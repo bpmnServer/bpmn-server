@@ -1,0 +1,33 @@
+<script>
+	var omni_base_url="/";
+	var ajax_object =null;
+</script>
+<style>
+	div.entry-content { margin:5px !important;}
+</style>
+
+<div class="content" style="min-height:400px" id="js-drop-zone">
+
+	<h2 style="padding-left:20px;">${title} </h2>
+
+	<div class="message error">
+		<div class="note">
+			<p>Ooops, we could not display the BPMN 2.0 diagram.</p>
+			<div class="details">
+				<span>cause of the problem</span>
+				<pre></pre>
+		</div>
+	</div>
+</div>
+<div class="canvas" style="height:800px" id="js-canvas"></div>
+
+	<script src="/javascripts/modeller.js"></script>
+	<script id="xmlSrc" type="text/xmldata">#{xml}</script>
+	script
+		| var processId = '#{processName}'	
+		
+		var OmniXML;
+		var OmniSVG;
+		var OmniChangesCallback = diagramChanged;
+		window.saveDiagramFunct = saveDiagram;
+	</script>

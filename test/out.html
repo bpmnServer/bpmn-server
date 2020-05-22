@@ -1,0 +1,301 @@
+defintions.js
+    <section class="suite">
+      <h1>Feature: Buy Used Car</h1>
+      <dl>
+        <section class="suite">
+          <h1>Scenario: All path</h1>
+          <dl>
+            <dt>Given a bpmn source with one user task</dt>
+            <dd><pre><code>// server = new BPMNServer.BPMNServer(config);
+ server = bpmnServer;</code></pre></dd>
+currentdir:E:\dev\node\bpmn-serverE:\dev\node\bpmn-server/processes/Buy Used Car.bpmn
+CustomEngine
+            <dt>When a process defintion is executed</dt>
+            <dd><pre><code>async () =&#x3E; {
+        execution = await server.execute(name);
+       // Helper.showLog();
+    }</code></pre></dd>
+            <dt>Then check for output to have engine</dt>
+            <dd><pre><code>expect(execution).to.have.property(&#x27;engine&#x27;);</code></pre></dd>
+            <dt>And check for output to instance</dt>
+            <dd><pre><code>expect(execution).to.have.property(&#x27;instance&#x27;);</code></pre></dd>
+            <dt>And check for output to have items</dt>
+            <dd><pre><code>async () =&#x3E; {
+          expect(execution).to.have.property(&#x27;events&#x27;);
+      }</code></pre></dd>
+waiting for:Buy Car
+            <dt>And Query on items from db</dt>
+            <dd><pre><code>async () =&#x3E; {
+          let waiting = await server.findItems(
+              { instanceId: execution.instance.id, status: &#x27;wait&#x27; });
+          item = waiting[0];
+          console.log(&#x27;waiting for:&#x27;+item.name);
+          expect(waiting).to.have.length(1);
+      }</code></pre></dd>
+            <dt>And Check Url for Pending Item</dt>
+            <dd><pre><code>async () =&#x3E; {
+          //itemUrl = item.getUrl();
+      }</code></pre></dd>
+            <dt>Given shutdown</dt>
+            <dd><pre><code>server.shutdown();</code></pre></dd>
+            <dt>And Buy the car</dt>
+            <dd><pre><code>async () =&#x3E; {
+          execution = await server.invoke({
+              instanceId: execution.instance.id, status: &#x27;wait&#x27;, name: &#x27;Buy Car&#x27;
+          }
+              , { model: &#x27;Thunderbird&#x27; });
+      }</code></pre></dd>
+            <dt>And Clean it</dt>
+            <dd><pre><code>async () =&#x3E; {
+          execution = await server.invoke({
+              instanceId: execution.instance.id, status: &#x27;wait&#x27;, name: &#x27;Clean Car&#x27;
+          });
+      }</code></pre></dd>
+            <dt>And Repair it</dt>
+            <dd><pre><code>async () =&#x3E; {
+          execution= await server.invoke({
+              instanceId: execution.instance.id, status: &#x27;wait&#x27;, name: &#x27;Repair Car&#x27;
+          });
+      }</code></pre></dd>
+            <dt>And Drive it</dt>
+            <dd><pre><code>async () =&#x3E; {
+          execution= await server.invoke({
+              instanceId: execution.instance.id, status: &#x27;wait&#x27;, name: &#x27;Drive Car&#x27;
+          });
+      }</code></pre></dd>
+            <dt>And Drive it</dt>
+            <dd><pre><code>async () =&#x3E; {
+          execution= await server.invoke({
+              instanceId: execution.instance.id, status: &#x27;wait&#x27;, name: &#x27;Drive Car&#x27;
+          });
+      }</code></pre></dd>
+            <dt>And Case Complete</dt>
+            <dd><pre><code>async () =&#x3E; {
+          let waiting = await server.findItems(
+              { instanceId: execution.instance.id, status: &#x27;wait&#x27;});
+          expect(waiting).to.have.length(0);
+      }</code></pre></dd>
+            <dt class="error">And and removed from Server</dt>
+            <dd class="error"><pre><code>async () =&#x3E; {
+          let myInstance = Server.BPMNServer.getLive(execution.instance.id);
+          expect(myInstance).to.be.an(&#x27;undefined&#x27;);
+      }</code></pre></dd>
+            <dd class="error">AssertionError: expected { Object (instance, engine) } to be an undefined</dd>
+writing to:Buy Used Car.log 324
+            <dt>And write log file toBuy Used Car.log</dt>
+            <dd><pre><code>async () =&#x3E; {
+          helper.dumpInfo(execution);
+          helper.getLogger().save(name+&#x27;.log&#x27;);
+      }</code></pre></dd>
+          </dl>
+        </section>
+      </dl>
+    </section>
+    <section class="suite">
+      <h1>Feature: Timer-Sample</h1>
+      <dl>
+        <section class="suite">
+          <h1>Scenario: All path</h1>
+          <dl>
+            <dt>Given a bpmn source with one user task</dt>
+            <dd><pre><code>// server = new BPMNServer.BPMNServer(config);
+server = bpmnServer;</code></pre></dd>
+currentdir:E:\dev\node\bpmn-serverE:\dev\node\bpmn-server/processes/timer-sample.bpmn
+            <dt>When a process defintion is executed</dt>
+            <dd><pre><code>async () =&#x3E; {
+            execution = await server.execute(name);
+            // Helper.showLog();
+        }</code></pre></dd>
+            <dt>And Find Waiting items</dt>
+            <dd><pre><code>async () =&#x3E; {
+            let waiting = await server.findItems(
+                { instanceId: execution.instance.id, status: &#x27;wait&#x27;});
+            expect(waiting).to.have.length(0);
+        }</code></pre></dd>
+delaying ... 2500
+delayed is done.
+            <dt>And Waiting for timer to fire</dt>
+            <dd><pre><code>async () =&#x3E; {
+            //            Logger.setOptions({ toConsole: true});
+            await helper.delay(2500, function () { console.log(&#x22;done&#x22;); })
+        }</code></pre></dd>
+            <dt>And Case Complete</dt>
+            <dd><pre><code>async () =&#x3E; {
+            let waiting = await server.findItems(
+                { instanceId: execution.instance.id, status: &#x27;wait&#x27; });
+            expect(waiting).to.have.length(0);
+        }</code></pre></dd>
+writing to:timer-sample.log 105
+            <dt>And write log file</dt>
+            <dd><pre><code>async () =&#x3E; {
+            helper.dumpInfo(execution);
+            helper.getLogger().save(name + &#x27;.log&#x27;);
+        }</code></pre></dd>
+          </dl>
+        </section>
+      </dl>
+    </section>
+    <section class="suite">
+      <h1>Feature: Shutdown and restart</h1>
+      <dl>
+        <section class="suite">
+          <h1>Scenario: All path</h1>
+          <dl>
+currentdir:E:\dev\node\bpmn-serverE:\dev\node\bpmn-server/processes/Buy Used Car.bpmn
+            <dt>Given a process defintion is executed</dt>
+            <dd><pre><code>async () =&#x3E; {
+          execution = await server.execute(name);
+      }</code></pre></dd>
+            <dt>When I shutdown the server </dt>
+            <dd><pre><code>server.shutdown();</code></pre></dd>
+            <dt>And My engine is stopped</dt>
+            <dd><pre><code>expect(execution.engine.state == &#x27;stopped&#x27;);</code></pre></dd>
+            <dt>And No live instances</dt>
+            <dd><pre><code>expect(Server.BPMNServer.getLives()).to.have.length(0);</code></pre></dd>
+            <dt>When I restart the server </dt>
+            <dd><pre><code>async () =&#x3E; {
+          await server.restart();
+      }</code></pre></dd>
+            <dt class="error">And Now I have some lives</dt>
+            <dd class="error"><pre><code>async () =&#x3E; {
+          expect(Server.BPMNServer.getLives()).not.to.have.length(0);
+          let myInstance = Server.BPMNServer.getLive(execution.instance.id);
+          expect(myInstance.instance.id).equal(execution.instance.id);
+      }</code></pre></dd>
+            <dd class="error">AssertionError: expected [] to not have a length of 0</dd>
+          </dl>
+        </section>
+      </dl>
+    </section>
+    <section class="suite">
+      <h1>Feature: Timer-Sample then user task</h1>
+      <dl>
+        <section class="suite">
+          <h1>Scenario: All path</h1>
+          <dl>
+            <dt>Given a bpmn source with one user task</dt>
+            <dd><pre><code>// server = new BPMNServer.BPMNServer(config);
+server = bpmnServer;</code></pre></dd>
+currentdir:E:\dev\node\bpmn-serverE:\dev\node\bpmn-server/processes/./timerBeforeUser.bpmn
+            <dt>When execute</dt>
+            <dd><pre><code>async () =&#x3E; {
+            execution = await server.execute(name);
+        }</code></pre></dd>
+            <dt>And Find Waiting items</dt>
+            <dd><pre><code>async () =&#x3E; {
+            let waiting = await server.findItems(
+                { instanceId: execution.instance.id, status: &#x27;wait&#x27;});
+            expect(waiting).to.have.length(0);
+            item = waiting[0];
+        }</code></pre></dd>
+            <dt>And My instance is alive</dt>
+            <dd><pre><code>async () =&#x3E; {
+            let myInstance = await Server.BPMNServer.getLive(execution.instance.id);
+    
+            expect(myInstance.instance.id).equal(execution.instance.id);
+        }</code></pre></dd>
+delaying ... 2500
+delayed is done.
+            <dt>And Waiting for timer to fire</dt>
+            <dd><pre><code>async () =&#x3E; {
+            await helper.delay(2500, function () { console.log(&#x22;done&#x22;); })
+        }</code></pre></dd>
+            <dt class="error">And Find Waiting items</dt>
+            <dd class="error"><pre><code>async () =&#x3E; {
+            let waiting = await server.findItems(
+                { instanceId: execution.instance.id, status: &#x27;wait&#x27; });
+            expect(waiting).to.have.length(1);
+            item = waiting[0];
+        }</code></pre></dd>
+            <dd class="error">AssertionError: expected [] to have a length of 1 but got 0</dd>
+
+Error Message: Item not found for this query
+
+Stacktrace:
+====================
+Error: Item not found for this query
+    at DefaultLogger.error (E:\dev\node\bpmn-server\src\DefaultLogger.js:60:15)
+    at Processor.<anonymous> (E:\dev\node\bpmn-server\src\Processor.js:230:29)
+    at Generator.next (<anonymous>)
+    at fulfilled (E:\dev\node\bpmn-server\src\Processor.js:5:58)
+    at process._tickCallback (internal/process/next_tick.js:68:7)
+            <dt class="error">And Fire User Task</dt>
+            <dd class="error"><pre><code>async () =&#x3E; {
+//            helper.getLogger().setOptions({ toConsole: true });
+            execution = await server.invoke({
+                instanceId: execution.instance.id, status: &#x27;wait&#x27;, name: &#x27;User Task&#x27;
+            });
+        }</code></pre></dd>
+            <dd class="error">Error: Error: Item not found for this query</dd>
+            <dt>And Case Complete</dt>
+            <dd><pre><code>async () =&#x3E; {
+            let waiting = await server.findItems(
+                { instanceId: execution.instance.id, status: &#x27;wait&#x27; });
+            expect(waiting).to.have.length(0);
+        }</code></pre></dd>
+            <dt class="error">And and removed from Server</dt>
+            <dd class="error"><pre><code>async () =&#x3E; {
+            let myInstance = Server.BPMNServer.getLive(execution.instance.id);
+            expect(myInstance).to.be.an(&#x27;undefined&#x27;);
+        }</code></pre></dd>
+            <dd class="error">AssertionError: expected { Object (instance, engine) } to be an undefined</dd>
+writing to:timerBeforeUser.log 406
+            <dt>And write log file</dt>
+            <dd><pre><code>async () =&#x3E; {
+            helper.dumpInfo(execution);
+            helper.getLogger().save(name + &#x27;.log&#x27;);
+        }</code></pre></dd>
+          </dl>
+        </section>
+      </dl>
+    </section>
+    <section class="suite">
+      <h1>Feature: Timer-Sample</h1>
+      <dl>
+        <section class="suite">
+          <h1>Scenario: All path</h1>
+          <dl>
+            <dt>Given a bpmn source with one user task</dt>
+            <dd><pre><code>// server = new BPMNServer.BPMNServer(config);
+server = bpmnServer;</code></pre></dd>
+currentdir:E:\dev\node\bpmn-serverE:\dev\node\bpmn-server/processes/timer-sample.bpmn
+f684131e-0023-47fa-90a3-ac6a7c79215f
+            <dt>When a process defintion is executed</dt>
+            <dd><pre><code>async () =&#x3E; {
+            execution = await server.execute(name);
+            console.log(execution.instance.id);
+        }</code></pre></dd>
+            <dt>And Find Waiting items</dt>
+            <dd><pre><code>async () =&#x3E; {
+            let waiting = await server.findItems(
+                { instanceId: execution.instance.id, status: &#x27;wait&#x27; });
+            expect(waiting).to.have.length(0);
+        }</code></pre></dd>
+delaying ... 2500
+delayed is done.
+            <dt>And Waiting for timer to fire</dt>
+            <dd><pre><code>async () =&#x3E; {
+            //            Logger.setOptions({ toConsole: true});
+            await helper.delay(2500, function () { console.log(&#x22;done&#x22;); })
+        }</code></pre></dd>
+            <dt>And Case Complete</dt>
+            <dd><pre><code>async () =&#x3E; {
+            let waiting = await server.findItems(
+                { instanceId: execution.instance.id, taskId: &#x27;Event_04w6u9w&#x27;, status: &#x27;end&#x27; });
+            expect(waiting).to.have.length(1);
+        }</code></pre></dd>
+            <dt>And and removed from Server</dt>
+            <dd><pre><code>async () =&#x3E; {
+            let myInstance = Server.BPMNServer.getLive(execution.instance.id);
+            expect(myInstance).to.be.an(&#x27;undefined&#x27;);
+        }</code></pre></dd>
+writing to:timer-sample.log 105
+            <dt>And write log file</dt>
+            <dd><pre><code>async () =&#x3E; {
+            helper.dumpInfo(execution);
+            helper.getLogger().save(name + &#x27;.log&#x27;);
+        }</code></pre></dd>
+          </dl>
+        </section>
+      </dl>
+    </section>

@@ -1,0 +1,156 @@
+@CHARSET "ISO-8859-1";
+
+#omni_page {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  min-height: 700px; 
+}
+
+#omni_header {
+  flex: 0 1 auto;
+  max-height:38px;
+}
+
+#omni_content {
+  border: 1px dotted grey;
+  flex: 1 1 auto;
+}
+
+#omni_footer {
+  flex: 0 1 10px;
+}                
+.mainLayout {
+  flex: 1 1 auto;
+}
+
+
+/* navbar */
+.navbar-nav > li  {border-right: 1px solid lightblue; }
+
+.navbar-brand { border:0 !important;}
+
+.navbar-brand>img {
+    position: absolute;
+    top: 5px;
+    left: 3px; }
+
+.navbar-nav > li > a {
+    font-size: 10px;
+    padding-left:5px !important; 
+    padding-right:5px !important; 
+    padding-top:5px !important; 
+    padding-bottom:5px !important;}
+
+.navbar {min-height: 42px !important;}
+
+/* forms */
+.form-section {
+   border: 1px dotted green;
+   }
+
+.form-group {
+    border: none;
+   /* border: 1px dotted lightgray; */
+   }
+.form-checkbox { max-width: 40px;}
+
+.form-horizontal .help-block { margin-left: 20px; }
+
+.control-label { font-weight: bold; }
+
+.clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+/* end of forms */
+
+
+td.linenos { width: 20px;}
+.field
+{
+	width: 25%;
+    display: table-cell;
+}
+.fieldValue
+{
+	width: 25%;
+    display: table-cell;
+
+}
+
+ .container {
+    display: table;
+    }
+
+  .row  {
+    display: table-row;
+    width:100%;
+    }
+#accordion-resizer {
+    padding: 10px;
+    width: 350px;
+    height: 220px;
+ }
+
+body {
+overflow:scroll !important;	
+font: 100% "Trebuchet MS", sans-serif;
+		margin: 2px; }
+		
+.ui-tabs-vertical { width: 55em; }
+.ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 12em; }
+.ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; }
+.ui-tabs-vertical .ui-tabs-nav li a { display:block; }
+.ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; }
+.ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 40em;}
+
+ #diagram { background-position: top left; }
+ #diagram, #workArea { width: 100%; height: 50%; padding: 0.5em; }
+ #diagram h3, #workArea h3 { text-align: center; margin: 0; }
+ #workArea { margin-top: 1em; }
+
+.ui-tabs .ui-tabs-nav li {  font-size: .7em; }
+
+.error
+{
+	
+}
+.validationError
+{
+	
+}
+#menu-bar {
+    float:left;width:100%;
+    background-color: rgb(238, 220, 239); 
+}
+#omni_menus {
+    float:left;
+    background-color: rgb(238, 220, 239); 
+}
+#omni_menus_local {
+    
+float:right;
+background-color: rgb(238, 220, 239); 
+}
+
+.maxScreen
+{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    padding: 40px 10px 10px 10px;
+    width:100%;
+    display:block;
+    overflow-y: scroll;
+    height: 100%;
+    background-color: whilte;
+    background-color: white;
+    background-image: none;
+}
+.hide { display: none;}

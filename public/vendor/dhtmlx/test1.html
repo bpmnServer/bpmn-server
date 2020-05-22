@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!--k rel="stylesheet" href="codebase/dhtmlxscheduler.css" type="text/css" charset="utf-8"-->
+	<link rel="stylesheet" href="skins/skyblue/dhtmlx.css" type="text/css" charset="utf-8">
+	<link rel="stylesheet" href="codebase/dhtmlx.css" type="text/css" charset="utf-8">
+	<!--script src="codebase/preview.js" type="text/javascript" charset="utf-8"></script-->
+	<script src="codebase/dhtmlx.js"></script>	
+	<style>
+		html, body {
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			margin: 0px;
+		}
+	</style>
+</head>
+<body>
+	<script type="text/javascript" charset="utf-8">
+		window.skin = "skyblue"; // for tree image_path
+			dhtmlx.image_path='codebase/imgs/';
+
+	var main_layout = new dhtmlXLayoutObject(document.body, '2E');
+
+	var diagram = main_layout.cells('a');
+	diagram.setText('Diagram');
+	diagram.hideHeader();
+	var menu_1 = diagram.attachMenu();
+	menu_1.setIconsPath('codebase/imgs/');
+	
+	menu_1.loadStruct('menu.xml');
+
+
+	var workArea = main_layout.cells('b');
+	workArea.setText('Details');
+	var tabbar_1 = workArea.attachTabbar();
+	tabbar_1.addTab('ProcessItems','Process Items');
+	var ProcessItems = tabbar_1.cells('ProcessItems');
+	ProcessItems.setActive();
+	var layout_2 = ProcessItems.attachLayout('2U');
+
+	var itemsList = layout_2.cells('a');
+	itemsList.hideHeader();
+	var tree_1 = itemsList.attachTree();
+		tree_1.setImagePath('codebase/imgs/dhxtree_'+window.skin+'/');
+		tree_1.loadXML('tree.xml');
+	
+
+
+	var ItemDetails = layout_2.cells('b');
+	ItemDetails.hideHeader();
+	var tabbar_2 = ItemDetails.attachTabbar();
+	tabbar_2.addTab('tab_5','tab_5');
+	var tab_5 = tabbar_2.cells('tab_5');
+	tab_5.setActive();
+	var str = [
+		{ type:"settings" , labelWidth:80, inputWidth:250, position:"absolute"  },
+		{ type:"input" , name:"form_input_1", label:"Input", labelWidth:325, inputWidth:325, labelLeft:25, labelTop:75, inputLeft:25, inputTop:96  },
+		{ type:"input" , name:"form_input_2", label:"Input", labelWidth:325, inputWidth:325, labelLeft:25, labelTop:150, inputLeft:25, inputTop:171  },
+		{ type:"button" , name:"form_button_1", label:"Save", value:"Save", width:"100", inputWidth:100, inputLeft:25, inputTop:25  },
+		{ type:"button" , name:"form_button_2", label:"Cancel", value:"Cancel", width:"75", inputWidth:75, inputLeft:200, inputTop:25  },
+		{ type:"checkbox" , name:"form_checkbox_1", label:"Checkbox", labelWidth:100, labelLeft:25, labelTop:225, inputLeft:25, inputTop:246  },
+		{ type:"checkbox" , name:"form_checkbox_2", label:"Checkbox", labelWidth:100, labelLeft:176, labelTop:225, inputLeft:176, inputTop:246  }
+	];
+	var form_2 = tab_5.attachForm(str);
+
+
+
+
+	tabbar_2.addTab('tab_6','tab_6');
+	var tab_6 = tabbar_2.cells('tab_6');
+
+
+	tabbar_2.addTab('tab_7','tab_7');
+	var tab_7 = tabbar_2.cells('tab_7');
+
+
+	tabbar_2.addTab('tab_8','tab_8');
+	var tab_8 = tabbar_2.cells('tab_8');
+
+	tabbar_1.addTab('ProcessDetails','Process Setting');
+	var ProcessDetails = tabbar_1.cells('ProcessDetails');
+
+	tabbar_1.addTab('roles','User Roles');
+	var roles = tabbar_1.cells('roles');
+
+	tabbar_1.addTab('docs','Documentation');
+	var docs = tabbar_1.cells('docs');
+	var str = [
+		{ type:"settings" , labelWidth:80, inputWidth:250, position:"absolute"  },
+		{ type:"editor" , name:"form_editor_1", label:"Editor", labelWidth:900, inputWidth:900, inputHeight:120, labelLeft:5, labelTop:5, inputLeft:5, inputTop:21  }
+	];
+	var form_3 = docs.attachForm(str);
+
+
+	var status_2 = workArea.attachStatusBar();
+	status_2.setText('');
+
+
+	</script>
+</body>
+Testing here
+</html>

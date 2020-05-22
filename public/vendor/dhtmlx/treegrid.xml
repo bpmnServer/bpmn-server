@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rows>
+	<head>
+		<beforeInit>
+			<call command="attachHeader">
+				<param>#rspan,Price,Cover,Ships in</param>
+			</call>
+		</beforeInit>
+		<column width="50" type="tree" align="left" color="white" sort="str">Book Name</column>
+		<column width="17" type="price" align="right" color="#deeaf8" sort="int">Terms and Conditions</column>
+		<column width="17" type="ed" align="left" color="white" sort="str">#cspan</column>
+		<column width="16" type="co" align="left" color="#deeaf8" sort="str">#cspan<option value="1">1 Hour</option>
+			<option value="12">12 Hours</option>
+			<option value="24">24 Hours</option>
+			<option value="48">12 days</option>
+			<option value="168">1 Week</option>
+			<option value="pick">pick up</option>
+			<option value="na">na</option>
+			
+		</column>
+		<settings>
+			<colwidth>%</colwidth>
+		</settings>
+	</head>
+	<row id="a.1" open="1">
+		<cell >Book Shop</cell>
+		<cell>0</cell>
+		<row id="b.1">
+			<cell >Bestsellers</cell>
+			<row id="c.1">
+				<cell >John Grisham</cell>
+				<cell>0</cell>
+				<row id="d.1">
+					<cell >A Time to Kill</cell>
+					<cell>12.25</cell>
+					<cell>Hardcover</cell>
+					<cell>12</cell>
+				</row>	
+				<row id="d.2">
+					<cell >The Rainmaker</cell>
+					<cell>5.50</cell>
+					<cell>Paperback</cell>
+					<cell>1</cell>
+				</row>	
+				<row id="d.3">
+					<cell >The Partner</cell>
+					<cell>11.70</cell>
+					<cell>Hardcover</cell>
+					<cell>168</cell>
+				</row>	
+				<row id="d.4">
+					<cell >The Firm</cell>
+					<cell>6.00</cell>
+					<cell>Paperback</cell>
+					<cell>24</cell>
+				</row>	
+				<row id="d.5">
+					<cell >The Brethren</cell>
+					<cell>15.80</cell>
+					<cell>Hardcover</cell>
+					<cell>12</cell>
+				</row>	
+				<row id="d.6">
+					<cell >The Testament</cell>
+					<cell>5.35</cell>
+					<cell>Paperback</cell>
+					<cell>12</cell>
+				</row>	
+				<row id="d.7">
+					<cell >The Sreet Lawyer</cell>
+					<cell>5.25</cell>
+					<cell>Paperback</cell>
+					<cell>168</cell>
+				</row>	
+				<row id="d.8">
+					<cell >The Client</cell>
+					<cell>15.85</cell>
+					<cell>Hardcover</cell>
+					<cell>168</cell>
+				</row>
+			</row>
+			<row id="c.2">
+				<cell >Stephen King</cell>
+				<cell>0</cell>
+				<row id="d.9">
+					<cell >Misery</cell>
+					<cell>5.25</cell>
+					<cell>Paperback</cell>
+					<cell>168</cell>
+				</row>
+				<row id="d.10">
+					<cell >It</cell>
+					<cell>15.75</cell>
+					<cell>Hardcover</cell>
+					<cell>1</cell>
+				</row>
+				<row id="d.11">
+					<cell >The Dark Tower</cell>
+					<cell>5.33</cell>
+					<cell>Paperback</cell>
+					<cell>2</cell>
+				</row>
+				<row id="d.12">
+					<cell >Hearts in Atlantis</cell>
+					<cell>4.73</cell>
+					<cell>Paperback</cell>
+					<cell>24</cell>
+				</row>
+			</row>
+		</row>
+		<row id="b.2" open="1">
+			<cell >Classics</cell>
+			<cell>0</cell>
+			<row id="c.3" open="1">
+				<cell >Pushkin</cell>
+				<cell>0</cell>
+				<row id="d.13">
+					<cell >Eugene Onegin : A Novel in Verse</cell>
+					<cell>14.40</cell>
+					<cell>Hardcover</cell>
+					<cell>24</cell>
+				</row>
+				<row id="d.14">
+					<cell >Boris Godunov</cell>
+					<cell>8.10</cell>
+					<cell>Paperback</cell>
+					<cell>24</cell>
+				</row>
+			</row>
+			<row id="c.4" open="1">
+				<cell >Honore De Balzac</cell>
+				<cell>0</cell>
+				<row id="d.15">
+					<cell >The Quest of the Absolute</cell>
+					<cell>9.75</cell>
+					<cell>Hardcover</cell>
+					<cell>24</cell>
+				</row>
+			</row>
+		</row>
+		<row id="b.3">
+			<cell >For Children</cell>
+			<cell>0</cell>
+			<row id="c.5">
+				<cell >Rudyard Kipling</cell>
+				<cell>0</cell>
+				<row id="d.16">
+					<cell >Captains Courageous</cell>
+					<cell>4.80</cell>
+					<cell>Paperback</cell>
+					<cell>1</cell>
+				</row>
+			</row>
+			<row id="c.6">
+				<cell >Lewis Carroll</cell>
+				<cell>0</cell>
+				<row id="d.17">
+					<cell >Alice in Wonderland</cell>
+					<cell>4.75</cell>
+					<cell>Paperback</cell>
+					<cell>24</cell>
+				</row>
+			</row>
+		</row>
+	</row>
+</rows>

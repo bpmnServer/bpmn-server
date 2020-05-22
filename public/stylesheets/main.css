@@ -1,0 +1,10 @@
+body {
+    padding: 10px;
+    font: 13px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+    color: #00B7FF;
+}
+tr { vertical-align: top;}
+td { padding-left:5px !important; padding-right: 5px !important;}

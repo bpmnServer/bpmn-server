@@ -1,0 +1,14 @@
+h3 Running Engines
+table
+	tr
+		td  Name
+		td  Duration
+		td  Case Id
+		td  last at
+
+	each engine in engines
+		tr
+			td  #{engine.instance.name}
+			td  #{engine.fromNow}
+			td  #{engine.instance.data.caseId}
+			td  #{engine.fromLast}

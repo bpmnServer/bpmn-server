@@ -1,0 +1,34 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EventType = void 0;
+const { Engine } = require('bpmn-engine');
+var EventType;
+(function (EventType) {
+    EventType["Server_start"] = "Server_start";
+    EventType["Server_shutdown"] = "Server_shutdown";
+    EventType["Engine_create"] = "Engine_create";
+    EventType["Engine_recover"] = "Engine_recover";
+    EventType["Engine_start"] = "Engine_start";
+    EventType["Engine_resume"] = "Engine_resume";
+    EventType["Engine_idle"] = "Engine_idle";
+    EventType["Instance_create"] = "Instance_create";
+    EventType["Instance_load"] = "Instance_load";
+    EventType["Instance_modify"] = "Instance_modify";
+    EventType["Instance_idle"] = "Instance_idle";
+    EventType["Instance_save"] = "Instance_save";
+    EventType["Item_invoke"] = "Item_invoke";
+    EventType["Item_add"] = "Item_add";
+    EventType["Item_modify"] = "Item_modify";
+    EventType["Item_save"] = "Item_save";
+    EventType["Process_start"] = "Process_start";
+    EventType["Process_end"] = "Process_end";
+    EventType["Activity_enter"] = "enter";
+    EventType["Activity_start"] = "start";
+    EventType["Activity_wait"] = "wait";
+    EventType["Activity_timer"] = "timer";
+    EventType["Activity_end"] = "end";
+    EventType["Flow_take"] = "take";
+    EventType["Flow_discard"] = "discard";
+})(EventType || (EventType = {}));
+exports.EventType = EventType;
+//# sourceMappingURL=API.js.map

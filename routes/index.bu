@@ -1,0 +1,30 @@
+/*
+ * GET home page.
+ */
+import express = require('express');
+const router = express.Router();
+const deb = require('../Debug.js')
+import { BPMNServer } from '../src/BPMNServer';
+const config = require('../configuration.js').configuration;
+
+router.get('/', (req: express.Request, res: express.Response) => {
+
+
+
+    res.render('index', { title: 'Express' });
+    test();
+});
+
+
+//const debug = deb.debug;
+const log = deb.log;
+
+async function test() {
+
+        let server = new BPMNServer(config);
+
+        await server.execute({ name: 'Buy Used Car' });
+
+    }
+
+export default router;

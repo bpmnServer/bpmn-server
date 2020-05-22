@@ -1,0 +1,34 @@
+extends layout
+
+block content
+
+
+	h3 Execute Process #{processName}
+
+	form(name='ExecuteForm',action="/execute",method="post")
+		input(type='hidden',name='processName',id='processName',value=`${processName}`)
+		table
+			tr
+				td  Data Values (for Process start)
+				td 
+					div(id='info')
+			tr
+				td  Field
+				td  Value
+			tr
+				td  
+					input(name='field1')
+				td  
+					input(name='value1')
+			tr
+				td  
+					input(name='field2')
+				td  
+					input(name='value2')
+			tr
+				td  
+					input(name='field3')
+				td  
+			tr
+				td  
+					input(type='submit')
