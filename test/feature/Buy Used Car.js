@@ -53,13 +53,13 @@ Feature('Buy Used Car', () => {
               , { model: 'Thunderbird', repairsRequired: true, cleaningRequired: false});
 
       });
-      /*
+      
       and('Clean it', async () => {
           execution = await server.invoke({
               instanceId: execution.instance.id, status: 'wait', name: 'Clean'
           });
       });
-      */
+      
       and('Repair it', async () => {
 
           await helper.dumpInfo(execution);

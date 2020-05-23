@@ -8,7 +8,8 @@ Features
 - [Instance Persistence](#instance-persistence)
 - [Accessible to your App](#accessible-to-your-App)
 - [Logging and debugging](#logging-and-debugging)
-- [User Interface](#user-interface)
+- [Web Interface](#Web-interface)
+- [Built-in Modeling](#Built-in-Modeling)
 - [Built for Integration](#built-for-integration)
 
 
@@ -20,37 +21,21 @@ BPMN 2 is an OMG standard and is widely supported by various modelling tools
 
 # Executable Workflow
 
+BPMN-Server is built on top of bpmn-engine that provides an excellent solution for executable workflow,
 
-https://github.com/paed01/bpmn-engine
+see https://github.com/paed01/bpmn-engine for more details.
 
 # Instance Persistence 
 
 # Accessible to your App
 
-# Data Handling
-
-Process can have input and output variables
-
-Activities can have their own input and output varaibles with the scope of item instance
-
-Activities can transform own data to process data
-
 # Logging and debugging
 
-# User Interface
+# Web Interface
 
 # Built for Integration
 
-	Server Cached Engines
-		Stop
-		Start
-	WorkFlow Presistence	-	done
-	Stop and Resume			-	done
-	User Tasks				-	done
-	message					-	done
-	timers					-	done
-	timer start event
-	Customization			done
-	Notification
+This package is not intended to be used as a stand-alone but rather be integrated with your applicaton. 
+The Web interface serve only as a prototype to be integrated in your solution.
 		
 

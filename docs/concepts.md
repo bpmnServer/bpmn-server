@@ -8,9 +8,8 @@ Features
 - [Instance Persistence](#instance-persistence)
 - [Accessible to your App](#accessible-to-your-App)
 - [Logging and debugging](#logging-and-debugging)
-- [User Interface](#user-interface)
+- [Web User Interface](#user-interface)
 - [Built for Integration](#built-for-integration)
-
 
 <!-- tocstop -->
 
@@ -19,6 +18,8 @@ Workflow is a state machine. You can imagine it as a flow chart running inside i
 So workflow is a graph of control flow, and activities are its nodes. They can be as simple like an if..then..else branch, or as complex like getting data from a database and do something complicated depending on the results.
 
 A workflow is an application running inside in your application, have its state and variables, and correlated across Node.js cluster and process instances. So if your Node.js application consists of many instances inside a cluster and many clusters across a server farm, a workflow instance will work like a single instance application within those. A workflow application could outlive Node.js applications, they have out-of-the-box persistence support to make them ideal platform to do long running business processes, durable services or scheduled backgound tasks.
+
+#Built-in Modeling
 
 # General Concepts
 

@@ -8,7 +8,7 @@ console.log("Defintions.ts");
 
 
 
-import { IModelsDatastore } from './src/API';
+import { IModelsDatastore } from './API';
 
 
 class ModelsDatastore implements IModelsDatastore {
