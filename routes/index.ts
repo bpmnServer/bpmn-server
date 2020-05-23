@@ -89,7 +89,7 @@ const awaitHandlerFactory = (middleware) => {
         /*
         let output = ['run ' + processName];
         output = show(output);
-        display(response, 'Run Prcesses', output, instance.logs, instance.getItems());
+        display(response, 'Run Prcesses', output, instance.logs, instance.getItems({}));
         */
     }));
 
@@ -118,7 +118,7 @@ const awaitHandlerFactory = (middleware) => {
         console.log(" insance id " + instance.id);
         let output = ['run ' + process];
         output = show(output);
-        display(response, 'Run Prcesses', output, instance.logs, instance.getItems()); */
+        display(response, 'Run Prcesses', output, instance.logs, instance.getItems({})); */
     }));
 
     function parseField(field, value, data) {
@@ -224,7 +224,7 @@ const awaitHandlerFactory = (middleware) => {
         console.log(" insance id " + instance.id);
         let output = ['run ' + process];
         output = show(output);
-        display(response, 'Run Prcesses', output, instance.logs, instance.getItems());
+        display(response, 'Run Prcesses', output, instance.logs, instance.getItems({}));
     }));
     router.get('/instanceDetails', awaitHandlerFactory(async (request, response) => {
 

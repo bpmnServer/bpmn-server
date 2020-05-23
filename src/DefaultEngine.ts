@@ -178,7 +178,9 @@ class CustomEngine  implements IEngine {
 
         return this.engine.getState();
     }
-
+    get state(): string{
+        return this.engine.state;
+    }
     async getFields(taskId) {
         let list = [];
 

@@ -148,6 +148,9 @@ class CustomEngine {
             return this.engine.getState();
         });
     }
+    get state() {
+        return this.engine.state;
+    }
     getFields(taskId) {
         return __awaiter(this, void 0, void 0, function* () {
             let list = [];

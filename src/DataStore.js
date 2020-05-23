@@ -38,7 +38,6 @@ class DataStore {
         return __awaiter(this, void 0, void 0, function* () {
             this.logger.log("Saving...");
             var json = JSON.stringify(instance.state, null, 2);
-            fs.writeFileSync('../state.json', json);
             this.logger.log('saving instances');
             var recs;
             var promises = [];
@@ -57,7 +56,7 @@ class DataStore {
                 this.logger.log("updating instance logs count:" + instance.logs.length);
             }
             this.logger.log('saving items');
-            this.saveItems(instance, promises);
+            yield this.saveItems(instance, promises);
             yield Promise.all(promises);
             this.logger.log('saving Complete');
         });
@@ -69,7 +68,7 @@ class DataStore {
             let newItems = [];
             let i = 0;
             let updates = 0;
-            let items = instance.getItems();
+            let items = instance.getItems({});
             for (i = 0; i < items.length; i++) {
                 let item = items[i];
                 item.instanceId = instance.id;

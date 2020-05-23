@@ -17,7 +17,7 @@ async function test() {
     let execution = await server.execute(name, {}, { caseId: 999 });
     let instance = execution.instance;
     let items = execution.instance.items;
-    return;
+
 
     let engine = execution.engine;
     console.log("instance");

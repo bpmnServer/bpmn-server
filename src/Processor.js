@@ -190,7 +190,7 @@ class Processor {
                 this.log("Action:Starting server invoke " + invokingItem.taskId + " Data:" + JSON.stringify(data));
                 let item = null;
                 let i = 0;
-                let items = this.instance.getItems();
+                let items = this.instance.getItems({});
                 for (i = 0; i < items.length; i++) {
                     if (items[i].id == invokingItem.id)
                         item = items[i];
@@ -230,7 +230,7 @@ class Processor {
             }
             else {
                 this.log(item);
-                this.log(this.instance.getItems());
+                this.log(this.instance.getItems({}));
                 this.error("**Error Invalid Item to be invoked**");
                 return null;
             }
@@ -260,8 +260,12 @@ class Processor {
             this.log(itemQuery);
             let items = yield this.dataStore.findItems(itemQuery);
             if (items.length == 0) {
-                this.log(" No item found" + JSON.stringify(itemQuery));
-                this.error("Item not found for this query: " + JSON.stringify(itemQuery));
+                let newQuery = itemQuery;
+                newQuery['name'] = null;
+                newQuery['status'] = null;
+                let allItems = yield this.dataStore.findItems(newQuery);
+                this.log(" No item found" + JSON.stringify(items));
+                this.error("Item not found for this query: " + JSON.stringify(itemQuery) + JSON.stringify(allItems));
                 return null;
             }
             const invokingItem = items[0];
@@ -283,6 +287,7 @@ class Processor {
             yield saveDataStore.saveInstance(this.instance);
             this.notify(API_1.EventType.Instance_save, this.instance);
             this.instance.modified = false;
+            this.log("saving ended.");
         });
     }
     ended() {

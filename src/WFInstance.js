@@ -43,9 +43,17 @@ class WFInstance {
         this.state = instanceObj.state;
         this.logs = instanceObj.logs;
     }
-    getItems() {
+    getItems({ status = null, name = null }) {
         let items = [];
-        this.items.forEach(item => { items.push(item); });
+        this.items.forEach(item => {
+            let take = true;
+            if (status && (item.status != status))
+                take = false;
+            if (name && (item.name != name))
+                take = false;
+            if (take)
+                items.push(item);
+        });
         return items;
     }
 }

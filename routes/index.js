@@ -74,7 +74,7 @@ const awaitHandlerFactory = (middleware) => {
         /*
         let output = ['run ' + processName];
         output = show(output);
-        display(response, 'Run Prcesses', output, instance.logs, instance.getItems());
+        display(response, 'Run Prcesses', output, instance.logs, instance.getItems({}));
         */
     })));
     router.post('/execute', awaitHandlerFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
@@ -96,7 +96,7 @@ const awaitHandlerFactory = (middleware) => {
         console.log(" insance id " + instance.id);
         let output = ['run ' + process];
         output = show(output);
-        display(response, 'Run Prcesses', output, instance.logs, instance.getItems()); */
+        display(response, 'Run Prcesses', output, instance.logs, instance.getItems({})); */
     })));
     function parseField(field, value, data) {
         if (field) {
@@ -181,7 +181,7 @@ const awaitHandlerFactory = (middleware) => {
         console.log(" insance id " + instance.id);
         let output = ['run ' + process];
         output = show(output);
-        display(response, 'Run Prcesses', output, instance.logs, instance.getItems());
+        display(response, 'Run Prcesses', output, instance.logs, instance.getItems({}));
     })));
     router.get('/instanceDetails', awaitHandlerFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
         let imageId = request.query.id;

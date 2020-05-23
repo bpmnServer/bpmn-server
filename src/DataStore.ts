@@ -46,8 +46,7 @@ class DataStore implements IDataStore  {
 
 	var json = JSON.stringify(instance.state, null, 2);
 
-	fs.writeFileSync('../state.json', json);
-		this.logger.log('saving instances');
+	this.logger.log('saving instances');
 
 	var recs;
 	var promises=[];
@@ -73,7 +72,7 @@ class DataStore implements IDataStore  {
 	}
 	this.logger.log('saving items');
 
-	this.saveItems(instance,promises);
+	await this.saveItems(instance,promises);
 
 	await Promise.all(promises);
 	this.logger.log('saving Complete');
@@ -90,7 +89,7 @@ class DataStore implements IDataStore  {
 	let i = 0;
 
 	let updates = 0;
-	let items = instance.getItems();
+	 let items = instance.getItems({});
 
 	for (i = 0; i < items.length; i++) {
 		let item = items[i];

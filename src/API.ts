@@ -147,7 +147,7 @@ interface IInstance {
     logs;
     engineClassPath;
 
-    getItems(): IInstanceItem[];
+    getItems({ }): IInstanceItem[];
 
 }
 /**

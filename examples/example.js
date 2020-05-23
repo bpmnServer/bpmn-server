@@ -21,7 +21,6 @@ function test() {
         let execution = yield server.execute(name, {}, { caseId: 999 });
         let instance = execution.instance;
         let items = execution.instance.items;
-        return;
         let engine = execution.engine;
         console.log("instance");
         console.log('instanceId:' + instance.id + " items " + items.length);
