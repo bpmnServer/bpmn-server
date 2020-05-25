@@ -16,7 +16,7 @@ BPMN 2.0 Modeling, Execution and Presistence Server. Open source for Node.js wor
 - [Featuers](./docs/features.md)
 - [Concepts](./docs/concepts.md)
 - [API](/docs/API.md)
-- [Examples](/docs/Examples.md)
+- [Examples](./docs/Examples.md)
 
 # Process modeller
 
@@ -60,7 +60,7 @@ async function test() {
     console.log(items);
 
 ```
-for more complete examples see [Examples](/docs/Examples.md)
+for more complete examples see [Examples](./docs/Examples.md)
 
 # Acknowledgments
 
