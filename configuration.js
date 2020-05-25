@@ -11,12 +11,9 @@ var configuration =
 		MongoDB:
 		{
 			db_url: "mongodb://localhost:27017?retryWrites=true&w=majority",
-			db: 'test',
-			instance_collection: 'wf_instances',
-			item_collection: 'wf_instance_items'
+			db: 'test'
 		}
 	},
 };
-
 
 module.exports = { configuration}

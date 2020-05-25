@@ -1,0 +1,42 @@
+declare class ItemInstance {
+    id: any;
+    instanceId: any;
+    task: any;
+    type: any;
+    taskId: any;
+    name: any;
+    processName: any;
+    startAt: string;
+    endAt: any;
+    executionId: any;
+    itemData: any;
+    data: any;
+    isoDuration: any;
+    timeout: any;
+    status: any;
+    user: any;
+    inputFields: any;
+    dbAction: any;
+    getUrl(): string;
+    static fromTask(task: any, instance: any, event: any): ItemInstance;
+    static fromDB(record: any): ItemInstance;
+    getDataObject(instance: any): {
+        id: any;
+        instanceId: any;
+        taskId: any;
+        name: any;
+        processName: any;
+        type: any;
+        startAt: string;
+        endAt: any;
+        executionId: any;
+        data: any;
+        itemData: any;
+        status: any;
+        user: any;
+        isoDuration: any;
+        timeout: any;
+        inputFields: any;
+    };
+}
+export { ItemInstance };

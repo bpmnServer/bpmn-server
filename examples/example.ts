@@ -1,4 +1,3 @@
-'use strict';
 
 import { BPMNServer } from '../src/BPMNServer';
 
@@ -6,9 +5,58 @@ const config = require('../configuration.js').configuration;
 
 let server, instance;
 
-test();
+/**
+ *  1.  models list
+ *  
+ *  2.  simple execution
+ *  
+ *  3.  show user interaction - cash request approval id
+ * 
+ *  4.  show pending items for a given task
+ *  
+ *  5.  Timer
+ *  
+ *  6.  show more complete example buy car
+ *  
+ *  7.  show services
+ * 
+ */
+//timerWithUserTask();
+cashRequest();
+async function Models() {
 
-async function test() {
+    const definitions = config.definitions;
+
+
+}
+async function cashRequest() {
+
+    let name = 'cashRequest';
+
+    server = new BPMNServer(config);
+    let execution = await server.execute(name, {}, {
+        caseId: 101
+    });
+    let instance = execution.instance;
+    let items = instance.items;
+
+    instance.getItems({ status: 'wait' }).forEach(item => {
+        console.log(`  waiting for ${item.name} `);
+    });
+
+
+    console.log('Invoking Buy');
+
+    execution = await server.invoke({
+        instanceId: execution.instance.id, status: 'wait', name: 'User Request'
+    }, 'ralph'
+        , { amount: 500, purpose: 'travel expenses' });
+    console.log("invoke returned to example");
+    let approvalItem = instance.getItems({ status: 'wait', name: 'Approval' });
+    console.log(approvalItem);
+
+}
+async function timerWithUserTask() {
 //    let name = 'Buy Used Car';
 
     let name = 'timerBeforeUser';

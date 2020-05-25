@@ -133,6 +133,7 @@ class BPMNServer implements IBPMNServer  {
 
 		context = await processor.execute(name, data, source, engineClassPath, callback ,services, extensions);
 
+		console.log("returning execute");
 		return context;
 
 

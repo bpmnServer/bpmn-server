@@ -6,9 +6,14 @@ const MongoDB = require('./MongoDB').MongoDB;
 
 import { IDataStore } from './API';
 
+
 const { v4: uuidv4 } = require('uuid');
 
 
+const Instance_collection = 'wf_instances';
+const Item_collection = 'wf_instance_items';
+
+console.log('DataStore' + Item_collection);
 
 class DataStore implements IDataStore  {
 
@@ -57,13 +62,13 @@ class DataStore implements IDataStore  {
 		dataObject.state = json;
 		dataObject.logs = instance.logs;
 
-		promises.push(this.db.insert(this.dbConfiguration.db, this.dbConfiguration.instance_collection, [dataObject]));
+		promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [dataObject]));
 
 		instance.dbAction = null;
 		this.logger.log("inserting instance logs count: " + instance.logs.length);
 	}
 	else {
-		promises.push(this.db.update(this.dbConfiguration.db, this.dbConfiguration.instance_collection,
+		promises.push(this.db.update(this.dbConfiguration.db, Instance_collection,
 			{ id: instance.id },
 			{ $set: { state: json, logs: instance.logs, endAt: instance.endAt } }));
 
@@ -101,7 +106,7 @@ class DataStore implements IDataStore  {
 			this.logger.log("	adding item task id " + item.taskId + " status " + item.status);
 		}
 		else if (item.dbAction == 'update') {
-			promises.push(this.db.update(this.dbConfiguration.db, this.dbConfiguration.item_collection,
+			promises.push(this.db.update(this.dbConfiguration.db, Item_collection,
 				{ id: item.id },
 				{ $set: { status: item.status, endAt: item.endAt } }
 			));
@@ -111,7 +116,7 @@ class DataStore implements IDataStore  {
 	}
 
 	if (newItems.length > 0) {
-		promises.push(this.db.insert(this.dbConfiguration.db, this.dbConfiguration.item_collection, newItems));
+		promises.push(this.db.insert(this.dbConfiguration.db, Item_collection, newItems));
 		this.logger.log("inserted " + newItems.length + " items ");
 	}
 	instance.items.forEach(item => { item.dbAction = null; });
@@ -150,23 +155,23 @@ class DataStore implements IDataStore  {
 		else 
 			projection = { };
 
-	var records = await this.db.find(this.dbConfiguration.db, this.dbConfiguration.instance_collection, query,projection);
+	var records = await this.db.find(this.dbConfiguration.db, Instance_collection, query,projection);
 	return records;
 }
  async findItems(query) {
 
-	 var records = await this.db.find(this.dbConfiguration.db, this.dbConfiguration.item_collection, query);
+	 var records = await this.db.find(this.dbConfiguration.db, Item_collection, query);
 	 
 	return records;
 }
  async deleteData(instanceId = null) {
 		if (instanceId) {
-			await this.db.remove(this.dbConfiguration.db, this.dbConfiguration.item_collection, {instanceId: instanceId});
-			await this.db.remove(this.dbConfiguration.db, this.dbConfiguration.instance_collection, {id: instanceId});
+			await this.db.remove(this.dbConfiguration.db, Item_collection, {instanceId: instanceId});
+			await this.db.remove(this.dbConfiguration.db, Instance_collection, {id: instanceId});
 		}
 		else {
-			await this.db.remove(this.dbConfiguration.db, this.dbConfiguration.item_collection, {});
-			await this.db.remove(this.dbConfiguration.db, this.dbConfiguration.instance_collection, {});
+			await this.db.remove(this.dbConfiguration.db, Item_collection, {});
+			await this.db.remove(this.dbConfiguration.db, Instance_collection, {});
 
         }
 

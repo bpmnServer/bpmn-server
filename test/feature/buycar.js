@@ -31,20 +31,16 @@ Feature('Buy Used Car', () => {
 
 
       and('Buy the car', async () => {
-          await invoke('Buy Car', { model: 'Thunderbir' });
+          await invoke('Buy', { model: 'Thunderbir' });
       });
       and('Clean it', async () => {
-          await invoke('Clean Car');
+          await invoke('Clean');
       });
       and('Repair it', async () => {
-          await invoke('Repair Car');
+          await invoke('Repair');
       });
       and('Drive it', async () => {
-          await invoke('Drive Car');
-      });
-      
-      and('Drive it', async () => {
-            await invoke('Drive Car');
+          await invoke('Drive');
       });
       
       and('Case Complete', async () => {
@@ -68,7 +64,9 @@ async function invoke(name, data = {}) {
     let list = await server.findItems({ instanceId: execution.instance.id, name });
     item = list[0];
 
-    if (item.status != 'wait')
+    if (!item)
+        helper.log(`-- expecting error items not found`);
+    else if (item.status != 'wait')
         helper.log(`-- expecting error items status is ${item.status} should be 'wait'`);
 //    expect(item.status).to.equal('wait');
 

@@ -2,3 +2,4 @@
 /obj/Debug
 *.log
 configuration.js
+/Samples/node_modules

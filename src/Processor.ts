@@ -14,7 +14,6 @@ import { DataStore } from "./DataStore";
 
 
 
-
 /**
  * is invoked when the server is invoked for execute/invoke
  * */
@@ -276,7 +275,9 @@ class Processor implements ILogger{
 
 			let task = item.task;
 			this.log(task.id + task.name + ' signalled');
-			await task.signal( itemData );
+			await task.signal(itemData);
+			this.log('task.environment.output'+JSON.stringify(task.environment.output));
+			this.log('task.environment.variables.input' + JSON.stringify(task.environment.variables.input));
 			item.itemData = itemData;
 
 		}
@@ -314,12 +315,8 @@ class Processor implements ILogger{
 		this.log(itemQuery);
 		let items = await this.dataStore.findItems(itemQuery);
 		if (items.length == 0) {
-			let newQuery = itemQuery;
-			newQuery['name'] = null;
-			newQuery['status'] = null;
-			let allItems = await this.dataStore.findItems(newQuery);
 			this.log(" No item found" + JSON.stringify(items));
-			this.error("Item not found for this query: "+ JSON.stringify(itemQuery)+JSON.stringify(allItems));
+			this.error("Item not found for this query: "+ JSON.stringify(itemQuery));
 			return null;
 		}
 

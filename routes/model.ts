@@ -63,7 +63,7 @@ const awaitHandlerFactory = (middleware) => {
         await definitions.save(name, bpmn, svg);
         console.log(" save completed");
 
-        console.log(request);
+//        console.log(request);
         response.status(200).send("");
     }));
 

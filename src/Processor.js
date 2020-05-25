@@ -226,6 +226,8 @@ class Processor {
                 let task = item.task;
                 this.log(task.id + task.name + ' signalled');
                 yield task.signal(itemData);
+                this.log('task.environment.output' + JSON.stringify(task.environment.output));
+                this.log('task.environment.variables.input' + JSON.stringify(task.environment.variables.input));
                 item.itemData = itemData;
             }
             else {
@@ -260,12 +262,8 @@ class Processor {
             this.log(itemQuery);
             let items = yield this.dataStore.findItems(itemQuery);
             if (items.length == 0) {
-                let newQuery = itemQuery;
-                newQuery['name'] = null;
-                newQuery['status'] = null;
-                let allItems = yield this.dataStore.findItems(newQuery);
                 this.log(" No item found" + JSON.stringify(items));
-                this.error("Item not found for this query: " + JSON.stringify(itemQuery) + JSON.stringify(allItems));
+                this.error("Item not found for this query: " + JSON.stringify(itemQuery));
                 return null;
             }
             const invokingItem = items[0];
