@@ -13,8 +13,8 @@ BPMN 2.0 Modeling, Execution and Presistence Server. Open source for Node.js wor
 - [Acknowledgments](#acknowledgments)
 
 ### Documentation
-- [Featuers](./docs/features)
-- [Concepts](./docs/concepts)
+- [Featuers](./docs/features.md)
+- [Concepts](./docs/concepts.md)
 - [API](/docs/API.md)
 - [Examples](/docs/Examples.md)
 
