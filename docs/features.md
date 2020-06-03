@@ -1,19 +1,62 @@
 Features
 =========
 
-
-<!-- toc -->
-- [BPMN 2](#bpmn-2)
-- [Executable Workflow](#executable-workflow)
-- [Instance Persistence](#instance-persistence)
-- [Accessible to your App](#accessible-to-your-App)
-- [Logging and debugging](#logging-and-debugging)
-- [Web Interface](#Web-interface)
-- [Built-in Modeling](#Built-in-Modeling)
-- [Built for Integration](#built-for-integration)
-
-
 <!-- tocstop -->
+
+The following elements are tested and supported.
+
+- Definition: Executable BPMN 2 definition
+- Process: Executes and keeps track of activity elements
+
+# Tasks
+- ReceiveTask
+- ScriptTask
+- ManualTask
+- UserTask
+- ServiceTask
+- BusinessRuleTask: Same behaviour as ServiceTask
+- SendTask: Same behaviour as ServiceTask
+- SignalTask
+# Behaviour
+- StandardLoopCharacteristics
+- MultiInstanceLoopCharacteristics
+# Events
+- StartEvent
+- EndEvent 
+- IntermediateCatchEvent
+- IntermediateThrowEvent
+# Event Behaviour
+- MessageEventDefinition
+- ConditionalEventDefinition
+- CompensateEventDefinition
+- TerminateEventDefinition
+- TimerEventDefinition
+- SignalEventDefinition
+# Gateways
+- EventBasedGateway
+- ExclusiveGateway
+- InclusiveGateway
+- ParallelGateway
+# Flows
+- SequenceFlow
+- MessageFlow
+# Data
+- IoSpecification
+- DataObject
+# Other
+- SubProcess
+- Lane
+- Pool
+# Special
+- BpmnError
+- BoundaryEvent
+- compensate by outbound Association
+- Error
+- ErrorEventDefinition
+- EscalationEventDefinition
+- LinkEventDefinition
+- ServiceImplementation: ServiceTask implementation attribute behaviour
+
 
 # BPMN 2
 
@@ -22,8 +65,6 @@ BPMN 2 is an OMG standard and is widely supported by various modelling tools
 # Executable Workflow
 
 BPMN-Server is built on top of bpmn-engine that provides an excellent solution for executable workflow,
-
-see https://github.com/paed01/bpmn-engine for more details.
 
 # Instance Persistence 
 

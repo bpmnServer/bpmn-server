@@ -1,0 +1,19 @@
+extends layout
+
+block content
+
+	h3 Invoking Item  #{elementId} - #{processName} 
+	p Item Id: #{id}
+	table
+		form(name='InvokeForm',action="/invokeItem",method="post")
+			input(type='hidden',name='itemId',id='itemId',value=`${id}`)
+
+			each field in fields
+				tr 
+					a(vertical-align="top")
+					td #{field.label}
+					td  
+						input(name=`${field.id}`)
+			tr
+				td
+					input(type='submit')

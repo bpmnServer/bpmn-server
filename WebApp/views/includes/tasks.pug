@@ -1,0 +1,23 @@
+h3 Pending Tasks
+table
+	tr
+		th Name -id
+		th Definition
+		th Case Id
+		th Type
+		th Started
+		th Status
+		th Action 
+	each item in waiting
+		- var ref = "/invokeItem?id="+item.id+"&processName="+item.processName+"&elementId="+item.elementId;
+
+		tr
+			td #{item.name} - #{item.elementId}
+			td #{item.processName} 
+			td #{item.data.caseId}
+			td #{item.type}
+			td #{item.fromNow}
+			td #{item.status}
+			td
+				a(href=`${ref}`) Execute
+//				img(src='/images/execute2.png')
