@@ -1,4 +1,5 @@
-const { BPMNServer, Execution, DataStore, DefaultHandler, Logger } = require("bpmn-server");
+const { BPMNServer, DataStore, Execution, DefaultHandler, Logger } = require("../../dist/");
+
 
 const config = require("../configuration.js").configuration;
 

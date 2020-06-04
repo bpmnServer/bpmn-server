@@ -1,15 +1,10 @@
-/*
- * GET home page.
- */
 import express = require('express');
 const router = express.Router();
 var bodyParser = require('body-parser')
 
 const FS = require('fs');
 
-import { BPMNServer, dateDiff, Behaviour_names   } from '../../src';
-import { Modeller } from '../views/Modeller';
-import { InstanceViewer } from '../views/InstanceViewer';
+import { BPMNServer, dateDiff, Behaviour_names   } from 'bpmn-server';
 import { configuration as config} from '../configuration';
 
 

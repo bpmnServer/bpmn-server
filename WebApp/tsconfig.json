@@ -5,11 +5,12 @@
     "lib": [ "es6" ],
     "sourceMap": true,
     "declaration": true
+
   },
   "include": [
     "**/*.ts"
   ],
   "exclude": [
-    "node_modules" , "./lib"
+    "node_modules" , "./dist"
   ]
 }

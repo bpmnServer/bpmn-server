@@ -1,5 +1,5 @@
 
-import { Execution,IHandler, Item, FLOW_ACTION , NODE_ACTION  } from '../src';
+import { Execution,IHandler, Item, FLOW_ACTION , NODE_ACTION  } from 'bpmn-server';
 
 const fs = require('fs');
 

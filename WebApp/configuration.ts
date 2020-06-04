@@ -1,5 +1,5 @@
 
-import { ModelsDatastore } from '../src';
+import { ModelsDatastore } from 'bpmn-server';
 import { MyHandler } from './handler';
 
 let definitionsPath = __dirname + '/processes/';

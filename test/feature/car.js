@@ -1,4 +1,4 @@
-const { BPMNServer , Execution , DefaultHandler , Logger } = require("bpmn-server");
+const { BPMNServer , Execution , DefaultHandler , Logger } = require("../../dist/");
 
 const logger = new Logger({ toConsole: false });
 

@@ -164,4 +164,4 @@ class MongoDB {
     }
 }
 exports.MongoDB = MongoDB;
-//# sourceMappingURL=MongoDB.js.map
+//# sourceMappingURL=MongoDb.js.map

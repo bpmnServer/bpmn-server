@@ -18,3 +18,5 @@
 *.txt
 /bin
 configuration.js
+/dist
+/WebApp/dist

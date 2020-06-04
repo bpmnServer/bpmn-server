@@ -1,6 +1,6 @@
 'use strict';
 
-import { ILogger } from "..";
+import { ILogger } from "../engine/Enums";
 
 const FS = require('fs');
 

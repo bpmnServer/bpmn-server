@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MyHandler = void 0;
-const src_1 = require("../src");
+const dist_1 = require("../dist");
 const fs = require('fs');
 var seq = 1;
 class MyHandler {
@@ -32,14 +32,14 @@ class MyHandler {
     }
     flowResponse(item) {
         let flow = item.element;
-        let action = src_1.FLOW_ACTION.take; // default
+        let action = dist_1.FLOW_ACTION.take; // default
         let data = item.token.data;
         if (flow) {
             item.token.log('=== ' + flow.id);
             //        console.log(msg);
             if (flow.id == 'flow_gateway_repair') {
                 if (data.needsRepairs == false)
-                    action = src_1.FLOW_ACTION.discard;
+                    action = dist_1.FLOW_ACTION.discard;
                 item.token.log(data);
             }
         }

@@ -1,4 +1,4 @@
-import { ModelsDatastore } from '../src';
+import { ModelsDatastore } from '../dist';
 import { MyHandler } from './handler';
 declare var configuration: {
     definitionsPath: string;

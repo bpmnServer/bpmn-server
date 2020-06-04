@@ -12,6 +12,6 @@
     "**/*.ts", "test/handler.js"
   ],
   "exclude": [
-    "node_modules" , "./dist"
+    "node_modules" , "./dist" , "./webApp"
   ]
 }

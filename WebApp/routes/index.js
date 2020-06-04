@@ -9,17 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/*
- * GET home page.
- */
 const express = require("express");
 const router = express.Router();
 var bodyParser = require('body-parser');
 const FS = require('fs');
-const src_1 = require("../../src");
+const bpmn_server_1 = require("bpmn-server");
 const configuration_1 = require("../configuration");
 const definitions = configuration_1.configuration.definitions;
-const bpmnServer = new src_1.BPMNServer(configuration_1.configuration);
+const bpmnServer = new bpmn_server_1.BPMNServer(configuration_1.configuration);
 var caseId = Math.floor(Math.random() * 10000);
 /* GET users listing. */
 const awaitHandlerFactory = (middleware) => {
@@ -248,17 +245,17 @@ function display(res, title, output, logs = [], items = []) {
         var instances = yield bpmnServer.findInstances({});
         let waiting = yield bpmnServer.findItems({ status: 'wait' }); // ({ name: 'Approval', claimId: 5000 });
         waiting.forEach(item => {
-            item.fromNow = src_1.dateDiff(item.startedAt);
+            item.fromNow = bpmn_server_1.dateDiff(item.startedAt);
         });
-        let engines = src_1.BPMNServer.getLives();
+        let engines = bpmn_server_1.BPMNServer.getLives();
         engines.forEach(engine => {
-            engine.fromNow = src_1.dateDiff(engine.instance.startedAt);
-            engine.fromLast = src_1.dateDiff(engine.instance.lastAt);
+            engine.fromNow = bpmn_server_1.dateDiff(engine.instance.startedAt);
+            engine.fromLast = bpmn_server_1.dateDiff(engine.instance.lastAt);
         });
         instances.forEach(item => {
-            item.fromNow = src_1.dateDiff(item.startedAt);
+            item.fromNow = bpmn_server_1.dateDiff(item.startedAt);
             if (item.endedAt)
-                item.endFromNow = src_1.dateDiff(item.endedAt);
+                item.endFromNow = bpmn_server_1.dateDiff(item.endedAt);
             else
                 item.endFromNow = '';
         });
@@ -320,7 +317,7 @@ function getFields(processName, elementId) {
     return __awaiter(this, void 0, void 0, function* () {
         let definition = yield bpmnServer.loadDefinition(processName);
         let node = definition.getNodeById(elementId);
-        let extName = src_1.Behaviour_names.CamundaFormData;
+        let extName = bpmn_server_1.Behaviour_names.CamundaFormData;
         console.log("ext name:" + extName);
         let ext = node.getBehaviour(extName);
         if (ext) {

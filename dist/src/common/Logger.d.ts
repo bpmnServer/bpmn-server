@@ -1,4 +1,4 @@
-import { ILogger } from "..";
+import { ILogger } from "../engine/Enums";
 declare class Logger implements ILogger {
     debugMsgs: any[];
     toConsole: boolean;

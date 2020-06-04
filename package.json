@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "BPMN 2.0 Server including Modeling, Execution and Presistence, an open source for Node.js",
   "main": "dist/index.js",
+  "module": "index.js",
+  "license": "MIT",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc --build",
@@ -19,7 +21,7 @@
     "type": "git",
     "url": "git+https:github.com/ralphhanna/bpmn-server.git"
   },
-  "keywords": [ "BPMN", "BPMN 2.0" ,"Workflow", "Node.js", "TypeScript" ],
+  "keywords": [ "BPMN", "BPMN 2.0", "Workflow", "Node.js", "TypeScript" ],
   "author": {
     "name": "ralphhanna"
   },
