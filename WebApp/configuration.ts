@@ -12,7 +12,7 @@ var configuration =
 		MongoDB:
 		{
 			db_url: "mongodb://localhost:27017?retryWrites=true&w=majority",
-			db: 'test'
+			db: 'test2'
 		}
 	},
 };

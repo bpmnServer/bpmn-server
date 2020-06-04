@@ -69,17 +69,17 @@ const awaitHandlerFactory = (middleware) => {
 
         let processName = request.params.processName;
 
-        let execution = await bpmnServer.execute(processName, { user: 'Ralph' }, { caseId: caseId++ });
+        let context = await bpmnServer.execute(processName, { user: 'Ralph' }, { caseId: caseId++ });
 
-        if (execution.error) {
-            displayError(response, execution.error);
+        if (context.error) {
+            displayError(response, context.error);
         }
 
 
-        let instance = execution.instance;
-        console.log(" insance id " + instance.id);
+        let execution = context.execution;
+        console.log(" insance id " + execution.id);
 
-        response.redirect('/instanceDetails?id=' + instance.id);
+        response.redirect('/instanceDetails?id=' + execution.id);
         /*
         let output = ['run ' + processName];
         output = show(output);
@@ -101,11 +101,11 @@ const awaitHandlerFactory = (middleware) => {
 
         data['caseId'] = caseId++;
      
-        let execution = await bpmnServer.execute(process, { user: 'Ralph' } ,data);
-        if (execution.error) {
-            displayError(response, execution.error);
+        let context = await bpmnServer.execute(process, { user: 'Ralph' } ,data);
+        if (context.error) {
+            displayError(response, context.error);
         }
-        let instance = execution.instance;
+        let instance = context.execution;
 
         response.redirect('/instanceDetails?id=' + instance.id);
         /*
@@ -174,7 +174,7 @@ const awaitHandlerFactory = (middleware) => {
         let result = await bpmnServer.invoke(id, {}, {});
 
         console.log("redirecting");
-        response.redirect('/instanceDetails?id=' + result.instance.id);
+        response.redirect('/instanceDetails?id=' + result.execution.id);
         /*
         let output = ['save' + id];
         display(response, 'Save Instance', output); */
@@ -196,13 +196,8 @@ const awaitHandlerFactory = (middleware) => {
         console.log(data);
         
         let result = await bpmnServer.invoke(id, 'rhanna', data);
-        let instance;
-        //instance= result.instance;
 
-        response.redirect('/instanceDetails?id=' + result.instance.id);
-        /*
-        let output = ['save' + id];
-        display(response, 'Save Instance', output); */
+        response.redirect('/instanceDetails?id=' + result.execution.id);
     }));
 
 
@@ -213,11 +208,11 @@ const awaitHandlerFactory = (middleware) => {
 
     router.get('/run/:process', awaitHandlerFactory(async (request, response) => {
         let process = request.params.process;
-        let execution = await bpmnServer.execute(process, {user: 'Ralph'}, { caseId: caseId++ });
-        if (execution.error) {
-            displayError(response,execution.error);
+        let context = await bpmnServer.execute(process, {user: 'Ralph'}, { caseId: caseId++ });
+        if (context.error) {
+            displayError(response, context.error);
         }
-        let instance = execution.instance;
+        let instance = context.execution;
         console.log(" insance id " + instance.id);
         let output = ['run ' + process];
         output = show(output);
@@ -298,8 +293,8 @@ async function display(res, title, output, logs = [], items = []) {
     let engines = BPMNServer.getLives();
 
     engines.forEach(engine => {
-        engine.fromNow = dateDiff(engine.instance.startedAt); 
-        engine.fromLast = dateDiff(engine.instance.lastAt); 
+        engine.fromNow = dateDiff(engine.startedAt); 
+        engine.fromLast = dateDiff(engine.lastAt); 
         });
 
     instances.forEach(item => {
@@ -344,6 +339,8 @@ async function instanceDetails(response,instanceId) {
 
     let elements = await definitions.getElements(instance.name);
 
+    const lastItem = result.items[result.items.length - 1];
+
     /*
 
     instance.items=items;
@@ -372,7 +369,7 @@ async function instanceDetails(response,instanceId) {
             instance, vars,
             title: 'Instance Details',
             logs,items: result.items, svg,
-            decorations , elements
+            decorations , elements , lastItem
 
         });
 

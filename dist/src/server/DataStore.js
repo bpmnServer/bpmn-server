@@ -91,14 +91,16 @@ class DataStore {
                     console.log("********* ERROR OLD State****");
                 }
                 yield this.saveInstance(state, this.execution.getItems());
-                this.execution.saved = new Date();
+                this.execution.saved = new Date().toISOString();
+                ;
                 this.logger.log('DataStore: saved ' + this.execution.saved);
                 while (this.saveCounter > currentCounter) { // will do it again
                     this.logger.log('DataStore:while i was busy other changes happended' + this.saveCounter);
                     currentCounter = this.saveCounter;
                     state = yield this.execution.getState();
                     yield this.saveInstance(state, this.execution.getItems());
-                    this.execution.saved = new Date();
+                    this.execution.saved = new Date().toISOString();
+                    ;
                     this.logger.log('DataStore: saved again ' + this.execution.saved);
                 }
                 this.isModified = false;
@@ -156,7 +158,8 @@ class DataStore {
             this.logger.log('saving instance ' + tokensCount + " tokens and items: " + itemsCount);
             var recs;
             if (!instance.saved) {
-                instance.saved = new Date();
+                instance.saved = new Date().toISOString();
+                ;
                 //this.promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]));
                 this.promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]));
                 this.logger.log("inserting instance");
@@ -165,7 +168,7 @@ class DataStore {
                 this.promises.push(this.db.update(this.dbConfiguration.db, Instance_collection, { id: instance.id }, {
                     $set: {
                         tokens: instance.tokens, items: instance.items, loops: instance.loops,
-                        ended: instance.ended, status: instance.status, saved: instance.saved, logs: instance.logs, data: instance.data
+                        endedAt: instance.endedAt, status: instance.status, saved: instance.saved, logs: instance.logs, data: instance.data
                     }
                 }));
                 this.logger.log("updating instance");

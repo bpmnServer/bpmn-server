@@ -19,15 +19,11 @@ function getDueDate(task) {
 }
 exports.getDueDate = getDueDate;
 function dateDiff(dateStr) {
-    var startTime;
-    if (dateStr instanceof Date) {
-    }
-    else {
-        startTime = new Date(dateStr);
-    }
-    console.log(dateStr + "" + startTime);
     var endDate = new Date();
-    var seconds = Math.abs(endDate.getTime() - startTime) / 1000;
+    var startTime = new Date(dateStr);
+    var time1 = endDate.getTime();
+    var time2 = startTime;
+    var seconds = Math.abs(time1 - time2) / 1000;
     // get total seconds between the times
     var delta = seconds; //Math.abs(date_future - date_now) / 1000;
     // calculate (and subtract) whole days

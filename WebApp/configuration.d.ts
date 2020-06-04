@@ -1,4 +1,4 @@
-import { ModelsDatastore } from 'bpmn-server';
+import { ModelsDatastore } from '.';
 import { MyHandler } from './handler';
 declare var configuration: {
     definitionsPath: string;

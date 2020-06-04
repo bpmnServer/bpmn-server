@@ -13,10 +13,10 @@ const express = require("express");
 const router = express.Router();
 var bodyParser = require('body-parser');
 const FS = require('fs');
-const bpmn_server_1 = require("bpmn-server");
+const __1 = require("bpmn-server");
 const configuration_1 = require("../configuration");
 const definitions = configuration_1.configuration.definitions;
-const bpmnServer = new bpmn_server_1.BPMNServer(configuration_1.configuration);
+const bpmnServer = new __1.BPMNServer(configuration_1.configuration);
 var caseId = Math.floor(Math.random() * 10000);
 /* GET users listing. */
 const awaitHandlerFactory = (middleware) => {
@@ -60,13 +60,13 @@ const awaitHandlerFactory = (middleware) => {
     })));
     router.get('/execute/:processName', awaitHandlerFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
         let processName = request.params.processName;
-        let execution = yield bpmnServer.execute(processName, { user: 'Ralph' }, { caseId: caseId++ });
-        if (execution.error) {
-            displayError(response, execution.error);
+        let context = yield bpmnServer.execute(processName, { user: 'Ralph' }, { caseId: caseId++ });
+        if (context.error) {
+            displayError(response, context.error);
         }
-        let instance = execution.instance;
-        console.log(" insance id " + instance.id);
-        response.redirect('/instanceDetails?id=' + instance.id);
+        let execution = context.execution;
+        console.log(" insance id " + execution.id);
+        response.redirect('/instanceDetails?id=' + execution.id);
         /*
         let output = ['run ' + processName];
         output = show(output);
@@ -82,11 +82,11 @@ const awaitHandlerFactory = (middleware) => {
         parseField(request.body.field3, request.body.value3, data);
         console.log(data);
         data['caseId'] = caseId++;
-        let execution = yield bpmnServer.execute(process, { user: 'Ralph' }, data);
-        if (execution.error) {
-            displayError(response, execution.error);
+        let context = yield bpmnServer.execute(process, { user: 'Ralph' }, data);
+        if (context.error) {
+            displayError(response, context.error);
         }
-        let instance = execution.instance;
+        let instance = context.execution;
         response.redirect('/instanceDetails?id=' + instance.id);
         /*
         console.log(" insance id " + instance.id);
@@ -142,7 +142,7 @@ const awaitHandlerFactory = (middleware) => {
         }
         let result = yield bpmnServer.invoke(id, {}, {});
         console.log("redirecting");
-        response.redirect('/instanceDetails?id=' + result.instance.id);
+        response.redirect('/instanceDetails?id=' + result.execution.id);
         /*
         let output = ['save' + id];
         display(response, 'Save Instance', output); */
@@ -161,23 +161,18 @@ const awaitHandlerFactory = (middleware) => {
         });
         console.log(data);
         let result = yield bpmnServer.invoke(id, 'rhanna', data);
-        let instance;
-        //instance= result.instance;
-        response.redirect('/instanceDetails?id=' + result.instance.id);
-        /*
-        let output = ['save' + id];
-        display(response, 'Save Instance', output); */
+        response.redirect('/instanceDetails?id=' + result.execution.id);
     })));
     router.get('/mocha', awaitHandlerFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
         const mocha = require('../node_modules/mocha/bin/mocha');
     })));
     router.get('/run/:process', awaitHandlerFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
         let process = request.params.process;
-        let execution = yield bpmnServer.execute(process, { user: 'Ralph' }, { caseId: caseId++ });
-        if (execution.error) {
-            displayError(response, execution.error);
+        let context = yield bpmnServer.execute(process, { user: 'Ralph' }, { caseId: caseId++ });
+        if (context.error) {
+            displayError(response, context.error);
         }
-        let instance = execution.instance;
+        let instance = context.execution;
         console.log(" insance id " + instance.id);
         let output = ['run ' + process];
         output = show(output);
@@ -245,17 +240,17 @@ function display(res, title, output, logs = [], items = []) {
         var instances = yield bpmnServer.findInstances({});
         let waiting = yield bpmnServer.findItems({ status: 'wait' }); // ({ name: 'Approval', claimId: 5000 });
         waiting.forEach(item => {
-            item.fromNow = bpmn_server_1.dateDiff(item.startedAt);
+            item.fromNow = __1.dateDiff(item.startedAt);
         });
-        let engines = bpmn_server_1.BPMNServer.getLives();
+        let engines = __1.BPMNServer.getLives();
         engines.forEach(engine => {
-            engine.fromNow = bpmn_server_1.dateDiff(engine.instance.startedAt);
-            engine.fromLast = bpmn_server_1.dateDiff(engine.instance.lastAt);
+            engine.fromNow = __1.dateDiff(engine.startedAt);
+            engine.fromLast = __1.dateDiff(engine.lastAt);
         });
         instances.forEach(item => {
-            item.fromNow = bpmn_server_1.dateDiff(item.startedAt);
+            item.fromNow = __1.dateDiff(item.startedAt);
             if (item.endedAt)
-                item.endFromNow = bpmn_server_1.dateDiff(item.endedAt);
+                item.endFromNow = __1.dateDiff(item.endedAt);
             else
                 item.endFromNow = '';
         });
@@ -287,6 +282,7 @@ function instanceDetails(response, instanceId) {
         catch (ex) {
         }
         let elements = yield definitions.getElements(instance.name);
+        const lastItem = result.items[result.items.length - 1];
         /*
     
         instance.items=items;
@@ -309,7 +305,7 @@ function instanceDetails(response, instanceId) {
             instance, vars,
             title: 'Instance Details',
             logs, items: result.items, svg,
-            decorations, elements
+            decorations, elements, lastItem
         });
     });
 }
@@ -317,7 +313,7 @@ function getFields(processName, elementId) {
     return __awaiter(this, void 0, void 0, function* () {
         let definition = yield bpmnServer.loadDefinition(processName);
         let node = definition.getNodeById(elementId);
-        let extName = bpmn_server_1.Behaviour_names.CamundaFormData;
+        let extName = __1.Behaviour_names.CamundaFormData;
         console.log("ext name:" + extName);
         let ext = node.getBehaviour(extName);
         if (ext) {

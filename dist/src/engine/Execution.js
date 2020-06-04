@@ -73,9 +73,17 @@ class Execution {
     end() {
         return __awaiter(this, void 0, void 0, function* () {
             this.log("execution ended.");
+            this.endedAt = new Date().toISOString();
+            ;
             this.status = Enums_1.EXECUTION_STATUS.end;
             this.doExecutionEvent(Enums_1.EXECUTION_EVENT.execution_end);
         });
+    }
+    /**
+     *
+     * causes the execution to stop from running any further
+     * */
+    stop() {
     }
     execute(startNode = null, inputData = {}) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -86,7 +94,8 @@ class Execution {
                 this.data = inputData;
             else
                 this.data = {};
-            this.startedAt = new Date();
+            this.startedAt = new Date().toISOString();
+            ;
             this.doExecutionEvent(Enums_1.EXECUTION_EVENT.execution_execute);
             if (!startNode)
                 startNode = this.definition.getStartNode();
@@ -226,11 +235,11 @@ class Execution {
         const items = this.getItems();
         for (indx = 0; indx < items.length; indx++) {
             const item = items[indx];
-            const endedAt = (item.endedAt) ? item.endedAt.toLocaleDateString("en-US") : '-';
+            const endedAt = (item.endedAt) ? item.endedAt : '-';
             if (item.element.type == 'bpmn:SequenceFlow')
                 this.log(`Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status}`);
             else
-                this.log(`Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status} start ${item.startedAt.toLocaleDateString("en-US")} end ${endedAt} `);
+                this.log(`Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status} start ${item.startedAt} end ${endedAt} `);
         }
         this.log('Data:');
         this.log(JSON.stringify(this.data));

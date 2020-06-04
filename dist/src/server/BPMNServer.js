@@ -30,8 +30,8 @@ let CacheManager = /** @class */ (() => {
             const instance = CacheManager.liveInstances.get(instanceId);
             return instance;
         }
-        static add(instance, engine) {
-            CacheManager.liveInstances.set(instance.id, { instance, engine });
+        static add(execution) {
+            CacheManager.liveInstances.set(execution.id, execution);
         }
         static remove(instanceId) {
             CacheManager.liveInstances.delete(instanceId);
@@ -114,7 +114,7 @@ class BPMNServer {
             for (i = 0; i < list.length; i++) {
                 const instance = list[i];
                 self.logger.log("..restoring instance " + instance.id);
-                yield self.restore(instance.id);
+                yield self.restore({ "id": instance.id });
                 self.logger.log("..count :" + CacheManager.getList().length);
             }
         });
@@ -128,10 +128,10 @@ class BPMNServer {
             const list = [];
             instannces.forEach(item => { list.push(item); });
             for (i = 0; i < list.length; i++) {
-                const engine = list[i].engine;
+                const engine = list[i];
                 yield engine.stop();
                 this.logger.log("shutdown engine " + engine.name + " status : " + engine.state);
-                instannces.delete(list[i].instance.id);
+                instannces.delete(list[i].id);
             }
         });
     }
@@ -163,6 +163,7 @@ class BPMNServer {
             const execution = new engine_1.Execution(name, source, this.configuration.appDelegate, this.logger);
             const ds = new DataStore_1.DataStore(this.configuration, this.logger);
             ds.monitorExecution(execution);
+            CacheManager.add(execution);
             yield execution.execute(null, data);
             const state = yield execution.getState();
             yield fs.writeFile('state.txt', JSON.stringify(state), function (err) {
@@ -170,37 +171,35 @@ class BPMNServer {
                     throw err;
             });
             yield ds.save();
-            context.instance = execution;
+            context.execution = execution;
+            context.dataStore = ds;
             console.log("returning execute");
             return context;
         });
     }
-    restore(instanceId, callback = null) {
+    restore(query) {
         return __awaiter(this, void 0, void 0, function* () {
-            /*
-            const context = new ServerContext(this.configuration, null , this.logger);
-            const processor = new Processor(context, this.dataStore);
-    
-            context = await processor.restore(instanceId, callback);
-    
+            // need to load instance first
+            const instance = yield this.dataStore.findInstance(query);
+            const context = new ServerContext(this.configuration, null, this.logger);
+            const execution = yield engine_1.Execution.restore(instance, new DefaultHandler_1.DefaultHandler(this.logger), this.logger);
+            const ds = new DataStore_1.DataStore(this.configuration, this.logger);
+            ds.monitorExecution(execution);
+            CacheManager.add(execution);
+            context.execution = execution;
+            context.dataStore = ds;
+            console.log("restore completed");
             return context;
-            */
-            return null;
         });
     }
     invoke(itemId, user, data = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             // need to load instance first
             console.log(itemId);
-            const query = { "items.id": itemId };
-            const instance = yield this.dataStore.findInstance(query);
-            const context = new ServerContext(this.configuration, user, this.logger);
-            const execution = yield engine_1.Execution.restore(instance, new DefaultHandler_1.DefaultHandler(this.logger), this.logger);
-            const ds = new DataStore_1.DataStore(this.configuration, this.logger);
-            ds.monitorExecution(execution);
+            const context = yield this.restore({ "items.id": itemId });
+            const execution = context.execution;
             yield execution.signal(itemId, data);
-            yield ds.save();
-            context.instance = execution;
+            yield context.dataStore.save();
             console.log("invoke completed");
             return context;
         });

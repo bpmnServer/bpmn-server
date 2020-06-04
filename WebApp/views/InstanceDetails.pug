@@ -29,6 +29,7 @@ block content
 		  }); // end ready
 				
 	h4 Instance Information
+	- let lastAt = (lastItem.endedAt) ? lastItem.endedAt : lastItem.startedAt;
 	table
 		tr 
 			td name:
@@ -36,18 +37,18 @@ block content
 			td id:
 			td #{instance.id}
 		tr
-			td startAt
-			td(class='startDate') #{instance.startAt}
-			td endAt
-			td #{instance.endAt}
+			td started At
+			td(class='startDate') #{instance.startedAt}
+			td ended At
+			td #{instance.endedAt}
 		tr
 			td lastAt
-			td #{instance.lastAt}
+			td #{lastAt} 
 		tr
 			td lastItem
-			td #{instance.lastItem}
+			td #{lastItem.elementId}
 			td last status
-			td #{instance.lastStatus}
+			td #{lastItem.status}
 
 				
 	h4 Instance Data 
@@ -60,7 +61,19 @@ block content
 	div!= svg
 
 	h4 Instance Items
+
+	span Times shown are from the start of the Execution
 	table
+		tr
+			td seq
+			td Element Id
+			td Name
+			td Started
+			td Ended
+			td Status
+			td Type
+			td 
+				
 		- let seq=0;
 		each item in items
 			- var ref = "/invokeItem?id="+item.id+"&processName="+instance.name+"&elementId="+item.elementId;

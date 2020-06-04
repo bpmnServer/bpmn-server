@@ -160,7 +160,7 @@ class Node  extends Element{
 
     }
     enter(item:Item) {
-        item.startedAt = new Date();
+        item.startedAt = new Date().toISOString();;
 
     }
     /*
@@ -240,7 +240,7 @@ class Node  extends Element{
     continue(item: Item) {
 
         this.end(item);
-        item.endedAt = new Date();
+        item.endedAt = new Date().toISOString();;
         this.behaviours.forEach(b => { b.end(item); });
         this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end);
         return;

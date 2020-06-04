@@ -152,7 +152,8 @@ class Node extends Element {
         item.token.execution.doItemEvent(item, event);
     }
     enter(item) {
-        item.startedAt = new Date();
+        item.startedAt = new Date().toISOString();
+        ;
     }
     /*
      * does the need require to go into wait
@@ -217,7 +218,8 @@ class Node extends Element {
      */
     continue(item) {
         this.end(item);
-        item.endedAt = new Date();
+        item.endedAt = new Date().toISOString();
+        ;
         this.behaviours.forEach(b => { b.end(item); });
         this.doEvent(item, Enums_1.EXECUTION_EVENT.node_end, Enums_1.ITEM_STATUS.end);
         return;

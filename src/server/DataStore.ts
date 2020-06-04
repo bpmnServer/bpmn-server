@@ -97,7 +97,7 @@ class DataStore { //implements IDataStore {
             }
 
 			await this.saveInstance(state, this.execution.getItems())
-			this.execution.saved = new Date();
+			this.execution.saved = new Date().toISOString();;
 			this.logger.log('DataStore: saved ' + this.execution.saved);
 
 			while(this.saveCounter > currentCounter) {	// will do it again
@@ -105,7 +105,7 @@ class DataStore { //implements IDataStore {
 				currentCounter = this.saveCounter;
 				state = await this.execution.getState();
 				await this.saveInstance(state, this.execution.getItems())
-				this.execution.saved = new Date();
+				this.execution.saved = new Date().toISOString();;
 				this.logger.log('DataStore: saved again ' + this.execution.saved);
 
             }
@@ -168,7 +168,7 @@ class DataStore { //implements IDataStore {
 
 		var recs;
 		if (!instance.saved) {
-			instance.saved = new Date();
+			instance.saved = new Date().toISOString();;
 
 			//this.promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]));
 			this.promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]));
@@ -182,7 +182,7 @@ class DataStore { //implements IDataStore {
 					$set:
 					{
 						tokens: instance.tokens, items: instance.items, loops: instance.loops,
-						ended: instance.ended, status: instance.status, saved: instance.saved , logs: instance.logs , data:instance.data
+						endedAt: instance.endedAt, status: instance.status, saved: instance.saved , logs: instance.logs , data:instance.data
 					} }));
 
 

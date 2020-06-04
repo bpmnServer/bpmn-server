@@ -31,9 +31,9 @@ class CacheManager {
 		return instance;
 	}
 
-	static add(instance, engine) {
+	static add(execution) {
 
-		CacheManager.liveInstances.set(instance.id, { instance, engine });
+		CacheManager.liveInstances.set(execution.id, execution);
 	}
 	static remove(instanceId) {
 		CacheManager.liveInstances.delete(instanceId);
@@ -42,7 +42,8 @@ class CacheManager {
 
 
 class ServerContext { // implements IContext {
-	instance?: Execution;
+	execution?: Execution;
+	dataStore?: DataStore;
 	logger: Logger;
 	serverListener?: any;
 	configuration: any;
@@ -125,7 +126,7 @@ class BPMNServer  {
 		for (i = 0; i < list.length; i++) {
 			const instance = list[i];
 			self.logger.log("..restoring instance " + instance.id);
-			await self.restore(instance.id);
+			await self.restore({ "id": instance.id });
 			self.logger.log("..count :" + CacheManager.getList().length);
         }
 		
@@ -140,10 +141,10 @@ class BPMNServer  {
 		instannces.forEach(item => { list.push(item); });
 		for (i = 0; i < list.length; i++) {
 
-			const engine = list[i].engine;
+			const engine = list[i];
 			await engine.stop();
 			this.logger.log("shutdown engine " + engine.name + " status : " + engine.state);
-			instannces.delete(list[i].instance.id);
+			instannces.delete(list[i].id);
         }
 	}
 	/*
@@ -185,6 +186,7 @@ class BPMNServer  {
 		const ds = new DataStore(this.configuration,this.logger);
 		ds.monitorExecution(execution);
 
+		CacheManager.add(execution);
 		await execution.execute(null, data);
 
 		const state = await execution.getState();
@@ -194,44 +196,46 @@ class BPMNServer  {
 		});
 		await ds.save();
 
-		context.instance = execution;
+		context.execution = execution;
+		context.dataStore = ds;
 
 		console.log("returning execute");
 		return context;
 
 	}
-	async restore(instanceId, callback = null) : Promise<ServerContext> {
+	async restore(query) : Promise<ServerContext> {
 
-		/*
-		const context = new ServerContext(this.configuration, null , this.logger);
-		const processor = new Processor(context, this.dataStore);
+		// need to load instance first
 
-		context = await processor.restore(instanceId, callback);
+		const instance = await this.dataStore.findInstance(query);
+
+		const context = new ServerContext(this.configuration, null, this.logger);
+
+		const execution = await Execution.restore(instance, new DefaultHandler(this.logger), this.logger);
+		const ds = new DataStore(this.configuration, this.logger);
+		ds.monitorExecution(execution);
+
+		CacheManager.add(execution);
+
+		context.execution = execution;
+		context.dataStore = ds;
+		console.log("restore completed");
 
 		return context;
-		*/
-		return null;
+		
 	}
 	async invoke(itemId, user, data = {}) {
 
 		// need to load instance first
 		console.log(itemId);
 
-		const query = { "items.id": itemId };
-
-		const instance = await this.dataStore.findInstance(query);
-		
-		const context = new ServerContext(this.configuration, user, this.logger);
-
-		const execution = await Execution.restore(instance, new DefaultHandler(this.logger), this.logger);
-		const ds = new DataStore(this.configuration,this.logger);
-		ds.monitorExecution(execution);
+		const context = await this.restore({ "items.id": itemId });
+		const execution = context.execution;
 
 		await execution.signal(itemId, data);
 
-		await ds.save();
+		await context.dataStore.save();
 
-		context.instance = execution;
 		console.log("invoke completed");
 		
 		return context;

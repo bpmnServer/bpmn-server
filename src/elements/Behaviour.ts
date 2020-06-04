@@ -159,7 +159,7 @@ Example (3 repeating intervals, each lasting 10 hours):
       </bpmn:timerEventDefinition>
 
 
-      const startedAt = new Date();
+      const startedAt = new Date().toISOString();;
       const timeout = isoDuration ? toSeconds(parse(isoDuration)) * 1000 : 0;
       timerContent = {...messageContent, isoDuration, timeout, startedAt, state: 'timer'};
 
