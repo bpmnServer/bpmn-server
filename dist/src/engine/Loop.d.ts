@@ -1,5 +1,5 @@
 import { Token } from './Token';
-import { LoopBehaviour } from '../Elements/Behaviour';
+import { LoopBehaviour } from '../elements/Behaviour';
 import { Node } from '../elements/Elements';
 declare class Loop {
     id: any;

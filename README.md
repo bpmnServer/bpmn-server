@@ -45,10 +45,15 @@ Included is a sample web application (running Node.js and Express.js) to allow y
 
 This package requires Node.js and an access to MongoDB 
 
-1) Download this package in a seperate folder
-2) Run:
+1) Create new Folder
+$ mkdir myBPMN
+$ cd myBPMN
+2) npm:
 
-npm install
+$ npm install bpmn-server
+3) copy WebApp folder
+
+$ cp node_modules/bpmn-server/WebApp/. ./  -r
 
 3) Edit configuration file to have MongoDB point to your server or free cloud account
 

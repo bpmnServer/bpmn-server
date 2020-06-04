@@ -1,5 +1,5 @@
 import { Token } from './Token';
-import { LoopBehaviour, Behaviour_names } from '../Elements/Behaviour';
+import { LoopBehaviour, Behaviour_names } from '../elements/Behaviour';
 import { Node } from '../elements/Elements';
 import { Execution } from './Execution';
 var dummy;

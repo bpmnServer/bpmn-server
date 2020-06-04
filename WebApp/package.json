@@ -1,6 +1,6 @@
 {
-  "name": "bpmn.ts",
-  "version": "0.0.0",
+  "name": "bpmn-server.webapp",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "build": "tsc --build",
@@ -13,7 +13,7 @@
     "toc": "node scripts/generate-api-toc ./docs/API.md,./docs/Examples.md",
     "test-md": "node scripts/test-markdown.js ./docs/API.md && node scripts/test-markdown.js ./docs/Examples.md"
   },
-  "description": "bpmn.ts",
+  "description": "bpmn-server.webApp",
   "author": {
     "name": ""
   },

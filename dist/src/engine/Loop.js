@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Loop = void 0;
 const Token_1 = require("./Token");
-const Behaviour_1 = require("../Elements/Behaviour");
+const Behaviour_1 = require("../elements/Behaviour");
 const Execution_1 = require("./Execution");
 var dummy;
 class Loop {

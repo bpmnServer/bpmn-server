@@ -7,7 +7,7 @@ import {
     Element, Node, Flow , Process, SubProcess  } from '../elements/Elements'
 import { EXECUTION_EVENT , NODE_ACTION , FLOW_ACTION, TOKEN_STATUS, EXECUTION_STATUS, IHandler, ITEM_STATUS} from './Enums';
 import { EventEmitter } from 'events';
-import { Behaviour_names, LoopBehaviour } from '../Elements/Behaviour';
+import { Behaviour_names, LoopBehaviour } from '../elements/Behaviour';
 import { Loop } from './Loop';
 import { Item } from './Item';
 
