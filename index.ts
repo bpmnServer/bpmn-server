@@ -1,13 +1,13 @@
 export * from './src/common/Logger';
 export * from './src/common/DefaultConfiguration';
-export * from './src/common/Defaulthandler';
+export * from './src/common/DefaultHandler';
 export * from './src/common/timer';
 
 
 export * from './src/server/BPMNServer';
 export * from './src/server/DataStore';
 export * from './src/server/ModelsDatastore';
-export * from './src/server/MongoDb';
+export * from './src/server/MongoDB';
 
 export * from './src/engine/Execution';
 export * from './src/engine/Token';

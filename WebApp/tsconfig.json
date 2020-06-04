@@ -6,6 +6,7 @@
     "sourceMap": true,
     "declaration": true
 
+
   },
   "include": [
     "**/*.ts"

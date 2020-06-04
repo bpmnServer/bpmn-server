@@ -1,4 +1,4 @@
-import { Execution, IHandler, Item, FLOW_ACTION, NODE_ACTION } from 'bpmn-server';
+import { Execution, IHandler, Item, FLOW_ACTION, NODE_ACTION } from './';
 declare class MyHandler implements IHandler {
     constructor(logger?: any);
     executionStarted(execution: Execution): void;

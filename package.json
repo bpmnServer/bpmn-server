@@ -32,9 +32,11 @@
     "name": "ralphhanna"
   },
   "dependencies": {
+    "bpmn-moddle": "^7.0.2",
     "camunda-bpmn-moddle": "^4.4.0",
     "chai": "^4.2.0",
     "express": "^4.14.0",
+    "iso8601-duration": "^1.2.0",
     "mocha": "^7.1.2",
     "mocha-cakes-2": "^3.3.0",
     "mongodb": "^3.5.7",

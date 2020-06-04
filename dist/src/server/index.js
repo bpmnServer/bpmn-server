@@ -13,5 +13,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./BPMNServer"), exports);
 __exportStar(require("./DataStore"), exports);
 __exportStar(require("./ModelsDatastore"), exports);
-__exportStar(require("./MongoDb"), exports);
+__exportStar(require("./MongoDB"), exports);
 //# sourceMappingURL=index.js.map
