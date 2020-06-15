@@ -4,7 +4,7 @@ bpmn-server
 [![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 
 ## Introduction
-BPMN 2.0 Modeling, Execution and Presistence, an open source Workflow Server for Node.js 
+BPMN 2.0 Modeling, Execution and Persistence, an open source Workflow Server for Node.js 
 
 ## Table of Contents
 - [Process modeller](#process-modeller)
