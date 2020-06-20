@@ -4,9 +4,9 @@
     "target": "es6",
     "lib": [ "es6" ],
     "sourceMap": true,
-    "declaration": false,
+    "declaration": true ,
 /*    "rootDir": "./src",*/
-    "outDir": "./dist"
+    "outDir": "./dist" 
   },
   "include": [
     "**/*.ts", "test/handler.js"

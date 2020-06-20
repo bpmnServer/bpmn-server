@@ -43,7 +43,7 @@ div(id="processes")
 						tr
 							td
 
-								select(id='process',size=15)
+								select(id='process',size=18)
 									each proc in procs
 										option #{proc}
 										a value #{proc}
@@ -52,7 +52,7 @@ div(id="processes")
 									a(id='execLink',href="javascript:alert('please select a Process');") Execute 
 						tr
 							td  
-									a(id='execInputLink',href="javascript:alert('please select a Process');") Execute with Input
+									a(id='execInputLink',href="javascript:alert('please select a Process');") Execute with Options
 						tr
 							td  
 									a(id='modelLink',href="javascript:alert('please select a Process');") Model

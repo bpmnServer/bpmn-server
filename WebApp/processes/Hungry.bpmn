@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:signavio="http://www.signavio.com" id="sid-38422fae-e03e-43a3-bef4-bd33b32041b2" targetNamespace="http://www.signavio.com/bpmn20" exporter="Signavio Process Editor, http://www.signavio.com" exporterVersion="7.9.1" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:camunda="http://camunda.org/schema/1.0/bpmn"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:signavio="http://www.signavio.com" id="sid-38422fae-e03e-43a3-bef4-bd33b32041b2" targetNamespace="http://www.signavio.com/bpmn20" exporter="Signavio Process Editor, http://www.signavio.com" exporterVersion="7.9.1" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
   <collaboration id="Collaboration_09pzcc5">
     <participant id="Participant_0yxylks" name="Hungry" processRef="sid-c8371393-9f09-410b-bd7f-b4838b26f391" />
   </collaboration>
@@ -8,59 +10,34 @@
       <signavio:signavioDiagramMetaData metaKey="revisionid" metaValue="6250b0fbb02945d8afc0fe13362c6896" />
     </extensionElements>
     <startEvent id="sid-D0BED8B1-BB93-411E-8E26-49C51C4AAF75" name="hunger&#10;noticed">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="bgcolor" metaValue="#ffffff" />
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
       <outgoing>sid-FFF01EF7-1FEC-4B83-986C-018858D97835</outgoing>
     </startEvent>
     <sequenceFlow id="sid-FFF01EF7-1FEC-4B83-986C-018858D97835" name="" sourceRef="sid-D0BED8B1-BB93-411E-8E26-49C51C4AAF75" targetRef="UserTask_1a8i191">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
     </sequenceFlow>
     <sequenceFlow id="sid-1CA5065E-3A33-4024-93CF-B7148AD79095" name="" sourceRef="UserTask_1llznb6" targetRef="sid-433EEF5E-4740-4E48-9503-61C492767C56">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
     </sequenceFlow>
-    <sequenceFlow id="sid-E943A666-80E2-4D38-9AEF-ACD1EFE0D128" name="pasta" sourceRef="sid-433EEF5E-4740-4E48-9503-61C492767C56" targetRef="UserTask_07iqy0c">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
+    <sequenceFlow id="sid-E943A666-80E2-4D38-9AEF-ACD1EFE0D128" name="pasta" sourceRef="sid-433EEF5E-4740-4E48-9503-61C492767C56" targetRef="userTask_pasta">
+      <conditionExpression xsi:type="bpmn:tExpression"><![CDATA[(this.meal=="pasta")]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="sid-4C1A6A53-32E3-46D3-BECE-5B3555133586" name="steak" sourceRef="sid-433EEF5E-4740-4E48-9503-61C492767C56" targetRef="UserTask_1i66bqg">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-        <signavio:signavioLabel align="left" distance="8.5" from="0" orientation="ul" ref="text_name" to="1" valign="top" x="415.5" y="113.0" />
-      </extensionElements>
+    <sequenceFlow id="sid-4C1A6A53-32E3-46D3-BECE-5B3555133586" name="steak" sourceRef="sid-433EEF5E-4740-4E48-9503-61C492767C56" targetRef="userTask_steak">
+      <conditionExpression xsi:type="bpmn:tExpression"><![CDATA[(this.meal=="steak")]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="sid-5244058D-4A1C-49C7-A975-3D2AF4BFAFE0" name="" sourceRef="UserTask_1a8i191" targetRef="UserTask_1llznb6">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
     </sequenceFlow>
-    <sequenceFlow id="sid-F031AA0F-ABDF-4866-A905-7EF8FF7A899B" name="" sourceRef="UserTask_1i66bqg" targetRef="sid-47D7385A-388F-40C4-892E-F814C0659C54">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
+    <sequenceFlow id="sid-F031AA0F-ABDF-4866-A905-7EF8FF7A899B" name="" sourceRef="userTask_steak" targetRef="sid-47D7385A-388F-40C4-892E-F814C0659C54">
     </sequenceFlow>
-    <sequenceFlow id="sid-E02C3FCE-3C11-4C6B-AFC0-674C5A8B69AF" name="" sourceRef="UserTask_07iqy0c" targetRef="sid-47D7385A-388F-40C4-892E-F814C0659C54">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
+    <sequenceFlow id="sid-E02C3FCE-3C11-4C6B-AFC0-674C5A8B69AF" name="" sourceRef="userTask_pasta" targetRef="sid-47D7385A-388F-40C4-892E-F814C0659C54">
     </sequenceFlow>
     <sequenceFlow id="sid-1BF06A5D-6B3D-4808-B358-69C1E08B1C42" name="" sourceRef="sid-47D7385A-388F-40C4-892E-F814C0659C54" targetRef="UserTask_0imlyu7">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
     </sequenceFlow>
     <sequenceFlow id="sid-A183C0F7-53E8-4A53-B0C1-C626A5459AB5" name="" sourceRef="UserTask_0imlyu7" targetRef="sid-283C754D-1AA2-4EC9-982F-382C51F2C9B9">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
     </sequenceFlow>
     <userTask id="UserTask_1a8i191" name="choose recipe">
+      <extensionElements>
+        <camunda:formData>
+          <camunda:formField id="meal" label="Choose (steak or pasta)?" type="string" />
+        </camunda:formData>
+      </extensionElements>
       <incoming>sid-FFF01EF7-1FEC-4B83-986C-018858D97835</incoming>
       <outgoing>sid-5244058D-4A1C-49C7-A975-3D2AF4BFAFE0</outgoing>
     </userTask>
@@ -72,7 +49,6 @@
       <extensionElements>
         <signavio:signavioMetaData metaKey="bgcolor" metaValue="#ffffff" />
         <signavio:signavioMetaData metaKey="adaptertype" metaValue="" />
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
         <signavio:signavioMetaData metaKey="adapterconfiguration" metaValue="" />
         <signavio:signavioMetaData metaKey="adapterclassname" metaValue="" />
         <signavio:signavioLabel align="center" bottom="false" left="false" ref="text_name" right="false" top="true" valign="bottom" x="21.0" y="-8.0" />
@@ -81,22 +57,15 @@
       <outgoing>sid-E943A666-80E2-4D38-9AEF-ACD1EFE0D128</outgoing>
       <outgoing>sid-4C1A6A53-32E3-46D3-BECE-5B3555133586</outgoing>
     </exclusiveGateway>
-    <userTask id="UserTask_07iqy0c" name="cook pasta">
+    <userTask id="userTask_pasta" name="cook pasta">
       <incoming>sid-E943A666-80E2-4D38-9AEF-ACD1EFE0D128</incoming>
       <outgoing>sid-E02C3FCE-3C11-4C6B-AFC0-674C5A8B69AF</outgoing>
     </userTask>
-    <userTask id="UserTask_1i66bqg" name="cook steak">
+    <userTask id="userTask_steak" name="cook steak">
       <incoming>sid-4C1A6A53-32E3-46D3-BECE-5B3555133586</incoming>
       <outgoing>sid-F031AA0F-ABDF-4866-A905-7EF8FF7A899B</outgoing>
     </userTask>
     <exclusiveGateway id="sid-47D7385A-388F-40C4-892E-F814C0659C54" name="" gatewayDirection="Converging">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="bgcolor" metaValue="#ffffff" />
-        <signavio:signavioMetaData metaKey="adaptertype" metaValue="" />
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-        <signavio:signavioMetaData metaKey="adapterconfiguration" metaValue="" />
-        <signavio:signavioMetaData metaKey="adapterclassname" metaValue="" />
-      </extensionElements>
       <incoming>sid-E02C3FCE-3C11-4C6B-AFC0-674C5A8B69AF</incoming>
       <incoming>sid-F031AA0F-ABDF-4866-A905-7EF8FF7A899B</incoming>
       <outgoing>sid-1BF06A5D-6B3D-4808-B358-69C1E08B1C42</outgoing>
@@ -106,65 +75,31 @@
       <outgoing>sid-A183C0F7-53E8-4A53-B0C1-C626A5459AB5</outgoing>
     </userTask>
     <endEvent id="sid-283C754D-1AA2-4EC9-982F-382C51F2C9B9" name="">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="bgcolor" metaValue="#ffffff" />
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
       <incoming>sid-A183C0F7-53E8-4A53-B0C1-C626A5459AB5</incoming>
     </endEvent>
     <textAnnotation id="sid-4E820B8B-41A4-47BC-B9BA-F007E2D485A4">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
       <text>10 minutes</text>
     </textAnnotation>
     <textAnnotation id="sid-A6E3D7E7-B739-4B08-993E-B5CB5F61C69F">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
       <text>3 minutes</text>
     </textAnnotation>
     <association id="sid-F04D4AF9-B37A-4489-9121-EA6E2398D277" associationDirection="None" sourceRef="UserTask_1a8i191" targetRef="sid-A6E3D7E7-B739-4B08-993E-B5CB5F61C69F">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
     </association>
     <association id="sid-18F7ACF2-1B3D-4E25-B7EF-B5080D0E25A4" associationDirection="None" sourceRef="UserTask_1llznb6" targetRef="sid-4E820B8B-41A4-47BC-B9BA-F007E2D485A4">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
     </association>
-    <association id="sid-62F4C2FE-901D-44BB-83F4-3A606EACD2EA" associationDirection="None" sourceRef="UserTask_1i66bqg" targetRef="sid-CFD63D17-AEF8-441B-B612-A50DBA801760">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
+    <association id="sid-62F4C2FE-901D-44BB-83F4-3A606EACD2EA" associationDirection="None" sourceRef="userTask_steak" targetRef="sid-CFD63D17-AEF8-441B-B612-A50DBA801760">
     </association>
-    <association id="sid-BC2439FA-B8F5-4ED6-B5BA-CF57F99FA435" associationDirection="None" sourceRef="UserTask_07iqy0c" targetRef="sid-158140B4-D103-4652-A69B-F15B8A689F9A">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
+    <association id="sid-BC2439FA-B8F5-4ED6-B5BA-CF57F99FA435" associationDirection="None" sourceRef="userTask_pasta" targetRef="sid-158140B4-D103-4652-A69B-F15B8A689F9A">
     </association>
     <association id="sid-37413548-ADAD-45C5-9306-650FE331BC24" associationDirection="None" sourceRef="UserTask_0imlyu7" targetRef="sid-BF48915E-9493-4461-A096-7B52E6FD0B70">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
     </association>
     <textAnnotation id="sid-158140B4-D103-4652-A69B-F15B8A689F9A">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
       <text>15 minutes</text>
     </textAnnotation>
     <textAnnotation id="sid-CFD63D17-AEF8-441B-B612-A50DBA801760">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
       <text>10 minutes</text>
     </textAnnotation>
     <textAnnotation id="sid-BF48915E-9493-4461-A096-7B52E6FD0B70">
-      <extensionElements>
-        <signavio:signavioMetaData metaKey="userstory" metaValue="[]" />
-      </extensionElements>
       <text>20 minutes</text>
     </textAnnotation>
   </process>
@@ -318,13 +253,13 @@
       <bpmndi:BPMNShape id="UserTask_1llznb6_di" bpmnElement="UserTask_1llznb6">
         <omgdc:Bounds x="367" y="32" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_07iqy0c_di" bpmnElement="UserTask_07iqy0c">
+      <bpmndi:BPMNShape id="userTask_pasta_di" bpmnElement="userTask_pasta">
         <omgdc:Bounds x="554" y="32" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UserTask_0imlyu7_di" bpmnElement="UserTask_0imlyu7">
         <omgdc:Bounds x="754" y="32" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_1i66bqg_di" bpmnElement="UserTask_1i66bqg">
+      <bpmndi:BPMNShape id="userTask_steak_di" bpmnElement="userTask_steak">
         <omgdc:Bounds x="554" y="200" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>

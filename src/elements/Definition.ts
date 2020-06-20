@@ -6,32 +6,33 @@ import { moddleOptions} from './js-bpmn-moddle';
 //const moddleOptions = require('./js-bpmn-moddle.json');
 
 import { Logger } from '../common/Logger';
-import { Node, Process, Flow, SubProcess } from './Elements';
-const fs = require('fs');
+import { Node, Flow , MessageFlow ,SubProcess , NodeLoader , Process } from '.'; 
+import { BPMN_TYPE } from './NodeLoader';
+import { IDefinition } from '../interfaces/elements';
 
-//  bpmn element name - type - superType -
-const bpmnTypes = {
-    UserTask: { type: 'Task', canInvoke: true },
-    ScriptTask: { type: 'Task' },
-    ServiceTask: { type: 'Task' },
-    SendTask: { type: 'Task' },
-    ReceiveTask: { type: 'Task' },
-    ParallelGateway: { type: 'Gateway' },
-    InclusiveGateway: { type: 'Gateway' },
-    StartEvent: { type: 'Event' },
-    IntermediateCatchEvent: { type: 'Event' },
-    EndEvent: { type: 'Event' },
-    SequenceFlow: { type: 'Flow' },
-}
+const fs = require('fs');
 
 //console.log(moddleOptions);
 const moddle = new BpmnModdle({ moddleOptions });
+/**
+ *  to be saved in DB to monitor for startEvents:
+ *      timer events that start process
+ *      message/signal events that are received
+ * */
+class DefinitionRecord {
+    name;
+    startEvents: DefinitionStartEvent[];
+}
+class DefinitionStartEvent {
+    elementId;
+    type;
+    messageSignalId;
+    timerDueNext;
+}
 
-
-class Definition {
+class Definition implements IDefinition{
     name;
     processes = new Map();
-    elements;
     rootElements;
     nodes = new Map();
     flows = [];
@@ -59,7 +60,7 @@ class Definition {
                 node.childProcess = this.loadProcess(definition, el);
             }
             else {
-                node = Node.loadNode(el, processId);
+                node = NodeLoader.loadNode(el, processId);
 
              }
             this.nodes.set(el.id, node);
@@ -80,13 +81,27 @@ class Definition {
                 case 'bpmn:Process':    
                     {
                         const proc = this.loadProcess(definition, e);
-                        this.processes.set(proc.id, proc);
+                        this.processes.set(e.id, proc);
                     }
                     break;
             }
         });
 
         let refs = new Map();
+        /*
+references:         
+    element                                 part 1
+		    $type : "bpmn:SequenceFlow"
+		    id : "flow_start_user"
+	    property : "bpmn:sourceRef"
+	    id : "event_start"
+    element                                 part 2
+		    $type : "bpmn:SequenceFlow"
+		    id : "flow_start_user"
+	    property : "bpmn:targetRef"
+	    id : "user_task"
+
+         */
         definition.references.forEach(ref => {
             if (ref.element.$type == 'bpmn:SequenceFlow') {
                 //                this.log(`-ref  <${ref.element.id}> <${ref.element.$type}> <${ref.property}> ref to: <${ref.id}>`);
@@ -105,34 +120,82 @@ class Definition {
                 else
                     flow.to = ref.id;
             }
+            // 
+        // get boundary events
+        /*
+reference
+    element
+        $type : "bpmn:BoundaryEvent"
+        id : "BoundaryEvent_0qdlc8p"
+    property : "bpmn:attachedToRef"
+    id : "user_task"
+         */
+            if (ref.element.$type == "bpmn:BoundaryEvent") {
+                const event = this.getNodeById(ref.element.id);
+                const owner = this.getNodeById(ref.id);
+                if (owner.type !== 'bpmn:SequenceFlow') {
+                    event.attachedTo = owner;
+                    owner.attachments.push(event);
+                }
+            }
         });
         refs.forEach(ref => {
-            let fromNode = this.getNodeById(ref.from);
-            let toNode = this.getNodeById(ref.to);
-            let flow = new Flow(ref.id, ref.type, fromNode, toNode, definition.elementsById[ref.id]);
+            const fromNode = this.getNodeById(ref.from);
+            const toNode = this.getNodeById(ref.to);
+            const flow = new Flow(ref.id, ref.type, fromNode, toNode, definition.elementsById[ref.id]);
             this.flows.push(flow);
             fromNode.outbounds.push(flow);
             toNode.inbounds.push(flow)
         });
+        // last step get messageFlows:
+        //  root
+        definition.rootElement.rootElements.forEach(e => {
+            if (e.$type == 'bpmn:Collaboration') {
+                if (e.messageFlows) {
+                    e.messageFlows.forEach(mf => {
+                        const fromNode=this.getNodeById(mf.sourceRef.id);
+                        const toNode= this.getNodeById(mf.targetRef.id);
+                        const flow = new MessageFlow(mf.id, mf.$type, fromNode,toNode,mf);
+                        fromNode.outbounds.push(flow);
+                        toNode.inbounds.push(flow)
+                    });
 
+                }
+
+            }
+        });
         return definition;
     }
+    getJson() {
+        const elements = [];
+        const flows = [];
+        this.nodes.forEach(node => {
+            let behaviours = [];
+            node.behaviours.forEach(behav => {
+                behaviours.push(behav.describe());});
+            elements.push({ id: node.id, name: node.name, type: node.type, description: node.describe() , behaviours });
+        });
 
+        this.flows.forEach(flow=> {
+            flows.push({ id: flow.id, from: flow.from.id, to: flow.to.id, type: flow.type, description: flow.describe() });
+        });
+
+        return JSON.stringify({ elements, flows });
+    }
     async getDefinition(source, logger) {
 
-    logger.log('getDefinition');
-
     const result = await moddle.fromXML(source);
-    /*    fs.writeFile('modlle2.txt', JSON.stringify(result), function (err) {
-        if (err) throw err;
-    }); */
+
 
     return result;
     }
+
     public getStartNode() {
         let start = null;
         this.processes.forEach(proc => {
             start = proc.getStartNode();
+//            if (start)
+//                return start;
         });
         return start;
     }
@@ -140,14 +203,6 @@ class Definition {
             return this.nodes.get(id);
     }
 
-    static getType(name) {
-        name = name.replace('bpmn:', '');
-        if (bpmnTypes[name]) {
-            return bpmnTypes[name].type;
-        }
-        else
-            return null;
-    }
 
 }
 export { Definition }

@@ -1,0 +1,47 @@
+doctype html
+html
+head
+	title bpmn-server Workbench
+	link(rel='stylesheet', href='/stylesheets/main.css')
+
+	<script type='text/javascript' src='/javascripts/jquery.min.js'></script>
+	<script type='text/javascript' src='/javascripts/bootstrap.min.js'></script>
+	<script type='text/javascript' src='/javascripts/jquery-ui.min.js'></script>
+	<script type='text/javascript' src='/javascripts/jquery.isloading.min.js'></script>
+	<script type='text/javascript' src='/javascripts/workflow.js'></script>
+	<script type='text/javascript' src='/javascripts/processEditor.js'></script>
+	<script type='text/javascript' src='/javascripts/jsonHelper.js'></script>
+	<script type='text/javascript' src='/javascripts/SVGHelper.js'></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2/webcomponents-loader.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2.2.10/webcomponents-loader.min.js"></script>
+	<script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@1/src/zero-md.min.js"></script>
+
+
+	<link rel='stylesheet' href='/stylesheets/bootstrap.min.css' type='text/css'>
+	<link rel='stylesheet' href='/stylesheets/bootstrap-theme.min.css' type='text/css'>
+	<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' type='text/css'>
+	<link rel='stylesheet' href='/stylesheets/diagram-js.css' type='text/css'>
+	<link rel='stylesheet' href='/vendor/bpmn-font/css/bpmn-embedded.css' type='text/css'>
+	<link rel='stylesheet' href='/stylesheets/app.css' type='text/css'>
+	<link rel='stylesheet' href='/stylesheets/jquery-ui.css' type='text/css'>
+	<link rel='stylesheet' href='/stylesheets/jquery-ui.theme.css' type='text/css'>
+
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+ 
+body
+	Header 
+		<nav role="navigation" class="navbar navbar-default">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<a href="/" class="navbar-brand">
+					<img src="https://demo.omniworkflow.com/web//images/omniworkflow_icon.png" /></a>
+			</div>
+			<!-- Collection of nav links, forms, and other content for toggling -->
+			<div id="navbarCollapse" class="collapse navbar-collapse">
+				include includes/navDocs.pug
+			</div>
+		</nav>
+		<div class='clearfix' height=0;></div>
+			<!-- end of omni_header -->
+	block content

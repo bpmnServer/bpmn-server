@@ -42,7 +42,7 @@ class MongoDB {
             // Use connect method to connect to the Server
 
             let cursor;
-            cursor = collection.find(qry); // project(projection);
+            cursor = collection.find(qry).project(projection);
             cursor.toArray(function (err, docs) {
                 // Do async job
                 if (err) {

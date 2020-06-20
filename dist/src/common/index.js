@@ -11,6 +11,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./Logger"), exports);
-__exportStar(require("./DefaultHandler"), exports);
 __exportStar(require("./DefaultConfiguration"), exports);
+__exportStar(require("./timer"), exports);
 //# sourceMappingURL=index.js.map

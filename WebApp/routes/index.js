@@ -13,13 +13,14 @@ const express = require("express");
 const router = express.Router();
 var bodyParser = require('body-parser');
 const FS = require('fs');
-const __1 = require("bpmn-server");
+const __1 = require("../");
 const configuration_1 = require("../configuration");
-const definitions = configuration_1.configuration.definitions;
 const bpmnServer = new __1.BPMNServer(configuration_1.configuration);
+const definitions = bpmnServer.definitions;
 var caseId = Math.floor(Math.random() * 10000);
+const docsFolder = __dirname + '/../bpmnServer/docs/';
 /* GET users listing. */
-const awaitHandlerFactory = (middleware) => {
+const awaitAppDelegateFactory = (middleware) => {
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             yield middleware(req, res, next);
@@ -30,13 +31,19 @@ const awaitHandlerFactory = (middleware) => {
     });
 };
 {
-    router.get('/', awaitHandlerFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    router.get('/', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
         let output = [];
         output = show(output);
         display(response, 'Show', output);
     })));
     var test;
-    router.get('/example', awaitHandlerFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    router.get('/readme_md', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+        let processName = request.params.process;
+        let fileName = docsFolder + '../README.md';
+        let file = FS.readFileSync(fileName, { encoding: 'utf8', flag: 'r' });
+        response.send(file);
+    })));
+    router.get('/example', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
         /* Testing only
          *
         */
@@ -54,15 +61,15 @@ const awaitHandlerFactory = (middleware) => {
      *      post:/execute       from form with input data
      *
      */
-    router.get('/executeInput/:processName', awaitHandlerFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    router.get('/executeInput/:processName', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
         let processName = request.params.processName;
         response.render('executeInput', { processName });
     })));
-    router.get('/execute/:processName', awaitHandlerFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    router.get('/execute/:processName', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
         let processName = request.params.processName;
-        let context = yield bpmnServer.execute(processName, { user: 'Ralph' }, { caseId: caseId++ });
-        if (context.error) {
-            displayError(response, context.error);
+        let context = yield bpmnServer.engine.start(processName, { caseId: caseId++ });
+        if (context.errors) {
+            displayError(response, context.errors);
         }
         let execution = context.execution;
         console.log(" insance id " + execution.id);
@@ -73,18 +80,18 @@ const awaitHandlerFactory = (middleware) => {
         display(response, 'Run Prcesses', output, instance.logs, instance.getItems({}));
         */
     })));
-    router.post('/execute', awaitHandlerFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    router.post('/execute', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(request.body);
         let process = request.body.processName;
         let data = {};
         parseField(request.body.field1, request.body.value1, data);
         parseField(request.body.field2, request.body.value2, data);
-        parseField(request.body.field3, request.body.value3, data);
+        let startNodeId = request.body.startNodeId;
         console.log(data);
         data['caseId'] = caseId++;
-        let context = yield bpmnServer.execute(process, { user: 'Ralph' }, data);
-        if (context.error) {
-            displayError(response, context.error);
+        let context = yield bpmnServer.engine.start(process, data, null, startNodeId);
+        if (context.errors) {
+            displayError(response, context.errors);
         }
         let instance = context.execution;
         response.redirect('/instanceDetails?id=' + instance.id);
@@ -111,8 +118,8 @@ const awaitHandlerFactory = (middleware) => {
         output = show(output);
         display(res, 'Show', output);
     });
-    router.get('/resetData', awaitHandlerFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
-        yield bpmnServer.deleteData();
+    router.get('/resetData', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+        yield bpmnServer.dataStore.deleteData();
         console.log(" Data Reset");
         let output = ['Data Reset'];
         output = show(output);
@@ -129,7 +136,7 @@ const awaitHandlerFactory = (middleware) => {
         output = show(output);
         display(res, 'Show', output);
     });
-    router.get('/invokeItem', awaitHandlerFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    router.get('/invokeItem', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
         let id = request.query.id;
         let processName = request.query.processName;
         let elementId = request.query.elementId;
@@ -140,14 +147,14 @@ const awaitHandlerFactory = (middleware) => {
             });
             return;
         }
-        let result = yield bpmnServer.invoke(id, {}, {});
+        let result = yield bpmnServer.engine.invoke({ items: { id: id } }, {});
         console.log("redirecting");
         response.redirect('/instanceDetails?id=' + result.execution.id);
         /*
         let output = ['save' + id];
         display(response, 'Save Instance', output); */
     })));
-    router.post('/invokeItem', awaitHandlerFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    router.post('/invokeItem', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
         console.log('invoke');
         console.log(request.body);
         let id = request.body.itemId;
@@ -160,36 +167,33 @@ const awaitHandlerFactory = (middleware) => {
             }
         });
         console.log(data);
-        let result = yield bpmnServer.invoke(id, 'rhanna', data);
+        let result = yield bpmnServer.engine.invoke({ items: { id: id } }, data);
         response.redirect('/instanceDetails?id=' + result.execution.id);
     })));
-    router.get('/mocha', awaitHandlerFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    router.get('/mocha', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
         const mocha = require('../node_modules/mocha/bin/mocha');
     })));
-    router.get('/run/:process', awaitHandlerFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    router.get('/run/:process', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
         let process = request.params.process;
-        let context = yield bpmnServer.execute(process, { user: 'Ralph' }, { caseId: caseId++ });
-        if (context.error) {
-            displayError(response, context.error);
+        let context = yield bpmnServer.engine.start(process, { caseId: caseId++ });
+        if (context.errors) {
+            displayError(response, context.errors);
         }
         let instance = context.execution;
         console.log(" insance id " + instance.id);
         let output = ['run ' + process];
         output = show(output);
-        display(response, 'Run Prcesses', output, instance.logs, instance.getItems({}));
+        display(response, 'Run Prcesses', output, instance.logs, instance.items);
     })));
-    router.get('/instanceDetails', awaitHandlerFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    router.get('/instanceDetails', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
         let imageId = request.query.id;
         console.log("id: " + imageId);
         yield instanceDetails(response, imageId);
     })));
-    router.get('/about', function (request, response) {
-        response.render('about');
-    });
     router.get('/deleteInstance', function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             let instanceId = req.query.id;
-            yield bpmnServer.deleteData(instanceId);
+            yield bpmnServer.dataStore.deleteData(instanceId);
             let output = ['Complete ' + instanceId];
             console.log(" deleted");
             display(res, 'Show', output);
@@ -198,7 +202,7 @@ const awaitHandlerFactory = (middleware) => {
     router.get('/shutdown', function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             let instanceId = req.query.id;
-            yield bpmnServer.shutdown();
+            yield bpmnServer.cache.shutdown();
             let output = ['Complete ' + instanceId];
             console.log(" deleted");
             display(res, 'Show', output);
@@ -207,7 +211,7 @@ const awaitHandlerFactory = (middleware) => {
     router.get('/restart', function (req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             let instanceId = req.query.id;
-            yield bpmnServer.restart();
+            yield bpmnServer.cache.restart();
             let output = ['Complete ' + instanceId];
             console.log(" deleted");
             display(res, 'Show', output);
@@ -237,12 +241,12 @@ function displayError(res, error) {
 function display(res, title, output, logs = [], items = []) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log(" Display Started");
-        var instances = yield bpmnServer.findInstances({});
-        let waiting = yield bpmnServer.findItems({ status: 'wait' }); // ({ name: 'Approval', claimId: 5000 });
+        var instances = yield bpmnServer.dataStore.findInstances({});
+        let waiting = yield bpmnServer.dataStore.findItems({ items: { status: 'wait' } });
         waiting.forEach(item => {
             item.fromNow = __1.dateDiff(item.startedAt);
         });
-        let engines = __1.BPMNServer.getLives();
+        let engines = bpmnServer.cache.list();
         engines.forEach(engine => {
             engine.fromNow = __1.dateDiff(engine.startedAt);
             engine.fromLast = __1.dateDiff(engine.lastAt);
@@ -254,11 +258,10 @@ function display(res, title, output, logs = [], items = []) {
             else
                 item.endFromNow = '';
         });
-        console.log("waiting " + waiting.length);
         res.render('index', {
             title: title, output: output,
             engines,
-            procs: definitions.getList(),
+            procs: bpmnServer.definitions.getList(),
             debugMsgs: [],
             waiting: waiting,
             instances,
@@ -281,22 +284,18 @@ function instanceDetails(response, instanceId) {
         }
         catch (ex) {
         }
-        let elements = yield definitions.getElements(instance.name);
         const lastItem = result.items[result.items.length - 1];
-        /*
-    
-        instance.items=items;
-    
-        let view = new InstanceViewer();
-        view.display(request, response,instance,svg);
-    
-        return;  */
+        const def = yield bpmnServer.definitions.load(instance.name);
+        yield def.load();
+        const defJson = def.getJson();
         let output = ['View Process Log'];
         output = show(output);
         let vars = [];
         Object.keys(instance.data).forEach(function (key) {
             let value = instance.data[key];
             if (Array.isArray(value))
+                value = JSON.stringify(value);
+            if (typeof value === 'object' && value !== null)
                 value = JSON.stringify(value);
             vars.push({ key, value });
         });
@@ -305,13 +304,13 @@ function instanceDetails(response, instanceId) {
             instance, vars,
             title: 'Instance Details',
             logs, items: result.items, svg,
-            decorations, elements, lastItem
+            decorations, definition: defJson, lastItem
         });
     });
 }
 function getFields(processName, elementId) {
     return __awaiter(this, void 0, void 0, function* () {
-        let definition = yield bpmnServer.loadDefinition(processName);
+        let definition = yield bpmnServer.definitions.load(processName);
         let node = definition.getNodeById(elementId);
         let extName = __1.Behaviour_names.CamundaFormData;
         console.log("ext name:" + extName);

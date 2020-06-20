@@ -3,13 +3,17 @@
  */
 import express = require('express');
 import { Modeller } from '../views/Modeller';
+var bodyParser = require('body-parser')
 
+const FS = require('fs');
+
+import { BPMNServer, dateDiff, Behaviour_names } from '../';
 const config = require('../configuration.js').configuration;
 
 
-const definitions = config.definitions;
+const bpmnServer = new BPMNServer(config);
 
-
+const definitions = bpmnServer.definitions;
 const router = express.Router();
 
 
@@ -28,9 +32,7 @@ const awaitHandlerFactory = (middleware) => {
 
 
         const config = require('../configuration.js').configuration;
-        const definitions = config.definitions;
         let xml, base_url, title, processName;
-
 
         processName = request.params.process;
         xml = definitions.getSource(processName);

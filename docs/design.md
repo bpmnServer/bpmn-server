@@ -9,7 +9,21 @@ A workflow is an application running inside in your application, have its state 
 
 Workflow is modeled using BPMN 2 tools and is defined in as an XML string or stream. Each element in the model is calleld a <b>Node</b> connected by <b>Flow</b>
 
-<b>Execution</b> is the entry point of your processing, you start by 
+<b>Execution</b> is the processing engine of the workflow, taking in an BPMN source and executes it.
+
+<b>Server</b> provides a complete environment through the following services:
+- ModelDatastore: a mechanism to retrieve and save BPMN definitions
+- DataStore to save Workflow Instances and related data
+  - Execution monitor: to monitor changes to execution and save data
+  - Instance loader
+  - Find instances and items
+- InstanceCache: to keep current instances in memory
+- EventsRegistry: to handle events outside of the scope of processes
+  - Timers 
+  - Message and Signals calls from outside of the process
+
+This is accomplished by providing a <b>ServerContext</b> that acts as a Service Container
+
 
 ```javascript
 		const execution = new Execution(source,customizer, logger);

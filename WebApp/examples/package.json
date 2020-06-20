@@ -1,0 +1,29 @@
+{
+  "name": "samples",
+  "version": "0.0.0",
+  "description": "Samples",
+  "main": "app.js",
+  "author": {
+    "name": ""
+  },
+  "devDependencies": {
+    "tsc": "^1.20150623.0",
+    "typescript": "^3.9.3"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "tsc --build --clean",
+    "start:watch": "nodemon app",
+    "start": "node app.ts",
+    "test": "mocha -R dot",
+    "posttest": "eslint . --cache && npm run toc",
+    "wintest": "node_modules/.bin/mocha",
+    "toc": "node scripts/generate-api-toc ./docs/API.md,./docs/Examples.md",
+    "test-md": "node scripts/test-markdown.js ./docs/API.md && node scripts/test-markdown.js ./docs/Examples.md",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json"
+  },
+  "dependencies": {
+    "iso8601-duration": "^1.2.0"
+  }
+}

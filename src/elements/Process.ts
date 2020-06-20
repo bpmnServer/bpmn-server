@@ -1,10 +1,10 @@
 import { Execution } from '../engine/Execution';
 import { Token } from '../engine/Token';
-import { IBehaviour, Behaviour } from './Behaviour';
-import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../engine/Enums';
-import { Node } from './Elements';
+import { IBehaviour, Behaviour } from "./behaviours";
+import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../../';
+
 import { Item } from '../engine/Item';
-import { Definition } from './Definition';
+import { Node, Definition } from '.';
 
 
 class Process {

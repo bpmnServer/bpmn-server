@@ -1,0 +1,161 @@
+[bpmn-server](../README.md) › [InstanceObject](instanceobject.md)
+
+# Class: InstanceObject
+
+as stored in MongoDB
+
+## Hierarchy
+
+* **InstanceObject**
+
+## Implements
+
+* [IInstanceData](../interfaces/iinstancedata.md)
+
+## Index
+
+### Properties
+
+* [data](instanceobject.md#data)
+* [endedAt](instanceobject.md#endedat)
+* [id](instanceobject.md#id)
+* [items](instanceobject.md#items)
+* [logs](instanceobject.md#logs)
+* [loops](instanceobject.md#loops)
+* [name](instanceobject.md#name)
+* [parentNodeId](instanceobject.md#parentnodeid)
+* [saved](instanceobject.md#saved)
+* [source](instanceobject.md#source)
+* [startedAt](instanceobject.md#startedat)
+* [status](instanceobject.md#status)
+* [tokens](instanceobject.md#tokens)
+
+## Properties
+
+###  data
+
+• **data**: *any*
+
+*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[data](../interfaces/iinstancedata.md#data)*
+
+Defined in src/engine/Model.ts:15
+
+___
+
+###  endedAt
+
+• **endedAt**: *any*
+
+*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[endedAt](../interfaces/iinstancedata.md#endedat)*
+
+Defined in src/engine/Model.ts:13
+
+___
+
+###  id
+
+• **id**: *any*
+
+*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[id](../interfaces/iinstancedata.md#id)*
+
+Defined in src/engine/Model.ts:9
+
+___
+
+###  items
+
+• **items**: *any*
+
+*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[items](../interfaces/iinstancedata.md#items)*
+
+Defined in src/engine/Model.ts:16
+
+___
+
+###  logs
+
+• **logs**: *any*
+
+*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[logs](../interfaces/iinstancedata.md#logs)*
+
+Defined in src/engine/Model.ts:18
+
+___
+
+###  loops
+
+• **loops**: *any*
+
+*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[loops](../interfaces/iinstancedata.md#loops)*
+
+Defined in src/engine/Model.ts:20
+
+___
+
+###  name
+
+• **name**: *any*
+
+*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[name](../interfaces/iinstancedata.md#name)*
+
+Defined in src/engine/Model.ts:10
+
+___
+
+###  parentNodeId
+
+• **parentNodeId**: *any*
+
+*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[parentNodeId](../interfaces/iinstancedata.md#parentnodeid)*
+
+Defined in src/engine/Model.ts:21
+
+___
+
+###  saved
+
+• **saved**: *any*
+
+*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[saved](../interfaces/iinstancedata.md#saved)*
+
+Defined in src/engine/Model.ts:14
+
+___
+
+###  source
+
+• **source**: *any*
+
+*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[source](../interfaces/iinstancedata.md#source)*
+
+Defined in src/engine/Model.ts:17
+
+___
+
+###  startedAt
+
+• **startedAt**: *any*
+
+*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[startedAt](../interfaces/iinstancedata.md#startedat)*
+
+Defined in src/engine/Model.ts:12
+
+___
+
+###  status
+
+• **status**: *[EXECUTION_STATUS](../enums/execution_status.md)*
+
+*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[status](../interfaces/iinstancedata.md#status)*
+
+Defined in src/engine/Model.ts:11
+
+___
+
+###  tokens
+
+• **tokens**: *any*
+
+*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[tokens](../interfaces/iinstancedata.md#tokens)*
+
+Defined in src/engine/Model.ts:19

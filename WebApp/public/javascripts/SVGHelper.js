@@ -56,9 +56,6 @@ $('document').ready(function () {
                 map.set(decor.id, set);
             });
 
-            console.log(map.has('StartEvent_1'));
-            console.log(map.has('StartEventxx'));
-
             let svg = $('svg');
             let lastChange;
 
@@ -127,7 +124,7 @@ function setElementDecor(svg, g, decorSet) {
         //                    tSpanEl.style.fontSize = "20px";
         tSpanEl.setAttributeNS(null, 'x', x);
         tSpanEl.setAttributeNS(null, 'y', -3);
-        tSpanEl.setAttributeNS(null, 'fill-opacity', '.5');
+        tSpanEl.setAttributeNS(null, 'fill-opacity', '.2');
         tSpanEl.setAttributeNS(null, 'fill', "chocolate");
 
 
@@ -135,7 +132,7 @@ function setElementDecor(svg, g, decorSet) {
         el.appendChild(txtEl);
 
         lastChange = txtEl;
-        x += 7;
+        x += 20;
         first = false;
     });
 
@@ -184,4 +181,120 @@ function setElementClick(element) {
 
                 // check decorations
 
+}
+var descDialog = null;
+
+function displayDescription(itemId) {
+    var html = 'click on any item in the diagram to view description.'
+    var title = 'Model Helper';
+    if (itemId == null) {
+
+    } else {
+        var element = getItemElement(itemId);
+
+        if (element) {
+            let desc = bpmn_descriptions[element.type.replace('bpmn:', '')];
+            html = getItemDescription(desc, element);
+
+            title = (element.name) ? element.name : itemId;
+        }
+    }
+    if (descDialog == null) {
+
+        descDialog = jQuery('<div width="100%">' + html + '</div>')
+            .dialog({
+                title: title,
+                autoOpen: true,
+                width: 300,
+                height: 300,
+                overflow: "auto",
+                resizeStop: function (event, ui) {
+                    //     alert(ui.size);
+                },
+                close: function (event, ui) {
+                    descDialog = null;
+                }
+            });
+    }
+    else {
+        jQuery(descDialog).dialog('option', 'title', title);
+        descDialog.html(html);
+    }
+
+}
+function getItemElement(itemId) {
+
+    let element;
+    let i;
+    for (i = 0; i < jsonData.flows.length; i++) {
+
+        if (jsonData.flows[i].id == itemId) {
+            return jsonData.flows[i];
+        }
+    }
+    for (i = 0; i < jsonData.elements.length; i++) {
+
+        if (jsonData.elements[i].id == itemId) {
+            return jsonData.elements[i];
+        }
+
+    }
+}
+
+function getItemDescription(desc,element) {
+
+    if (desc == null) {
+        return '';
+    }
+    var html = "<table style='font-size:1.2em'>";
+
+    var pre = '';
+    var post = '</td></tr>';
+
+    html += getDescAttribute(desc, 'title', "<tr><td><b>", "</b>",post);
+    html += getDescAttribute(desc, 'desc', "<tr><td colspan='2'>", post);
+//    html += getDescAttribute(desc, 'userDoc', "<tr><td>", post);
+    html += getDescAttribute(element, 'id', "<tr><td>id:</td><td>", post);
+    html += getDescAttribute(element, 'type', "<tr><td>type:</td><td>", post);
+    html += getDescAttribute(desc, 'start', "<tr><td>Starts:</td><td>", post);
+    html += getDescAttribute(desc, 'completion', "<tr><td>Completes:</td><td>", post);
+    if (element.description) {
+        element.description.forEach(desc => {
+            html += `<tr><td style='width:20%;'>${desc[0]}</td><td>${desc[1]}</td><td></tr>`;
+        });
+    }
+    if (element.behaviours) {
+        element.behaviours.forEach(beh => {
+            html += `<tr><td style='width:20%;'>${beh[0]}</td><td>${beh[1]}</td><td></tr>`;
+        });
+    }
+    //    html+= getDescAttribute(desc,'modelOptions',"<tr><td style='width:20%;'>Model Options:</td><td>",post);
+
+    html += "</table>";
+
+    return html;
+
+}
+function getDescAttribute(desc, attr, pre, post) {
+    txt = '';
+    txt = desc[attr];
+    if ((typeof txt === 'undefined') || (txt === null))
+        return '';
+
+    if (jQuery.isArray(txt)) {
+
+        if (txt.length > 0) {
+            var dOptions = "<ul>";
+            for (var i = 0; i < txt.length; i++) {
+                var opt = txt[i];
+                dOptions += "<li>" + opt + "</li>";
+            }
+            dOptions += "</ul>";
+            txt = dOptions;
+        }
+    }
+    if (txt == '')
+        return '';
+    else
+        return pre + txt + post;
 }

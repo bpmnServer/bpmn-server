@@ -9,6 +9,10 @@ block content
 		input(type='hidden',name='processName',id='processName',value=`${processName}`)
 		table
 			tr
+				td  Start Node Id:
+				td  
+					input(name='startNodeId')
+			tr
 				td  Data Values (for Process start)
 				td 
 					div(id='info')
@@ -26,9 +30,6 @@ block content
 				td  
 					input(name='value2')
 			tr
-				td  
-					input(name='field3')
-				td  
-			tr
+
 				td  
 					input(type='submit')

@@ -1,21 +1,20 @@
+import { Definition } from "../..";
+import { ServerComponent } from "./ServerContext";
+import { BPMNServer } from "./BPMNServer";
 
 const fs = require('fs');
 const Path = require('path')
 
 const BpmnModdle = require('bpmn-moddle');
 
-console.log("Defintions.ts");
 
-
-
-//import { IModelsDatastore } from './API';
-
-
-class ModelsDatastore { //implements IModelsDatastore {
+class ModelsDatastore extends ServerComponent { //implements IModelsDatastore {
 
     definitionsPath;
-    constructor(definitionsPath) {
-        this.definitionsPath = definitionsPath;
+    constructor(server: BPMNServer) {
+        super(server);
+    this.definitionsPath = server.configuration.definitionsPath;
+        
     }
     getList(): string[] {
 
@@ -30,6 +29,19 @@ class ModelsDatastore { //implements IModelsDatastore {
         });
   
         return files;
+    }
+
+	/*
+	 *	loads a definition
+	 *	
+	 */
+    async load(name) : Promise<Definition> {
+
+        const source = this.getSource(name);
+
+        const definition = new Definition(name, source, this.logger);
+        await definition.load();
+        return definition;
     }
 
     private getPath(name, type) {
@@ -71,23 +83,6 @@ class ModelsDatastore { //implements IModelsDatastore {
         return true;
 
     }
-
-    async getElements(name) {
-
-        let source = this.getSource(name);
-        const moddle = new BpmnModdle();
-
-        const result = await moddle.fromXML(source);
-        let keys = Object.keys(result.elementsById);
-
-        let elements = [];
-
-        keys.forEach(key => {
-            let el = result.elementsById[key];
-            elements.push({ type: el.$type, id: el.id });
-        });
-        return elements;
-}
 }
 
 export {ModelsDatastore }

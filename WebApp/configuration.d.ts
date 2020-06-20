@@ -1,14 +1,3 @@
-import { ModelsDatastore } from '.';
-import { MyHandler } from './handler';
-declare var configuration: {
-    definitionsPath: string;
-    definitions: ModelsDatastore;
-    appDelegate: MyHandler;
-    database: {
-        MongoDB: {
-            db_url: string;
-            db: string;
-        };
-    };
-};
+import { Configuration } from './';
+declare var configuration: Configuration;
 export { configuration };

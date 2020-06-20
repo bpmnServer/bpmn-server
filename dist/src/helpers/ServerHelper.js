@@ -12,16 +12,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ServerHelper = void 0;
 const DefaultLogger = require('../src/DefaultLogger.js').DefaultLogger;
 const logger = new DefaultLogger({ toConsole: false });
-const config = require('../configuration.js').configuration;
-const Server = require("../src/BPMNServer");
-let bpmnServer = new Server.BPMNServer(config, logger);
+const Server = require("../src/.");
 var caseId;
 Log("Server Helper");
 function Log(msg) {
     logger.log(msg);
 }
 class ServerHelper {
-    constructor() {
+    constructor(configuration) {
+        this.configuration = configuration;
+        this.bpmnServer = new Server.BPMNServer(configuration, logger);
     }
     log(msg) {
         logger.log(msg);
@@ -33,7 +33,7 @@ class ServerHelper {
     execute(definitionName, data = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             Log(" from ServerHelper.ts --- to Logger Execute");
-            let result = yield bpmnServer.execute(definitionName, data);
+            let result = yield this.bpmnServer.execute(definitionName, data);
             if (result.error) {
                 console.log("returned error");
                 console.log(result.error);
@@ -50,7 +50,7 @@ class ServerHelper {
     invoke(nodeName, data) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log("Invoking " + nodeName);
-            let result = yield bpmnServer.invoke({ name: nodeName, status: 'wait', instanceId: this.instanceId }, data = {});
+            let result = yield this.bpmnServer.invoke({ name: nodeName, status: 'wait', instanceId: this.instanceId }, data = {});
             if (result.error) {
                 console.log("returned error");
                 console.log(result.error.message);
@@ -80,7 +80,7 @@ class ServerHelper {
     }
     resetData() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield bpmnServer.deleteData();
+            yield this.bpmnServer.deleteData();
             return true;
         });
     }
@@ -98,7 +98,7 @@ class ServerHelper {
     }
     isComplete() {
         return __awaiter(this, void 0, void 0, function* () {
-            let recs = yield bpmnServer.findInstances({ data: { caseId: caseId } });
+            let recs = yield this.bpmnServer.findInstances({ instance: { data: { caseId: caseId } } });
             let rec = recs[0];
             if (!rec)
                 return false;
@@ -110,7 +110,7 @@ class ServerHelper {
     }
     checkItem(query, step) {
         return __awaiter(this, void 0, void 0, function* () {
-            query.data = { caseId: caseId };
+            query.instance.data = { caseId: caseId };
             console.log(query);
             let items = yield this.findItems(query);
             if (items.length != step.count) {
@@ -122,7 +122,7 @@ class ServerHelper {
     }
     findItems(query) {
         return __awaiter(this, void 0, void 0, function* () {
-            let items = yield bpmnServer.findItems(query); // ({ name: 'Approval', claimId: 5000 });
+            let items = yield this.bpmnServer.findItems(query); // ({ name: 'Approval', claimId: 5000 });
             console.log(" found items " + items.length);
             //    items.forEach(item => { Log("id:" + item.taskId + " " +  item.name + " status:" + item.status); });
             return items;

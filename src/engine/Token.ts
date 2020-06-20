@@ -3,15 +3,13 @@ import { Logger } from '../common/Logger';
 const fs = require('fs');
 
 import { Execution } from './Execution';
-import {
-    Element, Node, Flow , Process, SubProcess  } from '../elements/Elements'
-import { EXECUTION_EVENT , NODE_ACTION , FLOW_ACTION, TOKEN_STATUS, EXECUTION_STATUS, IHandler, ITEM_STATUS} from './Enums';
+import { SubProcess , Behaviour_names, LoopBehaviour , Element, Node, Flow } from '../elements/'
+import { EXECUTION_EVENT , NODE_ACTION , FLOW_ACTION, TOKEN_STATUS, EXECUTION_STATUS,  ITEM_STATUS, INode} from '../../';
 import { EventEmitter } from 'events';
-import { Behaviour_names, LoopBehaviour } from '../elements/Behaviour';
 import { Loop } from './Loop';
 import { Item } from './Item';
+import { IToken, IExecution, IItem } from '../interfaces/engine';
 
-var dummy;
 
 /*
  *  Tokens:
@@ -22,7 +20,8 @@ var dummy;
  *      3 start of multi-instances      end of instance         own (new object)
  *      4 diverging                     at converge             parent
  *      
- *      
+ *  Rules:
+ *      Node acts synchronisly
  *      
  *      parent token go on 'HOLD' waiting for children to finish
  *      
@@ -52,9 +51,9 @@ var dummy;
 // ---------------------------------------------
 
 // ---------------------------------------------
-class Token {
+class Token implements IToken {
     id;
-    execution: Execution;
+    execution: any;
     dataPath: string;
     startNodeId;
     parentToken?: Token;
@@ -63,12 +62,26 @@ class Token {
     loop: Loop;
 
     currentNode: Node;
+    processId;
+
     status: TOKEN_STATUS;
 
     get data():any {
         return this.execution.getData(this.dataPath);
     }
-    get currentItem() { return this.path[this.path.length - 1];}
+    get currentItem() : Item {
+        return this.path[this.path.length - 1];
+    }
+    get lastItem() : Item {
+        let nodes = this.path.filter(function (value) {
+            return (value.element.type == 'bpmn:SequenceFlow') ? false : true;
+        });
+
+        if (nodes.length > 1)
+            return nodes[nodes.length - 2];
+        else
+            return null;
+    }
     constructor(execution: Execution, startNode: Node, dataPath? ,parentToken?: Token, branchNode?: Node) {
         this.execution = execution;
         if (dataPath)
@@ -81,15 +94,25 @@ class Token {
         this.parentToken = parentToken;
         this.branchNode = branchNode;
         this.id = execution.getNewId('token');
+        this.processId = startNode.processId;
         this.path = [];
-    }
-    static async startNewToken(execution, startNode, dataPath, parentToken: Token, branchNode: Node, loop: Loop) {
+    }/*
+    static newToken(execution:Execution, startNode, dataPath, parentToken: Token, branchNode: Node, loop: Loop, data = null) {
+        const token = new Token(execution, startNode, dataPath, parentToken, branchNode);
+        token.loop = loop;
+        execution.tokens.set(token.id, token);
+        token.applyInput(data);
+        execution.addToQueue(token);
+        return token;
+    }*/
+    static async startNewToken(execution, startNode, dataPath, parentToken: Token, branchNode: Node, loop: Loop , data=null) {
         const token = new Token(execution,  startNode ,dataPath, parentToken, branchNode);
         token.loop = loop;
         execution.tokens.set(token.id, token);
+        token.applyInput(data);
         const result = await token.execute();
         return token;
-    }
+    } 
     save() {
         let parentToken, branchNode, loopId;
         if (this.parentToken)
@@ -131,10 +154,13 @@ class Token {
      *  fire resume for all existing items to wakeup the timers
      *  
      */
+    resume() {
+        this.currentNode.resume(this.currentItem);
 
-    resume(execution) {
+    }
+    restored() {
         this.path.forEach(item => {
-            item.element.resume(item);
+            item.element.restored(item);
         });
     }
     getChildrenTokens() {
@@ -172,20 +198,22 @@ class Token {
         let ret;
         const item = new Item(this.currentNode,this);
         this.path.push(item);
-        this.log('executing item:' + this.currentNode.id + " "+ item.id);
+        this.log('.executing item:' + this.currentNode.id + " "+ item.id);
+
         ret = await this.currentNode.execute(item);
+/*
         // check for subprocess 
         if (this.currentNode.type == 'bpmn:SubProcess') {
-            this.log('executing a sub process item:' + this.currentNode.id + " " + item.id + " is done");
+            this.log('..executing a sub process item:' + this.currentNode.id + " " + item.id + " is done");
             const subProcess = this.currentNode as SubProcess;
             const proc = subProcess.childProcess;
             const startNode = proc.getStartNode();
 
-            const newToken=await Token.startNewToken(this.execution, startNode, null, this,this.currentNode , null);
+            const newToken = await Token.startNewToken(this.execution, startNode, null, this, this.currentNode, null);
 
         }
-
-        this.log('executing item:' + this.currentNode.id+ " " +item.id + " is done");
+*/
+        this.log('..executing item:' + this.currentNode.id+ " " +item.id + " is done");
 
         if (ret == NODE_ACTION.wait) {
             this.status = TOKEN_STATUS.wait;
@@ -193,12 +221,21 @@ class Token {
 
         }
 
-        dummy = await this.goNext();
-        return dummy;
+        const result = await this.goNext();
+        return result;
 
     }
     applyInput(inputData) {
         this.execution.applyInput(inputData, this.dataPath);
+    }
+    /**
+     *  is called by Gateways to cancel current token
+     *  
+     * */
+    terminate() {
+        this.currentNode.end(this.currentItem);
+        this.end();
+
     }
     /*
      *  is called to invoke an element like userTask, or trigger an envent or signal
@@ -208,19 +245,21 @@ class Token {
         // check if valid node and valid status
         // find the item
         const item = this.currentItem;
+        this.log(`..token.invoke ${this.currentNode.id} ${this.currentNode.type}`);
 
         this.applyInput(data);
         if (item.status == ITEM_STATUS.wait) {
             const ret = await this.currentNode.run(item);
 
 
-            dummy = await this.currentNode.continue(item);
-            this.log("signal completed");
-            dummy =await this.goNext();
-            return dummy;
+            let result = await this.currentNode.continue(item);
+            result =await this.goNext();
         }
         else
-            this.log('*** ERROR===== invoking a a type of ' + this.currentNode.type);
+            this.log(`*** ERROR===== invoking a type of  ${this.currentNode.type} with status of ${item.status}`);
+
+        this.log(`..token.invoke ended ${this.currentNode.id} ${this.currentNode.type}`);
+
     }
     /*
      *  is called to mark this token end
@@ -228,12 +267,12 @@ class Token {
 
     async end() {
         if (this.currentItem.status != ITEM_STATUS.end)
-            this.log('**token ended but item is still '+this.currentItem.status);
+            this.log('..**token ended but item is still '+this.currentItem.status);
         this.status = TOKEN_STATUS.end;
         this.execution.tokenEnded(this);
         // check if subprocess then continue parent
         if (this.branchNode && this.branchNode.type == 'bpmn:SubProcess') {
-            this.log(' subprocess token has ended');
+            this.log('..subprocess token has ended');
             await this.parentToken.signal(null);
         }
     }
@@ -243,39 +282,43 @@ class Token {
      */ 
     async goNext() {
 
+        this.log(`..token.goNext ${this.currentNode.id} ${this.currentNode.type}`);
         if (!await this.preNext())
             return;
 
         const outbounds = this.currentNode.getOutbounds(this.currentItem);
 
         if (outbounds.length == 0) {
-            this.log('no more outbounds - ending token '+this.id);
+            this.log('...no more outbounds - ending token '+this.id);
             return await this.end();
         }
-        let count = 0;
+
         let thisNode = this.currentNode;
         const self = this;
         const promises = [];
+        if (outbounds.length > 1) {
+            this.end();
+        }
         outbounds.forEach(async function (flowItem) {
 
             /// need to check if next node is converging; therefore no new item``
             flowItem.status = ITEM_STATUS.end;
             self.path.push(flowItem);
             let nextNode = flowItem.element['to'];
-            self.log('processing flow' + flowItem.element.id + " to " +nextNode.id);
+            self.log('...processing flow' + flowItem.element.id + " to " +nextNode.id);
             if (nextNode) {
-                if (count == 0) {
+                if (outbounds.length == 1) {
                     self.currentNode = nextNode;
                     promises.push(self.execute());
                 }
                 else {
-                    promises.push(Token.startNewToken(self.execution, nextNode, null , self, thisNode, null));
-                }
-                count++;
+                    promises.push(Token.startNewToken(self.execution, nextNode, null, self, thisNode, null));
+               }
             }
         });
+        this.log(`... waiting for ${promises.length}`);
         await Promise.all(promises);
-        self.log(" promises retured go next is done.")
+        this.log(`..token.goNext is done ${this.currentNode.id} ${this.currentNode.type}`);
     }
     log(msg) {
         this.execution.log(msg);

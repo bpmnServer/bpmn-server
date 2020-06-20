@@ -12,24 +12,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Definition = void 0;
 const BpmnModdle = require('bpmn-moddle');
 const js_bpmn_moddle_1 = require("./js-bpmn-moddle");
-const Elements_1 = require("./Elements");
+const _1 = require(".");
 const fs = require('fs');
-//  bpmn element name - type - superType -
-const bpmnTypes = {
-    UserTask: { type: 'Task', canInvoke: true },
-    ScriptTask: { type: 'Task' },
-    ServiceTask: { type: 'Task' },
-    SendTask: { type: 'Task' },
-    ReceiveTask: { type: 'Task' },
-    ParallelGateway: { type: 'Gateway' },
-    InclusiveGateway: { type: 'Gateway' },
-    StartEvent: { type: 'Event' },
-    IntermediateCatchEvent: { type: 'Event' },
-    EndEvent: { type: 'Event' },
-    SequenceFlow: { type: 'Flow' },
-};
 //console.log(moddleOptions);
 const moddle = new BpmnModdle({ moddleOptions: js_bpmn_moddle_1.moddleOptions });
+/**
+ *  to be saved in DB to monitor for startEvents:
+ *      timer events that start process
+ *      message/signal events that are received
+ * */
+class DefinitionRecord {
+}
+class DefinitionStartEvent {
+}
 class Definition {
     constructor(name, source, logger) {
         this.processes = new Map();
@@ -48,16 +43,16 @@ class Definition {
             let el = definition.elementsById[child.id];
             let node;
             if (el.$type == 'bpmn:SubProcess') { // subprocess
-                node = new Elements_1.SubProcess(el.id, processId, el.$type, el);
+                node = new _1.SubProcess(el.id, processId, el.$type, el);
                 node.childProcess = this.loadProcess(definition, el);
             }
             else {
-                node = Elements_1.Node.loadNode(el, processId);
+                node = _1.NodeLoader.loadNode(el, processId);
             }
             this.nodes.set(el.id, node);
             children.push(node);
         });
-        return new Elements_1.Process(processElement, children);
+        return new _1.Process(processElement, children);
     }
     load() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -71,12 +66,26 @@ class Definition {
                     case 'bpmn:Process':
                         {
                             const proc = this.loadProcess(definition, e);
-                            this.processes.set(proc.id, proc);
+                            this.processes.set(e.id, proc);
                         }
                         break;
                 }
             });
             let refs = new Map();
+            /*
+    references:
+        element                                 part 1
+                $type : "bpmn:SequenceFlow"
+                id : "flow_start_user"
+            property : "bpmn:sourceRef"
+            id : "event_start"
+        element                                 part 2
+                $type : "bpmn:SequenceFlow"
+                id : "flow_start_user"
+            property : "bpmn:targetRef"
+            id : "user_task"
+    
+             */
             definition.references.forEach(ref => {
                 if (ref.element.$type == 'bpmn:SequenceFlow') {
                     //                this.log(`-ref  <${ref.element.id}> <${ref.element.$type}> <${ref.property}> ref to: <${ref.id}>`);
@@ -95,25 +104,69 @@ class Definition {
                     else
                         flow.to = ref.id;
                 }
+                // 
+                // get boundary events
+                /*
+        reference
+            element
+                $type : "bpmn:BoundaryEvent"
+                id : "BoundaryEvent_0qdlc8p"
+            property : "bpmn:attachedToRef"
+            id : "user_task"
+                 */
+                if (ref.element.$type == "bpmn:BoundaryEvent") {
+                    const event = this.getNodeById(ref.element.id);
+                    const owner = this.getNodeById(ref.id);
+                    if (owner.type !== 'bpmn:SequenceFlow') {
+                        event.attachedTo = owner;
+                        owner.attachments.push(event);
+                    }
+                }
             });
             refs.forEach(ref => {
-                let fromNode = this.getNodeById(ref.from);
-                let toNode = this.getNodeById(ref.to);
-                let flow = new Elements_1.Flow(ref.id, ref.type, fromNode, toNode, definition.elementsById[ref.id]);
+                const fromNode = this.getNodeById(ref.from);
+                const toNode = this.getNodeById(ref.to);
+                const flow = new _1.Flow(ref.id, ref.type, fromNode, toNode, definition.elementsById[ref.id]);
                 this.flows.push(flow);
                 fromNode.outbounds.push(flow);
                 toNode.inbounds.push(flow);
             });
+            // last step get messageFlows:
+            //  root
+            definition.rootElement.rootElements.forEach(e => {
+                if (e.$type == 'bpmn:Collaboration') {
+                    if (e.messageFlows) {
+                        e.messageFlows.forEach(mf => {
+                            const fromNode = this.getNodeById(mf.sourceRef.id);
+                            const toNode = this.getNodeById(mf.targetRef.id);
+                            const flow = new _1.MessageFlow(mf.id, mf.$type, fromNode, toNode, mf);
+                            fromNode.outbounds.push(flow);
+                            toNode.inbounds.push(flow);
+                        });
+                    }
+                }
+            });
             return definition;
         });
     }
+    getJson() {
+        const elements = [];
+        const flows = [];
+        this.nodes.forEach(node => {
+            let behaviours = [];
+            node.behaviours.forEach(behav => {
+                behaviours.push(behav.describe());
+            });
+            elements.push({ id: node.id, name: node.name, type: node.type, description: node.describe(), behaviours });
+        });
+        this.flows.forEach(flow => {
+            flows.push({ id: flow.id, from: flow.from.id, to: flow.to.id, type: flow.type, description: flow.describe() });
+        });
+        return JSON.stringify({ elements, flows });
+    }
     getDefinition(source, logger) {
         return __awaiter(this, void 0, void 0, function* () {
-            logger.log('getDefinition');
             const result = yield moddle.fromXML(source);
-            /*    fs.writeFile('modlle2.txt', JSON.stringify(result), function (err) {
-                if (err) throw err;
-            }); */
             return result;
         });
     }
@@ -121,19 +174,13 @@ class Definition {
         let start = null;
         this.processes.forEach(proc => {
             start = proc.getStartNode();
+            //            if (start)
+            //                return start;
         });
         return start;
     }
     getNodeById(id) {
         return this.nodes.get(id);
-    }
-    static getType(name) {
-        name = name.replace('bpmn:', '');
-        if (bpmnTypes[name]) {
-            return bpmnTypes[name].type;
-        }
-        else
-            return null;
     }
 }
 exports.Definition = Definition;

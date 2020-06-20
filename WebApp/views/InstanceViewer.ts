@@ -2,7 +2,6 @@
 
 class InstanceViewer {
     display(request, response, instance, svg) {
-        console.log('instanceViewer');
         let jsonObj = { instance: instance, itemDescriptions: null };
         let json = JSON.stringify(jsonObj);
         let decorations = JSON.stringify(getDecorations(instance));

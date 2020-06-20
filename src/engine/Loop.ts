@@ -1,8 +1,8 @@
 import { Token } from './Token';
-import { LoopBehaviour, Behaviour_names } from '../elements/Behaviour';
-import { Node } from '../elements/Elements';
+import { Node, LoopBehaviour, Behaviour_names } from '../elements/';
+
 import { Execution } from './Execution';
-var dummy;
+
 class Loop {
     id;
     node;
@@ -32,7 +32,7 @@ class Loop {
             token.log('loop collection:' + coll);
             this.completed = 0;
 
-            this.items = Execution.scopeEval(token.data, coll);
+            this.items = token.execution.appDelegate.scopeEval(token.data, coll);
             this.dataPath = token.dataPath + '.'+this.node.id+'[]';
             this.sequence = 0;
         }
@@ -40,7 +40,8 @@ class Loop {
     save() {
         return {
             id: this.id, nodeId: this.node.id, ownerTokenId: this.ownerToken.id, dataPath: this.dataPath,
-            items: this.items, completed: this.completed, sequence: this.sequence
+//            items: this.items,
+            completed: this.completed, sequence: this.sequence
         };
     }
     static load(execution, dataObject): Loop {
@@ -49,6 +50,7 @@ class Loop {
         let ownerToken = execution.getToken(dataObject.ownerTokenId);
         let loop = new Loop(node, ownerToken, dataObject);
         loop.dataPath = dataObject.dataPath;
+        loop.sequence = dataObject.sequence;
         return loop;
 
     }
@@ -78,8 +80,9 @@ class Loop {
                 let seq = loop.getNext();
                 let data = {};
                 data[loop.getKeyName()] = seq;
-                let newToken = await Token.startNewToken(token.execution, token.currentNode, loop.dataPath, token, token.currentNode, loop);
-                newToken.applyInput(data);
+                let newToken = await Token.startNewToken(token.execution, token.currentNode, loop.dataPath+'.'+seq, token, token.currentNode, loop, data);
+
+
                 return false; // launching new token; stop this one
 
             }
@@ -88,13 +91,15 @@ class Loop {
                 if (token.loop) // already assigned a loop
                     return true; // go ahead and execute
                 let loop = new Loop(token.currentNode, token);
-                loop.items.forEach(async function (inst) {
+                let seq;
+                for (seq = 0; seq < loop.items.length; seq++) {
+                    let entry = loop.items[seq];
                     let data = {};
-                    data[loop.getKeyName()] = inst;
-                    let newToken = await Token.startNewToken(token.execution, token.currentNode, loop.dataPath, token, token.currentNode, loop);
-                    newToken.applyInput(data);
+                    data[loop.getKeyName()] = entry;
+                    let newToken = await Token.startNewToken(token.execution, token.currentNode, loop.dataPath + '.' + seq, token, token.currentNode, loop, data);
+                }
 
-                });
+                token.log('..loop: fired all tokens' + seq);
                 return false; // launching new tokens; stop this one
 
             }
@@ -118,8 +123,7 @@ class Loop {
                     let seq = token.loop.getNext();
                     let data = {};
                     data[token.loop.getKeyName()] = seq;
-                    let newToken = await Token.startNewToken(token.execution, token.currentNode, token.loop.dataPath, token, token.currentNode, token.loop);
-                    newToken.applyInput(data);
+                    let newToken = await Token.startNewToken(token.execution, token.currentNode, token.loop.dataPath, token, token.currentNode, token.loop, data);
 
 
                     return false;

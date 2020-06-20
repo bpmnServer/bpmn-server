@@ -5,9 +5,6 @@ table
 			a(href=`/shutdown`)  Shutdown  
 		td 
 			a(href=`/restart`)  Restart 
-
-
-
 table
 	tr
 		td  Name
@@ -17,7 +14,7 @@ table
 
 	each engine in engines
 		tr
-			td  #{engine.name}
-			td  #{engine.fromNow}
-			td  #{engine.data.caseId}
-			td  #{engine.fromLast}
+			td  #{engine.execution.name}
+			td  #{engine.execution.fromNow}
+			td  #{engine.execution.data.caseId}
+			td  #{engine.execution.fromLast}

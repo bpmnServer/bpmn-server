@@ -5,11 +5,11 @@
     "lib": [ "es6" ],
     "sourceMap": true,
     "declaration": true
-
+/*    "listFiles" :  true */
 
   },
   "include": [
-    "**/*.ts"
+    "**/*.ts", "test/feature/eventBasedGateway.js"
   ],
   "exclude": [
     "node_modules" , "./dist"

@@ -1,6 +1,14 @@
 
+import { BPMNServer, dateDiff, Behaviour_names } from '../';
+
 const config = require('../configuration.js').configuration;
-const definitions = config.definitions;
+
+
+
+const bpmnServer = new BPMNServer(config);
+
+const definitions = bpmnServer.definitions;
+
 let xml, base_url, title, processName;
 
 

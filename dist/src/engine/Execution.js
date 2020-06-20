@@ -10,17 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Execution = void 0;
-const Logger_1 = require("../common/Logger");
 const fs = require('fs');
 const Item_1 = require("./Item");
 const Token_1 = require("./Token");
 const Loop_1 = require("./Loop");
-const Enums_1 = require("./Enums");
-const events_1 = require("events");
-const Definition_1 = require("../elements/Definition");
-const common_1 = require("../common");
+const elements_1 = require("../elements/");
+const __1 = require("../../");
 const { v4: uuidv4 } = require('uuid');
-var dummy;
 /**
  *  is accessed two ways:
  *      execute - start process
@@ -32,29 +28,21 @@ class Execution {
      *
      * @param name          process name
      * @param source        bpmn source
-     * @param handler       a delegate object to handle services
-     * @param logger        to capture log messages
-     * @param listener      an event listener
+     * @param executionContext
      */
-    constructor(name, source, handler, logger, listener) {
+    constructor(name, source, executionContext) {
         this.tokens = new Map();
         this.logs = [];
+        this.promises = [];
         this.uids = {};
         this.id = this.getUUID();
         this.name = name;
         this.source = source;
-        if (logger)
-            this.logger = logger;
-        else
-            this.logger = new Logger_1.Logger({ toConsole: false });
-        if (handler)
-            this.handler = handler;
-        else
-            this.handler = new common_1.DefaultHandler(this.logger);
-        if (!listener)
-            listener = new events_1.EventEmitter();
-        this.listener = listener;
-        this.definition = new Definition_1.Definition(name, source, this.logger);
+        this.logger = executionContext.logger;
+        this.appDelegate = executionContext.appDelegate;
+        this.listener = executionContext.listener;
+        this.definition = new elements_1.Definition(name, source, this.logger);
+        this.executionContext = executionContext;
     }
     getNodeById(id) {
         return this.definition.getNodeById(id);
@@ -64,7 +52,7 @@ class Execution {
     }
     tokenEnded(token) {
         let active = 0;
-        this.tokens.forEach(t => { if (t.status != Enums_1.TOKEN_STATUS.end)
+        this.tokens.forEach(t => { if (t.status != __1.TOKEN_STATUS.end)
             active++; });
         if (active == 0) {
             this.end();
@@ -72,11 +60,11 @@ class Execution {
     }
     end() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.log("execution ended.");
+            this.log(".execution ended.");
             this.endedAt = new Date().toISOString();
             ;
-            this.status = Enums_1.EXECUTION_STATUS.end;
-            this.doExecutionEvent(Enums_1.EXECUTION_EVENT.execution_end);
+            this.status = __1.EXECUTION_STATUS.end;
+            this.doExecutionEvent(__1.EXECUTION_EVENT.execution_end);
         });
     }
     /**
@@ -85,44 +73,55 @@ class Execution {
      * */
     stop() {
     }
-    execute(startNode = null, inputData = {}) {
+    execute(startNodeId = null, inputData = {}) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.log('execute:');
+            this.log('ACTION:execute:');
             yield this.definition.load();
-            this.status = Enums_1.EXECUTION_STATUS.running;
+            this.status = __1.EXECUTION_STATUS.running;
+            this.appDelegate.executionStarted(this.executionContext);
             if (inputData)
                 this.data = inputData;
             else
                 this.data = {};
             this.startedAt = new Date().toISOString();
             ;
-            this.doExecutionEvent(Enums_1.EXECUTION_EVENT.execution_execute);
-            if (!startNode)
+            this.doExecutionEvent(__1.EXECUTION_EVENT.execution_execute);
+            let startNode;
+            if (!startNodeId)
                 startNode = this.definition.getStartNode();
+            else
+                startNode = this.getNodeById(startNodeId);
             if (!startNode) {
                 this.logger.error("No Start Node");
                 return;
             }
-            this.log('starting at :' + startNode.id);
-            dummy = yield Token_1.Token.startNewToken(this, startNode, null, null, null, null);
-            this.log('-----execute returned ');
-            yield this.doExecutionEvent(Enums_1.EXECUTION_EVENT.execution_executed);
+            this.log('..starting at :' + startNode.id);
+            let result = yield Token_1.Token.startNewToken(this, startNode, null, null, null, null);
+            yield Promise.all(this.promises);
+            this.log('.execute returned ');
+            yield this.doExecutionEvent(__1.EXECUTION_EVENT.execution_executed);
             this.report();
         });
     }
+    /**
+     *
+     * invoke scenarios:
+     *      itemId
+     *      elementId   - but only one is active
+     *      elementId   - for a startEvent in a secondary process
+     *
+     * @param executionId
+     * @param inputData
+     *
+     * Obselete -- remove later
+     */
     signal(executionId, inputData) {
         return __awaiter(this, void 0, void 0, function* () {
-            /*
-            var exKey = ExecutionId.getTokenNode(executionId);
-            var tokenId = exKey.tokenId;
-            var nodeId = exKey.nodeId;
-            var seq = exKey.seq;
-            var token = this.getToken(tokenId); */
-            this.log('-----signal ' + executionId + ' startedAt ');
-            this.log('------------------------ ');
+            this.log('Action:signal ' + executionId + ' startedAt ');
             let token = null;
             this.applyInput(inputData);
-            this.doExecutionEvent(Enums_1.EXECUTION_EVENT.execution_invoke);
+            this.appDelegate.executionStarted(this.executionContext);
+            this.doExecutionEvent(__1.EXECUTION_EVENT.execution_invoke);
             this.tokens.forEach(t => {
                 if (t.currentItem && t.currentItem.id == executionId)
                     token = t;
@@ -133,12 +132,39 @@ class Execution {
                         token = t;
                 });
             }
-            if (token)
-                yield token.signal(inputData);
-            else
-                this.log("*** ERROR *** task id not valid");
-            this.doExecutionEvent(Enums_1.EXECUTION_EVENT.execution_invoked);
-            this.log('-----signal returned process  status:' + this.status + " id: " + executionId);
+            if (token) {
+                this.log('..launching a token signal');
+                let result = yield token.signal(inputData);
+                this.log('..signal token is done');
+            }
+            else { // check for startEvent of a secondary process
+                let node = null;
+                const startedNodeId = this.tokens.get(0).path[0].elementId;
+                this.definition.processes.forEach(proc => {
+                    let startNodeId = proc.getStartNode().id;
+                    if (startNodeId !== startedNodeId) {
+                        this.log(`checking for valid other start node: ${startNodeId} is possible`);
+                        if (startNodeId == executionId) {
+                            // ok we will start new token for this
+                            node = this.getNodeById(executionId);
+                            this.log('..starting at :' + executionId);
+                        }
+                    }
+                });
+                if (node) {
+                    let token = yield Token_1.Token.startNewToken(this, node, null, null, null, null);
+                }
+                else {
+                    this.getItems().forEach(i => {
+                        this.logger.log(`Item: ${i.id} - ${i.elementId} - ${i.status} - ${i.timeDue}`);
+                    });
+                    this.logger.error("*** ERROR *** task id not valid");
+                }
+            }
+            this.log('.signal returning .. waiting for promises status:' + this.status + " id: " + executionId);
+            yield Promise.all(this.promises);
+            this.doExecutionEvent(__1.EXECUTION_EVENT.execution_invoked);
+            this.log('.signal returned process  status:' + this.status + " id: " + executionId);
             this.report();
         });
     }
@@ -150,6 +176,11 @@ class Execution {
             });
         });
         return items.sort(function (a, b) { return (a.seq - b.seq); });
+    }
+    getItemsData() {
+        const items = [];
+        this.getItems().forEach(item => { items.push(item.save()); });
+        return items;
     }
     /*
      * return the execution State as a Json object
@@ -170,14 +201,14 @@ class Execution {
         const state = {
             source: this.source, items, tokens, loops,
             id: this.id, name: this.name, startedAt: this.startedAt, endedAt: this.endedAt,
-            status: this.status, saved: this.saved, data: this.data, logs: this.logs
+            status: this.status, saved: this.saved, data: this.data, logs: this.logs, parentNodeId: this.parentNodeId
         };
         return state;
     }
-    static restore(state, handler, logger) {
+    static restore(state, executionContext) {
         return __awaiter(this, void 0, void 0, function* () {
             const source = state.source;
-            const execution = new Execution(state.name, source, handler, logger);
+            const execution = new Execution(state.name, source, executionContext);
             yield execution.definition.load();
             const tokenLoops = [];
             const tokens = new Map();
@@ -210,26 +241,33 @@ class Execution {
             execution.name = state.name;
             execution.startedAt = state.startedAt;
             execution.endedAt = state.endedAt;
-            execution.doExecutionEvent(Enums_1.EXECUTION_EVENT.execution_restored);
             execution.saved = state.saved;
             execution.logs = state.logs;
-            execution.log('-restore completed');
+            execution.parentNodeId = state.parentNodeId;
+            execution.log('.restore completed');
             execution.report();
+            execution.restored();
             return execution;
         });
     }
+    restored() {
+        this.doExecutionEvent(__1.EXECUTION_EVENT.execution_restored);
+        this.tokens.forEach(t => {
+            t.restored();
+        });
+    }
     resume() {
-        this.doExecutionEvent(Enums_1.EXECUTION_EVENT.execution_resumed);
+        this.doExecutionEvent(__1.EXECUTION_EVENT.execution_resumed);
         this.tokens.forEach(t => {
             t.resume();
         });
     }
     report() {
-        this.log('---Execution Report ----');
-        this.log('Status:' + this.status);
+        this.log('.Execution Report ----');
+        this.log('..Status:' + this.status);
         this.tokens.forEach(token => {
             const branch = token.branchNode ? token.branchNode.id : 'root';
-            this.log(`token: ${token.id} - ${token.status} - current: ${token.currentNode.id} from ${branch}  ` + JSON.stringify(token.data));
+            this.log(`..token: ${token.id} - ${token.status} - current: ${token.currentNode.id} from ${branch}  ` + JSON.stringify(token.data));
         });
         let indx = 0;
         const items = this.getItems();
@@ -237,11 +275,11 @@ class Execution {
             const item = items[indx];
             const endedAt = (item.endedAt) ? item.endedAt : '-';
             if (item.element.type == 'bpmn:SequenceFlow')
-                this.log(`Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status}`);
+                this.log(`..Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status}`);
             else
-                this.log(`Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status} start ${item.startedAt} end ${endedAt} `);
+                this.log(`..Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status}  from ${item.startedAt} to ${endedAt} id: ${item.id} `);
         }
-        this.log('Data:');
+        this.log('.Data:');
         this.log(JSON.stringify(this.data));
     }
     getNewId(scope) {
@@ -255,24 +293,25 @@ class Execution {
     }
     doExecutionEvent(event) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.listener.emit(event, this);
-            yield this.listener.emit('all', event, this);
+            yield this.listener.emit(event, { event, execution: this });
+            yield this.listener.emit('all', { event, execution: this });
         });
     }
     doTokenEvent(token, event) {
-        this.listener.emit(event, token);
-        this.listener.emit('all', event, token);
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.listener.emit(event, { event, token });
+            yield this.listener.emit('all', { event, token });
+        });
     }
     doItemEvent(item, event) {
-        this.listener.emit(event, item);
-        this.listener.emit('all', event, item);
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.listener.emit(event, { event, item });
+            yield this.listener.emit('all', { event, item });
+        });
     }
     log(msg) {
         this.logs.push(msg);
         this.logger.log(msg);
-    }
-    static scopeEval(scope, script) {
-        return Function('"use strict";return (' + script + ')').bind(scope)();
     }
     // Data Handling 
     /*
@@ -287,7 +326,7 @@ class Execution {
         }
         let target = this.getAndCreateData(dataPath, asArray);
         if (!target) {
-            console.log("*** Error *** target is not defined");
+            this.logger.error("*** Error *** target is not defined");
             return;
         }
         if (inputData) {

@@ -1,0 +1,73 @@
+<h1 id="bpmn-server">bpmn-server</h1>
+<p><a href="http://www.repostatus.org/#active"><img src="http://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active - The project has reached a stable, usable state and is being actively developed." /></a></p>
+<h2 id="introduction">Introduction</h2>
+<p>BPMN 2.0 Modeling, Execution and Presistence, an open source Workflow Server for Node.js</p>
+<p>This package is designed specifically for Node.js and TypeScript</p>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#process-modeller">Process modeller</a></li>
+<li><a href="#Process-execution">Execution</a></li>
+<li><a href="#Installation">Installation</a></li>
+<li><a href="#Demo">Demo</a></li>
+<li><a href="#acknowledgments">Acknowledgments</a></li>
+</ul>
+<h3 id="documentation">Documentation</h3>
+<ul>
+<li><a href="./docs/features">Featuers</a></li>
+<li><a href="./docs/examples.md">Examples</a></li>
+</ul>
+<h1 id="process-modeller">Process modeller</h1>
+<p>A web based modeler is included based on http://bpmn.io , models definitions are saved at your server <img src="./docs/model-demo.gif" alt="Modeller" /></p>
+<h1 id="process-execution">Process Execution</h1>
+<p>bpmn-server provides an bpmnEngine to execute your workflow definition supporting most of BPMN 2.0 elements</p>
+<h1 id="process-server">Process Server</h1>
+<p>provides an environment to presist execution Instances while running and communicate with your application.</p>
+<p>Applications can monitor and communicate to Instances whether they are running or offline, allowing user interface to query and process Workflow steps</p>
+<h1 id="data-queries">Data Queries</h1>
+<p>Since instances are saved in MongoDB you can easily query your instances (running or completed)</p>
+<h1 id="sample-web-app">Sample Web App</h1>
+<p>Included is a sample web application (running Node.js and Express.js) to allow you to visualize your workflow</p>
+<h1 id="installation">Installation</h1>
+<p>This package requires Node.js and an access to MongoDB () if you don’t have MongoDB already installed you can <a href="http://bit.ly/cyd-atlas">create a free cloud account here</a></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1"></a>$ mkdir myBPMN</span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a>$ cd myBPMN</span>
+<span id="cb1-4"><a href="#cb1-4"></a></span>
+<span id="cb1-5"><a href="#cb1-5"></a>$ npm install bpmn<span class="op">-</span>server</span>
+<span id="cb1-6"><a href="#cb1-6"></a></span>
+<span id="cb1-7"><a href="#cb1-7"></a>$ cp node_modules<span class="op">/</span>bpmn<span class="op">-</span>server<span class="op">/</span>WebApp<span class="op">/.</span> <span class="op">./</span>  <span class="op">-</span>r</span>
+<span id="cb1-8"><a href="#cb1-8"></a></span>
+<span id="cb1-9"><a href="#cb1-9"></a>Windows<span class="op">:</span> </span>
+<span id="cb1-10"><a href="#cb1-10"></a>xcopy <span class="op">/</span>e <span class="op">/</span>i <span class="op">/</span>s <span class="op">/</span>y node_modules\bpmn<span class="op">-</span>server\WebApp\<span class="op">*.*</span> <span class="op">.</span></span></code></pre></div>
+<p>Edit configuration file to have MongoDB point to your server or free cloud account</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1"></a>node app</span></code></pre></div>
+<h1 id="demo">Demo</h1>
+<p>a full demo site is available @ http://bpmn.omniworkflow.com</p>
+<h1 id="example">Example</h1>
+<div class="sourceCode" id="cb3"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1"></a>    <span class="kw">const</span> server <span class="op">=</span> <span class="kw">new</span> BPMNServer(configuration<span class="op">,</span> logger)<span class="op">;</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a></span>
+<span id="cb3-3"><a href="#cb3-3"></a>    <span class="kw">let</span> response <span class="op">=</span> <span class="cf">await</span> server<span class="op">.</span><span class="fu">execute</span>(<span class="st">&#39;Buy Used Car&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a></span>
+<span id="cb3-5"><a href="#cb3-5"></a>    <span class="co">// let us get the items</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a>    <span class="kw">const</span> items <span class="op">=</span> response<span class="op">.</span><span class="at">items</span><span class="op">.</span><span class="fu">filter</span>(item <span class="kw">=&gt;</span> {</span>
+<span id="cb3-7"><a href="#cb3-7"></a>        <span class="cf">return</span> (item<span class="op">.</span><span class="at">status</span> <span class="op">==</span> <span class="st">&#39;wait&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a>    })<span class="op">;</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a></span>
+<span id="cb3-10"><a href="#cb3-10"></a>    items<span class="op">.</span><span class="fu">forEach</span>(item <span class="kw">=&gt;</span> {</span>
+<span id="cb3-11"><a href="#cb3-11"></a>        <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="vs">`  waiting for &lt;</span><span class="sc">${</span>item<span class="op">.</span><span class="at">name</span><span class="sc">}</span><span class="vs">&gt; -&lt;</span><span class="sc">${</span>item<span class="op">.</span><span class="at">elementId</span><span class="sc">}</span><span class="vs">&gt; id: &lt;</span><span class="sc">${</span>item<span class="op">.</span><span class="at">id</span><span class="sc">}</span><span class="vs">&gt; `</span>)<span class="op">;</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a>    })<span class="op">;</span></span>
+<span id="cb3-13"><a href="#cb3-13"></a></span>
+<span id="cb3-14"><a href="#cb3-14"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&#39;Invoking Buy&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-15"><a href="#cb3-15"></a></span>
+<span id="cb3-16"><a href="#cb3-16"></a>    response <span class="op">=</span> <span class="cf">await</span> server<span class="op">.</span><span class="fu">invoke</span>({<span class="dt">instanceId</span><span class="op">:</span> response<span class="op">.</span><span class="at">execution</span><span class="op">.</span><span class="at">id</span><span class="op">,</span> <span class="dt">elementId</span><span class="op">:</span> <span class="st">&#39;task_Buy&#39;</span> }<span class="op">,</span></span>
+<span id="cb3-17"><a href="#cb3-17"></a>        { <span class="dt">model</span><span class="op">:</span> <span class="st">&#39;Thunderbird&#39;</span><span class="op">,</span> <span class="dt">needsRepairs</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span> <span class="dt">needsCleaning</span><span class="op">:</span> <span class="kw">false</span> })<span class="op">;</span></span>
+<span id="cb3-18"><a href="#cb3-18"></a></span>
+<span id="cb3-19"><a href="#cb3-19"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&quot;Ready to drive&quot;</span>)<span class="op">;</span></span>
+<span id="cb3-20"><a href="#cb3-20"></a></span>
+<span id="cb3-21"><a href="#cb3-21"></a>    response <span class="op">=</span> <span class="cf">await</span> server<span class="op">.</span><span class="fu">invoke</span>({ <span class="dt">instanceId</span><span class="op">:</span> response<span class="op">.</span><span class="at">execution</span><span class="op">.</span><span class="at">id</span><span class="op">,</span> <span class="dt">elementId</span><span class="op">:</span> <span class="st">&#39;task_Drive&#39;</span> })<span class="op">;</span></span>
+<span id="cb3-22"><a href="#cb3-22"></a></span>
+<span id="cb3-23"><a href="#cb3-23"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="vs">`that is it!, process is now complete status=&lt;</span><span class="sc">${</span>response<span class="op">.</span><span class="at">execution</span><span class="op">.</span><span class="at">status</span><span class="sc">}</span><span class="vs">&gt;`</span>)</span></code></pre></div>
+<p>for more complete examples see <a href="./docs/examples.md">Examples</a></p>
+<h1 id="acknowledgments">Acknowledgments</h1>
+<p>The <strong>bpmn-server</strong> resides upon the excellent library <a href="https://github.com/bpmn-io/bpmn-moddle">bpmn-io/bpmn-moddle</a> developed by <a href="http://bpmn.io/">bpmn.io</a></p>
+<p>The <strong>bpmn-server</strong> is inspired by the library <a href="https://github.com/paed01/bpmn-engine">bpmn-engine</a></p>

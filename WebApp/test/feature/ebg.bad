@@ -1,0 +1,98 @@
+const { BPMNServer , Execution , DefaultHandler , Logger } = require("../../");
+
+const logger = new Logger({ toConsole: false });
+
+
+
+let name = 'Event Based Gateway';
+
+//const source = require('../resources/' + name + '.js').source;
+
+const file = __dirname + '/../../WebApp/processes/' + name + '.bpmn';
+
+const source =fs.readFileSync(file, { encoding: 'utf8', flag: 'r' });
+
+//=-=-=-==============================
+
+const events = [
+    'timerEvent',
+    'messageEvent',
+    'Task_receive',
+    'event_signal'];
+
+
+
+function itemStatus( elementId) {
+    const list = execution.getItems().filter(item => {
+        return (item.elementId == elementId);
+    });
+    if ((list.length > 0))
+        return list[0].status;
+    else
+        return null;
+}
+
+
+// Scenario: issue Signal
+const helper = new Helper('Event Based Gateway');
+
+await helper.execute(null,
+    { reminderCounter: 0, caseId: 1005 });
+
+helper.itemStatus('timerEvent', 'Equals', 'wait');
+helper.itemStatus('messageEvent', 'Equals', 'wait');
+helper.itemStatus('Task_receive', 'Equals', 'wait');
+helper.itemStatus('event_signal', 'Equals', 'wait');
+
+await helper.signal('event_signal', null);
+
+helper.itemStatus('timerEvent', 'Equals', 'end');
+helper.itemStatus('messageEvent', 'Equals', 'end');
+helper.itemStatus('Task_receive', 'Equals', 'end');
+helper.itemStatus('event_signal', 'Equals', 'end');
+
+helper.report();
+helper.save('EBG3.log');
+return;
+
+
+Feature('Event Based Gateway', () => {
+    Scenario('All path', () => {
+
+
+
+        Given('load process helper', () => {
+            const helper = new Helper('Event Based Gateway');
+        });
+
+        When('execute', async () => {
+
+            await helper.execute(null,
+                { reminderCounter: 0, caseId: 1005 });
+
+        });
+        and('check for waiting items', async () => {
+            expect(helper.itemStatus('timerEvent').equals('wait');
+            helper.expectItem('messageEvent','equals', 'wait');
+            helper.expectItem('Task_receive', 'wait');
+            helper.expectItem('event_signal', 'wait');
+
+            //          process.signal('userTask', {}); // Buy
+        });
+
+        and('Case Complete', async () => {
+            expect(process.status).equals('end');
+        });
+
+
+        and('write log file to' + name + '.log', async () => {
+            let fileName = __dirname + '/../logs/' + name + '.log';
+            logger.save(fileName);
+        });
+
+
+    });
+});
+
+
+

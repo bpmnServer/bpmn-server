@@ -4,13 +4,9 @@ const DefaultLogger = require('../src/DefaultLogger.js').DefaultLogger;
 
 const logger = new DefaultLogger({ toConsole: false });
 
-
-const config = require('../configuration.js').configuration;
-
-const Server= require("../src/BPMNServer");
+const Server= require("../src/.");
 
 
-let bpmnServer  = new Server.BPMNServer(config,logger);
 
 var caseId;
 
@@ -20,15 +16,18 @@ function Log(msg) {
 }
 
 class ServerHelper {
+    constructor(configuration) {
+        this.configuration = configuration;
+
+        this.bpmnServer = new Server.BPMNServer(configuration, logger);
+    }
+    bpmnServer;
+    configuration;
     instance;
     items;
     engine;
     instanceId;
 
-    constructor() {
-
-
-    }
     log(msg) {
         logger.log(msg);
         logger.log(msg);
@@ -40,7 +39,7 @@ class ServerHelper {
 
     async execute(definitionName, data = {}) {
         Log(" from ServerHelper.ts --- to Logger Execute");
-        let result = await bpmnServer.execute(definitionName,data);
+        let result = await this.bpmnServer.execute(definitionName,data);
         if (result.error) {
             console.log("returned error");
             console.log(result.error);
@@ -57,7 +56,7 @@ class ServerHelper {
 
         console.log("Invoking "+nodeName);
 
-        let result = await bpmnServer.invoke({ name: nodeName, status: 'wait', instanceId: this.instanceId }, data = {});
+        let result = await this.bpmnServer.invoke({ name: nodeName, status: 'wait', instanceId: this.instanceId }, data = {});
 
         if (result.error) {
             console.log("returned error");
@@ -87,7 +86,7 @@ class ServerHelper {
     }
 
     async resetData() {
-        await bpmnServer.deleteData();
+        await this.bpmnServer.deleteData();
         return true;
 
     }
@@ -105,7 +104,7 @@ class ServerHelper {
     }
     async isComplete() {
 
-        let recs = await bpmnServer.findInstances({ data: { caseId: caseId } });
+        let recs = await this.bpmnServer.findInstances({ instance: { data: { caseId: caseId } } });
         let rec = recs[0];
         if (!rec)
             return false;
@@ -115,7 +114,7 @@ class ServerHelper {
             return true;
     }
     async checkItem(query,step) {
-        query.data = { caseId: caseId };
+        query.instance.data = { caseId: caseId };
         console.log(query);
         let items = await this.findItems(query);
 
@@ -127,7 +126,7 @@ class ServerHelper {
     }
 
     async findItems(query) {
-        let items = await bpmnServer.findItems(query); // ({ name: 'Approval', claimId: 5000 });
+        let items = await this.bpmnServer.findItems(query); // ({ name: 'Approval', claimId: 5000 });
         console.log(" found items " + items.length);
     //    items.forEach(item => { Log("id:" + item.taskId + " " +  item.name + " status:" + item.status); });
         return items;

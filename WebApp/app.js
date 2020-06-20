@@ -6,6 +6,8 @@ const path = require("path");
 var bodyParser = require('body-parser');
 const index_1 = require("./routes/index");
 const model_1 = require("./routes/model");
+const docs_1 = require("./routes/docs");
+const api_1 = require("./routes/api");
 const app = express();
 // support parsing of application/json type post data
 app.use(bodyParser.json({ limit: '10mb' }));
@@ -17,6 +19,8 @@ app.set('view engine', 'pug');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index_1.default);
 app.use('/model', model_1.default);
+app.use('/docs', docs_1.default);
+app.use('/api', api_1.default);
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
     const err = new Error('Not Found');

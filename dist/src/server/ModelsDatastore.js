@@ -10,14 +10,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ModelsDatastore = void 0;
+const __1 = require("../..");
+const ServerContext_1 = require("./ServerContext");
 const fs = require('fs');
 const Path = require('path');
 const BpmnModdle = require('bpmn-moddle');
-console.log("Defintions.ts");
-//import { IModelsDatastore } from './API';
-class ModelsDatastore {
-    constructor(definitionsPath) {
-        this.definitionsPath = definitionsPath;
+class ModelsDatastore extends ServerContext_1.ServerComponent {
+    constructor(server) {
+        super(server);
+        this.definitionsPath = server.configuration.definitionsPath;
     }
     getList() {
         let files = [];
@@ -30,6 +31,18 @@ class ModelsDatastore {
             }
         });
         return files;
+    }
+    /*
+     *	loads a definition
+     *
+     */
+    load(name) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const source = this.getSource(name);
+            const definition = new __1.Definition(name, source, this.logger);
+            yield definition.load();
+            return definition;
+        });
     }
     getPath(name, type) {
         return this.definitionsPath + name + '.' + type;
@@ -57,20 +70,6 @@ class ModelsDatastore {
         if (svg)
             this.saveFile(name, 'svg', svg);
         return true;
-    }
-    getElements(name) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let source = this.getSource(name);
-            const moddle = new BpmnModdle();
-            const result = yield moddle.fromXML(source);
-            let keys = Object.keys(result.elementsById);
-            let elements = [];
-            keys.forEach(key => {
-                let el = result.elementsById[key];
-                elements.push({ type: el.$type, id: el.id });
-            });
-            return elements;
-        });
     }
 }
 exports.ModelsDatastore = ModelsDatastore;

@@ -587,9 +587,22 @@ function displayItemDescription(itemId) {
 
 	jQuery("#itemDescription").html(html);
 }
+
 function getItemDescription(itemId) {
 
 	desc = getObject('itemsDescription', itemId);
+	let type;
+	jsonData.elements.forEach(el => {
+		if (el.id == item.id) {
+			type = el.type.replace('bpmn:','');
+        }
+	});
+	if (!type)
+		return;
+
+	let desc = bpmn_descriptions[type];
+
+
 	if (desc == null) {
 		return '';
 	}

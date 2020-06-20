@@ -14,8 +14,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const express = require("express");
 const Modeller_1 = require("../views/Modeller");
+var bodyParser = require('body-parser');
+const FS = require('fs');
+const __1 = require("../");
 const config = require('../configuration.js').configuration;
-const definitions = config.definitions;
+const bpmnServer = new __1.BPMNServer(config);
+const definitions = bpmnServer.definitions;
 const router = express.Router();
 const awaitHandlerFactory = (middleware) => {
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -30,7 +34,6 @@ const awaitHandlerFactory = (middleware) => {
 router.get('/:process', awaitHandlerFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
     let output = [];
     const config = require('../configuration.js').configuration;
-    const definitions = config.definitions;
     let xml, base_url, title, processName;
     processName = request.params.process;
     xml = definitions.getSource(processName);

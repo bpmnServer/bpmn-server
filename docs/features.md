@@ -12,9 +12,11 @@ The following elements are tested and supported.
 - ReceiveTask
 - ScriptTask
 - ManualTask
+  Same as user task
 - UserTask
 - ServiceTask
-- BusinessRuleTask: Same behaviour as ServiceTask
+- BusinessRuleTask
+Same behaviour as ServiceTask
 - SendTask: Same behaviour as ServiceTask
 - SignalTask
 # Behaviour
@@ -22,13 +24,13 @@ The following elements are tested and supported.
 - MultiInstanceLoopCharacteristics
 # Events
 - StartEvent
-- EndEvent 
-- IntermediateCatchEvent
-- IntermediateThrowEvent
+- Multiple start events in process
+- End Event 
+- Intermediate Catch Event
+- Intermediate Throw Event
+- Boundary Event
 # Event Behaviour
-- MessageEventDefinition
-- ConditionalEventDefinition
-- CompensateEventDefinition
+- Message EventDefinition
 - TerminateEventDefinition
 - TimerEventDefinition
 - SignalEventDefinition
@@ -39,15 +41,18 @@ The following elements are tested and supported.
 - ParallelGateway
 # Flows
 - SequenceFlow
+- Conditional Sequence Flow
 - MessageFlow
 # Data
 - IoSpecification
 - DataObject
 # Other
 - SubProcess
+- Call Task
 - Lane
 - Pool
 # Special
+- Script Events
 - BpmnError
 - BoundaryEvent
 - compensate by outbound Association

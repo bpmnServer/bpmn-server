@@ -1,17 +1,10 @@
-extends layout
+doctype html
+html
+head
+    title= title
 
-block content
-    h1 BPMN-Server Demo
+<script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2/webcomponents-loader.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2.2.10/webcomponents-loader.min.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@1/src/zero-md.min.js"></script>
+<zero-md src="/readme_md"></zero-md>
 
-    h2 Features
-
-    ul   
-        li   To handle processes that wait for User Interactions or event,messages or signals
-            ul
-                li       unload and save engines when idle or when waiting
-                li       load engines (instances) when invoked
-        li   To manage information about running,i.e. outstanding work
-        li   To manage information about completed processes for data analysis
-        hr
-
-    

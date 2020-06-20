@@ -4,23 +4,21 @@ var bodyParser = require('body-parser')
 
 const FS = require('fs');
 
-import { BPMNServer, dateDiff, Behaviour_names   } from 'bpmn-server';
+import { BPMNServer, dateDiff, Behaviour_names   } from '../';
 import { configuration as config} from '../configuration';
-
-
-
-const definitions = config.definitions;
 
 const bpmnServer = new BPMNServer(config);
 
+const definitions = bpmnServer.definitions;
 
 var caseId = Math.floor(Math.random() * 10000);
 
 
+const docsFolder = __dirname + '/../bpmnServer/docs/';
 
 /* GET users listing. */
 
-const awaitHandlerFactory = (middleware) => {
+const awaitAppDelegateFactory = (middleware) => {
     return async (req, res, next) => {
         try {
             await middleware(req, res, next)
@@ -30,14 +28,25 @@ const awaitHandlerFactory = (middleware) => {
     }
 }
    {
-    router.get('/', awaitHandlerFactory(async (request, response) => {
+    router.get('/', awaitAppDelegateFactory(async (request, response) => {
         let output = [];
         output = show(output);
         display(response, 'Show', output);
     }));
 
     var test;
-    router.get('/example', awaitHandlerFactory(async (request, response) => {
+    router.get('/readme_md', awaitAppDelegateFactory(async (request, response) => {
+
+        let processName = request.params.process;
+        let fileName = docsFolder + '../README.md';
+
+        let file = FS.readFileSync(fileName,
+            { encoding: 'utf8', flag: 'r' });
+
+        response.send(file);
+
+    }));
+    router.get('/example', awaitAppDelegateFactory(async (request, response) => {
         /* Testing only
          * 
         */
@@ -58,21 +67,21 @@ const awaitHandlerFactory = (middleware) => {
      *      
      */
     
-    router.get('/executeInput/:processName', awaitHandlerFactory(async (request, response) => {
+    router.get('/executeInput/:processName', awaitAppDelegateFactory(async (request, response) => {
         let processName = request.params.processName;
 
         response.render('executeInput', { processName });
     }));
 
 
-    router.get('/execute/:processName', awaitHandlerFactory(async (request, response) => {
+    router.get('/execute/:processName', awaitAppDelegateFactory(async (request, response) => {
 
         let processName = request.params.processName;
 
-        let context = await bpmnServer.execute(processName, { user: 'Ralph' }, { caseId: caseId++ });
+        let context = await bpmnServer.engine.start(processName, { caseId: caseId++ });
 
-        if (context.error) {
-            displayError(response, context.error);
+        if (context.errors) {
+            displayError(response, context.errors);
         }
 
 
@@ -88,22 +97,24 @@ const awaitHandlerFactory = (middleware) => {
     }));
 
 
-    router.post('/execute', awaitHandlerFactory(async (request, response) => {
+    router.post('/execute', awaitAppDelegateFactory(async (request, response) => {
 
         console.log(request.body);
         let process = request.body.processName;
         let data = {};
         parseField(request.body.field1, request.body.value1, data);
         parseField(request.body.field2, request.body.value2, data);
-        parseField(request.body.field3, request.body.value3, data);
+
+        
+        let startNodeId = request.body.startNodeId
 
         console.log(data);
 
         data['caseId'] = caseId++;
      
-        let context = await bpmnServer.execute(process, { user: 'Ralph' } ,data);
-        if (context.error) {
-            displayError(response, context.error);
+        let context = await bpmnServer.engine.start(process,data , null,startNodeId);
+        if (context.errors) {
+            displayError(response, context.errors);
         }
         let instance = context.execution;
 
@@ -135,8 +146,8 @@ const awaitHandlerFactory = (middleware) => {
 
     });
 
-    router.get('/resetData', awaitHandlerFactory(async (request, response) => {
-        await bpmnServer.deleteData();
+    router.get('/resetData', awaitAppDelegateFactory(async (request, response) => {
+        await bpmnServer.dataStore.deleteData();
         console.log(" Data Reset");
         let output = ['Data Reset'];
         output = show(output);
@@ -156,7 +167,7 @@ const awaitHandlerFactory = (middleware) => {
         display(res, 'Show', output);
     });
 
-    router.get('/invokeItem', awaitHandlerFactory(async (request, response) => {
+    router.get('/invokeItem', awaitAppDelegateFactory(async (request, response) => {
 
         let id = request.query.id;
         let processName = request.query.processName;
@@ -166,12 +177,12 @@ const awaitHandlerFactory = (middleware) => {
 
         if (fields && fields.length > 0) {
             response.render('invokeItem', {
-                id , fields, processName,elementId
+                id, fields, processName, elementId
             });
             return;
         }
 
-        let result = await bpmnServer.invoke(id, {}, {});
+        let result = await bpmnServer.engine.invoke({ items: { id: id }}, {});
 
         console.log("redirecting");
         response.redirect('/instanceDetails?id=' + result.execution.id);
@@ -179,7 +190,7 @@ const awaitHandlerFactory = (middleware) => {
         let output = ['save' + id];
         display(response, 'Save Instance', output); */
     }));
-    router.post('/invokeItem', awaitHandlerFactory(async (request, response) => {
+    router.post('/invokeItem', awaitAppDelegateFactory(async (request, response) => {
         console.log('invoke');
         console.log(request.body);
         let id = request.body.itemId;
@@ -195,46 +206,44 @@ const awaitHandlerFactory = (middleware) => {
 
         console.log(data);
         
-        let result = await bpmnServer.invoke(id, 'rhanna', data);
+        let result = await bpmnServer.engine.invoke({ items: { id: id } },  data);
+
 
         response.redirect('/instanceDetails?id=' + result.execution.id);
     }));
 
 
-    router.get('/mocha', awaitHandlerFactory(async (request, response) => {
+    router.get('/mocha', awaitAppDelegateFactory(async (request, response) => {
 
         const mocha = require('../node_modules/mocha/bin/mocha');
     }));
 
-    router.get('/run/:process', awaitHandlerFactory(async (request, response) => {
+    router.get('/run/:process', awaitAppDelegateFactory(async (request, response) => {
         let process = request.params.process;
-        let context = await bpmnServer.execute(process, {user: 'Ralph'}, { caseId: caseId++ });
-        if (context.error) {
-            displayError(response, context.error);
+        let context = await bpmnServer.engine.start(process, { caseId: caseId++ });
+        if (context.errors) {
+            displayError(response, context.errors);
         }
         let instance = context.execution;
         console.log(" insance id " + instance.id);
         let output = ['run ' + process];
         output = show(output);
-        display(response, 'Run Prcesses', output, instance.logs, instance.getItems({}));
+        display(response, 'Run Prcesses', output, instance.logs, instance.items);
     }));
-    router.get('/instanceDetails', awaitHandlerFactory(async (request, response) => {
+    router.get('/instanceDetails', awaitAppDelegateFactory(async (request, response) => {
 
         let imageId = request.query.id;
         console.log("id: " + imageId);
         await instanceDetails(response,imageId);        
 
     }));
-    router.get('/about', function (request, response) {
 
-        response.render('about');
-    });
 
     router.get('/deleteInstance',async function (req, res) {
 
         let instanceId = req.query.id;
 
-        await bpmnServer.deleteData(instanceId);
+        await bpmnServer.dataStore.deleteData(instanceId);
 
         let output = ['Complete ' + instanceId];
         console.log(" deleted");
@@ -244,7 +253,7 @@ const awaitHandlerFactory = (middleware) => {
 
         let instanceId = req.query.id;
 
-        await bpmnServer.shutdown();
+        await bpmnServer.cache.shutdown();
 
         let output = ['Complete ' + instanceId];
         console.log(" deleted");
@@ -254,7 +263,7 @@ const awaitHandlerFactory = (middleware) => {
 
         let instanceId = req.query.id;
 
-        await bpmnServer.restart();
+        await bpmnServer.cache.restart();
 
         let output = ['Complete ' + instanceId];
         console.log(" deleted");
@@ -283,14 +292,14 @@ async function displayError(res, error) {
 async function display(res, title, output, logs = [], items = []) {
 
     console.log(" Display Started");
-    var instances = await bpmnServer.findInstances({});
-    let waiting = await bpmnServer.findItems({ status: 'wait' }); // ({ name: 'Approval', claimId: 5000 });
+    var instances = await bpmnServer.dataStore.findInstances({});
+    let waiting = await bpmnServer.dataStore.findItems({ items: { status: 'wait' } }); 
 
     waiting.forEach(item => {
         item.fromNow = dateDiff(item.startedAt);
     });
 
-    let engines = BPMNServer.getLives();
+    let engines = bpmnServer.cache.list();
 
     engines.forEach(engine => {
         engine.fromNow = dateDiff(engine.startedAt); 
@@ -305,13 +314,11 @@ async function display(res, title, output, logs = [], items = []) {
             item.endFromNow = '';
     });
 
-    console.log("waiting " + waiting.length);
-
     res.render('index',
         {
             title: title, output: output,
             engines,
-            procs: definitions.getList(),
+            procs: bpmnServer.definitions.getList(),
             debugMsgs: [], // Logger.get(),
             waiting: waiting,
             instances,
@@ -337,18 +344,11 @@ async function instanceDetails(response,instanceId) {
 
     }
 
-    let elements = await definitions.getElements(instance.name);
-
     const lastItem = result.items[result.items.length - 1];
 
-    /*
-
-    instance.items=items;
-
-    let view = new InstanceViewer();
-    view.display(request, response,instance,svg);
-
-    return;  */
+    const def = await bpmnServer.definitions.load(instance.name);
+    await def.load();
+    const defJson = def.getJson();
 
     let output = ['View Process Log'];
     output = show(output);
@@ -357,6 +357,8 @@ async function instanceDetails(response,instanceId) {
     Object.keys(instance.data).forEach(function (key) {
         let value = instance.data[key];
         if (Array.isArray(value)) 
+            value = JSON.stringify(value);
+        if (typeof value === 'object' && value !== null)
             value = JSON.stringify(value);
         
         vars.push({ key, value });
@@ -369,14 +371,13 @@ async function instanceDetails(response,instanceId) {
             instance, vars,
             title: 'Instance Details',
             logs,items: result.items, svg,
-            decorations , elements , lastItem
-
+            decorations , definition:defJson, lastItem
         });
 
 }
 async function getFields(processName, elementId) {
 
-    let definition = await bpmnServer.loadDefinition(processName);
+    let definition = await bpmnServer.definitions.load(processName);
     let node = definition.getNodeById(elementId);
     let extName = Behaviour_names.CamundaFormData;
     console.log("ext name:" + extName);
@@ -388,6 +389,7 @@ async function getFields(processName, elementId) {
     else
         return null;
 }
+
 function calculateDecorations(items) {
     let decors = [];
     let seq = 1;

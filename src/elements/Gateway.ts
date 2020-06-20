@@ -1,10 +1,13 @@
 
 import { Execution } from '../engine/Execution';
 import { Token } from '../engine/Token';
-import { IBehaviour, Behaviour } from './Behaviour';
-import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../engine/Enums';
-import { Node } from './Elements';
+import { IBehaviour, Behaviour } from "./behaviours";
+import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../../';
+import { Node } from '.';
 import { Item } from '../engine/Item';
+
+
+// ---------------------------------------------
 
 
 /*
@@ -21,6 +24,41 @@ import { Item } from '../engine/Item';
  *              
  */
 class Gateway extends Node {
+
+    /**
+      * 
+      * @param item
+      */
+    /*  rule: DefaultFlow will only fire if no other flows are valid
+     */
+    getOutbounds(item: Item): Item[] {
+        if (this.def.default) {
+
+            let defaultFlow;
+            const outbounds = [];
+            this.outbounds.forEach(flow => {
+                if (flow.id == this.def.default.id) {
+                    defaultFlow = flow;
+                }
+                else {
+                    let flowItem = new Item(flow, item.token);
+                    if (flow.run(flowItem) == FLOW_ACTION.take)
+                        outbounds.push(flowItem);
+                }
+            });
+
+            if (outbounds.length == 0 && defaultFlow) {
+                let flowItem = new Item(defaultFlow, item.token);
+                outbounds.push(flowItem)
+            }
+            item.token.log('..return outbounds' + outbounds.length);
+            return outbounds;
+        }
+        else
+            return super.getOutbounds(item);
+
+    }
+
     /*
      * we are looking for:
      *      tokens are still active (pending)
@@ -30,10 +68,10 @@ class Gateway extends Node {
 
         let divergingGateway = null;
         let parentToken = null;
-        const pendingTokens = [];
-        const waitingTokens = [];
+        let pendingTokens = [];
+        let waitingTokens = [];
 
-        token.log('converging .. my token ' + token.id);
+        token.log('..converging .. my token ' + token.id);
         if (token.parentToken) { // is a child did i branch from a gatewy
             if (token.branchNode.type == 'bpmn:InclusiveGateway' ||
                 token.branchNode.type == 'bpmn:ExclusiveGateway') {
@@ -42,7 +80,7 @@ class Gateway extends Node {
             }
         }
         else { // do I have a child branching from a gateway
-            const childrenTokens = token.getChildrenTokens();
+            let childrenTokens = token.getChildrenTokens();
             childrenTokens.forEach(t => {
                 if (t.branchNode.type == 'bpmn:InclusiveGateway' ||
                     token.branchNode.type == 'bpmn:ExclusiveGateway') {
@@ -51,8 +89,8 @@ class Gateway extends Node {
                 }
             });
         }
-        token.log('   converging gateway was : ' + divergingGateway.id);
         if (divergingGateway) {
+            token.log('..converging gateway was : ' + divergingGateway.id);
             // that all branches that are active that passed through this gateway or branch from it
             token.execution.tokens.forEach(t => {
                 if ((t.status != TOKEN_STATUS.end)
@@ -74,25 +112,59 @@ class Gateway extends Node {
                 }
             });
         }
-        token.log('   # of active tokens pending ' + pendingTokens.length);
+        token.log('..# of active tokens pending ' + pendingTokens.length);
         pendingTokens.forEach(t => {
-            token.log('    token id ' + t.id + " " + t.currentNode.id);
+            token.log('..token id ' + t.id + " " + t.currentNode.id);
         });
 
         return { pendingTokens, waitingTokens };
     }
+    // new logic 
+    // since all splits causes new token to be created
+    convergeFlows(item: Item) {
 
-    start(item: Item): NODE_ACTION {
+        const token = item.token;
+        if (this.inbounds.length > 1
+            && token.branchNode
+            && (token.branchNode.type == 'bpmn:InclusiveGateway' ||
+                token.branchNode.type == 'bpmn:ExclusiveGateway')) {
+
+            const siblings = token.parentToken.getChildrenTokens();
+            const waitingTokens = [];
+            const pendingTokens = [];
+
+            siblings.forEach(t => {
+                if ((t.id != token.id)
+                    && (t.currentNode.id == this.id)) {// waiting for me
+
+                    if (t.status != TOKEN_STATUS.end
+                        && t.status != TOKEN_STATUS.terminated)
+                        waitingTokens.push(t);
+                    else
+                        pendingTokens.push(t);
+
+                }
+
+                token.log(`..token waiting for gatewy ${t.id} nod: ${t.currentNode.id}`);
+
+
+            });
+            token.log('..# of active tokens pending ' + waitingTokens.length);
+        }
+
+    }
+
+    async start(item: Item): Promise<NODE_ACTION> {
         if (this.inbounds.length > 1) { // converging .....
-            item.token.log("Starting a converging gateway");
+            item.token.log("..Starting a converging gateway");
             // what is my token
-            const result = this.findActiveFlows(item.token);
+            let result = this.findActiveFlows(item.token);
             if (result.pendingTokens.length > 0)
                 return NODE_ACTION.wait;
             else {
-                item.token.log('let us converge now ');
+                item.token.log('..let us converge now ');
                 result.waitingTokens.forEach(t => {
-                    item.token.log("converging ending token #" + t.id);
+                    item.token.log("..converging ending token #" + t.id);
                     t.currentItem.status = ITEM_STATUS.end;
                     t.end();
                 });
@@ -105,6 +177,7 @@ class Gateway extends Node {
 
 
 }
+
 /**
  *  ExclusiveGatway:
  *      outbounds:  only 1 
@@ -118,7 +191,7 @@ class XORGateway extends Node {
         const outbounds = super.getOutbounds(item);
 
         if (outbounds.length > 1) {
-            item.token.log('XORGateway : removed other outbounds , took the first');
+            item.token.log('..XORGateway : removed other outbounds , took the first');
             return [outbounds[0]];
 
         }
@@ -127,5 +200,65 @@ class XORGateway extends Node {
     }
 
 }
+/**
+ * trick here is once one event is met all others must be cancelled
+ * 
+ * How will I know?
+ *      when one of my events is fired shoudl I subscribe to the event or get directly notified?
+ * */
+class EventBasedGateway extends Gateway {
+    working = false;
+    listener;
 
-export {Gateway,XORGateway }
+    restored(item: Item) {
+        this.startMonitor(item);
+        super.resume(item);
+    }
+    async run(item: Item): Promise<NODE_ACTION> {
+        this.startMonitor(item);
+        return NODE_ACTION.end;
+    }
+    async cancelAllBranched(endingItem: Item) {
+        if (this.working)
+            return;
+        this.working = true;
+        const self = this;
+
+        endingItem.token.execution.tokens.forEach(async function (token) {
+
+            if (token.status == TOKEN_STATUS.wait && token.currentItem.id != endingItem.id) {
+                if (token.branchNode && token.branchNode.id == self.id)
+                     {
+
+                    endingItem.token.log(`..EventBasedGateway:<${self.id}>-- cancelling  ${token.currentNode.id} `);
+
+                    await token.terminate();
+                }
+            }
+        });
+        this.working = false;
+    }
+    startMonitor(item) {
+        if (this.listener)
+            return;
+        item.token.log("..EventBasedGateway is running" + this.id);
+        this.listener = item.token.execution.listener;
+
+        const self = this;
+        this.listener.on(EXECUTION_EVENT.node_end, async function ({ item: endingItem }) {
+
+            const token = endingItem.token;
+
+            const lastItem = token.lastItem;
+            if (token.branchNode && token.branchNode.id == self.id) {
+
+                await self.cancelAllBranched(endingItem);
+            }
+
+        });
+
+    }
+
+}
+
+export {Gateway,XORGateway , EventBasedGateway }
