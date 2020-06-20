@@ -13,9 +13,9 @@ The execution Engine , processes an BPMN definition - [Engine](api/classes/Engin
 
 | Method| parameters           | return  | description |
 | ------------- |:-------------:| -----| ----------|
-| **start** | name, input 	 | [ExecutionResponse](api/classes/ExecutionResponse.md) | - Start a new Process execution |
-| **invoke**| [itemQuery](#item-query) ,input |	[ExecutionResponse](api/classes/ExecutionResponse.md) | Invoke an already started Item (waiting)  |
-| **signal**|signalId,input| [ExecutionResponse](api/classes/ExecutionResponse.md) | Issue a signal or message|
+| **start** | name, input 	 | [ExecutionResponse](api/classes/executionresponse.md) | - Start a new Process execution |
+| **invoke**| [itemQuery](#item-query) ,input |	[ExecutionResponse](api/classes/executionresponse.md) | Invoke an already started Item (waiting)  |
+| **signal**|signalId,input| [ExecutionResponse](api/classes/executionresponse.md) | Issue a signal or message|
 | **get**|[instanceQuery](#instance-query) |		[Instance](api/interfaces/iinstancedata.md) | Get an already running or idle Instance |
 
 examples:
@@ -32,7 +32,7 @@ examples:
 ```
 
 ## definitions
-Manages BPMN defintions - [Definitions](api/classes/ModelsDatastore.md)
+Manages BPMN defintions - [Definitions](api/classes/modelsdatastore.md)
 
 | Method| parameters           | return  | description |
 | ------------- |:-------------:| -----| ----------|
@@ -40,7 +40,7 @@ Manages BPMN defintions - [Definitions](api/classes/ModelsDatastore.md)
 |		load	| name|	definition |
 
 ## datastore
-Saves and retrievs Instances Data - [DataStore](api/classes/DataStore.md)
+Saves and retrievs Instances Data - [DataStore](api/classes/datastore.md)
 
 | Method| parameters           | return  | description |
 | ------------- |:-------------:| -----| ----------|
@@ -58,7 +58,7 @@ Caches running instances for performance - [CacheManager](api/classes/cachemanag
 		restart
 
 ## cron
-Manages background tasks, primarly timers - [Cron](api/classes/Cron.md)
+Manages background tasks, primarly timers - [Cron](api/classes/cron.md)
 
 		start
 		check
