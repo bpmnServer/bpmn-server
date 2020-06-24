@@ -13,6 +13,7 @@
 ## Implemented by
 
 * [BoundaryEvent](../classes/boundaryevent.md)
+* [CallActivity](../classes/callactivity.md)
 * [CatchEvent](../classes/catchevent.md)
 * [Element](../classes/element.md)
 * [EndEvent](../classes/endevent.md)

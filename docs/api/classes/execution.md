@@ -32,7 +32,7 @@ is accessed two ways:
 * [logger](execution.md#logger)
 * [logs](execution.md#logs)
 * [name](execution.md#name)
-* [parentNodeId](execution.md#parentnodeid)
+* [parentItemId](execution.md#parentitemid)
 * [promises](execution.md#promises)
 * [saved](execution.md#saved)
 * [source](execution.md#source)
@@ -131,6 +131,8 @@ ___
 
 • **executionContext**: *any*
 
+*Implementation of [IExecution](../interfaces/iexecution.md).[executionContext](../interfaces/iexecution.md#executioncontext)*
+
 Defined in src/engine/Execution.ts:40
 
 ___
@@ -185,11 +187,11 @@ Defined in src/engine/Execution.ts:25
 
 ___
 
-###  parentNodeId
+###  parentItemId
 
-• **parentNodeId**: *any*
+• **parentItemId**: *any*
 
-*Implementation of [IExecution](../interfaces/iexecution.md).[parentNodeId](../interfaces/iexecution.md#parentnodeid)*
+*Implementation of [IExecution](../interfaces/iexecution.md).[parentItemId](../interfaces/iexecution.md#parentitemid)*
 
 Defined in src/engine/Execution.ts:37
 
@@ -198,6 +200,8 @@ ___
 ###  promises
 
 • **promises**: *any[]* = []
+
+*Implementation of [IExecution](../interfaces/iexecution.md).[promises](../interfaces/iexecution.md#promises)*
 
 Defined in src/engine/Execution.ts:42
 
@@ -259,7 +263,7 @@ ___
 
 *Implementation of [IExecution](../interfaces/iexecution.md).[uids](../interfaces/iexecution.md#uids)*
 
-Defined in src/engine/Execution.ts:335
+Defined in src/engine/Execution.ts:338
 
 #### Type declaration:
 
@@ -271,7 +275,7 @@ Defined in src/engine/Execution.ts:335
 
 *Implementation of [IExecution](../interfaces/iexecution.md)*
 
-Defined in src/engine/Execution.ts:372
+Defined in src/engine/Execution.ts:375
 
 **Parameters:**
 
@@ -290,7 +294,7 @@ ___
 
 *Implementation of [IExecution](../interfaces/iexecution.md)*
 
-Defined in src/engine/Execution.ts:350
+Defined in src/engine/Execution.ts:353
 
 **Parameters:**
 
@@ -308,7 +312,7 @@ ___
 
 *Implementation of [IExecution](../interfaces/iexecution.md)*
 
-Defined in src/engine/Execution.ts:360
+Defined in src/engine/Execution.ts:363
 
 **Parameters:**
 
@@ -327,7 +331,7 @@ ___
 
 *Implementation of [IExecution](../interfaces/iexecution.md)*
 
-Defined in src/engine/Execution.ts:355
+Defined in src/engine/Execution.ts:358
 
 **Parameters:**
 
@@ -356,7 +360,7 @@ ___
 
 ▸ **execute**(`startNodeId`: any, `inputData`: object): *Promise‹void›*
 
-Defined in src/engine/Execution.ts:94
+Defined in src/engine/Execution.ts:97
 
 **Parameters:**
 
@@ -375,7 +379,7 @@ ___
 
 *Implementation of [IExecution](../interfaces/iexecution.md)*
 
-Defined in src/engine/Execution.ts:414
+Defined in src/engine/Execution.ts:417
 
 **Parameters:**
 
@@ -394,7 +398,7 @@ ___
 
 *Implementation of [IExecution](../interfaces/iexecution.md)*
 
-Defined in src/engine/Execution.ts:401
+Defined in src/engine/Execution.ts:404
 
 **Parameters:**
 
@@ -412,7 +416,7 @@ ___
 
 *Implementation of [IExecution](../interfaces/iexecution.md)*
 
-Defined in src/engine/Execution.ts:204
+Defined in src/engine/Execution.ts:207
 
 **Parameters:**
 
@@ -430,7 +434,7 @@ ___
 
 *Implementation of [IExecution](../interfaces/iexecution.md)*
 
-Defined in src/engine/Execution.ts:215
+Defined in src/engine/Execution.ts:218
 
 **Returns:** *any[]*
 
@@ -442,7 +446,7 @@ ___
 
 *Implementation of [IExecution](../interfaces/iexecution.md)*
 
-Defined in src/engine/Execution.ts:336
+Defined in src/engine/Execution.ts:339
 
 **Parameters:**
 
@@ -478,7 +482,7 @@ ___
 
 *Implementation of [IExecution](../interfaces/iexecution.md)*
 
-Defined in src/engine/Execution.ts:225
+Defined in src/engine/Execution.ts:228
 
 **Returns:** *[IInstanceData](../interfaces/iinstancedata.md)*
 
@@ -508,7 +512,7 @@ ___
 
 *Implementation of [IExecution](../interfaces/iexecution.md)*
 
-Defined in src/engine/Execution.ts:343
+Defined in src/engine/Execution.ts:346
 
 **Returns:** *any*
 
@@ -520,7 +524,7 @@ ___
 
 *Implementation of [IExecution](../interfaces/iexecution.md)*
 
-Defined in src/engine/Execution.ts:364
+Defined in src/engine/Execution.ts:367
 
 **Parameters:**
 
@@ -538,7 +542,7 @@ ___
 
 *Implementation of [IExecution](../interfaces/iexecution.md)*
 
-Defined in src/engine/Execution.ts:312
+Defined in src/engine/Execution.ts:315
 
 **Returns:** *void*
 
@@ -550,7 +554,7 @@ ___
 
 *Implementation of [IExecution](../interfaces/iexecution.md)*
 
-Defined in src/engine/Execution.ts:299
+Defined in src/engine/Execution.ts:302
 
 **Returns:** *void*
 
@@ -562,7 +566,7 @@ ___
 
 *Implementation of [IExecution](../interfaces/iexecution.md)*
 
-Defined in src/engine/Execution.ts:306
+Defined in src/engine/Execution.ts:309
 
 **Returns:** *void*
 
@@ -574,7 +578,7 @@ ___
 
 *Implementation of [IExecution](../interfaces/iexecution.md)*
 
-Defined in src/engine/Execution.ts:143
+Defined in src/engine/Execution.ts:146
 
 invoke scenarios:
      itemId
@@ -598,7 +602,7 @@ ___
 
 *Implementation of [IExecution](../interfaces/iexecution.md)*
 
-Defined in src/engine/Execution.ts:91
+Defined in src/engine/Execution.ts:94
 
 causes the execution to stop from running any further
 
@@ -626,7 +630,7 @@ ___
 
 ▸ **restore**(`state`: [IInstanceData](../interfaces/iinstancedata.md), `executionContext`: any): *Promise‹[Execution](execution.md)›*
 
-Defined in src/engine/Execution.ts:246
+Defined in src/engine/Execution.ts:249
 
 **Parameters:**
 

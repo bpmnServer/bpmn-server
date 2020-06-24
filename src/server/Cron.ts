@@ -7,11 +7,15 @@ import { IEventData } from '../..';
 
 class Cron  extends ServerComponent {
 
-	static checkingTimers = false;
-	static timersFired = 0;
+	private static checkingTimers = false;
+	private static timersFired = 0;
 
-	timersFired() {
+	static timerScheduled(timeDue) {
 		Cron.timersFired++;
+    }
+	static timerEnded(item) {
+		Cron.timersFired--;
+
     }
 	async checkTimers(duration = 0) {
 
@@ -20,9 +24,9 @@ class Cron  extends ServerComponent {
 			setTimeout(this.checkTimers.bind(this, duration), duration);
 	}
 	async start() {
-		this.checkTimers(500);
+		this.checkTimers(5000);
     }
-	async _checkTimers() {
+	private async _checkTimers() {
 		if (Cron.checkingTimers || Cron.timersFired==0)
 			return;
 
@@ -36,9 +40,10 @@ class Cron  extends ServerComponent {
 		let query, list, i;
 		target += precision;
 
+		const self = this;
+		/* Todo
 		query = { "timeDue": { $lt: new Date(target).toISOString() } };
 		list = await this.findEvents(query);
-		const self = this;
 
 		for (i = 0; i < list.length; i++) {
 			let entry = list[i];
@@ -51,8 +56,9 @@ class Cron  extends ServerComponent {
 //				}
 			}
 		}
+		*/
 		// { "items.timeDue": { $lt: new ISODate("2020-06-14T19:44:38.541Z") } }	
-		query = { items: { timeDue: { $lt: target } } };
+		query = { "items.timeDue": { $lt: target } };
 		//query = { query: { "items.timeDue": { $lt: new Date(target).toISOString() } } };
 		//query = { items: {timeDue: { $lt: new Date(target).toISOString() } }};
 		list = await this.dataStore.findItems(query);
@@ -66,7 +72,7 @@ class Cron  extends ServerComponent {
 				self.logger.log(`checking timer: ${item.timeDue}  vs ${now.getTime()}`);
 //				if (item.timeDue < now.getTime()) {
 					self.logger.log("timer is now due for item:" + item.elementId+ " status:"+ item.status + " "+item.id);
-					await self.engine.invoke({ items: { id: item.id } }, null);
+				await self.engine.invoke({"items.id": item.id }, null);
 //				}
 			}
 		}
@@ -74,24 +80,11 @@ class Cron  extends ServerComponent {
 		this.logger.log(" all timers are done.");
 		Cron.checkingTimers = false;
 	}
-	async findEvents(query): Promise<IEventData[]> {
-		let recs = await this.dataStore.findEvents(query);
-		this.logger.log(recs);
-		return recs;
+	private async findEvents(query): Promise<IEventData[]> {
+		return null;	// todo
 	}
-	async findEventById(signalId: string): Promise<IEventData> {
-
-		let list = await this.findEvents({});
-		let i;
-		for (i = 0; i < list.length; i++) {
-			let entry = list[i];
-			if (entry.signalId) {
-				if (signalId == entry.signalId) {
-					this.logger.log("found event");
-					return entry;
-				}
-			}
-		}
+	private async findEventById(signalId: string): Promise<IEventData> {
+		return null;	// todo 
 	}
 }
 

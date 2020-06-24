@@ -2,14 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BPMNServer = void 0;
 const Logger_1 = require("../common/Logger");
-const DataStore_1 = require("./DataStore");
-const EventsRegistry_1 = require("./EventsRegistry");
-const __1 = require("../..");
 const Engine_1 = require("./Engine");
 const CacheManager_1 = require("./CacheManager");
 const Cron_1 = require("./Cron");
 const fs = require('fs');
-/*
+/**
  *	The main class of Server Layer
  *	provides the full functionalities:
  *
@@ -46,12 +43,11 @@ class BPMNServer {
         this.configuration = configuration;
         this.cron = new Cron_1.Cron(this);
         this.cron.start();
-        this.dataStore = new DataStore_1.DataStore(this);
         this.cache = new CacheManager_1.CacheManager(this);
         this.engine = new Engine_1.Engine(this);
-        this.eventsRegistry = new EventsRegistry_1.EventsRegistry(this);
-        this.definitions = new __1.ModelsDatastore(this);
-        this.appDelegate = configuration.appDelegate;
+        this.dataStore = configuration.dataStore(this);
+        this.definitions = configuration.definitions(this);
+        this.appDelegate = configuration.appDelegate(this);
     }
 }
 exports.BPMNServer = BPMNServer;

@@ -1,9 +1,8 @@
 
-import { ModelsDatastore } from '../server/ModelsDatastore';
+import { ModelsDatastoreDB } from '../datastore/ModelsDatastoreDB';
 import { DefaultAppDelegate } from '../engine/DefaultAppDelegate';
 
-import { IConfiguration, DataStore, ILogger, IModelsDatastore, IAppDelegate, IDataStore, IEventsRegistry } from '../..';
-import { EventsRegistry } from '../..';
+import { IConfiguration, DataStore, ILogger, IModelsDatastore, IAppDelegate, IDataStore } from '../..';
 import { Logger } from './'
 
 let definitionsPath = __dirname + '/processes/';
@@ -13,18 +12,22 @@ class Configuration implements IConfiguration {
 	timers: { forceTimersDelay: number; precision: number; };
 	database: { MongoDB: { db_url: string; db: string; }; };
 	logger: ILogger;
-	definitions: IModelsDatastore;
-	appDelegate: IAppDelegate;
-	dataStore: IDataStore;
-	eventsRegistry: IEventsRegistry;
+	definitions(server)  {
+		return new ModelsDatastoreDB(server); 
+	}
+	appDelegate(server) {
+		return new DefaultAppDelegate(server);
+	}
+	dataStore(server) {
+		return new DataStore(server);
+	}
 
 	constructor({
 		definitionsPath, timers, database,
 		logger,
 		definitions,
 		appDelegate,
-		dataStore,
-		eventsRegistry }) {
+		dataStore }) {
 		this.definitionsPath = definitionsPath;
 		this.timers = timers;
 		this.database = database;
@@ -32,7 +35,6 @@ class Configuration implements IConfiguration {
 		this.definitions = definitions;
 		this.appDelegate = appDelegate;
 		this.dataStore = dataStore;
-		this.eventsRegistry = eventsRegistry;
 	}
 }
 var defaultConfiguration = new Configuration(
@@ -50,10 +52,9 @@ var defaultConfiguration = new Configuration(
 			}
 		},
 		logger: Logger,							// class
-		definitions: ModelsDatastore,			// class
+		definitions: ModelsDatastoreDB,			// class
 		appDelegate: new DefaultAppDelegate(),		// object
-		dataStore: DataStore,					// class	
-		eventsRegistry: EventsRegistry			//class
+		dataStore: DataStore				// class	
 	});
 
 

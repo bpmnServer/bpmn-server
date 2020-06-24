@@ -1,14 +1,11 @@
 
-import { Logger } from '../common/Logger';
+import { Execution, ExecutionContext } from '../..';
+import { ServerComponent } from '../server/ServerContext';
 
-
-import { Execution } from '../engine/Execution';
-
-import { ServerComponent } from './ServerContext';
-import { DataStore } from './DataStore';
-import { ExecutionContext, ExecutionResponse } from '.';
 import { EventEmitter } from 'events';
-
+import { DataStore } from '../datastore';
+console.log('ServerComponent');
+console.log(ServerComponent);
 
 class Engine extends ServerComponent {
 
@@ -21,31 +18,36 @@ class Engine extends ServerComponent {
 	 */
 	async start(name: any,
 		data: any = {}, listener: EventEmitter = null,
-		startNodeId: string = null): Promise<ExecutionResponse> {
+		startNodeId: string = null): Promise<ExecutionContext> {
 
 		this.logger.log(`Action:engine.start ${name}`);
 
 
 		const definitions = this.definitions;
-		const source = definitions.getSource(name);
+		const source = await definitions.getSource(name);
 
-		const executionContext = new ExecutionContext(this.server);
 		if (!listener)
 			listener = new EventEmitter();
+
+		const executionContext = new ExecutionContext(this.server);
+
 		executionContext.listener = listener;
 		const execution = new Execution(name, source, executionContext);
 		executionContext.execution = execution;
-		executionContext.dataStore.monitorExecution(execution);
+
+		// new dataStore for every execution to be monitored 
+		const newDataStore =new DataStore(executionContext.server);
+		executionContext.server.dataStore = newDataStore;
+
+		newDataStore.monitorExecution(execution);
 
 		this.cache.add(executionContext);
 		await execution.execute(startNodeId, data);
 
-		const state = await execution.getState();
-
 		await executionContext.dataStore.save();
 
 		this.logger.log(`.engine.start ended for ${name}`);
-		return new ExecutionResponse(execution);
+		return executionContext;
 
 	}
 	/**
@@ -61,10 +63,10 @@ class Engine extends ServerComponent {
 	 *					{ items.item.itemKey : 'businesskey here'}
 	 *					
 	 */
-	async get(instanceQuery,listener: EventEmitter = null): Promise<ExecutionResponse> {
+	async get(instanceQuery,listener: EventEmitter = null): Promise<ExecutionContext> {
 
-		const executionContext = await this.restore(instanceQuery, listener);
-		return new ExecutionResponse(executionContext.execution);
+		return  await this.restore(instanceQuery, listener);
+		
 	}
 	async restore(instanceQuery, listener: EventEmitter = null): Promise<ExecutionContext> {
 
@@ -84,7 +86,12 @@ class Engine extends ServerComponent {
 			executionContext.listener = listener;
 			const execution = await Execution.restore(instance, executionContext);
 			executionContext.execution = execution;
-			executionContext.dataStore.monitorExecution(execution);
+
+			// new dataStore for every execution to be monitored 
+			const newDataStore = new DataStore(executionContext.server);
+			executionContext.server.dataStore = newDataStore;
+
+			newDataStore.monitorExecution(execution);
 
 			this.cache.add(executionContext);
 			this.logger.log("restore completed");
@@ -104,7 +111,7 @@ class Engine extends ServerComponent {
 	 * @param itemQuery		criteria to retrieve the item
 	 * @param data
 	 */
-	async invoke(itemQuery, data = {},listener: EventEmitter = null ) : Promise<ExecutionResponse> {
+	async invoke(itemQuery, data = {},listener: EventEmitter = null ) : Promise<ExecutionContext> {
 
 		this.logger.log(`Action:engine.continue`);
 		this.logger.log(itemQuery);
@@ -131,7 +138,7 @@ class Engine extends ServerComponent {
 
 			this.logger.log(`.engine.continue ended`);
 
-			return new ExecutionResponse(executionContext.execution);
+			return executionContext;
 		}
 		catch (exc) {
 			return this.error(exc,executionContext);
@@ -153,14 +160,15 @@ class Engine extends ServerComponent {
 	 * @param elementId
 	 * @param data
 	 */
-	async startEvent(instanceId, elementId, data = {}, listener: EventEmitter = null) : Promise<ExecutionResponse> {
+	async startEvent(instanceId, elementId, data = {}, listener: EventEmitter = null) : Promise<ExecutionContext> {
 
+		let context;
 		// need to load instance first
 		this.logger.log('serverinvokeSignal');
 
 		try {
 
-			const context = await this.restore({ "id": instanceId },listener);
+			context = await this.restore({ "id": instanceId },listener);
 			const execution = context.execution;
 
 			await execution.signal(elementId, data);
@@ -169,10 +177,10 @@ class Engine extends ServerComponent {
 
 			this.logger.log("invoke completed");
 
-			return new ExecutionResponse(context.execution);
+			return context;
 		}
 		catch (exc) {
-			return this.error(exc);
+			return this.error(exc,context);
 
 		}
 	}
@@ -188,24 +196,18 @@ class Engine extends ServerComponent {
 	 * @param matchingKey	should match the itemKey (if specified)
 	 * @param data			message data
 	 */
-	async signal(messageId, matchingKey, data = {}, listener: EventEmitter = null) {
+	async signal(messageId, matchingKey, data = {}, listener: EventEmitter = null) : Promise<ExecutionContext>{
 
 		// need to load instance first
-		this.logger.log('serverinvokeSignal');
-
-		try {
-
-		}
-		catch (exc) {
-			return this.error(exc);
-
-		}
+		return null;
 	}
 
 
-	private error(exc, executionContext = null) {
-
-		return new ExecutionResponse((executionContext)?executionContext.execution:null, exc);
+	private error(exc, executionContext) {
+		if (!executionContext)
+			executionContext = new ExecutionContext(this.server);
+		executionContext.errors=exc;
+		return executionContext;
 	}
 }
 

@@ -8,6 +8,9 @@ class MessageEventBehaviour extends Behaviour {
     end(item: Item) {
 
     }
+    get messageId() {
+        return this.definition['bpmn:messageRef'];
+    }
     describe() {
         return ['', 'has a message'];
     }
@@ -18,6 +21,9 @@ class SignalEventBehaviour extends Behaviour {
     }
     describe() {
         return ['', 'has a signal'];
+    }
+    get signalId() {
+        return this.definition['bpmn:signalRef'];
     }
 }
 

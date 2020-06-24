@@ -5,9 +5,9 @@ const _1 = require("./");
 const appDelegate_1 = require("./appDelegate");
 const _2 = require("./");
 const _3 = require("./");
-const _4 = require("./");
 let definitionsPath = __dirname + '/processes/';
-var configuration = new _1.Configuration({ definitionsPath: definitionsPath,
+var configuration = new _1.Configuration({
+    definitionsPath: definitionsPath,
     timers: {
         forceTimersDelay: 1000,
         precision: 3000,
@@ -18,11 +18,18 @@ var configuration = new _1.Configuration({ definitionsPath: definitionsPath,
             db: 'bpmn'
         }
     },
-    logger: _4.Logger,
-    definitions: _1.ModelsDatastore,
-    appDelegate: new appDelegate_1.MyAppDelegate(this),
-    dataStore: _2.DataStore,
-    eventsRegistry: _3.EventsRegistry //class
+    logger: function (server) {
+        new _3.Logger(server);
+    },
+    definitions: function (server) {
+        return new _1.ModelsDatastoreFS(server);
+    },
+    appDelegate: function (server) {
+        return new appDelegate_1.MyAppDelegate(server);
+    },
+    dataStore: function (server) {
+        return new _2.DataStore(server);
+    }
 });
 exports.configuration = configuration;
 //# sourceMappingURL=configuration.js.map

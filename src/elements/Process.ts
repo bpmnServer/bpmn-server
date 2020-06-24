@@ -9,10 +9,15 @@ import { Node, Definition } from '.';
 
 class Process {
     id;
+    name;
+    isExecutable;
     def: Definition;
     childrenNodes: Node[];
 
     constructor(definition, children) {
+        this.id = definition.id;
+        this.isExecutable = definition.isExecutable;
+        this.name = definition.name;
         this.def = definition;
         this.childrenNodes = children;
     }

@@ -1,14 +1,14 @@
 
-import { ModelsDatastore, Configuration } from './';
+import { ModelsDatastoreDB, Configuration, ModelsDatastoreFS } from './';
 import { MyAppDelegate } from './appDelegate';
-import { IConfiguration, DataStore, ILogger, IModelsDatastore, IAppDelegate, IDataStore, IEventsRegistry } from './';
-import { EventsRegistry } from './';
+import { IConfiguration, DataStore, ILogger } from './';
 import { Logger } from './'
 
 
 let definitionsPath = __dirname + '/processes/';
 var configuration = new Configuration(
-	{definitionsPath: definitionsPath,
+	{
+		definitionsPath: definitionsPath,
 		timers: {
 			forceTimersDelay: 1000,
 			precision: 3000,
@@ -20,11 +20,18 @@ var configuration = new Configuration(
 				db: 'bpmn'
 			}
 		},
-		logger: Logger,							// class
-		definitions: ModelsDatastore,			// class
-		appDelegate: new MyAppDelegate(this),		// object
-		dataStore: DataStore,					// class	
-		eventsRegistry: EventsRegistry			//class
+		logger: function (server) {
+			new Logger(server);
+		},							
+		definitions: function (server) {
+			return new ModelsDatastoreFS(server);
+		},			
+		appDelegate: function (server) {
+			return new MyAppDelegate(server);
+		},		
+		dataStore: function (server) {
+			return new DataStore(server);
+		}		
 	});
 
 

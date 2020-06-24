@@ -38,6 +38,7 @@
 * [run](timerbehaviour.md#run)
 * [start](timerbehaviour.md#start)
 * [startTimer](timerbehaviour.md#starttimer)
+* [timeDue](timerbehaviour.md#timedue)
 
 ## Constructors
 
@@ -116,7 +117,7 @@ ___
 
 *Overrides [Behaviour](behaviour.md).[end](behaviour.md#end)*
 
-Defined in src/elements/behaviours/Timer.ts:108
+Defined in src/elements/behaviours/Timer.ts:123
 
 **Parameters:**
 
@@ -132,7 +133,7 @@ ___
 
 ▸ **expires**(): *void*
 
-Defined in src/elements/behaviours/Timer.ts:101
+Defined in src/elements/behaviours/Timer.ts:116
 
 **Returns:** *void*
 
@@ -213,7 +214,7 @@ ___
 
 *Overrides [Behaviour](behaviour.md).[resume](behaviour.md#resume)*
 
-Defined in src/elements/behaviours/Timer.ts:112
+Defined in src/elements/behaviours/Timer.ts:127
 
 **Returns:** *void*
 
@@ -243,7 +244,7 @@ ___
 
 *Overrides [Behaviour](behaviour.md).[start](behaviour.md#start)*
 
-Defined in src/elements/behaviours/Timer.ts:68
+Defined in src/elements/behaviours/Timer.ts:90
 
 **Parameters:**
 
@@ -257,15 +258,32 @@ ___
 
 ###  startTimer
 
-▸ **startTimer**(`item`: any, `seconds`: any): *void*
+▸ **startTimer**(`item`: any): *void*
 
-Defined in src/elements/behaviours/Timer.ts:85
+Defined in src/elements/behaviours/Timer.ts:100
 
 **Parameters:**
 
 Name | Type |
 ------ | ------ |
 `item` | any |
-`seconds` | any |
 
 **Returns:** *void*
+
+___
+
+###  timeDue
+
+▸ **timeDue**(`timerModifier`: any): *number*
+
+Defined in src/elements/behaviours/Timer.ts:73
+
+return the next time the timer is due
+
+**Parameters:**
+
+Name | Type | Default | Description |
+------ | ------ | ------ | ------ |
+`timerModifier` | any | null | for testing purposes configuration can alter the timer  |
+
+**Returns:** *number*

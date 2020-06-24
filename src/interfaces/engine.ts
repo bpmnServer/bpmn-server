@@ -49,7 +49,6 @@ interface IToken {
     log(msg: any): void;
 }
 
-
 interface IExecution {
     id: any;
     name: any;
@@ -59,13 +58,15 @@ interface IExecution {
     status: EXECUTION_STATUS;
     tokens: Map<any, IToken>;
     definition: IDefinition;
-    appDelegate: any;
+    appDelegate: IAppDelegate;
     source: any;
     logger: ILogger;
     data: any;
     logs: any[];
-    parentNodeId: any;
+    parentItemId: any;
     listener: EventEmitter;
+    executionContext: IExecutionContext;
+    promises;
 
     getNodeById(id: any): Node;
     getToken(id: number): IToken;
@@ -132,11 +133,13 @@ interface IInstanceData {
     logs;
     tokens;
     loops;
-    parentNodeId;   // used for subProcess Calls
+    parentItemId;   // used for subProcess Calls
 }
 
 interface IItem extends IItemData {
-    data: any;
+    element: Element;
+    token: Token;
+    context: IExecutionContext;
 }
 
 
@@ -148,14 +151,23 @@ interface IExecutionResponse {
 
 
 interface IExecutionContext {
-    execution?: IExecution;
+    server;
+    configuration;
     logger;
-    listener;
     dataStore;
+    engine;
+    cron;
+    cache;
+    definitions;
+    appDelegate;
+
+    execution?: IExecution;
+    listener;
     errors;
     items: IItem[];
     error(error): IExecutionContext;
+    instance;
 }
 
 
-export { IItem, IItemData, IInstanceData, IToken, IExecution,IExecutionContext, IExecutionResponse }
+export { IItem, IItemData, IInstanceData, IToken, IExecution,IExecutionContext }

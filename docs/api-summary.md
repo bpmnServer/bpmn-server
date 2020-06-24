@@ -13,14 +13,14 @@ The execution Engine , processes an BPMN definition - [Engine](api/classes/Engin
 
 | Method| parameters           | return  | description |
 | ------------- |:-------------:| -----| ----------|
-| **start** | name, input 	 | [ExecutionResponse](api/classes/executionresponse.md) | - Start a new Process execution |
-| **invoke**| [itemQuery](#item-query) ,input |	[ExecutionResponse](api/classes/executionresponse.md) | Invoke an already started Item (waiting)  |
-| **signal**|signalId,input| [ExecutionResponse](api/classes/executionresponse.md) | Issue a signal or message|
+| **start** | name, input 	 | [ExecutionContext](api/classes/executioncontext.md) | - Start a new Process execution |
+| **invoke**| [itemQuery](#item-query) ,input |	[ExecutionContext](api/classes/executioncontext.md) | Invoke an already started Item (waiting)  |
+| **signal**|signalId,input| [ExecutionContext](api/classes/executioncontext.md) | Issue a signal or message|
 | **get**|[instanceQuery](#instance-query) |		[Instance](api/interfaces/iinstancedata.md) | Get an already running or idle Instance |
 
 examples:
 ```javascript
-    let response: ExecutionResponse;
+    let response: executioncontext;
     let data = {};
 
     //  engine
@@ -64,51 +64,74 @@ Manages background tasks, primarly timers - [Cron](api/classes/cron.md)
 		check
 		stop
 
-# Other Objects
+# Data Query 
 
-## Item Query 
+The syntax follows MongoDB standards, since instance data is saved in the format of :
 ```javascript
-       and('find items by item id only', async () => {
+{
+id;
+name;
+//.. other instance attributes
+items: { // items here
+    id;
+    elementId;
+    status;
+    // items here
+}
+data: { // data attributes here}
 
-            query = { items: { id: item.id } };
+}
+the query syntax must be 
+- instance attributes unqualified
+- item attributes are qualified by 'items.<attributeName>'
+- data attributes are qualified by 'data.<attributeName>'
+
+```
+## Item Query 
+
+
+| example | will retrieve          |
+| -------------|-----------|
+|	 { "items.id": item.id }	|	find items by id only - unique |
+|		{ id: instanceId, "items.elementId": item.elementId }	| find items by instance id and elementId 	|
+|	{"data.caseId": caseId  ,"items.**elementId**" : item.elementId }	| find items by caseId and item elementId 	|
+|		{ id: instanceId, "items.status": 'wait' }	| check for items in "wait" |
+|		{"items.status": 'wait' }	| find all items that has "wait" status |
+
+```javascript
+        and('find items by item id only', async () => {
+
+            query = { "items.id": item.id };
             items = await server.dataStore.findItems(query);
             checkItem(items, { id: item.id });
-
         });
         and('find items by instance and item elemetnId ', async () => {
-            query = {
-                instance: { id: response.execution.id },
-                items: { elementId: item.elementId }
-            };
 
+            query = { id: instanceId, "items.elementId": item.elementId };
             items = await server.dataStore.findItems(query);
             checkItem(items, { id: item.id });
-
         });
-        and('find items by caseId and item elemetnId ', async () => {
-            query = {
-                instance: {
-                    data: { caseId: caseId } },
-                items: { elementId: item.elementId }
-            };
-            console.log(items);
+
+        and('find items by caseId and item elementId ', async () => {
+
+            query = {"data.caseId": caseId  ,"items.elementId" : item.elementId };
             items = await server.dataStore.findItems(query);
             checkItem(items, { id: item.id });
-
         });
 
 
         and('check for items "wait" ', async () => {
-            query = { items: { status: 'wait' } };
+
+            query = { id: instanceId, "items.status": 'wait' };
             items = await server.dataStore.findItems(query);
             checkItem(items, { status: 'wait' });
-        });
-
+      });
 ```
 
 ## Instance Query
 ```javascript
-       and('find instance by instance id only', async () => {
+
+        and('find instance by instance id only', async () => {
 
             query = { id: response.execution.id };
             instances = await server.dataStore.findInstances(query);
@@ -118,8 +141,7 @@ Manages background tasks, primarly timers - [Cron](api/classes/cron.md)
 
         and('find instance by itemd id ', async () => {
 
-            query = {
-                items: { id: item.id  }};
+            query = {"items.id": item.id };
             instances = await server.dataStore.findInstances(query);
             checkInstance(instances, { id: response.execution.id });
 
@@ -134,6 +156,7 @@ Manages background tasks, primarly timers - [Cron](api/classes/cron.md)
             checkInstance(instances, { id: response.execution.id  });
 
         });
+
 
 ```
 - configuration

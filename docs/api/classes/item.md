@@ -93,6 +93,8 @@ ___
 
 • **element**: *[Element](element.md)*
 
+*Implementation of [IItem](../interfaces/iitem.md).[element](../interfaces/iitem.md#element)*
+
 Defined in src/engine/Item.ts:11
 
 ___
@@ -151,17 +153,19 @@ ___
 
 • **token**: *[Token](token.md)*
 
+*Implementation of [IItem](../interfaces/iitem.md).[token](../interfaces/iitem.md#token)*
+
 Defined in src/engine/Item.ts:12
 
 ## Accessors
 
 ###  context
 
-• **get context**(): *any*
+• **get context**(): *[IExecutionContext](../interfaces/iexecutioncontext.md)*
 
 Defined in src/engine/Item.ts:35
 
-**Returns:** *any*
+**Returns:** *[IExecutionContext](../interfaces/iexecutioncontext.md)*
 
 ___
 

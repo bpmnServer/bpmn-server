@@ -147,7 +147,7 @@ const awaitAppDelegateFactory = (middleware) => {
     });
 
     router.get('/resetData', awaitAppDelegateFactory(async (request, response) => {
-        await bpmnServer.dataStore.deleteData();
+        await bpmnServer.dataStore.deleteInstances();
         console.log(" Data Reset");
         let output = ['Data Reset'];
         output = show(output);
@@ -182,7 +182,7 @@ const awaitAppDelegateFactory = (middleware) => {
             return;
         }
 
-        let result = await bpmnServer.engine.invoke({ items: { id: id }}, {});
+        let result = await bpmnServer.engine.invoke({ "items.id": id }, {});
 
         console.log("redirecting");
         response.redirect('/instanceDetails?id=' + result.execution.id);
@@ -206,7 +206,7 @@ const awaitAppDelegateFactory = (middleware) => {
 
         console.log(data);
         
-        let result = await bpmnServer.engine.invoke({ items: { id: id } },  data);
+        let result = await bpmnServer.engine.invoke({ "items.id": id },  data);
 
 
         response.redirect('/instanceDetails?id=' + result.execution.id);
@@ -228,7 +228,7 @@ const awaitAppDelegateFactory = (middleware) => {
         console.log(" insance id " + instance.id);
         let output = ['run ' + process];
         output = show(output);
-        display(response, 'Run Prcesses', output, instance.logs, instance.items);
+        display(response, 'Run Prcesses', output, instance.logs, context.items);
     }));
     router.get('/instanceDetails', awaitAppDelegateFactory(async (request, response) => {
 
@@ -243,7 +243,7 @@ const awaitAppDelegateFactory = (middleware) => {
 
         let instanceId = req.query.id;
 
-        await bpmnServer.dataStore.deleteData(instanceId);
+        await bpmnServer.dataStore.deleteInstances({ id: instanceId });
 
         let output = ['Complete ' + instanceId];
         console.log(" deleted");
@@ -269,7 +269,14 @@ const awaitAppDelegateFactory = (middleware) => {
         console.log(" deleted");
         display(res, 'Show', output);
     });
-}
+    router.get('/manage', async function (req, res) {
+
+        res.render('manageProcesses',
+            {
+                procs: await bpmnServer.definitions.getList(),
+            });
+
+    });}
 async function displayError(res, error) {
     let msg = '';
 
@@ -292,8 +299,8 @@ async function displayError(res, error) {
 async function display(res, title, output, logs = [], items = []) {
 
     console.log(" Display Started");
-    var instances = await bpmnServer.dataStore.findInstances({});
-    let waiting = await bpmnServer.dataStore.findItems({ items: { status: 'wait' } }); 
+    var instances = await bpmnServer.dataStore.findInstances({},'summary');
+    let waiting = await bpmnServer.dataStore.findItems({"items.status": 'wait' }); 
 
     waiting.forEach(item => {
         item.fromNow = dateDiff(item.startedAt);
@@ -318,7 +325,7 @@ async function display(res, title, output, logs = [], items = []) {
         {
             title: title, output: output,
             engines,
-            procs: bpmnServer.definitions.getList(),
+            procs: await bpmnServer.definitions.getList(),
             debugMsgs: [], // Logger.get(),
             waiting: waiting,
             instances,

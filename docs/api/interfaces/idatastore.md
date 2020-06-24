@@ -6,6 +6,10 @@
 
 * **IDataStore**
 
+## Implemented by
+
+* [DataStore](../classes/datastore.md)
+
 ## Index
 
 ### Properties
@@ -13,26 +17,19 @@
 * [db](idatastore.md#db)
 * [dbConfiguration](idatastore.md#dbconfiguration)
 * [execution](idatastore.md#execution)
-* [inSaving](idatastore.md#insaving)
-* [isModified](idatastore.md#ismodified)
-* [isRunning](idatastore.md#isrunning)
 * [logger](idatastore.md#logger)
-* [promises](idatastore.md#promises)
-* [saveCounter](idatastore.md#savecounter)
 
 ### Methods
 
-* [check](idatastore.md#check)
-* [deleteData](idatastore.md#deletedata)
+* [deleteInstances](idatastore.md#deleteinstances)
 * [findInstance](idatastore.md#findinstance)
 * [findInstances](idatastore.md#findinstances)
 * [findItem](idatastore.md#finditem)
 * [findItems](idatastore.md#finditems)
+* [install](idatastore.md#install)
 * [loadInstance](idatastore.md#loadinstance)
 * [monitorExecution](idatastore.md#monitorexecution)
 * [save](idatastore.md#save)
-* [saveInstance](idatastore.md#saveinstance)
-* [setListener](idatastore.md#setlistener)
 
 ## Properties
 
@@ -40,7 +37,7 @@
 
 • **db**: *any*
 
-Defined in src/interfaces/server.ts:7
+Defined in src/interfaces/datastore.ts:7
 
 ___
 
@@ -48,7 +45,7 @@ ___
 
 • **dbConfiguration**: *any*
 
-Defined in src/interfaces/server.ts:6
+Defined in src/interfaces/datastore.ts:6
 
 ___
 
@@ -56,31 +53,7 @@ ___
 
 • **execution**: *[IExecution](iexecution.md)*
 
-Defined in src/interfaces/server.ts:9
-
-___
-
-###  inSaving
-
-• **inSaving**: *boolean*
-
-Defined in src/interfaces/server.ts:12
-
-___
-
-###  isModified
-
-• **isModified**: *boolean*
-
-Defined in src/interfaces/server.ts:10
-
-___
-
-###  isRunning
-
-• **isRunning**: *boolean*
-
-Defined in src/interfaces/server.ts:11
+Defined in src/interfaces/datastore.ts:9
 
 ___
 
@@ -88,47 +61,21 @@ ___
 
 • **logger**: *any*
 
-Defined in src/interfaces/server.ts:8
-
-___
-
-###  promises
-
-• **promises**: *any[]*
-
-Defined in src/interfaces/server.ts:13
-
-___
-
-###  saveCounter
-
-• **saveCounter**: *number*
-
-Defined in src/interfaces/server.ts:16
+Defined in src/interfaces/datastore.ts:8
 
 ## Methods
 
-###  check
+###  deleteInstances
 
-▸ **check**(): *Promise‹void›*
+▸ **deleteInstances**(`query?`: any): *Promise‹void›*
 
-Defined in src/interfaces/server.ts:18
-
-**Returns:** *Promise‹void›*
-
-___
-
-###  deleteData
-
-▸ **deleteData**(`instanceId?`: any): *Promise‹void›*
-
-Defined in src/interfaces/server.ts:40
+Defined in src/interfaces/datastore.ts:23
 
 **Parameters:**
 
 Name | Type |
 ------ | ------ |
-`instanceId?` | any |
+`query?` | any |
 
 **Returns:** *Promise‹void›*
 
@@ -138,7 +85,7 @@ ___
 
 ▸ **findInstance**(`query`: any, `options`: any): *Promise‹any›*
 
-Defined in src/interfaces/server.ts:25
+Defined in src/interfaces/datastore.ts:17
 
 **Parameters:**
 
@@ -155,7 +102,7 @@ ___
 
 ▸ **findInstances**(`query`: any, `option`: "summary" | "full"): *Promise‹any›*
 
-Defined in src/interfaces/server.ts:26
+Defined in src/interfaces/datastore.ts:18
 
 **Parameters:**
 
@@ -172,7 +119,7 @@ ___
 
 ▸ **findItem**(`query`: any): *Promise‹any›*
 
-Defined in src/interfaces/server.ts:24
+Defined in src/interfaces/datastore.ts:16
 
 **Parameters:**
 
@@ -188,15 +135,7 @@ ___
 
 ▸ **findItems**(`query`: any): *Promise‹any[]›*
 
-Defined in src/interfaces/server.ts:39
-
-scenario:
-itemId			{ items { id : value } }
-itemKey			{ items {key: value } }
-instance, task	{ instance: { id: instanceId }, items: { elementId: value }}
-message			{ items: { messageId: nameofmessage, key: value } {}
-status			{ items: {status: 'wait' } }
-custom: { query: query, projection: projection }
+Defined in src/interfaces/datastore.ts:22
 
 **Parameters:**
 
@@ -208,11 +147,21 @@ Name | Type | Description |
 
 ___
 
+###  install
+
+▸ **install**(): *any*
+
+Defined in src/interfaces/datastore.ts:24
+
+**Returns:** *any*
+
+___
+
 ###  loadInstance
 
 ▸ **loadInstance**(`instanceId`: any): *Promise‹object›*
 
-Defined in src/interfaces/server.ts:19
+Defined in src/interfaces/datastore.ts:12
 
 **Parameters:**
 
@@ -228,7 +177,7 @@ ___
 
 ▸ **monitorExecution**(`execution`: [IExecution](iexecution.md)): *void*
 
-Defined in src/interfaces/server.ts:14
+Defined in src/interfaces/datastore.ts:10
 
 **Parameters:**
 
@@ -244,39 +193,6 @@ ___
 
 ▸ **save**(): *Promise‹void›*
 
-Defined in src/interfaces/server.ts:17
+Defined in src/interfaces/datastore.ts:11
 
 **Returns:** *Promise‹void›*
-
-___
-
-###  saveInstance
-
-▸ **saveInstance**(`instance`: any, `items`: any): *Promise‹void›*
-
-Defined in src/interfaces/server.ts:23
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`instance` | any |
-`items` | any |
-
-**Returns:** *Promise‹void›*
-
-___
-
-###  setListener
-
-▸ **setListener**(`listener`: any): *void*
-
-Defined in src/interfaces/server.ts:15
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`listener` | any |
-
-**Returns:** *void*

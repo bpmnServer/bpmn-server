@@ -17,10 +17,11 @@ const Behaviour_names = {
     TerminateEventDefinition: 'bpmn:TerminateEventDefinition',
     MessageEventDefinition: 'bpmn:MessageEventDefinition',
     SignalEventDefinition: 'bpmn:SignalEventDefinition',
-    CamundaFormData: 'camunda:formData'
+    CamundaFormData: 'camunda:formData',
+    CamundaScript: 'camunda:script'
 }
 
-class BehaviourLoader {
+class BehaviourLoader {/*
     static Behaviours = {
         timerEventDefinition: function (node, def) { return new TimerBehaviour(node, def); },
         loopCharacteristics: function (node, def) { return new LoopBehaviour(node, def); },
@@ -29,7 +30,7 @@ class BehaviourLoader {
         messageEventDefinition: function (node, def) { return new MessageEventBehaviour(node, def); },
         signalEventDefinition: function (node, def) { return new SignalEventBehaviour(node, def); },
         terminateEventDefinition: function (node, def) { return new TerminateBehaviour(node, def); }
-    }
+    } */
 
     static behaviours = [
         {
@@ -58,7 +59,12 @@ class BehaviourLoader {
             }
         },
         {
-            name: 'camunda:script', funct: function (node, def) {
+            name: Behaviour_names.SignalEventDefinition, funct: function (node, def) {
+                return new SignalEventBehaviour(node, def);
+            }
+        },
+        {
+            name: Behaviour_names.CamundaScript, funct: function (node, def) {
                 return new ScriptBehaviour(node, def);
             }
         },

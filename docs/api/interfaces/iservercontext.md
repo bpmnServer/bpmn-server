@@ -16,7 +16,6 @@ is used as a repsone to server request
 * [configuration](iservercontext.md#configuration)
 * [dataStore](iservercontext.md#datastore)
 * [definitions](iservercontext.md#definitions)
-* [eventsRegistry](iservercontext.md#eventsregistry)
 * [logger](iservercontext.md#logger)
 
 ## Properties
@@ -25,7 +24,7 @@ is used as a repsone to server request
 
 • **appDelegate**: *any*
 
-Defined in src/interfaces/server.ts:50
+Defined in src/interfaces/server.ts:12
 
 ___
 
@@ -33,7 +32,7 @@ ___
 
 • **configuration**: *any*
 
-Defined in src/interfaces/server.ts:47
+Defined in src/interfaces/server.ts:9
 
 ___
 
@@ -41,7 +40,7 @@ ___
 
 • **dataStore**: *any*
 
-Defined in src/interfaces/server.ts:51
+Defined in src/interfaces/server.ts:13
 
 ___
 
@@ -49,15 +48,7 @@ ___
 
 • **definitions**: *any*
 
-Defined in src/interfaces/server.ts:49
-
-___
-
-###  eventsRegistry
-
-• **eventsRegistry**: *any*
-
-Defined in src/interfaces/server.ts:52
+Defined in src/interfaces/server.ts:11
 
 ___
 
@@ -65,4 +56,4 @@ ___
 
 • **logger**: *any*
 
-Defined in src/interfaces/server.ts:48
+Defined in src/interfaces/server.ts:10

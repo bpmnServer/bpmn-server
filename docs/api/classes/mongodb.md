@@ -21,12 +21,14 @@
 ### Methods
 
 * [connect](mongodb.md#connect)
+* [createIndex](mongodb.md#createindex)
 * [find](mongodb.md#find)
 * [getClient](mongodb.md#getclient)
 * [insert](mongodb.md#insert)
 * [remove](mongodb.md#remove)
 * [removeById](mongodb.md#removebyid)
 * [update](mongodb.md#update)
+* [update2](mongodb.md#update2)
 
 ## Constructors
 
@@ -34,7 +36,7 @@
 
 \+ **new MongoDB**(`dbConfig`: any, `logger`: any): *[MongoDB](mongodb.md)*
 
-Defined in src/server/MongoDB.ts:21
+Defined in src/datastore/MongoDB.ts:21
 
 **Parameters:**
 
@@ -51,7 +53,7 @@ Name | Type |
 
 • **client**: *any*
 
-Defined in src/server/MongoDB.ts:19
+Defined in src/datastore/MongoDB.ts:19
 
 ___
 
@@ -59,7 +61,7 @@ ___
 
 • **dbConfig**: *any*
 
-Defined in src/server/MongoDB.ts:20
+Defined in src/datastore/MongoDB.ts:20
 
 ___
 
@@ -67,7 +69,7 @@ ___
 
 • **logger**: *any*
 
-Defined in src/server/MongoDB.ts:21
+Defined in src/datastore/MongoDB.ts:21
 
 ## Methods
 
@@ -75,7 +77,26 @@ Defined in src/server/MongoDB.ts:21
 
 ▸ **connect**(): *Promise‹unknown›*
 
-Defined in src/server/MongoDB.ts:161
+Defined in src/datastore/MongoDB.ts:208
+
+**Returns:** *Promise‹unknown›*
+
+___
+
+###  createIndex
+
+▸ **createIndex**(`dbName`: any, `collName`: any, `index`: any, `unique`: object): *Promise‹unknown›*
+
+Defined in src/datastore/MongoDB.ts:59
+
+**Parameters:**
+
+Name | Type | Default |
+------ | ------ | ------ |
+`dbName` | any | - |
+`collName` | any | - |
+`index` | any | - |
+`unique` | object | {} |
 
 **Returns:** *Promise‹unknown›*
 
@@ -85,7 +106,7 @@ ___
 
 ▸ **find**(`dbName`: any, `collName`: any, `qry`: any, `projection`: any): *Promise‹unknown›*
 
-Defined in src/server/MongoDB.ts:33
+Defined in src/datastore/MongoDB.ts:33
 
 **Parameters:**
 
@@ -104,7 +125,7 @@ ___
 
 ▸ **getClient**(): *Promise‹any›*
 
-Defined in src/server/MongoDB.ts:26
+Defined in src/datastore/MongoDB.ts:26
 
 **Returns:** *Promise‹any›*
 
@@ -114,7 +135,7 @@ ___
 
 ▸ **insert**(`dbName`: any, `collName`: any, `docs`: any): *Promise‹unknown›*
 
-Defined in src/server/MongoDB.ts:57
+Defined in src/datastore/MongoDB.ts:82
 
 **Parameters:**
 
@@ -132,7 +153,7 @@ ___
 
 ▸ **remove**(`dbName`: any, `collName`: any, `query`: any): *Promise‹unknown›*
 
-Defined in src/server/MongoDB.ts:105
+Defined in src/datastore/MongoDB.ts:152
 
 **Parameters:**
 
@@ -150,7 +171,7 @@ ___
 
 ▸ **removeById**(`dbName`: any, `collName`: any, `id`: any): *Promise‹unknown›*
 
-Defined in src/server/MongoDB.ts:133
+Defined in src/datastore/MongoDB.ts:180
 
 **Parameters:**
 
@@ -166,17 +187,38 @@ ___
 
 ###  update
 
-▸ **update**(`dbName`: any, `collName`: any, `query`: any, `updateObject`: any): *Promise‹unknown›*
+▸ **update**(`dbName`: any, `collName`: any, `query`: any, `updateObject`: any, `options`: object): *Promise‹unknown›*
 
-Defined in src/server/MongoDB.ts:82
+Defined in src/datastore/MongoDB.ts:107
 
 **Parameters:**
 
-Name | Type |
------- | ------ |
-`dbName` | any |
-`collName` | any |
-`query` | any |
-`updateObject` | any |
+Name | Type | Default |
+------ | ------ | ------ |
+`dbName` | any | - |
+`collName` | any | - |
+`query` | any | - |
+`updateObject` | any | - |
+`options` | object | {} |
+
+**Returns:** *Promise‹unknown›*
+
+___
+
+###  update2
+
+▸ **update2**(`dbName`: any, `collName`: any, `query`: any, `updateObject`: any, `options`: object): *Promise‹unknown›*
+
+Defined in src/datastore/MongoDB.ts:129
+
+**Parameters:**
+
+Name | Type | Default |
+------ | ------ | ------ |
+`dbName` | any | - |
+`collName` | any | - |
+`query` | any | - |
+`updateObject` | any | - |
+`options` | object | {} |
 
 **Returns:** *Promise‹unknown›*

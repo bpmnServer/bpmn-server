@@ -53,7 +53,7 @@ import { IToken, IExecution, IItem } from '../interfaces/engine';
 // ---------------------------------------------
 class Token implements IToken {
     id;
-    execution: any;
+    execution: IExecution;
     dataPath: string;
     startNodeId;
     parentToken?: Token;

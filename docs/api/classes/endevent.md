@@ -44,6 +44,9 @@
 * [getBehaviour](endevent.md#getbehaviour)
 * [getOutbounds](endevent.md#getoutbounds)
 * [hasBehaviour](endevent.md#hasbehaviour)
+* [hasMessage](endevent.md#hasmessage)
+* [hasSignal](endevent.md#hassignal)
+* [hasTimer](endevent.md#hastimer)
 * [init](endevent.md#init)
 * [requiresWait](endevent.md#requireswait)
 * [restored](endevent.md#restored)
@@ -213,7 +216,7 @@ ___
 
 *Overrides [Node](node.md).[canBeInvoked](node.md#canbeinvoked)*
 
-Defined in src/elements/Events.ts:21
+Defined in src/elements/Events.ts:30
 
 **Returns:** *boolean*
 
@@ -279,7 +282,7 @@ ___
 
 *Overrides [Event](event.md).[end](event.md#end)*
 
-Defined in src/elements/Events.ts:88
+Defined in src/elements/Events.ts:94
 
 **Parameters:**
 
@@ -396,6 +399,42 @@ Name | Type |
 
 ___
 
+###  hasMessage
+
+▸ **hasMessage**(): *any*
+
+*Inherited from [Event](event.md).[hasMessage](event.md#hasmessage)*
+
+Defined in src/elements/Events.ts:7
+
+**Returns:** *any*
+
+___
+
+###  hasSignal
+
+▸ **hasSignal**(): *any*
+
+*Inherited from [Event](event.md).[hasSignal](event.md#hassignal)*
+
+Defined in src/elements/Events.ts:10
+
+**Returns:** *any*
+
+___
+
+###  hasTimer
+
+▸ **hasTimer**(): *any*
+
+*Inherited from [Event](event.md).[hasTimer](event.md#hastimer)*
+
+Defined in src/elements/Events.ts:13
+
+**Returns:** *any*
+
+___
+
 ###  init
 
 ▸ **init**(`item`: [Item](item.md)): *void*
@@ -493,7 +532,7 @@ ___
 
 *Overrides [Node](node.md).[start](node.md#start)*
 
-Defined in src/elements/Events.ts:13
+Defined in src/elements/Events.ts:22
 
 	using token: check if fromEventBasedGateway;	if yes cancel all other events
 

@@ -35,7 +35,7 @@ const awaitHandlerFactory = (middleware) => {
         let xml, base_url, title, processName;
 
         processName = request.params.process;
-        xml = definitions.getSource(processName);
+        xml = await definitions.getSource(processName);
         title = processName;
 
         /*

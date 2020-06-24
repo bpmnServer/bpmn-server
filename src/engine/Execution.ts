@@ -4,7 +4,7 @@ const fs = require('fs');
 import { Item } from './Item';
 import { Token  } from './Token';
 import { Loop} from './Loop';
-import { Element, Node, Flow , Definition } from '../elements/'
+import { Element, Node, Flow , Definition, CallActivity } from '../elements/'
 import { EXECUTION_EVENT, NODE_ACTION, FLOW_ACTION, TOKEN_STATUS, EXECUTION_STATUS, ITEM_STATUS, IDefinition, ExecutionContext } from '../../';
 import { IInstanceData, IBPMNServer, IExecution, IAppDelegate , DefaultAppDelegate } from '../../';
 import { EventEmitter } from 'events';
@@ -34,7 +34,7 @@ class Execution implements IExecution {
     logger;
     data : any;
     logs=[];
-    parentNodeId;
+    parentItemId;
 
     listener: EventEmitter;
     executionContext;
@@ -82,6 +82,9 @@ class Execution implements IExecution {
         this.log(".execution ended.");
         this.endedAt = new Date().toISOString();;
         this.status = EXECUTION_STATUS.end;
+        if (this.parentItemId) {
+            CallActivity.executionEnded(this);
+        }
         this.doExecutionEvent(EXECUTION_EVENT.execution_end);
     }
     /**
@@ -238,7 +241,7 @@ class Execution implements IExecution {
         const state= {
             source: this.source, items, tokens, loops,
             id: this.id , name: this.name, startedAt: this.startedAt, endedAt: this.endedAt,
-            status: this.status, saved: this.saved, data: this.data, logs: this.logs, parentNodeId: this.parentNodeId
+            status: this.status, saved: this.saved, data: this.data, logs: this.logs, parentItemId: this.parentItemId
         };
 
         return state;
@@ -289,7 +292,7 @@ class Execution implements IExecution {
         execution.endedAt = state.endedAt;
         execution.saved = state.saved;
         execution.logs = state.logs;
-        execution.parentNodeId = state.parentNodeId;
+        execution.parentItemId = state.parentItemId;
         execution.log('.restore completed');
         execution.report();
 

@@ -8,6 +8,10 @@
 
   ↳ **DataStore**
 
+## Implements
+
+* [IDataStore](../interfaces/idatastore.md)
+
 ## Index
 
 ### Constructors
@@ -36,20 +40,20 @@
 * [dataStore](datastore.md#datastore)
 * [definitions](datastore.md#definitions)
 * [engine](datastore.md#engine)
-* [eventsRegistry](datastore.md#eventsregistry)
 * [logger](datastore.md#logger)
 
 ### Methods
 
 * [addEvent](datastore.md#addevent)
 * [check](datastore.md#check)
-* [deleteData](datastore.md#deletedata)
 * [deleteEvents](datastore.md#deleteevents)
+* [deleteInstances](datastore.md#deleteinstances)
 * [findEvents](datastore.md#findevents)
 * [findInstance](datastore.md#findinstance)
 * [findInstances](datastore.md#findinstances)
 * [findItem](datastore.md#finditem)
 * [findItems](datastore.md#finditems)
+* [install](datastore.md#install)
 * [loadInstance](datastore.md#loadinstance)
 * [monitorExecution](datastore.md#monitorexecution)
 * [save](datastore.md#save)
@@ -58,17 +62,17 @@
 
 ###  constructor
 
-\+ **new DataStore**(`server`: [BPMNServer](bpmnserver.md)): *[DataStore](datastore.md)*
+\+ **new DataStore**(`server`: [IBPMNServer](../interfaces/ibpmnserver.md)): *[DataStore](datastore.md)*
 
-*Overrides [Cron](cron.md).[constructor](cron.md#constructor)*
+*Overrides [ServerComponent](servercomponent.md).[constructor](servercomponent.md#constructor)*
 
-Defined in src/server/DataStore.ts:40
+Defined in src/datastore/DataStore.ts:25
 
 **Parameters:**
 
 Name | Type |
 ------ | ------ |
-`server` | [BPMNServer](bpmnserver.md) |
+`server` | [IBPMNServer](../interfaces/ibpmnserver.md) |
 
 **Returns:** *[DataStore](datastore.md)*
 
@@ -78,7 +82,9 @@ Name | Type |
 
 • **db**: *any*
 
-Defined in src/server/DataStore.ts:33
+*Implementation of [IDataStore](../interfaces/idatastore.md).[db](../interfaces/idatastore.md#db)*
+
+Defined in src/datastore/DataStore.ts:19
 
 ___
 
@@ -86,7 +92,9 @@ ___
 
 • **dbConfiguration**: *any*
 
-Defined in src/server/DataStore.ts:32
+*Implementation of [IDataStore](../interfaces/idatastore.md).[dbConfiguration](../interfaces/idatastore.md#dbconfiguration)*
+
+Defined in src/datastore/DataStore.ts:18
 
 ___
 
@@ -94,7 +102,9 @@ ___
 
 • **execution**: *[Execution](execution.md)*
 
-Defined in src/server/DataStore.ts:36
+*Implementation of [IDataStore](../interfaces/idatastore.md).[execution](../interfaces/idatastore.md#execution)*
+
+Defined in src/datastore/DataStore.ts:21
 
 ___
 
@@ -102,7 +112,7 @@ ___
 
 • **inSaving**: *boolean* = false
 
-Defined in src/server/DataStore.ts:39
+Defined in src/datastore/DataStore.ts:24
 
 ___
 
@@ -110,7 +120,7 @@ ___
 
 • **isModified**: *boolean* = false
 
-Defined in src/server/DataStore.ts:37
+Defined in src/datastore/DataStore.ts:22
 
 ___
 
@@ -118,7 +128,7 @@ ___
 
 • **isRunning**: *boolean* = false
 
-Defined in src/server/DataStore.ts:38
+Defined in src/datastore/DataStore.ts:23
 
 ___
 
@@ -126,7 +136,7 @@ ___
 
 • **promises**: *any[]* = []
 
-Defined in src/server/DataStore.ts:40
+Defined in src/datastore/DataStore.ts:25
 
 ___
 
@@ -134,7 +144,7 @@ ___
 
 • **saveCounter**: *number* = 0
 
-Defined in src/server/DataStore.ts:70
+Defined in src/datastore/DataStore.ts:55
 
 ___
 
@@ -142,9 +152,9 @@ ___
 
 • **server**: *any*
 
-*Inherited from [Cron](cron.md).[server](cron.md#server)*
+*Inherited from [ServerComponent](servercomponent.md).[server](servercomponent.md#server)*
 
-Defined in src/server/ServerContext.ts:11
+Defined in src/server/ServerContext.ts:9
 
 ___
 
@@ -152,7 +162,7 @@ ___
 
 ▪ **seq**: *number* = 0
 
-Defined in src/server/DataStore.ts:155
+Defined in src/datastore/DataStore.ts:140
 
 ## Accessors
 
@@ -160,9 +170,9 @@ Defined in src/server/DataStore.ts:155
 
 • **get appDelegate**(): *any*
 
-*Inherited from [Cron](cron.md).[appDelegate](cron.md#appdelegate)*
+*Inherited from [ServerComponent](servercomponent.md).[appDelegate](servercomponent.md#appdelegate)*
 
-Defined in src/server/ServerContext.ts:23
+Defined in src/server/ServerContext.ts:20
 
 **Returns:** *any*
 
@@ -172,9 +182,9 @@ ___
 
 • **get cache**(): *[CacheManager](cachemanager.md)*
 
-*Inherited from [Cron](cron.md).[cache](cron.md#cache)*
+*Inherited from [ServerComponent](servercomponent.md).[cache](servercomponent.md#cache)*
 
-Defined in src/server/ServerContext.ts:21
+Defined in src/server/ServerContext.ts:18
 
 **Returns:** *[CacheManager](cachemanager.md)*
 
@@ -184,9 +194,9 @@ ___
 
 • **get configuration**(): *any*
 
-*Inherited from [Cron](cron.md).[configuration](cron.md#configuration)*
+*Inherited from [ServerComponent](servercomponent.md).[configuration](servercomponent.md#configuration)*
 
-Defined in src/server/ServerContext.ts:15
+Defined in src/server/ServerContext.ts:13
 
 **Returns:** *any*
 
@@ -196,9 +206,9 @@ ___
 
 • **get cron**(): *[Cron](cron.md)*
 
-*Inherited from [Cron](cron.md).[cron](cron.md#cron)*
+*Inherited from [ServerComponent](servercomponent.md).[cron](servercomponent.md#cron)*
 
-Defined in src/server/ServerContext.ts:20
+Defined in src/server/ServerContext.ts:17
 
 **Returns:** *[Cron](cron.md)*
 
@@ -208,9 +218,9 @@ ___
 
 • **get dataStore**(): *any*
 
-*Inherited from [Cron](cron.md).[dataStore](cron.md#datastore)*
+*Inherited from [ServerComponent](servercomponent.md).[dataStore](servercomponent.md#datastore)*
 
-Defined in src/server/ServerContext.ts:17
+Defined in src/server/ServerContext.ts:15
 
 **Returns:** *any*
 
@@ -220,9 +230,9 @@ ___
 
 • **get definitions**(): *any*
 
-*Inherited from [Cron](cron.md).[definitions](cron.md#definitions)*
+*Inherited from [ServerComponent](servercomponent.md).[definitions](servercomponent.md#definitions)*
 
-Defined in src/server/ServerContext.ts:22
+Defined in src/server/ServerContext.ts:19
 
 **Returns:** *any*
 
@@ -230,25 +240,13 @@ ___
 
 ###  engine
 
-• **get engine**(): *[Engine](engine.md)*
+• **get engine**(): *[IEngine](../interfaces/iengine.md)*
 
-*Inherited from [Cron](cron.md).[engine](cron.md#engine)*
+*Inherited from [ServerComponent](servercomponent.md).[engine](servercomponent.md#engine)*
 
-Defined in src/server/ServerContext.ts:19
+Defined in src/server/ServerContext.ts:16
 
-**Returns:** *[Engine](engine.md)*
-
-___
-
-###  eventsRegistry
-
-• **get eventsRegistry**(): *any*
-
-*Inherited from [Cron](cron.md).[eventsRegistry](cron.md#eventsregistry)*
-
-Defined in src/server/ServerContext.ts:18
-
-**Returns:** *any*
+**Returns:** *[IEngine](../interfaces/iengine.md)*
 
 ___
 
@@ -256,9 +254,9 @@ ___
 
 • **get logger**(): *any*
 
-*Inherited from [Cron](cron.md).[logger](cron.md#logger)*
+*Inherited from [ServerComponent](servercomponent.md).[logger](servercomponent.md#logger)*
 
-Defined in src/server/ServerContext.ts:16
+Defined in src/server/ServerContext.ts:14
 
 **Returns:** *any*
 
@@ -268,7 +266,7 @@ Defined in src/server/ServerContext.ts:16
 
 ▸ **addEvent**(`eventData`: any): *Promise‹any›*
 
-Defined in src/server/DataStore.ts:332
+Defined in src/datastore/DataStore.ts:362
 
 **Parameters:**
 
@@ -284,7 +282,7 @@ ___
 
 ▸ **check**(`event`: any, `item`: any): *Promise‹void›*
 
-Defined in src/server/DataStore.ts:106
+Defined in src/datastore/DataStore.ts:91
 
 **Parameters:**
 
@@ -297,27 +295,29 @@ Name | Type |
 
 ___
 
-###  deleteData
-
-▸ **deleteData**(`instanceId`: any): *Promise‹void›*
-
-Defined in src/server/DataStore.ts:318
-
-**Parameters:**
-
-Name | Type | Default |
------- | ------ | ------ |
-`instanceId` | any | null |
-
-**Returns:** *Promise‹void›*
-
-___
-
 ###  deleteEvents
 
 ▸ **deleteEvents**(`query`: any): *Promise‹any›*
 
-Defined in src/server/DataStore.ts:339
+Defined in src/datastore/DataStore.ts:369
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`query` | any |
+
+**Returns:** *Promise‹any›*
+
+___
+
+###  deleteInstances
+
+▸ **deleteInstances**(`query`: any): *Promise‹any›*
+
+*Implementation of [IDataStore](../interfaces/idatastore.md)*
+
+Defined in src/datastore/DataStore.ts:355
 
 **Parameters:**
 
@@ -333,7 +333,7 @@ ___
 
 ▸ **findEvents**(`query`: any): *Promise‹any›*
 
-Defined in src/server/DataStore.ts:335
+Defined in src/datastore/DataStore.ts:365
 
 **Parameters:**
 
@@ -349,7 +349,9 @@ ___
 
 ▸ **findInstance**(`query`: any, `options`: any): *Promise‹any›*
 
-Defined in src/server/DataStore.ts:208
+*Implementation of [IDataStore](../interfaces/idatastore.md)*
+
+Defined in src/datastore/DataStore.ts:193
 
 **Parameters:**
 
@@ -366,7 +368,7 @@ ___
 
 ▸ **findInstances**(`query`: any, `option`: "summary" | "full" | any): *Promise‹any›*
 
-Defined in src/server/DataStore.ts:219
+Defined in src/datastore/DataStore.ts:204
 
 **Parameters:**
 
@@ -383,7 +385,9 @@ ___
 
 ▸ **findItem**(`query`: any): *Promise‹any›*
 
-Defined in src/server/DataStore.ts:198
+*Implementation of [IDataStore](../interfaces/idatastore.md)*
+
+Defined in src/datastore/DataStore.ts:183
 
 **Parameters:**
 
@@ -399,9 +403,20 @@ ___
 
 ▸ **findItems**(`query`: any): *Promise‹any[]›*
 
-Defined in src/server/DataStore.ts:243
+*Implementation of [IDataStore](../interfaces/idatastore.md)*
+
+Defined in src/datastore/DataStore.ts:238
 
 scenario:
+itemId			{ items { id : value } }
+itemKey			{ items {key: value } }
+instance, task	{ instance: { id: instanceId }, items: { elementId: value }}
+message			{ items: { messageId: nameofmessage, key: value } {}
+status			{ items: {status: 'wait' } }
+custom: { query: query, projection: projection }
+
+New approach:
+just like MongoDB
 itemId			{ items { id : value } }
 itemKey			{ items {key: value } }
 instance, task	{ instance: { id: instanceId }, items: { elementId: value }}
@@ -419,11 +434,29 @@ Name | Type | Description |
 
 ___
 
+###  install
+
+▸ **install**(): *Promise‹any›*
+
+*Implementation of [IDataStore](../interfaces/idatastore.md)*
+
+Defined in src/datastore/DataStore.ts:380
+
+first time installation of DB
+
+creates a new collection and add an index
+
+**Returns:** *Promise‹any›*
+
+___
+
 ###  loadInstance
 
 ▸ **loadInstance**(`instanceId`: any): *Promise‹object›*
 
-Defined in src/server/DataStore.ts:116
+*Implementation of [IDataStore](../interfaces/idatastore.md)*
+
+Defined in src/datastore/DataStore.ts:101
 
 **Parameters:**
 
@@ -439,7 +472,7 @@ ___
 
 ▸ **monitorExecution**(`execution`: [Execution](execution.md)): *void*
 
-Defined in src/server/DataStore.ts:49
+Defined in src/datastore/DataStore.ts:34
 
 **Parameters:**
 
@@ -455,6 +488,8 @@ ___
 
 ▸ **save**(): *Promise‹void›*
 
-Defined in src/server/DataStore.ts:71
+*Implementation of [IDataStore](../interfaces/idatastore.md)*
+
+Defined in src/datastore/DataStore.ts:56
 
 **Returns:** *Promise‹void›*

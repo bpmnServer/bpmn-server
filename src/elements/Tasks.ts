@@ -2,12 +2,14 @@
 import { Execution } from '../engine/Execution';
 import { Token } from '../engine/Token';
 import { IBehaviour, Behaviour, Behaviour_names } from "./behaviours";
-import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../../';
+import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, ExecutionContext } from '../../';
 //import { Gateway } from './Gateway';
 import { Item } from '../engine/Item';
 
 import { Process } from './Process';
 import { Node } from './Node';
+import { IExecution } from '../interfaces/engine';
+import { EXECUTION_STATUS } from '../interfaces/Enums';
 
 // ---------------------------------------------
 class ScriptTask extends Node {
@@ -87,5 +89,49 @@ class SubProcess extends Node {
         return NODE_ACTION.continue;
     }
 }
+/**
+ * 
+ * <callActivity id="callCheckCreditProcess" name="Check credit" calledElement="checkCreditProcess" />
+ * 
+ * the called process need to call me back when done.
+ * 
+ * */
+class CallActivity extends Node {
+    get calledElement() {
+        return this.def.calledElement;
+    };
 
-export {  UserTask, ScriptTask, ServiceTask, SendTask, ReceiveTask, SubProcess }
+    requiresWait() { return true; }
+    canBeInvoked() { return false; }
+
+    static async executionEnded(execution: IExecution) {
+        const itemId = execution.parentItemId;
+        const executionContext: ExecutionContext = execution.executionContext;
+        const engine = executionContext.engine;
+        await engine.invoke({ "items.id": itemId }, execution.data);
+
+    }
+    async start(item): Promise<NODE_ACTION> {
+
+        const token = item.token;
+
+        token.log('..executing a call activity for item:' + item.id+ " calling "+this.calledElement);
+
+        const context = item.context;
+        const modelName = this.calledElement;
+        const data = item.data;
+
+        const response = await context.engine.start(modelName, data);
+
+        token.log('..end of executing a call activity for item:' + item.id + " calling " + this.calledElement);
+
+        token.log('..response :' + response.execution.status);
+
+        if (response.execution.status == EXECUTION_STATUS.end)
+            return NODE_ACTION.continue;
+        else
+            return NODE_ACTION.wait;
+    }
+}
+
+export {  UserTask, ScriptTask, ServiceTask, SendTask, ReceiveTask, SubProcess , CallActivity }

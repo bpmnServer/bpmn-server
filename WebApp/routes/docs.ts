@@ -6,8 +6,8 @@ const FS = require('fs');
 
 import { BPMNServer, dateDiff, Behaviour_names   } from '..';
 import { configuration as config} from '../configuration';
-
-const docsFolder = __dirname +'/../bpmnServer/docs/';
+import { docsFolder } from '..';
+console.log(docsFolder);
 
 /* GET users listing. */
 

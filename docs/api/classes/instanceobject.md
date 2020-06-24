@@ -23,7 +23,7 @@ as stored in MongoDB
 * [logs](instanceobject.md#logs)
 * [loops](instanceobject.md#loops)
 * [name](instanceobject.md#name)
-* [parentNodeId](instanceobject.md#parentnodeid)
+* [parentItemId](instanceobject.md#parentitemid)
 * [saved](instanceobject.md#saved)
 * [source](instanceobject.md#source)
 * [startedAt](instanceobject.md#startedat)
@@ -102,11 +102,11 @@ Defined in src/engine/Model.ts:10
 
 ___
 
-###  parentNodeId
+###  parentItemId
 
-• **parentNodeId**: *any*
+• **parentItemId**: *any*
 
-*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[parentNodeId](../interfaces/iinstancedata.md#parentnodeid)*
+*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[parentItemId](../interfaces/iinstancedata.md#parentitemid)*
 
 Defined in src/engine/Model.ts:21
 

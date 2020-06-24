@@ -23,6 +23,10 @@
 * [definition](signaleventbehaviour.md#definition)
 * [node](signaleventbehaviour.md#node)
 
+### Accessors
+
+* [signalId](signaleventbehaviour.md#signalid)
+
 ### Methods
 
 * [describe](signaleventbehaviour.md#describe)
@@ -74,6 +78,16 @@ ___
 
 Defined in src/elements/behaviours/Behaviour.ts:35
 
+## Accessors
+
+###  signalId
+
+• **get signalId**(): *any*
+
+Defined in src/elements/behaviours/MessageSignal.ts:25
+
+**Returns:** *any*
+
 ## Methods
 
 ###  describe
@@ -84,7 +98,7 @@ Defined in src/elements/behaviours/Behaviour.ts:35
 
 *Overrides [Behaviour](behaviour.md).[describe](behaviour.md#describe)*
 
-Defined in src/elements/behaviours/MessageSignal.ts:19
+Defined in src/elements/behaviours/MessageSignal.ts:22
 
 **Returns:** *string[]*
 
@@ -96,7 +110,7 @@ ___
 
 *Overrides [Behaviour](behaviour.md).[end](behaviour.md#end)*
 
-Defined in src/elements/behaviours/MessageSignal.ts:17
+Defined in src/elements/behaviours/MessageSignal.ts:20
 
 **Parameters:**
 
@@ -219,7 +233,7 @@ ___
 
 *Overrides [Behaviour](behaviour.md).[start](behaviour.md#start)*
 
-Defined in src/elements/behaviours/MessageSignal.ts:16
+Defined in src/elements/behaviours/MessageSignal.ts:19
 
 **Parameters:**
 

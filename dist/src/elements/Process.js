@@ -3,6 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Process = void 0;
 class Process {
     constructor(definition, children) {
+        this.id = definition.id;
+        this.isExecutable = definition.isExecutable;
+        this.name = definition.name;
         this.def = definition;
         this.childrenNodes = children;
     }

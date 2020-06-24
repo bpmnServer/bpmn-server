@@ -21,6 +21,7 @@ Application Delegate Object to respond to various events and services:
 
 ### Methods
 
+* [executionEvent](iappdelegate.md#executionevent)
 * [executionStarted](iappdelegate.md#executionstarted)
 * [messageIssued](iappdelegate.md#messageissued)
 * [scopeEval](iappdelegate.md#scopeeval)
@@ -30,11 +31,31 @@ Application Delegate Object to respond to various events and services:
 
 ## Methods
 
+###  executionEvent
+
+▸ **executionEvent**(`__namedParameters`: object): *any*
+
+Defined in src/interfaces/common.ts:66
+
+**Parameters:**
+
+▪ **__namedParameters**: *object*
+
+Name | Type |
+------ | ------ |
+`event` | any |
+`execution` | any |
+`item` | any |
+
+**Returns:** *any*
+
+___
+
 ###  executionStarted
 
 ▸ **executionStarted**(`execution`: [IExecutionContext](iexecutioncontext.md)): *any*
 
-Defined in src/interfaces/common.ts:67
+Defined in src/interfaces/common.ts:65
 
 **Parameters:**
 
@@ -50,7 +71,7 @@ ___
 
 ▸ **messageIssued**(`item`: [IItem](iitem.md)): *any*
 
-Defined in src/interfaces/common.ts:69
+Defined in src/interfaces/common.ts:67
 
 **Parameters:**
 
@@ -66,7 +87,7 @@ ___
 
 ▸ **scopeEval**(`scope`: any, `script`: any): *any*
 
-Defined in src/interfaces/common.ts:78
+Defined in src/interfaces/common.ts:76
 
 **Parameters:**
 
@@ -83,7 +104,7 @@ ___
 
 ▸ **scopeJS**(`scope`: any, `script`: any): *any*
 
-Defined in src/interfaces/common.ts:79
+Defined in src/interfaces/common.ts:77
 
 **Parameters:**
 
@@ -100,7 +121,7 @@ ___
 
 ▸ **serviceCalled**(`item`: [IItem](iitem.md)): *any*
 
-Defined in src/interfaces/common.ts:76
+Defined in src/interfaces/common.ts:74
 
 is called only if the serviceTask has no implementation; otherwise the specified implementation will be called.
 
@@ -118,7 +139,7 @@ ___
 
 ▸ **signalIssued**(`item`: [IItem](iitem.md)): *any*
 
-Defined in src/interfaces/common.ts:70
+Defined in src/interfaces/common.ts:68
 
 **Parameters:**
 

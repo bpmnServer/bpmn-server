@@ -36,7 +36,7 @@ router.get('/:process', awaitHandlerFactory((request, response) => __awaiter(voi
     const config = require('../configuration.js').configuration;
     let xml, base_url, title, processName;
     processName = request.params.process;
-    xml = definitions.getSource(processName);
+    xml = yield definitions.getSource(processName);
     title = processName;
     /*
     response.render('modeller',

@@ -7,6 +7,7 @@
 ### Enumeration members
 
 * [BoundaryEvent](bpmn_type.md#boundaryevent)
+* [CallActivity](bpmn_type.md#callactivity)
 * [EndEvent](bpmn_type.md#endevent)
 * [EventBasedGateway](bpmn_type.md#eventbasedgateway)
 * [ExclusiveGateway](bpmn_type.md#exclusivegateway)
@@ -31,6 +32,14 @@
 • **BoundaryEvent**: = "bpmn:BoundaryEvent"
 
 Defined in src/elements/NodeLoader.ts:18
+
+___
+
+###  CallActivity
+
+• **CallActivity**: = "bpmn:CallActivity"
+
+Defined in src/elements/NodeLoader.ts:25
 
 ___
 

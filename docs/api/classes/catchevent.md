@@ -4,7 +4,7 @@
 
 ## Hierarchy
 
-  ↳ [Node](node.md)
+  ↳ [Event](event.md)
 
   ↳ **CatchEvent**
 
@@ -45,6 +45,8 @@
 * [getOutbounds](catchevent.md#getoutbounds)
 * [hasBehaviour](catchevent.md#hasbehaviour)
 * [hasMessage](catchevent.md#hasmessage)
+* [hasSignal](catchevent.md#hassignal)
+* [hasTimer](catchevent.md#hastimer)
 * [init](catchevent.md#init)
 * [requiresWait](catchevent.md#requireswait)
 * [restored](catchevent.md#restored)
@@ -210,9 +212,9 @@ ___
 
 ▸ **canBeInvoked**(): *boolean*
 
-*Overrides [Node](node.md).[canBeInvoked](node.md#canbeinvoked)*
+*Overrides [Event](event.md).[canBeInvoked](event.md#canbeinvoked)*
 
-Defined in src/elements/Events.ts:38
+Defined in src/elements/Events.ts:44
 
 **Returns:** *boolean*
 
@@ -276,9 +278,11 @@ ___
 
 ▸ **end**(`item`: [Item](item.md)): *Promise‹void›*
 
-*Inherited from [Node](node.md).[end](node.md#end)*
+*Inherited from [Event](event.md).[end](event.md#end)*
 
-Defined in src/elements/Node.ts:142
+*Overrides [Node](node.md).[end](node.md#end)*
+
+Defined in src/elements/Events.ts:26
 
 **Parameters:**
 
@@ -397,11 +401,37 @@ ___
 
 ###  hasMessage
 
-▸ **hasMessage**(): *boolean*
+▸ **hasMessage**(): *any*
 
-Defined in src/elements/Events.ts:32
+*Inherited from [Event](event.md).[hasMessage](event.md#hasmessage)*
 
-**Returns:** *boolean*
+Defined in src/elements/Events.ts:7
+
+**Returns:** *any*
+
+___
+
+###  hasSignal
+
+▸ **hasSignal**(): *any*
+
+*Inherited from [Event](event.md).[hasSignal](event.md#hassignal)*
+
+Defined in src/elements/Events.ts:10
+
+**Returns:** *any*
+
+___
+
+###  hasTimer
+
+▸ **hasTimer**(): *any*
+
+*Inherited from [Event](event.md).[hasTimer](event.md#hastimer)*
+
+Defined in src/elements/Events.ts:13
+
+**Returns:** *any*
 
 ___
 
@@ -429,7 +459,7 @@ ___
 
 *Overrides [Node](node.md).[requiresWait](node.md#requireswait)*
 
-Defined in src/elements/Events.ts:35
+Defined in src/elements/Events.ts:41
 
 **Returns:** *boolean*
 
@@ -498,9 +528,9 @@ ___
 
 ▸ **start**(`item`: [Item](item.md)): *Promise‹[NODE_ACTION](../enums/node_action.md)›*
 
-*Overrides [Node](node.md).[start](node.md#start)*
+*Overrides [Event](event.md).[start](event.md#start)*
 
-Defined in src/elements/Events.ts:42
+Defined in src/elements/Events.ts:48
 
 **Parameters:**
 

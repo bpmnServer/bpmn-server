@@ -21,87 +21,85 @@
     <bpmn:scriptTask id="task_2" name="Issue Reminder">
       <bpmn:incoming>flow_boundary_task2</bpmn:incoming>
     </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="flow_start_user" sourceRef="event_start" targetRef="user_task" />
-    <bpmn:sequenceFlow id="flow_user_receive" sourceRef="user_task" targetRef="receive_task" />
-    <bpmn:sequenceFlow id="flow_receive_end" sourceRef="receive_task" targetRef="event_end" />
-    <bpmn:sequenceFlow id="flow_boundary_task2" sourceRef="BoundaryEvent_timer" targetRef="task_2" />
-    
+    <bpmn:boundaryEvent id="BoundaryEvent_message" cancelActivity="false" attachedToRef="user_task">
+      <bpmn:messageEventDefinition />
+    </bpmn:boundaryEvent>
     <bpmn:boundaryEvent id="BoundaryEvent_timer" cancelActivity="false" attachedToRef="user_task">
       <bpmn:outgoing>flow_boundary_task2</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_07xu06a">
         <bpmn:timeDuration xsi:type="bpmn:tExpression">PT2S</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
-    
-    <bpmn:boundaryEvent id="BoundaryEvent_message" cancelActivity="false" attachedToRef="user_task">
-      <bpmn:messageEventDefinition />
-    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="flow_start_user" sourceRef="event_start" targetRef="user_task" />
+    <bpmn:sequenceFlow id="flow_user_receive" sourceRef="user_task" targetRef="receive_task" />
+    <bpmn:sequenceFlow id="flow_receive_end" sourceRef="receive_task" targetRef="event_end" />
+    <bpmn:sequenceFlow id="flow_boundary_task2" sourceRef="BoundaryEvent_timer" targetRef="task_2" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1j7mruu">
       <bpmndi:BPMNShape id="Participant_0s0yicu_di" bpmnElement="Participant_0s0yicu">
-        <dc:Bounds x="135" y="28" width="600" height="250" />
+        <dc:Bounds x="122" y="24" width="600" height="250" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="event_start_di" bpmnElement="event_start">
-        <dc:Bounds x="185" y="70" width="36" height="36" />
+        <dc:Bounds x="172" y="66" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="192" y="113" width="24" height="13" />
+          <dc:Bounds x="179" y="109" width="24" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0b8fjcv_di" bpmnElement="user_task">
-        <dc:Bounds x="273" y="48" width="100" height="80" />
+        <dc:Bounds x="260" y="44" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="event_end_di" bpmnElement="event_end">
-        <dc:Bounds x="585" y="70" width="36" height="36" />
+        <dc:Bounds x="572" y="66" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="593" y="113" width="21" height="13" />
+          <dc:Bounds x="580" y="109" width="21" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="flow_start_user_di" bpmnElement="flow_start_user">
-        <di:waypoint xsi:type="dc:Point" x="221" y="88" />
-        <di:waypoint xsi:type="dc:Point" x="273" y="88" />
+        <di:waypoint xsi:type="dc:Point" x="208" y="84" />
+        <di:waypoint xsi:type="dc:Point" x="260" y="84" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="202" y="63" width="90" height="20" />
+          <dc:Bounds x="189" y="59" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="flow_user_receive_di" bpmnElement="flow_user_receive">
-        <di:waypoint xsi:type="dc:Point" x="373" y="88" />
-        <di:waypoint xsi:type="dc:Point" x="429" y="88" />
+        <di:waypoint xsi:type="dc:Point" x="360" y="84" />
+        <di:waypoint xsi:type="dc:Point" x="416" y="84" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="356" y="63" width="90" height="20" />
+          <dc:Bounds x="343" y="59" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="flow_receive_end_di" bpmnElement="flow_receive_end">
-        <di:waypoint xsi:type="dc:Point" x="529" y="88" />
-        <di:waypoint xsi:type="dc:Point" x="585" y="88" />
+        <di:waypoint xsi:type="dc:Point" x="516" y="84" />
+        <di:waypoint xsi:type="dc:Point" x="572" y="84" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="512" y="63" width="90" height="20" />
+          <dc:Bounds x="499" y="59" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="flow_boundary_task2_di" bpmnElement="flow_boundary_task2">
-        <di:waypoint xsi:type="dc:Point" x="346" y="144" />
-        <di:waypoint xsi:type="dc:Point" x="346" y="215" />
-        <di:waypoint xsi:type="dc:Point" x="403" y="215" />
+        <di:waypoint xsi:type="dc:Point" x="333" y="140" />
+        <di:waypoint xsi:type="dc:Point" x="333" y="211" />
+        <di:waypoint xsi:type="dc:Point" x="390" y="211" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="316" y="173" width="90" height="13" />
+          <dc:Bounds x="303" y="169" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ScriptTask_19rpm9d_di" bpmnElement="task_2">
-        <dc:Bounds x="403" y="175" width="100" height="80" />
+        <dc:Bounds x="390" y="171" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ReceiveTask_1lhc8yo_di" bpmnElement="receive_task">
-        <dc:Bounds x="429" y="48" width="100" height="80" />
+        <dc:Bounds x="416" y="44" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BoundaryEvent_11mjywp_di" bpmnElement="BoundaryEvent_timer">
-        <dc:Bounds x="328" y="108" width="36" height="36" />
+        <dc:Bounds x="315" y="104" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="256" y="147" width="90" height="13" />
+          <dc:Bounds x="243" y="143" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BoundaryEvent_1mxz6ux_di" bpmnElement="BoundaryEvent_message">
-        <dc:Bounds x="286" y="110" width="36" height="36" />
+        <dc:Bounds x="273" y="106" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="304" y="149" width="0" height="13" />
+          <dc:Bounds x="246" y="145" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>

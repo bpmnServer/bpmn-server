@@ -8,6 +8,10 @@
 
   ↳ **ExecutionContext**
 
+## Implements
+
+* [IExecutionContext](../interfaces/iexecutioncontext.md)
+
 ## Index
 
 ### Constructors
@@ -31,7 +35,7 @@
 * [cron](executioncontext.md#cron)
 * [definitions](executioncontext.md#definitions)
 * [engine](executioncontext.md#engine)
-* [eventsRegistry](executioncontext.md#eventsregistry)
+* [instance](executioncontext.md#instance)
 * [items](executioncontext.md#items)
 
 ### Methods
@@ -42,17 +46,17 @@
 
 ###  constructor
 
-\+ **new ExecutionContext**(`server`: [BPMNServer](bpmnserver.md)): *[ExecutionContext](executioncontext.md)*
+\+ **new ExecutionContext**(`server`: [IBPMNServer](../interfaces/ibpmnserver.md)): *[ExecutionContext](executioncontext.md)*
 
-*Inherited from [Cron](cron.md).[constructor](cron.md#constructor)*
+*Overrides [ServerComponent](servercomponent.md).[constructor](servercomponent.md#constructor)*
 
-Defined in src/server/ServerContext.ts:11
+Defined in src/server/ServerContext.ts:35
 
 **Parameters:**
 
 Name | Type |
 ------ | ------ |
-`server` | [BPMNServer](bpmnserver.md) |
+`server` | [IBPMNServer](../interfaces/ibpmnserver.md) |
 
 **Returns:** *[ExecutionContext](executioncontext.md)*
 
@@ -62,9 +66,11 @@ Name | Type |
 
 • **dataStore**: *any*
 
-*Overrides [Cron](cron.md).[dataStore](cron.md#datastore)*
+*Implementation of [IExecutionContext](../interfaces/iexecutioncontext.md).[dataStore](../interfaces/iexecutioncontext.md#datastore)*
 
-Defined in src/server/ServerContext.ts:30
+*Overrides [ServerComponent](servercomponent.md).[dataStore](servercomponent.md#datastore)*
+
+Defined in src/server/ServerContext.ts:27
 
 ___
 
@@ -72,7 +78,9 @@ ___
 
 • **errors**: *any*
 
-Defined in src/server/ServerContext.ts:31
+*Implementation of [IExecutionContext](../interfaces/iexecutioncontext.md).[errors](../interfaces/iexecutioncontext.md#errors)*
+
+Defined in src/server/ServerContext.ts:28
 
 ___
 
@@ -80,7 +88,9 @@ ___
 
 • **execution**? : *[IExecution](../interfaces/iexecution.md)*
 
-Defined in src/server/ServerContext.ts:27
+*Implementation of [IExecutionContext](../interfaces/iexecutioncontext.md).[execution](../interfaces/iexecutioncontext.md#optional-execution)*
+
+Defined in src/server/ServerContext.ts:24
 
 ___
 
@@ -88,7 +98,9 @@ ___
 
 • **listener**: *any*
 
-Defined in src/server/ServerContext.ts:29
+*Implementation of [IExecutionContext](../interfaces/iexecutioncontext.md).[listener](../interfaces/iexecutioncontext.md#listener)*
+
+Defined in src/server/ServerContext.ts:26
 
 ___
 
@@ -96,9 +108,11 @@ ___
 
 • **logger**: *any*
 
-*Overrides [Cron](cron.md).[logger](cron.md#logger)*
+*Implementation of [IExecutionContext](../interfaces/iexecutioncontext.md).[logger](../interfaces/iexecutioncontext.md#logger)*
 
-Defined in src/server/ServerContext.ts:28
+*Overrides [ServerComponent](servercomponent.md).[logger](servercomponent.md#logger)*
+
+Defined in src/server/ServerContext.ts:25
 
 ___
 
@@ -106,9 +120,11 @@ ___
 
 • **server**: *any*
 
-*Inherited from [Cron](cron.md).[server](cron.md#server)*
+*Implementation of [IExecutionContext](../interfaces/iexecutioncontext.md).[server](../interfaces/iexecutioncontext.md#server)*
 
-Defined in src/server/ServerContext.ts:11
+*Inherited from [ServerComponent](servercomponent.md).[server](servercomponent.md#server)*
+
+Defined in src/server/ServerContext.ts:9
 
 ## Accessors
 
@@ -116,9 +132,9 @@ Defined in src/server/ServerContext.ts:11
 
 • **get appDelegate**(): *any*
 
-*Inherited from [Cron](cron.md).[appDelegate](cron.md#appdelegate)*
+*Inherited from [ServerComponent](servercomponent.md).[appDelegate](servercomponent.md#appdelegate)*
 
-Defined in src/server/ServerContext.ts:23
+Defined in src/server/ServerContext.ts:20
 
 **Returns:** *any*
 
@@ -128,9 +144,9 @@ ___
 
 • **get cache**(): *[CacheManager](cachemanager.md)*
 
-*Inherited from [Cron](cron.md).[cache](cron.md#cache)*
+*Inherited from [ServerComponent](servercomponent.md).[cache](servercomponent.md#cache)*
 
-Defined in src/server/ServerContext.ts:21
+Defined in src/server/ServerContext.ts:18
 
 **Returns:** *[CacheManager](cachemanager.md)*
 
@@ -140,9 +156,9 @@ ___
 
 • **get configuration**(): *any*
 
-*Inherited from [Cron](cron.md).[configuration](cron.md#configuration)*
+*Inherited from [ServerComponent](servercomponent.md).[configuration](servercomponent.md#configuration)*
 
-Defined in src/server/ServerContext.ts:15
+Defined in src/server/ServerContext.ts:13
 
 **Returns:** *any*
 
@@ -152,9 +168,9 @@ ___
 
 • **get cron**(): *[Cron](cron.md)*
 
-*Inherited from [Cron](cron.md).[cron](cron.md#cron)*
+*Inherited from [ServerComponent](servercomponent.md).[cron](servercomponent.md#cron)*
 
-Defined in src/server/ServerContext.ts:20
+Defined in src/server/ServerContext.ts:17
 
 **Returns:** *[Cron](cron.md)*
 
@@ -164,9 +180,9 @@ ___
 
 • **get definitions**(): *any*
 
-*Inherited from [Cron](cron.md).[definitions](cron.md#definitions)*
+*Inherited from [ServerComponent](servercomponent.md).[definitions](servercomponent.md#definitions)*
 
-Defined in src/server/ServerContext.ts:22
+Defined in src/server/ServerContext.ts:19
 
 **Returns:** *any*
 
@@ -174,25 +190,23 @@ ___
 
 ###  engine
 
-• **get engine**(): *[Engine](engine.md)*
+• **get engine**(): *[IEngine](../interfaces/iengine.md)*
 
-*Inherited from [Cron](cron.md).[engine](cron.md#engine)*
+*Inherited from [ServerComponent](servercomponent.md).[engine](servercomponent.md#engine)*
 
-Defined in src/server/ServerContext.ts:19
+Defined in src/server/ServerContext.ts:16
 
-**Returns:** *[Engine](engine.md)*
+**Returns:** *[IEngine](../interfaces/iengine.md)*
 
 ___
 
-###  eventsRegistry
+###  instance
 
-• **get eventsRegistry**(): *any*
+• **get instance**(): *[IInstanceData](../interfaces/iinstancedata.md)*
 
-*Inherited from [Cron](cron.md).[eventsRegistry](cron.md#eventsregistry)*
+Defined in src/server/ServerContext.ts:32
 
-Defined in src/server/ServerContext.ts:18
-
-**Returns:** *any*
+**Returns:** *[IInstanceData](../interfaces/iinstancedata.md)*
 
 ___
 
@@ -200,7 +214,7 @@ ___
 
 • **get items**(): *[IItem](../interfaces/iitem.md)[]*
 
-Defined in src/server/ServerContext.ts:32
+Defined in src/server/ServerContext.ts:40
 
 **Returns:** *[IItem](../interfaces/iitem.md)[]*
 
@@ -208,9 +222,11 @@ Defined in src/server/ServerContext.ts:32
 
 ###  error
 
-▸ **error**(`error`: any): *[ExecutionContext](executioncontext.md)*
+▸ **error**(`error`: any): *[IExecutionContext](../interfaces/iexecutioncontext.md)*
 
-Defined in src/server/ServerContext.ts:36
+*Implementation of [IExecutionContext](../interfaces/iexecutioncontext.md)*
+
+Defined in src/server/ServerContext.ts:29
 
 **Parameters:**
 
@@ -218,4 +234,4 @@ Name | Type |
 ------ | ------ |
 `error` | any |
 
-**Returns:** *[ExecutionContext](executioncontext.md)*
+**Returns:** *[IExecutionContext](../interfaces/iexecutioncontext.md)*

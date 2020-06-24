@@ -1,5 +1,5 @@
 const { BPMNServer , DefaultAppDelegate , Logger } = require("../../");
-const { configuration } = require('../../configuration');
+const { configuration } = require('../configuration');
 
 
 const logger = new Logger({ toConsole: false });
@@ -27,8 +27,8 @@ Feature('Buy Used Car', () => {
 
                 const data = { needsCleaning: "No", needsRepairs: "No" };
                 const query ={
-                    instance: { id: instanceId },
-                    items: { elementId: 'task_Buy' }};
+                    id: instanceId ,
+                    "items.elementId": 'task_Buy' };
                 response= await server.engine.invoke(query ,data );
             });
 
@@ -49,30 +49,27 @@ Feature('Buy Used Car', () => {
 
             and('Clean it', async () => {
                     const query = {
-                        instance: {
-                            data: { caseId: caseId }},
-                        items: { elementId: 'task_clean' }
-                    };
+                        "data.caseId": caseId ,
+                        "items.elementId" : 'task_clean' };
                     await server.engine.invoke(query, {});
             });
       
             and('Repair it', async () => {
-                    const query = {
-                        instance: { id: instanceId },
-                        items: { elementId: 'task_repair' }
-                    };
+                    const query = { id: instanceId ,"items.elementId": 'task_repair'};
                     response = await server.engine.invoke(query, {});
             }); 
             and('Drive it 1', async () => {
                 const query = {
-                    instance: { id: instanceId },
-                    items: { elementId: 'task_Drive' }
-                };
+                    id: instanceId ,
+                    "items.elementId": 'task_Drive'};
                 response=await server.engine.invoke(query, {});
             });
 
             and('Case Complete', async () => {
-              expect(response.instance.status).equals('end');
+
+                console.log(response.instance.status);
+                console.log(response.execution.status);
+              expect(response.execution.status).equals('end');
                 expect(getItem('task_Drive').status).equals('end');
 
             });

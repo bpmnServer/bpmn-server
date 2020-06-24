@@ -1,8 +1,0 @@
-{
-	"inputFiles": ["./bpmnServer/src/"], 
-	"mode": "file",  
-	"out": "bpmnServer/docs/api2",  
-	"readme":"none",
-	"excludePrivate": true
-}
-

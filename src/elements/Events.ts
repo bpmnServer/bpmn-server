@@ -4,6 +4,15 @@ import { NODE_ACTION } from "../../";
 import { Item } from "../engine/Item";
 class Event extends Node {
 
+    hasMessage() {
+        return this.getBehaviour(Behaviour_names.MessageEventDefinition);
+    }
+    hasSignal() {
+        return this.getBehaviour(Behaviour_names.SignalEventDefinition);
+    }
+    hasTimer() {
+        return this.getBehaviour(Behaviour_names.TimerEventDefinition);
+    }
     /**
      * 
      * 	using token: check if fromEventBasedGateway;	if yes cancel all other events
@@ -22,16 +31,13 @@ class Event extends Node {
 
 }
 
-class CatchEvent extends Node {
+class CatchEvent extends Event {
 
     /**
      * 
      * 	
      * @param item
      */
-    hasMessage() {
-        return this.hasBehaviour(Behaviour_names.MessageEventDefinition);
-    }
     requiresWait() {
         return true; // return this.hasMessage(); 
     }
@@ -43,28 +49,25 @@ class CatchEvent extends Node {
         return super.start(item);
     }
 }
-class BoundaryEvent extends Node {
+class BoundaryEvent extends Event {
 
     /**
      * 
      * 	
      * @param item
      */
-    hasMessage() {
-        return this.hasBehaviour(Behaviour_names.MessageEventDefinition);
-    }
     requiresWait() {
-        return true; // return this.hasMessage(); 
+        return true; 
     }
     canBeInvoked() {
-        return true; // return this.hasMessage();
+        return true; 
     }
 
     async start(item: Item): Promise<NODE_ACTION> {
         return super.start(item);
     }
 }
-class ThrowEvent extends Node {
+class ThrowEvent extends Event {
 
     /**
      * 
@@ -75,14 +78,17 @@ class ThrowEvent extends Node {
     async start(item: Item): Promise<NODE_ACTION> {
         return super.start(item);
     }
-}
-/*  TODO
-    <endEvent id="EndEvent_2" name="Tweet rejected">
-      <terminateEventDefinition id="TerminateEventDefinition_1"/>
+    async run(item: Item): Promise<NODE_ACTION> {
 
-    <endEvent>
- /process>
- */
+        if (this.hasMessage())
+            await item.token.execution.appDelegate.messageIssued(item);
+        if (this.hasSignal())
+            await item.token.execution.appDelegate.signalIssued(item);
+
+        return NODE_ACTION.end;
+    }
+}
+
 class EndEvent extends Event {
 
     end(item: Item) {

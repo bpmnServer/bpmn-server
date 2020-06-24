@@ -14,38 +14,24 @@
 
 ### Properties
 
-* [appDelegate](iconfiguration.md#appdelegate)
-* [dataStore](iconfiguration.md#datastore)
 * [database](iconfiguration.md#database)
-* [definitions](iconfiguration.md#definitions)
 * [definitionsPath](iconfiguration.md#definitionspath)
-* [eventsRegistry](iconfiguration.md#eventsregistry)
 * [logger](iconfiguration.md#logger)
 * [timers](iconfiguration.md#timers)
 
+### Methods
+
+* [appDelegate](iconfiguration.md#appdelegate)
+* [dataStore](iconfiguration.md#datastore)
+* [definitions](iconfiguration.md#definitions)
+
 ## Properties
-
-###  appDelegate
-
-• **appDelegate**: *[IAppDelegate](iappdelegate.md)*
-
-Defined in src/interfaces/common.ts:22
-
-___
-
-###  dataStore
-
-• **dataStore**: *[IDataStore](idatastore.md)*
-
-Defined in src/interfaces/common.ts:23
-
-___
 
 ###  database
 
 • **database**: *object*
 
-Defined in src/interfaces/common.ts:12
+Defined in src/interfaces/common.ts:11
 
 #### Type declaration:
 
@@ -57,27 +43,11 @@ Defined in src/interfaces/common.ts:12
 
 ___
 
-###  definitions
-
-• **definitions**: *[IModelsDatastore](imodelsdatastore.md)*
-
-Defined in src/interfaces/common.ts:21
-
-___
-
 ###  definitionsPath
 
 • **definitionsPath**: *string*
 
-Defined in src/interfaces/common.ts:7
-
-___
-
-###  eventsRegistry
-
-• **eventsRegistry**: *[IEventsRegistry](ieventsregistry.md)*
-
-Defined in src/interfaces/common.ts:24
+Defined in src/interfaces/common.ts:6
 
 ___
 
@@ -85,7 +55,7 @@ ___
 
 • **logger**: *[ILogger](ilogger.md)*
 
-Defined in src/interfaces/common.ts:20
+Defined in src/interfaces/common.ts:19
 
 ___
 
@@ -93,10 +63,58 @@ ___
 
 • **timers**: *object*
 
-Defined in src/interfaces/common.ts:8
+Defined in src/interfaces/common.ts:7
 
 #### Type declaration:
 
 * **forceTimersDelay**: *number*
 
 * **precision**: *number*
+
+## Methods
+
+###  appDelegate
+
+▸ **appDelegate**(`server`: any): *[IAppDelegate](iappdelegate.md)*
+
+Defined in src/interfaces/common.ts:21
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`server` | any |
+
+**Returns:** *[IAppDelegate](iappdelegate.md)*
+
+___
+
+###  dataStore
+
+▸ **dataStore**(`server`: any): *[IDataStore](idatastore.md)*
+
+Defined in src/interfaces/common.ts:22
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`server` | any |
+
+**Returns:** *[IDataStore](idatastore.md)*
+
+___
+
+###  definitions
+
+▸ **definitions**(`server`: any): *[IModelsDatastore](imodelsdatastore.md)*
+
+Defined in src/interfaces/common.ts:20
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`server` | any |
+
+**Returns:** *[IModelsDatastore](imodelsdatastore.md)*

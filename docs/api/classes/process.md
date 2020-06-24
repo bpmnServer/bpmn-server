@@ -17,6 +17,8 @@
 * [childrenNodes](process.md#childrennodes)
 * [def](process.md#def)
 * [id](process.md#id)
+* [isExecutable](process.md#isexecutable)
+* [name](process.md#name)
 
 ### Methods
 
@@ -28,7 +30,7 @@
 
 \+ **new Process**(`definition`: any, `children`: any): *[Process](process.md)*
 
-Defined in src/elements/Process.ts:13
+Defined in src/elements/Process.ts:15
 
 **Parameters:**
 
@@ -45,7 +47,7 @@ Name | Type |
 
 • **childrenNodes**: *[Node](node.md)[]*
 
-Defined in src/elements/Process.ts:13
+Defined in src/elements/Process.ts:15
 
 ___
 
@@ -53,7 +55,7 @@ ___
 
 • **def**: *[Definition](definition.md)*
 
-Defined in src/elements/Process.ts:12
+Defined in src/elements/Process.ts:14
 
 ___
 
@@ -63,12 +65,28 @@ ___
 
 Defined in src/elements/Process.ts:11
 
+___
+
+###  isExecutable
+
+• **isExecutable**: *any*
+
+Defined in src/elements/Process.ts:13
+
+___
+
+###  name
+
+• **name**: *any*
+
+Defined in src/elements/Process.ts:12
+
 ## Methods
 
 ###  getStartNode
 
 ▸ **getStartNode**(): *any*
 
-Defined in src/elements/Process.ts:19
+Defined in src/elements/Process.ts:24
 
 **Returns:** *any*

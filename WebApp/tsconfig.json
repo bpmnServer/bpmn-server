@@ -9,7 +9,7 @@
 
   },
   "include": [
-    "**/*.ts", "test/feature/eventBasedGateway.js"
+    "**/*.ts"
   ],
   "exclude": [
     "node_modules" , "./dist"

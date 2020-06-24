@@ -1,6 +1,6 @@
 import { Node , UserTask, ScriptTask, ServiceTask, SendTask, ReceiveTask , 
     Gateway, EventBasedGateway, XORGateway , 
-    Event, CatchEvent, ThrowEvent, EndEvent , SubProcess, BoundaryEvent
+    Event, CatchEvent, ThrowEvent, EndEvent , SubProcess, BoundaryEvent, CallActivity
 } from '.';
 
 
@@ -22,6 +22,7 @@ enum BPMN_TYPE  {
     EndEvent        = 'bpmn:EndEvent',
     SequenceFlow    = 'bpmn:SequenceFlow',
     MessageFlow = 'bpmn:MessageFlow',
+    CallActivity = 'bpmn:CallActivity'
 }
 
 class NodeLoader {
@@ -29,50 +30,53 @@ class NodeLoader {
     static loadNode(el, processId): Node {
 
         switch (el.$type) {
-            case 'bpmn:UserTask':
+            case BPMN_TYPE.UserTask:
                 return new UserTask(el.id, processId, el.$type, el);
                 break;
-            case 'bpmn:ScriptTask':
+            case BPMN_TYPE.ScriptTask:
                 return new ScriptTask(el.id, processId, el.$type, el);
                 break;
-            case 'bpmn:ServiceTask':
+            case BPMN_TYPE.ServiceTask:
                 return new ServiceTask(el.id, processId, el.$type, el);
                 break;
-            case 'bpmn:SendTask':
+            case BPMN_TYPE.SendTask:
                 return new SendTask(el.id, processId, el.$type, el);
                 break;
-            case 'bpmn:ReceiveTask':
+            case BPMN_TYPE.ReceiveTask:
                 return new ReceiveTask(el.id, processId, el.$type, el);
                 break;
-            case 'bpmn:SubProcess':
+            case BPMN_TYPE.SubProcess:
                 return new SubProcess(el.id, processId, el.$type, el);
                 break;
-            case 'bpmn:ParallelGateway':
+            case BPMN_TYPE.ParallelGateway:
                 return new Gateway(el.id, processId, el.$type, el);
                 break;
-            case 'bpmn:EventBasedGateway':
+            case BPMN_TYPE.EventBasedGateway:
                 return new EventBasedGateway(el.id, processId, el.$type, el);
                 break;
-            case 'bpmn:InclusiveGateway':
+            case BPMN_TYPE.InclusiveGateway:
                 return new Gateway(el.id, processId, el.$type, el);
                 break;
-            case 'bpmn:ExclusiveGateway':
+            case BPMN_TYPE.ExclusiveGateway:
                 return new XORGateway(el.id, processId, el.$type, el);
                 break;
-            case 'bpmn:IntermediateCatchEvent':
+            case BPMN_TYPE.IntermediateCatchEvent:
                 return new CatchEvent(el.id, processId, el.$type, el);
                 break;
-            case 'bpmn:IntermediateThrowEvent':
+            case BPMN_TYPE.IntermediateThrowEvent:
                 return new ThrowEvent(el.id, processId, el.$type, el);
                 break;
-            case 'bpmn:BoundaryEvent':
+            case BPMN_TYPE.BoundaryEvent:
                 return new BoundaryEvent(el.id, processId, el.$type, el);
                 break;
-            case 'bpmn:EndEvent':
+            case BPMN_TYPE.EndEvent:
                 return new EndEvent(el.id, processId, el.$type, el);
                 break;
-            case 'bpmn:StartEvent':
+            case BPMN_TYPE.StartEvent:
                 return new Event(el.id, processId, el.$type, el);
+                break;
+            case BPMN_TYPE.CallActivity:
+                return new CallActivity(el.id, processId, el.$type, el);
                 break;
             default:
                 return new Node(el.id, processId, el.$type, el);

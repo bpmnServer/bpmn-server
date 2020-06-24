@@ -17,8 +17,6 @@
 ### Properties
 
 * [server](cron.md#server)
-* [checkingTimers](cron.md#static-checkingtimers)
-* [timersFired](cron.md#static-timersfired)
 
 ### Accessors
 
@@ -29,7 +27,6 @@
 * [dataStore](cron.md#datastore)
 * [definitions](cron.md#definitions)
 * [engine](cron.md#engine)
-* [eventsRegistry](cron.md#eventsregistry)
 * [logger](cron.md#logger)
 
 ### Methods
@@ -39,23 +36,24 @@
 * [findEventById](cron.md#findeventbyid)
 * [findEvents](cron.md#findevents)
 * [start](cron.md#start)
-* [timersFired](cron.md#timersfired)
+* [timerEnded](cron.md#static-timerended)
+* [timerScheduled](cron.md#static-timerscheduled)
 
 ## Constructors
 
 ###  constructor
 
-\+ **new Cron**(`server`: [BPMNServer](bpmnserver.md)): *[Cron](cron.md)*
+\+ **new Cron**(`server`: [IBPMNServer](../interfaces/ibpmnserver.md)): *[Cron](cron.md)*
 
-*Inherited from [Cron](cron.md).[constructor](cron.md#constructor)*
+*Inherited from [ServerComponent](servercomponent.md).[constructor](servercomponent.md#constructor)*
 
-Defined in src/server/ServerContext.ts:11
+Defined in src/server/ServerContext.ts:9
 
 **Parameters:**
 
 Name | Type |
 ------ | ------ |
-`server` | [BPMNServer](bpmnserver.md) |
+`server` | [IBPMNServer](../interfaces/ibpmnserver.md) |
 
 **Returns:** *[Cron](cron.md)*
 
@@ -65,25 +63,9 @@ Name | Type |
 
 • **server**: *any*
 
-*Inherited from [Cron](cron.md).[server](cron.md#server)*
+*Inherited from [ServerComponent](servercomponent.md).[server](servercomponent.md#server)*
 
-Defined in src/server/ServerContext.ts:11
-
-___
-
-### `Static` checkingTimers
-
-▪ **checkingTimers**: *boolean* = false
-
-Defined in src/server/Cron.ts:10
-
-___
-
-### `Static` timersFired
-
-▪ **timersFired**: *number* = 0
-
-Defined in src/server/Cron.ts:11
+Defined in src/server/ServerContext.ts:9
 
 ## Accessors
 
@@ -91,9 +73,9 @@ Defined in src/server/Cron.ts:11
 
 • **get appDelegate**(): *any*
 
-*Inherited from [Cron](cron.md).[appDelegate](cron.md#appdelegate)*
+*Inherited from [ServerComponent](servercomponent.md).[appDelegate](servercomponent.md#appdelegate)*
 
-Defined in src/server/ServerContext.ts:23
+Defined in src/server/ServerContext.ts:20
 
 **Returns:** *any*
 
@@ -103,9 +85,9 @@ ___
 
 • **get cache**(): *[CacheManager](cachemanager.md)*
 
-*Inherited from [Cron](cron.md).[cache](cron.md#cache)*
+*Inherited from [ServerComponent](servercomponent.md).[cache](servercomponent.md#cache)*
 
-Defined in src/server/ServerContext.ts:21
+Defined in src/server/ServerContext.ts:18
 
 **Returns:** *[CacheManager](cachemanager.md)*
 
@@ -115,9 +97,9 @@ ___
 
 • **get configuration**(): *any*
 
-*Inherited from [Cron](cron.md).[configuration](cron.md#configuration)*
+*Inherited from [ServerComponent](servercomponent.md).[configuration](servercomponent.md#configuration)*
 
-Defined in src/server/ServerContext.ts:15
+Defined in src/server/ServerContext.ts:13
 
 **Returns:** *any*
 
@@ -127,9 +109,9 @@ ___
 
 • **get cron**(): *[Cron](cron.md)*
 
-*Inherited from [Cron](cron.md).[cron](cron.md#cron)*
+*Inherited from [ServerComponent](servercomponent.md).[cron](servercomponent.md#cron)*
 
-Defined in src/server/ServerContext.ts:20
+Defined in src/server/ServerContext.ts:17
 
 **Returns:** *[Cron](cron.md)*
 
@@ -139,9 +121,9 @@ ___
 
 • **get dataStore**(): *any*
 
-*Inherited from [Cron](cron.md).[dataStore](cron.md#datastore)*
+*Inherited from [ServerComponent](servercomponent.md).[dataStore](servercomponent.md#datastore)*
 
-Defined in src/server/ServerContext.ts:17
+Defined in src/server/ServerContext.ts:15
 
 **Returns:** *any*
 
@@ -151,9 +133,9 @@ ___
 
 • **get definitions**(): *any*
 
-*Inherited from [Cron](cron.md).[definitions](cron.md#definitions)*
+*Inherited from [ServerComponent](servercomponent.md).[definitions](servercomponent.md#definitions)*
 
-Defined in src/server/ServerContext.ts:22
+Defined in src/server/ServerContext.ts:19
 
 **Returns:** *any*
 
@@ -161,25 +143,13 @@ ___
 
 ###  engine
 
-• **get engine**(): *[Engine](engine.md)*
+• **get engine**(): *[IEngine](../interfaces/iengine.md)*
 
-*Inherited from [Cron](cron.md).[engine](cron.md#engine)*
+*Inherited from [ServerComponent](servercomponent.md).[engine](servercomponent.md#engine)*
 
-Defined in src/server/ServerContext.ts:19
+Defined in src/server/ServerContext.ts:16
 
-**Returns:** *[Engine](engine.md)*
-
-___
-
-###  eventsRegistry
-
-• **get eventsRegistry**(): *any*
-
-*Inherited from [Cron](cron.md).[eventsRegistry](cron.md#eventsregistry)*
-
-Defined in src/server/ServerContext.ts:18
-
-**Returns:** *any*
+**Returns:** *[IEngine](../interfaces/iengine.md)*
 
 ___
 
@@ -187,9 +157,9 @@ ___
 
 • **get logger**(): *any*
 
-*Inherited from [Cron](cron.md).[logger](cron.md#logger)*
+*Inherited from [ServerComponent](servercomponent.md).[logger](servercomponent.md#logger)*
 
-Defined in src/server/ServerContext.ts:16
+Defined in src/server/ServerContext.ts:14
 
 **Returns:** *any*
 
@@ -199,7 +169,7 @@ Defined in src/server/ServerContext.ts:16
 
 ▸ **_checkTimers**(): *Promise‹void›*
 
-Defined in src/server/Cron.ts:25
+Defined in src/server/Cron.ts:29
 
 **Returns:** *Promise‹void›*
 
@@ -209,7 +179,7 @@ ___
 
 ▸ **checkTimers**(`duration`: number): *Promise‹void›*
 
-Defined in src/server/Cron.ts:16
+Defined in src/server/Cron.ts:20
 
 **Parameters:**
 
@@ -225,7 +195,7 @@ ___
 
 ▸ **findEventById**(`signalId`: string): *Promise‹[IEventData](../interfaces/ieventdata.md)›*
 
-Defined in src/server/Cron.ts:82
+Defined in src/server/Cron.ts:86
 
 **Parameters:**
 
@@ -241,7 +211,7 @@ ___
 
 ▸ **findEvents**(`query`: any): *Promise‹[IEventData](../interfaces/ieventdata.md)[]›*
 
-Defined in src/server/Cron.ts:77
+Defined in src/server/Cron.ts:81
 
 **Parameters:**
 
@@ -257,16 +227,38 @@ ___
 
 ▸ **start**(): *Promise‹void›*
 
-Defined in src/server/Cron.ts:22
+Defined in src/server/Cron.ts:26
 
 **Returns:** *Promise‹void›*
 
 ___
 
-###  timersFired
+### `Static` timerEnded
 
-▸ **timersFired**(): *void*
+▸ **timerEnded**(`item`: any): *void*
+
+Defined in src/server/Cron.ts:16
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`item` | any |
+
+**Returns:** *void*
+
+___
+
+### `Static` timerScheduled
+
+▸ **timerScheduled**(`timeDue`: any): *void*
 
 Defined in src/server/Cron.ts:13
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`timeDue` | any |
 
 **Returns:** *void*

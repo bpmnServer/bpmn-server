@@ -66,8 +66,8 @@ Feature('Event Based Gateway', () => {
             When('we issue reminder', async () => {
 
                 const query = {
-                    instance: { id: instanceId },
-                    items: { elementId: 'reminder' }
+                   id: instanceId ,
+                    "items.elementId" : 'reminder'
                 };
                 response=await server.engine.invoke(query, {});
             });

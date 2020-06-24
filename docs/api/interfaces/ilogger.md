@@ -34,7 +34,7 @@ msgs can be cleared by the clean method
 
 ▸ **clear**(): *void*
 
-Defined in src/interfaces/common.ts:49
+Defined in src/interfaces/common.ts:47
 
 **Returns:** *void*
 
@@ -44,7 +44,7 @@ ___
 
 ▸ **debug**(`message`: any): *void*
 
-Defined in src/interfaces/common.ts:51
+Defined in src/interfaces/common.ts:49
 
 **Parameters:**
 
@@ -60,7 +60,7 @@ ___
 
 ▸ **error**(`err`: any): *void*
 
-Defined in src/interfaces/common.ts:54
+Defined in src/interfaces/common.ts:52
 
 **Parameters:**
 
@@ -76,7 +76,7 @@ ___
 
 ▸ **get**(): *any[]*
 
-Defined in src/interfaces/common.ts:50
+Defined in src/interfaces/common.ts:48
 
 **Returns:** *any[]*
 
@@ -86,7 +86,7 @@ ___
 
 ▸ **log**(`message`: any): *void*
 
-Defined in src/interfaces/common.ts:53
+Defined in src/interfaces/common.ts:51
 
 **Parameters:**
 
@@ -102,7 +102,7 @@ ___
 
 ▸ **save**(`filename`: any): *Promise‹void›*
 
-Defined in src/interfaces/common.ts:55
+Defined in src/interfaces/common.ts:53
 
 **Parameters:**
 
@@ -118,7 +118,7 @@ ___
 
 ▸ **setOptions**(`__namedParameters`: object): *void*
 
-Defined in src/interfaces/common.ts:44
+Defined in src/interfaces/common.ts:42
 
 **Parameters:**
 
@@ -138,7 +138,7 @@ ___
 
 ▸ **warn**(`message`: any): *void*
 
-Defined in src/interfaces/common.ts:52
+Defined in src/interfaces/common.ts:50
 
 **Parameters:**
 

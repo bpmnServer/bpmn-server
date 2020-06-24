@@ -18,13 +18,9 @@
 
   ↳ [SubProcess](subprocess.md)
 
+  ↳ [CallActivity](callactivity.md)
+
   ↳ [Event](event.md)
-
-  ↳ [CatchEvent](catchevent.md)
-
-  ↳ [BoundaryEvent](boundaryevent.md)
-
-  ↳ [ThrowEvent](throwevent.md)
 
   ↳ [Gateway](gateway.md)
 

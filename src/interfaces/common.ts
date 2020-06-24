@@ -1,5 +1,4 @@
-import { IExecution, IItem, NODE_ACTION, FLOW_ACTION, IModelsDatastore, IExecutionContext } from '../..';
-import { IDataStore, IEventsRegistry } from './server';
+import { IExecution, IItem, NODE_ACTION, FLOW_ACTION, IModelsDatastore, IExecutionContext, IDataStore} from '../..';
 
 
 interface IConfiguration 
@@ -18,10 +17,9 @@ interface IConfiguration
     },
 
     logger: ILogger,
-    definitions: IModelsDatastore,
-    appDelegate: IAppDelegate,
-    dataStore: IDataStore, 
-    eventsRegistry: IEventsRegistry,
+    definitions(server): IModelsDatastore,
+    appDelegate(server): IAppDelegate,
+    dataStore(server): IDataStore
 }
 
 /**

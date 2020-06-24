@@ -8,19 +8,19 @@ super class for various objects that are part of the server
 
 * **ServerComponent**
 
-  ↳ [Cron](cron.md)
+  ↳ [ExecutionContext](executioncontext.md)
 
   ↳ [DataStore](datastore.md)
 
-  ↳ [EventsRegistry](eventsregistry.md)
+  ↳ [ModelsDatastoreFS](modelsdatastorefs.md)
 
   ↳ [Engine](engine.md)
 
   ↳ [CacheManager](cachemanager.md)
 
-  ↳ [ExecutionContext](executioncontext.md)
+  ↳ [Cron](cron.md)
 
-  ↳ [ModelsDatastore](modelsdatastore.md)
+  ↳ [ModelsDatastoreDB](modelsdatastoredb.md)
 
 ## Index
 
@@ -41,22 +41,21 @@ super class for various objects that are part of the server
 * [dataStore](servercomponent.md#datastore)
 * [definitions](servercomponent.md#definitions)
 * [engine](servercomponent.md#engine)
-* [eventsRegistry](servercomponent.md#eventsregistry)
 * [logger](servercomponent.md#logger)
 
 ## Constructors
 
 ###  constructor
 
-\+ **new ServerComponent**(`server`: [BPMNServer](bpmnserver.md)): *[ServerComponent](servercomponent.md)*
+\+ **new ServerComponent**(`server`: [IBPMNServer](../interfaces/ibpmnserver.md)): *[ServerComponent](servercomponent.md)*
 
-Defined in src/server/ServerContext.ts:11
+Defined in src/server/ServerContext.ts:9
 
 **Parameters:**
 
 Name | Type |
 ------ | ------ |
-`server` | [BPMNServer](bpmnserver.md) |
+`server` | [IBPMNServer](../interfaces/ibpmnserver.md) |
 
 **Returns:** *[ServerComponent](servercomponent.md)*
 
@@ -66,7 +65,7 @@ Name | Type |
 
 • **server**: *any*
 
-Defined in src/server/ServerContext.ts:11
+Defined in src/server/ServerContext.ts:9
 
 ## Accessors
 
@@ -74,7 +73,7 @@ Defined in src/server/ServerContext.ts:11
 
 • **get appDelegate**(): *any*
 
-Defined in src/server/ServerContext.ts:23
+Defined in src/server/ServerContext.ts:20
 
 **Returns:** *any*
 
@@ -84,7 +83,7 @@ ___
 
 • **get cache**(): *[CacheManager](cachemanager.md)*
 
-Defined in src/server/ServerContext.ts:21
+Defined in src/server/ServerContext.ts:18
 
 **Returns:** *[CacheManager](cachemanager.md)*
 
@@ -94,7 +93,7 @@ ___
 
 • **get configuration**(): *any*
 
-Defined in src/server/ServerContext.ts:15
+Defined in src/server/ServerContext.ts:13
 
 **Returns:** *any*
 
@@ -104,7 +103,7 @@ ___
 
 • **get cron**(): *[Cron](cron.md)*
 
-Defined in src/server/ServerContext.ts:20
+Defined in src/server/ServerContext.ts:17
 
 **Returns:** *[Cron](cron.md)*
 
@@ -114,7 +113,7 @@ ___
 
 • **get dataStore**(): *any*
 
-Defined in src/server/ServerContext.ts:17
+Defined in src/server/ServerContext.ts:15
 
 **Returns:** *any*
 
@@ -124,7 +123,7 @@ ___
 
 • **get definitions**(): *any*
 
-Defined in src/server/ServerContext.ts:22
+Defined in src/server/ServerContext.ts:19
 
 **Returns:** *any*
 
@@ -132,21 +131,11 @@ ___
 
 ###  engine
 
-• **get engine**(): *[Engine](engine.md)*
+• **get engine**(): *[IEngine](../interfaces/iengine.md)*
 
-Defined in src/server/ServerContext.ts:19
+Defined in src/server/ServerContext.ts:16
 
-**Returns:** *[Engine](engine.md)*
-
-___
-
-###  eventsRegistry
-
-• **get eventsRegistry**(): *any*
-
-Defined in src/server/ServerContext.ts:18
-
-**Returns:** *any*
+**Returns:** *[IEngine](../interfaces/iengine.md)*
 
 ___
 
@@ -154,6 +143,6 @@ ___
 
 • **get logger**(): *any*
 
-Defined in src/server/ServerContext.ts:16
+Defined in src/server/ServerContext.ts:14
 
 **Returns:** *any*

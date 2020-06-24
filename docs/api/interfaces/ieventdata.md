@@ -8,42 +8,53 @@
 
 ## Implemented by
 
-* [SignalEvent](../classes/signalevent.md)
-* [TimerEvent](../classes/timerevent.md)
+* [EventData](../classes/eventdata.md)
+* [EventData](../classes/eventdata.md)
 
 ## Index
 
 ### Properties
 
-* [_id](ieventdata.md#_id)
 * [elementId](ieventdata.md#elementid)
-* [processName](ieventdata.md#processname)
+* [messageId](ieventdata.md#optional-messageid)
+* [name](ieventdata.md#name)
+* [processId](ieventdata.md#processid)
 * [signalId](ieventdata.md#optional-signalid)
+* [subType](ieventdata.md#subtype)
 * [timeDue](ieventdata.md#optional-timedue)
+* [type](ieventdata.md#type)
 
 ## Properties
-
-###  _id
-
-• **_id**: *any*
-
-Defined in src/interfaces/server.ts:79
-
-___
 
 ###  elementId
 
 • **elementId**: *string*
 
-Defined in src/interfaces/server.ts:83
+Defined in src/interfaces/datastore.ts:46
 
 ___
 
-###  processName
+### `Optional` messageId
 
-• **processName**: *string*
+• **messageId**? : *string*
 
-Defined in src/interfaces/server.ts:82
+Defined in src/interfaces/datastore.ts:52
+
+___
+
+###  name
+
+• **name**: *any*
+
+Defined in src/interfaces/datastore.ts:49
+
+___
+
+###  processId
+
+• **processId**: *string*
+
+Defined in src/interfaces/datastore.ts:47
 
 ___
 
@@ -51,7 +62,15 @@ ___
 
 • **signalId**? : *string*
 
-Defined in src/interfaces/server.ts:80
+Defined in src/interfaces/datastore.ts:51
+
+___
+
+###  subType
+
+• **subType**: *any*
+
+Defined in src/interfaces/datastore.ts:50
 
 ___
 
@@ -59,4 +78,12 @@ ___
 
 • **timeDue**? : *Date*
 
-Defined in src/interfaces/server.ts:81
+Defined in src/interfaces/datastore.ts:53
+
+___
+
+###  type
+
+• **type**: *any*
+
+Defined in src/interfaces/datastore.ts:48

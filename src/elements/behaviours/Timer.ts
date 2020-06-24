@@ -3,7 +3,7 @@ import { Token, Execution  } from '../../engine';
 import { Node } from '..';
 import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../../..';
 import { Item } from '../../engine/Item';
-import { EventsRegistry, TimerEvent, BPMNServer } from '../../server';
+import { BPMNServer } from '../../server';
 import { Behaviour } from './';
 import { Cron } from '../../server/Cron';
 
@@ -65,36 +65,51 @@ class TimerBehaviour extends Behaviour {
     describe() {
         return ['timer','is a timer duration='+duration];
     }
-    start(item: Item) {
-        let seconds;
-        if (this.duration) {
-            seconds = toSeconds((parse(this.duration)));
-        }
-        else if (this.timeCycle) 
-        {
-            seconds = toSeconds((parse(this.timeCycle)));
-        }
-        item.token.log("..------timer running --- " + seconds);
-        this.startTimer(item, seconds);
+    /**
+     * return the next time the timer is due
+     * 
+     * @param timerModifier - for testing purposes configuration can alter the timer
+     */
+    timeDue(timerModifier=null) {
 
-        Cron.timersFired++;
+        let seconds;
+        if (timerModifier)
+            seconds = timerModifier;
+        else {
+            if (this.duration) {
+                seconds = toSeconds((parse(this.duration)));
+            }
+            else if (this.timeCycle) {
+                seconds = toSeconds((parse(this.timeCycle)));
+            }
+        }
+        let timeDue = new Date().getTime();
+        timeDue += seconds;
+        return timeDue;
+    }
+    start(item: Item) {
+
+        item.token.log("..------timer running --- " );
+        this.startTimer(item);
+
         //setTimeout(this.expires.bind(item), seconds * 1000);
 
         return NODE_ACTION.wait;
     }
-    startTimer(item, seconds) {
 
+    startTimer(item) {
+
+        let timerModifier = null;
         const config = item.context.configuration;
         if (config.timers && config.timers.forceTimersDelay) {
-            seconds = config.timers.forceTimersDelay;
-            item.token.log("Timer duration modified by the configuration to " + seconds);
+            timerModifier = config.timers.forceTimersDelay;
+            item.token.log("Timer duration modified by the configuration to " + timerModifier);
         }
 
-        let timeDue = new Date().getTime();
-        timeDue += seconds;
+        item.timeDue = this.timeDue(timerModifier);
+        item.token.log("timer is set at " + item.timeDue);
 
-        item.timeDue = timeDue;//  new Date(timeDue);
-        item.token.log("timer is set at " + timeDue);
+        Cron.timerScheduled(item.timeDue);
 //          done by cron class
 //        setTimeout(this.expires.bind(item), seconds * 1000);
     }
@@ -106,7 +121,7 @@ class TimerBehaviour extends Behaviour {
             item.token.signal(null);
     }
     end(item: Item) {
-        Cron.timersFired--;
+        Cron.timerEnded(item);
         item.timeDue = undefined;
     }
     resume() { }

@@ -18,6 +18,7 @@
 
 ### Methods
 
+* [executionEvent](defaultappdelegate.md#executionevent)
 * [executionStarted](defaultappdelegate.md#executionstarted)
 * [messageIssued](defaultappdelegate.md#messageissued)
 * [scopeEval](defaultappdelegate.md#scopeeval)
@@ -43,6 +44,26 @@ Name | Type | Default |
 
 ## Methods
 
+###  executionEvent
+
+▸ **executionEvent**(`__namedParameters`: object): *Promise‹void›*
+
+Defined in src/engine/DefaultAppDelegate.ts:15
+
+**Parameters:**
+
+▪ **__namedParameters**: *object*
+
+Name | Type |
+------ | ------ |
+`event` | any |
+`execution` | any |
+`item` | any |
+
+**Returns:** *Promise‹void›*
+
+___
+
 ###  executionStarted
 
 ▸ **executionStarted**(`execution`: [IExecutionContext](../interfaces/iexecutioncontext.md)): *void*
@@ -67,7 +88,7 @@ ___
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:10
+Defined in src/engine/DefaultAppDelegate.ts:22
 
 **Parameters:**
 
@@ -85,7 +106,7 @@ ___
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:14
+Defined in src/engine/DefaultAppDelegate.ts:26
 
 **Parameters:**
 
@@ -104,7 +125,7 @@ ___
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:24
+Defined in src/engine/DefaultAppDelegate.ts:36
 
 **Parameters:**
 
@@ -123,7 +144,7 @@ ___
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:12
+Defined in src/engine/DefaultAppDelegate.ts:24
 
 **Parameters:**
 
@@ -141,7 +162,7 @@ ___
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:11
+Defined in src/engine/DefaultAppDelegate.ts:23
 
 **Parameters:**
 

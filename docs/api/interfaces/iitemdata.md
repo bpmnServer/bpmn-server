@@ -35,7 +35,7 @@
 
 • **data**: *any*
 
-Defined in src/interfaces/engine.ts:120
+Defined in src/interfaces/engine.ts:121
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 • **elementId**: *string*
 
-Defined in src/interfaces/engine.ts:111
+Defined in src/interfaces/engine.ts:112
 
 ___
 
@@ -51,7 +51,7 @@ ___
 
 • **endedAt**: *any*
 
-Defined in src/interfaces/engine.ts:116
+Defined in src/interfaces/engine.ts:117
 
 ___
 
@@ -59,7 +59,7 @@ ___
 
 • **id**: *string*
 
-Defined in src/interfaces/engine.ts:109
+Defined in src/interfaces/engine.ts:110
 
 ___
 
@@ -67,7 +67,7 @@ ___
 
 • **itemKey**: *string*
 
-Defined in src/interfaces/engine.ts:110
+Defined in src/interfaces/engine.ts:111
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 • **name**: *string*
 
-Defined in src/interfaces/engine.ts:112
+Defined in src/interfaces/engine.ts:113
 
 ___
 
@@ -83,7 +83,7 @@ ___
 
 • **seq**: *any*
 
-Defined in src/interfaces/engine.ts:117
+Defined in src/interfaces/engine.ts:118
 
 ___
 
@@ -91,7 +91,7 @@ ___
 
 • **startedAt**: *any*
 
-Defined in src/interfaces/engine.ts:115
+Defined in src/interfaces/engine.ts:116
 
 ___
 
@@ -99,7 +99,7 @@ ___
 
 • **status**: *[ITEM_STATUS](../enums/item_status.md)*
 
-Defined in src/interfaces/engine.ts:119
+Defined in src/interfaces/engine.ts:120
 
 ___
 
@@ -107,7 +107,7 @@ ___
 
 • **timeDue**: *Date*
 
-Defined in src/interfaces/engine.ts:118
+Defined in src/interfaces/engine.ts:119
 
 ___
 
@@ -115,7 +115,7 @@ ___
 
 • **tokenId**: *any*
 
-Defined in src/interfaces/engine.ts:114
+Defined in src/interfaces/engine.ts:115
 
 ___
 
@@ -123,4 +123,4 @@ ___
 
 • **type**: *string*
 
-Defined in src/interfaces/engine.ts:113
+Defined in src/interfaces/engine.ts:114

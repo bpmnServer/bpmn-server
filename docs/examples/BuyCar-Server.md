@@ -26,7 +26,7 @@ async function test() {
 ```
 The server object provides a set of components;for now, we need the engine
 We start a process execution by name; in this case 'Buy Used Car' 
-BPMN definitions are saved our catalog as defined by the [configuration](../configuration.md), in our WebApp they are under WebApp/processes folder
+BPMN definitions are saved our catalog as defined by the [configuration](../setup.md), in our WebApp they are under WebApp/processes folder
 
 ```javascript
     let response = await engine.start('Buy Used Car');
@@ -59,7 +59,7 @@ The [query](../query.md) is passed to MongoDB to select the appropriate item.
 ```javascript
 
     const input={ model: 'Thunderbird', needsRepairs: false, needsCleaning: false };
-    response = await engine.continue({items: { id: itemId } }, input );
+    response = await engine.invoke({items: { id: itemId } }, input );
 
     console.log("Ready to drive");
 
@@ -67,7 +67,7 @@ The [query](../query.md) is passed to MongoDB to select the appropriate item.
     in the next step, we will query on instance id as well as the element id 
 
 ```javascript
-    response = await engine.continue({ instance: { response.execution.id }, items: {elementId: 'task_Drive' }});
+    response = await engine.invoke({ instance: { response.execution.id }, items: {elementId: 'task_Drive' }});
 
     console.log(`that is it!, process is now complete status=<${response.execution.status}>`)
 

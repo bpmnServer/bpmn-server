@@ -16,15 +16,6 @@ const _1 = require(".");
 const fs = require('fs');
 //console.log(moddleOptions);
 const moddle = new BpmnModdle({ moddleOptions: js_bpmn_moddle_1.moddleOptions });
-/**
- *  to be saved in DB to monitor for startEvents:
- *      timer events that start process
- *      message/signal events that are received
- * */
-class DefinitionRecord {
-}
-class DefinitionStartEvent {
-}
 class Definition {
     constructor(name, source, logger) {
         this.processes = new Map();
@@ -113,6 +104,20 @@ class Definition {
                 id : "BoundaryEvent_0qdlc8p"
             property : "bpmn:attachedToRef"
             id : "user_task"
+        
+        
+        element
+        $type : "bpmn:MessageEventDefinition"
+        property : "bpmn:messageRef"
+        id : "newInvoice"
+        
+        
+        element
+        $type : "bpmn:SignalEventDefinition"
+        id : "signalEventDef1"
+        property : "bpmn:signalRef"
+        id : "cancelAll"
+        
                  */
                 if (ref.element.$type == "bpmn:BoundaryEvent") {
                     const event = this.getNodeById(ref.element.id);
@@ -121,6 +126,14 @@ class Definition {
                         event.attachedTo = owner;
                         owner.attachments.push(event);
                     }
+                }
+                else if ((ref.element.$type == "bpmn:MessageEventDefinition")
+                    || (ref.element.$type == "bpmn:SignalEventDefinition")) {
+                    const eventDef = definition.elementsById[ref.element.id];
+                    console.log('-- attaching signalId to eventDef');
+                    console.log(eventDef);
+                    eventDef[ref.property] = ref.id;
+                    console.log(eventDef);
                 }
             });
             refs.forEach(ref => {
@@ -152,17 +165,21 @@ class Definition {
     getJson() {
         const elements = [];
         const flows = [];
+        const processes = [];
+        this.processes.forEach(process => {
+            processes.push({ id: process.id, name: process.name, isExecutable: process.isExecutable });
+        });
         this.nodes.forEach(node => {
             let behaviours = [];
             node.behaviours.forEach(behav => {
                 behaviours.push(behav.describe());
             });
-            elements.push({ id: node.id, name: node.name, type: node.type, description: node.describe(), behaviours });
+            elements.push({ id: node.id, name: node.name, type: node.type, process: node.processId, def: node.def, description: node.describe(), behaviours });
         });
         this.flows.forEach(flow => {
             flows.push({ id: flow.id, from: flow.from.id, to: flow.to.id, type: flow.type, description: flow.describe() });
         });
-        return JSON.stringify({ elements, flows });
+        return JSON.stringify({ root: this.rootElements, processes, elements, flows });
     }
     getDefinition(source, logger) {
         return __awaiter(this, void 0, void 0, function* () {

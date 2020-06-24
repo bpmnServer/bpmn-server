@@ -6,6 +6,8 @@
 
 * **IServerComponent**
 
+  ↳ [IEngine](iengine.md)
+
 ## Index
 
 ### Properties
@@ -17,7 +19,6 @@
 * [dataStore](iservercomponent.md#datastore)
 * [definitions](iservercomponent.md#definitions)
 * [engine](iservercomponent.md#engine)
-* [eventsRegistry](iservercomponent.md#eventsregistry)
 * [logger](iservercomponent.md#logger)
 * [server](iservercomponent.md#server)
 
@@ -27,7 +28,7 @@
 
 • **appDelegate**: *any*
 
-Defined in src/interfaces/server.ts:103
+Defined in src/interfaces/server.ts:37
 
 ___
 
@@ -35,7 +36,7 @@ ___
 
 • **cache**: *any*
 
-Defined in src/interfaces/server.ts:101
+Defined in src/interfaces/server.ts:35
 
 ___
 
@@ -43,7 +44,7 @@ ___
 
 • **configuration**: *any*
 
-Defined in src/interfaces/server.ts:95
+Defined in src/interfaces/server.ts:30
 
 ___
 
@@ -51,7 +52,7 @@ ___
 
 • **cron**: *any*
 
-Defined in src/interfaces/server.ts:100
+Defined in src/interfaces/server.ts:34
 
 ___
 
@@ -59,7 +60,7 @@ ___
 
 • **dataStore**: *any*
 
-Defined in src/interfaces/server.ts:97
+Defined in src/interfaces/server.ts:32
 
 ___
 
@@ -67,7 +68,7 @@ ___
 
 • **definitions**: *any*
 
-Defined in src/interfaces/server.ts:102
+Defined in src/interfaces/server.ts:36
 
 ___
 
@@ -75,15 +76,7 @@ ___
 
 • **engine**: *any*
 
-Defined in src/interfaces/server.ts:99
-
-___
-
-###  eventsRegistry
-
-• **eventsRegistry**: *any*
-
-Defined in src/interfaces/server.ts:98
+Defined in src/interfaces/server.ts:33
 
 ___
 
@@ -91,7 +84,7 @@ ___
 
 • **logger**: *any*
 
-Defined in src/interfaces/server.ts:96
+Defined in src/interfaces/server.ts:31
 
 ___
 
@@ -99,4 +92,4 @@ ___
 
 • **server**: *any*
 
-Defined in src/interfaces/server.ts:94
+Defined in src/interfaces/server.ts:29

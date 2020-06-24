@@ -23,6 +23,10 @@
 * [definition](messageeventbehaviour.md#definition)
 * [node](messageeventbehaviour.md#node)
 
+### Accessors
+
+* [messageId](messageeventbehaviour.md#messageid)
+
 ### Methods
 
 * [describe](messageeventbehaviour.md#describe)
@@ -74,6 +78,16 @@ ___
 
 Defined in src/elements/behaviours/Behaviour.ts:35
 
+## Accessors
+
+###  messageId
+
+• **get messageId**(): *any*
+
+Defined in src/elements/behaviours/MessageSignal.ts:11
+
+**Returns:** *any*
+
 ## Methods
 
 ###  describe
@@ -84,7 +98,7 @@ Defined in src/elements/behaviours/Behaviour.ts:35
 
 *Overrides [Behaviour](behaviour.md).[describe](behaviour.md#describe)*
 
-Defined in src/elements/behaviours/MessageSignal.ts:11
+Defined in src/elements/behaviours/MessageSignal.ts:14
 
 **Returns:** *string[]*
 

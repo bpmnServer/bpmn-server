@@ -13,9 +13,9 @@ let xml, base_url, title, processName;
 
 
 class Modeller {
-    display(process, request, response) {
+    async display(process, request, response) {
         processName = process;
-        xml = definitions.getSource(processName);
+        xml = await definitions.getSource(processName);
         title = processName;
         response.write(getText());
         response.end();

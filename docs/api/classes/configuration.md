@@ -18,14 +18,16 @@
 
 ### Properties
 
-* [appDelegate](configuration.md#appdelegate)
-* [dataStore](configuration.md#datastore)
 * [database](configuration.md#database)
-* [definitions](configuration.md#definitions)
 * [definitionsPath](configuration.md#definitionspath)
-* [eventsRegistry](configuration.md#eventsregistry)
 * [logger](configuration.md#logger)
 * [timers](configuration.md#timers)
+
+### Methods
+
+* [appDelegate](configuration.md#appdelegate)
+* [dataStore](configuration.md#datastore)
+* [definitions](configuration.md#definitions)
 
 ## Constructors
 
@@ -33,7 +35,7 @@
 
 \+ **new Configuration**(`__namedParameters`: object): *[Configuration](configuration.md)*
 
-Defined in src/common/DefaultConfiguration.ts:19
+Defined in src/common/DefaultConfiguration.ts:23
 
 **Parameters:**
 
@@ -46,7 +48,6 @@ Name | Type |
 `database` | any |
 `definitions` | any |
 `definitionsPath` | any |
-`eventsRegistry` | any |
 `logger` | any |
 `timers` | any |
 
@@ -54,33 +55,13 @@ Name | Type |
 
 ## Properties
 
-###  appDelegate
-
-• **appDelegate**: *[IAppDelegate](../interfaces/iappdelegate.md)*
-
-*Implementation of [IConfiguration](../interfaces/iconfiguration.md).[appDelegate](../interfaces/iconfiguration.md#appdelegate)*
-
-Defined in src/common/DefaultConfiguration.ts:17
-
-___
-
-###  dataStore
-
-• **dataStore**: *[IDataStore](../interfaces/idatastore.md)*
-
-*Implementation of [IConfiguration](../interfaces/iconfiguration.md).[dataStore](../interfaces/iconfiguration.md#datastore)*
-
-Defined in src/common/DefaultConfiguration.ts:18
-
-___
-
 ###  database
 
 • **database**: *object*
 
 *Implementation of [IConfiguration](../interfaces/iconfiguration.md).[database](../interfaces/iconfiguration.md#database)*
 
-Defined in src/common/DefaultConfiguration.ts:14
+Defined in src/common/DefaultConfiguration.ts:13
 
 #### Type declaration:
 
@@ -92,33 +73,13 @@ Defined in src/common/DefaultConfiguration.ts:14
 
 ___
 
-###  definitions
-
-• **definitions**: *[IModelsDatastore](../interfaces/imodelsdatastore.md)*
-
-*Implementation of [IConfiguration](../interfaces/iconfiguration.md).[definitions](../interfaces/iconfiguration.md#definitions)*
-
-Defined in src/common/DefaultConfiguration.ts:16
-
-___
-
 ###  definitionsPath
 
 • **definitionsPath**: *string*
 
 *Implementation of [IConfiguration](../interfaces/iconfiguration.md).[definitionsPath](../interfaces/iconfiguration.md#definitionspath)*
 
-Defined in src/common/DefaultConfiguration.ts:12
-
-___
-
-###  eventsRegistry
-
-• **eventsRegistry**: *[IEventsRegistry](../interfaces/ieventsregistry.md)*
-
-*Implementation of [IConfiguration](../interfaces/iconfiguration.md).[eventsRegistry](../interfaces/iconfiguration.md#eventsregistry)*
-
-Defined in src/common/DefaultConfiguration.ts:19
+Defined in src/common/DefaultConfiguration.ts:11
 
 ___
 
@@ -128,7 +89,7 @@ ___
 
 *Implementation of [IConfiguration](../interfaces/iconfiguration.md).[logger](../interfaces/iconfiguration.md#logger)*
 
-Defined in src/common/DefaultConfiguration.ts:15
+Defined in src/common/DefaultConfiguration.ts:14
 
 ___
 
@@ -138,10 +99,64 @@ ___
 
 *Implementation of [IConfiguration](../interfaces/iconfiguration.md).[timers](../interfaces/iconfiguration.md#timers)*
 
-Defined in src/common/DefaultConfiguration.ts:13
+Defined in src/common/DefaultConfiguration.ts:12
 
 #### Type declaration:
 
 * **forceTimersDelay**: *number*
 
 * **precision**: *number*
+
+## Methods
+
+###  appDelegate
+
+▸ **appDelegate**(`server`: any): *[DefaultAppDelegate](defaultappdelegate.md)‹›*
+
+*Implementation of [IConfiguration](../interfaces/iconfiguration.md)*
+
+Defined in src/common/DefaultConfiguration.ts:18
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`server` | any |
+
+**Returns:** *[DefaultAppDelegate](defaultappdelegate.md)‹›*
+
+___
+
+###  dataStore
+
+▸ **dataStore**(`server`: any): *[DataStore](datastore.md)‹›*
+
+*Implementation of [IConfiguration](../interfaces/iconfiguration.md)*
+
+Defined in src/common/DefaultConfiguration.ts:21
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`server` | any |
+
+**Returns:** *[DataStore](datastore.md)‹›*
+
+___
+
+###  definitions
+
+▸ **definitions**(`server`: any): *[ModelsDatastoreDB](modelsdatastoredb.md)‹›*
+
+*Implementation of [IConfiguration](../interfaces/iconfiguration.md)*
+
+Defined in src/common/DefaultConfiguration.ts:15
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`server` | any |
+
+**Returns:** *[ModelsDatastoreDB](modelsdatastoredb.md)‹›*

@@ -4,7 +4,7 @@
 
 ## Hierarchy
 
-  ↳ [Node](node.md)
+  ↳ [Event](event.md)
 
   ↳ **ThrowEvent**
 
@@ -44,6 +44,9 @@
 * [getBehaviour](throwevent.md#getbehaviour)
 * [getOutbounds](throwevent.md#getoutbounds)
 * [hasBehaviour](throwevent.md#hasbehaviour)
+* [hasMessage](throwevent.md#hasmessage)
+* [hasSignal](throwevent.md#hassignal)
+* [hasTimer](throwevent.md#hastimer)
 * [init](throwevent.md#init)
 * [requiresWait](throwevent.md#requireswait)
 * [restored](throwevent.md#restored)
@@ -209,9 +212,11 @@ ___
 
 ▸ **canBeInvoked**(): *boolean*
 
-*Inherited from [Node](node.md).[canBeInvoked](node.md#canbeinvoked)*
+*Inherited from [Event](event.md).[canBeInvoked](event.md#canbeinvoked)*
 
-Defined in src/elements/Node.ts:52
+*Overrides [Node](node.md).[canBeInvoked](node.md#canbeinvoked)*
+
+Defined in src/elements/Events.ts:30
 
 **Returns:** *boolean*
 
@@ -275,9 +280,11 @@ ___
 
 ▸ **end**(`item`: [Item](item.md)): *Promise‹void›*
 
-*Inherited from [Node](node.md).[end](node.md#end)*
+*Inherited from [Event](event.md).[end](event.md#end)*
 
-Defined in src/elements/Node.ts:142
+*Overrides [Node](node.md).[end](node.md#end)*
+
+Defined in src/elements/Events.ts:26
 
 **Parameters:**
 
@@ -394,6 +401,42 @@ Name | Type |
 
 ___
 
+###  hasMessage
+
+▸ **hasMessage**(): *any*
+
+*Inherited from [Event](event.md).[hasMessage](event.md#hasmessage)*
+
+Defined in src/elements/Events.ts:7
+
+**Returns:** *any*
+
+___
+
+###  hasSignal
+
+▸ **hasSignal**(): *any*
+
+*Inherited from [Event](event.md).[hasSignal](event.md#hassignal)*
+
+Defined in src/elements/Events.ts:10
+
+**Returns:** *any*
+
+___
+
+###  hasTimer
+
+▸ **hasTimer**(): *any*
+
+*Inherited from [Event](event.md).[hasTimer](event.md#hastimer)*
+
+Defined in src/elements/Events.ts:13
+
+**Returns:** *any*
+
+___
+
 ###  init
 
 ▸ **init**(`item`: [Item](item.md)): *void*
@@ -469,9 +512,9 @@ ___
 
 ▸ **run**(`item`: [Item](item.md)): *Promise‹[NODE_ACTION](../enums/node_action.md)›*
 
-*Inherited from [Node](node.md).[run](node.md#run)*
+*Overrides [Node](node.md).[run](node.md#run)*
 
-Defined in src/elements/Node.ts:138
+Defined in src/elements/Events.ts:81
 
 **Parameters:**
 
@@ -487,9 +530,9 @@ ___
 
 ▸ **start**(`item`: [Item](item.md)): *Promise‹[NODE_ACTION](../enums/node_action.md)›*
 
-*Overrides [Node](node.md).[start](node.md#start)*
+*Overrides [Event](event.md).[start](event.md#start)*
 
-Defined in src/elements/Events.ts:75
+Defined in src/elements/Events.ts:78
 
 	using token: check if fromEventBasedGateway;	if yes cancel all other events
 

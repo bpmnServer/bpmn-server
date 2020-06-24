@@ -18,12 +18,14 @@
 * [data](iexecution.md#data)
 * [definition](iexecution.md#definition)
 * [endedAt](iexecution.md#endedat)
+* [executionContext](iexecution.md#executioncontext)
 * [id](iexecution.md#id)
 * [listener](iexecution.md#listener)
 * [logger](iexecution.md#logger)
 * [logs](iexecution.md#logs)
 * [name](iexecution.md#name)
-* [parentNodeId](iexecution.md#parentnodeid)
+* [parentItemId](iexecution.md#parentitemid)
+* [promises](iexecution.md#promises)
 * [saved](iexecution.md#saved)
 * [source](iexecution.md#source)
 * [startedAt](iexecution.md#startedat)
@@ -60,9 +62,9 @@
 
 ###  appDelegate
 
-• **appDelegate**: *any*
+• **appDelegate**: *[IAppDelegate](iappdelegate.md)*
 
-Defined in src/interfaces/engine.ts:62
+Defined in src/interfaces/engine.ts:61
 
 ___
 
@@ -70,7 +72,7 @@ ___
 
 • **data**: *any*
 
-Defined in src/interfaces/engine.ts:65
+Defined in src/interfaces/engine.ts:64
 
 ___
 
@@ -78,7 +80,7 @@ ___
 
 • **definition**: *[IDefinition](idefinition.md)*
 
-Defined in src/interfaces/engine.ts:61
+Defined in src/interfaces/engine.ts:60
 
 ___
 
@@ -86,7 +88,15 @@ ___
 
 • **endedAt**: *any*
 
-Defined in src/interfaces/engine.ts:57
+Defined in src/interfaces/engine.ts:56
+
+___
+
+###  executionContext
+
+• **executionContext**: *[IExecutionContext](iexecutioncontext.md)*
+
+Defined in src/interfaces/engine.ts:68
 
 ___
 
@@ -94,7 +104,7 @@ ___
 
 • **id**: *any*
 
-Defined in src/interfaces/engine.ts:54
+Defined in src/interfaces/engine.ts:53
 
 ___
 
@@ -102,7 +112,7 @@ ___
 
 • **listener**: *EventEmitter*
 
-Defined in src/interfaces/engine.ts:68
+Defined in src/interfaces/engine.ts:67
 
 ___
 
@@ -110,7 +120,7 @@ ___
 
 • **logger**: *[ILogger](ilogger.md)*
 
-Defined in src/interfaces/engine.ts:64
+Defined in src/interfaces/engine.ts:63
 
 ___
 
@@ -118,7 +128,7 @@ ___
 
 • **logs**: *any[]*
 
-Defined in src/interfaces/engine.ts:66
+Defined in src/interfaces/engine.ts:65
 
 ___
 
@@ -126,15 +136,23 @@ ___
 
 • **name**: *any*
 
-Defined in src/interfaces/engine.ts:55
+Defined in src/interfaces/engine.ts:54
 
 ___
 
-###  parentNodeId
+###  parentItemId
 
-• **parentNodeId**: *any*
+• **parentItemId**: *any*
 
-Defined in src/interfaces/engine.ts:67
+Defined in src/interfaces/engine.ts:66
+
+___
+
+###  promises
+
+• **promises**: *any*
+
+Defined in src/interfaces/engine.ts:69
 
 ___
 
@@ -142,7 +160,7 @@ ___
 
 • **saved**: *any*
 
-Defined in src/interfaces/engine.ts:58
+Defined in src/interfaces/engine.ts:57
 
 ___
 
@@ -150,7 +168,7 @@ ___
 
 • **source**: *any*
 
-Defined in src/interfaces/engine.ts:63
+Defined in src/interfaces/engine.ts:62
 
 ___
 
@@ -158,7 +176,7 @@ ___
 
 • **startedAt**: *any*
 
-Defined in src/interfaces/engine.ts:56
+Defined in src/interfaces/engine.ts:55
 
 ___
 
@@ -166,7 +184,7 @@ ___
 
 • **status**: *[EXECUTION_STATUS](../enums/execution_status.md)*
 
-Defined in src/interfaces/engine.ts:59
+Defined in src/interfaces/engine.ts:58
 
 ___
 
@@ -174,7 +192,7 @@ ___
 
 • **tokens**: *Map‹any, [IToken](itoken.md)›*
 
-Defined in src/interfaces/engine.ts:60
+Defined in src/interfaces/engine.ts:59
 
 ___
 
@@ -182,7 +200,7 @@ ___
 
 • **uids**: *object*
 
-Defined in src/interfaces/engine.ts:97
+Defined in src/interfaces/engine.ts:98
 
 #### Type declaration:
 
@@ -192,7 +210,7 @@ Defined in src/interfaces/engine.ts:97
 
 ▸ **applyInput**(`inputData`: any, `dataPath?`: any): *void*
 
-Defined in src/interfaces/engine.ts:104
+Defined in src/interfaces/engine.ts:105
 
 **Parameters:**
 
@@ -209,7 +227,7 @@ ___
 
 ▸ **doExecutionEvent**(`event`: any): *Promise‹void›*
 
-Defined in src/interfaces/engine.ts:100
+Defined in src/interfaces/engine.ts:101
 
 **Parameters:**
 
@@ -225,7 +243,7 @@ ___
 
 ▸ **doItemEvent**(`item`: any, `event`: any): *Promise‹void›*
 
-Defined in src/interfaces/engine.ts:102
+Defined in src/interfaces/engine.ts:103
 
 **Parameters:**
 
@@ -242,7 +260,7 @@ ___
 
 ▸ **doTokenEvent**(`token`: any, `event`: any): *Promise‹void›*
 
-Defined in src/interfaces/engine.ts:101
+Defined in src/interfaces/engine.ts:102
 
 **Parameters:**
 
@@ -259,7 +277,7 @@ ___
 
 ▸ **end**(): *Promise‹void›*
 
-Defined in src/interfaces/engine.ts:74
+Defined in src/interfaces/engine.ts:75
 
 **Returns:** *Promise‹void›*
 
@@ -269,7 +287,7 @@ ___
 
 ▸ **execute**(`startNodeId?`: any, `inputData?`: object): *Promise‹void›*
 
-Defined in src/interfaces/engine.ts:80
+Defined in src/interfaces/engine.ts:81
 
 **Parameters:**
 
@@ -286,7 +304,7 @@ ___
 
 ▸ **getAndCreateData**(`dataPath`: any, `asArray?`: boolean): *any*
 
-Defined in src/interfaces/engine.ts:106
+Defined in src/interfaces/engine.ts:107
 
 **Parameters:**
 
@@ -303,7 +321,7 @@ ___
 
 ▸ **getData**(`dataPath`: any): *any*
 
-Defined in src/interfaces/engine.ts:105
+Defined in src/interfaces/engine.ts:106
 
 **Parameters:**
 
@@ -319,7 +337,7 @@ ___
 
 ▸ **getItems**(`query?`: any): *[IItem](iitem.md)[]*
 
-Defined in src/interfaces/engine.ts:92
+Defined in src/interfaces/engine.ts:93
 
 **Parameters:**
 
@@ -335,7 +353,7 @@ ___
 
 ▸ **getItemsData**(): *[IItemData](iitemdata.md)[]*
 
-Defined in src/interfaces/engine.ts:73
+Defined in src/interfaces/engine.ts:74
 
 **Returns:** *[IItemData](iitemdata.md)[]*
 
@@ -345,7 +363,7 @@ ___
 
 ▸ **getNewId**(`scope`: string): *number*
 
-Defined in src/interfaces/engine.ts:98
+Defined in src/interfaces/engine.ts:99
 
 **Parameters:**
 
@@ -361,7 +379,7 @@ ___
 
 ▸ **getNodeById**(`id`: any): *[Node](../classes/node.md)*
 
-Defined in src/interfaces/engine.ts:70
+Defined in src/interfaces/engine.ts:71
 
 **Parameters:**
 
@@ -377,7 +395,7 @@ ___
 
 ▸ **getState**(): *[IInstanceData](iinstancedata.md)*
 
-Defined in src/interfaces/engine.ts:93
+Defined in src/interfaces/engine.ts:94
 
 **Returns:** *[IInstanceData](iinstancedata.md)*
 
@@ -387,7 +405,7 @@ ___
 
 ▸ **getToken**(`id`: number): *[IToken](itoken.md)*
 
-Defined in src/interfaces/engine.ts:71
+Defined in src/interfaces/engine.ts:72
 
 **Parameters:**
 
@@ -403,7 +421,7 @@ ___
 
 ▸ **getUUID**(): *any*
 
-Defined in src/interfaces/engine.ts:99
+Defined in src/interfaces/engine.ts:100
 
 **Returns:** *any*
 
@@ -413,7 +431,7 @@ ___
 
 ▸ **log**(`msg`: any): *void*
 
-Defined in src/interfaces/engine.ts:103
+Defined in src/interfaces/engine.ts:104
 
 **Parameters:**
 
@@ -429,7 +447,7 @@ ___
 
 ▸ **report**(): *void*
 
-Defined in src/interfaces/engine.ts:96
+Defined in src/interfaces/engine.ts:97
 
 **Returns:** *void*
 
@@ -439,7 +457,7 @@ ___
 
 ▸ **restored**(): *void*
 
-Defined in src/interfaces/engine.ts:94
+Defined in src/interfaces/engine.ts:95
 
 **Returns:** *void*
 
@@ -449,7 +467,7 @@ ___
 
 ▸ **resume**(): *void*
 
-Defined in src/interfaces/engine.ts:95
+Defined in src/interfaces/engine.ts:96
 
 **Returns:** *void*
 
@@ -459,7 +477,7 @@ ___
 
 ▸ **signal**(`executionId`: any, `inputData`: any): *Promise‹void›*
 
-Defined in src/interfaces/engine.ts:91
+Defined in src/interfaces/engine.ts:92
 
 invoke scenarios:
      itemId
@@ -481,7 +499,7 @@ ___
 
 ▸ **stop**(): *void*
 
-Defined in src/interfaces/engine.ts:79
+Defined in src/interfaces/engine.ts:80
 
 causes the execution to stop from running any further
 
@@ -493,7 +511,7 @@ ___
 
 ▸ **tokenEnded**(`token`: [IToken](itoken.md)): *void*
 
-Defined in src/interfaces/engine.ts:72
+Defined in src/interfaces/engine.ts:73
 
 **Parameters:**
 

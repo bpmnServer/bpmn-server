@@ -108,7 +108,7 @@ ___
 
 ###  execution
 
-• **execution**: *any*
+• **execution**: *[IExecution](../interfaces/iexecution.md)*
 
 *Implementation of [IToken](../interfaces/itoken.md).[execution](../interfaces/itoken.md#execution)*
 

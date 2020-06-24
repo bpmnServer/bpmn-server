@@ -25,6 +25,7 @@ Feature('TimerSample', () => {
 
     });
       and('wait a bit ', async () => {
+          server.cron.checkTimers();
           await delay(4500, 'test');
           response = await server.engine.restore({ id: response.execution.id });
           items = response.items;

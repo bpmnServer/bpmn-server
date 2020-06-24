@@ -2,9 +2,34 @@
 
 # Class: BPMNServer
 
+The main class of Server Layer
+	provides the full functionalities:
+
+		1.	access to Execution engine
+		2.	data Presistence through DataStore class
+		3.	access to models definitions, loading and saving of models
+		4.	access to BPMN definition details
+
+		primary Use Cases:
+		a.	execute a process
+			server= new BPMNServer(...);
+			server.execute(...);
+
+		b.	invoke a task in an already started process
+			server= new BPMNServer(...);
+			server.invoke(...);
+
+		c.	find items (various options)
+			server= new BPMNServer(...);
+			server.findItems(...);
+
 ## Hierarchy
 
 * **BPMNServer**
+
+## Implements
+
+* [IBPMNServer](../interfaces/ibpmnserver.md)
 
 ## Index
 
@@ -21,7 +46,6 @@
 * [dataStore](bpmnserver.md#datastore)
 * [definitions](bpmnserver.md#definitions)
 * [engine](bpmnserver.md#engine)
-* [eventsRegistry](bpmnserver.md#eventsregistry)
 * [logger](bpmnserver.md#logger)
 
 ## Constructors
@@ -30,7 +54,7 @@
 
 \+ **new BPMNServer**(`configuration`: [IConfiguration](../interfaces/iconfiguration.md), `logger?`: [ILogger](../interfaces/ilogger.md)): *[BPMNServer](bpmnserver.md)*
 
-Defined in src/server/BPMNServer.ts:54
+Defined in src/server/BPMNServer.ts:42
 
 Server Constructor
 
@@ -49,7 +73,9 @@ Name | Type | Description |
 
 • **appDelegate**: *[IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/server/BPMNServer.ts:50
+*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[appDelegate](../interfaces/ibpmnserver.md#appdelegate)*
+
+Defined in src/server/BPMNServer.ts:39
 
 ___
 
@@ -57,7 +83,9 @@ ___
 
 • **cache**: *[CacheManager](cachemanager.md)*
 
-Defined in src/server/BPMNServer.ts:53
+*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[cache](../interfaces/ibpmnserver.md#cache)*
+
+Defined in src/server/BPMNServer.ts:41
 
 ___
 
@@ -65,7 +93,9 @@ ___
 
 • **configuration**: *any*
 
-Defined in src/server/BPMNServer.ts:47
+*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[configuration](../interfaces/ibpmnserver.md#configuration)*
+
+Defined in src/server/BPMNServer.ts:36
 
 ___
 
@@ -73,15 +103,19 @@ ___
 
 • **cron**: *[Cron](cron.md)*
 
-Defined in src/server/BPMNServer.ts:54
+*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[cron](../interfaces/ibpmnserver.md#cron)*
+
+Defined in src/server/BPMNServer.ts:42
 
 ___
 
 ###  dataStore
 
-• **dataStore**: *[DataStore](datastore.md)*
+• **dataStore**: *[IDataStore](../interfaces/idatastore.md)*
 
-Defined in src/server/BPMNServer.ts:51
+*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[dataStore](../interfaces/ibpmnserver.md#datastore)*
+
+Defined in src/server/BPMNServer.ts:40
 
 ___
 
@@ -89,7 +123,9 @@ ___
 
 • **definitions**: *any*
 
-Defined in src/server/BPMNServer.ts:49
+*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[definitions](../interfaces/ibpmnserver.md#definitions)*
+
+Defined in src/server/BPMNServer.ts:38
 
 ___
 
@@ -97,15 +133,9 @@ ___
 
 • **engine**: *[Engine](engine.md)*
 
-Defined in src/server/BPMNServer.ts:46
+*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[engine](../interfaces/ibpmnserver.md#engine)*
 
-___
-
-###  eventsRegistry
-
-• **eventsRegistry**: *[IEventsRegistry](../interfaces/ieventsregistry.md)*
-
-Defined in src/server/BPMNServer.ts:52
+Defined in src/server/BPMNServer.ts:35
 
 ___
 
@@ -113,4 +143,6 @@ ___
 
 • **logger**: *[ILogger](../interfaces/ilogger.md)*
 
-Defined in src/server/BPMNServer.ts:48
+*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[logger](../interfaces/ibpmnserver.md#logger)*
+
+Defined in src/server/BPMNServer.ts:37

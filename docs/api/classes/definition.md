@@ -40,7 +40,7 @@
 
 \+ **new Definition**(`name`: string, `source`: string, `logger`: [Logger](logger.md)): *[Definition](definition.md)*
 
-Defined in src/elements/Definition.ts:40
+Defined in src/elements/Definition.ts:26
 
 **Parameters:**
 
@@ -60,7 +60,7 @@ Name | Type |
 
 *Implementation of [IDefinition](../interfaces/idefinition.md).[flows](../interfaces/idefinition.md#flows)*
 
-Defined in src/elements/Definition.ts:38
+Defined in src/elements/Definition.ts:24
 
 ___
 
@@ -70,7 +70,7 @@ ___
 
 *Implementation of [IDefinition](../interfaces/idefinition.md).[logger](../interfaces/idefinition.md#logger)*
 
-Defined in src/elements/Definition.ts:40
+Defined in src/elements/Definition.ts:26
 
 ___
 
@@ -80,7 +80,7 @@ ___
 
 *Implementation of [IDefinition](../interfaces/idefinition.md).[name](../interfaces/idefinition.md#name)*
 
-Defined in src/elements/Definition.ts:34
+Defined in src/elements/Definition.ts:20
 
 ___
 
@@ -90,7 +90,7 @@ ___
 
 *Implementation of [IDefinition](../interfaces/idefinition.md).[nodes](../interfaces/idefinition.md#nodes)*
 
-Defined in src/elements/Definition.ts:37
+Defined in src/elements/Definition.ts:23
 
 ___
 
@@ -100,7 +100,7 @@ ___
 
 *Implementation of [IDefinition](../interfaces/idefinition.md).[processes](../interfaces/idefinition.md#processes)*
 
-Defined in src/elements/Definition.ts:35
+Defined in src/elements/Definition.ts:21
 
 ___
 
@@ -110,7 +110,7 @@ ___
 
 *Implementation of [IDefinition](../interfaces/idefinition.md).[rootElements](../interfaces/idefinition.md#rootelements)*
 
-Defined in src/elements/Definition.ts:36
+Defined in src/elements/Definition.ts:22
 
 ___
 
@@ -120,7 +120,7 @@ ___
 
 *Implementation of [IDefinition](../interfaces/idefinition.md).[source](../interfaces/idefinition.md#source)*
 
-Defined in src/elements/Definition.ts:39
+Defined in src/elements/Definition.ts:25
 
 ## Methods
 
@@ -128,7 +128,7 @@ Defined in src/elements/Definition.ts:39
 
 ▸ **getDefinition**(`source`: any, `logger`: any): *Promise‹any›*
 
-Defined in src/elements/Definition.ts:185
+Defined in src/elements/Definition.ts:198
 
 **Parameters:**
 
@@ -147,7 +147,7 @@ ___
 
 *Implementation of [IDefinition](../interfaces/idefinition.md)*
 
-Defined in src/elements/Definition.ts:169
+Defined in src/elements/Definition.ts:177
 
 **Returns:** *string*
 
@@ -159,7 +159,7 @@ ___
 
 *Implementation of [IDefinition](../interfaces/idefinition.md)*
 
-Defined in src/elements/Definition.ts:202
+Defined in src/elements/Definition.ts:215
 
 **Parameters:**
 
@@ -177,7 +177,7 @@ ___
 
 *Implementation of [IDefinition](../interfaces/idefinition.md)*
 
-Defined in src/elements/Definition.ts:193
+Defined in src/elements/Definition.ts:206
 
 **Returns:** *any*
 
@@ -189,6 +189,6 @@ ___
 
 *Implementation of [IDefinition](../interfaces/idefinition.md)*
 
-Defined in src/elements/Definition.ts:71
+Defined in src/elements/Definition.ts:57
 
 **Returns:** *Promise‹any›*

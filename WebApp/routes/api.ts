@@ -25,222 +25,160 @@ const awaitAppDelegateFactory = (middleware) => {
     }
 }
    {
-    router.get('/engine/get', awaitAppDelegateFactory(async (request, response) => {
-        let output = [];
-        output = show(output);
-        response.send('hi');
+    router.get('/datastore/findItems', awaitAppDelegateFactory(async (request, response) => {
+
+        console.log(request.body);
+        let query;
+        if (request.body.query) {
+            query = request.body.query;
+        }
+
+        console.log(query);
+        let items;
+        let errors;
+        try {
+            items= await bpmnServer.dataStore.findItems(query);
+        }
+        catch (exc) {
+            errors = exc.toString();
+            console.log(errors);
+        }
+        response.json({ request: request.body, errors: errors, items});
     }));
 
-    /*
-     *  3 methods for execute:
-     *      get: /execute       fires execute without input
-     *      get: /executeInput  redirect to executeInput page -> call post: execute
-     *      post:/execute       from form with input data
-     *      
-     */
-  
-
-    router.get('engine/get/:instanceId', awaitAppDelegateFactory(async (request, response) => {
-
-        let instanceId = request.params.instanceId;
-        console.log(request.params);
+    router.get('/datastore/findInstances', awaitAppDelegateFactory(async (request, response) => {
 
 
-        let context = await bpmnServer.engine.get(instanceId);
+        console.log(request.body);
+        let query;
+        if (request.body.query) {
+            query = request.body.query;
+        }
 
-        response.json(context);
+        console.log(query);
+        let instances;
+        let errors;
+        try {
+            instances = await bpmnServer.dataStore.findInstances(query,'full');
+        }
+        catch (exc) {
+            errors = exc.toString();
+            console.log(errors);
+        }
+        response.json({ request: request.body, errors: errors, instances });
     }));
 
-    router.get('/engine/start/:processName', awaitAppDelegateFactory(async (request, response) => {
+    router.post('/engine/start/:name?', awaitAppDelegateFactory(async (request, response) => {
 
-        let processName = request.params.processName;
-        console.log(request.params);
-        let data = {};
-        if (request.query.data) {
-            console.log(data);
-            data = JSON.parse(request.query.data);
-        }
-        if (request.query) {
-            data = request.query;
-        }
-        console.log('changes2');
+        try {
+        let name = request.params.name;
+        if (!name)
+            name = request.body.name;
+        console.log(' starting ' + name);
+        console.log(request.body);
+        let data = request.body.data;
+        let context;
         console.log(data);
-
-        data['caseId'] = caseId++;
-        let context = await bpmnServer.engine.start(processName, data);
-
-        response.json(context);
+            context = await bpmnServer.engine.start(name, data);
+            response.json(context.instance);
+        }
+        catch (exc) {
+            response.json({ error: exc.toString() });
+        }
     }));
 
-    router.get('/engine/invoke', awaitAppDelegateFactory(async (request, response) => {
+    router.put('/engine/invoke', awaitAppDelegateFactory(async (request, response) => {
 
-        console.log(request.query);
+        console.log(request.body);
         let query, data;
-        if (request.query.query) {
-            query = request.query.query;
+        if (request.body.query) {
+            query = request.body.query;
         }
-        if (request.query.data) {
-            data = request.query.data;
+        if (request.body.data) {
+            data = request.body.data;
         }
-//        let context = await bpmnServer.engine.invoke(query, data);
 
-        response.json(request.query);
+        console.log(query);
+        let context;
+        let instance;
+        let errors;
+        try {
+            context = await bpmnServer.engine.invoke(query, data);
+            instance = context.instance;
+            if (context && context.errors)
+                errors = context.errors.toString();
+        }
+        catch (exc) {
+            errors = exc.toString();
+            console.log(errors);
+        }
+        response.json({ errors: errors, instance });
+
+
     }));
 
-
-
-    router.post('/execute', awaitAppDelegateFactory(async (request, response) => {
+    router.get('/engine/get', awaitAppDelegateFactory(async (request, response) => {
 
         console.log(request.body);
-        let process = request.body.processName;
-        let data = {};
-        parseField(request.body.field1, request.body.value1, data);
-        parseField(request.body.field2, request.body.value2, data);
-
-        
-        let startNodeId = request.body.startNodeId
-
-        console.log(data);
-
-        data['caseId'] = caseId++;
-     
-        let context = await bpmnServer.engine.start(process,data , null,startNodeId);
-        if (context.errors) {
-            displayError(response, context.errors);
-        }
-        let instance = context.execution;
-
-        response.redirect('/instanceDetails?id=' + instance.id);
-        /*
-        console.log(" insance id " + instance.id);
-        let output = ['run ' + process];
-        output = show(output);
-        display(response, 'Run Prcesses', output, instance.logs, instance.getItems({})); */
-    }));
-
-    function parseField(field, value, data) {
-        if (field) {
-            if (value.substring(0, 1) == '[') {
-                value = value.substring(1);
-                value = value.substring(0, value.length - 1);
-                console.log('array'+value );
-                let array = value.split(',');
-                value = array;
-            }
-            data[field] = value;
-        }
-    }
-
-    router.get('/listDefinitions', function (req, res) {
-        let output = ['Data Reset'];
-        output = show(output);
-        display(res, 'Show', output);
-
-    });
-
-    router.get('/resetData', awaitAppDelegateFactory(async (request, response) => {
-        await bpmnServer.dataStore.deleteData();
-        console.log(" Data Reset");
-        let output = ['Data Reset'];
-        output = show(output);
-        display(response, 'Show', output);
-    }));
-
-    router.get('/refresh', function (req, res) {
-        let output = [];
-        output = show(output);
-        display(res, 'Show', output);
-    });
-
-    router.get('/clearDebug', function (req, res) {
-    //    Logger.clear();
-        let output = [];
-        output = show(output);
-        display(res, 'Show', output);
-    });
-
-    router.get('/invokeItem', awaitAppDelegateFactory(async (request, response) => {
-
-        let id = request.query.id;
-        let processName = request.query.processName;
-        let elementId = request.query.elementId;
-
-        let fields = await getFields(processName, elementId);
-
-        if (fields && fields.length > 0) {
-            response.render('invokeItem', {
-                id, fields, processName, elementId
-            });
-            return;
+        let query;
+        if (request.body.query) {
+            query = request.body.query;
         }
 
-        let result = await bpmnServer.engine.invoke({ items: { id: id }}, {});
-
-        console.log("redirecting");
-        response.redirect('/instanceDetails?id=' + result.execution.id);
-        /*
-        let output = ['save' + id];
-        display(response, 'Save Instance', output); */
+        console.log(query);
+        let context;
+        let instance;
+        let errors;
+        try {
+            context = await bpmnServer.engine.get(query);
+            instance = context.instance;
+        }
+        catch (exc) {
+            errors = exc.toString();
+            console.log(errors);
+        }
+        response.json({errors: errors, instance});
     }));
-    router.post('/invokeItem', awaitAppDelegateFactory(async (request, response) => {
-        console.log('invoke');
+
+
+    router.get('/definitions/list',async function (req, response) {
+
+        let list = await bpmnServer.definitions.getList();
+         console.log(list);
+        response.json(list);
+    });
+    router.get('/definitions/load/:name?',async function (request, response) {
+
+        console.log(request.params);
+        let name = request.params.name;
+
+        let definition= await bpmnServer.definitions.load(name);
+        response.json(JSON.parse(definition.getJson()));
+    });
+
+    router.delete('/datastore/deleteInstances', awaitAppDelegateFactory(async (request, response) => {
+
         console.log(request.body);
-        let id = request.body.itemId;
-        let data = {};
-        console.log(id);
-
-        Object.entries(request.body).forEach(entry => {
-            if (entry[0] == 'itemId') { }
-            else {
-                data[entry[0]] = entry[1];
-            }
-        });
-
-        console.log(data);
-        
-        let result = await bpmnServer.engine.invoke({ items: { id: id } },  data);
-
-
-        response.redirect('/instanceDetails?id=' + result.execution.id);
-    }));
-
-
-    router.get('/mocha', awaitAppDelegateFactory(async (request, response) => {
-
-        const mocha = require('../node_modules/mocha/bin/mocha');
-    }));
-
-    router.get('/run/:process', awaitAppDelegateFactory(async (request, response) => {
-        let process = request.params.process;
-        let context = await bpmnServer.engine.start(process, { caseId: caseId++ });
-        if (context.errors) {
-            displayError(response, context.errors);
+        let query;
+        if (request.body.query) {
+            query = request.body.query;
         }
-        let instance = context.execution;
-        console.log(" insance id " + instance.id);
-        let output = ['run ' + process];
-        output = show(output);
-        display(response, 'Run Prcesses', output, instance.logs, instance.items);
+
+        console.log(query);
+
+        let errors;
+        let result;
+        try {
+            result = await bpmnServer.dataStore.deleteInstances(query);
+        }
+        catch (exc) {
+            errors = exc.toString();
+            console.log(errors);
+        }
+        response.json({ errors: errors, result });
+
     }));
-    router.get('/instanceDetails', awaitAppDelegateFactory(async (request, response) => {
 
-        let imageId = request.query.id;
-        console.log("id: " + imageId);
-        await instanceDetails(response,imageId);        
-
-    }));
-
-
-    router.get('/deleteInstance',async function (req, res) {
-
-        let instanceId = req.query.id;
-
-        await bpmnServer.dataStore.deleteData(instanceId);
-
-        let output = ['Complete ' + instanceId];
-        console.log(" deleted");
-        display(res, 'Show', output);
-    });
     router.get('/shutdown', async function (req, res) {
 
         let instanceId = req.query.id;
@@ -284,7 +222,7 @@ async function displayError(res, error) {
 async function display(res, title, output, logs = [], items = []) {
 
     console.log(" Display Started");
-    var instances = await bpmnServer.dataStore.findInstances({});
+    var instances = await bpmnServer.dataStore.findInstances({},'full');
     let waiting = await bpmnServer.dataStore.findItems({ items: { status: 'wait' } }); 
 
     waiting.forEach(item => {

@@ -64,6 +64,9 @@ class Execution {
             this.endedAt = new Date().toISOString();
             ;
             this.status = __1.EXECUTION_STATUS.end;
+            if (this.parentItemId) {
+                elements_1.CallActivity.executionEnded(this);
+            }
             this.doExecutionEvent(__1.EXECUTION_EVENT.execution_end);
         });
     }
@@ -201,7 +204,7 @@ class Execution {
         const state = {
             source: this.source, items, tokens, loops,
             id: this.id, name: this.name, startedAt: this.startedAt, endedAt: this.endedAt,
-            status: this.status, saved: this.saved, data: this.data, logs: this.logs, parentNodeId: this.parentNodeId
+            status: this.status, saved: this.saved, data: this.data, logs: this.logs, parentItemId: this.parentItemId
         };
         return state;
     }
@@ -243,7 +246,7 @@ class Execution {
             execution.endedAt = state.endedAt;
             execution.saved = state.saved;
             execution.logs = state.logs;
-            execution.parentNodeId = state.parentNodeId;
+            execution.parentItemId = state.parentItemId;
             execution.log('.restore completed');
             execution.report();
             execution.restored();

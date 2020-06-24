@@ -13,7 +13,8 @@ const express = require("express");
 const router = express.Router();
 var bodyParser = require('body-parser');
 const FS = require('fs');
-const docsFolder = __dirname + '/../bpmnServer/docs/';
+const __1 = require("..");
+console.log(__1.docsFolder);
 /* GET users listing. */
 const url = 'https://raw.githubusercontent.com/ralphhanna/bpmn-server/master/';
 const https = require('https');
@@ -86,7 +87,7 @@ const awaitAppDelegateFactory = (middleware) => {
     })));
 }
 function processFile(fileName, response) {
-    fileName = docsFolder + fileName;
+    fileName = __1.docsFolder + fileName;
     let file = FS.readFileSync(fileName);
     if (fileName.endsWith('.png')) {
         console.log('.png');

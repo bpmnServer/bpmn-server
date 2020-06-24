@@ -18,7 +18,7 @@ class InstanceObject implements IInstanceData {
     logs;
     tokens;
     loops;
-    parentNodeId;
+    parentItemId;
 }
 /**
  *  as stroed in MongoDB

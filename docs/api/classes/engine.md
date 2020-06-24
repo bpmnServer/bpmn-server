@@ -27,7 +27,6 @@
 * [dataStore](engine.md#datastore)
 * [definitions](engine.md#definitions)
 * [engine](engine.md#engine)
-* [eventsRegistry](engine.md#eventsregistry)
 * [logger](engine.md#logger)
 
 ### Methods
@@ -43,17 +42,17 @@
 
 ###  constructor
 
-\+ **new Engine**(`server`: [BPMNServer](bpmnserver.md)): *[Engine](engine.md)*
+\+ **new Engine**(`server`: [IBPMNServer](../interfaces/ibpmnserver.md)): *[Engine](engine.md)*
 
-*Inherited from [Cron](cron.md).[constructor](cron.md#constructor)*
+*Inherited from [ServerComponent](servercomponent.md).[constructor](servercomponent.md#constructor)*
 
-Defined in src/server/ServerContext.ts:11
+Defined in src/server/ServerContext.ts:9
 
 **Parameters:**
 
 Name | Type |
 ------ | ------ |
-`server` | [BPMNServer](bpmnserver.md) |
+`server` | [IBPMNServer](../interfaces/ibpmnserver.md) |
 
 **Returns:** *[Engine](engine.md)*
 
@@ -63,9 +62,9 @@ Name | Type |
 
 • **server**: *any*
 
-*Inherited from [Cron](cron.md).[server](cron.md#server)*
+*Inherited from [ServerComponent](servercomponent.md).[server](servercomponent.md#server)*
 
-Defined in src/server/ServerContext.ts:11
+Defined in src/server/ServerContext.ts:9
 
 ## Accessors
 
@@ -73,9 +72,9 @@ Defined in src/server/ServerContext.ts:11
 
 • **get appDelegate**(): *any*
 
-*Inherited from [Cron](cron.md).[appDelegate](cron.md#appdelegate)*
+*Inherited from [ServerComponent](servercomponent.md).[appDelegate](servercomponent.md#appdelegate)*
 
-Defined in src/server/ServerContext.ts:23
+Defined in src/server/ServerContext.ts:20
 
 **Returns:** *any*
 
@@ -85,9 +84,9 @@ ___
 
 • **get cache**(): *[CacheManager](cachemanager.md)*
 
-*Inherited from [Cron](cron.md).[cache](cron.md#cache)*
+*Inherited from [ServerComponent](servercomponent.md).[cache](servercomponent.md#cache)*
 
-Defined in src/server/ServerContext.ts:21
+Defined in src/server/ServerContext.ts:18
 
 **Returns:** *[CacheManager](cachemanager.md)*
 
@@ -97,9 +96,9 @@ ___
 
 • **get configuration**(): *any*
 
-*Inherited from [Cron](cron.md).[configuration](cron.md#configuration)*
+*Inherited from [ServerComponent](servercomponent.md).[configuration](servercomponent.md#configuration)*
 
-Defined in src/server/ServerContext.ts:15
+Defined in src/server/ServerContext.ts:13
 
 **Returns:** *any*
 
@@ -109,9 +108,9 @@ ___
 
 • **get cron**(): *[Cron](cron.md)*
 
-*Inherited from [Cron](cron.md).[cron](cron.md#cron)*
+*Inherited from [ServerComponent](servercomponent.md).[cron](servercomponent.md#cron)*
 
-Defined in src/server/ServerContext.ts:20
+Defined in src/server/ServerContext.ts:17
 
 **Returns:** *[Cron](cron.md)*
 
@@ -121,9 +120,9 @@ ___
 
 • **get dataStore**(): *any*
 
-*Inherited from [Cron](cron.md).[dataStore](cron.md#datastore)*
+*Inherited from [ServerComponent](servercomponent.md).[dataStore](servercomponent.md#datastore)*
 
-Defined in src/server/ServerContext.ts:17
+Defined in src/server/ServerContext.ts:15
 
 **Returns:** *any*
 
@@ -133,9 +132,9 @@ ___
 
 • **get definitions**(): *any*
 
-*Inherited from [Cron](cron.md).[definitions](cron.md#definitions)*
+*Inherited from [ServerComponent](servercomponent.md).[definitions](servercomponent.md#definitions)*
 
-Defined in src/server/ServerContext.ts:22
+Defined in src/server/ServerContext.ts:19
 
 **Returns:** *any*
 
@@ -143,25 +142,13 @@ ___
 
 ###  engine
 
-• **get engine**(): *[Engine](engine.md)*
+• **get engine**(): *[IEngine](../interfaces/iengine.md)*
 
-*Inherited from [Cron](cron.md).[engine](cron.md#engine)*
+*Inherited from [ServerComponent](servercomponent.md).[engine](servercomponent.md#engine)*
 
-Defined in src/server/ServerContext.ts:19
+Defined in src/server/ServerContext.ts:16
 
-**Returns:** *[Engine](engine.md)*
-
-___
-
-###  eventsRegistry
-
-• **get eventsRegistry**(): *any*
-
-*Inherited from [Cron](cron.md).[eventsRegistry](cron.md#eventsregistry)*
-
-Defined in src/server/ServerContext.ts:18
-
-**Returns:** *any*
+**Returns:** *[IEngine](../interfaces/iengine.md)*
 
 ___
 
@@ -169,9 +156,9 @@ ___
 
 • **get logger**(): *any*
 
-*Inherited from [Cron](cron.md).[logger](cron.md#logger)*
+*Inherited from [ServerComponent](servercomponent.md).[logger](servercomponent.md#logger)*
 
-Defined in src/server/ServerContext.ts:16
+Defined in src/server/ServerContext.ts:14
 
 **Returns:** *any*
 
@@ -179,9 +166,9 @@ Defined in src/server/ServerContext.ts:16
 
 ###  get
 
-▸ **get**(`instanceQuery`: any, `listener`: EventEmitter): *Promise‹[ExecutionResponse](executionresponse.md)›*
+▸ **get**(`instanceQuery`: any, `listener`: EventEmitter): *Promise‹[ExecutionContext](executioncontext.md)›*
 
-Defined in src/server/Engine.ts:64
+Defined in src/server/Engine.ts:66
 
 restores an instance into memeory or provides you access to a running instance
 
@@ -194,15 +181,15 @@ Name | Type | Default | Description |
 `instanceQuery` | any | - | criteria to fetch the instance  query example:	{ id: instanceId} 					{ data: {caseId: 1005}} 					{ items.item.id : 'abcc111322'} 					{ items.item.itemKey : 'businesskey here'}   |
 `listener` | EventEmitter | null | - |
 
-**Returns:** *Promise‹[ExecutionResponse](executionresponse.md)›*
+**Returns:** *Promise‹[ExecutionContext](executioncontext.md)›*
 
 ___
 
 ###  invoke
 
-▸ **invoke**(`itemQuery`: any, `data`: object, `listener`: EventEmitter): *Promise‹[ExecutionResponse](executionresponse.md)›*
+▸ **invoke**(`itemQuery`: any, `data`: object, `listener`: EventEmitter): *Promise‹[ExecutionContext](executioncontext.md)›*
 
-Defined in src/server/Engine.ts:107
+Defined in src/server/Engine.ts:114
 
 Continue an existing item that is in a wait state
 
@@ -220,7 +207,7 @@ Name | Type | Default | Description |
 `data` | object | {} |   |
 `listener` | EventEmitter | null | - |
 
-**Returns:** *Promise‹[ExecutionResponse](executionresponse.md)›*
+**Returns:** *Promise‹[ExecutionContext](executioncontext.md)›*
 
 ___
 
@@ -228,7 +215,7 @@ ___
 
 ▸ **restore**(`instanceQuery`: any, `listener`: EventEmitter): *Promise‹[ExecutionContext](executioncontext.md)›*
 
-Defined in src/server/Engine.ts:69
+Defined in src/server/Engine.ts:71
 
 **Parameters:**
 
@@ -243,9 +230,9 @@ ___
 
 ###  signal
 
-▸ **signal**(`messageId`: any, `matchingKey`: any, `data`: object, `listener`: EventEmitter): *Promise‹[ExecutionResponse](executionresponse.md)‹››*
+▸ **signal**(`messageId`: any, `matchingKey`: any, `data`: object, `listener`: EventEmitter): *Promise‹[ExecutionContext](executioncontext.md)›*
 
-Defined in src/server/Engine.ts:191
+Defined in src/server/Engine.ts:199
 
 signal/message raise a signal or throw a message
 
@@ -263,15 +250,15 @@ Name | Type | Default | Description |
 `data` | object | {} | message data  |
 `listener` | EventEmitter | null | - |
 
-**Returns:** *Promise‹[ExecutionResponse](executionresponse.md)‹››*
+**Returns:** *Promise‹[ExecutionContext](executioncontext.md)›*
 
 ___
 
 ###  start
 
-▸ **start**(`name`: any, `data`: any, `listener`: EventEmitter, `startNodeId`: string): *Promise‹[ExecutionResponse](executionresponse.md)›*
+▸ **start**(`name`: any, `data`: any, `listener`: EventEmitter, `startNodeId`: string): *Promise‹[ExecutionContext](executioncontext.md)›*
 
-Defined in src/server/Engine.ts:22
+Defined in src/server/Engine.ts:19
 
 	loads a definitions  and start execution
 
@@ -284,15 +271,15 @@ Name | Type | Default | Description |
 `listener` | EventEmitter | null | - |
 `startNodeId` | string | null | in process has multiple start node; you need to specify which one  |
 
-**Returns:** *Promise‹[ExecutionResponse](executionresponse.md)›*
+**Returns:** *Promise‹[ExecutionContext](executioncontext.md)›*
 
 ___
 
 ###  startEvent
 
-▸ **startEvent**(`instanceId`: any, `elementId`: any, `data`: object, `listener`: EventEmitter): *Promise‹[ExecutionResponse](executionresponse.md)›*
+▸ **startEvent**(`instanceId`: any, `elementId`: any, `data`: object, `listener`: EventEmitter): *Promise‹[ExecutionContext](executioncontext.md)›*
 
-Defined in src/server/Engine.ts:156
+Defined in src/server/Engine.ts:163
 
 Invoking an event (usually start event of a secondary process) against an existing instance
 or
@@ -312,4 +299,4 @@ Name | Type | Default | Description |
 `data` | object | {} |   |
 `listener` | EventEmitter | null | - |
 
-**Returns:** *Promise‹[ExecutionResponse](executionresponse.md)›*
+**Returns:** *Promise‹[ExecutionContext](executioncontext.md)›*

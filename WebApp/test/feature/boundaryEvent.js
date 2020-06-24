@@ -27,8 +27,8 @@ Feature('Boundary Event', () => {
 
                 const data = { };
                 const query ={
-                    instance: { id: instanceId },
-                    items: { elementId: 'user_task' }};
+                   id: instanceId ,
+                    "items.elementId" : 'user_task' };
                 response= await server.engine.invoke(query ,data );
             });
 

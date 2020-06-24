@@ -10,5 +10,8 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.docsFolder = void 0;
 __exportStar(require("bpmn-server"), exports);
+const docsFolder = __dirname + '/node_modules/bpmn-server/docs/';
+exports.docsFolder = docsFolder;
 //# sourceMappingURL=index.js.map

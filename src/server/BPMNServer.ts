@@ -1,25 +1,14 @@
 
 import { Logger } from '../common/Logger';
 
-import { DefaultAppDelegate } from '../engine/DefaultAppDelegate';
 
-import { DataStore }  from  './DataStore';
-//import { EventType, IBPMNServer } from './API';
-import { EventEmitter } from 'events';
-import { Execution } from '../engine/Execution';
-import { Item } from '../engine/Item';
-import { Definition } from '../elements/Definition';
-import { exec } from 'child_process';
-import { Event } from '../elements';
-import { EventsRegistry } from './EventsRegistry';
-import { IConfiguration, ILogger, ServerComponent, ModelsDatastore, IAppDelegate } from '../..';
-import { IServerContext, IBPMNServer, IEventData, IEventsRegistry } from '../interfaces/server';
+import { IConfiguration, ILogger, DataStore , ModelsDatastoreDB, IAppDelegate, IBPMNServer, IDataStore} from '../..';
 import { Engine } from './Engine';
 import { CacheManager } from './CacheManager';
 import { Cron } from './Cron';
 
 const fs = require('fs');
-/*
+/**
  *	The main class of Server Layer
  *	provides the full functionalities:
  *	
@@ -41,15 +30,14 @@ const fs = require('fs');
   *			server= new BPMNServer(...);
  *			server.findItems(...);
 */
-class BPMNServer { // implements IBPMNServer {
+class BPMNServer implements IBPMNServer {
 
 	engine: Engine;
 	configuration: any;
 	logger: ILogger;
 	definitions;
 	appDelegate: IAppDelegate;
-	dataStore: DataStore;
-	eventsRegistry: IEventsRegistry;
+	dataStore: IDataStore;
 	cache: CacheManager;
 	cron: Cron;
 
@@ -70,12 +58,11 @@ class BPMNServer { // implements IBPMNServer {
 		this.configuration = configuration;
 		this.cron = new Cron(this);
 		this.cron.start();
-		this.dataStore= new DataStore(this);
 		this.cache = new CacheManager(this);
 		this.engine = new Engine(this);
-		this.eventsRegistry = new EventsRegistry(this);
-		this.definitions = new ModelsDatastore(this);
-		this.appDelegate = configuration.appDelegate;
+		this.dataStore = configuration.dataStore(this);
+		this.definitions = configuration.definitions(this);
+		this.appDelegate = configuration.appDelegate(this);
 	}
 
 }

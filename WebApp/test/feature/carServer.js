@@ -38,8 +38,8 @@ Feature('Buy Used Car', () => {
 
                 const data = { needsCleaning: options.needsCleaning, needsRepairs: options.needsRepairs };
                 const query ={
-                    instance: { id: instanceId },
-                    items: { elementId: 'task_Buy' }};
+                   id: instanceId ,
+                    "items.elementId" : 'task_Buy' };
                 response= await server.engine.invoke(query ,data );
 
             });
@@ -52,29 +52,20 @@ Feature('Buy Used Car', () => {
             and('Clean it', async () => {
 
                 if (options.needsCleaning) {
-                    const query = {
-                        instance: {
-                            data: { caseId: caseId }},
-                        items: { elementId: 'task_clean' }
-                    };
+                    const query = {"data.caseId": caseId, "items.elementId" : 'task_clean' };
                     await server.engine.invoke(query, {});
                 }
             });
       
             and('Repair it', async () => {
                 if (options.needsRepairs) { 
-                    const query = {
-                        instance: { id: instanceId },
-                        items: { elementId: 'task_repair' }
-                    };
+                    const query = { id: instanceId, "items.elementId": 'task_repair' };
+
                     response = await server.engine.invoke(query, {});
                 }
             }); 
             and('Drive it 1', async () => {
-                const query = {
-                    instance: { id: instanceId },
-                    items: { elementId: 'task_Drive' }
-                };
+                const query = {id: instanceId ,"items.elementId" : 'task_Drive' };
                 response=await server.engine.invoke(query, {});
             });
 
