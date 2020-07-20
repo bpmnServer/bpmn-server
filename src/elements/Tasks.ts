@@ -1,7 +1,7 @@
 
 import { Execution } from '../engine/Execution';
 import { Token } from '../engine/Token';
-import { IBehaviour, Behaviour, Behaviour_names } from "./behaviours";
+import { IBehaviour, Behaviour} from "./behaviours";
 import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, ExecutionContext } from '../../';
 //import { Gateway } from './Gateway';
 import { Item } from '../engine/Item';
@@ -52,6 +52,9 @@ class ServiceTask extends Node {
     }
 }
 class SendTask extends ServiceTask {
+
+    get isCatching(): boolean { return false; } 
+
     async run(item): Promise<NODE_ACTION> {
 
         if (this.def.script) {
@@ -63,19 +66,20 @@ class SendTask extends ServiceTask {
 }
 class UserTask extends Node {
 
-    requiresWait() { return true; }
-    canBeInvoked() { return true; }
+    get requiresWait() { return true; }
+    get canBeInvoked() { return true; }
 }
 class ReceiveTask extends Node {
 
-    requiresWait() { return true; }
-    canBeInvoked() { return true; }
+    get isCatching(): boolean { return true; } 
+    get requiresWait() { return true; }
+    get canBeInvoked() { return true; }
 }
 
 class SubProcess extends Node {
     childProcess: Process;
-    requiresWait() { return true; }
-    canBeInvoked() { return false; }
+    get requiresWait() { return true; }
+    get canBeInvoked() { return false; }
 
     async start(item): Promise<NODE_ACTION> {
 
@@ -101,8 +105,8 @@ class CallActivity extends Node {
         return this.def.calledElement;
     };
 
-    requiresWait() { return true; }
-    canBeInvoked() { return false; }
+    get requiresWait() { return true; }
+    get canBeInvoked() { return false; }
 
     static async executionEnded(execution: IExecution) {
         const itemId = execution.parentItemId;

@@ -4,6 +4,7 @@
  */
 enum EXECUTION_EVENT {
     node_enter = 'enter', node_start = 'start', node_wait = 'wait', node_end = 'end', node_terminated = 'terminated',
+    transform_input = 'transformInput', transform_output ='transformOutput',
     flow_take = 'take', flow_discard = 'discard',
     execution_execute = 'execution.execute',   execution_executed = 'execution.executed',
     execution_invoke = 'execution.invoke',     execution_invoked = 'execution.invoked',

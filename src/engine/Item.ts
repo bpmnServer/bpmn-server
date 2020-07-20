@@ -2,7 +2,8 @@ import { Execution } from "./Execution";
 import { ITEM_STATUS, IItem, } from "../../";
 import { IItemData } from "../../";
 
-import {Element } from '../elements/Element';
+import { Element , Node } from '../elements';
+
 import { Token } from "./Token";
 
 class Item implements IItem {
@@ -43,8 +44,13 @@ class Item implements IItem {
     get type() {
         return this.element.type;
     }
+    get node() : Node {
+        return this.element as Node;
+    }
     // timer
     timeDue: Date;
+    messageId;
+    signalId;
 
     _dbAction: 'add' | 'update' | null = null;
 
@@ -60,7 +66,8 @@ class Item implements IItem {
 
         return {
             id: this.id, seq: this.seq, itemKey: this.itemKey, tokenId: this.token.id, elementId: this.elementId, name: this.name,
-            status: this.status, startedAt: this.startedAt, endedAt: this.endedAt, type: this.type , timeDue : this.timeDue , data: undefined
+            status: this.status, startedAt: this.startedAt, endedAt: this.endedAt, type: this.type, timeDue: this.timeDue,
+            data: undefined , messageId: this.messageId, signalId: this.signalId
 
         };
 
@@ -76,6 +83,7 @@ class Item implements IItem {
         item.timeDue = dataObject.timeDue;
         return item;
     }
+
 }
 
 export {Item}

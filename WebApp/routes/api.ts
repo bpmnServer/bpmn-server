@@ -43,7 +43,7 @@ const awaitAppDelegateFactory = (middleware) => {
             errors = exc.toString();
             console.log(errors);
         }
-        response.json({ request: request.body, errors: errors, items});
+        response.json({ errors: errors, items});
     }));
 
     router.get('/datastore/findInstances', awaitAppDelegateFactory(async (request, response) => {
@@ -65,7 +65,7 @@ const awaitAppDelegateFactory = (middleware) => {
             errors = exc.toString();
             console.log(errors);
         }
-        response.json({ request: request.body, errors: errors, instances });
+        response.json({ errors: errors, instances });
     }));
 
     router.post('/engine/start/:name?', awaitAppDelegateFactory(async (request, response) => {

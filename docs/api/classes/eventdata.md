@@ -16,12 +16,17 @@
 ### Properties
 
 * [elementId](eventdata.md#elementid)
+* [expression](eventdata.md#expression)
+* [expressionFormat](eventdata.md#expressionformat)
+* [maxRepeat](eventdata.md#maxrepeat)
 * [messageId](eventdata.md#messageid)
 * [name](eventdata.md#name)
 * [processId](eventdata.md#processid)
+* [referenceDateTime](eventdata.md#referencedatetime)
+* [repeatCount](eventdata.md#repeatcount)
 * [signalId](eventdata.md#signalid)
 * [subType](eventdata.md#subtype)
-* [timeDue](eventdata.md#timedue)
+* [timeDue](eventdata.md#optional-timedue)
 * [type](eventdata.md#type)
 
 ## Properties
@@ -32,9 +37,45 @@
 
 *Implementation of [IEventData](../interfaces/ieventdata.md).[elementId](../interfaces/ieventdata.md#elementid)*
 
-Defined in src/interfaces/datastore.ts:56
+Defined in src/interfaces/datastore.ts:63
 
-Defined in src/datastore/ModelsData.ts:79
+Defined in src/datastore/ModelsData.ts:82
+
+___
+
+###  expression
+
+• **expression**: *any*
+
+*Implementation of [IEventData](../interfaces/ieventdata.md).[expression](../interfaces/ieventdata.md#expression)*
+
+Defined in src/interfaces/datastore.ts:71
+
+Defined in src/datastore/ModelsData.ts:90
+
+___
+
+###  expressionFormat
+
+• **expressionFormat**: *any*
+
+*Implementation of [IEventData](../interfaces/ieventdata.md).[expressionFormat](../interfaces/ieventdata.md#expressionformat)*
+
+Defined in src/interfaces/datastore.ts:72
+
+Defined in src/datastore/ModelsData.ts:91
+
+___
+
+###  maxRepeat
+
+• **maxRepeat**: *any*
+
+*Implementation of [IEventData](../interfaces/ieventdata.md).[maxRepeat](../interfaces/ieventdata.md#maxrepeat)*
+
+Defined in src/interfaces/datastore.ts:74
+
+Defined in src/datastore/ModelsData.ts:93
 
 ___
 
@@ -44,9 +85,9 @@ ___
 
 *Implementation of [IEventData](../interfaces/ieventdata.md).[messageId](../interfaces/ieventdata.md#optional-messageid)*
 
-Defined in src/interfaces/datastore.ts:62
+Defined in src/interfaces/datastore.ts:69
 
-Defined in src/datastore/ModelsData.ts:85
+Defined in src/datastore/ModelsData.ts:88
 
 ___
 
@@ -56,9 +97,9 @@ ___
 
 *Implementation of [IEventData](../interfaces/ieventdata.md).[name](../interfaces/ieventdata.md#name)*
 
-Defined in src/interfaces/datastore.ts:59
+Defined in src/interfaces/datastore.ts:66
 
-Defined in src/datastore/ModelsData.ts:82
+Defined in src/datastore/ModelsData.ts:85
 
 ___
 
@@ -68,9 +109,33 @@ ___
 
 *Implementation of [IEventData](../interfaces/ieventdata.md).[processId](../interfaces/ieventdata.md#processid)*
 
-Defined in src/interfaces/datastore.ts:60
+Defined in src/interfaces/datastore.ts:67
 
-Defined in src/datastore/ModelsData.ts:83
+Defined in src/datastore/ModelsData.ts:86
+
+___
+
+###  referenceDateTime
+
+• **referenceDateTime**: *any*
+
+*Implementation of [IEventData](../interfaces/ieventdata.md).[referenceDateTime](../interfaces/ieventdata.md#referencedatetime)*
+
+Defined in src/interfaces/datastore.ts:73
+
+Defined in src/datastore/ModelsData.ts:92
+
+___
+
+###  repeatCount
+
+• **repeatCount**: *any*
+
+*Implementation of [IEventData](../interfaces/ieventdata.md).[repeatCount](../interfaces/ieventdata.md#repeatcount)*
+
+Defined in src/interfaces/datastore.ts:75
+
+Defined in src/datastore/ModelsData.ts:94
 
 ___
 
@@ -80,9 +145,9 @@ ___
 
 *Implementation of [IEventData](../interfaces/ieventdata.md).[signalId](../interfaces/ieventdata.md#optional-signalid)*
 
-Defined in src/interfaces/datastore.ts:61
+Defined in src/interfaces/datastore.ts:68
 
-Defined in src/datastore/ModelsData.ts:84
+Defined in src/datastore/ModelsData.ts:87
 
 ___
 
@@ -92,21 +157,21 @@ ___
 
 *Implementation of [IEventData](../interfaces/ieventdata.md).[subType](../interfaces/ieventdata.md#subtype)*
 
-Defined in src/interfaces/datastore.ts:58
+Defined in src/interfaces/datastore.ts:65
 
-Defined in src/datastore/ModelsData.ts:81
+Defined in src/datastore/ModelsData.ts:84
 
 ___
 
-###  timeDue
+### `Optional` timeDue
 
-• **timeDue**: *any*
+• **timeDue**? : *any*
 
 *Implementation of [IEventData](../interfaces/ieventdata.md).[timeDue](../interfaces/ieventdata.md#optional-timedue)*
 
-Defined in src/interfaces/datastore.ts:63
+Defined in src/interfaces/datastore.ts:76
 
-Defined in src/datastore/ModelsData.ts:86
+Defined in src/datastore/ModelsData.ts:95
 
 ___
 
@@ -116,6 +181,6 @@ ___
 
 *Implementation of [IEventData](../interfaces/ieventdata.md).[type](../interfaces/ieventdata.md#type)*
 
-Defined in src/interfaces/datastore.ts:57
+Defined in src/interfaces/datastore.ts:64
 
-Defined in src/datastore/ModelsData.ts:80
+Defined in src/datastore/ModelsData.ts:83

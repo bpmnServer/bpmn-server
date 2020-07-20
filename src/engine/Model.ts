@@ -42,6 +42,8 @@ class ItemObject implements IItemData {
     processName;
     timeDue: Date;
     data;
+    messageId;
+    signalId;
 }
 class TokenObject {
     id;

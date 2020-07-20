@@ -97,7 +97,7 @@ class Token {
             token.loop = loop;
             execution.tokens.set(token.id, token);
             token.applyInput(data);
-            const result = yield token.execute();
+            const result = yield token.execute(data);
             return token;
         });
     }
@@ -175,7 +175,7 @@ class Token {
     /**
      * this is the primary exectuion method for a token
      */
-    execute() {
+    execute(input) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!(yield this.preExecute()))
                 return; // loop logic will take care of it
@@ -183,6 +183,8 @@ class Token {
             const item = new Item_1.Item(this.currentNode, this);
             this.path.push(item);
             this.log('.executing item:' + this.currentNode.id + " " + item.id);
+            if (input)
+                yield this.currentNode.setInput(item, input);
             ret = yield this.currentNode.execute(item);
             /*
                     // check for subprocess
@@ -226,7 +228,7 @@ class Token {
             // find the item
             const item = this.currentItem;
             this.log(`..token.invoke ${this.currentNode.id} ${this.currentNode.type}`);
-            this.applyInput(data);
+            this.currentNode.setInput(item, data);
             if (item.status == __1.ITEM_STATUS.wait) {
                 const ret = yield this.currentNode.run(item);
                 let result = yield this.currentNode.continue(item);
@@ -283,7 +285,7 @@ class Token {
                     if (nextNode) {
                         if (outbounds.length == 1) {
                             self.currentNode = nextNode;
-                            promises.push(self.execute());
+                            promises.push(self.execute(null));
                         }
                         else {
                             promises.push(Token.startNewToken(self.execution, nextNode, null, self, thisNode, null));

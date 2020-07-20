@@ -1,7 +1,7 @@
 
 import { Execution } from '../engine/Execution';
 import { Token } from '../engine/Token';
-import { IBehaviour, Behaviour, Behaviour_names } from "./behaviours";
+import { IBehaviour, Behaviour} from "./behaviours";
 import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, IFlow } from '../../';
 
 import { Item } from '../engine/Item';

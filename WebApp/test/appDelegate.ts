@@ -11,7 +11,7 @@ class MyAppDelegate extends DefaultAppDelegate{
         super(logger);
     }
 
-    executionStarted(execution: IExecutionContext) {
+    async executionStarted(execution: IExecutionContext) {
         super.executionStarted(execution);}
     async executionEvent({ event, item, execution }) {
         let object;
@@ -21,8 +21,12 @@ class MyAppDelegate extends DefaultAppDelegate{
             object = item;
     }
 
-    messageIssued(item: Item) { }
-    signalIssued(item: Item) { }
+    async messageThrown(messageId, data, matchingQuery, item: Item) {
+        await super.messageThrown(messageId, data, matchingQuery, item);
+    }
+    async signalThrown(signalId, data, matchingQuery, item: Item) {
+        await super.signalThrown(signalId, data, matchingQuery, item);
+    }
 
     async serviceTask(item) {
         console.log(" Hi this is the serviceTask from appDelegate");

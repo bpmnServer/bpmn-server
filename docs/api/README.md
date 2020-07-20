@@ -53,8 +53,8 @@
 * [LoopObject](classes/loopobject.md)
 * [MessageEventBehaviour](classes/messageeventbehaviour.md)
 * [MessageFlow](classes/messageflow.md)
+* [ModelsDatastore](classes/modelsdatastore.md)
 * [ModelsDatastoreDB](classes/modelsdatastoredb.md)
-* [ModelsDatastoreFS](classes/modelsdatastorefs.md)
 * [MongoDB](classes/mongodb.md)
 * [Node](classes/node.md)
 * [NodeLoader](classes/nodeloader.md)
@@ -69,6 +69,7 @@
 * [ServerHelper](classes/serverhelper.md)
 * [ServiceTask](classes/servicetask.md)
 * [SignalEventBehaviour](classes/signaleventbehaviour.md)
+* [StartEvent](classes/startevent.md)
 * [SubProcess](classes/subprocess.md)
 * [TerminateBehaviour](classes/terminatebehaviour.md)
 * [ThrowEvent](classes/throwevent.md)
@@ -125,7 +126,6 @@
 * [end](README.md#const-end)
 * [fs](README.md#const-fs)
 * [logger](README.md#const-logger)
-* [moddle](README.md#const-moddle)
 * [mongoose](README.md#const-mongoose)
 * [parse](README.md#const-parse)
 * [seq](README.md#seq)
@@ -154,9 +154,9 @@
 
 • **BpmnModdle**: *any* = require('bpmn-moddle')
 
-Defined in src/elements/Definition.ts:2
+Defined in src/datastore/ModelsDatastore.ts:12
 
-Defined in src/datastore/ModelsDatastoreFS.ts:8
+Defined in src/elements/Definition.ts:2
 
 ___
 
@@ -172,7 +172,7 @@ ___
 
 • **Definition_collection**: *"wf_models"* = "wf_models"
 
-Defined in src/datastore/ModelsDatastoreDB.ts:11
+Defined in src/datastore/ModelsDatastoreDB.ts:13
 
 ___
 
@@ -182,7 +182,7 @@ ___
 
 Defined in src/datastore/DataStore.ts:13
 
-Defined in src/datastore/ModelsDatastoreDB.ts:12
+Defined in src/datastore/ModelsDatastoreDB.ts:14
 
 ___
 
@@ -222,11 +222,11 @@ ___
 
 • **Path**: *any* = require('path')
 
-Defined in src/datastore/ModelsDatastoreFS.ts:6
+Defined in src/datastore/ModelsDatastore.ts:10
 
 Defined in src/datastore/ModelsData.ts:7
 
-Defined in src/datastore/ModelsDatastoreDB.ts:7
+Defined in src/datastore/ModelsDatastoreDB.ts:9
 
 ___
 
@@ -292,11 +292,11 @@ ___
 
 • **duration**: *any* = require('iso8601-duration')
 
+Defined in src/server/Cron.ts:8
+
 Defined in src/elements/behaviours/Behaviour.ts:8
 
 Defined in src/elements/behaviours/BehaviourLoader.ts:8
-
-Defined in src/elements/behaviours/Timer.ts:10
 
 ___
 
@@ -304,11 +304,11 @@ ___
 
 • **end**: *any* = duration.end
 
+Defined in src/server/Cron.ts:10
+
 Defined in src/elements/behaviours/Behaviour.ts:10
 
 Defined in src/elements/behaviours/BehaviourLoader.ts:10
-
-Defined in src/elements/behaviours/Timer.ts:12
 
 ___
 
@@ -316,11 +316,13 @@ ___
 
 • **fs**: *any* = require('fs')
 
-Defined in src/elements/Definition.ts:13
+Defined in src/engine/Token.ts:3
+
+Defined in src/engine/Execution.ts:3
 
 Defined in src/datastore/DataStore.ts:7
 
-Defined in src/datastore/ModelsDatastoreFS.ts:5
+Defined in src/datastore/ModelsDatastore.ts:9
 
 Defined in src/datastore/ModelsData.ts:6
 
@@ -328,11 +330,9 @@ Defined in src/server/CacheManager.ts:7
 
 Defined in src/server/BPMNServer.ts:10
 
-Defined in src/engine/Token.ts:3
+Defined in src/elements/Definition.ts:14
 
-Defined in src/engine/Execution.ts:3
-
-Defined in src/datastore/ModelsDatastoreDB.ts:6
+Defined in src/datastore/ModelsDatastoreDB.ts:8
 
 ___
 
@@ -341,14 +341,6 @@ ___
 • **logger**: *any* = new DefaultLogger({ toConsole: false })
 
 Defined in src/helpers/ServerHelper.ts:5
-
-___
-
-### `Const` moddle
-
-• **moddle**: *any* = new BpmnModdle({ moddleOptions })
-
-Defined in src/elements/Definition.ts:16
 
 ___
 
@@ -364,11 +356,11 @@ ___
 
 • **parse**: *any* = duration.parse
 
+Defined in src/server/Cron.ts:9
+
 Defined in src/elements/behaviours/Behaviour.ts:9
 
 Defined in src/elements/behaviours/BehaviourLoader.ts:9
-
-Defined in src/elements/behaviours/Timer.ts:11
 
 ___
 
@@ -376,7 +368,7 @@ ___
 
 • **seq**: *number* = 1
 
-Defined in src/engine/DefaultAppDelegate.ts:3
+Defined in src/engine/DefaultAppDelegate.ts:5
 
 ___
 
@@ -384,11 +376,11 @@ ___
 
 • **toSeconds**: *any* = duration.toSeconds
 
+Defined in src/server/Cron.ts:11
+
 Defined in src/elements/behaviours/Behaviour.ts:11
 
 Defined in src/elements/behaviours/BehaviourLoader.ts:11
-
-Defined in src/elements/behaviours/Timer.ts:13
 
 ___
 
@@ -463,7 +455,7 @@ ___
 
 ▸ **delay**(`time`: any, `result`: any): *Promise‹unknown›*
 
-Defined in src/engine/DefaultAppDelegate.ts:54
+Defined in src/engine/DefaultAppDelegate.ts:104
 
 **Parameters:**
 
@@ -506,7 +498,7 @@ ___
 
 ▸ **test**(): *void*
 
-Defined in src/engine/Model.ts:74
+Defined in src/engine/Model.ts:76
 
 **Returns:** *void*
 

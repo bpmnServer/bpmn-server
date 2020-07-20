@@ -42,10 +42,14 @@ class Item {
     get type() {
         return this.element.type;
     }
+    get node() {
+        return this.element;
+    }
     save() {
         return {
             id: this.id, seq: this.seq, itemKey: this.itemKey, tokenId: this.token.id, elementId: this.elementId, name: this.name,
-            status: this.status, startedAt: this.startedAt, endedAt: this.endedAt, type: this.type, timeDue: this.timeDue, data: undefined
+            status: this.status, startedAt: this.startedAt, endedAt: this.endedAt, type: this.type, timeDue: this.timeDue,
+            data: undefined, messageId: this.messageId, signalId: this.signalId
         };
     }
     static load(execution, dataObject, token) {

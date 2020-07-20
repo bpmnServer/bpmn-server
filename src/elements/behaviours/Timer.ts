@@ -7,10 +7,6 @@ import { BPMNServer } from '../../server';
 import { Behaviour } from './';
 import { Cron } from '../../server/Cron';
 
-const duration = require('iso8601-duration');
-const parse = duration.parse;
-const end = duration.end;
-const toSeconds = duration.toSeconds;
 
 /*
  * will fire a timer at start and go into wait sleep
@@ -63,7 +59,7 @@ class TimerBehaviour extends Behaviour {
 
     }
     describe() {
-        return ['timer','is a timer duration='+duration];
+        return ['timer','is a timer duration='+this.duration];
     }
     /**
      * return the next time the timer is due
@@ -77,10 +73,12 @@ class TimerBehaviour extends Behaviour {
             seconds = timerModifier;
         else {
             if (this.duration) {
-                seconds = toSeconds((parse(this.duration)));
+                //seconds = toSeconds((parse(this.duration)));
+                seconds= Cron.timeDue(this.duration, null);
             }
             else if (this.timeCycle) {
-                seconds = toSeconds((parse(this.timeCycle)));
+                //seconds = toSeconds((parse(this.timeCycle)));
+                seconds = Cron.timeDue(this.duration, null);
             }
         }
         let timeDue = new Date().getTime();
@@ -89,6 +87,8 @@ class TimerBehaviour extends Behaviour {
     }
     start(item: Item) {
 
+        if (item.node.type == "bpmn:StartEvent")
+            return;
         item.token.log("..------timer running --- " );
         this.startTimer(item);
 

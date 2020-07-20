@@ -59,7 +59,7 @@ class Execution implements IExecution {
         
         this.listener = executionContext.listener;
 
-        this.definition = new Definition(name, source, this.logger);
+        this.definition = new Definition(name, source, executionContext.server);
 
         this.executionContext = executionContext;
 
@@ -141,14 +141,11 @@ class Execution implements IExecution {
      * @param executionId
      * @param inputData
      * 
-     * Obselete -- remove later 
      */
     public async signal(executionId, inputData:any) {
 
         this.log('Action:signal ' + executionId + ' startedAt ');
         let token = null;
-
-        this.applyInput(inputData);
 
         this.appDelegate.executionStarted(this.executionContext);
         this.doExecutionEvent(EXECUTION_EVENT.execution_invoke);
@@ -187,7 +184,7 @@ class Execution implements IExecution {
             });
 
             if (node) {
-                let token = await Token.startNewToken(this, node, null, null, null, null);
+                let token = await Token.startNewToken(this, node, null, null, null, inputData);
             }
             else {
                 this.getItems().forEach(i => {
@@ -351,18 +348,14 @@ class Execution implements IExecution {
 
 
     async doExecutionEvent(event) {
-
-        await this.listener.emit(event, { event, execution: this });
-        await this.listener.emit('all', {event, execution: this});
-    }
-    async doTokenEvent(token, event) {
-        await this.listener.emit(event,{event, token});
-        await this.listener.emit('all', { event, token });
+        await this.listener.emit(event, { event, context: this.executionContext });
+        await this.listener.emit('all', { event, context: this.executionContext });
     }
 
     async doItemEvent(item, event) {
-        await this.listener.emit(event, { event, item });
-        await this.listener.emit('all', {event, item});
+        this.executionContext.item = item;
+        await this.listener.emit(event, { event, context: this.executionContext });
+        await this.listener.emit('all', { event, context: this.executionContext });
     }
     log(msg) {
         this.logs.push(msg);

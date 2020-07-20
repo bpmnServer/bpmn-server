@@ -226,8 +226,9 @@ class EventBasedGateway extends Gateway {
         item.token.log("..EventBasedGateway is running" + this.id);
         this.listener = item.token.execution.listener;
         const self = this;
-        this.listener.on(__1.EXECUTION_EVENT.node_end, function ({ item: endingItem }) {
+        this.listener.on(__1.EXECUTION_EVENT.node_end, function ({ context }) {
             return __awaiter(this, void 0, void 0, function* () {
+                const endingItem = context.item;
                 const token = endingItem.token;
                 const lastItem = token.lastItem;
                 if (token.branchNode && token.branchNode.id == self.id) {

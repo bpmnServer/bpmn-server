@@ -3,7 +3,7 @@ import { Logger } from '../common/Logger';
 const fs = require('fs');
 
 import { Execution } from './Execution';
-import { SubProcess , Behaviour_names, LoopBehaviour , Element, Node, Flow } from '../elements/'
+import { SubProcess ,  LoopBehaviour , Element, Node, Flow } from '../elements/'
 import { EXECUTION_EVENT , NODE_ACTION , FLOW_ACTION, TOKEN_STATUS, EXECUTION_STATUS,  ITEM_STATUS, INode} from '../../';
 import { EventEmitter } from 'events';
 import { Loop } from './Loop';
@@ -110,7 +110,7 @@ class Token implements IToken {
         token.loop = loop;
         execution.tokens.set(token.id, token);
         token.applyInput(data);
-        const result = await token.execute();
+        const result = await token.execute(data);
         return token;
     } 
     save() {
@@ -190,7 +190,7 @@ class Token implements IToken {
     /**
      * this is the primary exectuion method for a token
      */
-    async execute() {
+    async execute(input) {
 
         if (!await this.preExecute())  
             return; // loop logic will take care of it
@@ -199,6 +199,9 @@ class Token implements IToken {
         const item = new Item(this.currentNode,this);
         this.path.push(item);
         this.log('.executing item:' + this.currentNode.id + " "+ item.id);
+
+        if (input)
+            await this.currentNode.setInput(item,input);
 
         ret = await this.currentNode.execute(item);
 /*
@@ -247,7 +250,7 @@ class Token implements IToken {
         const item = this.currentItem;
         this.log(`..token.invoke ${this.currentNode.id} ${this.currentNode.type}`);
 
-        this.applyInput(data);
+        this.currentNode.setInput(item, data);
         if (item.status == ITEM_STATUS.wait) {
             const ret = await this.currentNode.run(item);
 
@@ -309,7 +312,7 @@ class Token implements IToken {
             if (nextNode) {
                 if (outbounds.length == 1) {
                     self.currentNode = nextNode;
-                    promises.push(self.execute());
+                    promises.push(self.execute(null));
                 }
                 else {
                     promises.push(Token.startNewToken(self.execution, nextNode, null, self, thisNode, null));

@@ -1,0 +1,234 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Modeller = void 0;
+const __1 = require("../");
+const config = require('../configuration.js').configuration;
+const bpmnServer = new __1.BPMNServer(config);
+const definitions = bpmnServer.definitions;
+let xml, base_url, title, processName;
+class Modeller {
+    displayNew(name, request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            processName = name;
+            title = processName;
+            xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn2:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn2=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xsi:schemaLocation=\"http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd\" id=\"sample-diagram\" targetNamespace=\"http://bpmn.io/schema/bpmn\">\n  <bpmn2:process id=\"Process_1\" isExecutable=\"false\">\n    <bpmn2:startEvent id=\"StartEvent_1\"/>\n  </bpmn2:process>\n  <bpmndi:BPMNDiagram id=\"BPMNDiagram_1\">\n    <bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\">\n      <bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\">\n        <dc:Bounds height=\"36.0\" width=\"36.0\" x=\"412.0\" y=\"240.0\"/>\n      </bpmndi:BPMNShape>\n    </bpmndi:BPMNPlane>\n  </bpmndi:BPMNDiagram>\n</bpmn2:definitions>";
+            response.write(getText());
+            response.end();
+        });
+    }
+    display(process, request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            processName = process;
+            xml = yield definitions.getSource(processName);
+            title = processName;
+            response.write(getText());
+            response.end();
+        });
+    }
+}
+exports.Modeller = Modeller;
+exports.Modeller = Modeller;
+function getText() {
+    return `
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8" /> 
+  <title>bpmn-js modeler demo</title>
+
+  <!-- copy of bpmn property panel 
+    link rel="stylesheet" href="css/diagram-js.css" />
+  <link rel="stylesheet" href="vendor/bpmn-font/css/bpmn-embedded.css" />
+  <link rel="stylesheet" href="css/app.css" / -->
+
+    <script type='text/javascript' src='/javascripts/jquery.min.js'></script>
+
+    <link rel='stylesheet' href='/stylesheets/bpmn/diagram-js.css' type='text/css'>
+    <link rel='stylesheet' href='/stylesheets/bpmn/vendor/bpmn-font/css/bpmn-embedded.css' type='text/css'>
+    <link rel='stylesheet' href='/stylesheets/bpmn/app.css' type='text/css'>
+
+<link rel='stylesheet' href='/stylesheets/bootstrap.min.css' type='text/css'>
+<link rel='stylesheet' href='/stylesheets/bootstrap-theme.min.css' type='text/css'>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' type='text/css'>
+<!--link rel='stylesheet' href='/stylesheets/app.css' type='text/css'-->
+<link rel='stylesheet' href='/stylesheets/jquery-ui.css' type='text/css'>
+<link rel='stylesheet' href='/stylesheets/jquery-ui.theme.css' type='text/css'>
+
+</head>
+<body>
+<!--- OWF additions -->
+<script>
+    var omni_base_url="${base_url}";
+    var ajax_object =null;					
+</script>        
+<!--- Views::header -->
+<div id="omni_page">
+     <div id="omni_header">
+        <!-- MenusView.php:displayMenus -->
+        <!-- bootstrap menus --->
+        <nav role="navigation" class="navbar navbar-default">
+        <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="/" class="navbar-brand">
+                    <img src="https://demo.omniworkflow.com/web//images/omniworkflow_icon.png" /></a>
+            </div>
+        <!-- Collection of nav links, forms, and other content for toggling -->
+            <div id="navbarCollapse" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav"></ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href='javascript:window.saveDiagramFunct();'>Save Model</a></li>
+                    <li>  </li>        
+                </ul>
+            </div>
+        </nav>  
+    </div>
+    <!-- end of omni_header -->
+</div>
+<style>
+ div.entry-content { margin:5px !important;}
+</style>
+<!--- end of OWF additions -->
+
+  <div class="content with-diagram" id="js-drop-zone">
+
+    <div class="message intro">
+      <div class="note">
+        Drop BPMN diagram from your desktop or <a id="js-create-diagram" href>create a new diagram</a> to get started.
+      </div>
+    </div>
+
+    <div class="message error">
+      <div class="note">
+        <p>Ooops, we could not display the BPMN 2.0 diagram.</p>
+
+        <div class="details">
+          <span>Import Error Details</span>
+          <pre></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="canvas" id="js-canvas"></div>
+    <div class="properties-panel-parent" id="js-properties-panel"></div>
+  </div>
+
+  <ul class="buttons">
+    <li>
+      download
+    </li>
+    <li>
+      <a id="js-download-diagram" href title="download BPMN diagram">
+        BPMN diagram
+      </a>
+    </li>
+    <li>
+      <a id="js-download-svg" href title="download as SVG image">
+        SVG image
+      </a>
+    </li>
+  </ul>
+
+  <script src="/javascripts/modeller-prop-panel.js"></script>
+<script id="xmlSrc" type="text/xmldata">
+${xml}
+</script>
+<script> 
+
+
+
+function saveDiagram() {
+	//            displayStatus("Saving Data.");
+	var url = '/model/edit/'+processId;
+
+	/*
+
+	$.ajax({
+	   url             :    url+"?command=saveDiagram",
+	   type            :   'POST',
+	   processData     :   false,
+	   contentType     :   'text/xml',
+	   data            :   xmlDocument,
+	   sucess          :   function( data ) {
+		  alert('success'+data);
+	   },
+	   error           :   function() {
+		  alert('failed to send ajax request');
+	   },
+	   complete        :   function( response) {
+		  alert('ajax request completed'+response.responseText);
+	   }
+	});
+
+	return;
+
+
+		xmlDocument = encodeURIComponent(bpmn);
+
+	*/
+	if (typeof OmniXML == "undefined") {
+		alert("No changes to save. BPMN Modeler requires you to make changes in order to save.");
+		return;
+	}
+//	waiting("Saving..");
+	var data = {
+		'action': 'omni_ajax_call',
+		'command': 'modeler.saveDiagram',
+		'processId': processId,
+		'bpmn': OmniXML,
+		'svg': OmniSVG
+	};
+
+
+	/*			jQuery( document ).ajaxError(function( event, request, settings , thrownError ,response ) {
+
+					alert("Error requesting data " + settings.url + thrownError  +request+"response:" +response);
+//									waiting("");
+
+				});
+	*/
+
+	jQuery.post(url, data, function (response) {
+//		waiting("");
+		window.onbeforeunload = null;
+		//				alert(response);
+	}).error(function (event, request, settings, thrownError, response) {
+		//                            alert("Error requesting data " + settings.url + thrownError  +request+"response:" +response);
+//		waiting("");
+		window.onbeforeunload = null;
+
+	});
+}
+
+	var processId='${processName}';
+
+	
+	var OmniXML;
+	var OmniSVG;
+    window.saveDiagramFunct=saveDiagram;
+
+</script>
+
+
+</html>
+
+`;
+
+}
+//# sourceMappingURL=Modeller.js.map

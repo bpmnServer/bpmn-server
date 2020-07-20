@@ -4,7 +4,7 @@ var bodyParser = require('body-parser')
 
 const FS = require('fs');
 
-import { BPMNServer, dateDiff, Behaviour_names   } from '..';
+import { BPMNServer   } from '..';
 import { configuration as config} from '../configuration';
 import { docsFolder } from '..';
 console.log(docsFolder);

@@ -37,7 +37,7 @@ async function install() {
     await dataStore.install();
 
     await modelsDataStore.install();
-
+    /* not needed
     const sampleModelsJson = fs.readFileSync(__dirname+'/sampleModels.json',
             { encoding: 'utf8', flag: 'r' });
 
@@ -49,6 +49,7 @@ async function install() {
 
     const res = await modelsDataStore.import(models);
     console.log(res);
+    */
     console.log('---done.');
 
 }

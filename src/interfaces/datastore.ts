@@ -50,7 +50,14 @@ interface IEventData {
     subType;
     signalId?: string;
     messageId?: string;
+    // timer info
+    expression;
+    expressionFormat; // cron/iso
+    referenceDateTime; //        start time of event   or last time timer ran
+    maxRepeat;
+    repeatCount;
     timeDue?: Date;
+
 }
 class EventData implements IEventData  {
     elementId;
@@ -60,7 +67,13 @@ class EventData implements IEventData  {
     processId;
     signalId;
     messageId;
-    timeDue;
+    // timer info
+    expression;
+    expressionFormat; // cron/iso
+    referenceDateTime; //        start time of event   or last time timer ran
+    maxRepeat;
+    repeatCount;
+    timeDue?: Date;
 }
 
 interface IBpmnModelData {
@@ -70,7 +83,7 @@ interface IBpmnModelData {
     processes: IProcessData[];
     events: IEventData[];
     saved;
-    parse(definition: IDefinition);
+//    parse(definition: IDefinition);
 }
 interface IProcessData {
     id;

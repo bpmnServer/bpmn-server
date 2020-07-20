@@ -1,0 +1,13 @@
+extends ../layout
+
+block content
+	h3 Import Processes 
+	div(id="processes")
+		form(name='ExecuteForm',action="/model/import",method="post", enctype="multipart/form-data" )
+			table
+				tr 
+					a(vertical-align="top")
+					td
+						input(type='file' name='fileUploaded')
+					td
+						input(type='submit',value='Import')

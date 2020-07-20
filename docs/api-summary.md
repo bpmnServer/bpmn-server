@@ -1,11 +1,20 @@
 [bpmn-server](./api/README.md)
 
 # API Summary  [Full Listing](./api-index.md)
-## Table of Contents
-| Component | [engine](#engine)| [definitions](#definitions)  | [dataStore](#datastore)  | [cache](#cache) | [cron](#cron)|
-| ---------- | --- |:-------------:| -----| ----------|---------- | 
-| Topic		| Query | [configuration](#configuration)	| [appDelegate](#appDelegate) |	[events listener](#events) | [Enumerations](#enumerations) |
+## Server Components
+- [engine](#engine) BPMN Execution Engine
+- [definitions](#definitions) 
+- [dataStore](#datastore)
+- [cache](#cache) 
+- [cron](#cron)
 
+## Other Components and Topics 
+- [Data Query](#data-query) 
+- [configuration](#configuration)	
+- [appDelegate](#appDelegate) 
+- [events listener](#events) 
+- [Data Variables and input/output](./data.md) 
+- [Timers](./timers.md) 
 
 ## engine:
 
@@ -32,7 +41,7 @@ examples:
 ```
 
 ## definitions
-Manages BPMN defintions - [Definitions](api/classes/modelsdatastore.md)
+Manages BPMN defintions - [Definitions](api/classes/modelsdatastoredb.md)
 
 | Method| parameters           | return  | description |
 | ------------- |:-------------:| -----| ----------|
@@ -164,6 +173,8 @@ the query syntax must be
 - AppDelegate
 
 - Event Listener
+
+- Data
 
 ## Enumerations
 

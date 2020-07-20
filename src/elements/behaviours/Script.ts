@@ -12,10 +12,9 @@ class ScriptBehaviour extends Behaviour {
     event;
     script;
     init() {
-        console.log('event:' + this.definition.event);
-        console.log('body:' + this.definition.$body);
-        this.event = this.definition.event;
-        this.script = this.definition.$body;
+        const event = this.definition.event;
+        const script = this.definition.$body;
+        this.node.scripts.set(event, script);
 
     }
     start(item: Item) {

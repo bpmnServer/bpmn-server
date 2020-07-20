@@ -36,7 +36,7 @@ interface IToken {
     /**
      * this is the primary exectuion method for a token
      */
-    execute(): Promise<any>;
+    execute(inputData): Promise<any>;
     applyInput(inputData: any): void;
     /**
      *  is called by Gateways to cancel current token
@@ -98,9 +98,8 @@ interface IExecution {
     uids: {};
     getNewId(scope: string): number;
     getUUID(): any;
-    doExecutionEvent(event: any): Promise<void>;
-    doTokenEvent(token: any, event: any): Promise<void>;
-    doItemEvent(item: any, event: any): Promise<void>;
+    doExecutionEvent(event: any): Promise<any>;
+    doItemEvent(item: any, event: any): Promise<any>;
     log(msg: any): void;
     applyInput(inputData: any, dataPath?: any): void;
     getData(dataPath: any): any;
@@ -119,6 +118,8 @@ interface IItemData {
     timeDue: Date;
     status: ITEM_STATUS;
     data: any;
+    messageId;
+    signalId;
 }
 interface IInstanceData {
     id;
@@ -140,6 +141,7 @@ interface IItem extends IItemData {
     element: Element;
     token: Token;
     context: IExecutionContext;
+    node: Node;
 }
 
 
@@ -151,6 +153,7 @@ interface IExecutionResponse {
 
 
 interface IExecutionContext {
+    //  components
     server;
     configuration;
     logger;
@@ -163,10 +166,25 @@ interface IExecutionContext {
 
     execution?: IExecution;
     listener;
+    //  context
+    instance;
+
+    process;
+    item;
+    input;
+    output;
+    messageMatchingKey;
+
+    //  results
     errors;
     items: IItem[];
     error(error): IExecutionContext;
-    instance;
+
+
+    // scope
+    parentContext?: IExecutionContext;
+
+
 }
 
 

@@ -20,10 +20,12 @@
 
 * [flows](definition.md#flows)
 * [logger](definition.md#logger)
+* [moddle](definition.md#moddle)
 * [name](definition.md#name)
 * [nodes](definition.md#nodes)
 * [processes](definition.md#processes)
 * [rootElements](definition.md#rootelements)
+* [server](definition.md#server)
 * [source](definition.md#source)
 
 ### Methods
@@ -38,9 +40,9 @@
 
 ###  constructor
 
-\+ **new Definition**(`name`: string, `source`: string, `logger`: [Logger](logger.md)): *[Definition](definition.md)*
+\+ **new Definition**(`name`: string, `source`: string, `server`: [BPMNServer](bpmnserver.md)): *[Definition](definition.md)*
 
-Defined in src/elements/Definition.ts:26
+Defined in src/elements/Definition.ts:28
 
 **Parameters:**
 
@@ -48,7 +50,7 @@ Name | Type |
 ------ | ------ |
 `name` | string |
 `source` | string |
-`logger` | [Logger](logger.md) |
+`server` | [BPMNServer](bpmnserver.md) |
 
 **Returns:** *[Definition](definition.md)*
 
@@ -71,6 +73,14 @@ ___
 *Implementation of [IDefinition](../interfaces/idefinition.md).[logger](../interfaces/idefinition.md#logger)*
 
 Defined in src/elements/Definition.ts:26
+
+___
+
+###  moddle
+
+• **moddle**: *any*
+
+Defined in src/elements/Definition.ts:28
 
 ___
 
@@ -114,6 +124,14 @@ Defined in src/elements/Definition.ts:22
 
 ___
 
+###  server
+
+• **server**: *any*
+
+Defined in src/elements/Definition.ts:27
+
+___
+
 ###  source
 
 • **source**: *any*
@@ -128,7 +146,7 @@ Defined in src/elements/Definition.ts:25
 
 ▸ **getDefinition**(`source`: any, `logger`: any): *Promise‹any›*
 
-Defined in src/elements/Definition.ts:198
+Defined in src/elements/Definition.ts:200
 
 **Parameters:**
 
@@ -147,7 +165,7 @@ ___
 
 *Implementation of [IDefinition](../interfaces/idefinition.md)*
 
-Defined in src/elements/Definition.ts:177
+Defined in src/elements/Definition.ts:179
 
 **Returns:** *string*
 
@@ -159,7 +177,7 @@ ___
 
 *Implementation of [IDefinition](../interfaces/idefinition.md)*
 
-Defined in src/elements/Definition.ts:215
+Defined in src/elements/Definition.ts:217
 
 **Parameters:**
 
@@ -177,7 +195,7 @@ ___
 
 *Implementation of [IDefinition](../interfaces/idefinition.md)*
 
-Defined in src/elements/Definition.ts:206
+Defined in src/elements/Definition.ts:208
 
 **Returns:** *any*
 
@@ -189,6 +207,6 @@ ___
 
 *Implementation of [IDefinition](../interfaces/idefinition.md)*
 
-Defined in src/elements/Definition.ts:57
+Defined in src/elements/Definition.ts:62
 
 **Returns:** *Promise‹any›*

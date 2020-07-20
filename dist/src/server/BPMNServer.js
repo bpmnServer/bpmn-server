@@ -42,12 +42,12 @@ class BPMNServer {
         this.logger = logger;
         this.configuration = configuration;
         this.cron = new Cron_1.Cron(this);
-        this.cron.start();
         this.cache = new CacheManager_1.CacheManager(this);
         this.engine = new Engine_1.Engine(this);
         this.dataStore = configuration.dataStore(this);
         this.definitions = configuration.definitions(this);
         this.appDelegate = configuration.appDelegate(this);
+        this.cron.start();
     }
 }
 exports.BPMNServer = BPMNServer;

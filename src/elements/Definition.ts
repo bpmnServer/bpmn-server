@@ -1,7 +1,7 @@
 
 const BpmnModdle = require('bpmn-moddle');
 
-import { moddleOptions} from './js-bpmn-moddle';
+//import { moddleOptions} from './js-bpmn-moddle';
 
 //const moddleOptions = require('./js-bpmn-moddle.json');
 
@@ -9,11 +9,11 @@ import { Logger } from '../common/Logger';
 import { Node, Flow , MessageFlow ,SubProcess , NodeLoader , Process } from '.'; 
 import { BPMN_TYPE } from './NodeLoader';
 import { IDefinition } from '../interfaces/elements';
+import { BPMNServer } from '../server/BPMNServer';
 
 const fs = require('fs');
 
 //console.log(moddleOptions);
-const moddle = new BpmnModdle({ moddleOptions });
 
 
 class Definition implements IDefinition{
@@ -24,12 +24,17 @@ class Definition implements IDefinition{
     flows = [];
     source;
     logger;
-    constructor(name:string,source:string,logger:Logger) {
-
+    server;
+    moddle;
+    constructor(name:string,source:string,server:BPMNServer) {
+        this.server = server;
         this.name = name;
         this.source = source;
-        this.logger = logger;
+        this.logger = server.logger;
 
+        const moddleOptions = this.server.appDelegate.moddleOptions;
+
+        this.moddle = new BpmnModdle({ moddleOptions });
     }
     private loadProcess(definition, processElement) {
 
@@ -141,10 +146,7 @@ references:
             else if ((ref.element.$type == "bpmn:MessageEventDefinition")
                 || (ref.element.$type == "bpmn:SignalEventDefinition")) {
                 const eventDef = definition.elementsById[ref.element.id];
-                console.log('-- attaching signalId to eventDef');
-                console.log(eventDef);
                 eventDef[ref.property] = ref.id;
-                console.log(eventDef);
             }
         });
         refs.forEach(ref => {
@@ -197,7 +199,7 @@ references:
     }
     async getDefinition(source, logger) {
 
-    const result = await moddle.fromXML(source);
+    const result = await this.moddle.fromXML(source);
 
 
     return result;

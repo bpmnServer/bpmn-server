@@ -31,11 +31,15 @@
 
 ### Methods
 
-* [_checkTimers](cron.md#_checktimers)
 * [checkTimers](cron.md#checktimers)
-* [findEventById](cron.md#findeventbyid)
-* [findEvents](cron.md#findevents)
+* [itemTimerExpired](cron.md#itemtimerexpired)
+* [processTimerExpired](cron.md#processtimerexpired)
+* [scheduleItem](cron.md#scheduleitem)
+* [scheduleProcess](cron.md#scheduleprocess)
 * [start](cron.md#start)
+* [startTimers](cron.md#starttimers)
+* [checkCron](cron.md#static-checkcron)
+* [timeDue](cron.md#static-timedue)
 * [timerEnded](cron.md#static-timerended)
 * [timerScheduled](cron.md#static-timerscheduled)
 
@@ -165,21 +169,11 @@ Defined in src/server/ServerContext.ts:14
 
 ## Methods
 
-###  _checkTimers
-
-▸ **_checkTimers**(): *Promise‹void›*
-
-Defined in src/server/Cron.ts:29
-
-**Returns:** *Promise‹void›*
-
-___
-
 ###  checkTimers
 
 ▸ **checkTimers**(`duration`: number): *Promise‹void›*
 
-Defined in src/server/Cron.ts:20
+Defined in src/server/Cron.ts:28
 
 **Parameters:**
 
@@ -191,35 +185,56 @@ Name | Type | Default |
 
 ___
 
-###  findEventById
+###  itemTimerExpired
 
-▸ **findEventById**(`signalId`: string): *Promise‹[IEventData](../interfaces/ieventdata.md)›*
+▸ **itemTimerExpired**(): *void*
 
-Defined in src/server/Cron.ts:86
+Defined in src/server/Cron.ts:158
 
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`signalId` | string |
-
-**Returns:** *Promise‹[IEventData](../interfaces/ieventdata.md)›*
+**Returns:** *void*
 
 ___
 
-###  findEvents
+###  processTimerExpired
 
-▸ **findEvents**(`query`: any): *Promise‹[IEventData](../interfaces/ieventdata.md)[]›*
+▸ **processTimerExpired**(): *Promise‹void›*
 
-Defined in src/server/Cron.ts:81
+Defined in src/server/Cron.ts:160
+
+**Returns:** *Promise‹void›*
+
+___
+
+###  scheduleItem
+
+▸ **scheduleItem**(`item`: any, `entry`: any): *void*
+
+Defined in src/server/Cron.ts:186
 
 **Parameters:**
 
 Name | Type |
 ------ | ------ |
-`query` | any |
+`item` | any |
+`entry` | any |
 
-**Returns:** *Promise‹[IEventData](../interfaces/ieventdata.md)[]›*
+**Returns:** *void*
+
+___
+
+###  scheduleProcess
+
+▸ **scheduleProcess**(`entry`: any): *void*
+
+Defined in src/server/Cron.ts:173
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`entry` | any |
+
+**Returns:** *void*
 
 ___
 
@@ -227,9 +242,53 @@ ___
 
 ▸ **start**(): *Promise‹void›*
 
-Defined in src/server/Cron.ts:26
+Defined in src/server/Cron.ts:34
 
 **Returns:** *Promise‹void›*
+
+___
+
+###  startTimers
+
+▸ **startTimers**(): *Promise‹void›*
+
+Defined in src/server/Cron.ts:97
+
+**Returns:** *Promise‹void›*
+
+___
+
+### `Static` checkCron
+
+▸ **checkCron**(`expression`: any, `referenceDateTime`: any): *number*
+
+Defined in src/server/Cron.ts:191
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`expression` | any |
+`referenceDateTime` | any |
+
+**Returns:** *number*
+
+___
+
+### `Static` timeDue
+
+▸ **timeDue**(`expression`: any, `referenceDateTime`: any): *any*
+
+Defined in src/server/Cron.ts:210
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`expression` | any |
+`referenceDateTime` | any |
+
+**Returns:** *any*
 
 ___
 
@@ -237,7 +296,7 @@ ___
 
 ▸ **timerEnded**(`item`: any): *void*
 
-Defined in src/server/Cron.ts:16
+Defined in src/server/Cron.ts:24
 
 **Parameters:**
 
@@ -253,7 +312,7 @@ ___
 
 ▸ **timerScheduled**(`timeDue`: any): *void*
 
-Defined in src/server/Cron.ts:13
+Defined in src/server/Cron.ts:21
 
 **Parameters:**
 

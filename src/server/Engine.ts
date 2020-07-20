@@ -4,8 +4,7 @@ import { ServerComponent } from '../server/ServerContext';
 
 import { EventEmitter } from 'events';
 import { DataStore } from '../datastore';
-console.log('ServerComponent');
-console.log(ServerComponent);
+
 
 class Engine extends ServerComponent {
 
@@ -99,6 +98,10 @@ class Engine extends ServerComponent {
 
 		return executionContext;
 	}
+	async invokeItem(itemQuery, data = {}, listener: EventEmitter = null): Promise<ExecutionContext> {
+
+		return await this.invoke(itemQuery, data, listener);
+	}
 	/**
 	 * Continue an existing item that is in a wait state
 	 * 
@@ -130,6 +133,7 @@ class Engine extends ServerComponent {
 
 			executionContext = await this.restore({ "id": item.instanceId },listener);
 
+			executionContext.execution.log("Action:engineInvoke " + JSON.stringify(itemQuery));
 			await executionContext.execution.signal(item.id, data);
 
 			this.logger.log(`..engine.continue execution ended saving.. `);
@@ -184,6 +188,36 @@ class Engine extends ServerComponent {
 
 		}
 	}
+	async throwMessage(messageId, data = {}, matchingQuery = {}, listener: EventEmitter = null): Promise<ExecutionContext> {
+
+		this.logger.log('Action:engine.throwMessage ' + messageId);
+
+		// need to load instance first
+		const eventsQuery = { "events.messageId": messageId };
+		const events = await this.definitions.findEvents(eventsQuery);
+		this.logger.log('..findEvents ' + events.length);
+		console.log(events);
+		if (events.length > 0) {
+
+			const event = events[0];
+			return await this.start(event.modelName, data, null, event.elementId);
+		}
+		let itemsQuery;
+		if (matchingQuery)
+			itemsQuery = Object.assign({}, matchingQuery);
+
+		itemsQuery["items.messageId"] = messageId;
+
+		const items = await this.dataStore.findItems(itemsQuery);
+		console.log(items);
+		if (items.length > 0) {
+
+			const item = items[0];
+			return await this.invoke({ "items.id": item.id }, data);
+		}
+		return null;
+
+	}
 	/**
 	 * 
 	 * signal/message raise a signal or throw a message 
@@ -193,12 +227,36 @@ class Engine extends ServerComponent {
 	 * that can be againt a running instance or it may start a new instance 
 	 * ----------------------------------------------------------------------------
 	 * @param messageId		the id of the message or signal as per bpmn definition
-	 * @param matchingKey	should match the itemKey (if specified)
+	 * @param matchingQuery	should match the itemKey (if specified)
 	 * @param data			message data
 	 */
-	async signal(messageId, matchingKey, data = {}, listener: EventEmitter = null) : Promise<ExecutionContext>{
+	async throwSignal(messageId, data = {}, matchingQuery = {} ,listener: EventEmitter = null) : Promise<ExecutionContext>{
+
+		this.logger.log('Action:engine.signal '+messageId);
 
 		// need to load instance first
+		const eventsQuery = { "events.messageId": messageId };
+		const events = await this.definitions.findEvents(eventsQuery);
+		this.logger.log('..findEvents '+events.length);
+		console.log(events);
+		if (events.length > 0) {
+
+			const event = events[0];
+			return await this.start(event.modelName, data, null, event.elementId);
+        }
+		let itemsQuery;
+		if (matchingQuery)
+			itemsQuery = Object.assign({}, matchingQuery);
+
+		itemsQuery["items.messageId"] = messageId;
+
+		const items = await this.dataStore.findItems(itemsQuery);
+		console.log(items);
+		if (items.length > 0) {
+
+			const item = items[0];
+			return await this.invoke({ "items.id": item.id }, data);
+		}
 		return null;
 	}
 

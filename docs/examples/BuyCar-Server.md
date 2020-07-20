@@ -64,6 +64,18 @@ The [query](../query.md) is passed to MongoDB to select the appropriate item.
     console.log("Ready to drive");
 
 ```
+    keeping in mind that the bpmn definition defines conditional flow as such:
+
+```javascript
+
+    <bpmn:sequenceFlow id="flow_gw1_clean" sourceRef="gateway_1" targetRef="task_clean">
+      <bpmn:conditionExpression xsi:type="bpmn:tExpression"><![CDATA[
+      (this.needsCleaning=="Yes")
+      ]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+
+```
+
     in the next step, we will query on instance id as well as the element id 
 
 ```javascript

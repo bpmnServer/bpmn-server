@@ -19,15 +19,29 @@ Application Delegate Object to respond to various events and services:
 
 ## Index
 
+### Properties
+
+* [moddleOptions](iappdelegate.md#moddleoptions)
+
 ### Methods
 
 * [executionEvent](iappdelegate.md#executionevent)
 * [executionStarted](iappdelegate.md#executionstarted)
-* [messageIssued](iappdelegate.md#messageissued)
+* [issueMessage](iappdelegate.md#issuemessage)
+* [issueSignal](iappdelegate.md#issuesignal)
+* [messageThrown](iappdelegate.md#messagethrown)
 * [scopeEval](iappdelegate.md#scopeeval)
 * [scopeJS](iappdelegate.md#scopejs)
 * [serviceCalled](iappdelegate.md#servicecalled)
-* [signalIssued](iappdelegate.md#signalissued)
+* [signalThrown](iappdelegate.md#signalthrown)
+
+## Properties
+
+###  moddleOptions
+
+• **moddleOptions**: *any*
+
+Defined in src/interfaces/common.ts:65
 
 ## Methods
 
@@ -35,7 +49,7 @@ Application Delegate Object to respond to various events and services:
 
 ▸ **executionEvent**(`__namedParameters`: object): *any*
 
-Defined in src/interfaces/common.ts:66
+Defined in src/interfaces/common.ts:67
 
 **Parameters:**
 
@@ -55,7 +69,7 @@ ___
 
 ▸ **executionStarted**(`execution`: [IExecutionContext](iexecutioncontext.md)): *any*
 
-Defined in src/interfaces/common.ts:65
+Defined in src/interfaces/common.ts:66
 
 **Parameters:**
 
@@ -67,16 +81,55 @@ Name | Type |
 
 ___
 
-###  messageIssued
+###  issueMessage
 
-▸ **messageIssued**(`item`: [IItem](iitem.md)): *any*
+▸ **issueMessage**(`messageId`: any, `data`: any): *any*
 
-Defined in src/interfaces/common.ts:67
+Defined in src/interfaces/common.ts:77
+
+is called when an event throws a message that can not be answered by another process
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`messageId` | any | - |
+`data` | any |   |
+
+**Returns:** *any*
+
+___
+
+###  issueSignal
+
+▸ **issueSignal**(`messageId`: any, `data`: any): *any*
+
+Defined in src/interfaces/common.ts:78
 
 **Parameters:**
 
 Name | Type |
 ------ | ------ |
+`messageId` | any |
+`data` | any |
+
+**Returns:** *any*
+
+___
+
+###  messageThrown
+
+▸ **messageThrown**(`signalId`: any, `data`: any, `messageMatchingKey`: any, `item`: [IItem](iitem.md)): *any*
+
+Defined in src/interfaces/common.ts:68
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`signalId` | any |
+`data` | any |
+`messageMatchingKey` | any |
 `item` | [IItem](iitem.md) |
 
 **Returns:** *any*
@@ -87,7 +140,7 @@ ___
 
 ▸ **scopeEval**(`scope`: any, `script`: any): *any*
 
-Defined in src/interfaces/common.ts:76
+Defined in src/interfaces/common.ts:86
 
 **Parameters:**
 
@@ -104,7 +157,7 @@ ___
 
 ▸ **scopeJS**(`scope`: any, `script`: any): *any*
 
-Defined in src/interfaces/common.ts:77
+Defined in src/interfaces/common.ts:87
 
 **Parameters:**
 
@@ -119,9 +172,9 @@ ___
 
 ###  serviceCalled
 
-▸ **serviceCalled**(`item`: [IItem](iitem.md)): *any*
+▸ **serviceCalled**(`serviceName`: any, `data`: any, `item`: [IItem](iitem.md)): *any*
 
-Defined in src/interfaces/common.ts:74
+Defined in src/interfaces/common.ts:84
 
 is called only if the serviceTask has no implementation; otherwise the specified implementation will be called.
 
@@ -129,22 +182,27 @@ is called only if the serviceTask has no implementation; otherwise the specified
 
 Name | Type | Description |
 ------ | ------ | ------ |
+`serviceName` | any | - |
+`data` | any | - |
 `item` | [IItem](iitem.md) |   |
 
 **Returns:** *any*
 
 ___
 
-###  signalIssued
+###  signalThrown
 
-▸ **signalIssued**(`item`: [IItem](iitem.md)): *any*
+▸ **signalThrown**(`signalId`: any, `data`: any, `messageMatchingKey`: any, `item`: [IItem](iitem.md)): *any*
 
-Defined in src/interfaces/common.ts:68
+Defined in src/interfaces/common.ts:69
 
 **Parameters:**
 
 Name | Type |
 ------ | ------ |
+`signalId` | any |
+`data` | any |
+`messageMatchingKey` | any |
 `item` | [IItem](iitem.md) |
 
 **Returns:** *any*

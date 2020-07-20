@@ -1,6 +1,6 @@
 import { Node , UserTask, ScriptTask, ServiceTask, SendTask, ReceiveTask , 
     Gateway, EventBasedGateway, XORGateway , 
-    Event, CatchEvent, ThrowEvent, EndEvent , SubProcess, BoundaryEvent, CallActivity
+    Event, CatchEvent, ThrowEvent, EndEvent , SubProcess, BoundaryEvent, CallActivity, StartEvent
 } from '.';
 
 
@@ -73,7 +73,7 @@ class NodeLoader {
                 return new EndEvent(el.id, processId, el.$type, el);
                 break;
             case BPMN_TYPE.StartEvent:
-                return new Event(el.id, processId, el.$type, el);
+                return new StartEvent(el.id, processId, el.$type, el);
                 break;
             case BPMN_TYPE.CallActivity:
                 return new CallActivity(el.id, processId, el.$type, el);

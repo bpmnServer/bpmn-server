@@ -14,7 +14,10 @@ table
 
 	each engine in engines
 		tr
+			- var caseId;
+			- if (engine.execution.data) caseId = engine.execution.data.caseId;
+			-    
 			td  #{engine.execution.name}
 			td  #{engine.execution.fromNow}
-			td  #{engine.execution.data.caseId}
+			td  #{caseId}
 			td  #{engine.execution.fromLast}

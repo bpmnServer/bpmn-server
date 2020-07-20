@@ -26,6 +26,14 @@ class ExecutionContext extends ServerComponent implements IExecutionContext {
 	listener;
 	dataStore;
 	errors;
+	// scope
+	parentContext?: IExecutionContext;
+	process;
+	item;
+	input;
+	output;
+	messageMatchingKey;
+
 	error(error): IExecutionContext {
 		return this;
     }
@@ -33,8 +41,9 @@ class ExecutionContext extends ServerComponent implements IExecutionContext {
 		if (this.execution)
 			return this.execution.getState();
 	}
-	constructor(server: IBPMNServer) {
+	constructor(server: IBPMNServer,parentContext: IExecutionContext =null) {
 		super(server);
+		this.parentContext = parentContext;
 //		this.errors = [];
     }
 	get items() : IItem[] {

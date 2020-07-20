@@ -35,13 +35,19 @@ function install() {
         const modelsDataStore = server.definitions;
         yield dataStore.install();
         yield modelsDataStore.install();
-        const sampleModelsJson = fs.readFileSync(__dirname + '/sampleModels.json', { encoding: 'utf8', flag: 'r' });
+        /* not needed
+        const sampleModelsJson = fs.readFileSync(__dirname+'/sampleModels.json',
+                { encoding: 'utf8', flag: 'r' });
+    
         const models = JSON.parse(sampleModelsJson);
         models.forEach(model => {
             model._id = undefined;
         });
-        const res = yield modelsDataStore.import(models);
+    
+    
+        const res = await modelsDataStore.import(models);
         console.log(res);
+        */
         console.log('---done.');
     });
 }

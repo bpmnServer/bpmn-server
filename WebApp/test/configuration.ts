@@ -1,5 +1,5 @@
 
-import { ModelsDatastoreDB, Configuration, ModelsDatastoreFS } from '../';
+import { ModelsDatastore, Configuration} from '../';
 import { MyAppDelegate } from './appDelegate';
 import { IConfiguration, DataStore, ILogger } from '../';
 import { Logger } from '../'
@@ -24,7 +24,7 @@ var configuration = new Configuration(
 			new Logger(server);
 		},							
 		definitions: function (server) {
-			return new ModelsDatastoreFS(server);
+			return new ModelsDatastore(server);
 		},			
 		appDelegate: function (server) {
 			return new MyAppDelegate(server);

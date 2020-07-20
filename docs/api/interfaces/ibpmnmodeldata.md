@@ -21,17 +21,13 @@
 * [source](ibpmnmodeldata.md#source)
 * [svg](ibpmnmodeldata.md#svg)
 
-### Methods
-
-* [parse](ibpmnmodeldata.md#parse)
-
 ## Properties
 
 ###  events
 
 • **events**: *[IEventData](ieventdata.md)[]*
 
-Defined in src/interfaces/datastore.ts:71
+Defined in src/interfaces/datastore.ts:84
 
 ___
 
@@ -39,7 +35,7 @@ ___
 
 • **name**: *any*
 
-Defined in src/interfaces/datastore.ts:67
+Defined in src/interfaces/datastore.ts:80
 
 ___
 
@@ -47,7 +43,7 @@ ___
 
 • **processes**: *[IProcessData](iprocessdata.md)[]*
 
-Defined in src/interfaces/datastore.ts:70
+Defined in src/interfaces/datastore.ts:83
 
 ___
 
@@ -55,7 +51,7 @@ ___
 
 • **saved**: *any*
 
-Defined in src/interfaces/datastore.ts:72
+Defined in src/interfaces/datastore.ts:85
 
 ___
 
@@ -63,7 +59,7 @@ ___
 
 • **source**: *any*
 
-Defined in src/interfaces/datastore.ts:68
+Defined in src/interfaces/datastore.ts:81
 
 ___
 
@@ -71,20 +67,4 @@ ___
 
 • **svg**: *any*
 
-Defined in src/interfaces/datastore.ts:69
-
-## Methods
-
-###  parse
-
-▸ **parse**(`definition`: [IDefinition](idefinition.md)): *any*
-
-Defined in src/interfaces/datastore.ts:73
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`definition` | [IDefinition](idefinition.md) |
-
-**Returns:** *any*
+Defined in src/interfaces/datastore.ts:82

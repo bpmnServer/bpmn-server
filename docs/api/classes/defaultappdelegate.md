@@ -16,15 +16,21 @@
 
 * [constructor](defaultappdelegate.md#constructor)
 
+### Accessors
+
+* [moddleOptions](defaultappdelegate.md#moddleoptions)
+
 ### Methods
 
 * [executionEvent](defaultappdelegate.md#executionevent)
 * [executionStarted](defaultappdelegate.md#executionstarted)
-* [messageIssued](defaultappdelegate.md#messageissued)
+* [issueMessage](defaultappdelegate.md#issuemessage)
+* [issueSignal](defaultappdelegate.md#issuesignal)
+* [messageThrown](defaultappdelegate.md#messagethrown)
 * [scopeEval](defaultappdelegate.md#scopeeval)
 * [scopeJS](defaultappdelegate.md#scopejs)
 * [serviceCalled](defaultappdelegate.md#servicecalled)
-* [signalIssued](defaultappdelegate.md#signalissued)
+* [signalThrown](defaultappdelegate.md#signalthrown)
 
 ## Constructors
 
@@ -32,7 +38,7 @@
 
 \+ **new DefaultAppDelegate**(`logger`: any): *[DefaultAppDelegate](defaultappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:5
+Defined in src/engine/DefaultAppDelegate.ts:7
 
 **Parameters:**
 
@@ -42,13 +48,81 @@ Name | Type | Default |
 
 **Returns:** *[DefaultAppDelegate](defaultappdelegate.md)*
 
+## Accessors
+
+###  moddleOptions
+
+• **get moddleOptions**(): *object*
+
+Defined in src/engine/DefaultAppDelegate.ts:11
+
+**Returns:** *object*
+
+* **name**: *string* = "Node bpmn-engine"
+
+* **prefix**: *string* = "js"
+
+* **types**: *object | object[]* = [{
+    "name": "Task",
+    "isAbstract": true,
+    "extends": [
+      "bpmn:Task"
+    ],
+    "properties": [
+      {
+        "name": "result",
+        "isAttr": true,
+        "type": "String"
+      }
+    ]
+  }, {
+    "name": "Output",
+    "superClass": ["Element"]
+  }, {
+    "name": "Collectable",
+    "isAbstract": true,
+    "extends": ["bpmn:MultiInstanceLoopCharacteristics"],
+    "properties": [
+      {
+        "name": "collection",
+        "isAttr": true,
+        "type": "String"
+      },
+      {
+        "name": "elementVariable",
+        "isAttr": true,
+        "type": "String"
+      }
+    ]
+  }, {
+    "name": "FormSupported",
+    "isAbstract": true,
+    "extends": [
+      "bpmn:StartEvent",
+      "bpmn:UserTask"
+    ],
+    "properties": [
+      {
+        "name": "formKey",
+        "isAttr": true,
+        "type": "String"
+      }
+    ]
+  }]
+
+* **uri**: *string* = "http://paed01.github.io/bpmn-engine/schema/2017/08/bpmn"
+
+* ### **xml**: *object*
+
+  * **tagAlias**: *string* = "lowerCase"
+
 ## Methods
 
 ###  executionEvent
 
 ▸ **executionEvent**(`__namedParameters`: object): *Promise‹void›*
 
-Defined in src/engine/DefaultAppDelegate.ts:15
+Defined in src/engine/DefaultAppDelegate.ts:21
 
 **Parameters:**
 
@@ -66,11 +140,11 @@ ___
 
 ###  executionStarted
 
-▸ **executionStarted**(`execution`: [IExecutionContext](../interfaces/iexecutioncontext.md)): *void*
+▸ **executionStarted**(`execution`: [IExecutionContext](../interfaces/iexecutioncontext.md)): *Promise‹void›*
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:8
+Defined in src/engine/DefaultAppDelegate.ts:14
 
 **Parameters:**
 
@@ -78,25 +152,70 @@ Name | Type |
 ------ | ------ |
 `execution` | [IExecutionContext](../interfaces/iexecutioncontext.md) |
 
-**Returns:** *void*
+**Returns:** *Promise‹void›*
 
 ___
 
-###  messageIssued
+###  issueMessage
 
-▸ **messageIssued**(`item`: [Item](item.md)): *void*
+▸ **issueMessage**(`messageId`: any, `data`: any): *Promise‹void›*
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:22
+Defined in src/engine/DefaultAppDelegate.ts:55
+
+is called when an event throws a message that can not be answered by another process
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`messageId` | any | - |
+`data` | any |   |
+
+**Returns:** *Promise‹void›*
+
+___
+
+###  issueSignal
+
+▸ **issueSignal**(`signalId`: any, `data`: any): *Promise‹void›*
+
+*Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
+
+Defined in src/engine/DefaultAppDelegate.ts:58
 
 **Parameters:**
 
 Name | Type |
 ------ | ------ |
-`item` | [Item](item.md) |
+`signalId` | any |
+`data` | any |
 
-**Returns:** *void*
+**Returns:** *Promise‹void›*
+
+___
+
+###  messageThrown
+
+▸ **messageThrown**(`messageId`: any, `data`: any, `messageMatchingKey`: any, `item`: [Item](item.md)): *Promise‹void›*
+
+*Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
+
+Defined in src/engine/DefaultAppDelegate.ts:36
+
+ is called when a event throws a message
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`messageId` | any | - |
+`data` | any | - |
+`messageMatchingKey` | any | - |
+`item` | [Item](item.md) |   |
+
+**Returns:** *Promise‹void›*
 
 ___
 
@@ -106,7 +225,7 @@ ___
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:26
+Defined in src/engine/DefaultAppDelegate.ts:76
 
 **Parameters:**
 
@@ -125,7 +244,7 @@ ___
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:36
+Defined in src/engine/DefaultAppDelegate.ts:86
 
 **Parameters:**
 
@@ -140,34 +259,39 @@ ___
 
 ###  serviceCalled
 
-▸ **serviceCalled**(`item`: [Item](item.md)): *void*
+▸ **serviceCalled**(`serviceName`: any, `data`: any, `item`: [Item](item.md)): *Promise‹void›*
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:24
+Defined in src/engine/DefaultAppDelegate.ts:73
 
 **Parameters:**
 
 Name | Type |
 ------ | ------ |
+`serviceName` | any |
+`data` | any |
 `item` | [Item](item.md) |
 
-**Returns:** *void*
+**Returns:** *Promise‹void›*
 
 ___
 
-###  signalIssued
+###  signalThrown
 
-▸ **signalIssued**(`item`: [Item](item.md)): *void*
+▸ **signalThrown**(`signalId`: any, `data`: any, `messageMatchingKey`: any, `item`: [Item](item.md)): *Promise‹void›*
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:23
+Defined in src/engine/DefaultAppDelegate.ts:61
 
 **Parameters:**
 
 Name | Type |
 ------ | ------ |
+`signalId` | any |
+`data` | any |
+`messageMatchingKey` | any |
 `item` | [Item](item.md) |
 
-**Returns:** *void*
+**Returns:** *Promise‹void›*

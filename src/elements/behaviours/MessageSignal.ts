@@ -2,28 +2,74 @@ import { TimerBehaviour } from ".";
 import { Node } from "..";
 import { Behaviour } from '.';
 import { Item } from "../../engine/Item";
+/**
+ * 
+ * 
+ * it is part of the following:
+ * 
+ *  events
+ *  sendTask
+ *  receiveTask
+ * */
 
 class MessageEventBehaviour extends Behaviour {
-    start(item: Item) { }
+    init() {
+        this.node.messageId = this.messageId;
+    }
+    async start(item: Item) {
+        item.context.logger.log("message event behaviour start");
+        if (this.node.isCatching) {
+            item.messageId = this.messageId;
+        }
+        else {  // throw a message
+             const output = await this.node.getOutput(item);
+            const matchingKey = item.context.messageMatchingKey;
+            item.token.log(`.Throwing Message <${this.messageId}> - output: ${JSON.stringify(output)} - matching key : ${JSON.stringify(matchingKey)}`);
+            await item.context.appDelegate.messageThrown(this.messageId,output, matchingKey, item);
+        }
+
+    }
     end(item: Item) {
 
     }
     get messageId() {
-        return this.definition['bpmn:messageRef'];
+        if (this.definition['messageRef'])
+            return this.definition['messageRef']['id'];
     }
     describe() {
-        return ['', 'has a message'];
+        if (this.node.isCatching) 
+            return ['Message', `catches message '${this.messageId}'`];
+        else
+            return ['Message', `throws message '${this.messageId}'`];
     }
 }
 class SignalEventBehaviour extends Behaviour {
-    start(item: Item) { }
+    init() {
+        this.node.signalId = this.signalId;
+    }
+    start(item: Item) {
+
+        if (this.node.isCatching) {
+            item.signalId = this.signalId;
+        }
+        else {  // throw a message
+            // don't wait for it 
+            item.context.appDelegate.signalIssued(item);
+        }
+
+
+    }
     end(item: Item) {
     }
     describe() {
-        return ['', 'has a signal'];
+        if (this.node.isCatching)
+            return ['Signal', `catches signal '${this.signalId}'`];
+        else
+            return ['Signal', `throws signal '${this.signalId}'`];
     }
     get signalId() {
-        return this.definition['bpmn:signalRef'];
+        if (this.definition['signalRef'])
+            return this.definition['signalRef']['id'];
     }
 }
 

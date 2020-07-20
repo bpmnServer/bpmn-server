@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const debug = require("debug");
 const express = require("express");
 const path = require("path");
+var busboy = require('connect-busboy'); //middleware for form/file upload
 var bodyParser = require('body-parser');
 const index_1 = require("./routes/index");
 const model_1 = require("./routes/model");
@@ -16,6 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+app.use(busboy());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index_1.default);
 app.use('/model', model_1.default);

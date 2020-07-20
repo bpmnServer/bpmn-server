@@ -8,14 +8,15 @@
 - [Gateway](./examples/gateWay.md)
 - [Event Based Gateway ](./examples/gateWay.md)
 - [Scripts](./examples/scripts.md)
+- [Boundary Events](./examples/boundary-events.md)
 - Services - to come
-- [Input Fields](./examples/inputFields.md)
-- [Multi-instances](./examples/multi-instances.md)
-- [Timer Example](./examples/timer.md)
-- [SubProcess](./examples/subProcess.md)
-- [Call Process](./examples/subProcess.md)
-- [Message Flow](./examples/subProcess.md)
-- [Buy Used Car (Detailed)](./examples/buyCarDetailed.md)
+- [Input Fields]
+- [Multi-instances]
+- [Timer Example]
+- [SubProcess]
+- [Call Process]
+- [Message Flow]
+- [Buy Used Car (Detailed)]
 
 # Data Query Examples
 

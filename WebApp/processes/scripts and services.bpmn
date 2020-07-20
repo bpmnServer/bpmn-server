@@ -6,12 +6,10 @@
   <bpmn:process id="Process_0e9r2d4" isExecutable="false">
     <bpmn:startEvent id="StartEvent_0iay4ar">
       <bpmn:extensionElements>
-        <camunda:script event="start">
-          console.log("This is the start event");
+        <camunda:script event="start"><![CDATA[console.log("This is the start event");
           this.token.applyInput({records:[1,2,3]});
           console.log(this.token.data);
-          console.log("This is the start event");
-        </camunda:script>        
+          console.log("This is the start event");]]></camunda:script>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_159xzcz</bpmn:outgoing>
     </bpmn:startEvent>
@@ -19,12 +17,9 @@
       <bpmn:incoming>Flow_159xzcz</bpmn:incoming>
       <bpmn:outgoing>Flow_0t7z2os</bpmn:outgoing>
       <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="(this.records)" />
-      <bpmn:script>
-            this.token.log('testing from the inside: '+this.token.data.loopKey);
-      </bpmn:script>
+      <bpmn:script><![CDATA[this.token.log('testing from the inside: '+this.token.data.loopKey);]]></bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:serviceTask id="serviceTask" name="Service Task"
-           implementation="service1">
+    <bpmn:serviceTask id="serviceTask" name="Service Task" implementation="service1">
       <bpmn:incoming>Flow_0t7z2os</bpmn:incoming>
       <bpmn:outgoing>Flow_0at2lca</bpmn:outgoing>
       <bpmn:multiInstanceLoopCharacteristics camunda:collection="(this.records)" />
@@ -44,38 +39,56 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_17s3se9">
       <bpmndi:BPMNShape id="Participant_1somigi_di" bpmnElement="Participant_1somigi" isHorizontal="true">
-        <dc:Bounds x="156" y="60" width="600" height="250" />
+        <dc:Bounds x="134" y="19" width="600" height="250" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1d90han_di" bpmnElement="Flow_1d90han">
-        <di:waypoint x="660" y="180" />
-        <di:waypoint x="682" y="180" />
+        <di:waypoint xsi:type="dc:Point" x="638" y="139" />
+        <di:waypoint xsi:type="dc:Point" x="660" y="139" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="604" y="114" width="90" height="20" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0at2lca_di" bpmnElement="Flow_0at2lca">
-        <di:waypoint x="520" y="180" />
-        <di:waypoint x="560" y="180" />
+        <di:waypoint xsi:type="dc:Point" x="498" y="139" />
+        <di:waypoint xsi:type="dc:Point" x="538" y="139" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="473" y="114" width="90" height="20" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0t7z2os_di" bpmnElement="Flow_0t7z2os">
-        <di:waypoint x="360" y="180" />
-        <di:waypoint x="420" y="180" />
+        <di:waypoint xsi:type="dc:Point" x="338" y="139" />
+        <di:waypoint xsi:type="dc:Point" x="398" y="139" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="323" y="114" width="90" height="20" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_159xzcz_di" bpmnElement="Flow_159xzcz">
-        <di:waypoint x="228" y="180" />
-        <di:waypoint x="260" y="180" />
+        <di:waypoint xsi:type="dc:Point" x="206" y="139" />
+        <di:waypoint xsi:type="dc:Point" x="238" y="139" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="177" y="114" width="90" height="20" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_0iay4ar">
-        <dc:Bounds x="192" y="162" width="36" height="36" />
+        <dc:Bounds x="170" y="121" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="143" y="157" width="90" height="20" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1amrljm_di" bpmnElement="scriptTask">
-        <dc:Bounds x="260" y="140" width="100" height="80" />
+        <dc:Bounds x="238" y="99" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0e04h0j_di" bpmnElement="serviceTask">
-        <dc:Bounds x="420" y="140" width="100" height="80" />
+        <dc:Bounds x="398" y="99" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0umbaad_di" bpmnElement="Event_0umbaad">
-        <dc:Bounds x="682" y="162" width="36" height="36" />
+        <dc:Bounds x="660" y="121" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="633" y="157" width="90" height="20" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1stq68c_di" bpmnElement="sendTask">
-        <dc:Bounds x="560" y="140" width="100" height="80" />
+        <dc:Bounds x="538" y="99" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

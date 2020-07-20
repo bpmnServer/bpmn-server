@@ -1,5 +1,6 @@
 # Timers
 
+All Timers are persisted, therefore, if the Node.js session is restared timers will pickup where they left     
 ## Timer Types
 
 ### DateTime (not supported)
@@ -27,15 +28,43 @@ Example (3 repeating intervals, each lasting 10 hours):
         <timeCycle>R3/PT10H</timeCycle>
     </timerEventDefinition>
 ```
-## Implementations
 
-### Intermediate Events
+Time Cycle accepts both ISO 8601 format and Cron format
 
-Are implemented as a normal event, will start the timer at start of the node and once the timer is completed the node will end.
+Example for cron format:
 
-Repeating timers, will create a new Item everytime
+```javascript
+    <timerEventDefinition>
+        <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">5 * * * *</bpmn:timeCycle>
+    </timerEventDefinition>
+```
 
-### Start Event
 
-Start Event Timers will start a new execution, therefore, they are scheduled by a cron job managed by bpmn-server.
 
+## Event Types
+
+| Event Type | TimeDate  |  Duration  | TimeCycle  | TimeCycle Repeat |
+| -------------|-----------|  -------------|-----------|-------- |
+| Start          | NA       | NA             | Yes        |Default |
+|Intermediate    | NA      |Yes            |Yes        |NA |
+|Boundary Event   |NA         |Yes            |Yes        |Yes |
+
+
+- Start Event support 'Time Cycle' only since duration and timeDate make no sense.
+ 
+- Intermediate Events are implemented as a normal event, will start the timer at start of the node and once the timer is completed the node will end.
+
+- Start Event Timers will start a new execution, therefore, they are scheduled by a cron job managed by bpmn-server.
+
+
+
+## Implementation:
+   
+### On Server start:
+
+1. All start event are re-evaluated and reschedules
+2. other events that are in wait state are re-evaluated and reschedules
+
+
+
+       

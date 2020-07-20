@@ -22,7 +22,7 @@ var configuration = new _1.Configuration({
         new _3.Logger(server);
     },
     definitions: function (server) {
-        return new _1.ModelsDatastoreFS(server);
+        return new _1.ModelsDatastore(server);
     },
     appDelegate: function (server) {
         return new appDelegate_1.MyAppDelegate(server);

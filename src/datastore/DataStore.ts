@@ -149,10 +149,12 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 		var recs;
 		if (!instance.saved) {
-			instance.saved = new Date().toISOString();;
+			instance.saved = new Date().toISOString();
+			console.log(instance.data);
 
 			//this.promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]));
-			this.promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]));
+			//this.promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]));
+			await this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]);
 
 			this.logger.log("inserting instance");
 		}
@@ -167,13 +169,12 @@ class DataStore extends ServerComponent  implements IDataStore {
 					}
 				}));
 
-/*			let fileName = instance.name + '_' + DataStore.seq++ + '.state';
-			await fs.writeFile(fileName, JSON.stringify(instance), function (err) {
-				if (err) throw err;
-			});
-*/
 			this.logger.log("updating instance");
 		}
+		/*t fileName = instance.name + '_' + DataStore.seq++ + '.state';
+		await fs.writeFile(fileName, JSON.stringify(instance), function (err) {
+			if (err) throw err;
+		});*/
 
 		await Promise.all(this.promises);
 		this.logger.log('DataStore:saving Complete');

@@ -41,7 +41,7 @@ class Execution {
         this.logger = executionContext.logger;
         this.appDelegate = executionContext.appDelegate;
         this.listener = executionContext.listener;
-        this.definition = new elements_1.Definition(name, source, this.logger);
+        this.definition = new elements_1.Definition(name, source, executionContext.server);
         this.executionContext = executionContext;
     }
     getNodeById(id) {
@@ -116,13 +116,11 @@ class Execution {
      * @param executionId
      * @param inputData
      *
-     * Obselete -- remove later
      */
     signal(executionId, inputData) {
         return __awaiter(this, void 0, void 0, function* () {
             this.log('Action:signal ' + executionId + ' startedAt ');
             let token = null;
-            this.applyInput(inputData);
             this.appDelegate.executionStarted(this.executionContext);
             this.doExecutionEvent(__1.EXECUTION_EVENT.execution_invoke);
             this.tokens.forEach(t => {
@@ -155,7 +153,7 @@ class Execution {
                     }
                 });
                 if (node) {
-                    let token = yield Token_1.Token.startNewToken(this, node, null, null, null, null);
+                    let token = yield Token_1.Token.startNewToken(this, node, null, null, null, inputData);
                 }
                 else {
                     this.getItems().forEach(i => {
@@ -296,20 +294,15 @@ class Execution {
     }
     doExecutionEvent(event) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.listener.emit(event, { event, execution: this });
-            yield this.listener.emit('all', { event, execution: this });
-        });
-    }
-    doTokenEvent(token, event) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.listener.emit(event, { event, token });
-            yield this.listener.emit('all', { event, token });
+            yield this.listener.emit(event, { event, context: this.executionContext });
+            yield this.listener.emit('all', { event, context: this.executionContext });
         });
     }
     doItemEvent(item, event) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.listener.emit(event, { event, item });
-            yield this.listener.emit('all', { event, item });
+            this.executionContext.item = item;
+            yield this.listener.emit(event, { event, context: this.executionContext });
+            yield this.listener.emit('all', { event, context: this.executionContext });
         });
     }
     log(msg) {

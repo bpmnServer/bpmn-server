@@ -34,6 +34,7 @@ Same behaviour as ServiceTask
 - TerminateEventDefinition
 - TimerEventDefinition
 - SignalEventDefinition
+- BoundaryEvent
 # Gateways
 - EventBasedGateway
 - ExclusiveGateway
@@ -45,6 +46,10 @@ Same behaviour as ServiceTask
 - MessageFlow
 # Data
 - IoSpecification
+- Input transformation
+- Output transformation
+- Message matching Key
+- Signal matching key
 - DataObject
 # Other
 - SubProcess
@@ -53,35 +58,13 @@ Same behaviour as ServiceTask
 - Pool
 # Special
 - Script Events
+
+# Pending 
 - BpmnError
-- BoundaryEvent
 - compensate by outbound Association
 - Error
 - ErrorEventDefinition
 - EscalationEventDefinition
-- LinkEventDefinition
-- ServiceImplementation: ServiceTask implementation attribute behaviour
 
-
-# BPMN 2
-
-BPMN 2 is an OMG standard and is widely supported by various modelling tools 
-
-# Executable Workflow
-
-BPMN-Server is built on top of bpmn-engine that provides an excellent solution for executable workflow,
-
-# Instance Persistence 
-
-# Accessible to your App
-
-# Logging and debugging
-
-# Web Interface
-
-# Built for Integration
-
-This package is not intended to be used as a stand-alone but rather be integrated with your applicaton. 
-The Web interface serve only as a prototype to be integrated in your solution.
 		
 

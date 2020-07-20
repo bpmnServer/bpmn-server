@@ -24,7 +24,7 @@
 
 • **id**: *any*
 
-Defined in src/interfaces/datastore.ts:76
+Defined in src/interfaces/datastore.ts:89
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 • **isExecutable**: *any*
 
-Defined in src/interfaces/datastore.ts:78
+Defined in src/interfaces/datastore.ts:91
 
 ___
 
@@ -40,4 +40,4 @@ ___
 
 • **name**: *any*
 
-Defined in src/interfaces/datastore.ts:77
+Defined in src/interfaces/datastore.ts:90

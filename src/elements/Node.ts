@@ -2,7 +2,7 @@ import { Element, Flow } from '.';
 
 import { Execution } from '../engine/Execution';
 import { Token } from '../engine/Token';
-import { IBehaviour, Behaviour, Behaviour_names } from "./behaviours";
+import { IBehaviour, Behaviour} from "./behaviours";
 import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, INode } from '../../';
 import { Item } from '../engine/Item';
 import { BPMN_TYPE } from './NodeLoader';
@@ -17,6 +17,10 @@ class Node extends Element {
     inbounds: Flow[];
     attachments: Node[];
     attachedTo: Node;
+    messageId;
+    signalId;
+    scripts = new Map();
+
     constructor(id, processId, type, def) {
         super();
         this.id = id;
@@ -31,9 +35,44 @@ class Node extends Element {
         BehaviourLoader.load(this);
     }
     async doEvent(item: Item, event: EXECUTION_EVENT, newStatus: ITEM_STATUS) {
-        item.status = newStatus;
+        if (newStatus)
+            item.status = newStatus;
         item.token.log('..>' + event + ' ' + this.id);
-        await item.token.execution.doItemEvent(item, event);
+        const script = this.scripts.get(event);
+        if (script) {
+            await item.token.execution.appDelegate.scopeJS(item, script);
+        }
+        return await item.token.execution.doItemEvent(item, event);
+
+    }
+    /**
+     * transform data using input rules
+     * todo
+     * @param item
+     */
+    async setInput(item: Item, input) {
+
+        //
+        item.token.log('--setting input ' + JSON.stringify(input));
+        item.context.input = input;
+
+        await this.doEvent(item, EXECUTION_EVENT.transform_input,null);
+
+        item.token.applyInput(item.context.input);
+
+    }
+    /**
+     * transform data using output rules
+     * todo
+     * @param item
+     */
+    async getOutput(item: Item) {
+        item.context.output = {};
+        item.context.messageMatchingKey = {};
+
+        await this.doEvent(item, EXECUTION_EVENT.transform_output,null);
+
+        return item.context.output;
 
     }
     enter(item: Item) {
@@ -44,14 +83,14 @@ class Node extends Element {
      * does the need require to go into wait 
      * tasks like UserTasks, receiveTask, timer 
      */
-    requiresWait() { return false; }
+    get requiresWait() { return false; }
     /* 
      * Can the Node be invoked externally (not from the workflow)
      * tasks like UserTasks, receiveTask, or events like receive,signal can be invoked
      */
-    canBeInvoked() { return false; }
+    get canBeInvoked() { return false; }
 
-
+    get isCatching(): boolean { return false; } // catching events and tasks
     /**
      * this is the primary exectuion method for a node
      * 
@@ -111,7 +150,7 @@ class Node extends Element {
                 return ret;
                 break;
         }
-        //  5   continue    that will fire: 
+        //  5   continue    
         //  --------
         //          end
 
@@ -129,7 +168,7 @@ class Node extends Element {
 
     async start(item: Item): Promise<NODE_ACTION> {
 
-        if (this.requiresWait()) {
+        if (this.requiresWait) {
             return NODE_ACTION.wait;
         }
         return NODE_ACTION.continue;

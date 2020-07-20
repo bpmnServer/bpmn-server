@@ -11,19 +11,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Definition = void 0;
 const BpmnModdle = require('bpmn-moddle');
-const js_bpmn_moddle_1 = require("./js-bpmn-moddle");
 const _1 = require(".");
 const fs = require('fs');
 //console.log(moddleOptions);
-const moddle = new BpmnModdle({ moddleOptions: js_bpmn_moddle_1.moddleOptions });
 class Definition {
-    constructor(name, source, logger) {
+    constructor(name, source, server) {
         this.processes = new Map();
         this.nodes = new Map();
         this.flows = [];
+        this.server = server;
         this.name = name;
         this.source = source;
-        this.logger = logger;
+        this.logger = server.logger;
+        const moddleOptions = this.server.appDelegate.moddleOptions;
+        this.moddle = new BpmnModdle({ moddleOptions });
     }
     loadProcess(definition, processElement) {
         let processId = processElement.id;
@@ -130,10 +131,7 @@ class Definition {
                 else if ((ref.element.$type == "bpmn:MessageEventDefinition")
                     || (ref.element.$type == "bpmn:SignalEventDefinition")) {
                     const eventDef = definition.elementsById[ref.element.id];
-                    console.log('-- attaching signalId to eventDef');
-                    console.log(eventDef);
                     eventDef[ref.property] = ref.id;
-                    console.log(eventDef);
                 }
             });
             refs.forEach(ref => {
@@ -183,7 +181,7 @@ class Definition {
     }
     getDefinition(source, logger) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield moddle.fromXML(source);
+            const result = yield this.moddle.fromXML(source);
             return result;
         });
     }

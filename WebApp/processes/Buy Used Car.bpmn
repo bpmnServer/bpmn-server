@@ -47,7 +47,9 @@
     <bpmn:sequenceFlow id="flow_start_buy" sourceRef="StartEvent_158yep3" targetRef="task_Buy" />
     <bpmn:sequenceFlow id="flow_buy_gw" sourceRef="task_Buy" targetRef="gateway_1" />
     <bpmn:sequenceFlow id="flow_gw1_clean" sourceRef="gateway_1" targetRef="task_clean">
-      <bpmn:conditionExpression xsi:type="bpmn:tExpression"><![CDATA[(this.needsCleaning=="Yes")]]></bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tExpression"><![CDATA[
+      (this.needsCleaning=="Yes")
+      ]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="flow_clean_gw2" sourceRef="task_clean" targetRef="gateway_2" />
     <bpmn:sequenceFlow id="flow_repair_gw2" sourceRef="task_repair" targetRef="gateway_2" />

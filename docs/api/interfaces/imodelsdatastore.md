@@ -8,8 +8,9 @@
 
 ## Implemented by
 
+* [ModelsDatastore](../classes/modelsdatastore.md)
+* [ModelsDatastore](../classes/modelsdatastore.md)
 * [ModelsDatastoreDB](../classes/modelsdatastoredb.md)
-* [ModelsDatastoreFS](../classes/modelsdatastorefs.md)
 
 ## Index
 

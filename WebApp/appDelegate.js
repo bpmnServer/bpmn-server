@@ -18,7 +18,12 @@ class MyAppDelegate extends _1.DefaultAppDelegate {
         super(logger);
     }
     executionStarted(execution) {
-        super.executionStarted(execution);
+        const _super = Object.create(null, {
+            executionStarted: { get: () => super.executionStarted }
+        });
+        return __awaiter(this, void 0, void 0, function* () {
+            yield _super.executionStarted.call(this, execution);
+        });
     }
     executionEvent({ event, item, execution }) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -29,8 +34,22 @@ class MyAppDelegate extends _1.DefaultAppDelegate {
                 object = item;
         });
     }
-    messageIssued(item) { }
-    signalIssued(item) { }
+    messageThrown(messageId, data, matchingQuery, item) {
+        const _super = Object.create(null, {
+            messageThrown: { get: () => super.messageThrown }
+        });
+        return __awaiter(this, void 0, void 0, function* () {
+            yield _super.messageThrown.call(this, messageId, data, matchingQuery, item);
+        });
+    }
+    signalThrown(signalId, data, matchingQuery, item) {
+        const _super = Object.create(null, {
+            signalThrown: { get: () => super.signalThrown }
+        });
+        return __awaiter(this, void 0, void 0, function* () {
+            yield _super.signalThrown.call(this, signalId, data, matchingQuery, item);
+        });
+    }
     serviceTask(item) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(" Hi this is the serviceTask from appDelegate");

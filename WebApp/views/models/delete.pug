@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+
+
+	h3 Delete Process #{processName}
+
+	form(name='ExecuteForm',action="/model/delete",method="post")
+		input(type='hidden',name='processName',id='processName',value=`${processName}`)
+		table
+			tr
+				td  
+					input(type='submit')
+

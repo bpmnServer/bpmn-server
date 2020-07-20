@@ -48,7 +48,7 @@
 
 *Inherited from [ScriptBehaviour](scriptbehaviour.md).[constructor](scriptbehaviour.md#constructor)*
 
-Defined in src/elements/behaviours/Behaviour.ts:36
+Defined in src/elements/behaviours/Behaviour.ts:39
 
 **Parameters:**
 
@@ -65,9 +65,11 @@ Name | Type |
 
 • **definition**: *any*
 
+*Implementation of [IBehaviour](../interfaces/ibehaviour.md).[definition](../interfaces/ibehaviour.md#definition)*
+
 *Inherited from [ScriptBehaviour](scriptbehaviour.md).[definition](scriptbehaviour.md#definition)*
 
-Defined in src/elements/behaviours/Behaviour.ts:36
+Defined in src/elements/behaviours/Behaviour.ts:39
 
 ___
 
@@ -75,7 +77,7 @@ ___
 
 • **duration**: *any*
 
-Defined in src/elements/behaviours/Timer.ts:44
+Defined in src/elements/behaviours/Timer.ts:40
 
 ___
 
@@ -83,9 +85,11 @@ ___
 
 • **node**: *[Node](node.md)*
 
+*Implementation of [IBehaviour](../interfaces/ibehaviour.md).[node](../interfaces/ibehaviour.md#node)*
+
 *Inherited from [ScriptBehaviour](scriptbehaviour.md).[node](scriptbehaviour.md#node)*
 
-Defined in src/elements/behaviours/Behaviour.ts:35
+Defined in src/elements/behaviours/Behaviour.ts:38
 
 ___
 
@@ -93,7 +97,7 @@ ___
 
 • **timeCycle**: *any*
 
-Defined in src/elements/behaviours/Timer.ts:45
+Defined in src/elements/behaviours/Timer.ts:41
 
 ## Methods
 
@@ -105,7 +109,7 @@ Defined in src/elements/behaviours/Timer.ts:45
 
 *Overrides [Behaviour](behaviour.md).[describe](behaviour.md#describe)*
 
-Defined in src/elements/behaviours/Timer.ts:65
+Defined in src/elements/behaviours/Timer.ts:61
 
 **Returns:** *string[]*
 
@@ -145,7 +149,7 @@ ___
 
 *Inherited from [ScriptBehaviour](scriptbehaviour.md).[getItemAttributes](scriptbehaviour.md#getitemattributes)*
 
-Defined in src/elements/behaviours/Behaviour.ts:50
+Defined in src/elements/behaviours/Behaviour.ts:53
 
 **Parameters:**
 
@@ -166,7 +170,7 @@ ___
 
 *Inherited from [ScriptBehaviour](scriptbehaviour.md).[getNodeAttributes](scriptbehaviour.md#getnodeattributes)*
 
-Defined in src/elements/behaviours/Behaviour.ts:49
+Defined in src/elements/behaviours/Behaviour.ts:52
 
 **Parameters:**
 
@@ -182,9 +186,11 @@ ___
 
 ▸ **init**(): *void*
 
+*Implementation of [IBehaviour](../interfaces/ibehaviour.md)*
+
 *Overrides [Behaviour](behaviour.md).[init](behaviour.md#init)*
 
-Defined in src/elements/behaviours/Timer.ts:46
+Defined in src/elements/behaviours/Timer.ts:42
 
 **Returns:** *void*
 
@@ -196,7 +202,7 @@ ___
 
 *Inherited from [ScriptBehaviour](scriptbehaviour.md).[restored](scriptbehaviour.md#restored)*
 
-Defined in src/elements/behaviours/Behaviour.ts:42
+Defined in src/elements/behaviours/Behaviour.ts:45
 
 **Parameters:**
 
@@ -226,7 +232,7 @@ ___
 
 *Inherited from [Behaviour](behaviour.md).[run](behaviour.md#run)*
 
-Defined in src/elements/behaviours/Behaviour.ts:46
+Defined in src/elements/behaviours/Behaviour.ts:49
 
 **Parameters:**
 
@@ -244,7 +250,7 @@ ___
 
 *Overrides [Behaviour](behaviour.md).[start](behaviour.md#start)*
 
-Defined in src/elements/behaviours/Timer.ts:90
+Defined in src/elements/behaviours/Timer.ts:88
 
 **Parameters:**
 
@@ -276,7 +282,7 @@ ___
 
 ▸ **timeDue**(`timerModifier`: any): *number*
 
-Defined in src/elements/behaviours/Timer.ts:73
+Defined in src/elements/behaviours/Timer.ts:69
 
 return the next time the timer is due
 

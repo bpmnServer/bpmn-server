@@ -27,21 +27,18 @@ class Event extends Node {
 
         return super.end(item);
     }
-    canBeInvoked() { return true; }
+    get canBeInvoked() { return true; }
 
 }
 
 class CatchEvent extends Event {
 
-    /**
-     * 
-     * 	
-     * @param item
-     */
-    requiresWait() {
+    get isCatching(): boolean { return true; } 
+
+    get requiresWait() {
         return true; // return this.hasMessage(); 
     }
-    canBeInvoked() {
+    get canBeInvoked() {
         return true; // return this.hasMessage();
     }
 
@@ -51,15 +48,12 @@ class CatchEvent extends Event {
 }
 class BoundaryEvent extends Event {
 
-    /**
-     * 
-     * 	
-     * @param item
-     */
-    requiresWait() {
+    get isCatching(): boolean { return true; } 
+
+    get requiresWait() {
         return true; 
     }
-    canBeInvoked() {
+    get canBeInvoked() {
         return true; 
     }
 
@@ -72,18 +66,14 @@ class ThrowEvent extends Event {
     /**
      * 
      * 	using token: check if fromEventBasedGateway;	if yes cancel all other events
-     * 	
-     * @param item
      */
+
+    get isCatching(): boolean { return false; } 
+
     async start(item: Item): Promise<NODE_ACTION> {
-        return super.start(item);
+        return await super.start(item);
     }
     async run(item: Item): Promise<NODE_ACTION> {
-
-        if (this.hasMessage())
-            await item.token.execution.appDelegate.messageIssued(item);
-        if (this.hasSignal())
-            await item.token.execution.appDelegate.signalIssued(item);
 
         return NODE_ACTION.end;
     }
@@ -91,9 +81,13 @@ class ThrowEvent extends Event {
 
 class EndEvent extends Event {
 
+    get isCatching(): boolean { return false; } 
     end(item: Item) {
         return super.end(item);
     }
 }
+class StartEvent extends Event {
+    get isCatching(): boolean { return true; }
+}
 
-export {Event, EndEvent , CatchEvent,ThrowEvent , BoundaryEvent}
+export {Event,StartEvent, EndEvent , CatchEvent,ThrowEvent , BoundaryEvent}

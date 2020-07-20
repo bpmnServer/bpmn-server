@@ -62,16 +62,26 @@ interface ILogger {
  *  
  * */
 interface IAppDelegate {
+    moddleOptions;
     executionStarted(execution: IExecutionContext);
     executionEvent({ event, item, execution });
-    messageIssued(item: IItem);
-    signalIssued(item: IItem);
+    messageThrown(signalId, data, messageMatchingKey: any, item: IItem);
+    signalThrown(signalId, data, messageMatchingKey: any, item: IItem);
+    /**
+     * 
+     * is called when an event throws a message that can not be answered by another process
+     * 
+     * @param messageId
+     * @param data
+     */
+    issueMessage(messageId, data);
+    issueSignal(messageId, data);
     /**
      * is called only if the serviceTask has no implementation; otherwise the specified implementation will be called.
      * 
      * @param item
      */
-    serviceCalled(item: IItem);
+    serviceCalled(serviceName,data,item: IItem);
 
     scopeEval(scope, script);
     scopeJS(scope, script);

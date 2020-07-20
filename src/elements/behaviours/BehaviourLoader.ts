@@ -21,17 +21,7 @@ const Behaviour_names = {
     CamundaScript: 'camunda:script'
 }
 
-class BehaviourLoader {/*
-    static Behaviours = {
-        timerEventDefinition: function (node, def) { return new TimerBehaviour(node, def); },
-        loopCharacteristics: function (node, def) { return new LoopBehaviour(node, def); },
-        camunda_formData: function (node, def) { return new CamundaFormData(node, def); },
-        ioSpecification: function (node, def) { return new IOBehaviour(node, def); },
-        messageEventDefinition: function (node, def) { return new MessageEventBehaviour(node, def); },
-        signalEventDefinition: function (node, def) { return new SignalEventBehaviour(node, def); },
-        terminateEventDefinition: function (node, def) { return new TerminateBehaviour(node, def); }
-    } */
-
+class BehaviourLoader {
     static behaviours = [
         {
             name: Behaviour_names.TimerEventDefinition, funct: function (node, def) {
@@ -74,6 +64,34 @@ class BehaviourLoader {/*
             }
         }
     ];
+    static register(name,funct) {
+
+        BehaviourLoader.behaviours.push({ name, funct });
+    }
+    /**
+     * 
+     *  1.  node.definition[<name>]
+     *  2.  node.definition.eventDefinitions
+     *          $type == <name>
+     *          
+     *          example:
+     *          
+            <bpmn:timerEventDefinition id="TimerEventDefinition_07xu06a">
+               <bpmn:timeDuration xsi:type="bpmn:tExpression">PT2S</bpmn:timeDuration>
+            </bpmn:timerEventDefinition>
+     *          
+     *  3.  node.definitions.extensionElements
+     *          $type == <name>
+     *          example: 'camunda:formData'
+                <extensionElements>
+                    <camunda:formData >
+                        <camunda: formField id = "surname" label = "Surname" type = "string" />
+                            <camunda: formField id = "givenName" label = "Given name" type = "string" />
+                    </camunda:formData>
+               < /extensionElements> 
+     * 
+     * @param node
+     */
     static load(node: Node) {
         BehaviourLoader.behaviours.forEach(behav => {
             if (node.def[behav.name]) {
@@ -89,7 +107,7 @@ class BehaviourLoader {/*
                 });
             });
         }
-        if (node.def.extensionElements) {
+        if (node.def.extensionElements && node.def.extensionElements.values) {
             node.def.extensionElements.values.forEach(ext => {
                 BehaviourLoader.behaviours.forEach(behav => {
                     if (ext.$type == behav.name) {

@@ -8,6 +8,8 @@
 
   ↳ **ModelsDatastoreDB**
 
+  ↳ [ModelsDatastore](modelsdatastore.md)
+
 ## Implements
 
 * [IModelsDatastore](../interfaces/imodelsdatastore.md)
@@ -50,6 +52,7 @@
 * [renameModel](modelsdatastoredb.md#renamemodel)
 * [save](modelsdatastoredb.md#save)
 * [saveModel](modelsdatastoredb.md#savemodel)
+* [updateTimer](modelsdatastoredb.md#updatetimer)
 
 ## Constructors
 
@@ -59,7 +62,7 @@
 
 *Overrides [ServerComponent](servercomponent.md).[constructor](servercomponent.md#constructor)*
 
-Defined in src/datastore/ModelsDatastoreDB.ts:16
+Defined in src/datastore/ModelsDatastoreDB.ts:18
 
 **Parameters:**
 
@@ -75,7 +78,7 @@ Name | Type |
 
 • **db**: *any*
 
-Defined in src/datastore/ModelsDatastoreDB.ts:16
+Defined in src/datastore/ModelsDatastoreDB.ts:18
 
 ___
 
@@ -83,7 +86,7 @@ ___
 
 • **dbConfiguration**: *any*
 
-Defined in src/datastore/ModelsDatastoreDB.ts:15
+Defined in src/datastore/ModelsDatastoreDB.ts:17
 
 ___
 
@@ -199,7 +202,7 @@ Defined in src/server/ServerContext.ts:14
 
 *Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
 
-Defined in src/datastore/ModelsDatastoreDB.ts:157
+Defined in src/datastore/ModelsDatastoreDB.ts:182
 
 **Parameters:**
 
@@ -215,7 +218,7 @@ ___
 
 ▸ **export**(`name`: any, `folderPath`: any): *Promise‹void›*
 
-Defined in src/datastore/ModelsDatastoreDB.ts:180
+Defined in src/datastore/ModelsDatastoreDB.ts:205
 
 **Parameters:**
 
@@ -230,11 +233,11 @@ ___
 
 ###  findEvents
 
-▸ **findEvents**(`query`: any): *Promise‹any[]›*
+▸ **findEvents**(`query`: any): *Promise‹[IEventData](../interfaces/ieventdata.md)[]›*
 
 *Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
 
-Defined in src/datastore/ModelsDatastoreDB.ts:79
+Defined in src/datastore/ModelsDatastoreDB.ts:82
 
 **Parameters:**
 
@@ -242,7 +245,7 @@ Name | Type |
 ------ | ------ |
 `query` | any |
 
-**Returns:** *Promise‹any[]›*
+**Returns:** *Promise‹[IEventData](../interfaces/ieventdata.md)[]›*
 
 ___
 
@@ -252,7 +255,7 @@ ___
 
 *Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
 
-Defined in src/datastore/ModelsDatastoreDB.ts:25
+Defined in src/datastore/ModelsDatastoreDB.ts:27
 
 **Returns:** *Promise‹string[]›*
 
@@ -264,7 +267,7 @@ ___
 
 *Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
 
-Defined in src/datastore/ModelsDatastoreDB.ts:50
+Defined in src/datastore/ModelsDatastoreDB.ts:52
 
 **Parameters:**
 
@@ -282,7 +285,7 @@ ___
 
 *Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
 
-Defined in src/datastore/ModelsDatastoreDB.ts:45
+Defined in src/datastore/ModelsDatastoreDB.ts:47
 
 **Parameters:**
 
@@ -300,7 +303,7 @@ ___
 
 *Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
 
-Defined in src/datastore/ModelsDatastoreDB.ts:127
+Defined in src/datastore/ModelsDatastoreDB.ts:130
 
 **Parameters:**
 
@@ -318,7 +321,7 @@ ___
 
 *Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
 
-Defined in src/datastore/ModelsDatastoreDB.ts:124
+Defined in src/datastore/ModelsDatastoreDB.ts:127
 
 first time installation of DB
 
@@ -334,7 +337,7 @@ ___
 
 *Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
 
-Defined in src/datastore/ModelsDatastoreDB.ts:38
+Defined in src/datastore/ModelsDatastoreDB.ts:40
 
 **Parameters:**
 
@@ -352,7 +355,7 @@ ___
 
 *Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
 
-Defined in src/datastore/ModelsDatastoreDB.ts:59
+Defined in src/datastore/ModelsDatastoreDB.ts:61
 
 **Parameters:**
 
@@ -370,7 +373,7 @@ ___
 
 *Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
 
-Defined in src/datastore/ModelsDatastoreDB.ts:162
+Defined in src/datastore/ModelsDatastoreDB.ts:187
 
 **Parameters:**
 
@@ -389,7 +392,7 @@ ___
 
 *Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
 
-Defined in src/datastore/ModelsDatastoreDB.ts:68
+Defined in src/datastore/ModelsDatastoreDB.ts:71
 
 **Parameters:**
 
@@ -409,12 +412,28 @@ ___
 
 *Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
 
-Defined in src/datastore/ModelsDatastoreDB.ts:133
+Defined in src/datastore/ModelsDatastoreDB.ts:162
 
 **Parameters:**
 
 Name | Type |
 ------ | ------ |
 `model` | [IBpmnModelData](../interfaces/ibpmnmodeldata.md) |
+
+**Returns:** *Promise‹boolean›*
+
+___
+
+###  updateTimer
+
+▸ **updateTimer**(`name`: any): *Promise‹boolean›*
+
+Defined in src/datastore/ModelsDatastoreDB.ts:136
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`name` | any |
 
 **Returns:** *Promise‹boolean›*

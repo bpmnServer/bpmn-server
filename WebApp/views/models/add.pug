@@ -1,0 +1,15 @@
+extends ../layout
+
+block content
+
+
+	h3 Add New Model
+
+	form(name='ExecuteForm',action="/model/new",method="post")
+		table
+			tr
+				td  Model Name:
+				td  
+					input(name='processName')
+				td  
+					input(type='submit')

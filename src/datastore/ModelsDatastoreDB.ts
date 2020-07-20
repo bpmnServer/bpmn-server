@@ -1,6 +1,8 @@
-import { Definition, IModelsDatastore, BpmnModelData } from "../..";
-import { ServerComponent , BPMNServer } from "../server";
-import { IBpmnModelData } from "../interfaces/datastore";
+import { Definition} from "../elements";
+import {  BPMNServer } from "../server/BPMNServer";
+import { ServerComponent} from "../server/ServerContext";
+import { IBpmnModelData, IModelsDatastore, IEventData } from "../interfaces/datastore";
+import { BpmnModelData } from "./ModelsData";
 
 
 const fs = require('fs');
@@ -28,7 +30,7 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
 
         this.logger.log('find events for ' +  " recs:" + records.length);
         const list = [];
-        records.forEach(r => { list.push(r.name); });
+        records.forEach(r => { list.push({ name: r.name, saved: r.saved }); });
         return list;
     }
 	/*
@@ -38,7 +40,7 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
     async load(name): Promise<Definition> {
 
         let data = await this.loadModel(name);
-        const definition = new Definition(name, data.source, this.logger);
+        const definition = new Definition(name, data.source, this.server);
         await definition.load();
         return definition;
     }
@@ -65,9 +67,10 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
         return records[0];
 
     }
+
     async save(name,source,svg): Promise<any> {
         let bpmnModelData: BpmnModelData = new BpmnModelData(name, source, svg, null, null);
-        let definition = new Definition(bpmnModelData.name, bpmnModelData.source, this.logger);
+        let definition = new Definition(bpmnModelData.name, bpmnModelData.source, this.server);
         await definition.load();
 
         bpmnModelData.parse(definition);
@@ -76,7 +79,7 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
         return bpmnModelData;
 
     }
-    async findEvents(query) {
+    async findEvents(query) : Promise<IEventData[]> {
 
         let projection = this.getProjection(query);
         var records = await this.db.find(this.dbConfiguration.db, Definition_collection, query, projection);
@@ -130,26 +133,48 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
         return await this.db.insert(this.dbConfiguration.db, Definition_collection, data);
 
     }
+    async updateTimer(name): Promise<boolean> {
+
+            const source = await this.getSource(name);
+            let model: BpmnModelData = new BpmnModelData(name, source, null, null, null);
+            let definition = new Definition(model.name, model.source, this.server);
+            await definition.load();
+
+            model.parse(definition);
+
+        await this.db.update(this.dbConfiguration.db, Definition_collection,
+            { name: model.name },
+            {
+                $set:
+                {
+                    events: model.events
+                }
+            }, { upsert: false });
+
+
+        this.logger.log("updating model");
+
+        this.logger.log('DataStore:saving Complete');
+
+        return true;
+
+    }
     async saveModel(model: IBpmnModelData): Promise<boolean> {
 
-        this.logger.log("Saving...");
+        this.logger.log("Saving Moel "+ model.name);
 
         var recs;
-        model.saved = new Date().toISOString();;
+        model.saved = new Date().toISOString();
 
             await this.db.update(this.dbConfiguration.db, Definition_collection,
                 { name: model.name },
                 {
                     $set:
                     {
-                        name: model.name, source: model.source, svg: model.svg, processes: model.processes, events: model.events
+                        name: model.name, saved: model.saved, source: model.source, svg: model.svg, processes: model.processes, events: model.events
                     }
                 }, { upsert: true });
 
-
-            this.logger.log("updating model");
-
-        this.logger.log('DataStore:saving Complete');
 
         return true;
 

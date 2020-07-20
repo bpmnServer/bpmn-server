@@ -1,11 +1,17 @@
 import { IExecution, Item, NODE_ACTION, FLOW_ACTION, IAppDelegate , IDefinition, IExecutionContext } from "../..";
 
+import { moddleOptions} from '../elements/js-bpmn-moddle';
+
 var seq = 1;
 
 class DefaultAppDelegate implements IAppDelegate {
     constructor(logger = null) {
     }
-    executionStarted(execution: IExecutionContext) {
+
+    get moddleOptions() {
+        return moddleOptions;
+    }
+    async executionStarted(execution: IExecutionContext) {
 
         let self = this;
         execution.listener.on('all',async function (eventApi) {
@@ -19,10 +25,54 @@ class DefaultAppDelegate implements IAppDelegate {
         else
             object = item;
     }
-    messageIssued( item: Item) { }
-    signalIssued(item: Item) { }
-    serviceCalled(item: Item) { }
+    /**
+     *  is called when a event throws a message
+     * 
+     * @param messageId
+     * @param data
+     * @param messageMatchingKey
+     * @param item
+     */
+    async messageThrown(messageId, data, messageMatchingKey: any , item: Item) {
+        const msgId = item.node.messageId;
+        item.context.logger.log("Message Issued" + msgId);
+        // issue it back for others to receive
+        console.log(item.context.engine);
+        const resp = await item.context.engine.throwMessage(msgId, data, messageMatchingKey);
+        if (resp && resp.instance) {
+            item.context.logger.log(" invoked another process " + resp.instance.id + " for " + resp.instance.name);
+        }
+        else
+            await this.issueMessage(messageId, data);
+    }
+    /**
+     * 
+     * is called when an event throws a message that can not be answered by another process
+     * 
+     * @param messageId
+     * @param data
+     */
+    async issueMessage(messageId, data) {
 
+    }
+    async issueSignal(signalId, data) {
+
+    }
+    async signalThrown(signalId, data, messageMatchingKey: any, item: Item) {
+        const msgId = item.node.messageId;
+        item.context.logger.log("Signal Issued" + signalId);
+        // issue it back for others to receive
+        console.log(item.context.engine);
+        const resp = await item.context.engine.throwSignal(msgId, data, messageMatchingKey);
+        if (resp && resp.instance) {
+            item.context.logger.log(" invoked another process " + resp.instance.id + " for " + resp.instance.name);
+        }
+        else
+            await this.issueSignal(signalId, data);
+    }
+    async serviceCalled(serviceName, data, item: Item) {
+
+    }
     scopeEval(scope, script) {
         let result;
         try {

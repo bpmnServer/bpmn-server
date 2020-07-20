@@ -21,6 +21,8 @@ const toSeconds = duration.toSeconds;
  *
  */
 interface IBehaviour {
+    node: Node;
+    definition;
     start(item: IItem);
     run(item: IItem);
     end(item: IItem);
@@ -29,6 +31,7 @@ interface IBehaviour {
     getNodeAttributes(attributes: any[]);
     getItemAttributes(item: IItem, attributes: any[]);
     describe(): string[];
+    init();
 }
 
 class Behaviour implements IBehaviour {

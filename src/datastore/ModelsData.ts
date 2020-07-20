@@ -42,6 +42,9 @@ class BpmnModelData implements IBpmnModelData {
                 if (timer) {
                     event.timeDue = timer.timeDue();
                     event.subType = 'Timer';
+                    event.expression = timer.timeCycle;
+                    event.referenceDateTime = new Date().getTime();
+                    console.log('reference Time:' + event.referenceDateTime);
                 }
                 let msg = n.hasMessage();
                 if (msg) {
@@ -83,6 +86,12 @@ class EventData implements IEventData  {
     processId;
     signalId;
     messageId;
+    // timer info
+    expression;
+    expressionFormat; // cron/iso
+    referenceDateTime; //        start time of event   or last time timer ran
+    maxRepeat;
+    repeatCount;
     timeDue;
 }
 
