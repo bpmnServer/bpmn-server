@@ -61,6 +61,8 @@ $ cp node_modules/bpmn-server/WebApp/. ./  -r
 
 Windows: 
 xcopy /e /i /s /y node_modules\bpmn-server\WebApp\*.* .
+
+npm update
 ```
 Edit [configuration](./docs/configuration.md) file to have MongoDB point to your server or free cloud account
 ```javascript
