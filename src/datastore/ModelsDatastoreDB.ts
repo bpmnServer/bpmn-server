@@ -161,7 +161,7 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
     }
     async saveModel(model: IBpmnModelData): Promise<boolean> {
 
-        this.logger.log("Saving Moel "+ model.name);
+        this.logger.log("Saving Model "+ model.name);
 
         var recs;
         model.saved = new Date().toISOString();
