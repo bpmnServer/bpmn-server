@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "bpmn-moddle": "^7.0.2",
-    "bpmn-server": "^1.0.0",
+    "bpmn-server": ">=1.1.0",
     "camunda-bpmn-moddle": "^4.4.0",
     "chai": "^4.2.0",
     "connect-busboy": "0.0.2",
