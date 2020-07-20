@@ -1,6 +1,6 @@
 {
   "name": "bpmn-server",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "BPMN 2.0 Server including Modeling, Execution and Presistence, an open source for Node.js",
   "main": "dist/index.js",
   "module": "index.js",
