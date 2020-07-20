@@ -111,7 +111,9 @@ class TimerBehaviour extends Behaviour {
 
         Cron.timerScheduled(item.timeDue);
 //          done by cron class
-//        setTimeout(this.expires.bind(item), seconds * 1000);
+        const seconds = Cron.timeDue(this.duration, null);
+
+        setTimeout(this.expires.bind(item), seconds * 1000);
     }
     expires() {
         let item = this as unknown as Item;

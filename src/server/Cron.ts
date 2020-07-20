@@ -33,11 +33,12 @@ class Cron  extends ServerComponent {
 	}
 	async start() {
 		this.startTimers();
+		this.checkTimers(500);
     }
 	private async _checkTimers() {
-		if (Cron.checkingTimers) // || Cron.timersFired==0)
+		if (Cron.checkingTimers || Cron.timersFired==0)
 			return;
-
+		return;
 
 		this.logger.log("Checking timers"+ Cron.timersFired);
 
@@ -52,7 +53,7 @@ class Cron  extends ServerComponent {
 			let target = new Date().getTime();
 			let query, list, i;
 			target += precision;
-
+			/*
 			query = { "events.timeDue": { $lt: target } };
 			list = await self.definitions.findEvents(query);
 
@@ -67,7 +68,7 @@ class Cron  extends ServerComponent {
 	//				}
 				}
 			}
-		
+			*/
 			// { "items.timeDue": { $lt: new ISODate("2020-06-14T19:44:38.541Z") } }	
 			query = { "items.timeDue": { $lt: target } };
 			//query = { query: { "items.timeDue": { $lt: new Date(target).toISOString() } } };

@@ -39,7 +39,23 @@ Example for cron format:
     </timerEventDefinition>
 ```
 
+## Development/Test Environment Timer modification
 
+bpmn-server allow you to modify the timer behaviour during development without changing bpmn definition
+
+By changing the configuration.ts to force timers to specific time
+
+```javascript
+
+let definitionsPath = __dirname + '/processes/';
+var configuration = new Configuration(
+	{
+		definitionsPath: definitionsPath,
+		timers: {
+			forceTimersDelay: 1000,
+			precision: 3000,
+		},
+```
 
 ## Event Types
 
