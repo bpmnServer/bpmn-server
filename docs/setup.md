@@ -9,16 +9,15 @@ This configuration file is passed to the BPMNServer constructor.
 For testing purposes, you can have a different configuration than production in same environemnt by passign a different object.
 
 ```javascript 
-import { ModelsDatastore, Configuration } from './';
-import { MyHandler } from './handler';
-import { IConfiguration, DataStore, ILogger, IModelsDatastore, IHandler, IDataStore, IEventsRegistry } from './';
-import { EventsRegistry } from './';
-import { Logger } from './'
+
+import { Configuration, ModelsDatastore, DataStore , Logger } from './';
+import { MyAppDelegate } from './appDelegate';
 
 
 let definitionsPath = __dirname + '/processes/';
 var configuration = new Configuration(
-	{definitionsPath: definitionsPath,
+	{
+		definitionsPath: definitionsPath,
 		timers: {
 			forceTimersDelay: 1000,
 			precision: 3000,
@@ -30,15 +29,24 @@ var configuration = new Configuration(
 				db: 'bpmn'
 			}
 		},
-		logger: Logger,							// class
-		definitions: ModelsDatastore,			// class
-		appDelegate: new MyHandler(this),		// object
-		dataStore: DataStore,					// class	
-		eventsRegistry: EventsRegistry			//class
+		/* Define Server Components */
+		logger: function (server) {
+			new Logger(server);
+		},							
+		definitions: function (server) {
+			return new ModelsDatastore(server);
+		},			
+		appDelegate: function (server) {
+			return new MyAppDelegate(server);
+		},		
+		dataStore: function (server) {
+			return new DataStore(server);
+		}		
 	});
 
 
 export { configuration}
+
 ```
 Example of usage in javascript 
 ```javascript 

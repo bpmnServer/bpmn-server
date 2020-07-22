@@ -8,6 +8,7 @@
       <bpmn2:outgoing>SequenceFlow_1wqndd7</bpmn2:outgoing>
       <bpmn2:timerEventDefinition id="TimerEventDefinition_07xu06a">
         <bpmn2:timeCycle xsi:type="bpmn:tFormalExpression">5 * * * *</bpmn2:timeCycle>
+        <!--bpmn2:timeCycle xsi:type="bpmn:tFormalExpression">*/1 * * * *</bpmn2:timeCycle-->        
         <!--bpmn2:timeCycle xsi:type="bpmn2:tExpression">R/PT1H</bpmn2:timeCycle-->
        
       </bpmn2:timerEventDefinition>

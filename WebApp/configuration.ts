@@ -1,8 +1,6 @@
 
-import { Configuration, ModelsDatastore } from './';
+import { Configuration, ModelsDatastore, DataStore , Logger } from './';
 import { MyAppDelegate } from './appDelegate';
-import { IConfiguration, DataStore, ILogger } from './';
-import { Logger } from './'
 
 
 let definitionsPath = __dirname + '/processes/';
@@ -20,6 +18,7 @@ var configuration = new Configuration(
 				db: 'bpmn'
 			}
 		},
+		/* Define Server Components */
 		logger: function (server) {
 			new Logger(server);
 		},							

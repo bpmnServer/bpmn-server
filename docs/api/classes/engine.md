@@ -170,7 +170,7 @@ Defined in src/server/ServerContext.ts:14
 
 ▸ **get**(`instanceQuery`: any, `listener`: EventEmitter): *Promise‹[ExecutionContext](executioncontext.md)›*
 
-Defined in src/server/Engine.ts:65
+Defined in src/server/Engine.ts:66
 
 restores an instance into memeory or provides you access to a running instance
 
@@ -191,7 +191,7 @@ ___
 
 ▸ **invoke**(`itemQuery`: any, `data`: object, `listener`: EventEmitter): *Promise‹[ExecutionContext](executioncontext.md)›*
 
-Defined in src/server/Engine.ts:117
+Defined in src/server/Engine.ts:118
 
 Continue an existing item that is in a wait state
 
@@ -217,7 +217,7 @@ ___
 
 ▸ **invokeItem**(`itemQuery`: any, `data`: object, `listener`: EventEmitter): *Promise‹[ExecutionContext](executioncontext.md)›*
 
-Defined in src/server/Engine.ts:101
+Defined in src/server/Engine.ts:102
 
 **Parameters:**
 
@@ -235,7 +235,7 @@ ___
 
 ▸ **restore**(`instanceQuery`: any, `listener`: EventEmitter): *Promise‹[ExecutionContext](executioncontext.md)›*
 
-Defined in src/server/Engine.ts:70
+Defined in src/server/Engine.ts:71
 
 **Parameters:**
 
@@ -250,7 +250,7 @@ ___
 
 ###  start
 
-▸ **start**(`name`: any, `data`: any, `listener`: EventEmitter, `startNodeId`: string): *Promise‹[ExecutionContext](executioncontext.md)›*
+▸ **start**(`name`: any, `data`: any, `listener`: EventEmitter, `startNodeId`: string, `options`: object): *Promise‹[ExecutionContext](executioncontext.md)›*
 
 Defined in src/server/Engine.ts:18
 
@@ -264,6 +264,7 @@ Name | Type | Default | Description |
 `data` | any | {} | input data |
 `listener` | EventEmitter | null | - |
 `startNodeId` | string | null | in process has multiple start node; you need to specify which one  |
+`options` | object | {} | - |
 
 **Returns:** *Promise‹[ExecutionContext](executioncontext.md)›*
 
@@ -273,7 +274,7 @@ ___
 
 ▸ **startEvent**(`instanceId`: any, `elementId`: any, `data`: object, `listener`: EventEmitter): *Promise‹[ExecutionContext](executioncontext.md)›*
 
-Defined in src/server/Engine.ts:167
+Defined in src/server/Engine.ts:168
 
 Invoking an event (usually start event of a secondary process) against an existing instance
 or
@@ -301,7 +302,7 @@ ___
 
 ▸ **throwMessage**(`messageId`: any, `data`: object, `matchingQuery`: object, `listener`: EventEmitter): *Promise‹[ExecutionContext](executioncontext.md)›*
 
-Defined in src/server/Engine.ts:191
+Defined in src/server/Engine.ts:192
 
 **Parameters:**
 
@@ -320,7 +321,7 @@ ___
 
 ▸ **throwSignal**(`messageId`: any, `data`: object, `matchingQuery`: object, `listener`: EventEmitter): *Promise‹[ExecutionContext](executioncontext.md)›*
 
-Defined in src/server/Engine.ts:233
+Defined in src/server/Engine.ts:234
 
 signal/message raise a signal or throw a message
 

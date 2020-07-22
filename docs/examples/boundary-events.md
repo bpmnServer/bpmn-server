@@ -1,4 +1,3 @@
-@boundary-events.md
 # Boundary Event:
 
 ![BPMN Diagram](boundary-event1.png)

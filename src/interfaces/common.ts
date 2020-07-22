@@ -63,6 +63,7 @@ interface ILogger {
  * */
 interface IAppDelegate {
     moddleOptions;
+    servicesProvider;       // to respond to all named services
     executionStarted(execution: IExecutionContext);
     executionEvent({ event, item, execution });
     messageThrown(signalId, data, messageMatchingKey: any, item: IItem);

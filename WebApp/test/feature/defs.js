@@ -21,7 +21,7 @@ Feature('Test Defintions', () => {
             definition = await server.definitions.load(name);
 
             response = await server.engine.start(name);
-            return;
+
         });
 
         When('a process defintion is executed', async () => {

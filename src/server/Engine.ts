@@ -17,7 +17,8 @@ class Engine extends ServerComponent {
 	 */
 	async start(name: any,
 		data: any = {}, listener: EventEmitter = null,
-		startNodeId: string = null): Promise<ExecutionContext> {
+		startNodeId: string = null,
+		options = {}): Promise<ExecutionContext> {
 
 		this.logger.log(`Action:engine.start ${name}`);
 
@@ -41,7 +42,7 @@ class Engine extends ServerComponent {
 		newDataStore.monitorExecution(execution);
 
 		this.cache.add(executionContext);
-		await execution.execute(startNodeId, data);
+		await execution.execute(startNodeId, data,options);
 
 		await executionContext.dataStore.save();
 

@@ -4,10 +4,11 @@ bpmn-server
 [![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 
 ## Introduction
-BPMN 2.0 Modeling, Execution and Persistence, an open source Workflow Server for Node.js 
+bpmn-server provides BPMN 2.0 Modeling, Execution and Persistence, as an open source Workflow Server for Node.js 
 
-This package is designed specifically for Node.js and TypeScript
+This package is designed specifically for Node.js and developed entirely in TypeScript 
 
+A WebApp provides a UI from modeling and developing your workflow
 
 ## Table of Contents
 - [Process modeller](#process-modeller)
@@ -17,7 +18,7 @@ This package is designed specifically for Node.js and TypeScript
 - [Acknowledgments](#acknowledgments)
 
 ### Documentation
-- [Featuers](./docs/features.md)
+- [Features](./docs/features.md)
 - [Examples](./docs/examples.md)
 - [API](./docs/api-summary.md)
 
@@ -63,8 +64,9 @@ Windows:
 xcopy /e /i /s /y node_modules\bpmn-server\WebApp\*.* .
 
 npm update
+
 ```
-Edit [configuration](./docs/configuration.md) file to have MongoDB point to your server or free cloud account
+Edit [configuration](./docs/setup#configuration) file to have MongoDB point to your server or free cloud account
 ```javascript
 node app
 ```
@@ -78,7 +80,7 @@ a full demo site is available @ http://bpmn.omniworkflow.com
 ```javascript
     const server = new BPMNServer(configuration, logger);
 
-    let response = await server.execute('Buy Used Car');
+    let response = await server.engine.start('Buy Used Car');
 
     // let us get the items
     const items = response.items.filter(item => {
@@ -91,17 +93,21 @@ a full demo site is available @ http://bpmn.omniworkflow.com
 
     console.log('Invoking Buy');
 
-    response = await server.invoke({instanceId: response.execution.id, elementId: 'task_Buy' },
+    response = await server.engine.invoke({ id: response.execution.id, "items.elementId": 'task_Buy' },
         { model: 'Thunderbird', needsRepairs: false, needsCleaning: false });
 
     console.log("Ready to drive");
 
-    response = await server.invoke({ instanceId: response.execution.id, elementId: 'task_Drive' });
+    response = await server.engine.invoke({ id: response.execution.id, "items.elementId": 'task_Drive' });
+
 
     console.log(`that is it!, process is now complete status=<${response.execution.status}>`)
 
 ```
 for more complete examples see [Examples](./docs/examples.md)
+# Change Log
+
+see [CHANGELOG](./docs/CHANGELOG.md)
 
 # Acknowledgments
 

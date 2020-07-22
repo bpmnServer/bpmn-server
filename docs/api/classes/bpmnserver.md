@@ -52,7 +52,7 @@ The main class of Server Layer
 
 ###  constructor
 
-\+ **new BPMNServer**(`configuration`: [IConfiguration](../interfaces/iconfiguration.md), `logger?`: [ILogger](../interfaces/ilogger.md)): *[BPMNServer](bpmnserver.md)*
+\+ **new BPMNServer**(`configuration`: [IConfiguration](../interfaces/iconfiguration.md), `logger?`: [ILogger](../interfaces/ilogger.md), `options`: object): *[BPMNServer](bpmnserver.md)*
 
 Defined in src/server/BPMNServer.ts:42
 
@@ -60,10 +60,11 @@ Server Constructor
 
 **Parameters:**
 
-Name | Type | Description |
------- | ------ | ------ |
-`configuration` | [IConfiguration](../interfaces/iconfiguration.md) | see |
-`logger?` | [ILogger](../interfaces/ilogger.md) |   |
+Name | Type | Default | Description |
+------ | ------ | ------ | ------ |
+`configuration` | [IConfiguration](../interfaces/iconfiguration.md) | - | see |
+`logger?` | [ILogger](../interfaces/ilogger.md) | - |   |
+`options` | object | {} | - |
 
 **Returns:** *[BPMNServer](bpmnserver.md)*
 

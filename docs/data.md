@@ -1,5 +1,7 @@
 # Table of Contents
 - [instance Data](#instance-data) 
+- [Data Scope](#data-scope) 
+- [Query on Data](#query-on-data) 
 - [input/Ooutput Data](#input-output-data) 
 
 
@@ -74,4 +76,18 @@ In this example we are adding a script to bpmn:startEvent
     </bpmn:startEvent>
     
 ```
+# Data Scope
+
+The entire execution will have one data scope object, shared among all nodes except SubProcess and Loops (Multi-instances), 
+each will have own item part of the data object
+
+![Image description](Data_BuyUsedCar.png)
+
+However, for SubProcess and Loop elements a seperate scope 
+
+![Image description](Data_Scripts_Services_model.png)
+![Image description](Data_Scripts_Services.png)
+
+# Query on Data
+For Details on Query see [Data Query](./api-summary#data-query) 
 # Input-Output Data

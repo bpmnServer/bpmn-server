@@ -31,6 +31,7 @@ class Item implements IItem {
         if (this._dbAction == null)
             this._dbAction = 'update';
     }
+    log(msg) { return this.token.log(msg); }
     get data() { return this.token.data; }
     set data(val) { this.token.applyInput(val); }
     get context() { return this.token.execution.executionContext; }

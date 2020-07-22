@@ -161,7 +161,13 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
     private async rebuildModel(name) {
         console.log("rebuilding " + name);
         let source = await this.getSource(name);
-        let svg = await this.getSVG(name);
+        let svg;
+        try {
+            svg = await this.getSVG(name);
+        }
+        catch (exc) {
+            console.log(exc);
+        }
         await super.save(name, source, svg);
 
     }

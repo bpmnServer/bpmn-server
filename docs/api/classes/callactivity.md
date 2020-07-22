@@ -233,7 +233,7 @@ Defined in src/elements/Element.ts:14
 
 • **get calledElement**(): *any*
 
-Defined in src/elements/Tasks.ts:104
+Defined in src/elements/Tasks.ts:119
 
 **Returns:** *any*
 
@@ -245,7 +245,7 @@ ___
 
 *Overrides [Node](node.md).[canBeInvoked](node.md#canbeinvoked)*
 
-Defined in src/elements/Tasks.ts:109
+Defined in src/elements/Tasks.ts:124
 
 **Returns:** *boolean*
 
@@ -269,7 +269,7 @@ ___
 
 *Overrides [Node](node.md).[requiresWait](node.md#requireswait)*
 
-Defined in src/elements/Tasks.ts:108
+Defined in src/elements/Tasks.ts:123
 
 **Returns:** *boolean*
 
@@ -599,7 +599,7 @@ ___
 
 *Overrides [Node](node.md).[start](node.md#start)*
 
-Defined in src/elements/Tasks.ts:118
+Defined in src/elements/Tasks.ts:133
 
 **Parameters:**
 
@@ -615,7 +615,7 @@ ___
 
 ▸ **executionEnded**(`execution`: [IExecution](../interfaces/iexecution.md)): *Promise‹void›*
 
-Defined in src/elements/Tasks.ts:111
+Defined in src/elements/Tasks.ts:126
 
 **Parameters:**
 

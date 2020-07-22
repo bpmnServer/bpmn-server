@@ -3,8 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.configuration = void 0;
 const _1 = require("./");
 const appDelegate_1 = require("./appDelegate");
-const _2 = require("./");
-const _3 = require("./");
 let definitionsPath = __dirname + '/processes/';
 var configuration = new _1.Configuration({
     definitionsPath: definitionsPath,
@@ -18,8 +16,9 @@ var configuration = new _1.Configuration({
             db: 'bpmn'
         }
     },
+    /* Define Server Components */
     logger: function (server) {
-        new _3.Logger(server);
+        new _1.Logger(server);
     },
     definitions: function (server) {
         return new _1.ModelsDatastore(server);
@@ -28,7 +27,7 @@ var configuration = new _1.Configuration({
         return new appDelegate_1.MyAppDelegate(server);
     },
     dataStore: function (server) {
-        return new _2.DataStore(server);
+        return new _1.DataStore(server);
     }
 });
 exports.configuration = configuration;

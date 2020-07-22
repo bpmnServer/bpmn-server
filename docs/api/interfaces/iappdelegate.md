@@ -22,6 +22,7 @@ Application Delegate Object to respond to various events and services:
 ### Properties
 
 * [moddleOptions](iappdelegate.md#moddleoptions)
+* [servicesProvider](iappdelegate.md#servicesprovider)
 
 ### Methods
 
@@ -43,13 +44,21 @@ Application Delegate Object to respond to various events and services:
 
 Defined in src/interfaces/common.ts:65
 
+___
+
+###  servicesProvider
+
+• **servicesProvider**: *any*
+
+Defined in src/interfaces/common.ts:66
+
 ## Methods
 
 ###  executionEvent
 
 ▸ **executionEvent**(`__namedParameters`: object): *any*
 
-Defined in src/interfaces/common.ts:67
+Defined in src/interfaces/common.ts:68
 
 **Parameters:**
 
@@ -69,7 +78,7 @@ ___
 
 ▸ **executionStarted**(`execution`: [IExecutionContext](iexecutioncontext.md)): *any*
 
-Defined in src/interfaces/common.ts:66
+Defined in src/interfaces/common.ts:67
 
 **Parameters:**
 
@@ -85,7 +94,7 @@ ___
 
 ▸ **issueMessage**(`messageId`: any, `data`: any): *any*
 
-Defined in src/interfaces/common.ts:77
+Defined in src/interfaces/common.ts:78
 
 is called when an event throws a message that can not be answered by another process
 
@@ -104,7 +113,7 @@ ___
 
 ▸ **issueSignal**(`messageId`: any, `data`: any): *any*
 
-Defined in src/interfaces/common.ts:78
+Defined in src/interfaces/common.ts:79
 
 **Parameters:**
 
@@ -121,7 +130,7 @@ ___
 
 ▸ **messageThrown**(`signalId`: any, `data`: any, `messageMatchingKey`: any, `item`: [IItem](iitem.md)): *any*
 
-Defined in src/interfaces/common.ts:68
+Defined in src/interfaces/common.ts:69
 
 **Parameters:**
 
@@ -140,7 +149,7 @@ ___
 
 ▸ **scopeEval**(`scope`: any, `script`: any): *any*
 
-Defined in src/interfaces/common.ts:86
+Defined in src/interfaces/common.ts:87
 
 **Parameters:**
 
@@ -157,7 +166,7 @@ ___
 
 ▸ **scopeJS**(`scope`: any, `script`: any): *any*
 
-Defined in src/interfaces/common.ts:87
+Defined in src/interfaces/common.ts:88
 
 **Parameters:**
 
@@ -174,7 +183,7 @@ ___
 
 ▸ **serviceCalled**(`serviceName`: any, `data`: any, `item`: [IItem](iitem.md)): *any*
 
-Defined in src/interfaces/common.ts:84
+Defined in src/interfaces/common.ts:85
 
 is called only if the serviceTask has no implementation; otherwise the specified implementation will be called.
 
@@ -194,7 +203,7 @@ ___
 
 ▸ **signalThrown**(`signalId`: any, `data`: any, `messageMatchingKey`: any, `item`: [IItem](iitem.md)): *any*
 
-Defined in src/interfaces/common.ts:69
+Defined in src/interfaces/common.ts:70
 
 **Parameters:**
 

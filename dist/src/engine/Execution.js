@@ -76,7 +76,7 @@ class Execution {
      * */
     stop() {
     }
-    execute(startNodeId = null, inputData = {}) {
+    execute(startNodeId = null, inputData = {}, options = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             this.log('ACTION:execute:');
             yield this.definition.load();

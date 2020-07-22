@@ -67,7 +67,7 @@ class Node extends Element {
      * @param item
      */
     async getOutput(item: Item) {
-        item.context.output = {};
+        item.context.output = item.data;
         item.context.messageMatchingKey = {};
 
         await this.doEvent(item, EXECUTION_EVENT.transform_output,null);

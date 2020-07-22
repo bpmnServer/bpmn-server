@@ -27,17 +27,32 @@ class ScriptTask extends Node {
  *      foo[method]();
  *      
  *      await this.token.appDelegate[serviceName](data);
+ *      
+ *      
+ *      service signature:
+ *              output= service (input,context)
  */
 class ServiceTask extends Node {
     async run(item): Promise<NODE_ACTION> {
 
         // calling appDelegate by service name
         const appDelegate = item.token.execution.appDelegate;
-        let serviceName = 'serviceCalled';
+        let serviceName;
+
+        let output = await item.node.getOutput(item);
+
         if (this.def.implementation) {
             serviceName = this.def.implementation;
         }
-        await appDelegate[serviceName](item);
+        let ret;
+        if (serviceName && appDelegate.servicesProvider[serviceName])
+            ret= await appDelegate.servicesProvider[serviceName](output,item.context);
+        else
+            ret =await appDelegate['serviceCalled'](output,item.context);
+
+        item.log("service returned " + ret);
+
+        await item.node.setInput(item,ret);
         /*
         item.token.log(this.def.implementation);
         if (this.def.implementation) {

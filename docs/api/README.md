@@ -455,7 +455,7 @@ ___
 
 ▸ **delay**(`time`: any, `result`: any): *Promise‹unknown›*
 
-Defined in src/engine/DefaultAppDelegate.ts:104
+Defined in src/engine/DefaultAppDelegate.ts:106
 
 **Parameters:**
 

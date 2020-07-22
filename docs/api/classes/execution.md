@@ -338,7 +338,7 @@ ___
 
 ###  execute
 
-▸ **execute**(`startNodeId`: any, `inputData`: object): *Promise‹void›*
+▸ **execute**(`startNodeId`: any, `inputData`: object, `options`: object): *Promise‹void›*
 
 Defined in src/engine/Execution.ts:97
 
@@ -348,6 +348,7 @@ Name | Type | Default |
 ------ | ------ | ------ |
 `startNodeId` | any | null |
 `inputData` | object | {} |
+`options` | object | {} |
 
 **Returns:** *Promise‹void›*
 

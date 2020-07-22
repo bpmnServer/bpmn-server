@@ -94,7 +94,7 @@ class Execution implements IExecution {
     stop() {
 
     }
-    public async execute(startNodeId = null, inputData = {}) {
+    public async execute(startNodeId = null, inputData = {}, options = {}) {
 
         this.log('ACTION:execute:');
         await this.definition.load();

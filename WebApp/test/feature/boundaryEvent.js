@@ -89,8 +89,7 @@ Feature('Boundary Event', () => {
 ///```javascript
             When('wait for the timer to fire', async () => {
 
-                await server.cron.checkTimers();
-                await delay(1500);
+                await delay(2500);
             });
 
 ///```

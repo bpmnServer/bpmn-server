@@ -229,7 +229,7 @@ Defined in src/elements/Element.ts:14
 
 *Overrides [Node](node.md).[canBeInvoked](node.md#canbeinvoked)*
 
-Defined in src/elements/Tasks.ts:76
+Defined in src/elements/Tasks.ts:91
 
 **Returns:** *boolean*
 
@@ -241,7 +241,7 @@ ___
 
 *Overrides [Node](node.md).[isCatching](node.md#iscatching)*
 
-Defined in src/elements/Tasks.ts:74
+Defined in src/elements/Tasks.ts:89
 
 **Returns:** *boolean*
 
@@ -253,7 +253,7 @@ ___
 
 *Overrides [Node](node.md).[requiresWait](node.md#requireswait)*
 
-Defined in src/elements/Tasks.ts:75
+Defined in src/elements/Tasks.ts:90
 
 **Returns:** *boolean*
 

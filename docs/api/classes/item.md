@@ -45,6 +45,7 @@
 
 ### Methods
 
+* [log](item.md#log)
 * [save](item.md#save)
 * [load](item.md#static-load)
 
@@ -54,7 +55,7 @@
 
 \+ **new Item**(`element`: any, `token`: any, `status`: [ITEM_STATUS](../enums/item_status.md)): *[Item](item.md)*
 
-Defined in src/engine/Item.ts:55
+Defined in src/engine/Item.ts:56
 
 **Parameters:**
 
@@ -72,7 +73,7 @@ Name | Type | Default |
 
 • **_dbAction**: *"add" | "update" | null* = null
 
-Defined in src/engine/Item.ts:55
+Defined in src/engine/Item.ts:56
 
 ___
 
@@ -128,7 +129,7 @@ ___
 
 *Implementation of [IItem](../interfaces/iitem.md).[messageId](../interfaces/iitem.md#messageid)*
 
-Defined in src/engine/Item.ts:52
+Defined in src/engine/Item.ts:53
 
 ___
 
@@ -148,7 +149,7 @@ ___
 
 *Implementation of [IItem](../interfaces/iitem.md).[signalId](../interfaces/iitem.md#signalid)*
 
-Defined in src/engine/Item.ts:53
+Defined in src/engine/Item.ts:54
 
 ___
 
@@ -168,7 +169,7 @@ ___
 
 *Implementation of [IItem](../interfaces/iitem.md).[timeDue](../interfaces/iitem.md#timedue)*
 
-Defined in src/engine/Item.ts:51
+Defined in src/engine/Item.ts:52
 
 ___
 
@@ -186,7 +187,7 @@ Defined in src/engine/Item.ts:13
 
 • **get context**(): *[IExecutionContext](../interfaces/iexecutioncontext.md)*
 
-Defined in src/engine/Item.ts:36
+Defined in src/engine/Item.ts:37
 
 **Returns:** *[IExecutionContext](../interfaces/iexecutioncontext.md)*
 
@@ -196,13 +197,13 @@ ___
 
 • **get data**(): *any*
 
-Defined in src/engine/Item.ts:34
+Defined in src/engine/Item.ts:35
 
 **Returns:** *any*
 
 • **set data**(`val`: any): *void*
 
-Defined in src/engine/Item.ts:35
+Defined in src/engine/Item.ts:36
 
 **Parameters:**
 
@@ -218,7 +219,7 @@ ___
 
 • **get elementId**(): *any*
 
-Defined in src/engine/Item.ts:37
+Defined in src/engine/Item.ts:38
 
 **Returns:** *any*
 
@@ -250,7 +251,7 @@ ___
 
 • **get name**(): *any*
 
-Defined in src/engine/Item.ts:38
+Defined in src/engine/Item.ts:39
 
 **Returns:** *any*
 
@@ -260,7 +261,7 @@ ___
 
 • **get node**(): *[Node](node.md)*
 
-Defined in src/engine/Item.ts:47
+Defined in src/engine/Item.ts:48
 
 **Returns:** *[Node](node.md)*
 
@@ -292,7 +293,7 @@ ___
 
 • **get tokenId**(): *any*
 
-Defined in src/engine/Item.ts:41
+Defined in src/engine/Item.ts:42
 
 **Returns:** *any*
 
@@ -302,17 +303,33 @@ ___
 
 • **get type**(): *any*
 
-Defined in src/engine/Item.ts:44
+Defined in src/engine/Item.ts:45
 
 **Returns:** *any*
 
 ## Methods
 
+###  log
+
+▸ **log**(`msg`: any): *void*
+
+Defined in src/engine/Item.ts:34
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`msg` | any |
+
+**Returns:** *void*
+
+___
+
 ###  save
 
 ▸ **save**(): *[IItemData](../interfaces/iitemdata.md)*
 
-Defined in src/engine/Item.ts:65
+Defined in src/engine/Item.ts:66
 
 **Returns:** *[IItemData](../interfaces/iitemdata.md)*
 
@@ -322,7 +339,7 @@ ___
 
 ▸ **load**(`execution`: [Execution](execution.md), `dataObject`: [IItemData](../interfaces/iitemdata.md), `token`: any): *[Item](item.md)‹›*
 
-Defined in src/engine/Item.ts:75
+Defined in src/engine/Item.ts:76
 
 **Parameters:**
 

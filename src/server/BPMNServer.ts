@@ -48,8 +48,7 @@ class BPMNServer implements IBPMNServer {
 	 * @param logger
 	 */
 
-	constructor(configuration: IConfiguration, logger?: ILogger)
-	{
+	constructor(configuration: IConfiguration, logger?: ILogger, options = {}) {
 
 		if (logger == null) {
 			logger = new Logger({});
@@ -62,6 +61,11 @@ class BPMNServer implements IBPMNServer {
 		this.dataStore = configuration.dataStore(this);
 		this.definitions = configuration.definitions(this);
 		this.appDelegate = configuration.appDelegate(this);
+
+		if (options['cron'] == false)
+		{
+			return;
+        }
 
 		this.cron.start();
 

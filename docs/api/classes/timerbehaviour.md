@@ -121,7 +121,7 @@ ___
 
 *Overrides [Behaviour](behaviour.md).[end](behaviour.md#end)*
 
-Defined in src/elements/behaviours/Timer.ts:123
+Defined in src/elements/behaviours/Timer.ts:125
 
 **Parameters:**
 
@@ -137,7 +137,7 @@ ___
 
 ▸ **expires**(): *void*
 
-Defined in src/elements/behaviours/Timer.ts:116
+Defined in src/elements/behaviours/Timer.ts:118
 
 **Returns:** *void*
 
@@ -220,7 +220,7 @@ ___
 
 *Overrides [Behaviour](behaviour.md).[resume](behaviour.md#resume)*
 
-Defined in src/elements/behaviours/Timer.ts:127
+Defined in src/elements/behaviours/Timer.ts:129
 
 **Returns:** *void*
 

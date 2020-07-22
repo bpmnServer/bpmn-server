@@ -217,7 +217,7 @@ Defined in src/server/ServerContext.ts:14
 
 *Overrides [ModelsDatastoreDB](modelsdatastoredb.md).[deleteModel](modelsdatastoredb.md#deletemodel)*
 
-Defined in src/datastore/ModelsDatastore.ts:97
+Defined in src/datastore/ModelsDatastore.ts:98
 
 **Parameters:**
 
@@ -404,7 +404,7 @@ ___
 
 ▸ **rebuild**(`model`: any): *Promise‹void›*
 
-Defined in src/datastore/ModelsDatastore.ts:125
+Defined in src/datastore/ModelsDatastore.ts:126
 
 reconstruct the models database from files
 
@@ -428,7 +428,7 @@ ___
 
 *Overrides [ModelsDatastoreDB](modelsdatastoredb.md).[renameModel](modelsdatastoredb.md#renamemodel)*
 
-Defined in src/datastore/ModelsDatastore.ts:107
+Defined in src/datastore/ModelsDatastore.ts:108
 
 **Parameters:**
 

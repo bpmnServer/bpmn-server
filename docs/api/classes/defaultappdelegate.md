@@ -16,6 +16,10 @@
 
 * [constructor](defaultappdelegate.md#constructor)
 
+### Properties
+
+* [servicesProvider](defaultappdelegate.md#servicesprovider)
+
 ### Accessors
 
 * [moddleOptions](defaultappdelegate.md#moddleoptions)
@@ -38,7 +42,7 @@
 
 \+ **new DefaultAppDelegate**(`logger`: any): *[DefaultAppDelegate](defaultappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:7
+Defined in src/engine/DefaultAppDelegate.ts:8
 
 **Parameters:**
 
@@ -48,13 +52,23 @@ Name | Type | Default |
 
 **Returns:** *[DefaultAppDelegate](defaultappdelegate.md)*
 
+## Properties
+
+###  servicesProvider
+
+• **servicesProvider**: *any*
+
+*Implementation of [IAppDelegate](../interfaces/iappdelegate.md).[servicesProvider](../interfaces/iappdelegate.md#servicesprovider)*
+
+Defined in src/engine/DefaultAppDelegate.ts:8
+
 ## Accessors
 
 ###  moddleOptions
 
 • **get moddleOptions**(): *object*
 
-Defined in src/engine/DefaultAppDelegate.ts:11
+Defined in src/engine/DefaultAppDelegate.ts:13
 
 **Returns:** *object*
 
@@ -122,7 +136,7 @@ Defined in src/engine/DefaultAppDelegate.ts:11
 
 ▸ **executionEvent**(`__namedParameters`: object): *Promise‹void›*
 
-Defined in src/engine/DefaultAppDelegate.ts:21
+Defined in src/engine/DefaultAppDelegate.ts:23
 
 **Parameters:**
 
@@ -144,7 +158,7 @@ ___
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:14
+Defined in src/engine/DefaultAppDelegate.ts:16
 
 **Parameters:**
 
@@ -162,7 +176,7 @@ ___
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:55
+Defined in src/engine/DefaultAppDelegate.ts:57
 
 is called when an event throws a message that can not be answered by another process
 
@@ -183,7 +197,7 @@ ___
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:58
+Defined in src/engine/DefaultAppDelegate.ts:60
 
 **Parameters:**
 
@@ -202,7 +216,7 @@ ___
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:36
+Defined in src/engine/DefaultAppDelegate.ts:38
 
  is called when a event throws a message
 
@@ -225,7 +239,7 @@ ___
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:76
+Defined in src/engine/DefaultAppDelegate.ts:78
 
 **Parameters:**
 
@@ -244,7 +258,7 @@ ___
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:86
+Defined in src/engine/DefaultAppDelegate.ts:88
 
 **Parameters:**
 
@@ -263,7 +277,7 @@ ___
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:73
+Defined in src/engine/DefaultAppDelegate.ts:75
 
 **Parameters:**
 
@@ -283,7 +297,7 @@ ___
 
 *Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
 
-Defined in src/engine/DefaultAppDelegate.ts:61
+Defined in src/engine/DefaultAppDelegate.ts:63
 
 **Parameters:**
 

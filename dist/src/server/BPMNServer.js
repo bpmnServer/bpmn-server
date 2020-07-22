@@ -35,7 +35,7 @@ class BPMNServer {
      * @param configuration	see
      * @param logger
      */
-    constructor(configuration, logger) {
+    constructor(configuration, logger, options = {}) {
         if (logger == null) {
             logger = new Logger_1.Logger({});
         }
@@ -47,6 +47,9 @@ class BPMNServer {
         this.dataStore = configuration.dataStore(this);
         this.definitions = configuration.definitions(this);
         this.appDelegate = configuration.appDelegate(this);
+        if (options['cron'] == false) {
+            return;
+        }
         this.cron.start();
     }
 }

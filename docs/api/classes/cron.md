@@ -189,7 +189,7 @@ ___
 
 ▸ **itemTimerExpired**(): *void*
 
-Defined in src/server/Cron.ts:158
+Defined in src/server/Cron.ts:95
 
 **Returns:** *void*
 
@@ -199,7 +199,7 @@ ___
 
 ▸ **processTimerExpired**(): *Promise‹void›*
 
-Defined in src/server/Cron.ts:160
+Defined in src/server/Cron.ts:97
 
 **Returns:** *Promise‹void›*
 
@@ -209,7 +209,7 @@ ___
 
 ▸ **scheduleItem**(`item`: any, `entry`: any): *void*
 
-Defined in src/server/Cron.ts:186
+Defined in src/server/Cron.ts:123
 
 **Parameters:**
 
@@ -226,7 +226,7 @@ ___
 
 ▸ **scheduleProcess**(`entry`: any): *void*
 
-Defined in src/server/Cron.ts:173
+Defined in src/server/Cron.ts:110
 
 **Parameters:**
 
@@ -242,7 +242,7 @@ ___
 
 ▸ **start**(): *Promise‹void›*
 
-Defined in src/server/Cron.ts:34
+Defined in src/server/Cron.ts:31
 
 **Returns:** *Promise‹void›*
 
@@ -252,7 +252,7 @@ ___
 
 ▸ **startTimers**(): *Promise‹void›*
 
-Defined in src/server/Cron.ts:97
+Defined in src/server/Cron.ts:34
 
 **Returns:** *Promise‹void›*
 
@@ -262,7 +262,7 @@ ___
 
 ▸ **checkCron**(`expression`: any, `referenceDateTime`: any): *number*
 
-Defined in src/server/Cron.ts:191
+Defined in src/server/Cron.ts:128
 
 **Parameters:**
 
@@ -279,7 +279,7 @@ ___
 
 ▸ **timeDue**(`expression`: any, `referenceDateTime`: any): *any*
 
-Defined in src/server/Cron.ts:210
+Defined in src/server/Cron.ts:147
 
 **Parameters:**
 

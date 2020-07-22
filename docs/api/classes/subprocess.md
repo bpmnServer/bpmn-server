@@ -120,7 +120,7 @@ ___
 
 • **childProcess**: *[Process](process.md)*
 
-Defined in src/elements/Tasks.ts:80
+Defined in src/elements/Tasks.ts:95
 
 ___
 
@@ -238,7 +238,7 @@ Defined in src/elements/Element.ts:14
 
 *Overrides [Node](node.md).[canBeInvoked](node.md#canbeinvoked)*
 
-Defined in src/elements/Tasks.ts:82
+Defined in src/elements/Tasks.ts:97
 
 **Returns:** *boolean*
 
@@ -262,7 +262,7 @@ ___
 
 *Overrides [Node](node.md).[requiresWait](node.md#requireswait)*
 
-Defined in src/elements/Tasks.ts:81
+Defined in src/elements/Tasks.ts:96
 
 **Returns:** *boolean*
 
@@ -592,7 +592,7 @@ ___
 
 *Overrides [Node](node.md).[start](node.md#start)*
 
-Defined in src/elements/Tasks.ts:84
+Defined in src/elements/Tasks.ts:99
 
 **Parameters:**
 

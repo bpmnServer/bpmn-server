@@ -5,7 +5,9 @@ import { moddleOptions} from '../elements/js-bpmn-moddle';
 var seq = 1;
 
 class DefaultAppDelegate implements IAppDelegate {
+    servicesProvider: any;
     constructor(logger = null) {
+        this.servicesProvider= this;
     }
 
     get moddleOptions() {
