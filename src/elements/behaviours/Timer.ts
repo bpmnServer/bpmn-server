@@ -103,16 +103,18 @@ class TimerBehaviour extends Behaviour {
         const config = item.context.configuration;
         if (config.timers && config.timers.forceTimersDelay) {
             timerModifier = config.timers.forceTimersDelay;
-            item.token.log("Timer duration modified by the configuration to " + timerModifier);
+            item.token.log("...Timer duration modified by the configuration to " + timerModifier);
         }
 
         item.timeDue = this.timeDue(timerModifier);
+
         item.token.log("timer is set at " + item.timeDue);
 
         Cron.timerScheduled(item.timeDue);
 //          done by cron class
         const seconds = Cron.timeDue(this.duration, null);
 
+        item.log("..setting timer for " + seconds + " seconds");
         setTimeout(this.expires.bind(item), seconds * 1000);
     }
     expires() {

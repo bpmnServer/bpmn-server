@@ -66,7 +66,8 @@ class Cron  extends ServerComponent {
 
 			// { "items.timeDue": { $lt: new ISODate("2020-06-14T19:44:38.541Z") } }	
 			// query = { "items.timeDue": { $lt: target } };
-			query = { "items.timeDue": { $exists: true } , "items.status": "wait" };
+			query = { "items.timeDue": { $exists: true }, "items.status": "wait" };
+			
 			//query = { query: { "items.timeDue": { $lt: new Date(target).toISOString() } } };
 			//query = { items: {timeDue: { $lt: new Date(target).toISOString() } }};
 			list = await this.dataStore.findItems(query);
@@ -74,13 +75,10 @@ class Cron  extends ServerComponent {
 			for (i = 0; i < list.length; i++) {
 				let item = list[i];
 				if (item.timeDue) {
-					self.logger.log(item.timeDue);
 					let now = new Date();
-					self.logger.log(`checking timer: ${item.timeDue}  vs ${now.getTime()}`);
-					//				if (item.timeDue < now.getTime()) {
-					self.logger.log("timer is now due for item:" + item.elementId + " status:" + item.status + " " + item.id);
-//					await self.engine.invoke({ "items.id": item.id }, null);
-					//				}
+					self.logger.log(`checking timer: ${item.timeDue}`);
+
+					this.scheduleItem(item);
 				}
 			}
 		}
@@ -92,9 +90,11 @@ class Cron  extends ServerComponent {
 		this.logger.log(" all timers are done.");
 	}
 
-	itemTimerExpired() {
+	private async itemTimerExpired() {
+		const entry: any = this as any;
+			await entry.cron.engine.invoke({ "items.id": entry.id }, null); 
 	}
-	async processTimerExpired() {
+	private async processTimerExpired() {
 		const params: any = this as any;
 		const event = params.entry;
 		const cron = params.cron;
@@ -107,7 +107,7 @@ class Cron  extends ServerComponent {
 
 		await cron.engine.start(event.modelName, null, null, event.elementId);
 	}
-	scheduleProcess( entry) {
+	private scheduleProcess( entry) {
 		const delay = Cron.timeDue(entry.expression,entry.referenceDateTime);
 		if (delay) {
 
@@ -120,9 +120,14 @@ class Cron  extends ServerComponent {
 
         }
 	}
-	scheduleItem(item,entry) {
+	private scheduleItem(entry) {
 
-		setTimeout(this.itemTimerExpired.bind(item), Cron.timeDue(entry.expression,entry.referenceDatetime) * 1000);
+		const now = new Date().getTime();
+		let delay;
+		delay = entry.timeDue - now;
+		if (delay < 0) delay = .1;
+		entry.cron = this;
+		setTimeout(this.itemTimerExpired.bind(entry), delay * 1000);
 	}
 
 	static checkCron(expression,referenceDateTime) {

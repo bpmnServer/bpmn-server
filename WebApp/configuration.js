@@ -7,7 +7,7 @@ let definitionsPath = __dirname + '/processes/';
 var configuration = new _1.Configuration({
     definitionsPath: definitionsPath,
     timers: {
-        forceTimersDelay: 1000,
+        //forceTimersDelay: 1000,
         precision: 3000,
     },
     database: {

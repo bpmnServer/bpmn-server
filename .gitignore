@@ -17,6 +17,3 @@
 *.njsproj.user
 *.txt
 /bin
-/dist
-/WebApp/dist
-/.vs
