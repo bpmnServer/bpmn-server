@@ -54,13 +54,13 @@ class TimerBehaviour extends _1.Behaviour {
     }
     /**
      * return the next time the timer is due
-     *
+     * format is time format
      * @param timerModifier - for testing purposes configuration can alter the timer
      */
     timeDue(timerModifier = null) {
         let seconds;
         if (timerModifier)
-            seconds = timerModifier;
+            seconds = timerModifier / 1000;
         else {
             if (this.duration) {
                 //seconds = toSeconds((parse(this.duration)));
@@ -71,7 +71,7 @@ class TimerBehaviour extends _1.Behaviour {
                 seconds = Cron_1.Cron.timeDue(this.duration, null);
             }
         }
-        let timeDue = new Date().getTime();
+        let timeDue = new Date().getTime() / 1000;
         timeDue += seconds;
         return timeDue;
     }
@@ -91,10 +91,8 @@ class TimerBehaviour extends _1.Behaviour {
             item.token.log("...Timer duration modified by the configuration to " + timerModifier);
         }
         item.timeDue = this.timeDue(timerModifier);
-        item.token.log("timer is set at " + item.timeDue);
-        Cron_1.Cron.timerScheduled(item.timeDue);
-        //          done by cron class
-        const seconds = Cron_1.Cron.timeDue(this.duration, null);
+        item.token.log("timer is set at " + item.timeDue + " - " + new Date(item.timeDue).toISOString());
+        const seconds = item.timeDue - (new Date().getTime() / 1000);
         item.log("..setting timer for " + seconds + " seconds");
         setTimeout(this.expires.bind(item), seconds * 1000);
     }

@@ -10,19 +10,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MyAppDelegate = void 0;
-const __1 = require("../");
+const __1 = require("..");
 const fs = require('fs');
 var seq = 1;
 class MyAppDelegate extends __1.DefaultAppDelegate {
     constructor(logger = null) {
         super(logger);
+        this.servicesProvider = new MyServices();
     }
     executionStarted(execution) {
         const _super = Object.create(null, {
             executionStarted: { get: () => super.executionStarted }
         });
         return __awaiter(this, void 0, void 0, function* () {
-            _super.executionStarted.call(this, execution);
+            yield _super.executionStarted.call(this, execution);
         });
     }
     executionEvent({ event, item, execution }) {
@@ -50,23 +51,8 @@ class MyAppDelegate extends __1.DefaultAppDelegate {
             yield _super.signalThrown.call(this, signalId, data, matchingQuery, item);
         });
     }
-    serviceTask(item) {
+    serviceCalled(input, context) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(" Hi this is the serviceTask from appDelegate");
-            console.log(item);
-            yield delay(5000, 'test');
-            console.log(" Hi this is the serviceTask from appDelegate says bye");
-        });
-    }
-    serviceCalled(item) {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
-    }
-    service1(item) {
-        return __awaiter(this, void 0, void 0, function* () {
-            seq++;
-            yield delay(3000 - (seq * 100), 'test');
-            item.token.log("SERVICE 1" + item.token.currentNode.id);
         });
     }
 }
@@ -81,5 +67,31 @@ function delay(time, result) {
             }, time);
         });
     });
+}
+class MyServices {
+    serviceTask(input, context) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let item = context.item;
+            console.log(" Hi this is the serviceTask from appDelegate");
+            console.log(item);
+            yield delay(5000, 'test');
+            console.log(" Hi this is the serviceTask from appDelegate says bye");
+        });
+    }
+    add({ v1, v2 }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log("Add Service");
+            console.log(v1, v2);
+            return v1 + v2;
+        });
+    }
+    service1(input, context) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let item = context.item;
+            seq++;
+            yield delay(3000 - (seq * 100), 'test');
+            item.token.log("SERVICE 1" + item.token.currentNode.id);
+        });
+    }
 }
 //# sourceMappingURL=appDelegate.js.map

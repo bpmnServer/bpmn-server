@@ -1,18 +1,20 @@
 
-import { IExecution, Item, FLOW_ACTION , NODE_ACTION, IExecutionContext  } from '../';
-import { DefaultAppDelegate } from '../';
+import { IExecution, Item, FLOW_ACTION, NODE_ACTION, IExecutionContext } from '..';
+import { DefaultAppDelegate } from '..';
 
 const fs = require('fs');
 
 var seq = 1;
 
-class MyAppDelegate extends DefaultAppDelegate{
+class MyAppDelegate extends DefaultAppDelegate {
     constructor(logger = null) {
         super(logger);
+        this.servicesProvider = new MyServices();
     }
 
     async executionStarted(execution: IExecutionContext) {
-        super.executionStarted(execution);}
+        await super.executionStarted(execution);
+    }
     async executionEvent({ event, item, execution }) {
         let object;
         if (event.startsWith('execution.'))
@@ -20,27 +22,14 @@ class MyAppDelegate extends DefaultAppDelegate{
         else
             object = item;
     }
-
     async messageThrown(messageId, data, matchingQuery, item: Item) {
         await super.messageThrown(messageId, data, matchingQuery, item);
     }
     async signalThrown(signalId, data, matchingQuery, item: Item) {
         await super.signalThrown(signalId, data, matchingQuery, item);
     }
+    async serviceCalled(input, context) {
 
-    async serviceTask(item) {
-        console.log(" Hi this is the serviceTask from appDelegate");
-        console.log(item);
-        await delay(5000, 'test');
-        console.log(" Hi this is the serviceTask from appDelegate says bye");
-    }
-    async serviceCalled(item) {
-
-    }
-    async service1(item) {
-        seq++;
-        await delay(3000 -(seq * 100) , 'test');
-        item.token.log("SERVICE 1" + item.token.currentNode.id);
     }
 }
 
@@ -53,4 +42,25 @@ async function delay(time, result) {
         }, time);
     });
 }
-export {MyAppDelegate}
+class MyServices {
+
+    async serviceTask(input, context) {
+        let item = context.item;
+        console.log(" Hi this is the serviceTask from appDelegate");
+        console.log(item);
+        await delay(5000, 'test');
+        console.log(" Hi this is the serviceTask from appDelegate says bye");
+    }
+    async add({ v1, v2 }) {
+        console.log("Add Service");
+        console.log(v1, v2);
+        return v1 + v2;
+    }
+    async service1(input, context) {
+        let item = context.item;
+        seq++;
+        await delay(3000 - (seq * 100), 'test');
+        item.token.log("SERVICE 1" + item.token.currentNode.id);
+    }
+}
+export { MyAppDelegate }

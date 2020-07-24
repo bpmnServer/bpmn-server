@@ -8,7 +8,7 @@ declare class TimerBehaviour extends Behaviour {
     describe(): string[];
     /**
      * return the next time the timer is due
-     *
+     * format is time format
      * @param timerModifier - for testing purposes configuration can alter the timer
      */
     timeDue(timerModifier?: any): number;

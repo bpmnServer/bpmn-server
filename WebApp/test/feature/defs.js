@@ -1,6 +1,6 @@
 const { BPMNServer, Execution, DefaultHandler, Logger } = require("../../");
 
-const config = require("../../configuration.js").configuration;
+const config = require("../testConfiguration.js").configuration;
 
 const logger = new Logger({ toConsole: false });
 

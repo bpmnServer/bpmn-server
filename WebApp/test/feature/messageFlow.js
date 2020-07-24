@@ -1,6 +1,6 @@
 const { BPMNServer, Execution, DefaultAppDelegate, Logger, ServerContext } = require("../../");
 
-const { configuration } = require('../../configuration');
+const { configuration } = require('../testConfiguration');
 
 const logger = new Logger({ toConsole: false });
 

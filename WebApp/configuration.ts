@@ -8,7 +8,7 @@ var configuration = new Configuration(
 	{
 		definitionsPath: definitionsPath,
 		timers: {
-			//forceTimersDelay: 1000,
+			//forceTimersDelay: 1000, 
 			precision: 3000,
 		},
 		database: {
