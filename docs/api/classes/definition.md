@@ -31,9 +31,11 @@
 ### Methods
 
 * [getDefinition](definition.md#getdefinition)
+* [getFields](definition.md#getfields)
 * [getJson](definition.md#getjson)
 * [getNodeById](definition.md#getnodebyid)
 * [getStartNode](definition.md#getstartnode)
+* [getStartNodes](definition.md#getstartnodes)
 * [load](definition.md#load)
 
 ## Constructors
@@ -159,6 +161,22 @@ Name | Type |
 
 ___
 
+###  getFields
+
+▸ **getFields**(`elementId`: any): *Promise‹any›*
+
+Defined in src/elements/Definition.ts:207
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`elementId` | any |
+
+**Returns:** *Promise‹any›*
+
+___
+
 ###  getJson
 
 ▸ **getJson**(): *string*
@@ -177,7 +195,7 @@ ___
 
 *Implementation of [IDefinition](../interfaces/idefinition.md)*
 
-Defined in src/elements/Definition.ts:217
+Defined in src/elements/Definition.ts:233
 
 **Parameters:**
 
@@ -195,9 +213,25 @@ ___
 
 *Implementation of [IDefinition](../interfaces/idefinition.md)*
 
-Defined in src/elements/Definition.ts:208
+Defined in src/elements/Definition.ts:230
 
 **Returns:** *any*
+
+___
+
+###  getStartNodes
+
+▸ **getStartNodes**(`userInvokable`: boolean): *any[]*
+
+Defined in src/elements/Definition.ts:219
+
+**Parameters:**
+
+Name | Type | Default |
+------ | ------ | ------ |
+`userInvokable` | boolean | false |
+
+**Returns:** *any[]*
 
 ___
 

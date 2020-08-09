@@ -17,7 +17,7 @@
 
 • **end**: = "end"
 
-Defined in src/interfaces/Enums.ts:26
+Defined in src/interfaces/Enums.ts:32
 
 ___
 
@@ -25,7 +25,7 @@ ___
 
 • **running**: = "running"
 
-Defined in src/interfaces/Enums.ts:26
+Defined in src/interfaces/Enums.ts:32
 
 ___
 
@@ -33,7 +33,7 @@ ___
 
 • **terminated**: = "terminated"
 
-Defined in src/interfaces/Enums.ts:26
+Defined in src/interfaces/Enums.ts:32
 
 ___
 
@@ -41,4 +41,4 @@ ___
 
 • **wait**: = "wait"
 
-Defined in src/interfaces/Enums.ts:26
+Defined in src/interfaces/Enums.ts:32

@@ -2,6 +2,7 @@ import { TimerBehaviour } from ".";
 import { Node } from "..";
 import { Behaviour } from '.';
 import { Item } from "../../engine/Item";
+import { NODE_SUBTYPE } from "../../..";
 /**
  * 
  * 
@@ -15,6 +16,8 @@ import { Item } from "../../engine/Item";
 class MessageEventBehaviour extends Behaviour {
     init() {
         this.node.messageId = this.messageId;
+        this.node.subType = NODE_SUBTYPE.message;
+
     }
     async start(item: Item) {
         item.context.logger.log("message event behaviour start");
@@ -23,7 +26,7 @@ class MessageEventBehaviour extends Behaviour {
         }
         else {  // throw a message
              const output = await this.node.getOutput(item);
-            const matchingKey = item.context.messageMatchingKey;
+            const matchingKey = item.context.response.messageMatchingKey;
             item.token.log(`.Throwing Message <${this.messageId}> - output: ${JSON.stringify(output)} - matching key : ${JSON.stringify(matchingKey)}`);
             await item.context.appDelegate.messageThrown(this.messageId,output, matchingKey, item);
         }
@@ -46,6 +49,7 @@ class MessageEventBehaviour extends Behaviour {
 class SignalEventBehaviour extends Behaviour {
     init() {
         this.node.signalId = this.signalId;
+        this.node.subType = NODE_SUBTYPE.signal;
     }
     start(item: Item) {
 

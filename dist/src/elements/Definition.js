@@ -185,14 +185,30 @@ class Definition {
             return result;
         });
     }
-    getStartNode() {
-        let start = null;
-        this.processes.forEach(proc => {
-            start = proc.getStartNode();
-            //            if (start)
-            //                return start;
+    getFields(elementId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let node = this.getNodeById(elementId);
+            let extName = _1.Behaviour_names.CamundaFormData;
+            let ext = node.getBehaviour(extName);
+            if (ext) {
+                return ext.fields;
+            }
+            else
+                return null;
         });
-        return start;
+    }
+    getStartNodes(userInvokable = false) {
+        let starts = [];
+        this.processes.forEach(proc => {
+            var node;
+            proc.getStartNodes(userInvokable).forEach(node => {
+                starts.push(node);
+            });
+        });
+        return starts;
+    }
+    getStartNode() {
+        return this.getStartNodes()[0];
     }
     getNodeById(id) {
         return this.nodes.get(id);

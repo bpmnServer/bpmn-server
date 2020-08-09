@@ -48,6 +48,10 @@ The main class of Server Layer
 * [engine](bpmnserver.md#engine)
 * [logger](bpmnserver.md#logger)
 
+### Methods
+
+* [getVersion](bpmnserver.md#static-getversion)
+
 ## Constructors
 
 ###  constructor
@@ -147,3 +151,13 @@ ___
 *Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[logger](../interfaces/ibpmnserver.md#logger)*
 
 Defined in src/server/BPMNServer.ts:37
+
+## Methods
+
+### `Static` getVersion
+
+▸ **getVersion**(): *any*
+
+Defined in src/server/BPMNServer.ts:74
+
+**Returns:** *any*

@@ -42,6 +42,7 @@
 * [processId](event.md#processid)
 * [scripts](event.md#scripts)
 * [signalId](event.md#signalid)
+* [subType](event.md#subtype)
 * [type](event.md#type)
 
 ### Accessors
@@ -60,6 +61,7 @@
 * [enter](event.md#enter)
 * [execute](event.md#execute)
 * [getBehaviour](event.md#getbehaviour)
+* [getInput](event.md#getinput)
 * [getOutbounds](event.md#getoutbounds)
 * [getOutput](event.md#getoutput)
 * [hasBehaviour](event.md#hasbehaviour)
@@ -124,7 +126,7 @@ ___
 
 *Inherited from [Element](element.md).[behaviours](element.md#behaviours)*
 
-Defined in src/elements/Element.ts:16
+Defined in src/elements/Element.ts:17
 
 ___
 
@@ -224,6 +226,16 @@ Defined in src/elements/Node.ts:21
 
 ___
 
+###  subType
+
+• **subType**: *any*
+
+*Inherited from [Element](element.md).[subType](element.md#subtype)*
+
+Defined in src/elements/Element.ts:15
+
+___
+
 ###  type
 
 • **type**: *any*
@@ -254,7 +266,7 @@ ___
 
 *Inherited from [Node](node.md).[isCatching](node.md#iscatching)*
 
-Defined in src/elements/Node.ts:93
+Defined in src/elements/Node.ts:100
 
 **Returns:** *boolean*
 
@@ -266,7 +278,7 @@ ___
 
 *Inherited from [Node](node.md).[requiresWait](node.md#requireswait)*
 
-Defined in src/elements/Node.ts:86
+Defined in src/elements/Node.ts:93
 
 **Returns:** *boolean*
 
@@ -280,7 +292,7 @@ Defined in src/elements/Node.ts:86
 
 *Inherited from [Element](element.md).[addBehaviour](element.md#addbehaviour)*
 
-Defined in src/elements/Element.ts:38
+Defined in src/elements/Element.ts:39
 
 **Parameters:**
 
@@ -301,7 +313,7 @@ ___
 
 *Overrides [Element](element.md).[continue](element.md#continue)*
 
-Defined in src/elements/Node.ts:163
+Defined in src/elements/Node.ts:170
 
 **Parameters:**
 
@@ -321,7 +333,7 @@ ___
 
 *Inherited from [Element](element.md).[describe](element.md#describe)*
 
-Defined in src/elements/Element.ts:20
+Defined in src/elements/Element.ts:21
 
 **Returns:** *string[][]*
 
@@ -371,7 +383,7 @@ ___
 
 *Inherited from [Node](node.md).[enter](node.md#enter)*
 
-Defined in src/elements/Node.ts:78
+Defined in src/elements/Node.ts:85
 
 **Parameters:**
 
@@ -389,7 +401,7 @@ ___
 
 *Inherited from [Node](node.md).[execute](node.md#execute)*
 
-Defined in src/elements/Node.ts:103
+Defined in src/elements/Node.ts:110
 
 this is the primary exectuion method for a node
 
@@ -417,7 +429,7 @@ ___
 
 *Inherited from [Element](element.md).[getBehaviour](element.md#getbehaviour)*
 
-Defined in src/elements/Element.ts:35
+Defined in src/elements/Element.ts:36
 
 **Parameters:**
 
@@ -429,13 +441,32 @@ Name | Type |
 
 ___
 
+###  getInput
+
+▸ **getInput**(`item`: [Item](item.md), `input`: any): *Promise‹any›*
+
+*Inherited from [Node](node.md).[getInput](node.md#getinput)*
+
+Defined in src/elements/Node.ts:63
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`item` | [Item](item.md) |
+`input` | any |
+
+**Returns:** *Promise‹any›*
+
+___
+
 ###  getOutbounds
 
 ▸ **getOutbounds**(`item`: [Item](item.md)): *[Item](item.md)[]*
 
 *Inherited from [Node](node.md).[getOutbounds](node.md#getoutbounds)*
 
-Defined in src/elements/Node.ts:227
+Defined in src/elements/Node.ts:234
 
 **Parameters:**
 
@@ -453,7 +484,7 @@ ___
 
 *Inherited from [Node](node.md).[getOutput](node.md#getoutput)*
 
-Defined in src/elements/Node.ts:69
+Defined in src/elements/Node.ts:76
 
 transform data using output rules
 todo
@@ -476,7 +507,7 @@ ___
 
 *Inherited from [Element](element.md).[hasBehaviour](element.md#hasbehaviour)*
 
-Defined in src/elements/Element.ts:31
+Defined in src/elements/Element.ts:32
 
 respond by providing behaviour attributes beyond item and node information
  ex: timer due , input/outupt , fields
@@ -527,7 +558,7 @@ ___
 
 *Inherited from [Node](node.md).[init](node.md#init)*
 
-Defined in src/elements/Node.ts:222
+Defined in src/elements/Node.ts:229
 
 **Parameters:**
 
@@ -545,7 +576,7 @@ ___
 
 *Inherited from [Element](element.md).[restored](element.md#restored)*
 
-Defined in src/elements/Element.ts:21
+Defined in src/elements/Element.ts:22
 
 **Parameters:**
 
@@ -565,7 +596,7 @@ ___
 
 *Overrides [Element](element.md).[resume](element.md#resume)*
 
-Defined in src/elements/Node.ts:219
+Defined in src/elements/Node.ts:226
 
 is called by the token after an execution resume for every active (in wait) item
 different than init, which is called for all items
@@ -586,7 +617,7 @@ ___
 
 *Inherited from [Node](node.md).[run](node.md#run)*
 
-Defined in src/elements/Node.ts:177
+Defined in src/elements/Node.ts:184
 
 **Parameters:**
 

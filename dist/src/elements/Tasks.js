@@ -27,7 +27,7 @@ class ScriptTask extends Node_1.Node {
     }
 }
 exports.ScriptTask = ScriptTask;
-/* * TODO: should also call it by just name
+/**
  *
  *      foo[method]();
  *
@@ -40,6 +40,7 @@ exports.ScriptTask = ScriptTask;
 class ServiceTask extends Node_1.Node {
     run(item) {
         return __awaiter(this, void 0, void 0, function* () {
+            item.context.response.action = null;
             // calling appDelegate by service name
             const appDelegate = item.token.execution.appDelegate;
             let serviceName;
@@ -54,16 +55,9 @@ class ServiceTask extends Node_1.Node {
                 ret = yield appDelegate['serviceCalled'](output, item.context);
             item.log("service returned " + ret);
             yield item.node.setInput(item, ret);
-            /*
-            item.token.log(this.def.implementation);
-            if (this.def.implementation) {
-                item.token.log('invoking service call ' + this.id + " " + item.id);
-                await item.token.execution.appDelegate.scopeJS(item, this.def.implementation);
-                //await item.token.execution.appDelegate[this.def.implementation](item);
-                item.token.log('returned from service call ' + this.id + " " + item.id);
+            if (item.context.response.action && item.context.response.action == __1.NODE_ACTION.wait) {
+                return item.context.response.action;
             }
-            //        console.log(' returning at service task');
-            */
             return __1.NODE_ACTION.end;
         });
     }
@@ -100,7 +94,7 @@ class SubProcess extends Node_1.Node {
         return __awaiter(this, void 0, void 0, function* () {
             const token = item.token;
             token.log('..executing a sub process item:' + item.id);
-            const startNode = this.childProcess.getStartNode();
+            const startNode = this.childProcess.getStartNodes()[0];
             yield Token_1.Token.startNewToken(token.execution, startNode, this.id, token, this, null);
             return __1.NODE_ACTION.continue;
         });
@@ -135,7 +129,7 @@ class CallActivity extends Node_1.Node {
             token.log('..executing a call activity for item:' + item.id + " calling " + this.calledElement);
             const context = item.context;
             const modelName = this.calledElement;
-            const data = item.data;
+            const data = item.node.getOutput(item);
             const response = yield context.engine.start(modelName, data);
             token.log('..end of executing a call activity for item:' + item.id + " calling " + this.calledElement);
             token.log('..response :' + response.execution.status);

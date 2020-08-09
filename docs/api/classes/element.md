@@ -21,6 +21,7 @@
 * [behaviours](element.md#behaviours)
 * [id](element.md#id)
 * [name](element.md#name)
+* [subType](element.md#subtype)
 * [type](element.md#type)
 
 ### Methods
@@ -41,7 +42,7 @@
 
 *Implementation of [IElement](../interfaces/ielement.md).[behaviours](../interfaces/ielement.md#behaviours)*
 
-Defined in src/elements/Element.ts:16
+Defined in src/elements/Element.ts:17
 
 ___
 
@@ -60,6 +61,14 @@ ___
 • **name**: *any*
 
 *Implementation of [IElement](../interfaces/ielement.md).[name](../interfaces/ielement.md#name)*
+
+Defined in src/elements/Element.ts:16
+
+___
+
+###  subType
+
+• **subType**: *any*
 
 Defined in src/elements/Element.ts:15
 
@@ -81,7 +90,7 @@ Defined in src/elements/Element.ts:14
 
 *Implementation of [IElement](../interfaces/ielement.md)*
 
-Defined in src/elements/Element.ts:38
+Defined in src/elements/Element.ts:39
 
 **Parameters:**
 
@@ -98,7 +107,7 @@ ___
 
 ▸ **continue**(`item`: [Item](item.md)): *void*
 
-Defined in src/elements/Element.ts:19
+Defined in src/elements/Element.ts:20
 
 **Parameters:**
 
@@ -116,7 +125,7 @@ ___
 
 *Implementation of [IElement](../interfaces/ielement.md)*
 
-Defined in src/elements/Element.ts:20
+Defined in src/elements/Element.ts:21
 
 **Returns:** *string[][]*
 
@@ -128,7 +137,7 @@ ___
 
 *Implementation of [IElement](../interfaces/ielement.md)*
 
-Defined in src/elements/Element.ts:35
+Defined in src/elements/Element.ts:36
 
 **Parameters:**
 
@@ -146,7 +155,7 @@ ___
 
 *Implementation of [IElement](../interfaces/ielement.md)*
 
-Defined in src/elements/Element.ts:31
+Defined in src/elements/Element.ts:32
 
 respond by providing behaviour attributes beyond item and node information
  ex: timer due , input/outupt , fields
@@ -165,7 +174,7 @@ ___
 
 ▸ **restored**(`item`: [Item](item.md)): *void*
 
-Defined in src/elements/Element.ts:21
+Defined in src/elements/Element.ts:22
 
 **Parameters:**
 
@@ -181,7 +190,7 @@ ___
 
 ▸ **resume**(`item`: [Item](item.md)): *void*
 
-Defined in src/elements/Element.ts:24
+Defined in src/elements/Element.ts:25
 
 **Parameters:**
 

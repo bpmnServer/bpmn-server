@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SignalEventBehaviour = exports.MessageEventBehaviour = void 0;
 const _1 = require(".");
+const __1 = require("../../..");
 /**
  *
  *
@@ -23,6 +24,7 @@ const _1 = require(".");
 class MessageEventBehaviour extends _1.Behaviour {
     init() {
         this.node.messageId = this.messageId;
+        this.node.subType = __1.NODE_SUBTYPE.message;
     }
     start(item) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -32,7 +34,7 @@ class MessageEventBehaviour extends _1.Behaviour {
             }
             else { // throw a message
                 const output = yield this.node.getOutput(item);
-                const matchingKey = item.context.messageMatchingKey;
+                const matchingKey = item.context.response.messageMatchingKey;
                 item.token.log(`.Throwing Message <${this.messageId}> - output: ${JSON.stringify(output)} - matching key : ${JSON.stringify(matchingKey)}`);
                 yield item.context.appDelegate.messageThrown(this.messageId, output, matchingKey, item);
             }
@@ -55,6 +57,7 @@ exports.MessageEventBehaviour = MessageEventBehaviour;
 class SignalEventBehaviour extends _1.Behaviour {
     init() {
         this.node.signalId = this.signalId;
+        this.node.subType = __1.NODE_SUBTYPE.signal;
     }
     start(item) {
         if (this.node.isCatching) {

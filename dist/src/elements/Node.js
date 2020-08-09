@@ -52,9 +52,15 @@ class Node extends _1.Element {
         return __awaiter(this, void 0, void 0, function* () {
             //
             item.token.log('--setting input ' + JSON.stringify(input));
-            item.context.input = input;
+            const data = this.getInput(item, input);
+            item.token.applyInput(data);
+        });
+    }
+    getInput(item, input) {
+        return __awaiter(this, void 0, void 0, function* () {
+            item.context.response.input = input;
             yield this.doEvent(item, __1.EXECUTION_EVENT.transform_input, null);
-            item.token.applyInput(item.context.input);
+            return item.context.response.input;
         });
     }
     /**
@@ -64,10 +70,10 @@ class Node extends _1.Element {
      */
     getOutput(item) {
         return __awaiter(this, void 0, void 0, function* () {
-            item.context.output = item.data;
-            item.context.messageMatchingKey = {};
+            item.context.response.output = item.data;
+            item.context.response.messageMatchingKey = {};
             yield this.doEvent(item, __1.EXECUTION_EVENT.transform_output, null);
-            return item.context.output;
+            return item.context.response.output;
         });
     }
     enter(item) {

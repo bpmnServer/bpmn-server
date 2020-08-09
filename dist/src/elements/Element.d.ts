@@ -3,6 +3,7 @@ import { IElement } from '../interfaces/elements';
 declare class Element implements IElement {
     id: any;
     type: any;
+    subType: any;
     name: any;
     behaviours: Map<any, any>;
     continue(item: Item): void;

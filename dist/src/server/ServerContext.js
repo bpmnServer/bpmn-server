@@ -22,12 +22,20 @@ class ServerComponent {
     get appDelegate() { return this.server.appDelegate; }
 }
 exports.ServerComponent = ServerComponent;
+class ExecutionResponse {
+}
 class ExecutionContext extends ServerComponent {
     constructor(server, parentContext = null) {
         super(server);
         this.parentContext = parentContext;
+        this.response = new ExecutionResponse();
         //		this.errors = [];
     }
+    /*
+    input;
+    output;
+    messageMatchingKey;
+    */
     error(error) {
         return this;
     }

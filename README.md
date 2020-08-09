@@ -12,9 +12,9 @@ A WebApp provides a UI from modeling and developing your workflow
 
 ## Table of Contents
 - [Process modeller](#process-modeller)
-- [Execution](#Process-execution)
-- [Installation](#Installation)
-- [Demo](#Demo)
+- [Execution](#process-execution)
+- [Installation](#installation)
+- [Demo](#demo)
 - [Acknowledgments](#acknowledgments)
 
 ### Documentation

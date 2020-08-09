@@ -138,6 +138,17 @@ interface IItem extends IItemData {
     context: IExecutionContext;
     node: Node;
 }
+interface IExecutionResponse {
+    instance: IInstanceData;
+    errors: any;
+    items: IItemData[];
+}
+interface IExecutionResponse {
+    input: any;
+    output: any;
+    action: any;
+    messageMatchingKey: any;
+}
 interface IExecutionContext {
     server: any;
     configuration: any;
@@ -153,9 +164,7 @@ interface IExecutionContext {
     instance: any;
     process: any;
     item: any;
-    input: any;
-    output: any;
-    messageMatchingKey: any;
+    response: IExecutionResponse;
     errors: any;
     items: IItem[];
     error(error: any): IExecutionContext;

@@ -77,7 +77,7 @@ ___
 
 • **duration**: *any*
 
-Defined in src/elements/behaviours/Timer.ts:40
+Defined in src/elements/behaviours/Timer.ts:41
 
 ___
 
@@ -97,7 +97,7 @@ ___
 
 • **timeCycle**: *any*
 
-Defined in src/elements/behaviours/Timer.ts:41
+Defined in src/elements/behaviours/Timer.ts:42
 
 ## Methods
 
@@ -109,7 +109,7 @@ Defined in src/elements/behaviours/Timer.ts:41
 
 *Overrides [Behaviour](behaviour.md).[describe](behaviour.md#describe)*
 
-Defined in src/elements/behaviours/Timer.ts:61
+Defined in src/elements/behaviours/Timer.ts:63
 
 **Returns:** *string[]*
 
@@ -121,7 +121,7 @@ ___
 
 *Overrides [Behaviour](behaviour.md).[end](behaviour.md#end)*
 
-Defined in src/elements/behaviours/Timer.ts:125
+Defined in src/elements/behaviours/Timer.ts:127
 
 **Parameters:**
 
@@ -137,7 +137,7 @@ ___
 
 ▸ **expires**(): *void*
 
-Defined in src/elements/behaviours/Timer.ts:118
+Defined in src/elements/behaviours/Timer.ts:120
 
 **Returns:** *void*
 
@@ -190,7 +190,7 @@ ___
 
 *Overrides [Behaviour](behaviour.md).[init](behaviour.md#init)*
 
-Defined in src/elements/behaviours/Timer.ts:42
+Defined in src/elements/behaviours/Timer.ts:43
 
 **Returns:** *void*
 
@@ -220,7 +220,7 @@ ___
 
 *Overrides [Behaviour](behaviour.md).[resume](behaviour.md#resume)*
 
-Defined in src/elements/behaviours/Timer.ts:129
+Defined in src/elements/behaviours/Timer.ts:131
 
 **Returns:** *void*
 
@@ -250,7 +250,7 @@ ___
 
 *Overrides [Behaviour](behaviour.md).[start](behaviour.md#start)*
 
-Defined in src/elements/behaviours/Timer.ts:88
+Defined in src/elements/behaviours/Timer.ts:90
 
 **Parameters:**
 
@@ -266,7 +266,7 @@ ___
 
 ▸ **startTimer**(`item`: any): *void*
 
-Defined in src/elements/behaviours/Timer.ts:100
+Defined in src/elements/behaviours/Timer.ts:102
 
 **Parameters:**
 
@@ -282,9 +282,10 @@ ___
 
 ▸ **timeDue**(`timerModifier`: any): *number*
 
-Defined in src/elements/behaviours/Timer.ts:69
+Defined in src/elements/behaviours/Timer.ts:71
 
 return the next time the timer is due
+format is time format
 
 **Parameters:**
 

@@ -12,6 +12,7 @@
 * [FLOW_ACTION](enums/flow_action.md)
 * [ITEM_STATUS](enums/item_status.md)
 * [NODE_ACTION](enums/node_action.md)
+* [NODE_SUBTYPE](enums/node_subtype.md)
 * [TOKEN_STATUS](enums/token_status.md)
 
 ### Classes
@@ -39,6 +40,7 @@
 * [EventData](classes/eventdata.md)
 * [Execution](classes/execution.md)
 * [ExecutionContext](classes/executioncontext.md)
+* [ExecutionResponse](classes/executionresponse.md)
 * [Flow](classes/flow.md)
 * [Gateway](classes/gateway.md)
 * [IOBehaviour](classes/iobehaviour.md)

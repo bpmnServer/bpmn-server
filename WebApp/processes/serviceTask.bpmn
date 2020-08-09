@@ -23,10 +23,10 @@
     <bpmn2:serviceTask id="Task_1gpov6r" name="add" implementation="add">
       <bpmn2:extensionElements>
         <camunda:script event="transformOutput"><![CDATA[
-        this.context.output={v1: this.data.v1 , v2: this.data.v2};
+        this.context.response.output={v1: this.data.v1 , v2: this.data.v2};
         ]]></camunda:script>
         <camunda:script event="transformInput"><![CDATA[
-        this.data.result=this.context.input;
+        this.data.result=this.context.response.input;
         ]]></camunda:script>
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0cr3d6e</bpmn2:incoming>

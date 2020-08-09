@@ -6,7 +6,7 @@ const BpmnModdle = require('bpmn-moddle');
 //const moddleOptions = require('./js-bpmn-moddle.json');
 
 import { Logger } from '../common/Logger';
-import { Node, Flow , MessageFlow ,SubProcess , NodeLoader , Process } from '.'; 
+import { Node, Flow , MessageFlow ,SubProcess , NodeLoader , Process, Behaviour_names } from '.'; 
 import { BPMN_TYPE } from './NodeLoader';
 import { IDefinition } from '../interfaces/elements';
 import { BPMNServer } from '../server/BPMNServer';
@@ -199,20 +199,36 @@ references:
     }
     async getDefinition(source, logger) {
 
-    const result = await this.moddle.fromXML(source);
+        const result = await this.moddle.fromXML(source);
 
 
-    return result;
+        return result;
+    }
+    async getFields(elementId) {
+
+        let node = this.getNodeById(elementId);
+        let extName = Behaviour_names.CamundaFormData;
+        let ext = node.getBehaviour(extName);
+        if (ext) {
+            return ext.fields;
+        }
+        else
+            return null;
+    }
+
+    public getStartNodes(userInvokable=false) {
+        let starts =[];
+        this.processes.forEach(proc => {
+            var node;
+            proc.getStartNodes(userInvokable).forEach(node => {
+                starts.push(node);
+            });
+        });
+        return starts;
     }
 
     public getStartNode() {
-        let start = null;
-        this.processes.forEach(proc => {
-            start = proc.getStartNode();
-//            if (start)
-//                return start;
-        });
-        return start;
+        return this.getStartNodes()[0];
     }
     public getNodeById(id) {
             return this.nodes.get(id);

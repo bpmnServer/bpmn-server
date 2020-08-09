@@ -1,6 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EXECUTION_STATUS = exports.TOKEN_STATUS = exports.ITEM_STATUS = exports.FLOW_ACTION = exports.NODE_ACTION = exports.EXECUTION_EVENT = void 0;
+exports.NODE_SUBTYPE = exports.EXECUTION_STATUS = exports.TOKEN_STATUS = exports.ITEM_STATUS = exports.FLOW_ACTION = exports.NODE_ACTION = exports.EXECUTION_EVENT = void 0;
+var NODE_SUBTYPE;
+(function (NODE_SUBTYPE) {
+    NODE_SUBTYPE["timer"] = "timer";
+    NODE_SUBTYPE["message"] = "message";
+    NODE_SUBTYPE["signal"] = "signal";
+    NODE_SUBTYPE["error"] = "error";
+    NODE_SUBTYPE["escalation"] = "escalation";
+})(NODE_SUBTYPE || (NODE_SUBTYPE = {}));
+exports.NODE_SUBTYPE = NODE_SUBTYPE;
 /*
  * ALL events
  */

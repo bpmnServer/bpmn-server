@@ -19,7 +19,7 @@
 
 • **discard**: = "discard"
 
-Defined in src/interfaces/Enums.ts:22
+Defined in src/interfaces/Enums.ts:28
 
 ___
 
@@ -27,7 +27,7 @@ ___
 
 • **end**: = "end"
 
-Defined in src/interfaces/Enums.ts:22
+Defined in src/interfaces/Enums.ts:28
 
 ___
 
@@ -35,7 +35,7 @@ ___
 
 • **enter**: = "enter"
 
-Defined in src/interfaces/Enums.ts:22
+Defined in src/interfaces/Enums.ts:28
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 • **start**: = "start"
 
-Defined in src/interfaces/Enums.ts:22
+Defined in src/interfaces/Enums.ts:28
 
 ___
 
@@ -51,7 +51,7 @@ ___
 
 • **terminated**: = "terminated"
 
-Defined in src/interfaces/Enums.ts:22
+Defined in src/interfaces/Enums.ts:28
 
 ___
 
@@ -59,4 +59,4 @@ ___
 
 • **wait**: = "wait"
 
-Defined in src/interfaces/Enums.ts:22
+Defined in src/interfaces/Enums.ts:28

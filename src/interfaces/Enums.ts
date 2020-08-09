@@ -1,4 +1,10 @@
-
+enum NODE_SUBTYPE {
+    timer = 'timer',
+    message = 'message',
+    signal = 'signal',
+    error = 'error',
+    escalation = 'escalation'
+}
 /*
  * ALL events 
  */
@@ -36,5 +42,5 @@ enum FLOW_ACTION { take = 'take', discard = 'discard' }
 
 export {
     EXECUTION_EVENT, NODE_ACTION, FLOW_ACTION,
-    ITEM_STATUS, TOKEN_STATUS, EXECUTION_STATUS
+    ITEM_STATUS, TOKEN_STATUS, EXECUTION_STATUS , NODE_SUBTYPE
 }

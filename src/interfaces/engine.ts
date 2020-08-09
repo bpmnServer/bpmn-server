@@ -151,6 +151,12 @@ interface IExecutionResponse {
     items: IItemData[];
 }
 
+interface IExecutionResponse {
+    input;
+    output;
+    action;
+    messageMatchingKey;
+}
 
 interface IExecutionContext {
     //  components
@@ -171,9 +177,7 @@ interface IExecutionContext {
 
     process;
     item;
-    input;
-    output;
-    messageMatchingKey;
+    response: IExecutionResponse;
 
     //  results
     errors;

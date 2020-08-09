@@ -5,6 +5,7 @@ import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } 
 
 import { Item } from '../engine/Item';
 import { Node, Definition } from '.';
+import { NODE_SUBTYPE } from '../interfaces';
 
 
 class Process {
@@ -21,13 +22,22 @@ class Process {
         this.def = definition;
         this.childrenNodes = children;
     }
-    public getStartNode() {
-        let start = null;
+    public getStartNodes(userInvokable=false) {
+        let starts = [];
         this.childrenNodes.forEach(node => {
-            if (node.type == 'bpmn:StartEvent')
-                start = node;
+            if (node.type == 'bpmn:StartEvent') {
+                if (!( userInvokable && (
+                    (node.subType == NODE_SUBTYPE.timer) ||
+                    (node.subType == NODE_SUBTYPE.message) ||
+                    (node.subType == NODE_SUBTYPE.signal) ) ) )
+                    {
+
+                    starts.push(node);
+                    }
+            }
+                
         })
-        return start;
+        return starts;
     }
 
 }

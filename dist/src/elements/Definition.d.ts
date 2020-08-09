@@ -15,6 +15,8 @@ declare class Definition implements IDefinition {
     load(): Promise<any>;
     getJson(): string;
     getDefinition(source: any, logger: any): Promise<any>;
+    getFields(elementId: any): Promise<any>;
+    getStartNodes(userInvokable?: boolean): any[];
     getStartNode(): any;
     getNodeById(id: any): any;
 }

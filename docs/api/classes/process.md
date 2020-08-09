@@ -22,7 +22,7 @@
 
 ### Methods
 
-* [getStartNode](process.md#getstartnode)
+* [getStartNodes](process.md#getstartnodes)
 
 ## Constructors
 
@@ -30,7 +30,7 @@
 
 \+ **new Process**(`definition`: any, `children`: any): *[Process](process.md)*
 
-Defined in src/elements/Process.ts:15
+Defined in src/elements/Process.ts:16
 
 **Parameters:**
 
@@ -47,7 +47,7 @@ Name | Type |
 
 • **childrenNodes**: *[Node](node.md)[]*
 
-Defined in src/elements/Process.ts:15
+Defined in src/elements/Process.ts:16
 
 ___
 
@@ -55,7 +55,7 @@ ___
 
 • **def**: *[Definition](definition.md)*
 
-Defined in src/elements/Process.ts:14
+Defined in src/elements/Process.ts:15
 
 ___
 
@@ -63,7 +63,7 @@ ___
 
 • **id**: *any*
 
-Defined in src/elements/Process.ts:11
+Defined in src/elements/Process.ts:12
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 • **isExecutable**: *any*
 
-Defined in src/elements/Process.ts:13
+Defined in src/elements/Process.ts:14
 
 ___
 
@@ -79,14 +79,20 @@ ___
 
 • **name**: *any*
 
-Defined in src/elements/Process.ts:12
+Defined in src/elements/Process.ts:13
 
 ## Methods
 
-###  getStartNode
+###  getStartNodes
 
-▸ **getStartNode**(): *any*
+▸ **getStartNodes**(`userInvokable`: boolean): *any[]*
 
-Defined in src/elements/Process.ts:24
+Defined in src/elements/Process.ts:25
 
-**Returns:** *any*
+**Parameters:**
+
+Name | Type | Default |
+------ | ------ | ------ |
+`userInvokable` | boolean | false |
+
+**Returns:** *any[]*

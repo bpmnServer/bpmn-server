@@ -15,7 +15,7 @@
 
 • **discard**: = "discard"
 
-Defined in src/interfaces/Enums.ts:34
+Defined in src/interfaces/Enums.ts:40
 
 ___
 
@@ -23,4 +23,4 @@ ___
 
 • **take**: = "take"
 
-Defined in src/interfaces/Enums.ts:34
+Defined in src/interfaces/Enums.ts:40

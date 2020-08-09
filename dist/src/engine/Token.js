@@ -67,15 +67,7 @@ class Token {
         this.id = execution.getNewId('token');
         this.processId = startNode.processId;
         this.path = [];
-    } /*
-    static newToken(execution:Execution, startNode, dataPath, parentToken: Token, branchNode: Node, loop: Loop, data = null) {
-        const token = new Token(execution, startNode, dataPath, parentToken, branchNode);
-        token.loop = loop;
-        execution.tokens.set(token.id, token);
-        token.applyInput(data);
-        execution.addToQueue(token);
-        return token;
-    }*/
+    }
     get data() {
         return this.execution.getData(this.dataPath);
     }

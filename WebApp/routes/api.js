@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const router = express.Router();
 var bodyParser = require('body-parser');
+const dmn_engine_1 = require("dmn-engine");
 const FS = require('fs');
 const __1 = require("..");
 const configuration_1 = require("../configuration");
@@ -179,6 +180,15 @@ const awaitAppDelegateFactory = (middleware) => {
             display(res, 'Show', output);
         });
     });
+    router.put('/rules/invoke', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            yield dmn_engine_1.WebService(request, response);
+        }
+        catch (exc) {
+            console.log(exc);
+            response.json({ errors: JSON.stringify(exc, null, 2) });
+        }
+    })));
 }
 function displayError(res, error) {
     return __awaiter(this, void 0, void 0, function* () {

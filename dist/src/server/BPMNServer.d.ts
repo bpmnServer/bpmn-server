@@ -40,5 +40,6 @@ declare class BPMNServer implements IBPMNServer {
      * @param logger
      */
     constructor(configuration: IConfiguration, logger?: ILogger, options?: {});
+    static getVersion(): any;
 }
 export { BPMNServer };

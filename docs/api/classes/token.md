@@ -220,7 +220,7 @@ Defined in src/engine/Token.ts:75
 
 *Implementation of [IToken](../interfaces/itoken.md)*
 
-Defined in src/engine/Token.ts:231
+Defined in src/engine/Token.ts:223
 
 **Parameters:**
 
@@ -238,7 +238,7 @@ ___
 
 *Implementation of [IToken](../interfaces/itoken.md)*
 
-Defined in src/engine/Token.ts:271
+Defined in src/engine/Token.ts:263
 
 **Returns:** *Promise‹void›*
 
@@ -250,7 +250,7 @@ ___
 
 *Implementation of [IToken](../interfaces/itoken.md)*
 
-Defined in src/engine/Token.ts:193
+Defined in src/engine/Token.ts:185
 
 this is the primary exectuion method for a token
 
@@ -270,7 +270,7 @@ ___
 
 *Implementation of [IToken](../interfaces/itoken.md)*
 
-Defined in src/engine/Token.ts:166
+Defined in src/engine/Token.ts:158
 
 **Returns:** *any[]*
 
@@ -282,7 +282,7 @@ ___
 
 *Implementation of [IToken](../interfaces/itoken.md)*
 
-Defined in src/engine/Token.ts:286
+Defined in src/engine/Token.ts:278
 
 **Returns:** *Promise‹void›*
 
@@ -294,7 +294,7 @@ ___
 
 *Implementation of [IToken](../interfaces/itoken.md)*
 
-Defined in src/engine/Token.ts:326
+Defined in src/engine/Token.ts:318
 
 **Parameters:**
 
@@ -312,7 +312,7 @@ ___
 
 *Implementation of [IToken](../interfaces/itoken.md)*
 
-Defined in src/engine/Token.ts:178
+Defined in src/engine/Token.ts:170
 
 **Returns:** *Promise‹boolean›*
 
@@ -324,7 +324,7 @@ ___
 
 *Implementation of [IToken](../interfaces/itoken.md)*
 
-Defined in src/engine/Token.ts:185
+Defined in src/engine/Token.ts:177
 
 **Returns:** *Promise‹boolean›*
 
@@ -336,7 +336,7 @@ ___
 
 *Implementation of [IToken](../interfaces/itoken.md)*
 
-Defined in src/engine/Token.ts:161
+Defined in src/engine/Token.ts:153
 
 **Returns:** *void*
 
@@ -348,7 +348,7 @@ ___
 
 *Implementation of [IToken](../interfaces/itoken.md)*
 
-Defined in src/engine/Token.ts:157
+Defined in src/engine/Token.ts:149
 
 **Returns:** *void*
 
@@ -360,7 +360,7 @@ ___
 
 *Implementation of [IToken](../interfaces/itoken.md)*
 
-Defined in src/engine/Token.ts:116
+Defined in src/engine/Token.ts:108
 
 **Returns:** *object*
 
@@ -388,7 +388,7 @@ ___
 
 *Implementation of [IToken](../interfaces/itoken.md)*
 
-Defined in src/engine/Token.ts:247
+Defined in src/engine/Token.ts:239
 
 **Parameters:**
 
@@ -406,7 +406,7 @@ ___
 
 *Implementation of [IToken](../interfaces/itoken.md)*
 
-Defined in src/engine/Token.ts:238
+Defined in src/engine/Token.ts:230
 
  is called by Gateways to cancel current token
 
@@ -418,7 +418,7 @@ ___
 
 ▸ **load**(`execution`: [Execution](execution.md), `da`: any): *[Token](token.md)*
 
-Defined in src/engine/Token.ts:137
+Defined in src/engine/Token.ts:129
 
 **Parameters:**
 
@@ -435,7 +435,7 @@ ___
 
 ▸ **startNewToken**(`execution`: any, `startNode`: any, `dataPath`: any, `parentToken`: [Token](token.md), `branchNode`: [Node](node.md), `loop`: [Loop](loop.md), `data`: any): *Promise‹[Token](token.md)‹››*
 
-Defined in src/engine/Token.ts:108
+Defined in src/engine/Token.ts:100
 
 **Parameters:**
 

@@ -20,6 +20,7 @@ declare class Node extends Element {
      * @param item
      */
     setInput(item: Item, input: any): Promise<void>;
+    getInput(item: Item, input: any): Promise<any>;
     /**
      * transform data using output rules
      * todo

@@ -1,3 +1,10 @@
+declare enum NODE_SUBTYPE {
+    timer = "timer",
+    message = "message",
+    signal = "signal",
+    error = "error",
+    escalation = "escalation"
+}
 declare enum EXECUTION_EVENT {
     node_enter = "enter",
     node_start = "start",
@@ -54,4 +61,4 @@ declare enum FLOW_ACTION {
     take = "take",
     discard = "discard"
 }
-export { EXECUTION_EVENT, NODE_ACTION, FLOW_ACTION, ITEM_STATUS, TOKEN_STATUS, EXECUTION_STATUS };
+export { EXECUTION_EVENT, NODE_ACTION, FLOW_ACTION, ITEM_STATUS, TOKEN_STATUS, EXECUTION_STATUS, NODE_SUBTYPE };

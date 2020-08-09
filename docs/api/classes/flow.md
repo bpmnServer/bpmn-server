@@ -29,6 +29,7 @@
 * [id](flow.md#id)
 * [isMessageFlow](flow.md#ismessageflow)
 * [name](flow.md#name)
+* [subType](flow.md#subtype)
 * [to](flow.md#to)
 * [type](flow.md#type)
 
@@ -74,7 +75,7 @@ Name | Type |
 
 *Inherited from [Element](element.md).[behaviours](element.md#behaviours)*
 
-Defined in src/elements/Element.ts:16
+Defined in src/elements/Element.ts:17
 
 ___
 
@@ -122,6 +123,16 @@ ___
 
 *Inherited from [Element](element.md).[name](element.md#name)*
 
+Defined in src/elements/Element.ts:16
+
+___
+
+###  subType
+
+• **subType**: *any*
+
+*Inherited from [Element](element.md).[subType](element.md#subtype)*
+
 Defined in src/elements/Element.ts:15
 
 ___
@@ -154,7 +165,7 @@ Defined in src/elements/Element.ts:14
 
 *Inherited from [Element](element.md).[addBehaviour](element.md#addbehaviour)*
 
-Defined in src/elements/Element.ts:38
+Defined in src/elements/Element.ts:39
 
 **Parameters:**
 
@@ -173,7 +184,7 @@ ___
 
 *Inherited from [Element](element.md).[continue](element.md#continue)*
 
-Defined in src/elements/Element.ts:19
+Defined in src/elements/Element.ts:20
 
 **Parameters:**
 
@@ -223,7 +234,7 @@ ___
 
 *Inherited from [Element](element.md).[getBehaviour](element.md#getbehaviour)*
 
-Defined in src/elements/Element.ts:35
+Defined in src/elements/Element.ts:36
 
 **Parameters:**
 
@@ -243,7 +254,7 @@ ___
 
 *Inherited from [Element](element.md).[hasBehaviour](element.md#hasbehaviour)*
 
-Defined in src/elements/Element.ts:31
+Defined in src/elements/Element.ts:32
 
 respond by providing behaviour attributes beyond item and node information
  ex: timer due , input/outupt , fields
@@ -264,7 +275,7 @@ ___
 
 *Inherited from [Element](element.md).[restored](element.md#restored)*
 
-Defined in src/elements/Element.ts:21
+Defined in src/elements/Element.ts:22
 
 **Parameters:**
 
@@ -282,7 +293,7 @@ ___
 
 *Inherited from [Element](element.md).[resume](element.md#resume)*
 
-Defined in src/elements/Element.ts:24
+Defined in src/elements/Element.ts:25
 
 **Parameters:**
 

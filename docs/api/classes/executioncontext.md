@@ -23,14 +23,12 @@
 * [dataStore](executioncontext.md#datastore)
 * [errors](executioncontext.md#errors)
 * [execution](executioncontext.md#optional-execution)
-* [input](executioncontext.md#input)
 * [item](executioncontext.md#item)
 * [listener](executioncontext.md#listener)
 * [logger](executioncontext.md#logger)
-* [messageMatchingKey](executioncontext.md#messagematchingkey)
-* [output](executioncontext.md#output)
 * [parentContext](executioncontext.md#optional-parentcontext)
 * [process](executioncontext.md#process)
+* [response](executioncontext.md#response)
 * [server](executioncontext.md#server)
 
 ### Accessors
@@ -56,7 +54,7 @@
 
 *Overrides [ServerComponent](servercomponent.md).[constructor](servercomponent.md#constructor)*
 
-Defined in src/server/ServerContext.ts:43
+Defined in src/server/ServerContext.ts:52
 
 **Parameters:**
 
@@ -77,7 +75,7 @@ Name | Type | Default |
 
 *Overrides [ServerComponent](servercomponent.md).[dataStore](servercomponent.md#datastore)*
 
-Defined in src/server/ServerContext.ts:27
+Defined in src/server/ServerContext.ts:34
 
 ___
 
@@ -87,7 +85,7 @@ ___
 
 *Implementation of [IExecutionContext](../interfaces/iexecutioncontext.md).[errors](../interfaces/iexecutioncontext.md#errors)*
 
-Defined in src/server/ServerContext.ts:28
+Defined in src/server/ServerContext.ts:35
 
 ___
 
@@ -97,17 +95,7 @@ ___
 
 *Implementation of [IExecutionContext](../interfaces/iexecutioncontext.md).[execution](../interfaces/iexecutioncontext.md#optional-execution)*
 
-Defined in src/server/ServerContext.ts:24
-
-___
-
-###  input
-
-• **input**: *any*
-
-*Implementation of [IExecutionContext](../interfaces/iexecutioncontext.md).[input](../interfaces/iexecutioncontext.md#input)*
-
-Defined in src/server/ServerContext.ts:33
+Defined in src/server/ServerContext.ts:31
 
 ___
 
@@ -117,7 +105,7 @@ ___
 
 *Implementation of [IExecutionContext](../interfaces/iexecutioncontext.md).[item](../interfaces/iexecutioncontext.md#item)*
 
-Defined in src/server/ServerContext.ts:32
+Defined in src/server/ServerContext.ts:39
 
 ___
 
@@ -127,7 +115,7 @@ ___
 
 *Implementation of [IExecutionContext](../interfaces/iexecutioncontext.md).[listener](../interfaces/iexecutioncontext.md#listener)*
 
-Defined in src/server/ServerContext.ts:26
+Defined in src/server/ServerContext.ts:33
 
 ___
 
@@ -139,27 +127,7 @@ ___
 
 *Overrides [ServerComponent](servercomponent.md).[logger](servercomponent.md#logger)*
 
-Defined in src/server/ServerContext.ts:25
-
-___
-
-###  messageMatchingKey
-
-• **messageMatchingKey**: *any*
-
-*Implementation of [IExecutionContext](../interfaces/iexecutioncontext.md).[messageMatchingKey](../interfaces/iexecutioncontext.md#messagematchingkey)*
-
-Defined in src/server/ServerContext.ts:35
-
-___
-
-###  output
-
-• **output**: *any*
-
-*Implementation of [IExecutionContext](../interfaces/iexecutioncontext.md).[output](../interfaces/iexecutioncontext.md#output)*
-
-Defined in src/server/ServerContext.ts:34
+Defined in src/server/ServerContext.ts:32
 
 ___
 
@@ -169,7 +137,7 @@ ___
 
 *Implementation of [IExecutionContext](../interfaces/iexecutioncontext.md).[parentContext](../interfaces/iexecutioncontext.md#optional-parentcontext)*
 
-Defined in src/server/ServerContext.ts:30
+Defined in src/server/ServerContext.ts:37
 
 ___
 
@@ -179,7 +147,17 @@ ___
 
 *Implementation of [IExecutionContext](../interfaces/iexecutioncontext.md).[process](../interfaces/iexecutioncontext.md#process)*
 
-Defined in src/server/ServerContext.ts:31
+Defined in src/server/ServerContext.ts:38
+
+___
+
+###  response
+
+• **response**: *any*
+
+*Implementation of [IExecutionContext](../interfaces/iexecutioncontext.md).[response](../interfaces/iexecutioncontext.md#response)*
+
+Defined in src/server/ServerContext.ts:40
 
 ___
 
@@ -271,7 +249,7 @@ ___
 
 • **get instance**(): *[IInstanceData](../interfaces/iinstancedata.md)*
 
-Defined in src/server/ServerContext.ts:40
+Defined in src/server/ServerContext.ts:49
 
 **Returns:** *[IInstanceData](../interfaces/iinstancedata.md)*
 
@@ -281,7 +259,7 @@ ___
 
 • **get items**(): *[IItem](../interfaces/iitem.md)[]*
 
-Defined in src/server/ServerContext.ts:49
+Defined in src/server/ServerContext.ts:59
 
 **Returns:** *[IItem](../interfaces/iitem.md)[]*
 
@@ -293,7 +271,7 @@ Defined in src/server/ServerContext.ts:49
 
 *Implementation of [IExecutionContext](../interfaces/iexecutioncontext.md)*
 
-Defined in src/server/ServerContext.ts:37
+Defined in src/server/ServerContext.ts:46
 
 **Parameters:**
 

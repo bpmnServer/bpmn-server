@@ -50,6 +50,7 @@
 * [processId](node.md#processid)
 * [scripts](node.md#scripts)
 * [signalId](node.md#signalid)
+* [subType](node.md#subtype)
 * [type](node.md#type)
 
 ### Accessors
@@ -68,6 +69,7 @@
 * [enter](node.md#enter)
 * [execute](node.md#execute)
 * [getBehaviour](node.md#getbehaviour)
+* [getInput](node.md#getinput)
 * [getOutbounds](node.md#getoutbounds)
 * [getOutput](node.md#getoutput)
 * [hasBehaviour](node.md#hasbehaviour)
@@ -123,7 +125,7 @@ ___
 
 *Inherited from [Element](element.md).[behaviours](element.md#behaviours)*
 
-Defined in src/elements/Element.ts:16
+Defined in src/elements/Element.ts:17
 
 ___
 
@@ -207,6 +209,16 @@ Defined in src/elements/Node.ts:21
 
 ___
 
+###  subType
+
+• **subType**: *any*
+
+*Inherited from [Element](element.md).[subType](element.md#subtype)*
+
+Defined in src/elements/Element.ts:15
+
+___
+
 ###  type
 
 • **type**: *any*
@@ -223,7 +235,7 @@ Defined in src/elements/Element.ts:14
 
 • **get canBeInvoked**(): *boolean*
 
-Defined in src/elements/Node.ts:91
+Defined in src/elements/Node.ts:98
 
 **Returns:** *boolean*
 
@@ -233,7 +245,7 @@ ___
 
 • **get isCatching**(): *boolean*
 
-Defined in src/elements/Node.ts:93
+Defined in src/elements/Node.ts:100
 
 **Returns:** *boolean*
 
@@ -243,7 +255,7 @@ ___
 
 • **get requiresWait**(): *boolean*
 
-Defined in src/elements/Node.ts:86
+Defined in src/elements/Node.ts:93
 
 **Returns:** *boolean*
 
@@ -257,7 +269,7 @@ Defined in src/elements/Node.ts:86
 
 *Inherited from [Element](element.md).[addBehaviour](element.md#addbehaviour)*
 
-Defined in src/elements/Element.ts:38
+Defined in src/elements/Element.ts:39
 
 **Parameters:**
 
@@ -276,7 +288,7 @@ ___
 
 *Overrides [Element](element.md).[continue](element.md#continue)*
 
-Defined in src/elements/Node.ts:163
+Defined in src/elements/Node.ts:170
 
 **Parameters:**
 
@@ -296,7 +308,7 @@ ___
 
 *Inherited from [Element](element.md).[describe](element.md#describe)*
 
-Defined in src/elements/Element.ts:20
+Defined in src/elements/Element.ts:21
 
 **Returns:** *string[][]*
 
@@ -324,7 +336,7 @@ ___
 
 ▸ **end**(`item`: [Item](item.md)): *Promise‹void›*
 
-Defined in src/elements/Node.ts:181
+Defined in src/elements/Node.ts:188
 
 **Parameters:**
 
@@ -340,7 +352,7 @@ ___
 
 ▸ **enter**(`item`: [Item](item.md)): *void*
 
-Defined in src/elements/Node.ts:78
+Defined in src/elements/Node.ts:85
 
 **Parameters:**
 
@@ -356,7 +368,7 @@ ___
 
 ▸ **execute**(`item`: [Item](item.md)): *Promise‹void | [error](../enums/node_action.md#error) | [abort](../enums/node_action.md#abort) | [wait](../enums/node_action.md#wait)›*
 
-Defined in src/elements/Node.ts:103
+Defined in src/elements/Node.ts:110
 
 this is the primary exectuion method for a node
 
@@ -384,7 +396,7 @@ ___
 
 *Inherited from [Element](element.md).[getBehaviour](element.md#getbehaviour)*
 
-Defined in src/elements/Element.ts:35
+Defined in src/elements/Element.ts:36
 
 **Parameters:**
 
@@ -396,11 +408,28 @@ Name | Type |
 
 ___
 
+###  getInput
+
+▸ **getInput**(`item`: [Item](item.md), `input`: any): *Promise‹any›*
+
+Defined in src/elements/Node.ts:63
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`item` | [Item](item.md) |
+`input` | any |
+
+**Returns:** *Promise‹any›*
+
+___
+
 ###  getOutbounds
 
 ▸ **getOutbounds**(`item`: [Item](item.md)): *[Item](item.md)[]*
 
-Defined in src/elements/Node.ts:227
+Defined in src/elements/Node.ts:234
 
 **Parameters:**
 
@@ -416,7 +445,7 @@ ___
 
 ▸ **getOutput**(`item`: [Item](item.md)): *Promise‹any›*
 
-Defined in src/elements/Node.ts:69
+Defined in src/elements/Node.ts:76
 
 transform data using output rules
 todo
@@ -439,7 +468,7 @@ ___
 
 *Inherited from [Element](element.md).[hasBehaviour](element.md#hasbehaviour)*
 
-Defined in src/elements/Element.ts:31
+Defined in src/elements/Element.ts:32
 
 respond by providing behaviour attributes beyond item and node information
  ex: timer due , input/outupt , fields
@@ -458,7 +487,7 @@ ___
 
 ▸ **init**(`item`: [Item](item.md)): *void*
 
-Defined in src/elements/Node.ts:222
+Defined in src/elements/Node.ts:229
 
 **Parameters:**
 
@@ -476,7 +505,7 @@ ___
 
 *Inherited from [Element](element.md).[restored](element.md#restored)*
 
-Defined in src/elements/Element.ts:21
+Defined in src/elements/Element.ts:22
 
 **Parameters:**
 
@@ -494,7 +523,7 @@ ___
 
 *Overrides [Element](element.md).[resume](element.md#resume)*
 
-Defined in src/elements/Node.ts:219
+Defined in src/elements/Node.ts:226
 
 is called by the token after an execution resume for every active (in wait) item
 different than init, which is called for all items
@@ -513,7 +542,7 @@ ___
 
 ▸ **run**(`item`: [Item](item.md)): *Promise‹[NODE_ACTION](../enums/node_action.md)›*
 
-Defined in src/elements/Node.ts:177
+Defined in src/elements/Node.ts:184
 
 **Parameters:**
 
@@ -549,7 +578,7 @@ ___
 
 ▸ **start**(`item`: [Item](item.md)): *Promise‹[NODE_ACTION](../enums/node_action.md)›*
 
-Defined in src/elements/Node.ts:169
+Defined in src/elements/Node.ts:176
 
 **Parameters:**
 

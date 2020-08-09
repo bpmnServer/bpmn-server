@@ -20,6 +20,13 @@ class ServerComponent {
 	get appDelegate() { return this.server.appDelegate; }
 }
 
+class ExecutionResponse {
+	input;
+	output;
+	action;
+	messageMatchingKey;
+}
+
 class ExecutionContext extends ServerComponent implements IExecutionContext {
 	execution?: IExecution;
 	logger;
@@ -30,10 +37,12 @@ class ExecutionContext extends ServerComponent implements IExecutionContext {
 	parentContext?: IExecutionContext;
 	process;
 	item;
+	response;
+	/*
 	input;
 	output;
 	messageMatchingKey;
-
+	*/
 	error(error): IExecutionContext {
 		return this;
     }
@@ -44,6 +53,7 @@ class ExecutionContext extends ServerComponent implements IExecutionContext {
 	constructor(server: IBPMNServer,parentContext: IExecutionContext =null) {
 		super(server);
 		this.parentContext = parentContext;
+		this.response = new ExecutionResponse();
 //		this.errors = [];
     }
 	get items() : IItem[] {

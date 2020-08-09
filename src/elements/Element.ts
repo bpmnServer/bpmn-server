@@ -12,6 +12,7 @@ import { IElement } from '../interfaces/elements';
 class Element implements IElement {
     id;
     type;
+    subType;
     name;
     behaviours = new Map();
 /* is called after the execution is restarted */

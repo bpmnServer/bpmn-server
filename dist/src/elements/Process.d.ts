@@ -6,6 +6,6 @@ declare class Process {
     def: Definition;
     childrenNodes: Node[];
     constructor(definition: any, children: any);
-    getStartNode(): any;
+    getStartNodes(userInvokable?: boolean): any[];
 }
 export { Process };

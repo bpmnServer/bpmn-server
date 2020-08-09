@@ -35,7 +35,7 @@
 
 • **execution_end**: = "execution.end"
 
-Defined in src/interfaces/Enums.ts:13
+Defined in src/interfaces/Enums.ts:19
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 • **execution_execute**: = "execution.execute"
 
-Defined in src/interfaces/Enums.ts:9
+Defined in src/interfaces/Enums.ts:15
 
 ___
 
@@ -51,7 +51,7 @@ ___
 
 • **execution_executed**: = "execution.executed"
 
-Defined in src/interfaces/Enums.ts:9
+Defined in src/interfaces/Enums.ts:15
 
 ___
 
@@ -59,7 +59,7 @@ ___
 
 • **execution_invoke**: = "execution.invoke"
 
-Defined in src/interfaces/Enums.ts:10
+Defined in src/interfaces/Enums.ts:16
 
 ___
 
@@ -67,7 +67,7 @@ ___
 
 • **execution_invoked**: = "execution.invoked"
 
-Defined in src/interfaces/Enums.ts:10
+Defined in src/interfaces/Enums.ts:16
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 • **execution_restored**: = "execution.restored"
 
-Defined in src/interfaces/Enums.ts:11
+Defined in src/interfaces/Enums.ts:17
 
 ___
 
@@ -83,7 +83,7 @@ ___
 
 • **execution_resumed**: = "execution_resumed"
 
-Defined in src/interfaces/Enums.ts:11
+Defined in src/interfaces/Enums.ts:17
 
 ___
 
@@ -91,7 +91,7 @@ ___
 
 • **execution_terminated**: = "executeion.terminate"
 
-Defined in src/interfaces/Enums.ts:13
+Defined in src/interfaces/Enums.ts:19
 
 ___
 
@@ -99,7 +99,7 @@ ___
 
 • **execution_wait**: = "execution.wait"
 
-Defined in src/interfaces/Enums.ts:12
+Defined in src/interfaces/Enums.ts:18
 
 ___
 
@@ -107,7 +107,7 @@ ___
 
 • **flow_discard**: = "discard"
 
-Defined in src/interfaces/Enums.ts:8
+Defined in src/interfaces/Enums.ts:14
 
 ___
 
@@ -115,7 +115,7 @@ ___
 
 • **flow_take**: = "take"
 
-Defined in src/interfaces/Enums.ts:8
+Defined in src/interfaces/Enums.ts:14
 
 ___
 
@@ -123,7 +123,7 @@ ___
 
 • **node_end**: = "end"
 
-Defined in src/interfaces/Enums.ts:6
+Defined in src/interfaces/Enums.ts:12
 
 ___
 
@@ -131,7 +131,7 @@ ___
 
 • **node_enter**: = "enter"
 
-Defined in src/interfaces/Enums.ts:6
+Defined in src/interfaces/Enums.ts:12
 
 ___
 
@@ -139,7 +139,7 @@ ___
 
 • **node_start**: = "start"
 
-Defined in src/interfaces/Enums.ts:6
+Defined in src/interfaces/Enums.ts:12
 
 ___
 
@@ -147,7 +147,7 @@ ___
 
 • **node_terminated**: = "terminated"
 
-Defined in src/interfaces/Enums.ts:6
+Defined in src/interfaces/Enums.ts:12
 
 ___
 
@@ -155,7 +155,7 @@ ___
 
 • **node_wait**: = "wait"
 
-Defined in src/interfaces/Enums.ts:6
+Defined in src/interfaces/Enums.ts:12
 
 ___
 
@@ -163,7 +163,7 @@ ___
 
 • **token_end**: = "token.end"
 
-Defined in src/interfaces/Enums.ts:14
+Defined in src/interfaces/Enums.ts:20
 
 ___
 
@@ -171,7 +171,7 @@ ___
 
 • **token_start**: = "token.start"
 
-Defined in src/interfaces/Enums.ts:14
+Defined in src/interfaces/Enums.ts:20
 
 ___
 
@@ -179,7 +179,7 @@ ___
 
 • **token_terminated**: = "token.terminated"
 
-Defined in src/interfaces/Enums.ts:14
+Defined in src/interfaces/Enums.ts:20
 
 ___
 
@@ -187,7 +187,7 @@ ___
 
 • **token_wait**: = "token.wait"
 
-Defined in src/interfaces/Enums.ts:14
+Defined in src/interfaces/Enums.ts:20
 
 ___
 
@@ -195,7 +195,7 @@ ___
 
 • **transform_input**: = "transformInput"
 
-Defined in src/interfaces/Enums.ts:7
+Defined in src/interfaces/Enums.ts:13
 
 ___
 
@@ -203,4 +203,4 @@ ___
 
 • **transform_output**: = "transformOutput"
 
-Defined in src/interfaces/Enums.ts:7
+Defined in src/interfaces/Enums.ts:13

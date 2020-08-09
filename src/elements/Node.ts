@@ -54,12 +54,19 @@ class Node extends Element {
 
         //
         item.token.log('--setting input ' + JSON.stringify(input));
-        item.context.input = input;
 
-        await this.doEvent(item, EXECUTION_EVENT.transform_input,null);
+        const data = this.getInput(item, input);
 
-        item.token.applyInput(item.context.input);
+        item.token.applyInput(data);
 
+    }
+    async getInput(item: Item, input) {
+
+        item.context.response.input = input;
+
+        await this.doEvent(item, EXECUTION_EVENT.transform_input, null);
+
+        return item.context.response.input;
     }
     /**
      * transform data using output rules
@@ -67,12 +74,12 @@ class Node extends Element {
      * @param item
      */
     async getOutput(item: Item) {
-        item.context.output = item.data;
-        item.context.messageMatchingKey = {};
+        item.context.response.output = item.data;
+        item.context.response.messageMatchingKey = {};
 
-        await this.doEvent(item, EXECUTION_EVENT.transform_output,null);
+        await this.doEvent(item, EXECUTION_EVENT.transform_output, null);
 
-        return item.context.output;
+        return item.context.response.output;
 
     }
     enter(item: Item) {

@@ -94,7 +94,7 @@ Defined in src/elements/behaviours/Behaviour.ts:38
 
 • **get messageId**(): *any*
 
-Defined in src/elements/behaviours/MessageSignal.ts:35
+Defined in src/elements/behaviours/MessageSignal.ts:38
 
 **Returns:** *any*
 
@@ -108,7 +108,7 @@ Defined in src/elements/behaviours/MessageSignal.ts:35
 
 *Overrides [Behaviour](behaviour.md).[describe](behaviour.md#describe)*
 
-Defined in src/elements/behaviours/MessageSignal.ts:39
+Defined in src/elements/behaviours/MessageSignal.ts:42
 
 **Returns:** *string[]*
 
@@ -120,7 +120,7 @@ ___
 
 *Overrides [Behaviour](behaviour.md).[end](behaviour.md#end)*
 
-Defined in src/elements/behaviours/MessageSignal.ts:32
+Defined in src/elements/behaviours/MessageSignal.ts:35
 
 **Parameters:**
 
@@ -179,7 +179,7 @@ ___
 
 *Overrides [Behaviour](behaviour.md).[init](behaviour.md#init)*
 
-Defined in src/elements/behaviours/MessageSignal.ts:16
+Defined in src/elements/behaviours/MessageSignal.ts:17
 
 **Returns:** *void*
 
@@ -245,7 +245,7 @@ ___
 
 *Overrides [Behaviour](behaviour.md).[start](behaviour.md#start)*
 
-Defined in src/elements/behaviours/MessageSignal.ts:19
+Defined in src/elements/behaviours/MessageSignal.ts:22
 
 **Parameters:**
 

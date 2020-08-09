@@ -32,10 +32,6 @@
 ### Methods
 
 * [checkTimers](cron.md#checktimers)
-* [itemTimerExpired](cron.md#itemtimerexpired)
-* [processTimerExpired](cron.md#processtimerexpired)
-* [scheduleItem](cron.md#scheduleitem)
-* [scheduleProcess](cron.md#scheduleprocess)
 * [start](cron.md#start)
 * [startTimers](cron.md#starttimers)
 * [checkCron](cron.md#static-checkcron)
@@ -185,59 +181,6 @@ Name | Type | Default |
 
 ___
 
-###  itemTimerExpired
-
-▸ **itemTimerExpired**(): *void*
-
-Defined in src/server/Cron.ts:95
-
-**Returns:** *void*
-
-___
-
-###  processTimerExpired
-
-▸ **processTimerExpired**(): *Promise‹void›*
-
-Defined in src/server/Cron.ts:97
-
-**Returns:** *Promise‹void›*
-
-___
-
-###  scheduleItem
-
-▸ **scheduleItem**(`item`: any, `entry`: any): *void*
-
-Defined in src/server/Cron.ts:123
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | any |
-`entry` | any |
-
-**Returns:** *void*
-
-___
-
-###  scheduleProcess
-
-▸ **scheduleProcess**(`entry`: any): *void*
-
-Defined in src/server/Cron.ts:110
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`entry` | any |
-
-**Returns:** *void*
-
-___
-
 ###  start
 
 ▸ **start**(): *Promise‹void›*
@@ -262,7 +205,7 @@ ___
 
 ▸ **checkCron**(`expression`: any, `referenceDateTime`: any): *number*
 
-Defined in src/server/Cron.ts:128
+Defined in src/server/Cron.ts:133
 
 **Parameters:**
 
@@ -279,7 +222,7 @@ ___
 
 ▸ **timeDue**(`expression`: any, `referenceDateTime`: any): *any*
 
-Defined in src/server/Cron.ts:147
+Defined in src/server/Cron.ts:152
 
 **Parameters:**
 

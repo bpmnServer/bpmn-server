@@ -62,6 +62,7 @@ class BPMNServer implements IBPMNServer {
 		this.definitions = configuration.definitions(this);
 		this.appDelegate = configuration.appDelegate(this);
 
+		console.log("bpmn-server version " + BPMNServer.getVersion());
 		if (options['cron'] == false)
 		{
 			return;
@@ -70,6 +71,11 @@ class BPMNServer implements IBPMNServer {
 		this.cron.start();
 
 	}
+	static getVersion() {
+		const pack = require("../../package.json");
+
+		return pack.version;
+    }
 
 }
 

@@ -7,6 +7,8 @@
 
 ## Invocation Summary
 
+To Invoke a process from your code:
+
 ```javascript
     const { configuration }  = require('../configuration.js');
     const { BPMNServer, Logger } = require('bpmn-server');
@@ -15,9 +17,7 @@
 
     const server = new BPMNServer(configuration, logger);
 
-    const engine = server.engine;
-
-    let response = await engine.start('Buy Used Car');
+    let response = await server.engine.start('Buy Used Car');
 
     const items = response.items.filter(item => {
         return (item.status == 'wait');
@@ -61,6 +61,7 @@ In the above example; engine.start return immediatly, but a listener keep track 
 ## Process Definitions Examples
 
 ### Service Task
+In Process definition (.bpmn file), use `implementation` attribute to define name of JavaScript/TypeScript Method to perform the Task:
 ```js
     <bpmn:serviceTask id="serviceTask" name="Service Task" implementation="service1">
     ...
@@ -203,8 +204,8 @@ When a process throw a message, bpmn-server checks if there is another process t
       <bpmn2:messageEventDefinition id="messageEventDef1" messageRef="Msg1" />
       <bpmn2:extensionElements>
         <camunda:script event="transformOutput"><![CDATA[
-        this.context.output={caseId: this.token.data.caseId};
-        this.context.messageMatchingKey={'data.caseId': this.token.data.caseId };
+        this.context.response.output={caseId: this.token.data.caseId};
+        this.context.response.messageMatchingKey={'data.caseId': this.token.data.caseId };
         ]]></camunda:script>
       </bpmn2:extensionElements>
       ...
@@ -233,8 +234,8 @@ In addition, the second process sends a confirmation message `Confirm1` to the f
       <bpmn2:messageEventDefinition id="messageEventDef2" messageRef="Confirm1" />
       <bpmn2:extensionElements>
         <camunda:script event="transformOutput"><![CDATA[
-        this.context.output={confirm: true};
-        this.context.messageMatchingKey={'data.caseId': this.token.data.caseId };
+        this.context.response.output={confirm: true};
+        this.context.response.messageMatchingKey={'data.caseId': this.token.data.caseId };
         ]]></camunda:script>
       </bpmn2:extensionElements>
         ...
@@ -258,10 +259,10 @@ Howerver, the challenge here is that make sure the message is sent to the specif
       
       <bpmn2:extensionElements>
         <camunda:script event="transformOutput"><![CDATA[
-        this.context.output={v1: this.data.v1 , v2: this.data.v2};
+        this.context.response.output={v1: this.data.v1 , v2: this.data.v2};
         ]]></camunda:script>
         <camunda:script event="transformInput"><![CDATA[
-        this.data.result=this.context.input;
+        this.data.result=this.context.response.input;
         ]]></camunda:script>
       </bpmn2:extensionElements>
       

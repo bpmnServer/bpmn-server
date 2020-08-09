@@ -4,6 +4,7 @@ exports.TimerBehaviour = void 0;
 const __1 = require("../../..");
 const _1 = require("./");
 const Cron_1 = require("../../server/Cron");
+const interfaces_1 = require("../../interfaces");
 /*
  * will fire a timer at start and go into wait sleep
  * timer will later invoke the item when due
@@ -35,6 +36,7 @@ Example (3 repeating intervals, each lasting 10 hours):
 class TimerBehaviour extends _1.Behaviour {
     init() {
         let def;
+        this.node.subType = interfaces_1.NODE_SUBTYPE.timer;
         this.node.def.eventDefinitions.forEach(ed => {
             if (ed.$type == 'bpmn:TimerEventDefinition') {
                 if (ed.timeDuration) {

@@ -6,6 +6,7 @@ import { Item } from '../../engine/Item';
 import { BPMNServer } from '../../server';
 import { Behaviour } from './';
 import { Cron } from '../../server/Cron';
+import { NODE_SUBTYPE } from '../../interfaces';
 
 
 /*
@@ -41,6 +42,7 @@ class TimerBehaviour extends Behaviour {
     timeCycle;
     init() {
         let def;
+        this.node.subType = NODE_SUBTYPE.timer;
 
         this.node.def.eventDefinitions.forEach(ed => {
 

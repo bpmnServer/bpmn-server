@@ -33,6 +33,7 @@
 * [processId](subprocess.md#processid)
 * [scripts](subprocess.md#scripts)
 * [signalId](subprocess.md#signalid)
+* [subType](subprocess.md#subtype)
 * [type](subprocess.md#type)
 
 ### Accessors
@@ -51,6 +52,7 @@
 * [enter](subprocess.md#enter)
 * [execute](subprocess.md#execute)
 * [getBehaviour](subprocess.md#getbehaviour)
+* [getInput](subprocess.md#getinput)
 * [getOutbounds](subprocess.md#getoutbounds)
 * [getOutput](subprocess.md#getoutput)
 * [hasBehaviour](subprocess.md#hasbehaviour)
@@ -112,7 +114,7 @@ ___
 
 *Inherited from [Element](element.md).[behaviours](element.md#behaviours)*
 
-Defined in src/elements/Element.ts:16
+Defined in src/elements/Element.ts:17
 
 ___
 
@@ -120,7 +122,7 @@ ___
 
 • **childProcess**: *[Process](process.md)*
 
-Defined in src/elements/Tasks.ts:95
+Defined in src/elements/Tasks.ts:92
 
 ___
 
@@ -220,6 +222,16 @@ Defined in src/elements/Node.ts:21
 
 ___
 
+###  subType
+
+• **subType**: *any*
+
+*Inherited from [Element](element.md).[subType](element.md#subtype)*
+
+Defined in src/elements/Element.ts:15
+
+___
+
 ###  type
 
 • **type**: *any*
@@ -238,7 +250,7 @@ Defined in src/elements/Element.ts:14
 
 *Overrides [Node](node.md).[canBeInvoked](node.md#canbeinvoked)*
 
-Defined in src/elements/Tasks.ts:97
+Defined in src/elements/Tasks.ts:94
 
 **Returns:** *boolean*
 
@@ -250,7 +262,7 @@ ___
 
 *Inherited from [Node](node.md).[isCatching](node.md#iscatching)*
 
-Defined in src/elements/Node.ts:93
+Defined in src/elements/Node.ts:100
 
 **Returns:** *boolean*
 
@@ -262,7 +274,7 @@ ___
 
 *Overrides [Node](node.md).[requiresWait](node.md#requireswait)*
 
-Defined in src/elements/Tasks.ts:96
+Defined in src/elements/Tasks.ts:93
 
 **Returns:** *boolean*
 
@@ -276,7 +288,7 @@ Defined in src/elements/Tasks.ts:96
 
 *Inherited from [Element](element.md).[addBehaviour](element.md#addbehaviour)*
 
-Defined in src/elements/Element.ts:38
+Defined in src/elements/Element.ts:39
 
 **Parameters:**
 
@@ -297,7 +309,7 @@ ___
 
 *Overrides [Element](element.md).[continue](element.md#continue)*
 
-Defined in src/elements/Node.ts:163
+Defined in src/elements/Node.ts:170
 
 **Parameters:**
 
@@ -317,7 +329,7 @@ ___
 
 *Inherited from [Element](element.md).[describe](element.md#describe)*
 
-Defined in src/elements/Element.ts:20
+Defined in src/elements/Element.ts:21
 
 **Returns:** *string[][]*
 
@@ -349,7 +361,7 @@ ___
 
 *Inherited from [Node](node.md).[end](node.md#end)*
 
-Defined in src/elements/Node.ts:181
+Defined in src/elements/Node.ts:188
 
 **Parameters:**
 
@@ -367,7 +379,7 @@ ___
 
 *Inherited from [Node](node.md).[enter](node.md#enter)*
 
-Defined in src/elements/Node.ts:78
+Defined in src/elements/Node.ts:85
 
 **Parameters:**
 
@@ -385,7 +397,7 @@ ___
 
 *Inherited from [Node](node.md).[execute](node.md#execute)*
 
-Defined in src/elements/Node.ts:103
+Defined in src/elements/Node.ts:110
 
 this is the primary exectuion method for a node
 
@@ -413,7 +425,7 @@ ___
 
 *Inherited from [Element](element.md).[getBehaviour](element.md#getbehaviour)*
 
-Defined in src/elements/Element.ts:35
+Defined in src/elements/Element.ts:36
 
 **Parameters:**
 
@@ -425,13 +437,32 @@ Name | Type |
 
 ___
 
+###  getInput
+
+▸ **getInput**(`item`: [Item](item.md), `input`: any): *Promise‹any›*
+
+*Inherited from [Node](node.md).[getInput](node.md#getinput)*
+
+Defined in src/elements/Node.ts:63
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`item` | [Item](item.md) |
+`input` | any |
+
+**Returns:** *Promise‹any›*
+
+___
+
 ###  getOutbounds
 
 ▸ **getOutbounds**(`item`: [Item](item.md)): *[Item](item.md)[]*
 
 *Inherited from [Node](node.md).[getOutbounds](node.md#getoutbounds)*
 
-Defined in src/elements/Node.ts:227
+Defined in src/elements/Node.ts:234
 
 **Parameters:**
 
@@ -449,7 +480,7 @@ ___
 
 *Inherited from [Node](node.md).[getOutput](node.md#getoutput)*
 
-Defined in src/elements/Node.ts:69
+Defined in src/elements/Node.ts:76
 
 transform data using output rules
 todo
@@ -472,7 +503,7 @@ ___
 
 *Inherited from [Element](element.md).[hasBehaviour](element.md#hasbehaviour)*
 
-Defined in src/elements/Element.ts:31
+Defined in src/elements/Element.ts:32
 
 respond by providing behaviour attributes beyond item and node information
  ex: timer due , input/outupt , fields
@@ -493,7 +524,7 @@ ___
 
 *Inherited from [Node](node.md).[init](node.md#init)*
 
-Defined in src/elements/Node.ts:222
+Defined in src/elements/Node.ts:229
 
 **Parameters:**
 
@@ -511,7 +542,7 @@ ___
 
 *Inherited from [Element](element.md).[restored](element.md#restored)*
 
-Defined in src/elements/Element.ts:21
+Defined in src/elements/Element.ts:22
 
 **Parameters:**
 
@@ -531,7 +562,7 @@ ___
 
 *Overrides [Element](element.md).[resume](element.md#resume)*
 
-Defined in src/elements/Node.ts:219
+Defined in src/elements/Node.ts:226
 
 is called by the token after an execution resume for every active (in wait) item
 different than init, which is called for all items
@@ -552,7 +583,7 @@ ___
 
 *Inherited from [Node](node.md).[run](node.md#run)*
 
-Defined in src/elements/Node.ts:177
+Defined in src/elements/Node.ts:184
 
 **Parameters:**
 
@@ -592,7 +623,7 @@ ___
 
 *Overrides [Node](node.md).[start](node.md#start)*
 
-Defined in src/elements/Tasks.ts:99
+Defined in src/elements/Tasks.ts:96
 
 **Parameters:**
 

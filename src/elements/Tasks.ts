@@ -22,7 +22,7 @@ class ScriptTask extends Node {
         return NODE_ACTION.end;
     }
 }
-/* * TODO: should also call it by just name
+/**
  * 
  *      foo[method]();
  *      
@@ -35,6 +35,7 @@ class ScriptTask extends Node {
 class ServiceTask extends Node {
     async run(item): Promise<NODE_ACTION> {
 
+        item.context.response.action = null;
         // calling appDelegate by service name
         const appDelegate = item.token.execution.appDelegate;
         let serviceName;
@@ -53,16 +54,12 @@ class ServiceTask extends Node {
         item.log("service returned " + ret);
 
         await item.node.setInput(item,ret);
-        /*
-        item.token.log(this.def.implementation);
-        if (this.def.implementation) {
-            item.token.log('invoking service call ' + this.id + " " + item.id);
-            await item.token.execution.appDelegate.scopeJS(item, this.def.implementation);
-            //await item.token.execution.appDelegate[this.def.implementation](item);
-            item.token.log('returned from service call ' + this.id + " " + item.id);
+
+        if (item.context.response.action && item.context.response.action == NODE_ACTION.wait) {
+
+            return item.context.response.action;
         }
-        //        console.log(' returning at service task');
-        */
+
         return NODE_ACTION.end;
     }
 }
@@ -101,7 +98,7 @@ class SubProcess extends Node {
         const token = item.token;
 
         token.log('..executing a sub process item:' + item.id );
-        const startNode = this.childProcess.getStartNode();
+        const startNode = this.childProcess.getStartNodes()[0];
 
         await Token.startNewToken(token.execution, startNode, this.id, token, this, null);
 
@@ -138,7 +135,7 @@ class CallActivity extends Node {
 
         const context = item.context;
         const modelName = this.calledElement;
-        const data = item.data;
+        const data = item.node.getOutput(item);
 
         const response = await context.engine.start(modelName, data);
 

@@ -1,6 +1,7 @@
 import express = require('express');
 const router = express.Router();
 var bodyParser = require('body-parser')
+import { WebService } from 'dmn-engine';
 
 const FS = require('fs');
 
@@ -199,6 +200,17 @@ const awaitAppDelegateFactory = (middleware) => {
         console.log(" deleted");
         display(res, 'Show', output);
     });
+    router.put('/rules/invoke', awaitAppDelegateFactory(async (request, response) => {
+
+        try {
+            await WebService(request, response);
+        }
+        catch (exc) {
+            console.log(exc);
+            response.json({ errors: JSON.stringify(exc,null,2)});
+        }
+    }));
+
 }
 async function displayError(res, error) {
     let msg = '';

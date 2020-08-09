@@ -23,16 +23,14 @@
 * [engine](iexecutioncontext.md#engine)
 * [errors](iexecutioncontext.md#errors)
 * [execution](iexecutioncontext.md#optional-execution)
-* [input](iexecutioncontext.md#input)
 * [instance](iexecutioncontext.md#instance)
 * [item](iexecutioncontext.md#item)
 * [items](iexecutioncontext.md#items)
 * [listener](iexecutioncontext.md#listener)
 * [logger](iexecutioncontext.md#logger)
-* [messageMatchingKey](iexecutioncontext.md#messagematchingkey)
-* [output](iexecutioncontext.md#output)
 * [parentContext](iexecutioncontext.md#optional-parentcontext)
 * [process](iexecutioncontext.md#process)
+* [response](iexecutioncontext.md#response)
 * [server](iexecutioncontext.md#server)
 
 ### Methods
@@ -45,7 +43,7 @@
 
 • **appDelegate**: *any*
 
-Defined in src/interfaces/engine.ts:165
+Defined in src/interfaces/engine.ts:171
 
 ___
 
@@ -53,7 +51,7 @@ ___
 
 • **cache**: *any*
 
-Defined in src/interfaces/engine.ts:163
+Defined in src/interfaces/engine.ts:169
 
 ___
 
@@ -61,7 +59,7 @@ ___
 
 • **configuration**: *any*
 
-Defined in src/interfaces/engine.ts:158
+Defined in src/interfaces/engine.ts:164
 
 ___
 
@@ -69,7 +67,7 @@ ___
 
 • **cron**: *any*
 
-Defined in src/interfaces/engine.ts:162
+Defined in src/interfaces/engine.ts:168
 
 ___
 
@@ -77,7 +75,7 @@ ___
 
 • **dataStore**: *any*
 
-Defined in src/interfaces/engine.ts:160
+Defined in src/interfaces/engine.ts:166
 
 ___
 
@@ -85,7 +83,7 @@ ___
 
 • **definitions**: *any*
 
-Defined in src/interfaces/engine.ts:164
+Defined in src/interfaces/engine.ts:170
 
 ___
 
@@ -93,7 +91,7 @@ ___
 
 • **engine**: *any*
 
-Defined in src/interfaces/engine.ts:161
+Defined in src/interfaces/engine.ts:167
 
 ___
 
@@ -101,7 +99,7 @@ ___
 
 • **errors**: *any*
 
-Defined in src/interfaces/engine.ts:179
+Defined in src/interfaces/engine.ts:183
 
 ___
 
@@ -109,15 +107,7 @@ ___
 
 • **execution**? : *[IExecution](iexecution.md)*
 
-Defined in src/interfaces/engine.ts:167
-
-___
-
-###  input
-
-• **input**: *any*
-
-Defined in src/interfaces/engine.ts:174
+Defined in src/interfaces/engine.ts:173
 
 ___
 
@@ -125,7 +115,7 @@ ___
 
 • **instance**: *any*
 
-Defined in src/interfaces/engine.ts:170
+Defined in src/interfaces/engine.ts:176
 
 ___
 
@@ -133,7 +123,7 @@ ___
 
 • **item**: *any*
 
-Defined in src/interfaces/engine.ts:173
+Defined in src/interfaces/engine.ts:179
 
 ___
 
@@ -141,7 +131,7 @@ ___
 
 • **items**: *[IItem](iitem.md)[]*
 
-Defined in src/interfaces/engine.ts:180
+Defined in src/interfaces/engine.ts:184
 
 ___
 
@@ -149,7 +139,7 @@ ___
 
 • **listener**: *any*
 
-Defined in src/interfaces/engine.ts:168
+Defined in src/interfaces/engine.ts:174
 
 ___
 
@@ -157,23 +147,7 @@ ___
 
 • **logger**: *any*
 
-Defined in src/interfaces/engine.ts:159
-
-___
-
-###  messageMatchingKey
-
-• **messageMatchingKey**: *any*
-
-Defined in src/interfaces/engine.ts:176
-
-___
-
-###  output
-
-• **output**: *any*
-
-Defined in src/interfaces/engine.ts:175
+Defined in src/interfaces/engine.ts:165
 
 ___
 
@@ -181,7 +155,7 @@ ___
 
 • **parentContext**? : *[IExecutionContext](iexecutioncontext.md)*
 
-Defined in src/interfaces/engine.ts:185
+Defined in src/interfaces/engine.ts:189
 
 ___
 
@@ -189,7 +163,15 @@ ___
 
 • **process**: *any*
 
-Defined in src/interfaces/engine.ts:172
+Defined in src/interfaces/engine.ts:178
+
+___
+
+###  response
+
+• **response**: *[IExecutionResponse](iexecutionresponse.md)*
+
+Defined in src/interfaces/engine.ts:180
 
 ___
 
@@ -197,7 +179,7 @@ ___
 
 • **server**: *any*
 
-Defined in src/interfaces/engine.ts:157
+Defined in src/interfaces/engine.ts:163
 
 ## Methods
 
@@ -205,7 +187,7 @@ Defined in src/interfaces/engine.ts:157
 
 ▸ **error**(`error`: any): *[IExecutionContext](iexecutioncontext.md)*
 
-Defined in src/interfaces/engine.ts:181
+Defined in src/interfaces/engine.ts:185
 
 **Parameters:**
 

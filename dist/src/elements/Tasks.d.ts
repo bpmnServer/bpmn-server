@@ -5,6 +5,16 @@ import { IExecution } from '../interfaces/engine';
 declare class ScriptTask extends Node {
     run(item: any): Promise<NODE_ACTION>;
 }
+/**
+ *
+ *      foo[method]();
+ *
+ *      await this.token.appDelegate[serviceName](data);
+ *
+ *
+ *      service signature:
+ *              output= service (input,context)
+ */
 declare class ServiceTask extends Node {
     run(item: any): Promise<NODE_ACTION>;
 }

@@ -23,9 +23,7 @@ declare class ExecutionContext extends ServerComponent implements IExecutionCont
     parentContext?: IExecutionContext;
     process: any;
     item: any;
-    input: any;
-    output: any;
-    messageMatchingKey: any;
+    response: any;
     error(error: any): IExecutionContext;
     get instance(): IInstanceData;
     constructor(server: IBPMNServer, parentContext?: IExecutionContext);
