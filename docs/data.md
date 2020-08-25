@@ -81,12 +81,12 @@ In this example we are adding a script to bpmn:startEvent
 The entire execution will have one data scope object, shared among all nodes except SubProcess and Loops (Multi-instances), 
 each will have own item part of the data object
 
-![Image description](Data_BuyUsedCar.png)
+![Image description](./Data_BuyUsedCar.PNG)
 
 However, for SubProcess and Loop elements a seperate scope 
 
-![Image description](Data_Scripts_Services_model.png)
-![Image description](Data_Scripts_Services.png)
+![Image description](./Data_scripts_services_model.PNG)
+![Image description](./Data_scripts_Services.PNG)
 
 # Query on Data
 For Details on Query see [Data Query](./api-summary#data-query) 
