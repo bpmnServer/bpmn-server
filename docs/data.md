@@ -86,7 +86,7 @@ each will have own item part of the data object
 However, for SubProcess and Loop elements a seperate scope 
 
 ![Image description](./Data_scripts_services_model.PNG)
-![Image description](./Data_scripts_Services.PNG)
+![Image description](./Data_scripts_services.PNG)
 
 # Query on Data
 For Details on Query see [Data Query](./api-summary#data-query) 
