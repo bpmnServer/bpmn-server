@@ -2,7 +2,7 @@
 - [instance Data](#instance-data) 
 - [Data Scope](#data-scope) 
 - [Query on Data](#query-on-data) 
-- [input/Ooutput Data](#input-output-data) 
+- [input/Output Data](#input-output-data) 
 
 
 # Instance Data
