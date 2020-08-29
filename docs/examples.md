@@ -166,7 +166,7 @@ In this example we are adding a script to bpmn:startEvent
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
 ```
-More on [timers](./timers)
+More on [timers](./timers.md)
 ### Multi-instances Tasks
 
 ```js
@@ -177,7 +177,7 @@ More on [timers](./timers)
       <bpmn:script><![CDATA[this.token.log('testing from the inside: '+this.token.data.loopKey);]]></bpmn:script>
     </bpmn:scriptTask>
 ```
-For Multi-instance data handling [see](./data)
+For Multi-instance data handling [see](./data.md)
 ### SubProcess
 ```js
 ```
