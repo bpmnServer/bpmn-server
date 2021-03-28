@@ -13,14 +13,14 @@ let items;
 let definition;
 let node;
 Feature('Test Defintions', () => {
-    Scenario('All path', () => {
+    Scenario('defs.js for:' + name, () => {
         Given('a bpmn source ', async () => {
 
             server = new BPMNServer(config, logger);
 
             definition = await server.definitions.load(name);
 
-            response = await server.engine.start(name);
+//            response = await server.engine.start(name);
 
         });
 
@@ -28,13 +28,13 @@ Feature('Test Defintions', () => {
 
             //console.log(definition);
             node = definition.getNodeById('StartEvent_0iay4ar');
-            console.log(node);
+            //console.log(node);
             let timerName = 'bpmn: TimerEventDefinition';
             if (node.hasBehaviour(timerName)) {
                 let timer = node.getBehaviour(timerName);
-                console.log(timer);
+                //console.log(timer);
             }
-            console.log(node.behaviours);
+            //console.log(node.behaviours);
             //            await process.execute(null, { needsCleaning: needsCleaning, needsRepairs: needsRepairs, records: [1, 2, 3] });
 
         });

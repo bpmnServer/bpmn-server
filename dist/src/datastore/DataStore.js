@@ -10,12 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DataStore = void 0;
-const ServerContext_1 = require("../server/ServerContext");
+const ServerComponent_1 = require("../server/ServerComponent");
 const fs = require('fs');
 const MongoDB = require('./MongoDB').MongoDB;
 const Instance_collection = 'wf_instances';
 const Events_collection = 'wf_events';
-class DataStore extends ServerContext_1.ServerComponent {
+class DataStore extends ServerComponent_1.ServerComponent {
     constructor(server) {
         super(server);
         this.isModified = false;
@@ -80,6 +80,7 @@ class DataStore extends ServerContext_1.ServerComponent {
                     this.logger.log('DataStore: saved again ' + this.execution.saved);
                 }
                 this.isModified = false;
+                this.logger.log('DataStore: save is now done ');
             }
             this.inSaving = false;
         });
@@ -87,11 +88,12 @@ class DataStore extends ServerContext_1.ServerComponent {
     check(event, item) {
         return __awaiter(this, void 0, void 0, function* () {
             if (item)
-                this.logger.log('DataStore: instance modified...' + event + 'item:' + item.elementId);
+                this.logger.log('DataStore: instance modified...event:' + event + 'item:' + item.elementId);
             else
-                this.logger.log('DataStore: instance modified...' + event);
+                this.logger.log('DataStore: instance modified...event:' + event);
             this.isModified = true;
-            setTimeout(this.save.bind(this), 500);
+            //setTimeout(this.save.bind(this), 500);
+            return this.execution.promises.push(this.save());
         });
     }
     loadInstance(instanceId) {

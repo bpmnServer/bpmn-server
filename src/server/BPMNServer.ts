@@ -2,10 +2,13 @@
 import { Logger } from '../common/Logger';
 
 
-import { IConfiguration, ILogger, DataStore , IAppDelegate, IBPMNServer, IDataStore} from '../..';
+import { IConfiguration, ILogger, DataStore , IAppDelegate, IBPMNServer, IDataStore,ExecutionContext} from '../..';
 import { Engine } from './Engine';
 import { CacheManager } from './CacheManager';
 import { Cron } from './Cron';
+import { EventEmitter } from 'events';
+
+const _version_ = "1.1.10";
 
 const fs = require('fs');
 /**
@@ -33,6 +36,7 @@ const fs = require('fs');
 class BPMNServer implements IBPMNServer {
 
 	engine: Engine;
+	listener: EventEmitter;
 	configuration: any;
 	logger: ILogger;
 	definitions;
@@ -53,6 +57,7 @@ class BPMNServer implements IBPMNServer {
 		if (logger == null) {
 			logger = new Logger({});
 		}
+		this.listener = new EventEmitter();
 		this.logger = logger;
 		this.configuration = configuration;
 		this.cron = new Cron(this);
@@ -71,10 +76,11 @@ class BPMNServer implements IBPMNServer {
 		this.cron.start();
 
 	}
-	static getVersion() {
-		const pack = require("../../package.json");
 
-		return pack.version;
+	static getVersion() {
+
+		return _version_;
+
     }
 
 }

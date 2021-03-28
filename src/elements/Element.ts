@@ -15,6 +15,7 @@ class Element implements IElement {
     subType;
     name;
     behaviours = new Map();
+    isFlow=false;
 /* is called after the execution is restarted */
 
     continue(item: Item) { }

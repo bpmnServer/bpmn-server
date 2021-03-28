@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Behaviour_names = exports.BehaviourLoader = void 0;
 const _1 = require(".");
 const Script_1 = require("./Script");
+const Error_1 = require("./Error");
 const duration = require('iso8601-duration');
 const parse = duration.parse;
 const end = duration.end;
@@ -14,6 +15,7 @@ const Behaviour_names = {
     TerminateEventDefinition: 'bpmn:TerminateEventDefinition',
     MessageEventDefinition: 'bpmn:MessageEventDefinition',
     SignalEventDefinition: 'bpmn:SignalEventDefinition',
+    ErrorEventDefinition: 'bpmn:ErrorEventDefinition',
     CamundaFormData: 'camunda:formData',
     CamundaScript: 'camunda:script'
 };
@@ -102,6 +104,11 @@ BehaviourLoader.behaviours = [
     {
         name: Behaviour_names.SignalEventDefinition, funct: function (node, def) {
             return new _1.SignalEventBehaviour(node, def);
+        }
+    },
+    {
+        name: Behaviour_names.ErrorEventDefinition, funct: function (node, def) {
+            return new Error_1.ErrorEventBehaviour(node, def);
         }
     },
     {

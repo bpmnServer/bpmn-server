@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://genmymodel.com/bpmn2" id="__JHs4I8yEeqwvcm2LAkYWA" name="bpmn-pizza-store-example" targetNamespace="http://genmymodel.com/bpmn2" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="6.5.1">
+  <bpmn2:extensionElements />
+  <bpmn2:collaboration id="__JHs4Y8yEeqwvcm2LAkYWA" name="collaboration">
+    <bpmn2:participant id="__JHs4o8yEeqwvcm2LAkYWA" name="Pizza customer" processRef="__JHs448yEeqwvcm2LAkYWA" />
+    <bpmn2:participant id="__JHs5I8yEeqwvcm2LAkYWA" name="Pizza vendor" processRef="__JHs5Y8yEeqwvcm2LAkYWA" />
+    <bpmn2:messageFlow id="__JHs5o8yEeqwvcm2LAkYWA" name="pizza order" sourceRef="__JHs548yEeqwvcm2LAkYWA" targetRef="__JHs6I8yEeqwvcm2LAkYWA" />
+    <bpmn2:messageFlow id="__JHs6Y8yEeqwvcm2LAkYWA" name="" sourceRef="__JHs6o8yEeqwvcm2LAkYWA" targetRef="__JHs648yEeqwvcm2LAkYWA" />
+    <bpmn2:messageFlow id="__JHs7I8yEeqwvcm2LAkYWA" name="" sourceRef="__JHs7Y8yEeqwvcm2LAkYWA" targetRef="__JHs6o8yEeqwvcm2LAkYWA" />
+    <bpmn2:messageFlow id="__JHs8Y8yEeqwvcm2LAkYWA" name="money" sourceRef="__JHs8o8yEeqwvcm2LAkYWA" targetRef="__JHs848yEeqwvcm2LAkYWA" />
+    <bpmn2:messageFlow id="__JHs9I8yEeqwvcm2LAkYWA" name="receipt" sourceRef="__JHs848yEeqwvcm2LAkYWA" targetRef="__JHs8o8yEeqwvcm2LAkYWA" />
+  </bpmn2:collaboration>
+  <bpmn2:process id="__JHs448yEeqwvcm2LAkYWA" name="Pizza customer process" processType="None" isExecutable="true">
+    <bpmn2:startEvent id="__JHs9Y8yEeqwvcm2LAkYWA" name="Hungry for pizza">
+      <bpmn2:outgoing>__JHs9o8yEeqwvcm2LAkYWA</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:eventBasedGateway id="__JHtAI8yEeqwvcm2LAkYWA" name="">
+      <bpmn2:incoming>__JHs-Y8yEeqwvcm2LAkYWA</bpmn2:incoming>
+      <bpmn2:incoming>__JHtAY8yEeqwvcm2LAkYWA</bpmn2:incoming>
+      <bpmn2:outgoing>__JHtA48yEeqwvcm2LAkYWA</bpmn2:outgoing>
+    </bpmn2:eventBasedGateway>
+    <bpmn2:intermediateCatchEvent id="__JHtBI8yEeqwvcm2LAkYWA" name="60 minutes">
+      <bpmn2:incoming>__JHtA48yEeqwvcm2LAkYWA</bpmn2:incoming>
+      <bpmn2:outgoing>__JHtBY8yEeqwvcm2LAkYWA</bpmn2:outgoing>
+      <bpmn2:timerEventDefinition id="__JHtBo8yEeqwvcm2LAkYWA" />
+    </bpmn2:intermediateCatchEvent>
+    <bpmn2:intermediateThrowEvent id="__JHs8I8yEeqwvcm2LAkYWA" name="pizza received">
+      <bpmn2:outgoing>__JHtB48yEeqwvcm2LAkYWA</bpmn2:outgoing>
+      <bpmn2:messageEventDefinition id="__JHtCI8yEeqwvcm2LAkYWA" />
+    </bpmn2:intermediateThrowEvent>
+    <bpmn2:endEvent id="__JHtDI8yEeqwvcm2LAkYWA" name="Hunger satisfied">
+      <bpmn2:incoming>__JHtC48yEeqwvcm2LAkYWA</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:userTask id="__JHs948yEeqwvcm2LAkYWA" name="Select a pizza">
+      <bpmn2:incoming>__JHs9o8yEeqwvcm2LAkYWA</bpmn2:incoming>
+      <bpmn2:outgoing>__JHs-I8yEeqwvcm2LAkYWA</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="__JHs548yEeqwvcm2LAkYWA" name="Order a pizza">
+      <bpmn2:incoming>__JHs-I8yEeqwvcm2LAkYWA</bpmn2:incoming>
+      <bpmn2:outgoing>__JHs-Y8yEeqwvcm2LAkYWA</bpmn2:outgoing>
+      <bpmn2:ioSpecification>
+        <bpmn2:dataOutput name="dataOutput" />
+        <bpmn2:inputSet />
+        <bpmn2:outputSet />
+      </bpmn2:ioSpecification>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="__JHs6o8yEeqwvcm2LAkYWA" name="Ask for the pizza">
+      <bpmn2:incoming>__JHtBY8yEeqwvcm2LAkYWA</bpmn2:incoming>
+      <bpmn2:outgoing>__JHtAY8yEeqwvcm2LAkYWA</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="__JHs8o8yEeqwvcm2LAkYWA" name="Pay the pizza">
+      <bpmn2:incoming>__JHtB48yEeqwvcm2LAkYWA</bpmn2:incoming>
+      <bpmn2:outgoing>__JHtCY8yEeqwvcm2LAkYWA</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="__JHtCo8yEeqwvcm2LAkYWA" name="Eat the pizza">
+      <bpmn2:incoming>__JHtCY8yEeqwvcm2LAkYWA</bpmn2:incoming>
+      <bpmn2:outgoing>__JHtC48yEeqwvcm2LAkYWA</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="__JHs9o8yEeqwvcm2LAkYWA" name="" sourceRef="__JHs9Y8yEeqwvcm2LAkYWA" targetRef="__JHs948yEeqwvcm2LAkYWA" />
+    <bpmn2:sequenceFlow id="__JHtAY8yEeqwvcm2LAkYWA" name="" sourceRef="__JHs6o8yEeqwvcm2LAkYWA" targetRef="__JHtAI8yEeqwvcm2LAkYWA" />
+    <bpmn2:sequenceFlow id="__JHs-Y8yEeqwvcm2LAkYWA" name="" sourceRef="__JHs548yEeqwvcm2LAkYWA" targetRef="__JHtAI8yEeqwvcm2LAkYWA" />
+    <bpmn2:sequenceFlow id="__JHtA48yEeqwvcm2LAkYWA" name="" sourceRef="__JHtAI8yEeqwvcm2LAkYWA" targetRef="__JHtBI8yEeqwvcm2LAkYWA" />
+    <bpmn2:sequenceFlow id="__JHtBY8yEeqwvcm2LAkYWA" name="" sourceRef="__JHtBI8yEeqwvcm2LAkYWA" targetRef="__JHs6o8yEeqwvcm2LAkYWA" />
+    <bpmn2:sequenceFlow id="__JHtB48yEeqwvcm2LAkYWA" name="" sourceRef="__JHs8I8yEeqwvcm2LAkYWA" targetRef="__JHs8o8yEeqwvcm2LAkYWA" />
+    <bpmn2:sequenceFlow id="__JHtC48yEeqwvcm2LAkYWA" name="" sourceRef="__JHtCo8yEeqwvcm2LAkYWA" targetRef="__JHtDI8yEeqwvcm2LAkYWA" />
+    <bpmn2:sequenceFlow id="__JHs-I8yEeqwvcm2LAkYWA" name="" sourceRef="__JHs948yEeqwvcm2LAkYWA" targetRef="__JHs548yEeqwvcm2LAkYWA" />
+    <bpmn2:sequenceFlow id="__JHtCY8yEeqwvcm2LAkYWA" name="" sourceRef="__JHs8o8yEeqwvcm2LAkYWA" targetRef="__JHtCo8yEeqwvcm2LAkYWA" />
+  </bpmn2:process>
+  <bpmn2:process id="__JHs5Y8yEeqwvcm2LAkYWA" name="Pizza vendor process" processType="None">
+    <bpmn2:laneSet id="__JHtDY8yEeqwvcm2LAkYWA" name="LaneSet">
+      <bpmn2:lane id="__JHtEo8yEeqwvcm2LAkYWA" name="Delivery boy">
+        <bpmn2:flowNodeRef>__JHs748yEeqwvcm2LAkYWA</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>__JHs848yEeqwvcm2LAkYWA</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>__JHtE48yEeqwvcm2LAkYWA</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+      <bpmn2:lane id="__JHtEI8yEeqwvcm2LAkYWA" name="pizza chef">
+        <bpmn2:flowNodeRef>__JHtEY8yEeqwvcm2LAkYWA</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+      <bpmn2:lane id="__JHtDo8yEeqwvcm2LAkYWA" name="clerk">
+        <bpmn2:flowNodeRef>__JHs7Y8yEeqwvcm2LAkYWA</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>__JHs6I8yEeqwvcm2LAkYWA</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>__JHtD48yEeqwvcm2LAkYWA</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>__JHs648yEeqwvcm2LAkYWA</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+    </bpmn2:laneSet>
+    <bpmn2:startEvent id="__JHs6I8yEeqwvcm2LAkYWA" name="Order received">
+      <bpmn2:outgoing>__JHtFI8yEeqwvcm2LAkYWA</bpmn2:outgoing>
+      <bpmn2:messageEventDefinition id="__JHtFY8yEeqwvcm2LAkYWA" />
+    </bpmn2:startEvent>
+    <bpmn2:parallelGateway id="__JHtD48yEeqwvcm2LAkYWA" name="">
+      <bpmn2:incoming>__JHtFI8yEeqwvcm2LAkYWA</bpmn2:incoming>
+      <bpmn2:outgoing>__JHtFo8yEeqwvcm2LAkYWA</bpmn2:outgoing>
+      <bpmn2:outgoing>__JHtF48yEeqwvcm2LAkYWA</bpmn2:outgoing>
+    </bpmn2:parallelGateway>
+    <bpmn2:intermediateCatchEvent id="__JHs648yEeqwvcm2LAkYWA" name="Where is my pizza?">
+      <bpmn2:incoming>__JHtF48yEeqwvcm2LAkYWA</bpmn2:incoming>
+      <bpmn2:incoming>__JHtGI8yEeqwvcm2LAkYWA</bpmn2:incoming>
+      <bpmn2:outgoing>__JHtGY8yEeqwvcm2LAkYWA</bpmn2:outgoing>
+      <bpmn2:messageEventDefinition id="__JHtGo8yEeqwvcm2LAkYWA" />
+    </bpmn2:intermediateCatchEvent>
+    <bpmn2:task id="__JHs7Y8yEeqwvcm2LAkYWA" name="Calm customer">
+      <bpmn2:incoming>__JHtGY8yEeqwvcm2LAkYWA</bpmn2:incoming>
+      <bpmn2:outgoing>__JHtGI8yEeqwvcm2LAkYWA</bpmn2:outgoing>
+    </bpmn2:task>
+    <bpmn2:task id="__JHtEY8yEeqwvcm2LAkYWA" name="Bake the pizza">
+      <bpmn2:incoming>__JHtFo8yEeqwvcm2LAkYWA</bpmn2:incoming>
+      <bpmn2:outgoing>__JHtG48yEeqwvcm2LAkYWA</bpmn2:outgoing>
+    </bpmn2:task>
+    <bpmn2:task id="__JHs748yEeqwvcm2LAkYWA" name="Deliver the pizza">
+      <bpmn2:incoming>__JHtG48yEeqwvcm2LAkYWA</bpmn2:incoming>
+      <bpmn2:outgoing>__JHtHI8yEeqwvcm2LAkYWA</bpmn2:outgoing>
+    </bpmn2:task>
+    <bpmn2:task id="__JHs848yEeqwvcm2LAkYWA" name="Receive payment">
+      <bpmn2:incoming>__JHtHI8yEeqwvcm2LAkYWA</bpmn2:incoming>
+      <bpmn2:outgoing>__JHtHY8yEeqwvcm2LAkYWA</bpmn2:outgoing>
+    </bpmn2:task>
+    <bpmn2:endEvent id="__JHtE48yEeqwvcm2LAkYWA" name="End">
+      <bpmn2:incoming>__JHtHY8yEeqwvcm2LAkYWA</bpmn2:incoming>
+      <bpmn2:terminateEventDefinition id="__JHtHo8yEeqwvcm2LAkYWA" />
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="__JHtFI8yEeqwvcm2LAkYWA" name="" sourceRef="__JHs6I8yEeqwvcm2LAkYWA" targetRef="__JHtD48yEeqwvcm2LAkYWA" />
+    <bpmn2:sequenceFlow id="__JHtFo8yEeqwvcm2LAkYWA" name="" sourceRef="__JHtD48yEeqwvcm2LAkYWA" targetRef="__JHtEY8yEeqwvcm2LAkYWA" />
+    <bpmn2:sequenceFlow id="__JHtF48yEeqwvcm2LAkYWA" name="" sourceRef="__JHtD48yEeqwvcm2LAkYWA" targetRef="__JHs648yEeqwvcm2LAkYWA" />
+    <bpmn2:sequenceFlow id="__JHtGI8yEeqwvcm2LAkYWA" name="" sourceRef="__JHs7Y8yEeqwvcm2LAkYWA" targetRef="__JHs648yEeqwvcm2LAkYWA" />
+    <bpmn2:sequenceFlow id="__JHtGY8yEeqwvcm2LAkYWA" name="" sourceRef="__JHs648yEeqwvcm2LAkYWA" targetRef="__JHs7Y8yEeqwvcm2LAkYWA" />
+    <bpmn2:sequenceFlow id="__JHtG48yEeqwvcm2LAkYWA" name="" sourceRef="__JHtEY8yEeqwvcm2LAkYWA" targetRef="__JHs748yEeqwvcm2LAkYWA" />
+    <bpmn2:sequenceFlow id="__JHtHI8yEeqwvcm2LAkYWA" name="" sourceRef="__JHs748yEeqwvcm2LAkYWA" targetRef="__JHs848yEeqwvcm2LAkYWA" />
+    <bpmn2:sequenceFlow id="__JHtHY8yEeqwvcm2LAkYWA" name="" sourceRef="__JHs848yEeqwvcm2LAkYWA" targetRef="__JHtE48yEeqwvcm2LAkYWA" />
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="__JHtH48yEeqwvcm2LAkYWA" name="pizza-store-collaboration">
+    <bpmndi:BPMNPlane id="__JHtII8yEeqwvcm2LAkYWA" bpmnElement="__JHs4Y8yEeqwvcm2LAkYWA">
+      <bpmndi:BPMNShape id="__JIT9o8yEeqwvcm2LAkYWA" bpmnElement="__JHs4o8yEeqwvcm2LAkYWA" isHorizontal="true">
+        <dc:Bounds x="135" y="16" width="1333" height="292" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="__JIUH48yEeqwvcm2LAkYWA" bpmnElement="__JHtC48yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="1335" y="103" />
+        <di:waypoint xsi:type="dc:Point" x="1385" y="103" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1315" y="78" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIUHo8yEeqwvcm2LAkYWA" bpmnElement="__JHtCY8yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="1195" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="1245" y="106" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1175" y="81" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIUG48yEeqwvcm2LAkYWA" bpmnElement="__JHtB48yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="1000" y="103" />
+        <di:waypoint xsi:type="dc:Point" x="1105" y="103" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1008" y="78" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIULo8yEeqwvcm2LAkYWA" bpmnElement="__JHtAY8yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="795" y="236" />
+        <di:waypoint xsi:type="dc:Point" x="795" y="274" />
+        <di:waypoint xsi:type="dc:Point" x="605" y="274" />
+        <di:waypoint xsi:type="dc:Point" x="605" y="126" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="655" y="249" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIUJ48yEeqwvcm2LAkYWA" bpmnElement="__JHtBY8yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="710" y="203" />
+        <di:waypoint xsi:type="dc:Point" x="765" y="203" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="693" y="178" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIUK48yEeqwvcm2LAkYWA" bpmnElement="__JHtA48yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="625" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="642" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="642" y="208" />
+        <di:waypoint xsi:type="dc:Point" x="675" y="208" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="612" y="147" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIUKI8yEeqwvcm2LAkYWA" bpmnElement="__JHs-Y8yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="515" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="585" y="106" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="505" y="81" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIUI48yEeqwvcm2LAkYWA" bpmnElement="__JHs-I8yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="375" y="106" />
+        <di:waypoint xsi:type="dc:Point" x="425" y="106" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="355" y="81" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIUGo8yEeqwvcm2LAkYWA" bpmnElement="__JHs9o8yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="230" y="103" />
+        <di:waypoint xsi:type="dc:Point" x="285" y="103" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="213" y="78" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="__JIUAY8yEeqwvcm2LAkYWA" bpmnElement="__JHs9Y8yEeqwvcm2LAkYWA">
+        <dc:Bounds x="195" y="86" width="35" height="35" />
+        <bpmndi:BPMNLabel id="__JIUAo8yEeqwvcm2LAkYWA">
+          <dc:Bounds x="173" y="125" width="81" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="__JIUEo8yEeqwvcm2LAkYWA" bpmnElement="__JHtAI8yEeqwvcm2LAkYWA">
+        <dc:Bounds x="585" y="86" width="40" height="40" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="560" y="126" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="__JIT_Y8yEeqwvcm2LAkYWA" bpmnElement="__JHtBI8yEeqwvcm2LAkYWA">
+        <dc:Bounds x="675" y="186" width="35" height="35" />
+        <bpmndi:BPMNLabel id="__JIT_o8yEeqwvcm2LAkYWA">
+          <dc:Bounds x="666" y="225" width="55" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="__JIUDo8yEeqwvcm2LAkYWA" bpmnElement="__JHs8I8yEeqwvcm2LAkYWA">
+        <dc:Bounds x="965" y="86" width="35" height="35" />
+        <bpmndi:BPMNLabel id="__JIUD48yEeqwvcm2LAkYWA">
+          <dc:Bounds x="947" y="62" width="71" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="__JIUDI8yEeqwvcm2LAkYWA" bpmnElement="__JHtDI8yEeqwvcm2LAkYWA">
+        <dc:Bounds x="1385" y="86" width="35" height="35" />
+        <bpmndi:BPMNLabel id="__JIUDY8yEeqwvcm2LAkYWA">
+          <dc:Bounds x="1363" y="125" width="80" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wmpmxl_di" bpmnElement="__JHs948yEeqwvcm2LAkYWA">
+        <dc:Bounds x="285" y="76" width="90" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qbyg7v_di" bpmnElement="__JHs548yEeqwvcm2LAkYWA">
+        <dc:Bounds x="425" y="76" width="90" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1sf0p3t_di" bpmnElement="__JHs6o8yEeqwvcm2LAkYWA">
+        <dc:Bounds x="765" y="176" width="120" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ympwoq_di" bpmnElement="__JHs8o8yEeqwvcm2LAkYWA">
+        <dc:Bounds x="1105" y="76" width="90" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_01jx6f3_di" bpmnElement="__JHtCo8yEeqwvcm2LAkYWA">
+        <dc:Bounds x="1245" y="76" width="90" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="__JIUA48yEeqwvcm2LAkYWA" bpmnElement="__JHs5I8yEeqwvcm2LAkYWA" isHorizontal="true">
+        <dc:Bounds x="135" y="338" width="1333" height="448" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="__JIT848yEeqwvcm2LAkYWA" bpmnElement="__JHtEo8yEeqwvcm2LAkYWA" isHorizontal="true">
+        <dc:Bounds x="165" y="656" width="1300" height="128" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="__JIUF48yEeqwvcm2LAkYWA" bpmnElement="__JHtEI8yEeqwvcm2LAkYWA" isHorizontal="true">
+        <dc:Bounds x="165" y="528" width="1300" height="128" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="__JIT8I8yEeqwvcm2LAkYWA" bpmnElement="__JHtDo8yEeqwvcm2LAkYWA" isHorizontal="true">
+        <dc:Bounds x="165" y="338" width="1300" height="190" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="__JIUL48yEeqwvcm2LAkYWA" bpmnElement="__JHtHY8yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="1205" y="723" />
+        <di:waypoint xsi:type="dc:Point" x="1265" y="723" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1190" y="698" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIULY8yEeqwvcm2LAkYWA" bpmnElement="__JHtHI8yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="1015" y="728" />
+        <di:waypoint xsi:type="dc:Point" x="1095" y="728" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1010" y="703" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIUMI8yEeqwvcm2LAkYWA" bpmnElement="__JHtG48yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="685" y="588" />
+        <di:waypoint xsi:type="dc:Point" x="795" y="588" />
+        <di:waypoint xsi:type="dc:Point" x="795" y="728" />
+        <di:waypoint xsi:type="dc:Point" x="905" y="728" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="765" y="648" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIUHI8yEeqwvcm2LAkYWA" bpmnElement="__JHtFo8yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="395" y="428" />
+        <di:waypoint xsi:type="dc:Point" x="395" y="585" />
+        <di:waypoint xsi:type="dc:Point" x="595" y="585" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="365" y="497" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIUGI8yEeqwvcm2LAkYWA" bpmnElement="__JHtGI8yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="705" y="436" />
+        <di:waypoint xsi:type="dc:Point" x="705" y="506" />
+        <di:waypoint xsi:type="dc:Point" x="485" y="506" />
+        <di:waypoint xsi:type="dc:Point" x="485" y="406" />
+        <di:waypoint xsi:type="dc:Point" x="545" y="404" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="550" y="481" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIUII8yEeqwvcm2LAkYWA" bpmnElement="__JHtGY8yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="580" y="403" />
+        <di:waypoint xsi:type="dc:Point" x="655" y="403" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="573" y="378" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIULI8yEeqwvcm2LAkYWA" bpmnElement="__JHtF48yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="415" y="404" />
+        <di:waypoint xsi:type="dc:Point" x="545" y="404" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="435" y="379" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIUKY8yEeqwvcm2LAkYWA" bpmnElement="__JHtFI8yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="280" y="404" />
+        <di:waypoint xsi:type="dc:Point" x="375" y="404" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="283" y="379" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="__JIT9I8yEeqwvcm2LAkYWA" bpmnElement="__JHs6I8yEeqwvcm2LAkYWA">
+        <dc:Bounds x="245" y="386" width="35" height="35" />
+        <bpmndi:BPMNLabel id="__JIT9Y8yEeqwvcm2LAkYWA">
+          <dc:Bounds x="227" y="425" width="73" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="__JHtIY8yEeqwvcm2LAkYWA" bpmnElement="__JHtD48yEeqwvcm2LAkYWA">
+        <dc:Bounds x="375" y="388" width="40" height="40" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="350" y="428" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="__JIT948yEeqwvcm2LAkYWA" bpmnElement="__JHs648yEeqwvcm2LAkYWA">
+        <dc:Bounds x="545" y="386" width="35" height="35" />
+        <bpmndi:BPMNLabel id="__JIT-I8yEeqwvcm2LAkYWA">
+          <dc:Bounds x="532" y="425" width="63" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="__JIUBo8yEeqwvcm2LAkYWA" bpmnElement="__JHs7Y8yEeqwvcm2LAkYWA">
+        <dc:Bounds x="655" y="376" width="100" height="60" />
+        <bpmndi:BPMNLabel id="__JIUB48yEeqwvcm2LAkYWA" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="__JIUCo8yEeqwvcm2LAkYWA" bpmnElement="__JHtEY8yEeqwvcm2LAkYWA">
+        <dc:Bounds x="595" y="558" width="90" height="60" />
+        <bpmndi:BPMNLabel id="__JIUC48yEeqwvcm2LAkYWA" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="__JIUBI8yEeqwvcm2LAkYWA" bpmnElement="__JHs748yEeqwvcm2LAkYWA">
+        <dc:Bounds x="905" y="698" width="110" height="60" />
+        <bpmndi:BPMNLabel id="__JIUBY8yEeqwvcm2LAkYWA" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="__JIUE48yEeqwvcm2LAkYWA" bpmnElement="__JHs848yEeqwvcm2LAkYWA">
+        <dc:Bounds x="1095" y="698" width="110" height="60" />
+        <bpmndi:BPMNLabel id="__JIUFI8yEeqwvcm2LAkYWA" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="__JIUEI8yEeqwvcm2LAkYWA" bpmnElement="__JHtE48yEeqwvcm2LAkYWA">
+        <dc:Bounds x="1265" y="706" width="35" height="35" />
+        <bpmndi:BPMNLabel id="__JIUEY8yEeqwvcm2LAkYWA">
+          <dc:Bounds x="1273" y="745" width="20" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="__JIUIY8yEeqwvcm2LAkYWA" bpmnElement="__JHs5o8yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="470" y="136" />
+        <di:waypoint xsi:type="dc:Point" x="470" y="265" />
+        <di:waypoint xsi:type="dc:Point" x="264" y="265" />
+        <di:waypoint xsi:type="dc:Point" x="264" y="386" />
+        <bpmndi:BPMNLabel id="__JIUIo8yEeqwvcm2LAkYWA">
+          <dc:Bounds x="352.01052631578943" y="214" width="56" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIUJI8yEeqwvcm2LAkYWA" bpmnElement="__JHs6Y8yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="818" y="236" />
+        <di:waypoint xsi:type="dc:Point" x="818" y="356" />
+        <di:waypoint xsi:type="dc:Point" x="563" y="356" />
+        <di:waypoint xsi:type="dc:Point" x="563" y="386" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="645.5" y="331" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIUHY8yEeqwvcm2LAkYWA" bpmnElement="__JHs7I8yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="755" y="422" />
+        <di:waypoint xsi:type="dc:Point" x="853" y="422" />
+        <di:waypoint xsi:type="dc:Point" x="853" y="236" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="759" y="397" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIUMY8yEeqwvcm2LAkYWA" bpmnElement="__JHs8Y8yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="1120" y="136" />
+        <di:waypoint xsi:type="dc:Point" x="1120" y="698" />
+        <bpmndi:BPMNLabel id="__JIUMo8yEeqwvcm2LAkYWA">
+          <dc:Bounds x="1073" y="315" width="34" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="__JIUJY8yEeqwvcm2LAkYWA" bpmnElement="__JHs9I8yEeqwvcm2LAkYWA">
+        <di:waypoint xsi:type="dc:Point" x="1171" y="698" />
+        <di:waypoint xsi:type="dc:Point" x="1171" y="136" />
+        <bpmndi:BPMNLabel id="__JIUJo8yEeqwvcm2LAkYWA">
+          <dc:Bounds x="1180" y="315" width="34" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

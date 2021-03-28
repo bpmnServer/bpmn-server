@@ -1,3 +1,28 @@
+
+
+<!-- toc -->
+
+- [Introductory Examples](#introductory-examples)
+- [Invoking Proccess through API](#invoking-proccess-through-api)
+  - [Async Execution](#async-execution)
+- [Process Definitions Examples](#process-definitions-examples)
+  - [Service Task](#service-task)
+  - [Script Task](#script-task)
+  - [Conditional Flow](#conditional-flow)
+  - [Input Fields](#input-fields)
+  - [Multiple Start Event](#multiple-start-event)
+  - [Business Rule Task](#business-rule-task)
+  - [Script Extensions](#script-extensions)
+  - [Timer Event](#timer-event)
+  - [Multi-instances Tasks](#multi-instances-tasks)
+  - [SubProcess](#subprocess)
+  - [Call Process](#call-process)
+  - [Message Flow](#message-flow)
+  - [Throwing and Cathcing Messages](#throwing-and-cathcing-messages)
+  - [Input and Output Data Handling](#input-and-output-data-handling)
+
+<!-- tocstop -->
+
 ## Introductory Examples
 - [Buy Used Car - Using WebApp ](./examples/BuyCar-Web.md)
 - [Buy Used Car - Using API](./examples/BuyCar-Server.md)
@@ -5,7 +30,7 @@
 - [Event Based Gateway ](./examples/gateway.md)
 - [Boundary Events](./examples/boundary-events.md)
 
-## Invocation Summary
+## Invoking Proccess through API
 
 To Invoke a process from your code:
 
@@ -134,6 +159,19 @@ From API:
     response = await server.engine.start('invoice', 
         { reminderCounter: 0, caseId: caseId}, null, 'StartEvent_AP');
 ```
+### Business Rule Task
+
+BPMN-Server supports Business Rules implemented through DMN-Engine
+Business Rules can be defined as a Decision Table as in this example:
+
+![Vacation Decision Table](./examples/VacationDecisionTable.PNG)
+
+Decision Table is called through 
+```js
+    <bpmn2:businessRuleTask id="Task_1lcamp6" name="Vacation"  camunda:decisionRef="Vacation">
+````
+This will load the file 'Vacation.json' form the Processes folder as defined in configuration.js
+
 ### Script Extensions
 
 Script Extensions are supported in release 1.1 and later, allowing you to add a script to any node.
@@ -287,4 +325,3 @@ AppDelegate.ts has a service:
 ```
 Output:
 { v1: 1, v2: 2, result: 3 }
-

@@ -52,16 +52,27 @@ function getText() {
 <link rel='stylesheet' href='/stylesheets/bootstrap.min.css' type='text/css'>
 <link rel='stylesheet' href='/stylesheets/bootstrap-theme.min.css' type='text/css'>
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' type='text/css'>
-<link rel='stylesheet' href='/stylesheets/diagram-js.css' type='text/css'>
-<link rel='stylesheet' href='/vendor/bpmn-font/css/bpmn-embedded.css' type='text/css'>
-<link rel='stylesheet' href='/stylesheets/app.css' type='text/css'>
+<!--link rel='stylesheet' href='/stylesheets/diagram-js.css' type='text/css'-->
+<!--link rel='stylesheet' href='/vendor/bpmn-font/css/bpmn-embedded.css' type='text/css'-->
+<!--link rel='stylesheet' href='/stylesheets/app.css' type='text/css'-->
 <link rel='stylesheet' href='/stylesheets/jquery-ui.css' type='text/css'>
 <link rel='stylesheet' href='/stylesheets/jquery-ui.theme.css' type='text/css'>
+<!-- property panel -->
+  <link rel="stylesheet" href="/vendor/css/diagram-js.css" />
+  <link rel="stylesheet" href="/vendor/bpmn-font/css/bpmn-embedded.css" />
+  <link rel="stylesheet" href="/vendor/css/app.css" />
+<style>
+.label { color: blue; }
+</style>
+
+
+
 </head>
 <body>
 <script>
     var omni_base_url="${base_url}";
     var ajax_object =null;					
+    var BPMNModeler;
 </script>        
 <!--- Views::header -->
    <div id="omni_page">
@@ -87,6 +98,7 @@ function getText() {
         <ul class="nav navbar-nav">
         </ul>
 <ul class="nav navbar-nav navbar-right">
+
 <li><a href='javascript:window.saveDiagramFunct();'>Save Model</a></li>
 <li>
   </li>        
@@ -98,8 +110,8 @@ function getText() {
 <style>
  div.entry-content { margin:5px !important;}
 </style>
-    <div class="content" style="min-height:400px" id="js-drop-zone">
-        <h2 style="padding-left:20px;">${title} </h2>
+    <div class="content" style="margin-top:-30px;min-height:400px" id="js-drop-zone">
+        <h2 style="position:relative;top:-30px;left:40px;padding-left:20px;max-width:50%">${title} </h2>
 
     <div class="message error">
       <div class="note">
@@ -113,7 +125,12 @@ function getText() {
     </div>
 
     <div class="canvas" style="height:800px" id="js-canvas"></div>
-    
+    <div class="properties-panel-parent" id="js-properties-panel" style="height:auto;overflow: visible;margin-top:10px;">
+    <div id="property-panel-control" style="border: solid #607D8B;background: #fafafa;padding: 2px 5px 2px 10px;">
+        Property Panel
+        <!--a id="xshowPropertyPanel" class="fa fa-arrows-alt" style="position:absolute;font-size:18px;right:35px;" href='javascript:window.togglePropertyPanel();'></a--> 
+        <a id="showPropertyPanel" class="fa fa-angle-up" style="position:absolute;font-size:18px;right:15px;" href='javascript:window.togglePropertyPanel();'></a> 
+    </div>    
   </div>
   <ul class="buttons">
     <li>
@@ -144,6 +161,42 @@ ${xml}
 	var OmniChangesCallback=diagramChanged;
         window.saveDiagramFunct=saveDiagram;
 
+    var propertyPanel=true;
+
+
+    //$("div#js-properties-panel").draggable();
+    //$("div#js-properties-panel").draggable();
+    var control=$("#property-panel-control");
+    var panel=$("div#js-properties-panel");
+    //$("#property-panel-control").draggable();
+    $("#property-panel-control")
+        .mousedown(function() {
+            panel.offset(control.offset);
+        })
+        .mousemove(function() {
+        })
+        .mouseup(function() {
+        });
+    function togglePropertyPanel() {
+
+        if(propertyPanel) {
+            // $('.bpp-properties-panel').hide();
+             $('#js-properties-panel').css('height','30px');
+             $('#js-properties-panel').css('overflow','hidden');
+            $('#showPropertyPanel').removeClass('fa fa-angle-up');
+            $('#showPropertyPanel').addClass('fa fa-angle-down');
+            }
+        else {
+            // $('.bpp-properties-panel').show();
+             $('#js-properties-panel').css('height','auto');
+             $('#js-properties-panel').css('overflow','visible');
+            $('#showPropertyPanel').removeClass('fa fa-angle-down');
+            $('#showPropertyPanel').addClass('fa fa-angle-up');
+            }
+
+        propertyPanel=!propertyPanel;
+    
+}
 
 </script>
                 

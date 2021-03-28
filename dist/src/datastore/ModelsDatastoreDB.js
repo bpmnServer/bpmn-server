@@ -11,14 +11,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ModelsDatastoreDB = void 0;
 const elements_1 = require("../elements");
-const ServerContext_1 = require("../server/ServerContext");
+const ServerComponent_1 = require("../server/ServerComponent");
 const ModelsData_1 = require("./ModelsData");
 const fs = require('fs');
 const Path = require('path');
 const MongoDB = require('./MongoDB').MongoDB;
 const Definition_collection = 'wf_models';
 const Events_collection = 'wf_events';
-class ModelsDatastoreDB extends ServerContext_1.ServerComponent {
+class ModelsDatastoreDB extends ServerComponent_1.ServerComponent {
     constructor(server) {
         super(server);
         this.dbConfiguration = this.configuration.database.MongoDB;

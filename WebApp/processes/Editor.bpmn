@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:collaboration id="Collaboration_14u0092">
+    <bpmn2:participant id="Participant_0a9ad1w" processRef="Process_1" />
+  </bpmn2:collaboration>
+  <bpmn2:process id="Process_1" isExecutable="false">
+    <bpmn2:laneSet id="LaneSet_00zj903">
+      <bpmn2:lane id="Lane_084ruhx">
+        <bpmn2:flowNodeRef>StartEvent_1</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Activity_1ghzrj9</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Activity_0k9la9d</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Activity_0y2fo0x</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Event_0eoidge</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+      <bpmn2:lane id="Lane_0zofp92">
+        <bpmn2:flowNodeRef>Activity_0hzw5se</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+    </bpmn2:laneSet>
+    <bpmn2:startEvent id="StartEvent_1">
+      <bpmn2:outgoing>Flow_0m0m7d8</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="Flow_0m0m7d8" sourceRef="StartEvent_1" targetRef="Activity_1ghzrj9" />
+    <bpmn2:sequenceFlow id="Flow_03k2sop" sourceRef="Activity_1ghzrj9" targetRef="Activity_0k9la9d" />
+    <bpmn2:scriptTask id="Activity_1ghzrj9" scriptFormat="JavaScript" camunda:resultVariable="testing">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">test1</camunda:script>
+        </camunda:executionListener>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="Input_0ba0i6l" />
+          <camunda:inputParameter name="Input_0q0rhf8" />
+          <camunda:outputParameter name="Output_1sfi00a" />
+          <camunda:outputParameter name="Output_2l1u2n3">
+            <camunda:script scriptFormat="JavaScript">this.value1</camunda:script>
+          </camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0m0m7d8</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_03k2sop</bpmn2:outgoing>
+      <bpmn2:script>test</bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:serviceTask id="Activity_0k9la9d">
+      <bpmn2:incoming>Flow_03k2sop</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_18hqaqw</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:task id="Activity_0y2fo0x">
+      <bpmn2:incoming>Flow_18hqaqw</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1ei0lnw</bpmn2:outgoing>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="Flow_18hqaqw" sourceRef="Activity_0k9la9d" targetRef="Activity_0y2fo0x" />
+    <bpmn2:endEvent id="Event_0eoidge">
+      <bpmn2:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="Input_1gobii2" />
+        </camunda:inputOutput>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1ei0lnw</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="Flow_1ei0lnw" sourceRef="Activity_0y2fo0x" targetRef="Event_0eoidge" />
+    <bpmn2:subProcess id="Activity_0hzw5se">
+      <bpmn2:multiInstanceLoopCharacteristics isSequential="true" />
+      <bpmn2:startEvent id="Event_1kd8j2f">
+        <bpmn2:outgoing>Flow_18d2ql0</bpmn2:outgoing>
+      </bpmn2:startEvent>
+      <bpmn2:sequenceFlow id="Flow_18d2ql0" sourceRef="Event_1kd8j2f" targetRef="Activity_0pi11gc" />
+      <bpmn2:sequenceFlow id="Flow_16n3alr" sourceRef="Activity_0pi11gc" targetRef="Event_0k1qlxc" />
+      <bpmn2:intermediateThrowEvent id="Event_0k1qlxc">
+        <bpmn2:incoming>Flow_16n3alr</bpmn2:incoming>
+        <bpmn2:messageEventDefinition id="MessageEventDefinition_18ibfgp" camunda:expression="" />
+      </bpmn2:intermediateThrowEvent>
+      <bpmn2:scriptTask id="Activity_0pi11gc">
+        <bpmn2:incoming>Flow_18d2ql0</bpmn2:incoming>
+        <bpmn2:outgoing>Flow_16n3alr</bpmn2:outgoing>
+      </bpmn2:scriptTask>
+    </bpmn2:subProcess>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_14u0092">
+      <bpmndi:BPMNShape id="Participant_0a9ad1w_di" bpmnElement="Participant_0a9ad1w" isHorizontal="true">
+        <dc:Bounds x="170" y="100" width="620" height="480" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0zofp92_di" bpmnElement="Lane_0zofp92" isHorizontal="true">
+        <dc:Bounds x="200" y="350" width="590" height="230" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_084ruhx_di" bpmnElement="Lane_084ruhx" isHorizontal="true">
+        <dc:Bounds x="200" y="100" width="590" height="250" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1ei0lnw_di" bpmnElement="Flow_1ei0lnw">
+        <di:waypoint x="670" y="230" />
+        <di:waypoint x="692" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18hqaqw_di" bpmnElement="Flow_18hqaqw">
+        <di:waypoint x="540" y="230" />
+        <di:waypoint x="570" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03k2sop_di" bpmnElement="Flow_03k2sop">
+        <di:waypoint x="400" y="230" />
+        <di:waypoint x="440" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m0m7d8_di" bpmnElement="Flow_0m0m7d8">
+        <di:waypoint x="268" y="230" />
+        <di:waypoint x="300" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="232" y="212" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0xqmrgx_di" bpmnElement="Activity_1ghzrj9">
+        <dc:Bounds x="300" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0gc14ss_di" bpmnElement="Activity_0k9la9d">
+        <dc:Bounds x="440" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0y2fo0x_di" bpmnElement="Activity_0y2fo0x">
+        <dc:Bounds x="570" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0eoidge_di" bpmnElement="Event_0eoidge">
+        <dc:Bounds x="692" y="212" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0hzw5se_di" bpmnElement="Activity_0hzw5se" isExpanded="true">
+        <dc:Bounds x="315" y="360" width="350" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_18d2ql0_di" bpmnElement="Flow_18d2ql0">
+        <di:waypoint x="391" y="460" />
+        <di:waypoint x="420" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16n3alr_di" bpmnElement="Flow_16n3alr">
+        <di:waypoint x="520" y="460" />
+        <di:waypoint x="552" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1kd8j2f_di" bpmnElement="Event_1kd8j2f">
+        <dc:Bounds x="355" y="442" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1hich5z_di" bpmnElement="Event_0k1qlxc">
+        <dc:Bounds x="552" y="442" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1eix0i0_di" bpmnElement="Activity_0pi11gc">
+        <dc:Bounds x="420" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

@@ -181,8 +181,19 @@ const awaitAppDelegateFactory = (middleware) => {
         });
     });
     router.put('/rules/invoke', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+        /*
+         *
+         *
+    export async function WebService(request, response) {
+    console.log(request);
+    console.log(response);
+    let { definition, data, options, loadFrom } = request.body;
+    response.json(Execute(request.body));
+}
+         */
         try {
-            yield dmn_engine_1.WebService(request, response);
+            yield response.json(dmn_engine_1.ExecuteDecisionTable(request.body));
+            //await WebService(request, response);
         }
         catch (exc) {
             console.log(exc);

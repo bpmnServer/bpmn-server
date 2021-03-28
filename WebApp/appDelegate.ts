@@ -1,6 +1,6 @@
 
-import { IExecution, Item, FLOW_ACTION , NODE_ACTION, IExecutionContext  } from '.';
-import { DefaultAppDelegate } from '.';
+import { IExecution, Item, FLOW_ACTION , NODE_ACTION, IExecutionContext  } from './';
+import { DefaultAppDelegate } from './index';
 
 const fs = require('fs');
 

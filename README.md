@@ -30,7 +30,7 @@ A web based modeler is included based on http://bpmn.io , models definitions are
 
 # Process Execution
 
-bpmn-server provides an bpmnEngine to execute your workflow definition supporting most of BPMN 2.0 elements
+bpmn-server provides an bpmnEngine to execute your workflow definition supporting BPMN 2.0
 
 # Process Server
 
@@ -63,10 +63,15 @@ $ cp node_modules/bpmn-server/WebApp/. ./  -r
 Windows: 
 xcopy /e /i /s /y node_modules\bpmn-server\WebApp\*.* .
 
-npm update
+npm install
 
 ```
-Edit [configuration](./docs/setup#configuration) file to have MongoDB point to your server or free cloud account
+Edit [configuration](./docs/setup.md#configuration) file to have MongoDB point to your server or free cloud account
+the change would look like this:
+    db_url: "mongodb://localhost:27017?retryWrites=true&w=majority",
+or:
+    db_url: "mongodb://<userName>:<password>@ip?retryWrites=true&w=majority",
+
 ```javascript
 node app
 ```
@@ -105,6 +110,8 @@ a full demo site is available @ http://bpmn.omniworkflow.com
 
 ```
 for more complete examples see [Examples](./docs/examples.md)
+# RoadMap and Project status
+see [RoadMap](https://github.com/ralphhanna/bpmn-server/projects/1)
 # Change Log
 
 see [CHANGELOG](./docs/CHANGELOG.md)

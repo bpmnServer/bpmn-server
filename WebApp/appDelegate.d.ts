@@ -1,5 +1,5 @@
-import { Item, IExecutionContext } from '.';
-import { DefaultAppDelegate } from '.';
+import { Item, IExecutionContext } from './';
+import { DefaultAppDelegate } from './index';
 declare class MyAppDelegate extends DefaultAppDelegate {
     constructor(logger?: any);
     executionStarted(execution: IExecutionContext): Promise<void>;

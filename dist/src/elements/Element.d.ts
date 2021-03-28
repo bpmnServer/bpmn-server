@@ -6,6 +6,7 @@ declare class Element implements IElement {
     subType: any;
     name: any;
     behaviours: Map<any, any>;
+    isFlow: boolean;
     continue(item: Item): void;
     describe(): string[][];
     restored(item: Item): void;

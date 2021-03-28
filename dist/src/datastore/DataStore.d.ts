@@ -1,6 +1,6 @@
 import { Execution } from '../engine/Execution';
 import { IDataStore, IBPMNServer } from '../interfaces';
-import { ServerComponent } from '../server/ServerContext';
+import { ServerComponent } from '../server/ServerComponent';
 declare class DataStore extends ServerComponent implements IDataStore {
     dbConfiguration: any;
     db: any;
@@ -14,7 +14,7 @@ declare class DataStore extends ServerComponent implements IDataStore {
     private setListener;
     saveCounter: number;
     save(): Promise<void>;
-    check(event: any, item: any): Promise<void>;
+    check(event: any, item: any): Promise<number>;
     loadInstance(instanceId: any): Promise<{
         instance: any;
         items: any[];

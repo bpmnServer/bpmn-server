@@ -1,6 +1,4 @@
-/// <reference types="node" />
 import { IExecutionContext } from '../..';
-import { EventEmitter } from 'events';
 /**
  * is used as a repsone to server request
  * */
@@ -40,7 +38,7 @@ interface IEngine extends IServerComponent {
      * @param data		input data
      * @param startNodeId	in process has multiple start node; you need to specify which one
      */
-    start(name: any, data?: any, listener?: EventEmitter, startNodeId?: string): Promise<IExecutionContext>;
+    start(name: any, data?: any, startNodeId?: string, options?: any): Promise<IExecutionContext>;
     /**
      * restores an instance into memeory or provides you access to a running instance
      *
@@ -54,8 +52,8 @@ interface IEngine extends IServerComponent {
      *					{ items.item.itemKey : 'businesskey here'}
      *
      */
-    get(instanceQuery: any, listener?: EventEmitter): Promise<IExecutionContext>;
-    restore(instanceQuery: any, listener?: EventEmitter): Promise<IExecutionContext>;
+    get(instanceQuery: any): Promise<IExecutionContext>;
+    restore(instanceQuery: any): Promise<IExecutionContext>;
     /**
      * Continue an existing item that is in a wait state
      *
@@ -68,7 +66,7 @@ interface IEngine extends IServerComponent {
      * @param itemQuery		criteria to retrieve the item
      * @param data
      */
-    invoke(itemQuery: any, data?: {}, listener?: EventEmitter): Promise<IExecutionContext>;
+    invoke(itemQuery: any, data?: {}): Promise<IExecutionContext>;
     /**
      *
      * Invoking an event (usually start event of a secondary process) against an existing instance
@@ -84,19 +82,6 @@ interface IEngine extends IServerComponent {
      * @param elementId
      * @param data
      */
-    startEvent(instanceId: any, elementId: any, data?: {}, listener?: EventEmitter): Promise<IExecutionContext>;
-    /**
-     *
-     * signal/message raise a signal or throw a message
-     *
-     * will seach for a matching event/task given the signalId/messageId
-     *
-     * that can be againt a running instance or it may start a new instance
-     * ----------------------------------------------------------------------------
-     * @param messageId		the id of the message or signal as per bpmn definition
-     * @param matchingKey	should match the itemKey (if specified)
-     * @param data			message data
-     */
-    signal(messageId: any, matchingKey: any, data?: {}, listener?: EventEmitter): Promise<IExecutionContext>;
+    startEvent(instanceId: any, elementId: any, data?: {}): Promise<IExecutionContext>;
 }
 export { IBPMNServer, IServerContext, IEngine };

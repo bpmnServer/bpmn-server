@@ -10,6 +10,7 @@ import { Node, Flow , MessageFlow ,SubProcess , NodeLoader , Process, Behaviour_
 import { BPMN_TYPE } from './NodeLoader';
 import { IDefinition } from '../interfaces/elements';
 import { BPMNServer } from '../server/BPMNServer';
+import { NODE_SUBTYPE } from '../interfaces';
 
 const fs = require('fs');
 
@@ -36,28 +37,33 @@ class Definition implements IDefinition{
 
         this.moddle = new BpmnModdle({ moddleOptions });
     }
-    private loadProcess(definition, processElement) {
+    private loadProcess(definition, processElement ,parentProcess) {
 
-        let processId = processElement.id;
         const children = [];
+        const process=new Process(processElement,parentProcess);
+
+        const eventSubProcesses = [];
         // process flowElements i.e. nodes 
         processElement.flowElements.forEach(child => {
             //
             let el = definition.elementsById[child.id];
             let node;
             if (el.$type == 'bpmn:SubProcess') { // subprocess
-                node = new SubProcess(el.id, processId, el.$type, el);
+                node = new SubProcess(el.id, process, el.$type, el);
 
-                node.childProcess = this.loadProcess(definition, el);
+                node.childProcess = this.loadProcess(definition, el,process);
+                if (el.triggeredByEvent)
+                    eventSubProcesses.push(node.childProcess);
             }
             else {
-                node = NodeLoader.loadNode(el, processId);
+                node = NodeLoader.loadNode(el, process);
 
              }
             this.nodes.set(el.id, node);
             children.push(node);
         });
-        return new Process(processElement, children);
+        process.init(children, eventSubProcesses)
+        return process;
     }
     async load() {
 
@@ -71,7 +77,7 @@ class Definition implements IDefinition{
             switch (e.$type) {
                 case 'bpmn:Process':    
                     {
-                        const proc = this.loadProcess(definition, e);
+                        const proc = this.loadProcess(definition, e , null);
                         this.processes.set(e.id, proc);
                     }
                     break;
@@ -215,7 +221,6 @@ references:
         else
             return null;
     }
-
     public getStartNodes(userInvokable=false) {
         let starts =[];
         this.processes.forEach(proc => {

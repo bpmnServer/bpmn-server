@@ -74,7 +74,7 @@ class Loop {
                     let seq = loop.getNext();
                     let data = {};
                     data[loop.getKeyName()] = seq;
-                    let newToken = yield Token_1.Token.startNewToken(token.execution, token.currentNode, loop.dataPath + '.' + seq, token, token.currentNode, loop, data);
+                    let newToken = yield Token_1.Token.startNewToken(Token_1.TOKEN_TYPE.Instance, token.execution, token.currentNode, loop.dataPath + '.' + seq, token, token.currentItem, loop, data);
                     return false; // launching new token; stop this one
                 }
                 else { // parallel 
@@ -83,11 +83,16 @@ class Loop {
                         return true; // go ahead and execute
                     let loop = new Loop(token.currentNode, token);
                     let seq;
-                    for (seq = 0; seq < loop.items.length; seq++) {
-                        let entry = loop.items[seq];
-                        let data = {};
-                        data[loop.getKeyName()] = entry;
-                        let newToken = yield Token_1.Token.startNewToken(token.execution, token.currentNode, loop.dataPath + '.' + seq, token, token.currentNode, loop, data);
+                    if (loop.items) {
+                        for (seq = 0; seq < loop.items.length; seq++) {
+                            let entry = loop.items[seq];
+                            let data = {};
+                            data[loop.getKeyName()] = entry;
+                            let newToken = yield Token_1.Token.startNewToken(Token_1.TOKEN_TYPE.Instance, token.execution, token.currentNode, loop.dataPath + '.' + seq, token, token.currentItem, loop, data);
+                        }
+                    }
+                    else {
+                        token.error("loop has no items");
                     }
                     token.log('..loop: fired all tokens' + seq);
                     return false; // launching new tokens; stop this one
@@ -112,7 +117,7 @@ class Loop {
                         let seq = token.loop.getNext();
                         let data = {};
                         data[token.loop.getKeyName()] = seq;
-                        let newToken = yield Token_1.Token.startNewToken(token.execution, token.currentNode, token.loop.dataPath, token, token.currentNode, token.loop, data);
+                        let newToken = yield Token_1.Token.startNewToken(Token_1.TOKEN_TYPE.Instance, token.execution, token.currentNode, token.loop.dataPath, token, token.currentItem, token.loop, data);
                         return false;
                     }
                 }

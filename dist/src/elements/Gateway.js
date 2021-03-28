@@ -70,18 +70,18 @@ class Gateway extends _1.Node {
         let waitingTokens = [];
         token.log('..converging .. my token ' + token.id);
         if (token.parentToken) { // is a child did i branch from a gatewy
-            if (token.branchNode.type == 'bpmn:InclusiveGateway' ||
-                token.branchNode.type == 'bpmn:ExclusiveGateway') {
-                divergingGateway = token.branchNode;
+            if (token.originItem.node.type == 'bpmn:InclusiveGateway' ||
+                token.originItem.node.type == 'bpmn:ExclusiveGateway') {
+                divergingGateway = token.originItem.node;
                 parentToken = token.parentToken;
             }
         }
         else { // do I have a child branching from a gateway
             let childrenTokens = token.getChildrenTokens();
             childrenTokens.forEach(t => {
-                if (t.branchNode.type == 'bpmn:InclusiveGateway' ||
-                    token.branchNode.type == 'bpmn:ExclusiveGateway') {
-                    divergingGateway = t.branchNode;
+                if (t.originItem.node.type == 'bpmn:InclusiveGateway' ||
+                    token.originItem.node.type == 'bpmn:ExclusiveGateway') {
+                    divergingGateway = t.originItem.node;
                     parentToken = token;
                 }
             });
@@ -97,7 +97,7 @@ class Gateway extends _1.Node {
                         waitingTokens.push(t);
                     }
                     else {
-                        if (t.branchNode && (t.branchNode.id == divergingGateway.id))
+                        if (t.originItem && (t.originItem.node.id == divergingGateway.id))
                             pendingTokens.push(t);
                         else {
                             t.path.forEach(i => {
@@ -120,9 +120,9 @@ class Gateway extends _1.Node {
     convergeFlows(item) {
         const token = item.token;
         if (this.inbounds.length > 1
-            && token.branchNode
-            && (token.branchNode.type == 'bpmn:InclusiveGateway' ||
-                token.branchNode.type == 'bpmn:ExclusiveGateway')) {
+            && token.originItem
+            && (token.originItem.node.type == 'bpmn:InclusiveGateway' ||
+                token.originItem.node.type == 'bpmn:ExclusiveGateway')) {
             const siblings = token.parentToken.getChildrenTokens();
             const waitingTokens = [];
             const pendingTokens = [];
@@ -167,9 +167,8 @@ exports.Gateway = Gateway;
  *  ExclusiveGatway:
  *      outbounds:  only 1
  *      inbound:    only 1 -
- *                      first flow arrives should cancel the rest: TODO
  * */
-class XORGateway extends _1.Node {
+class XORGateway extends Gateway {
     getOutbounds(item) {
         const outbounds = super.getOutbounds(item);
         if (outbounds.length > 1) {
@@ -210,7 +209,7 @@ class EventBasedGateway extends Gateway {
             endingItem.token.execution.tokens.forEach(function (token) {
                 return __awaiter(this, void 0, void 0, function* () {
                     if (token.status == __1.TOKEN_STATUS.wait && token.currentItem.id != endingItem.id) {
-                        if (token.branchNode && token.branchNode.id == self.id) {
+                        if (token.originItem && token.originItem.node.id == self.id) {
                             endingItem.token.log(`..EventBasedGateway:<${self.id}>-- cancelling  ${token.currentNode.id} `);
                             yield token.terminate();
                         }
@@ -231,7 +230,7 @@ class EventBasedGateway extends Gateway {
                 const endingItem = context.item;
                 const token = endingItem.token;
                 const lastItem = token.lastItem;
-                if (token.branchNode && token.branchNode.id == self.id) {
+                if (token.originItem && token.originItem.node.id == self.id) {
                     yield self.cancelAllBranched(endingItem);
                 }
             });

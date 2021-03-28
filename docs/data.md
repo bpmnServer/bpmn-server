@@ -78,16 +78,65 @@ In this example we are adding a script to bpmn:startEvent
 ```
 # Data Scope
 
-The entire execution will have one data scope object, shared among all nodes except SubProcess and Loops (Multi-instances), 
-each will have own item part of the data object
+The entire execution will have one data scope object, shared among all nodes, except the following will have own item part of the data object
+  - SubProcess 
+  - and Loops (Multi-instances)
+
 
 ![Image description](./Data_BuyUsedCar.PNG)
 
 However, for SubProcess and Loop elements a seperate scope 
 
-![Image description](./Data_scripts_services_model.PNG)
-![Image description](./Data_scripts_services.PNG)
+![Image description](./Data_Scripts_Services_model.PNG)
+![Image description](./Data_Scripts_Services.PNG)
 
+## Accessing data outside your scoe
+TOCOME
 # Query on Data
+You can use Instance data as part of your query for Instances or Items
 For Details on Query see [Data Query](./api-summary#data-query) 
+
 # Input-Output Data
+
+Input and output is used in the following scenarios:
+- Subprocess
+- Service Tasks
+- Call Tasks
+- Message Events
+- Signal Events
+
+Default behaviour is all instance data is passed as an input and all output data is saved or added to the instance data.
+
+But you can modify this behaviour by specifying Input and Output variables;
+
+## Using TransformOutput/TransformInput Events
+TransformOutput script when specified it generate an output object of all output variables
+This output object is defined as `this.context.response.output`
+
+Similarly, you used TransformInput event to return `this.context.response.input`
+
+The sequence is as follows:
+
+  1.    Event:TransformOutput is called; script set `context.response.output`
+  2.    System will invoke the Service
+        a.    Passing `context.response.output` to the Service as in input
+        b.    System will save Service results as `context.response.input`
+  3.    Event:TransformInput is called; script will convert data from `context.response.input`
+    
+
+```js
+    <bpmn2:serviceTask id="Task_1gpov6r" name="add" implementation="add">
+      
+      <bpmn2:extensionElements>
+        <camunda:script event="transformOutput"><![CDATA[
+        this.context.response.output={v1: this.data.v1 , v2: this.data.v2};
+        ]]></camunda:script>
+        <camunda:script event="transformInput"><![CDATA[
+        this.data.result=this.context.response.input;
+        ]]></camunda:script>
+      </bpmn2:extensionElements>
+      
+      <bpmn2:incoming>SequenceFlow_0cr3d6e</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1kdq5qw</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+```

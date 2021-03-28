@@ -1,15 +1,14 @@
 
-import { Execution } from '../engine/Execution';
-import { Token } from '../engine/Token';
-import { IBehaviour, Behaviour} from "./behaviours";
-import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, ExecutionContext } from '../../';
-//import { Gateway } from './Gateway';
-import { Item } from '../engine/Item';
+import { Node } from './Node';
+
+import { Token, TOKEN_TYPE } from '../engine/Token';
+import { ExecutionContext } from '../server/ExecutionContext';
+import { NODE_ACTION } from '../interfaces/Enums'
 
 import { Process } from './Process';
-import { Node } from './Node';
 import { IExecution } from '../interfaces/engine';
 import { EXECUTION_STATUS } from '../interfaces/Enums';
+import { DecisionTable } from 'dmn-engine';
 
 // ---------------------------------------------
 class ScriptTask extends Node {
@@ -35,7 +34,7 @@ class ScriptTask extends Node {
 class ServiceTask extends Node {
     async run(item): Promise<NODE_ACTION> {
 
-        item.context.response.action = null;
+        item.context.action = null;
         // calling appDelegate by service name
         const appDelegate = item.token.execution.appDelegate;
         let serviceName;
@@ -55,13 +54,42 @@ class ServiceTask extends Node {
 
         await item.node.setInput(item,ret);
 
-        if (item.context.response.action && item.context.response.action == NODE_ACTION.wait) {
+        if (item.context.action && item.context.action == NODE_ACTION.wait) {
 
-            return item.context.response.action;
+            return item.context.action;
         }
 
         return NODE_ACTION.end;
     }
+}
+//    <bpmn2:businessRuleTask id="Task_1lcamp6" name="Vacation"  camunda:decisionRef="Vacation">
+
+
+class BusinessRuleTask extends ServiceTask {
+    async run(item): Promise<NODE_ACTION> {
+        let businessRule;
+        const token: Token = item.token;
+
+        const config= token.execution.executionContext.configuration;
+        const path = config.definitionsPath;
+
+        console.log('Business Rule Task'); //.loopCharacteristics.$attrs["camunda:collection"];
+        console.log(this.def.$attrs); //.loopCharacteristics.$attrs["camunda:collection"];
+        if (this.def.$attrs && this.def.$attrs["camunda:decisionRef"]) {
+            businessRule = this.def.$attrs["camunda:decisionRef"];
+            console.log("invoking business rule:" + businessRule)
+            const dt = await DecisionTable.load(path + businessRule + '.json');
+            console.log(dt);
+            const data = await item.node.getOutput(item);
+            const result = await dt.evaluate(data);
+            console.log("result");
+            console.log(result.actions);
+
+            await item.node.setInput(item, result.actions);
+        }
+        return NODE_ACTION.end;
+    }
+
 }
 class SendTask extends ServiceTask {
 
@@ -100,9 +128,14 @@ class SubProcess extends Node {
         token.log('..executing a sub process item:' + item.id );
         const startNode = this.childProcess.getStartNodes()[0];
 
-        await Token.startNewToken(token.execution, startNode, this.id, token, this, null);
+        const newToken=await Token.startNewToken(TOKEN_TYPE.SubProcess, token.execution, startNode, this.id, token, item, null,null,true);
 
-        return NODE_ACTION.continue;
+        await this.childProcess.start(token.execution,newToken);
+
+        await this.startBoundaryEvents(item, newToken);
+        await newToken.execute(null);
+
+        return NODE_ACTION.wait;
     }
 }
 /**
@@ -135,7 +168,7 @@ class CallActivity extends Node {
 
         const context = item.context;
         const modelName = this.calledElement;
-        const data = item.node.getOutput(item);
+        const data = await item.node.getOutput(item);
 
         const response = await context.engine.start(modelName, data);
 
@@ -150,4 +183,4 @@ class CallActivity extends Node {
     }
 }
 
-export {  UserTask, ScriptTask, ServiceTask, SendTask, ReceiveTask, SubProcess , CallActivity }
+export {  UserTask, ScriptTask, ServiceTask, BusinessRuleTask, SendTask, ReceiveTask, SubProcess , CallActivity }

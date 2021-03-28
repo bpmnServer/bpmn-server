@@ -1,7 +1,7 @@
 
 import { Logger } from '../common/Logger';
 
-import { ServerComponent } from './ServerContext';
+import { ServerComponent } from './ServerComponent';
 
 import { IEventData } from '../..';
 

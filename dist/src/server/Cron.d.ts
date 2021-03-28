@@ -1,4 +1,4 @@
-import { ServerComponent } from './ServerContext';
+import { ServerComponent } from './ServerComponent';
 declare class Cron extends ServerComponent {
     private static timersStarted;
     private static checkingTimers;

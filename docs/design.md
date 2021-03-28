@@ -7,7 +7,7 @@ So workflow is a graph of control flow, and activities are its nodes. They can b
 
 A workflow is an application running inside in your application, have its state and variables, and correlated across Node.js cluster and process instances. So if your Node.js application consists of many instances inside a cluster and many clusters across a server farm, a workflow instance will work like a single instance application within those. A workflow application could outlive Node.js applications, they have out-of-the-box persistence support to make them ideal platform to do long running business processes, durable services or scheduled backgound tasks.
 
-Workflow is modeled using BPMN 2 tools and is defined in as an XML string or stream. Each element in the model is calleld a <b>Node</b> connected by <b>Flow</b>
+Workflow is modeled using BPMN 2 tools and is defined in as an XML string or stream. Each element in the model is called a <b>Node</b>, nodes are connected by <b>Flow</b>.
 
 <b>Execution</b> is the processing engine of the workflow, taking in an BPMN source and executes it.
 

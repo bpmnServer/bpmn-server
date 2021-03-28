@@ -26,8 +26,7 @@ The following elements are tested and supported.
   Same as user task
 - UserTask
 - ServiceTask
-- BusinessRuleTask
-Same behaviour as ServiceTask
+- [Business Rule Task](./examples#BusinessRuleTask) 
 - SendTask: Same behaviour as ServiceTask
 - SignalTask
 ## Behaviour
@@ -68,7 +67,7 @@ Same behaviour as ServiceTask
 - Lane
 - Pool
 ## Special
-- Script Events
+- [Script Events](./examples#ScriptExtensions) 
 
 ## Pending 
 - BpmnError

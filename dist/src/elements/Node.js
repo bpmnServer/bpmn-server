@@ -12,17 +12,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Node = void 0;
 const _1 = require(".");
 const Token_1 = require("../engine/Token");
-const __1 = require("../../");
+const Enums_1 = require("../interfaces/Enums");
 const Item_1 = require("../engine/Item");
-const NodeLoader_1 = require("./NodeLoader");
+const Enums_2 = require("../interfaces/Enums");
 const BehaviourLoader_1 = require("./behaviours/BehaviourLoader");
 // ---------------------------------------------
 class Node extends _1.Element {
-    constructor(id, processId, type, def) {
+    constructor(id, process, type, def) {
         super();
         this.scripts = new Map();
         this.id = id;
-        this.processId = processId;
+        this.process = process;
         this.type = type;
         this.def = def;
         this.inbounds = [];
@@ -30,6 +30,9 @@ class Node extends _1.Element {
         this.name = def.name;
         this.attachments = [];
         BehaviourLoader_1.BehaviourLoader.load(this);
+    }
+    get processId() {
+        return this.process.id;
     }
     doEvent(item, event, newStatus) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -52,15 +55,15 @@ class Node extends _1.Element {
         return __awaiter(this, void 0, void 0, function* () {
             //
             item.token.log('--setting input ' + JSON.stringify(input));
-            const data = this.getInput(item, input);
+            const data = yield this.getInput(item, input);
             item.token.applyInput(data);
         });
     }
     getInput(item, input) {
         return __awaiter(this, void 0, void 0, function* () {
-            item.context.response.input = input;
-            yield this.doEvent(item, __1.EXECUTION_EVENT.transform_input, null);
-            return item.context.response.input;
+            item.context.input = input;
+            yield this.doEvent(item, Enums_1.EXECUTION_EVENT.transform_input, null);
+            return item.context.input;
         });
     }
     /**
@@ -70,10 +73,10 @@ class Node extends _1.Element {
      */
     getOutput(item) {
         return __awaiter(this, void 0, void 0, function* () {
-            item.context.response.output = item.data;
-            item.context.response.messageMatchingKey = {};
-            yield this.doEvent(item, __1.EXECUTION_EVENT.transform_output, null);
-            return item.context.response.output;
+            item.context.output = item.data;
+            item.context.messageMatchingKey = {};
+            yield this.doEvent(item, Enums_1.EXECUTION_EVENT.transform_output, null);
+            return item.context.output;
         });
     }
     enter(item) {
@@ -104,40 +107,37 @@ class Node extends _1.Element {
         return __awaiter(this, void 0, void 0, function* () {
             //  2  enter
             //  --------
-            yield this.doEvent(item, __1.EXECUTION_EVENT.node_enter, __1.ITEM_STATUS.enter);
+            yield this.doEvent(item, Enums_1.EXECUTION_EVENT.node_enter, Enums_1.ITEM_STATUS.enter);
             this.enter(item); // no choice
             //  3   start
             //  --------
-            yield this.doEvent(item, __1.EXECUTION_EVENT.node_start, __1.ITEM_STATUS.start);
+            yield this.doEvent(item, Enums_1.EXECUTION_EVENT.node_start, Enums_1.ITEM_STATUS.start);
             let ret = yield this.start(item);
-            let wait = ret == __1.NODE_ACTION.wait;
-            this.behaviours.forEach(b => {
-                if (b.start(item) == __1.NODE_ACTION.wait) {
-                    item.token.log("..behaviour returned wait");
-                    wait = true;
-                }
-            });
-            // check for attachments - boundary events:
             let i;
-            for (i = 0; i < this.attachments.length; i++) {
-                let event = this.attachments[i];
-                item.token.log('..executing boundary event -' + event.id);
-                yield Token_1.Token.startNewToken(item.token.execution, event, null, item.token, this, null);
-                item.token.log('..executing boundary event -' + event.id + ' ended');
+            const behaviourlist = [];
+            this.behaviours.forEach(b => { behaviourlist.push(b); });
+            for (i = 0; i < behaviourlist.length; i++) {
+                const b = behaviourlist[i];
+                const bRet = yield b.start(item);
+                if (bRet > ret)
+                    ret = bRet;
             }
-            if (wait) {
-                yield this.doEvent(item, __1.EXECUTION_EVENT.node_wait, __1.ITEM_STATUS.wait);
-                return __1.NODE_ACTION.wait;
+            // check for attachments - boundary events:
+            if (ret == Enums_1.NODE_ACTION.error || ret == Enums_1.NODE_ACTION.abort)
+                return ret;
+            else if (ret == Enums_1.NODE_ACTION.wait) {
+                yield this.doEvent(item, Enums_1.EXECUTION_EVENT.node_wait, Enums_1.ITEM_STATUS.wait);
+                return ret;
             }
             //  4   run  perform the work
             //  --------
             item.token.log('..>run ' + this.id);
             ret = yield this.run(item);
             switch (ret) {
-                case __1.NODE_ACTION.error:
+                case Enums_1.NODE_ACTION.error:
                     return ret;
                     break;
-                case __1.NODE_ACTION.abort:
+                case Enums_1.NODE_ACTION.abort:
                     return ret;
                     break;
             }
@@ -158,20 +158,20 @@ class Node extends _1.Element {
     }
     start(item) {
         return __awaiter(this, void 0, void 0, function* () {
+            yield this.startBoundaryEvents(item, item.token);
             if (this.requiresWait) {
-                return __1.NODE_ACTION.wait;
+                return Enums_1.NODE_ACTION.wait;
             }
-            return __1.NODE_ACTION.continue;
+            return Enums_1.NODE_ACTION.continue;
         });
     }
     run(item) {
         return __awaiter(this, void 0, void 0, function* () {
-            return __1.NODE_ACTION.end;
+            return Enums_1.NODE_ACTION.end;
         });
     }
     end(item) {
         return __awaiter(this, void 0, void 0, function* () {
-            /// fire message flow
             /**
              * Rule:    boundary events are canceled when owner task status is 'end'
              * */
@@ -189,19 +189,20 @@ class Node extends _1.Element {
             }
             for (i = 0; i < this.outbounds.length; i++) {
                 let flow = this.outbounds[i];
-                if (flow.type == NodeLoader_1.BPMN_TYPE.MessageFlow) {
+                if (flow.type == Enums_2.BPMN_TYPE.MessageFlow) {
                     let flowItem = new Item_1.Item(flow, item.token);
                     yield flow.execute(flowItem);
                 }
             }
-            if (item.status == __1.ITEM_STATUS.end)
+            if (item.status == Enums_1.ITEM_STATUS.end)
                 return;
             item.endedAt = new Date().toISOString();
             ;
             this.behaviours.forEach(function (b) {
                 return __awaiter(this, void 0, void 0, function* () { yield b.end(item); });
             });
-            yield this.doEvent(item, __1.EXECUTION_EVENT.node_end, __1.ITEM_STATUS.end);
+            yield this.doEvent(item, Enums_1.EXECUTION_EVENT.node_end, Enums_1.ITEM_STATUS.end);
+            item.log('setting item status to end' + item.id + 'status' + item.status);
         });
     }
     /**
@@ -217,16 +218,26 @@ class Node extends _1.Element {
     getOutbounds(item) {
         const outbounds = [];
         this.outbounds.forEach(flow => {
-            if (flow.type == NodeLoader_1.BPMN_TYPE.MessageFlow) {
+            if (flow.type == Enums_2.BPMN_TYPE.MessageFlow) {
             }
             else {
                 let flowItem = new Item_1.Item(flow, item.token);
-                if (flow.run(flowItem) == __1.FLOW_ACTION.take)
+                if (flow.run(flowItem) == Enums_1.FLOW_ACTION.take)
                     outbounds.push(flowItem);
             }
         });
         item.token.log('..return outbounds' + outbounds.length);
         return outbounds;
+    }
+    startBoundaryEvents(item, token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let i;
+            // check for attachments - boundary events:
+            for (i = 0; i < this.attachments.length; i++) {
+                let event = this.attachments[i];
+                yield Token_1.Token.startNewToken(Token_1.TOKEN_TYPE.BoundaryEvent, item.token.execution, event, null, token, item, null);
+            }
+        });
     }
 }
 exports.Node = Node;

@@ -67,3 +67,5 @@ This is where the definition files reside, the demo WebApp contains a set of tho
 
 ## AppDelegate Class
 
+This class handles application specific calls
+

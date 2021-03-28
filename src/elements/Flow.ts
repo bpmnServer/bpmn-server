@@ -1,6 +1,6 @@
 
 import { Execution } from '../engine/Execution';
-import { Token } from '../engine/Token';
+import { Token, TOKEN_TYPE } from '../engine/Token';
 import { IBehaviour, Behaviour} from "./behaviours";
 import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, IFlow } from '../../';
 
@@ -20,6 +20,7 @@ class Flow extends Element implements IFlow {
         this.to = to;
         this.def = def;
         this.name = def.name;
+        this.isFlow = true;
     }
     describe() {
 
@@ -84,7 +85,7 @@ class MessageFlow extends Flow {
 
         }
         else {
-            execution.promises.push(Token.startNewToken(execution, this.to, null, null, null, null));
+            execution.promises.push(Token.startNewToken(TOKEN_TYPE.Primary,execution, this.to, null, null, null, null));
         }
     }
 

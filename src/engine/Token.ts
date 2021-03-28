@@ -4,7 +4,7 @@ const fs = require('fs');
 
 import { Execution } from './Execution';
 import { SubProcess ,  LoopBehaviour , Element, Node, Flow } from '../elements/'
-import { EXECUTION_EVENT , NODE_ACTION , FLOW_ACTION, TOKEN_STATUS, EXECUTION_STATUS,  ITEM_STATUS, INode} from '../../';
+import { EXECUTION_EVENT , NODE_ACTION , FLOW_ACTION, TOKEN_STATUS, EXECUTION_STATUS,  ITEM_STATUS, INode, NODE_SUBTYPE} from '../../';
 import { EventEmitter } from 'events';
 import { Loop } from './Loop';
 import { Item } from './Item';
@@ -49,21 +49,24 @@ import { IToken, IExecution, IItem } from '../interfaces/engine';
  *  
  */
 // ---------------------------------------------
-
+enum TOKEN_TYPE {
+    Primary = 'Primary', SubProcess = 'SubProcess', Instance = 'Instance', Diverge = 'Diverge',
+    EventSubProcess='EventSubProces', BoundaryEvent ='BoundaryEvent'
+}
 // ---------------------------------------------
 class Token implements IToken {
     id;
+    type: TOKEN_TYPE;
     execution: IExecution;
     dataPath: string;
     startNodeId;
     parentToken?: Token;
-    branchNode?: Node;
+//    branchNode?: Node;
+    originItem: Item;
     path: Item[];  //  keep track of all nodes and flow taken 
     loop: Loop;
-
     currentNode: Node;
     processId;
-
     status: TOKEN_STATUS;
 
     get data():any {
@@ -71,6 +74,9 @@ class Token implements IToken {
     }
     get currentItem() : Item {
         return this.path[this.path.length - 1];
+    }
+    get firstItem(): Item {
+        return this.path[0];
     }
     get lastItem() : Item {
         let nodes = this.path.filter(function (value) {
@@ -82,8 +88,14 @@ class Token implements IToken {
         else
             return null;
     }
-    constructor(execution: Execution, startNode: Node, dataPath? ,parentToken?: Token, branchNode?: Node) {
+    get childrenTokens(): Token[] {
+        const list = [];
+        this.execution.tokens.forEach(t => { if (t.parentToken && t.parentToken.id == this.id) list.push(t); });
+        return list;
+    }
+    constructor(type: TOKEN_TYPE, execution: Execution, startNode: Node, dataPath? ,parentToken?: Token, originItem?: Item) {
         this.execution = execution;
+        this.type = type;
         if (dataPath)
             this.dataPath = dataPath;
         else
@@ -92,25 +104,36 @@ class Token implements IToken {
         this.startNodeId = startNode.id;
         this.currentNode = startNode;
         this.parentToken = parentToken;
-        this.branchNode = branchNode;
+        this.originItem= originItem;
         this.id = execution.getNewId('token');
         this.processId = startNode.processId;
         this.path = [];
     }
-    static async startNewToken(execution, startNode, dataPath, parentToken: Token, branchNode: Node, loop: Loop , data=null) {
-        const token = new Token(execution,  startNode ,dataPath, parentToken, branchNode);
+    /**
+     * 
+     * @param execution
+     * @param startNode
+     * @param dataPath
+     * @param parentToken
+     * @param originItem
+     * @param loop
+     * @param data
+     */
+    static async startNewToken(type:TOKEN_TYPE,execution, startNode, dataPath, parentToken: Token, originItem: Item, loop: Loop , data=null , noExecute=false) {
+        const token = new Token(type,execution,  startNode ,dataPath, parentToken, originItem);
         token.loop = loop;
         execution.tokens.set(token.id, token);
         token.applyInput(data);
-        const result = await token.execute(data);
+        if (noExecute==false)
+            await token.execute(data);
         return token;
     } 
     save() {
-        let parentToken, branchNode, loopId;
+        let parentToken, originItem, loopId;
         if (this.parentToken)
             parentToken = this.parentToken.id;
-        if (this.branchNode)
-            branchNode = this.branchNode.id;
+        if (this.originItem)
+            originItem = this.originItem.id;
         if (this.loop)
             loopId = this.loop.id;
 
@@ -121,24 +144,26 @@ class Token implements IToken {
         });
 
         return {
-            id: this.id, status: this.status, dataPath: this.dataPath, loopId,
-            parentToken, branchNode, startNodeId: this.startNodeId,
+            id: this.id, type: this.type, status: this.status, dataPath: this.dataPath, loopId,
+            parentToken, originItem, startNodeId: this.startNodeId,
             currentNode: this.currentNode.id 
         };
     }
     static load(execution: Execution , da :any ) : Token {
         const startNode = execution.getNodeById(da.startNodeId);
         const parentToken = execution.getToken(da.parentToken);
-        const branchNode = execution.getNodeById(da.branchNode);
         const currentNode = execution.getNodeById(da.currentNode);
 
-        const token = new Token(execution, startNode, da.dataPath, parentToken, branchNode);
+        const token = new Token(da.type,execution, startNode, da.dataPath, parentToken, null);
         token.id = da.id;
         token.startNodeId = da.startNodeId;
         token.currentNode = currentNode;
         token.status = da.status;
         token.path = [];
         return token;
+    }
+    stop() {
+        
     }
     /*
      * is fired once after the execution is resumed from restrt 
@@ -154,6 +179,15 @@ class Token implements IToken {
         this.path.forEach(item => {
             item.element.restored(item);
         });
+    }
+    getSubProcessToken() : Token {
+        if (this.type==TOKEN_TYPE.SubProcess)
+            return this;
+        else if (this.parentToken == null)
+            return null;
+        else
+            return this.parentToken.getSubProcessToken();
+
     }
     getChildrenTokens() {
         const children = [];
@@ -215,9 +249,48 @@ class Token implements IToken {
             return;     // goto sleep for now will call you by signal
 
         }
+        else if (ret == NODE_ACTION.error) {
+            await this.processError();
+        }
+        else if (ret == NODE_ACTION.abort) {
+            this.execution.terminate();
+            return;     
+
+        }
+
 
         const result = await this.goNext();
         return result;
+
+    }
+    async processError() {
+
+        let errorHandlerToken=null;
+        // two types of error handlers
+        //  1.  eventSubProcess 
+        //  2.  boundaryEvents  
+        let contextItem: Item = this.currentItem;
+        let contextToken: Token = this;
+
+        while (contextToken && errorHandlerToken==null) {
+            contextToken.childrenTokens.forEach(ct => {
+                if ((ct.type == TOKEN_TYPE.EventSubProcess || ct.type == TOKEN_TYPE.BoundaryEvent)
+                    && ct.currentNode.subType == NODE_SUBTYPE.error) {
+                    errorHandlerToken = ct;
+                }
+            });
+            contextToken = contextToken.parentToken;
+        }
+        if (errorHandlerToken) {
+            await errorHandlerToken.signal(null);
+            this.currentItem.status = ITEM_STATUS.end;
+            await this.end();
+        }
+        else {
+            this.log("Aborting due to error")
+            this.execution.terminate();
+            return;
+        }
 
     }
     applyInput(inputData) {
@@ -227,9 +300,9 @@ class Token implements IToken {
      *  is called by Gateways to cancel current token
      *  
      * */
-    terminate() {
-        this.currentNode.end(this.currentItem);
-        this.end();
+    async terminate() {
+        await this.currentNode.end(this.currentItem);
+        await this.end();
 
     }
     /*
@@ -266,9 +339,17 @@ class Token implements IToken {
         this.status = TOKEN_STATUS.end;
         this.execution.tokenEnded(this);
         // check if subprocess then continue parent
-        if (this.branchNode && this.branchNode.type == 'bpmn:SubProcess') {
+        if (this.type==TOKEN_TYPE.SubProcess) {
             this.log('..subprocess token has ended');
             await this.parentToken.signal(null);
+        }
+        let i;
+        const children = this.childrenTokens;
+        for (i = 0; i < children.length; i++) {
+            const child = children[i];
+            if (child.type == TOKEN_TYPE.EventSubProcess) {
+                await child.terminate();
+            }
         }
     }
     /*
@@ -289,6 +370,7 @@ class Token implements IToken {
         }
 
         let thisNode = this.currentNode;
+        let thisItem = this.currentItem;
         const self = this;
         const promises = [];
         if (outbounds.length > 1) {
@@ -307,7 +389,7 @@ class Token implements IToken {
                     promises.push(self.execute(null));
                 }
                 else {
-                    promises.push(Token.startNewToken(self.execution, nextNode, null, self, thisNode, null));
+                    promises.push(Token.startNewToken(TOKEN_TYPE.Diverge,self.execution, nextNode, null, self, thisItem, null));
                }
             }
         });
@@ -318,7 +400,10 @@ class Token implements IToken {
     log(msg) {
         this.execution.log(msg);
     }
+    error(msg) {
+        this.execution.error(msg);
+    }
 }
 
 // ---------------------------------------------
-export { Token  }
+export { Token , TOKEN_TYPE }

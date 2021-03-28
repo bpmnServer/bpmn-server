@@ -1,4 +1,4 @@
-import { ServerComponent } from './ServerContext';
+import { ServerComponent } from './ServerComponent';
 import { ExecutionContext } from '.';
 declare class CacheManager extends ServerComponent {
     static liveInstances: Map<any, any>;

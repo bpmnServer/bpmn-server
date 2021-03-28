@@ -1,6 +1,6 @@
-import { NODE_ACTION } from '../../';
-import { Process } from './Process';
 import { Node } from './Node';
+import { NODE_ACTION } from '../interfaces/Enums';
+import { Process } from './Process';
 import { IExecution } from '../interfaces/engine';
 declare class ScriptTask extends Node {
     run(item: any): Promise<NODE_ACTION>;
@@ -16,6 +16,9 @@ declare class ScriptTask extends Node {
  *              output= service (input,context)
  */
 declare class ServiceTask extends Node {
+    run(item: any): Promise<NODE_ACTION>;
+}
+declare class BusinessRuleTask extends ServiceTask {
     run(item: any): Promise<NODE_ACTION>;
 }
 declare class SendTask extends ServiceTask {
@@ -51,4 +54,4 @@ declare class CallActivity extends Node {
     static executionEnded(execution: IExecution): Promise<void>;
     start(item: any): Promise<NODE_ACTION>;
 }
-export { UserTask, ScriptTask, ServiceTask, SendTask, ReceiveTask, SubProcess, CallActivity };
+export { UserTask, ScriptTask, ServiceTask, BusinessRuleTask, SendTask, ReceiveTask, SubProcess, CallActivity };

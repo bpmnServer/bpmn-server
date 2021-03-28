@@ -3,6 +3,7 @@ import { Node } from "..";
 import { Item } from "../../engine/Item";
 import { IItem } from "../../..";
 import { ScriptBehaviour } from "./Script";
+import { ErrorEventBehaviour } from "./Error";
 
 
 const duration = require('iso8601-duration');
@@ -17,6 +18,7 @@ const Behaviour_names = {
     TerminateEventDefinition: 'bpmn:TerminateEventDefinition',
     MessageEventDefinition: 'bpmn:MessageEventDefinition',
     SignalEventDefinition: 'bpmn:SignalEventDefinition',
+    ErrorEventDefinition: 'bpmn:ErrorEventDefinition',
     CamundaFormData: 'camunda:formData',
     CamundaScript: 'camunda:script'
 }
@@ -51,6 +53,11 @@ class BehaviourLoader {
         {
             name: Behaviour_names.SignalEventDefinition, funct: function (node, def) {
                 return new SignalEventBehaviour(node, def);
+            }
+        },
+        {
+            name: Behaviour_names.ErrorEventDefinition, funct: function (node, def) {
+                return new ErrorEventBehaviour(node, def);
             }
         },
         {

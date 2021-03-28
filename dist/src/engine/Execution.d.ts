@@ -43,6 +43,11 @@ declare class Execution implements IExecution {
      *
      * causes the execution to stop from running any further
      * */
+    terminate(): void;
+    /**
+     *
+     * causes the execution to stop from running any further
+     * */
     stop(): void;
     execute(startNodeId?: any, inputData?: {}, options?: {}): Promise<void>;
     /**
@@ -70,6 +75,7 @@ declare class Execution implements IExecution {
     doExecutionEvent(event: any): Promise<void>;
     doItemEvent(item: any, event: any): Promise<void>;
     log(msg: any): void;
+    error(msg: any): void;
     applyInput(inputData: any, dataPath?: any): void;
     getData(dataPath: any): any;
     getAndCreateData(dataPath: any, asArray?: boolean): any;

@@ -1,17 +1,15 @@
 import { Element, Flow } from '.';
 
-import { Execution } from '../engine/Execution';
-import { Token } from '../engine/Token';
-import { IBehaviour, Behaviour} from "./behaviours";
-import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, INode } from '../../';
+import { Token, TOKEN_TYPE } from '../engine/Token';
+import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, NODE_SUBTYPE} from '../interfaces/Enums';
 import { Item } from '../engine/Item';
-import { BPMN_TYPE } from './NodeLoader';
+import { BPMN_TYPE } from '../interfaces/Enums';
 import { BehaviourLoader } from './behaviours/BehaviourLoader';
 
 // ---------------------------------------------
 class Node extends Element {
     name;
-    processId;
+    process;
     def;
     outbounds: Flow[];
     inbounds: Flow[];
@@ -20,11 +18,15 @@ class Node extends Element {
     messageId;
     signalId;
     scripts = new Map();
+    get processId() : any {
 
-    constructor(id, processId, type, def) {
+        return this.process.id;
+    } 
+
+    constructor(id, process , type, def) {
         super();
         this.id = id;
-        this.processId = processId;
+        this.process = process;
         this.type = type;
         this.def = def;
         this.inbounds = [];
@@ -33,6 +35,7 @@ class Node extends Element {
         this.attachments = [];
 
         BehaviourLoader.load(this);
+
     }
     async doEvent(item: Item, event: EXECUTION_EVENT, newStatus: ITEM_STATUS) {
         if (newStatus)
@@ -55,18 +58,18 @@ class Node extends Element {
         //
         item.token.log('--setting input ' + JSON.stringify(input));
 
-        const data = this.getInput(item, input);
+        const data = await this.getInput(item, input);
 
         item.token.applyInput(data);
 
     }
     async getInput(item: Item, input) {
 
-        item.context.response.input = input;
+        item.context.input = input;
 
         await this.doEvent(item, EXECUTION_EVENT.transform_input, null);
 
-        return item.context.response.input;
+        return item.context.input;
     }
     /**
      * transform data using output rules
@@ -74,12 +77,12 @@ class Node extends Element {
      * @param item
      */
     async getOutput(item: Item) {
-        item.context.response.output = item.data;
-        item.context.response.messageMatchingKey = {};
+        item.context.output = item.data;
+        item.context.messageMatchingKey = {};
 
         await this.doEvent(item, EXECUTION_EVENT.transform_output, null);
 
-        return item.context.response.output;
+        return item.context.output;
 
     }
     enter(item: Item) {
@@ -123,25 +126,21 @@ class Node extends Element {
 
         let ret =await this.start(item);
 
-        let wait = ret == NODE_ACTION.wait;
-        this.behaviours.forEach(b => {
-            if (b.start(item) == NODE_ACTION.wait) {
-                item.token.log("..behaviour returned wait");
-                wait = true;
-            }
-
-        });
-        // check for attachments - boundary events:
         let i;
-        for (i = 0; i < this.attachments.length; i++) {
-            let event = this.attachments[i];
-            item.token.log('..executing boundary event -' + event.id);
-            await Token.startNewToken(item.token.execution, event, null, item.token, this, null);
-            item.token.log('..executing boundary event -' + event.id + ' ended');
+        const behaviourlist = [];
+        this.behaviours.forEach(b => { behaviourlist.push(b) });
+        for (i = 0; i < behaviourlist.length; i++) {
+            const b = behaviourlist[i];
+            const bRet = await b.start(item);
+            if (bRet > ret) ret = bRet;
         }
-        if (wait) {
+        // check for attachments - boundary events:
+
+        if (ret == NODE_ACTION.error || ret == NODE_ACTION.abort)
+            return ret;
+        else if (ret ==NODE_ACTION.wait) {
             await this.doEvent(item, EXECUTION_EVENT.node_wait, ITEM_STATUS.wait);
-            return NODE_ACTION.wait;
+            return ret;
         }
         //  4   run  perform the work
         //  --------
@@ -172,9 +171,9 @@ class Node extends Element {
         await this.end(item);
         return;
     }
-
     async start(item: Item): Promise<NODE_ACTION> {
 
+        await this.startBoundaryEvents(item, item.token);
         if (this.requiresWait) {
             return NODE_ACTION.wait;
         }
@@ -187,7 +186,6 @@ class Node extends Element {
     }
     async end(item: Item) {
 
-        /// fire message flow
         /**
          * Rule:    boundary events are canceled when owner task status is 'end'
          * */
@@ -217,6 +215,7 @@ class Node extends Element {
         item.endedAt = new Date().toISOString();;
         this.behaviours.forEach(async function (b) { await b.end(item); });
         await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end);
+        item.log('setting item status to end'+ item.id + 'status'+ item.status);
     }
     /**
      * is called by the token after an execution resume for every active (in wait) item
@@ -245,6 +244,16 @@ class Node extends Element {
         });
         item.token.log('..return outbounds' + outbounds.length);
         return outbounds;
+    }
+    async startBoundaryEvents(item,token) {
+        let i;
+        // check for attachments - boundary events:
+        for (i = 0; i < this.attachments.length; i++) {
+            let event = this.attachments[i];
+            await Token.startNewToken(TOKEN_TYPE.BoundaryEvent, item.token.execution, event, null, token, item, null);
+        }
+
+
     }
 }
 

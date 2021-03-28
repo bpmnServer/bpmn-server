@@ -1,6 +1,29 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NODE_SUBTYPE = exports.EXECUTION_STATUS = exports.TOKEN_STATUS = exports.ITEM_STATUS = exports.FLOW_ACTION = exports.NODE_ACTION = exports.EXECUTION_EVENT = void 0;
+exports.NODE_SUBTYPE = exports.EXECUTION_STATUS = exports.TOKEN_STATUS = exports.ITEM_STATUS = exports.FLOW_ACTION = exports.NODE_ACTION = exports.EXECUTION_EVENT = exports.BPMN_TYPE = void 0;
+var BPMN_TYPE;
+(function (BPMN_TYPE) {
+    BPMN_TYPE["UserTask"] = "bpmn:UserTask";
+    BPMN_TYPE["ScriptTask"] = "bpmn:ScriptTask";
+    BPMN_TYPE["ServiceTask"] = "bpmn:ServiceTask";
+    BPMN_TYPE["SendTask"] = "bpmn:SendTask";
+    BPMN_TYPE["ReceiveTask"] = "bpmn:ReceiveTask";
+    BPMN_TYPE["BusinessRuleTask"] = "bpmn:BusinessRuleTask";
+    BPMN_TYPE["SubProcess"] = "bpmn:SubProces";
+    BPMN_TYPE["ParallelGateway"] = "bpmn:ParallelGateway";
+    BPMN_TYPE["EventBasedGateway"] = "bpmn:EventBasedGateway";
+    BPMN_TYPE["InclusiveGateway"] = "bpmn:InclusiveGateway";
+    BPMN_TYPE["ExclusiveGateway"] = "bpmn:ExclusiveGateway";
+    BPMN_TYPE["BoundaryEvent"] = "bpmn:BoundaryEvent";
+    BPMN_TYPE["StartEvent"] = "bpmn:StartEvent";
+    BPMN_TYPE["IntermediateCatchEvent"] = "bpmn:IntermediateCatchEvent";
+    BPMN_TYPE["IntermediateThrowEvent"] = "bpmn:IntermediateThrowEvent";
+    BPMN_TYPE["EndEvent"] = "bpmn:EndEvent";
+    BPMN_TYPE["SequenceFlow"] = "bpmn:SequenceFlow";
+    BPMN_TYPE["MessageFlow"] = "bpmn:MessageFlow";
+    BPMN_TYPE["CallActivity"] = "bpmn:CallActivity";
+})(BPMN_TYPE || (BPMN_TYPE = {}));
+exports.BPMN_TYPE = BPMN_TYPE;
 var NODE_SUBTYPE;
 (function (NODE_SUBTYPE) {
     NODE_SUBTYPE["timer"] = "timer";
@@ -45,14 +68,15 @@ exports.EXECUTION_EVENT = EXECUTION_EVENT;
 //   must be same as above
 var NODE_ACTION;
 (function (NODE_ACTION) {
-    NODE_ACTION["continue"] = "continue";
-    NODE_ACTION["end"] = "end";
-    NODE_ACTION["stop"] = "stop";
-    NODE_ACTION["error"] = "error";
-    NODE_ACTION["abort"] = "abort";
-    NODE_ACTION["wait"] = "wait";
+    NODE_ACTION[NODE_ACTION["continue"] = 1] = "continue";
+    NODE_ACTION[NODE_ACTION["wait"] = 2] = "wait";
+    NODE_ACTION[NODE_ACTION["end"] = 3] = "end";
+    NODE_ACTION[NODE_ACTION["stop"] = 4] = "stop";
+    NODE_ACTION[NODE_ACTION["error"] = 5] = "error";
+    NODE_ACTION[NODE_ACTION["abort"] = 6] = "abort";
 })(NODE_ACTION || (NODE_ACTION = {}));
 exports.NODE_ACTION = NODE_ACTION;
+;
 var ITEM_STATUS;
 (function (ITEM_STATUS) {
     ITEM_STATUS["enter"] = "enter";

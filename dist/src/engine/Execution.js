@@ -52,7 +52,7 @@ class Execution {
     }
     tokenEnded(token) {
         let active = 0;
-        this.tokens.forEach(t => { if (t.status != __1.TOKEN_STATUS.end)
+        this.tokens.forEach(t => { if (t.status != __1.TOKEN_STATUS.end && t.status != __1.TOKEN_STATUS.terminated)
             active++; });
         if (active == 0) {
             this.end();
@@ -74,7 +74,19 @@ class Execution {
      *
      * causes the execution to stop from running any further
      * */
+    terminate() {
+        this.tokens.forEach(t => {
+            t.terminate();
+        });
+    }
+    /**
+     *
+     * causes the execution to stop from running any further
+     * */
     stop() {
+        this.tokens.forEach(t => {
+            t.stop();
+        });
     }
     execute(startNodeId = null, inputData = {}, options = {}) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -99,7 +111,11 @@ class Execution {
                 return;
             }
             this.log('..starting at :' + startNode.id);
-            let result = yield Token_1.Token.startNewToken(this, startNode, null, null, null, null);
+            let token = yield Token_1.Token.startNewToken(Token_1.TOKEN_TYPE.Primary, this, startNode, null, null, null, null, null, true);
+            // start all event sub processes for the process
+            const proc = startNode.process;
+            yield proc.start(this, token);
+            yield token.execute(null);
             yield Promise.all(this.promises);
             this.log('.execute returned ');
             yield this.doExecutionEvent(__1.EXECUTION_EVENT.execution_executed);
@@ -153,7 +169,7 @@ class Execution {
                     }
                 });
                 if (node) {
-                    let token = yield Token_1.Token.startNewToken(this, node, null, null, null, inputData);
+                    let token = yield Token_1.Token.startNewToken(Token_1.TOKEN_TYPE.Primary, this, node, null, null, null, inputData);
                 }
                 else {
                     this.getItems().forEach(i => {
@@ -232,9 +248,21 @@ class Execution {
                 token.loop = loop;
             });
             // items
+            const items = [];
             state.items.forEach(i => {
                 const token = execution.getToken(i.tokenId);
-                token.path.push(Item_1.Item.load(execution, i, token));
+                const item = Item_1.Item.load(execution, i, token);
+                token.path.push(item);
+                items.push(item);
+            });
+            // token.originItem
+            state.tokens.forEach(t => {
+                const token = execution.getToken(t.id);
+                if (t.originItem)
+                    items.forEach(it => {
+                        if (it.id == t.originItem)
+                            token.originItem = it;
+                    });
             });
             execution.status = state.status;
             execution.data = state.data;
@@ -267,8 +295,9 @@ class Execution {
         this.log('.Execution Report ----');
         this.log('..Status:' + this.status);
         this.tokens.forEach(token => {
-            const branch = token.branchNode ? token.branchNode.id : 'root';
-            this.log(`..token: ${token.id} - ${token.status} - current: ${token.currentNode.id} from ${branch}  ` + JSON.stringify(token.data));
+            const branch = token.originItem ? token.originItem.elementId : 'root';
+            const parent = token.parentToken ? token.parentToken.id : '-';
+            this.log(`..token: ${token.id} - ${token.status} - ${token.type} current: ${token.currentNode.id} from ${branch} child of ${parent} ` + JSON.stringify(token.data));
         });
         let indx = 0;
         const items = this.getItems();
@@ -278,7 +307,7 @@ class Execution {
             if (item.element.type == 'bpmn:SequenceFlow')
                 this.log(`..Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status}`);
             else
-                this.log(`..Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status}  from ${item.startedAt} to ${endedAt} id: ${item.id} `);
+                this.log(`..Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status}  from ${item.startedAt} to ${endedAt} id: ${item.id}`);
         }
         this.log('.Data:');
         this.log(JSON.stringify(this.data));
@@ -308,6 +337,10 @@ class Execution {
     log(msg) {
         this.logs.push(msg);
         this.logger.log(msg);
+    }
+    error(msg) {
+        this.logs.push(msg);
+        this.logger.error(msg);
     }
     // Data Handling 
     /*

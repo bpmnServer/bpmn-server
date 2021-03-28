@@ -1,8 +1,7 @@
-/// <reference types="node" />
 import { ExecutionContext } from '../..';
-import { ServerComponent } from '../server/ServerContext';
-import { EventEmitter } from 'events';
-declare class Engine extends ServerComponent {
+import { ServerComponent } from '../server/ServerComponent';
+import { IEngine } from "../interfaces";
+declare class Engine extends ServerComponent implements IEngine {
     /**
      *	loads a definitions  and start execution
      *
@@ -10,7 +9,7 @@ declare class Engine extends ServerComponent {
      * @param data		input data
      * @param startNodeId	in process has multiple start node; you need to specify which one
      */
-    start(name: any, data?: any, listener?: EventEmitter, startNodeId?: string, options?: {}): Promise<ExecutionContext>;
+    start(name: any, data?: any, startNodeId?: string, options?: {}): Promise<ExecutionContext>;
     /**
      * restores an instance into memeory or provides you access to a running instance
      *
@@ -24,9 +23,9 @@ declare class Engine extends ServerComponent {
      *					{ items.item.itemKey : 'businesskey here'}
      *
      */
-    get(instanceQuery: any, listener?: EventEmitter): Promise<ExecutionContext>;
-    restore(instanceQuery: any, listener?: EventEmitter): Promise<ExecutionContext>;
-    invokeItem(itemQuery: any, data?: {}, listener?: EventEmitter): Promise<ExecutionContext>;
+    get(instanceQuery: any): Promise<ExecutionContext>;
+    restore(instanceQuery: any): Promise<ExecutionContext>;
+    invokeItem(itemQuery: any, data?: {}): Promise<ExecutionContext>;
     /**
      * Continue an existing item that is in a wait state
      *
@@ -39,7 +38,7 @@ declare class Engine extends ServerComponent {
      * @param itemQuery		criteria to retrieve the item
      * @param data
      */
-    invoke(itemQuery: any, data?: {}, listener?: EventEmitter): Promise<ExecutionContext>;
+    invoke(itemQuery: any, data?: {}): Promise<ExecutionContext>;
     /**
      *
      * Invoking an event (usually start event of a secondary process) against an existing instance
@@ -55,8 +54,8 @@ declare class Engine extends ServerComponent {
      * @param elementId
      * @param data
      */
-    startEvent(instanceId: any, elementId: any, data?: {}, listener?: EventEmitter): Promise<ExecutionContext>;
-    throwMessage(messageId: any, data?: {}, matchingQuery?: {}, listener?: EventEmitter): Promise<ExecutionContext>;
+    startEvent(instanceId: any, elementId: any, data?: {}): Promise<ExecutionContext>;
+    throwMessage(messageId: any, data?: {}, matchingQuery?: {}): Promise<ExecutionContext>;
     /**
      *
      * signal/message raise a signal or throw a message
@@ -69,7 +68,7 @@ declare class Engine extends ServerComponent {
      * @param matchingQuery	should match the itemKey (if specified)
      * @param data			message data
      */
-    throwSignal(messageId: any, data?: {}, matchingQuery?: {}, listener?: EventEmitter): Promise<ExecutionContext>;
+    throwSignal(messageId: any, data?: {}, matchingQuery?: {}): Promise<ExecutionContext>;
     private error;
 }
 export { Engine };

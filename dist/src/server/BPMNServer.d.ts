@@ -1,7 +1,9 @@
+/// <reference types="node" />
 import { IConfiguration, ILogger, IAppDelegate, IBPMNServer, IDataStore } from '../..';
 import { Engine } from './Engine';
 import { CacheManager } from './CacheManager';
 import { Cron } from './Cron';
+import { EventEmitter } from 'events';
 /**
  *	The main class of Server Layer
  *	provides the full functionalities:
@@ -26,6 +28,7 @@ import { Cron } from './Cron';
 */
 declare class BPMNServer implements IBPMNServer {
     engine: Engine;
+    listener: EventEmitter;
     configuration: any;
     logger: ILogger;
     definitions: any;
@@ -40,6 +43,6 @@ declare class BPMNServer implements IBPMNServer {
      * @param logger
      */
     constructor(configuration: IConfiguration, logger?: ILogger, options?: {});
-    static getVersion(): any;
+    static getVersion(): string;
 }
 export { BPMNServer };

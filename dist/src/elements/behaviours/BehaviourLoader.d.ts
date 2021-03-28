@@ -8,6 +8,7 @@ declare const Behaviour_names: {
     TerminateEventDefinition: string;
     MessageEventDefinition: string;
     SignalEventDefinition: string;
+    ErrorEventDefinition: string;
     CamundaFormData: string;
     CamundaScript: string;
 };

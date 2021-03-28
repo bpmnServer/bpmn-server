@@ -1,3 +1,26 @@
+
+enum BPMN_TYPE {
+    UserTask = 'bpmn:UserTask',
+    ScriptTask = 'bpmn:ScriptTask',
+    ServiceTask = 'bpmn:ServiceTask',
+    SendTask = 'bpmn:SendTask',
+    ReceiveTask = 'bpmn:ReceiveTask',
+    BusinessRuleTask = 'bpmn:BusinessRuleTask',
+    SubProcess = 'bpmn:SubProces',
+    ParallelGateway = 'bpmn:ParallelGateway',
+    EventBasedGateway = 'bpmn:EventBasedGateway',
+    InclusiveGateway = 'bpmn:InclusiveGateway',
+    ExclusiveGateway = 'bpmn:ExclusiveGateway',
+    BoundaryEvent = 'bpmn:BoundaryEvent',
+    StartEvent = 'bpmn:StartEvent',
+    IntermediateCatchEvent = 'bpmn:IntermediateCatchEvent',
+    IntermediateThrowEvent = 'bpmn:IntermediateThrowEvent',
+    EndEvent = 'bpmn:EndEvent',
+    SequenceFlow = 'bpmn:SequenceFlow',
+    MessageFlow = 'bpmn:MessageFlow',
+    CallActivity = 'bpmn:CallActivity'
+}
+
 enum NODE_SUBTYPE {
     timer = 'timer',
     message = 'message',
@@ -23,7 +46,7 @@ enum EXECUTION_EVENT {
  *  possible actions by node
  */
 //   must be same as above
-enum NODE_ACTION { continue = 'continue', end = 'end', stop = 'stop', error = 'error', abort = 'abort', wait = 'wait' }
+enum NODE_ACTION { continue = 1, wait,  end , stop , error , abort  };
 
 enum ITEM_STATUS {  enter = 'enter', start = 'start', wait = 'wait', end = 'end', terminated = 'terminated' , discard= 'discard'}
 
@@ -41,6 +64,7 @@ enum FLOW_ACTION { take = 'take', discard = 'discard' }
 
 
 export {
+    BPMN_TYPE ,
     EXECUTION_EVENT, NODE_ACTION, FLOW_ACTION,
     ITEM_STATUS, TOKEN_STATUS, EXECUTION_STATUS , NODE_SUBTYPE
 }

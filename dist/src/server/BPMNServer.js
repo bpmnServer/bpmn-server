@@ -5,6 +5,8 @@ const Logger_1 = require("../common/Logger");
 const Engine_1 = require("./Engine");
 const CacheManager_1 = require("./CacheManager");
 const Cron_1 = require("./Cron");
+const events_1 = require("events");
+const _version_ = "1.1.10";
 const fs = require('fs');
 /**
  *	The main class of Server Layer
@@ -39,6 +41,7 @@ class BPMNServer {
         if (logger == null) {
             logger = new Logger_1.Logger({});
         }
+        this.listener = new events_1.EventEmitter();
         this.logger = logger;
         this.configuration = configuration;
         this.cron = new Cron_1.Cron(this);
@@ -54,8 +57,7 @@ class BPMNServer {
         this.cron.start();
     }
     static getVersion() {
-        const pack = require("../../package.json");
-        return pack.version;
+        return _version_;
     }
 }
 exports.BPMNServer = BPMNServer;

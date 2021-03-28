@@ -26,25 +26,29 @@ class Definition {
         const moddleOptions = this.server.appDelegate.moddleOptions;
         this.moddle = new BpmnModdle({ moddleOptions });
     }
-    loadProcess(definition, processElement) {
-        let processId = processElement.id;
+    loadProcess(definition, processElement, parentProcess) {
         const children = [];
+        const process = new _1.Process(processElement, parentProcess);
+        const eventSubProcesses = [];
         // process flowElements i.e. nodes 
         processElement.flowElements.forEach(child => {
             //
             let el = definition.elementsById[child.id];
             let node;
             if (el.$type == 'bpmn:SubProcess') { // subprocess
-                node = new _1.SubProcess(el.id, processId, el.$type, el);
-                node.childProcess = this.loadProcess(definition, el);
+                node = new _1.SubProcess(el.id, process, el.$type, el);
+                node.childProcess = this.loadProcess(definition, el, process);
+                if (el.triggeredByEvent)
+                    eventSubProcesses.push(node.childProcess);
             }
             else {
-                node = _1.NodeLoader.loadNode(el, processId);
+                node = _1.NodeLoader.loadNode(el, process);
             }
             this.nodes.set(el.id, node);
             children.push(node);
         });
-        return new _1.Process(processElement, children);
+        process.init(children, eventSubProcesses);
+        return process;
     }
     load() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -57,7 +61,7 @@ class Definition {
                 switch (e.$type) {
                     case 'bpmn:Process':
                         {
-                            const proc = this.loadProcess(definition, e);
+                            const proc = this.loadProcess(definition, e, null);
                             this.processes.set(e.id, proc);
                         }
                         break;

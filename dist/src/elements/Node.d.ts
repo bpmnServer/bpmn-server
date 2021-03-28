@@ -1,9 +1,9 @@
 import { Element, Flow } from '.';
-import { NODE_ACTION, EXECUTION_EVENT, ITEM_STATUS } from '../../';
+import { NODE_ACTION, EXECUTION_EVENT, ITEM_STATUS } from '../interfaces/Enums';
 import { Item } from '../engine/Item';
 declare class Node extends Element {
     name: any;
-    processId: any;
+    process: any;
     def: any;
     outbounds: Flow[];
     inbounds: Flow[];
@@ -12,7 +12,8 @@ declare class Node extends Element {
     messageId: any;
     signalId: any;
     scripts: Map<any, any>;
-    constructor(id: any, processId: any, type: any, def: any);
+    get processId(): any;
+    constructor(id: any, process: any, type: any, def: any);
     doEvent(item: Item, event: EXECUTION_EVENT, newStatus: ITEM_STATUS): Promise<any>;
     /**
      * transform data using input rules
@@ -40,7 +41,7 @@ declare class Node extends Element {
      *      3.  Subprocess the parent node is fired as normal
      *              run method will fire the subprocess invoking a new token and will go into wait
      */
-    execute(item: Item): Promise<void | NODE_ACTION.error | NODE_ACTION.abort | NODE_ACTION.wait>;
+    execute(item: Item): Promise<void | NODE_ACTION.wait | NODE_ACTION.error | NODE_ACTION.abort>;
     continue(item: Item): Promise<void>;
     start(item: Item): Promise<NODE_ACTION>;
     run(item: Item): Promise<NODE_ACTION>;
@@ -53,5 +54,6 @@ declare class Node extends Element {
     resume(item: Item): void;
     init(item: Item): void;
     getOutbounds(item: Item): Item[];
+    startBoundaryEvents(item: any, token: any): Promise<void>;
 }
 export { Node };

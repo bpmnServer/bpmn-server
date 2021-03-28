@@ -23,6 +23,7 @@ class Flow extends _1.Element {
         this.to = to;
         this.def = def;
         this.name = def.name;
+        this.isFlow = true;
     }
     describe() {
         if (this.def.conditionExpression) {
@@ -87,7 +88,7 @@ class MessageFlow extends Flow {
                 execution.promises.push(token.signal(null));
             }
             else {
-                execution.promises.push(Token_1.Token.startNewToken(execution, this.to, null, null, null, null));
+                execution.promises.push(Token_1.Token.startNewToken(Token_1.TOKEN_TYPE.Primary, execution, this.to, null, null, null, null));
             }
         });
     }

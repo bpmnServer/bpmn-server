@@ -34,7 +34,7 @@ class MessageEventBehaviour extends _1.Behaviour {
             }
             else { // throw a message
                 const output = yield this.node.getOutput(item);
-                const matchingKey = item.context.response.messageMatchingKey;
+                const matchingKey = item.context.messageMatchingKey;
                 item.token.log(`.Throwing Message <${this.messageId}> - output: ${JSON.stringify(output)} - matching key : ${JSON.stringify(matchingKey)}`);
                 yield item.context.appDelegate.messageThrown(this.messageId, output, matchingKey, item);
             }

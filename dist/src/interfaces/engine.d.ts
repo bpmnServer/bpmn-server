@@ -1,32 +1,37 @@
-/// <reference types="node" />
 import { ITEM_STATUS, EXECUTION_STATUS, TOKEN_STATUS } from './Enums';
-import { ILogger, IAppDelegate, IDefinition, Token, Element, Node } from '../../';
-import { EventEmitter } from 'events';
+import { ILogger, IAppDelegate, IDefinition, Token, Item, Element, Node } from '../../';
 interface IToken {
     id: any;
+    type: any;
     execution: IExecution;
     dataPath: string;
     startNodeId: any;
     parentToken?: IToken;
-    branchNode?: any;
+    originItem: IItem;
     path: IItem[];
+    loop: any;
     currentNode: any;
     processId: any;
     status: TOKEN_STATUS;
     data: any;
     currentItem: IItem;
     lastItem: IItem;
+    firstItem: Item;
+    childrenTokens: Token[];
     save(): {
         id: any;
+        type: any;
         status: TOKEN_STATUS;
         dataPath: string;
         loopId: any;
         parentToken: any;
-        branchNode: any;
+        originItem: any;
         startNodeId: any;
         currentNode: any;
     };
     resume(): void;
+    stop(): void;
+    processError(): any;
     restored(): void;
     getChildrenTokens(): any[];
     preExecute(): Promise<boolean>;
@@ -44,7 +49,9 @@ interface IToken {
     signal(data: any): Promise<any>;
     end(): Promise<void>;
     goNext(): Promise<void>;
+    getSubProcessToken(): IToken;
     log(msg: any): void;
+    error(msg: any): void;
 }
 interface IExecution {
     id: any;
@@ -61,7 +68,6 @@ interface IExecution {
     data: any;
     logs: any[];
     parentItemId: any;
-    listener: EventEmitter;
     executionContext: IExecutionContext;
     promises: any;
     getNodeById(id: any): Node;
@@ -74,6 +80,7 @@ interface IExecution {
      * causes the execution to stop from running any further
      * */
     stop(): void;
+    terminate(): void;
     execute(startNodeId?: any, inputData?: {}): Promise<void>;
     /**
      *
@@ -97,6 +104,7 @@ interface IExecution {
     doExecutionEvent(event: any): Promise<any>;
     doItemEvent(item: any, event: any): Promise<any>;
     log(msg: any): void;
+    error(msg: any): void;
     applyInput(inputData: any, dataPath?: any): void;
     getData(dataPath: any): any;
     getAndCreateData(dataPath: any, asArray?: boolean): any;
@@ -138,17 +146,6 @@ interface IItem extends IItemData {
     context: IExecutionContext;
     node: Node;
 }
-interface IExecutionResponse {
-    instance: IInstanceData;
-    errors: any;
-    items: IItemData[];
-}
-interface IExecutionResponse {
-    input: any;
-    output: any;
-    action: any;
-    messageMatchingKey: any;
-}
 interface IExecutionContext {
     server: any;
     configuration: any;
@@ -160,14 +157,18 @@ interface IExecutionContext {
     definitions: any;
     appDelegate: any;
     execution?: IExecution;
-    listener: any;
     instance: any;
+    listener: any;
     process: any;
     item: any;
-    response: IExecutionResponse;
     errors: any;
     items: IItem[];
     error(error: any): IExecutionContext;
+    input: any;
+    output: any;
+    messageMatchingKey: any;
     parentContext?: IExecutionContext;
+    worker: any;
+    tillDone(): any;
 }
 export { IItem, IItemData, IInstanceData, IToken, IExecution, IExecutionContext };

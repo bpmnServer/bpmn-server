@@ -1,7 +1,7 @@
 import { Execution } from '../engine/Execution';
 import { IDataStore, IBPMNServer } from '../interfaces';
 
-import { ServerComponent } from '../server/ServerContext';
+import { ServerComponent } from '../server/ServerComponent';
 
 
 const fs = require('fs');
@@ -53,6 +53,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		});
 	}
 	saveCounter = 0;
+
 	async save() {
 		if (this.inSaving) {
 			// come back please
@@ -85,17 +86,19 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 			}
 			this.isModified = false;
+			this.logger.log('DataStore: save is now done ');
 		}
 		this.inSaving = false;
 	}
 	async check(event, item) {
 		if (item)
-			this.logger.log('DataStore: instance modified...' + event + 'item:' + item.elementId);
+			this.logger.log('DataStore: instance modified...event:' + event + 'item:' + item.elementId);
 		else
-			this.logger.log('DataStore: instance modified...' + event);
+			this.logger.log('DataStore: instance modified...event:' + event);
 
 		this.isModified = true;
-		setTimeout(this.save.bind(this), 500);
+		//setTimeout(this.save.bind(this), 500);
+		return this.execution.promises.push(this.save());
 
 	}
 	async loadInstance(instanceId) {

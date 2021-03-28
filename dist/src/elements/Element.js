@@ -4,6 +4,7 @@ exports.Element = void 0;
 class Element {
     constructor() {
         this.behaviours = new Map();
+        this.isFlow = false;
     }
     /* is called after the execution is restarted */
     continue(item) { }

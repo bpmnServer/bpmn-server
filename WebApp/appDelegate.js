@@ -10,10 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MyAppDelegate = void 0;
-const _1 = require(".");
+const index_1 = require("./index");
 const fs = require('fs');
 var seq = 1;
-class MyAppDelegate extends _1.DefaultAppDelegate {
+class MyAppDelegate extends index_1.DefaultAppDelegate {
     constructor(logger = null) {
         super(logger);
         this.servicesProvider = new MyServices();

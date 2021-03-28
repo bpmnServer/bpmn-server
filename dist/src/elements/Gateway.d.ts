@@ -19,9 +19,8 @@ declare class Gateway extends Node {
  *  ExclusiveGatway:
  *      outbounds:  only 1
  *      inbound:    only 1 -
- *                      first flow arrives should cancel the rest: TODO
  * */
-declare class XORGateway extends Node {
+declare class XORGateway extends Gateway {
     getOutbounds(item: any): Item[];
 }
 /**

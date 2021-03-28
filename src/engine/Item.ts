@@ -1,9 +1,7 @@
 import { Execution } from "./Execution";
 import { ITEM_STATUS, IItem, } from "../../";
 import { IItemData } from "../../";
-
 import { Element , Node } from '../elements';
-
 import { Token } from "./Token";
 
 class Item implements IItem {
@@ -84,7 +82,6 @@ class Item implements IItem {
         item.timeDue = dataObject.timeDue;
         return item;
     }
-
 }
 
 export {Item}

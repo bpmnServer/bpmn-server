@@ -5,30 +5,39 @@ interface IDataStore {
 
 }
 interface IToken {
+
     id: any;
+    type;
     execution: IExecution;
     dataPath: string;
     startNodeId: any;
     parentToken?: IToken;
-    branchNode?: any;
+    //  branchNode?: any;
+    originItem: IItem;
     path: IItem[];
+    loop;
     currentNode: any;
     processId: any;
     status: TOKEN_STATUS;
     data;
     currentItem: IItem;
     lastItem: IItem;
+    firstItem: Item;
+    childrenTokens: Token[];
     save(): {
         id: any;
+        type;
         status: TOKEN_STATUS;
         dataPath: string;
         loopId: any;
         parentToken: any;
-        branchNode: any;
+        originItem: any;
         startNodeId: any;
         currentNode: any;
     };
     resume(): void;
+    stop(): void;
+    processError()
     restored(): void;
     getChildrenTokens(): any[];
     preExecute(): Promise<boolean>;
@@ -46,7 +55,9 @@ interface IToken {
     signal(data: any): Promise<any>;
     end(): Promise<void>;
     goNext(): Promise<void>;
+    getSubProcessToken(): IToken;
     log(msg: any): void;
+    error(msg: any): void;
 }
 
 interface IExecution {
@@ -64,7 +75,6 @@ interface IExecution {
     data: any;
     logs: any[];
     parentItemId: any;
-    listener: EventEmitter;
     executionContext: IExecutionContext;
     promises;
 
@@ -78,6 +88,7 @@ interface IExecution {
      * causes the execution to stop from running any further
      * */
     stop(): void;
+    terminate(): void;
     execute(startNodeId?: any, inputData?: {}): Promise<void>;
     /**
      *
@@ -101,6 +112,7 @@ interface IExecution {
     doExecutionEvent(event: any): Promise<any>;
     doItemEvent(item: any, event: any): Promise<any>;
     log(msg: any): void;
+    error(msg: any): void;
     applyInput(inputData: any, dataPath?: any): void;
     getData(dataPath: any): any;
     getAndCreateData(dataPath: any, asArray?: boolean): any;
@@ -144,7 +156,7 @@ interface IItem extends IItemData {
     node: Node;
 }
 
-
+/* no longer used 
 interface IExecutionResponse {
     instance: IInstanceData;
     errors;
@@ -157,7 +169,7 @@ interface IExecutionResponse {
     action;
     messageMatchingKey;
 }
-
+*/
 interface IExecutionContext {
     //  components
     server;
@@ -171,24 +183,25 @@ interface IExecutionContext {
     appDelegate;
 
     execution?: IExecution;
-    listener;
     //  context
     instance;
+    listener;
 
     process;
     item;
-    response: IExecutionResponse;
-
-    //  results
     errors;
     items: IItem[];
     error(error): IExecutionContext;
 
+    input;
+    output;
+    messageMatchingKey;
+
 
     // scope
     parentContext?: IExecutionContext;
-
-
+    worker;
+    tillDone();
 }
 
 

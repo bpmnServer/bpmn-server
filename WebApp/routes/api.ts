@@ -1,7 +1,7 @@
 import express = require('express');
 const router = express.Router();
 var bodyParser = require('body-parser')
-import { WebService } from 'dmn-engine';
+import { ExecuteDecisionTable, ExecuteCondition, ExecuteExpression } from 'dmn-engine';
 
 const FS = require('fs');
 
@@ -201,9 +201,19 @@ const awaitAppDelegateFactory = (middleware) => {
         display(res, 'Show', output);
     });
     router.put('/rules/invoke', awaitAppDelegateFactory(async (request, response) => {
-
+        /*
+         * 
+         * 
+    export async function WebService(request, response) {
+	console.log(request);
+	console.log(response);
+	let { definition, data, options, loadFrom } = request.body;
+	response.json(Execute(request.body));
+}
+         */
         try {
-            await WebService(request, response);
+            await response.json(ExecuteDecisionTable(request.body));
+            //await WebService(request, response);
         }
         catch (exc) {
             console.log(exc);

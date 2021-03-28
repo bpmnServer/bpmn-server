@@ -1,6 +1,6 @@
 import { Definition } from "../elements";
 import { BPMNServer } from "../server/BPMNServer";
-import { ServerComponent } from "../server/ServerContext";
+import { ServerComponent } from "../server/ServerComponent";
 import { IBpmnModelData, IModelsDatastore, IEventData } from "../interfaces/datastore";
 import { BpmnModelData } from "./ModelsData";
 declare class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {

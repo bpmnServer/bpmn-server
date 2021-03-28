@@ -10,9 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CacheManager = void 0;
-const ServerContext_1 = require("./ServerContext");
+const ServerComponent_1 = require("./ServerComponent");
 const fs = require('fs');
-class CacheManager extends ServerContext_1.ServerComponent {
+class CacheManager extends ServerComponent_1.ServerComponent {
     list() {
         const items = [];
         CacheManager.liveInstances.forEach(item => { items.push(item); });
