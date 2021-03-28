@@ -1,6 +1,6 @@
 {
   "name": "bpmn-server.webapp",
-  "version": "1.1.4",
+  "version": "1.1.12",
   "private": true,
   "scripts": {
     "build": "tsc --build",
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "bpmn-moddle": "^7.0.3",
-    "bpmn-server": "^1.1.10",
+    "bpmn-server": "^1.1.12",
     "camunda-bpmn-moddle": "^4.4.0",
     "chai": "^4.2.0",
     "connect-busboy": "0.0.2",
