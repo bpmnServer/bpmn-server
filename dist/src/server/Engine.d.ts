@@ -1,7 +1,8 @@
-import { ExecutionContext } from '../..';
+import { Execution } from '../..';
 import { ServerComponent } from '../server/ServerComponent';
 import { IEngine } from "../interfaces";
 declare class Engine extends ServerComponent implements IEngine {
+    constructor(server: any);
     /**
      *	loads a definitions  and start execution
      *
@@ -9,7 +10,7 @@ declare class Engine extends ServerComponent implements IEngine {
      * @param data		input data
      * @param startNodeId	in process has multiple start node; you need to specify which one
      */
-    start(name: any, data?: any, startNodeId?: string, options?: {}): Promise<ExecutionContext>;
+    start(name: any, data?: any, startNodeId?: string, userKey?: string, options?: {}): Promise<Execution>;
     /**
      * restores an instance into memeory or provides you access to a running instance
      *
@@ -23,9 +24,9 @@ declare class Engine extends ServerComponent implements IEngine {
      *					{ items.item.itemKey : 'businesskey here'}
      *
      */
-    get(instanceQuery: any): Promise<ExecutionContext>;
-    restore(instanceQuery: any): Promise<ExecutionContext>;
-    invokeItem(itemQuery: any, data?: {}): Promise<ExecutionContext>;
+    get(instanceQuery: any): Promise<Execution>;
+    restore(instanceQuery: any): Promise<Execution>;
+    invokeItem(itemQuery: any, data?: {}): Promise<Execution>;
     /**
      * Continue an existing item that is in a wait state
      *
@@ -38,7 +39,7 @@ declare class Engine extends ServerComponent implements IEngine {
      * @param itemQuery		criteria to retrieve the item
      * @param data
      */
-    invoke(itemQuery: any, data?: {}): Promise<ExecutionContext>;
+    invoke(itemQuery: any, data?: {}, userKey?: string): Promise<Execution>;
     /**
      *
      * Invoking an event (usually start event of a secondary process) against an existing instance
@@ -54,8 +55,8 @@ declare class Engine extends ServerComponent implements IEngine {
      * @param elementId
      * @param data
      */
-    startEvent(instanceId: any, elementId: any, data?: {}): Promise<ExecutionContext>;
-    throwMessage(messageId: any, data?: {}, matchingQuery?: {}): Promise<ExecutionContext>;
+    startEvent(instanceId: any, elementId: any, data?: {}): Promise<Execution>;
+    throwMessage(messageId: any, data?: {}, matchingQuery?: {}): Promise<Execution>;
     /**
      *
      * signal/message raise a signal or throw a message
@@ -68,7 +69,6 @@ declare class Engine extends ServerComponent implements IEngine {
      * @param matchingQuery	should match the itemKey (if specified)
      * @param data			message data
      */
-    throwSignal(messageId: any, data?: {}, matchingQuery?: {}): Promise<ExecutionContext>;
-    private error;
+    throwSignal(messageId: any, data?: {}, matchingQuery?: {}): Promise<Execution>;
 }
 export { Engine };

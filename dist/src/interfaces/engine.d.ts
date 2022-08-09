@@ -1,5 +1,6 @@
-import { ITEM_STATUS, EXECUTION_STATUS, TOKEN_STATUS } from './Enums';
-import { ILogger, IAppDelegate, IDefinition, Token, Item, Element, Node } from '../../';
+import { TOKEN_STATUS } from './Enums';
+import { IItemData, IInstanceData } from './';
+import { ILogger, IAppDelegate, IDefinition, Token, Item, Element, Node, IServerComponent } from '../../';
 interface IToken {
     id: any;
     type: any;
@@ -53,23 +54,25 @@ interface IToken {
     log(msg: any): void;
     error(msg: any): void;
 }
-interface IExecution {
-    id: any;
-    name: any;
-    startedAt: any;
-    endedAt: any;
-    saved: any;
-    status: EXECUTION_STATUS;
+interface IExecution extends IServerComponent {
+    instance: IInstanceData;
     tokens: Map<any, IToken>;
     definition: IDefinition;
     appDelegate: IAppDelegate;
-    source: any;
     logger: ILogger;
-    data: any;
-    logs: any[];
-    parentItemId: any;
-    executionContext: IExecutionContext;
+    process: any;
     promises: any;
+    listener: any;
+    errors: any;
+    item: any;
+    input: any;
+    output: any;
+    messageMatchingKey: any;
+    worker: any;
+    currentUser: any;
+    id: any;
+    status: any;
+    name: any;
     getNodeById(id: any): Node;
     getToken(id: number): IToken;
     tokenEnded(token: IToken): void;
@@ -101,7 +104,7 @@ interface IExecution {
     uids: {};
     getNewId(scope: string): number;
     getUUID(): any;
-    doExecutionEvent(event: any): Promise<any>;
+    doExecutionEvent(process: any, event: any): Promise<any>;
     doItemEvent(item: any, event: any): Promise<any>;
     log(msg: any): void;
     error(msg: any): void;
@@ -109,66 +112,10 @@ interface IExecution {
     getData(dataPath: any): any;
     getAndCreateData(dataPath: any, asArray?: boolean): any;
 }
-interface IItemData {
-    id: string;
-    itemKey: string;
-    elementId: string;
-    name: string;
-    type: string;
-    tokenId: any;
-    startedAt: any;
-    endedAt: any;
-    seq: any;
-    timeDue: Date;
-    status: ITEM_STATUS;
-    data: any;
-    messageId: any;
-    signalId: any;
-}
-interface IInstanceData {
-    id: any;
-    name: any;
-    status: any;
-    startedAt: any;
-    endedAt: any;
-    saved: any;
-    data: any;
-    items: any;
-    source: any;
-    logs: any;
-    tokens: any;
-    loops: any;
-    parentItemId: any;
-}
 interface IItem extends IItemData {
     element: Element;
     token: Token;
-    context: IExecutionContext;
+    context: IExecution;
     node: Node;
 }
-interface IExecutionContext {
-    server: any;
-    configuration: any;
-    logger: any;
-    dataStore: any;
-    engine: any;
-    cron: any;
-    cache: any;
-    definitions: any;
-    appDelegate: any;
-    execution?: IExecution;
-    instance: any;
-    listener: any;
-    process: any;
-    item: any;
-    errors: any;
-    items: IItem[];
-    error(error: any): IExecutionContext;
-    input: any;
-    output: any;
-    messageMatchingKey: any;
-    parentContext?: IExecutionContext;
-    worker: any;
-    tillDone(): any;
-}
-export { IItem, IItemData, IInstanceData, IToken, IExecution, IExecutionContext };
+export { IItem, IToken, IExecution };

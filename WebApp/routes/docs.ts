@@ -7,6 +7,7 @@ const FS = require('fs');
 import { BPMNServer   } from '..';
 import { configuration as config} from '../configuration';
 import { docsFolder } from '..';
+import { Common } from './common';
 console.log(docsFolder);
 
 /* GET users listing. */
@@ -54,66 +55,71 @@ const awaitAppDelegateFactory = (middleware) => {
         }
     }
 }
-   {
 
-    router.get('/', function (request, response) {
-        let fileName =  '../README.md';
-        return processFile(fileName, response);
+export class Docs extends Common {
 
-    });
-    router.get('/api/*/:fileName', awaitAppDelegateFactory(async (request, response) => {
+    config() {
+        var router = express.Router();
 
-        console.log('from docs');
-        console.log(request.params);
-        let folder = '';
-        if (request.params[0])
-            folder = request.params[0] + '/';
-        console.log(folder);
-        let fileName = 'api/' + folder + request.params.fileName;
+        router.get('/', function (request, response) {
+            let fileName = '../README.md';
+            return processFile(fileName, response);
 
-        return processFile(fileName, response);
-    }));
-    router.get('/api/:fileName', awaitAppDelegateFactory(async (request, response) => {
+        });
+        router.get('/api/*/:fileName', awaitAppDelegateFactory(async (request, response) => {
 
-        console.log('from docs');
-        console.log(request.params);
-        let fileName = 'api/' + request.params.fileName;
+            console.log('from docs');
+            console.log(request.params);
+            let folder = '';
+            if (request.params[0])
+                folder = request.params[0] + '/';
+            console.log(folder);
+            let fileName = 'api/' + folder + request.params.fileName;
 
-        return processFile(fileName, response);
-    }));
-    router.get('/examples/:fileName', awaitAppDelegateFactory(async (request, response) => {
+            return processFile(fileName, response);
+        }));
+        router.get('/api/:fileName', awaitAppDelegateFactory(async (request, response) => {
 
-        console.log('from docs');
-        console.log(request.params);
+            console.log('from docs');
+            console.log(request.params);
+            let fileName = 'api/' + request.params.fileName;
 
-        let fileName = 'examples/'+request.params.fileName;
+            return processFile(fileName, response);
+        }));
+        router.get('/examples/:fileName', awaitAppDelegateFactory(async (request, response) => {
 
-        return processFile(fileName, response);
-    }));
-        
-    router.get('/:fileName', awaitAppDelegateFactory(async (request, response) => {
+            console.log('from docs');
+            console.log(request.params);
 
-        console.log('from docs');
-        console.log(request.params);
+            let fileName = 'examples/' + request.params.fileName;
 
-        let fileName = request.params.fileName;
+            return processFile(fileName, response);
+        }));
 
-        return processFile(fileName, response);
+        router.get('/:fileName', awaitAppDelegateFactory(async (request, response) => {
+
+            console.log('from docs');
+            console.log(request.params);
+
+            let fileName = request.params.fileName;
+
+            return processFile(fileName, response);
 
 
-    }));
-    router.get('/readme_md', awaitAppDelegateFactory(async (request, response) => {
+        }));
+        router.get('/readme_md', awaitAppDelegateFactory(async (request, response) => {
 
-        let processName = request.params.process;
-        let fileName = __dirname + '/../node_modules/bpmn-server/README.md';
+            let processName = request.params.process;
+            let fileName = __dirname + '/../node_modules/bpmn-server/README.md';
 
-        let file = FS.readFileSync(fileName,
-            { encoding: 'utf8', flag: 'r' });
+            let file = FS.readFileSync(fileName,
+                { encoding: 'utf8', flag: 'r' });
 
-        response.send(file);
+            response.send(file);
 
-    }));
- 
+        }));
+        return router;
+    }
 }
 function processFile(fileName,response) {
 

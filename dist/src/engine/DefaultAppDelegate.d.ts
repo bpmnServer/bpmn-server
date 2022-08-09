@@ -1,7 +1,9 @@
-import { Item, IAppDelegate, IExecutionContext } from "../..";
+import { IExecution, Item, IAppDelegate } from "../..";
 declare class DefaultAppDelegate implements IAppDelegate {
+    server: any;
+    sendEmail(to: any, msg: any, body: any): void;
     servicesProvider: any;
-    constructor(logger?: any);
+    constructor(server: any);
     get moddleOptions(): {
         name: string;
         uri: string;
@@ -27,7 +29,7 @@ declare class DefaultAppDelegate implements IAppDelegate {
             properties?: undefined;
         })[];
     };
-    executionStarted(execution: IExecutionContext): Promise<void>;
+    executionStarted(execution: IExecution): Promise<void>;
     executionEvent({ event, item, execution }: {
         event: any;
         item: any;

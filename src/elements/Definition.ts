@@ -10,7 +10,7 @@ import { Node, Flow , MessageFlow ,SubProcess , NodeLoader , Process, Behaviour_
 import { BPMN_TYPE } from './NodeLoader';
 import { IDefinition } from '../interfaces/elements';
 import { BPMNServer } from '../server/BPMNServer';
-import { NODE_SUBTYPE } from '../interfaces';
+import { NODE_SUBTYPE, EXECUTION_EVENT } from '../interfaces';
 
 const fs = require('fs');
 
@@ -27,6 +27,7 @@ class Definition implements IDefinition{
     logger;
     server;
     moddle;
+    accessRules = [];
     constructor(name:string,source:string,server:BPMNServer) {
         this.server = server;
         this.name = name;
@@ -65,6 +66,9 @@ class Definition implements IDefinition{
         process.init(children, eventSubProcesses)
         return process;
     }
+    /**
+     * 
+     * */
     async load() {
 
         let definition = await this.getDefinition(this.source, this.logger);
@@ -77,7 +81,8 @@ class Definition implements IDefinition{
             switch (e.$type) {
                 case 'bpmn:Process':    
                     {
-                        const proc = this.loadProcess(definition, e , null);
+                        const proc = this.loadProcess(definition, e, null);
+                        proc.name = this.name;
                         this.processes.set(e.id, proc);
                     }
                     break;
@@ -180,8 +185,14 @@ references:
 
             }
         });
+
+        const event = EXECUTION_EVENT.process_loaded;
+        await this.server.listener.emit(event, { event, context: this } );
+
         return definition;
     }
+
+
     getJson() {
         const elements = [];
         

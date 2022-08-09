@@ -9,11 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Docs = void 0;
 const express = require("express");
 const router = express.Router();
 var bodyParser = require('body-parser');
 const FS = require('fs');
 const __1 = require("..");
+const common_1 = require("./common");
 console.log(__1.docsFolder);
 /* GET users listing. */
 const url = 'https://raw.githubusercontent.com/ralphhanna/bpmn-server/master/';
@@ -46,46 +48,51 @@ const awaitAppDelegateFactory = (middleware) => {
         }
     });
 };
-{
-    router.get('/', function (request, response) {
-        let fileName = '../README.md';
-        return processFile(fileName, response);
-    });
-    router.get('/api/*/:fileName', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
-        console.log('from docs');
-        console.log(request.params);
-        let folder = '';
-        if (request.params[0])
-            folder = request.params[0] + '/';
-        console.log(folder);
-        let fileName = 'api/' + folder + request.params.fileName;
-        return processFile(fileName, response);
-    })));
-    router.get('/api/:fileName', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
-        console.log('from docs');
-        console.log(request.params);
-        let fileName = 'api/' + request.params.fileName;
-        return processFile(fileName, response);
-    })));
-    router.get('/examples/:fileName', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
-        console.log('from docs');
-        console.log(request.params);
-        let fileName = 'examples/' + request.params.fileName;
-        return processFile(fileName, response);
-    })));
-    router.get('/:fileName', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
-        console.log('from docs');
-        console.log(request.params);
-        let fileName = request.params.fileName;
-        return processFile(fileName, response);
-    })));
-    router.get('/readme_md', awaitAppDelegateFactory((request, response) => __awaiter(void 0, void 0, void 0, function* () {
-        let processName = request.params.process;
-        let fileName = __dirname + '/../node_modules/bpmn-server/README.md';
-        let file = FS.readFileSync(fileName, { encoding: 'utf8', flag: 'r' });
-        response.send(file);
-    })));
+class Docs extends common_1.Common {
+    config() {
+        var router = express.Router();
+        router.get('/', function (request, response) {
+            let fileName = '../README.md';
+            return processFile(fileName, response);
+        });
+        router.get('/api/*/:fileName', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
+            console.log('from docs');
+            console.log(request.params);
+            let folder = '';
+            if (request.params[0])
+                folder = request.params[0] + '/';
+            console.log(folder);
+            let fileName = 'api/' + folder + request.params.fileName;
+            return processFile(fileName, response);
+        })));
+        router.get('/api/:fileName', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
+            console.log('from docs');
+            console.log(request.params);
+            let fileName = 'api/' + request.params.fileName;
+            return processFile(fileName, response);
+        })));
+        router.get('/examples/:fileName', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
+            console.log('from docs');
+            console.log(request.params);
+            let fileName = 'examples/' + request.params.fileName;
+            return processFile(fileName, response);
+        })));
+        router.get('/:fileName', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
+            console.log('from docs');
+            console.log(request.params);
+            let fileName = request.params.fileName;
+            return processFile(fileName, response);
+        })));
+        router.get('/readme_md', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
+            let processName = request.params.process;
+            let fileName = __dirname + '/../node_modules/bpmn-server/README.md';
+            let file = FS.readFileSync(fileName, { encoding: 'utf8', flag: 'r' });
+            response.send(file);
+        })));
+        return router;
+    }
 }
+exports.Docs = Docs;
 function processFile(fileName, response) {
     fileName = __1.docsFolder + fileName;
     let file = FS.readFileSync(fileName);

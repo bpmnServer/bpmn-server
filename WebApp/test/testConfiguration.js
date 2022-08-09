@@ -5,9 +5,13 @@ const __1 = require("../");
 const appDelegate_1 = require("./appDelegate");
 const __2 = require("../");
 const __3 = require("../");
+const __4 = require("../");
+const dotenv = require('dotenv');
+const res = dotenv.config();
 let definitionsPath = __dirname + '/../processes/';
 var configuration = new __1.Configuration({
     definitionsPath: definitionsPath,
+    templatesPath: __dirname + '/../emailTemplates',
     timers: {
         forceTimersDelay: 1000,
         precision: 3000,
@@ -18,6 +22,7 @@ var configuration = new __1.Configuration({
             db: 'bpmn'
         }
     },
+    apiKey: process.env.API_KEY,
     logger: function (server) {
         new __3.Logger(server);
     },
@@ -29,6 +34,12 @@ var configuration = new __1.Configuration({
     },
     dataStore: function (server) {
         return new __2.DataStore(server);
+    },
+    IAM: function (server) {
+        return new __4.IAM(server);
+    },
+    ACL: function (server) {
+        return new __4.ACL(server);
     }
 });
 exports.configuration = configuration;

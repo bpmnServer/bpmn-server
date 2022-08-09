@@ -1,34 +1,29 @@
-import { IExecutionContext } from '../..';
-/**
- * is used as a repsone to server request
- * */
-interface IServerContext {
-    configuration: any;
-    logger: any;
-    definitions: any;
-    appDelegate: any;
-    dataStore: any;
-}
+/// <reference types="node" />
+import { IExecution, ILogger, IDefinition, IConfiguration, IAppDelegate, IDataStore } from '../..';
+import { EventEmitter } from 'events';
 interface IBPMNServer {
-    configuration: any;
-    logger: any;
-    dataStore: any;
-    engine: any;
-    cron: any;
-    cache: any;
-    definitions: any;
-    appDelegate: any;
+    engine: IEngine;
+    listener: EventEmitter;
+    configuration: IConfiguration;
+    logger: ILogger;
+    definitions: IDefinition;
+    appDelegate: IAppDelegate;
+    dataStore: IDataStore;
+    cache: ICacheManager;
+    cron: ICron;
+    acl: IACL;
+    iam: IIAM;
 }
 interface IServerComponent {
-    server: any;
-    configuration: any;
-    logger: any;
-    dataStore: any;
-    engine: any;
+    server: IBPMNServer;
+    configuration: IConfiguration;
+    logger: ILogger;
     cron: any;
     cache: any;
+    appDelegate: IAppDelegate;
+    engine: any;
+    dataStore: IDataStore;
     definitions: any;
-    appDelegate: any;
 }
 interface IEngine extends IServerComponent {
     /**
@@ -38,7 +33,7 @@ interface IEngine extends IServerComponent {
      * @param data		input data
      * @param startNodeId	in process has multiple start node; you need to specify which one
      */
-    start(name: any, data?: any, startNodeId?: string, options?: any): Promise<IExecutionContext>;
+    start(name: any, data?: any, startNodeId?: string, userKey?: string, options?: any): Promise<IExecution>;
     /**
      * restores an instance into memeory or provides you access to a running instance
      *
@@ -52,8 +47,8 @@ interface IEngine extends IServerComponent {
      *					{ items.item.itemKey : 'businesskey here'}
      *
      */
-    get(instanceQuery: any): Promise<IExecutionContext>;
-    restore(instanceQuery: any): Promise<IExecutionContext>;
+    get(instanceQuery: any): Promise<IExecution>;
+    restore(instanceQuery: any): Promise<IExecution>;
     /**
      * Continue an existing item that is in a wait state
      *
@@ -66,7 +61,7 @@ interface IEngine extends IServerComponent {
      * @param itemQuery		criteria to retrieve the item
      * @param data
      */
-    invoke(itemQuery: any, data?: {}): Promise<IExecutionContext>;
+    invoke(itemQuery: any, data?: {}, userKey?: string): Promise<IExecution>;
     /**
      *
      * Invoking an event (usually start event of a secondary process) against an existing instance
@@ -82,6 +77,36 @@ interface IEngine extends IServerComponent {
      * @param elementId
      * @param data
      */
-    startEvent(instanceId: any, elementId: any, data?: {}): Promise<IExecutionContext>;
+    startEvent(instanceId: any, elementId: any, data?: {}): Promise<IExecution>;
 }
-export { IBPMNServer, IServerContext, IEngine };
+interface IUser {
+    userId: any;
+    name: any;
+    email: any;
+    userGroups: any;
+    password: any;
+}
+interface IIAM {
+    login(userId: any, password: any): any;
+    getCurrentUser(key: any): IUser;
+    getUser(userId: any): Promise<IUser>;
+    getUsersForGroup(userGroup: any): Promise<IUser[]>;
+    addUser(userId: any, name: any, email: any, userGroups: any, password: any): Promise<IUser>;
+}
+interface IACL {
+    listener: EventEmitter;
+    canPerform(operation: any, object: any): any;
+}
+interface ICron {
+    checkTimers(duration: any): any;
+    start(): any;
+    startTimers(): any;
+}
+interface ICacheManager {
+    list(): any;
+    add(execution: IExecution): any;
+    remove(instanceId: any): any;
+    shutdown(): any;
+    restart(): any;
+}
+export { IBPMNServer, IEngine, IACL, IUser, IIAM, ICron, ICacheManager, IServerComponent };

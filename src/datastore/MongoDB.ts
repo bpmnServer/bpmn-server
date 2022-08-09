@@ -5,10 +5,10 @@ const MongoDb = require('mongodb');
 const mongoose= require('mongoose');
 const assert = require('assert');
 
-mongoose.set('useNewUrlParser', true);
-mongoose.set('useFindAndModify', false);
-mongoose.set('useCreateIndex', true);
-mongoose.set('useUnifiedTopology', true);
+//mongoose.set('useNewUrlParser', true);
+//mongoose.set('useFindAndModify', false);
+//mongoose.set('useCreateIndex', true);
+//mongoose.set('useUnifiedTopology', true);
 
 /*Replace update() with updateOne(), updateMany(), or replaceOne()
 Replace remove() with deleteOne() or deleteMany().

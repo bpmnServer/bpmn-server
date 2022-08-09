@@ -19,6 +19,7 @@ declare class Process {
      * Notify process that it ended
      * */
     end(): Promise<void>;
+    getStartNode(userInvokable?: boolean): any;
     getStartNodes(userInvokable?: boolean): any[];
     getEventSubProcessStart(): Node[];
 }

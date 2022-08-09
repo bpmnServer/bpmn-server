@@ -1,9 +1,10 @@
-import { IExecution, IItem, NODE_ACTION, FLOW_ACTION, IModelsDatastore, IExecutionContext, IDataStore} from '../..';
+import { IExecution, IItem, NODE_ACTION, FLOW_ACTION, IModelsDatastore, IDataStore} from '../..';
 
 
 interface IConfiguration 
 {
     definitionsPath: string,
+    templatesPath: string,
     timers: {
         forceTimersDelay: number,
         precision: number,
@@ -15,7 +16,7 @@ interface IConfiguration
             db: string,
         }
     },
-
+    apiKey: string,
     logger: ILogger,
     definitions(server): IModelsDatastore,
     appDelegate(server): IAppDelegate,
@@ -64,7 +65,8 @@ interface ILogger {
 interface IAppDelegate {
     moddleOptions;
     servicesProvider;       // to respond to all named services
-    executionStarted(execution: IExecutionContext);
+    sendEmail(to, msg, body);
+    executionStarted(execution);
     executionEvent({ event, item, execution });
     messageThrown(signalId, data, messageMatchingKey: any, item: IItem);
     signalThrown(signalId, data, messageMatchingKey: any, item: IItem);

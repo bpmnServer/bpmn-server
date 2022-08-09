@@ -14,6 +14,18 @@ block content
 		var jsonData=!{definition};	
 		var decorations= !{decorations};	
 	script(type="text/javascript").
+		function showLogs()
+		{
+		  var dv = document.getElementById("logs");
+		  var button =document.getElementById("showHide");
+		  if (dv.style.display === "none") {
+			dv.style.display = "block";
+			button.innerHTML="Hide";
+		  } else {
+			dv.style.display = "none";
+			button.innerHTML="Show";
+		  }
+		}
 		$(document).ready(function() {
 		  var lines= $('#logs').find('table').find('tr').find('td');
 		  lines.each(function(index) {
@@ -80,19 +92,51 @@ block content
 			- var label='';
 			- if (item.status=='wait') label= 'Execute';
 			- seq++;
-			tr
-				td #{seq}
-				td #{item.elementId}
-				td #{item.name}
-				td(class='date') #{item.startedAt}
-				td(class='date') #{item.endedAt}
-				td #{item.status}
-				td #{item.type}
-				td
-					a(href=`${ref}`) #{label}
+				tr
+					td #{seq}
+					td #{item.elementId}
+					td #{item.name}
+					td(class='date') #{item.startedAt}
+					td(class='date') #{item.endedAt}
+					td #{item.status}
+					td #{item.type}
+					td
+						a(href=`${ref}`) #{label}
+			each assign in item.assignments
+				tr
+					td 
+					td #{assign.describe()}
 
-	h4 Instance Logs
-	div(id="logs")
+			each note in item.notifications
+				tr
+					td 
+					td #{note.describe()}
+			each auth in item.authorizations
+				tr
+					td 
+					td #{auth.describe()}
+
+
+	h4 Process Level Auhtorizations
+	ul
+		each auth in instance.authorizations
+					li #{auth.describe()}
+	h4 Process Involvements
+	ul
+
+		each auth in instance.involvements
+					li #{auth.describe()}
+
+
+
+	h4 Process Access Rules
+
+	ul
+		each rule in accessRules
+			li #{rule.describe()}
+
+	h4 Instance Logs <button id="showHide" onclick="showLogs()">Show</button>
+	div(id="logs" style="display:none;") 
 		table
 			each log in logs
 				tr

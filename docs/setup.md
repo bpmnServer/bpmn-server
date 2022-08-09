@@ -1,5 +1,6 @@
 # Setup bpmn Application with bpmn-server
 
+
 ## Configuration
 
 Every project must have a configuration file that is an instance of [Configuration class](./api/classes/configuration.md)
@@ -7,6 +8,17 @@ Every project must have a configuration file that is an instance of [Configurati
 This configuration file is passed to the BPMNServer constructor.
 
 For testing purposes, you can have a different configuration than production in same environemnt by passign a different object.
+
+## Environment
+things that vary between dev and production
+
+-  timers: 
+   -    forceTimersDelay
+   -    precision
+- database:
+   - MongoDB:
+            db_url
+            db
 
 ```javascript 
 
@@ -68,4 +80,20 @@ This is where the definition files reside, the demo WebApp contains a set of tho
 ## AppDelegate Class
 
 This class handles application specific calls
+
+    moddleOptions;
+    servicesProvider;       // to respond to all named services
+    sendEmail(to, msg, body);
+    executionStarted(execution);
+    executionEvent({ event, item, execution });
+    messageThrown(signalId, data, messageMatchingKey: any, item: IItem);
+    signalThrown(signalId, data, messageMatchingKey: any, item: IItem);
+    issueMessage(messageId, data);
+    issueSignal(messageId, data);
+    serviceCalled(serviceName,data,item: IItem);
+    scopeEval(scope, script);
+    scopeJS(scope, script);
+
+
+
 

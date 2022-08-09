@@ -33,7 +33,7 @@ Feature('DataStore', () => {
         });
         
         and('get an item', async () => {
-            items = response.items.filter(item => {
+            items = response.instance.items.filter(item => {
                 return (item.name == 'Buy');
             });
             item = items[0];
@@ -88,7 +88,7 @@ Feature('DataStore', () => {
         });
         and('get an item', async () => {
 
-            items = response.items.filter(item => {
+            items = response.instance.items.filter(item => {
                 return (item.name == 'Buy');
             });
             item = items[0];

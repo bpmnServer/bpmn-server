@@ -1,5 +1,6 @@
 import { ITEM_STATUS, EXECUTION_STATUS, NODE_ACTION, FLOW_ACTION, TOKEN_STATUS } from './Enums';
- import { ILogger, IAppDelegate,    IBPMNServer, IDefinition, IElement, Execution, Token, Item, Element, INode, Node  } from '../../';
+import { IItemData , IInstanceData } from './';
+import { ILogger, IAppDelegate, IBPMNServer, IDefinition, IElement, Execution, Token, Item, Element, INode, Node, IServerComponent } from '../../';
 import { EventEmitter } from 'events';
 interface IDataStore {
 
@@ -60,23 +61,28 @@ interface IToken {
     error(msg: any): void;
 }
 
-interface IExecution {
-    id: any;
-    name: any;
-    startedAt: any;
-    endedAt: any;
-    saved: any;
-    status: EXECUTION_STATUS;
+interface IExecution extends IServerComponent {
+    instance: IInstanceData;
+
     tokens: Map<any, IToken>;
     definition: IDefinition;
     appDelegate: IAppDelegate;
-    source: any;
     logger: ILogger;
-    data: any;
-    logs: any[];
-    parentItemId: any;
-    executionContext: IExecutionContext;
+    process: any;
     promises;
+    listener;
+
+    errors;
+    item;
+    input;
+    output;
+    messageMatchingKey;
+    worker;
+    currentUser;
+
+    id;
+    status;
+    name;
 
     getNodeById(id: any): Node;
     getToken(id: number): IToken;
@@ -109,7 +115,7 @@ interface IExecution {
     uids: {};
     getNewId(scope: string): number;
     getUUID(): any;
-    doExecutionEvent(event: any): Promise<any>;
+    doExecutionEvent(process:any, event: any): Promise<any>;
     doItemEvent(item: any, event: any): Promise<any>;
     log(msg: any): void;
     error(msg: any): void;
@@ -117,92 +123,13 @@ interface IExecution {
     getData(dataPath: any): any;
     getAndCreateData(dataPath: any, asArray?: boolean): any;
 }
-interface IItemData {
-    id: string;            // System generated unique Id
-    itemKey: string;        // application assigned key to call the item by
-    elementId: string;   // bpmn element
-    name: string;       // name of bpmn element
-    type: string;       // bpmn element type
-    tokenId: any;         // execution Token
-    startedAt: any;
-    endedAt: any;
-    seq: any;
-    timeDue: Date;
-    status: ITEM_STATUS;
-    data: any;
-    messageId;
-    signalId;
-}
-interface IInstanceData {
-    id;
-    name;
-    status;
-    startedAt;
-    endedAt;
-    saved;
-    data;
-    items;
-    source;
-    logs;
-    tokens;
-    loops;
-    parentItemId;   // used for subProcess Calls
-}
 
 interface IItem extends IItemData {
     element: Element;
     token: Token;
-    context: IExecutionContext;
+    context: IExecution;
     node: Node;
 }
 
-/* no longer used 
-interface IExecutionResponse {
-    instance: IInstanceData;
-    errors;
-    items: IItemData[];
-}
 
-interface IExecutionResponse {
-    input;
-    output;
-    action;
-    messageMatchingKey;
-}
-*/
-interface IExecutionContext {
-    //  components
-    server;
-    configuration;
-    logger;
-    dataStore;
-    engine;
-    cron;
-    cache;
-    definitions;
-    appDelegate;
-
-    execution?: IExecution;
-    //  context
-    instance;
-    listener;
-
-    process;
-    item;
-    errors;
-    items: IItem[];
-    error(error): IExecutionContext;
-
-    input;
-    output;
-    messageMatchingKey;
-
-
-    // scope
-    parentContext?: IExecutionContext;
-    worker;
-    tillDone();
-}
-
-
-export { IItem, IItemData, IInstanceData, IToken, IExecution,IExecutionContext }
+export { IItem, IToken, IExecution}

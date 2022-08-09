@@ -1,13 +1,47 @@
 Concepts
 =========
 
+
+## Components
+
+1. Server
+2. Web UI
+3. Client to invoke server calls as webServices
+ 
+### Server Core
+
+
+
+| Class | Role  | Life Cycle| holds |
+| ------------- |:-------------:| -----| ----------|
+| **Server**	| Represent BPMN2 definition | Entire | Server Components |
+| **ExecutionContext**| holds the request context| one per request | UserInfo, Execution,Process,Item Response|
+| **Engine**		| API to execution | per XContext | only XContext |
+| **Execution**		| process the execution and State | per Instance lifecycle ,cached, saved and restored thru Instance |execution State, tokens.. |
+| **Instance**		| Instance of Process | statefull (in MongoDB) | source, items , tokens, state |
+| **Definition**	| Represent BPMN2 definition | transient | |
+| **Process**		| Primary Process running | transient | |
+
+## Presistence 
+
+## Extensions
+
+
+
+## Workflow
+
+
 Workflow is a state machine. You can imagine it as a flow chart running inside in your application, and when it reach a decision point, you can invoke a method to provide an answer that chooses the right path of execution from there. 
 
 So workflow is a graph of control flow, and activities are its nodes. They can be as simple like an if..then..else branch, or as complex like getting data from a database and do something complicated depending on the results.
 
 A workflow is an application running inside in your application, have its state and variables, and correlated across Node.js cluster and process instances. So if your Node.js application consists of many instances inside a cluster and many clusters across a server farm, a workflow instance will work like a single instance application within those. A workflow application could outlive Node.js applications, they have out-of-the-box persistence support to make them ideal platform to do long running business processes, durable services or scheduled backgound tasks.
 
-Workflow is modeled using BPMN 2 tools and is defined in as an XML string or stream. Each element in the model is called a <b>Node</b>, nodes are connected by <b>Flow</b>.
+Workflow is modeled using BPMN2 tools and is defined in as an XML string or stream. Each element in the model is called a <b>Node</b>, nodes are connected by <b>Flow</b>.
+
+## Definition
+
+## Engine
 
 <b>Execution</b> is the processing engine of the workflow, taking in an BPMN source and executes it.
 
@@ -93,3 +127,13 @@ Everytime the engine makes a decision it attaches the appropriate decision objec
 
 For example; If a gateway decides to select one flow over the other, you should see a record of that in the gateway item
 
+
+# Process
+
+Process is the a definition of a Workflow
+
+# Activity
+
+# Instance 
+
+# Instance Item (Item)

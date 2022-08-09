@@ -3,6 +3,7 @@ import { ITEM_STATUS, IItem, } from "../../";
 import { IItemData } from "../../";
 import { Element , Node } from '../elements';
 import { Token } from "./Token";
+import { Authorization, Assignment, Notification } from "../acl/Repository";
 
 class Item implements IItem {
     id;                 
@@ -10,8 +11,14 @@ class Item implements IItem {
     element: Element;   
     token : Token;      
     seq;
+    userId;
     startedAt;              // dateTime Started
     _endedAt = null;
+    assignments=[];
+    authorizations=[];
+    notifications=[];
+
+
     get endedAt() {         // dateTime ended
         return this._endedAt;
     }   
@@ -32,7 +39,7 @@ class Item implements IItem {
     log(msg) { return this.token.log(msg); }
     get data() { return this.token.data; }
     set data(val) { this.token.applyInput(val); }
-    get context() { return this.token.execution.executionContext; }
+    get context() { return this.token.execution; }
     get elementId() { return this.element.id; }
     get name() {
         return this.element.name;
@@ -60,14 +67,17 @@ class Item implements IItem {
         this._dbAction = 'add';
         this.token = token;
         this.status = status;
+        const user = token.execution.currentUser;
+        if (user)
+            this.userId = user.userId;
     }
     save() : IItemData {
 
         return {
             id: this.id, seq: this.seq, itemKey: this.itemKey, tokenId: this.token.id, elementId: this.elementId, name: this.name,
-            status: this.status, startedAt: this.startedAt, endedAt: this.endedAt, type: this.type, timeDue: this.timeDue,
-            data: undefined , messageId: this.messageId, signalId: this.signalId
-
+            status: this.status, userId: this.userId, startedAt: this.startedAt, endedAt: this.endedAt, type: this.type, timeDue: this.timeDue,
+            data: undefined, messageId: this.messageId, signalId: this.signalId,
+                assignments: this.assignments,authorizations: this.authorizations, notifications: this.notifications
         };
 
     }
@@ -80,6 +90,10 @@ class Item implements IItem {
         item.startedAt = dataObject.startedAt;
         item.endedAt = dataObject.endedAt;
         item.timeDue = dataObject.timeDue;
+
+        item.authorizations=dataObject.authorizations;
+        item.assignments=dataObject.assignments;
+        item.notifications=dataObject.notifications;
         return item;
     }
 }

@@ -14,9 +14,36 @@ const index_1 = require("./index");
 const fs = require('fs');
 var seq = 1;
 class MyAppDelegate extends index_1.DefaultAppDelegate {
-    constructor(logger = null) {
-        super(logger);
+    constructor(server) {
+        super(server);
         this.servicesProvider = new MyServices();
+    }
+    sendEmail(to, msg, body) {
+        console.log(`Sending email to ${to}`);
+        const key = process.env.SENDGRID_API_KEY;
+        if (key && (key != '')) {
+            const sgMail = require('@sendgrid/mail');
+            sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+            const email = {
+                to: to,
+                from: 'ralphhanna@hotmail.com',
+                subject: msg,
+                text: body,
+                html: body
+            };
+            sgMail
+                .send(email)
+                .then((response) => {
+                this.server.logger.log('responseCode', response[0].statusCode);
+                this.server.logger.log('responseHeaders', response[0].headers);
+            })
+                .catch((error) => {
+                console.error('Email Error:' + error);
+            });
+        }
+        else {
+            console.log(`email is disabled`);
+        }
     }
     executionStarted(execution) {
         const _super = Object.create(null, {
@@ -53,6 +80,7 @@ class MyAppDelegate extends index_1.DefaultAppDelegate {
     }
     serviceCalled(input, context) {
         return __awaiter(this, void 0, void 0, function* () {
+            this.server.logger.log("service called");
         });
     }
 }

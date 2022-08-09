@@ -8,14 +8,7 @@ var bodyParser = require('body-parser')
 const FS = require('fs');
 
 import { BPMNServer} from '../';
-const config = require('../configuration.js').configuration;
-
-
-const bpmnServer = new BPMNServer(config);
-
-const definitions = bpmnServer.definitions;
-const router = express.Router();
-
+import { Common } from './common';
 
 const awaitHandlerFactory = (middleware) => {
     return async (req, res, next) => {
@@ -26,53 +19,66 @@ const awaitHandlerFactory = (middleware) => {
         }
     }
 }
-    router.get('/new', awaitHandlerFactory(async (request, response) => {
 
-        response.render('models/add');
+export class Model extends Common {
+    config() {
 
-    }));
-    router.post('/new', awaitHandlerFactory(async (request, response) => {
+        const config = require('../configuration.js').configuration;
 
-        let processName = request.body.processName;
+        const bpmnServer = this.webApp.bpmnServer;
 
-        response.redirect('/model/add/' + processName);
-    }));
-    router.get('/add/:process', awaitHandlerFactory(async (request, response) => {
+        const definitions = bpmnServer.definitions;
 
-        let processName = request.params.process;
 
-        console.log('adding ' + processName);
+        var router = express.Router();
 
-        let view = new Modeller();
+        router.get('/new', awaitHandlerFactory(async (request, response) => {
 
-        view.displayNew(processName, request, response);
+            response.render('models/add');
 
-}));
-    router.get('/export', awaitHandlerFactory(async (request, response) => {
-        console.log(request.params);
-        let procs = await bpmnServer.definitions.getList();
-        response.render('models/export', { procs});
+        }));
+        router.post('/new', awaitHandlerFactory(async (request, response) => {
 
-    }));
-    router.get('/download/:file', awaitHandlerFactory(async (request, response) => {
-        console.log(request.params.file);
+            let processName = request.body.processName;
 
-        const filePath = config.definitionsPath+request.params.file;
-        console.log('filePath:'+ filePath);
+            response.redirect('/model/add/' + processName);
+        }));
+        router.get('/add/:process', awaitHandlerFactory(async (request, response) => {
 
-        response.download(filePath); // Set disposition and send it.
+            let processName = request.params.process;
 
-    }));
+            console.log('adding ' + processName);
 
-router.get('/import', awaitHandlerFactory(async (request, response) => {
-    console.log(request.params);
-    response.render('models/import');
+            let view = new Modeller();
 
-}));
+            view.displayNew(processName, request, response);
 
-    var fsx = require('fs-extra');       //File System - for file manipulation
+        }));
+        router.get('/export', awaitHandlerFactory(async (request, response) => {
+            console.log(request.params);
+            let procs = await bpmnServer.definitions.getList();
+            response.render('models/export', { procs });
 
-    router.post('/import', awaitHandlerFactory(async (req, res) => {
+        }));
+        router.get('/download/:file', awaitHandlerFactory(async (request, response) => {
+            console.log(request.params.file);
+
+            const filePath = config.definitionsPath + request.params.file;
+            console.log('filePath:' + filePath);
+
+            response.download(filePath); // Set disposition and send it.
+
+        }));
+
+        router.get('/import', awaitHandlerFactory(async (request, response) => {
+            console.log(request.params);
+            response.render('models/import');
+
+        }));
+
+        var fsx = require('fs-extra');       //File System - for file manipulation
+
+        router.post('/import', awaitHandlerFactory(async (req, res) => {
 
             var fstream;
             req.pipe(req.busboy);
@@ -83,10 +89,10 @@ router.get('/import', awaitHandlerFactory(async (request, response) => {
                 const filepath = __dirname + '/../tmp/' + filename;
                 fstream = fsx.createWriteStream(filepath);
                 file.pipe(fstream);
-                fstream.on('close',async function () {
+                fstream.on('close', async function () {
                     console.log("Upload Finished of " + filename);
                     const name = filename;
-                    const source= fsx.readFileSync(filepath ,
+                    const source = fsx.readFileSync(filepath,
                         { encoding: 'utf8', flag: 'r' });
                     await definitions.save(name, source, null);
 
@@ -96,107 +102,106 @@ router.get('/import', awaitHandlerFactory(async (request, response) => {
             });
 
 
-}));
+        }));
 
 
-    router.get('/delete/:process', awaitHandlerFactory(async (request, response) => {
-        console.log(request.params);
-        response.render('models/delete', { processName: request.params.process });
+        router.get('/delete/:process', awaitHandlerFactory(async (request, response) => {
+            console.log(request.params);
+            response.render('models/delete', { processName: request.params.process });
 
-    }));
-    router.post('/delete', awaitHandlerFactory(async (request, response) => {
+        }));
+        router.post('/delete', awaitHandlerFactory(async (request, response) => {
 
-        console.log(request.body);
-        let process = request.body.processName;
-        await definitions.deleteModel(process);
-        console.log('deleting ' + process);
-        response.redirect('/');
+            console.log(request.body);
+            let process = request.body.processName;
+            await definitions.deleteModel(process);
+            console.log('deleting ' + process);
+            response.redirect('/');
 
-    }));
-    router.post('/rename', awaitHandlerFactory(async (request, response) => {
+        }));
+        router.post('/rename', awaitHandlerFactory(async (request, response) => {
 
-        console.log(request.body);
-        let process= request.body.processName;
-        let newName = request.body.newName;
-        await definitions.renameModel(process,newName);
-        console.log('renamed ' + process+" to "+newName);
-        response.redirect('/');
+            console.log(request.body);
+            let process = request.body.processName;
+            let newName = request.body.newName;
+            await definitions.renameModel(process, newName);
+            console.log('renamed ' + process + " to " + newName);
+            response.redirect('/');
 
-    }));
-    router.get('/rename/:process', awaitHandlerFactory(async (request, response) => {
+        }));
+        router.get('/rename/:process', awaitHandlerFactory(async (request, response) => {
 
-        response.render('models/rename', { processName: request.params.process });
+            response.render('models/rename', { processName: request.params.process });
 
-    }));
-    router.get('/edit/:process', awaitHandlerFactory(async (request, response) => {
-        let output = [];
+        }));
+        router.get('/edit/:process', awaitHandlerFactory(async (request, response) => {
+            let output = [];
 
-        console.log('model.ts/:process ');
-        const config = require('../configuration.js').configuration;
-        let xml, base_url, title, processName;
+            console.log('model.ts/:process ');
+            const config = require('../configuration.js').configuration;
+            let xml, base_url, title, processName;
 
-        processName = request.params.process;
-        xml = await definitions.getSource(processName);
-        title = processName;
+            processName = request.params.process;
+            xml = await definitions.getSource(processName);
+            title = processName;
 
-        let view = new Modeller();
+            let view = new Modeller();
 
-        view.display(processName,request, response);
+            view.display(processName, request, response);
 
-    }));
-router.post('/add/:process?', awaitHandlerFactory(async (request, response) => {
-    console.log(" modeller add");
+        }));
+        router.post('/add/:process?', awaitHandlerFactory(async (request, response) => {
+            console.log(" modeller add");
 
-    let body = request.body;
+            let body = request.body;
 
-    let name = body.processId;
-    let bpmn = body.bpmn;
-    let svg = body.svg;
+            let name = body.processId;
+            let bpmn = body.bpmn;
+            let svg = body.svg;
 
-    await definitions.save(name, bpmn, svg);
-    console.log(" save completed");
+            await definitions.save(name, bpmn, svg);
+            console.log(" save completed");
 
-    //        console.log(request);
-    response.status(200).send("");
-}));
-
-
-    router.post('/edit/:process', awaitHandlerFactory(async (request, response) => {
-        console.log(" modeller posted");
-
-        let body = request.body;
-
-        let name = body.processId;
-        let bpmn = body.bpmn;
-        let svg = body.svg;
-
-        let definitionsPath = bpmnServer.configuration.definitionsPath;
-        let fullpath = definitionsPath + '/' + name + '.bpmn';
-
-        fsx.writeFile(fullpath, bpmn, function (err) {
-            if (err) throw err;
-            console.log(`Saved bpmn to ${fullpath}`);
-        });
-        await definitions.save(name, bpmn, svg);
-        console.log(" save completed");
-
-//        console.log(request);
-        response.status(200).send("");
-    }));
-
-    router.get('/getSvg/:process', awaitHandlerFactory(async (request, response) => {
-
-        let processName = request.params.process;
-        let fileName = __dirname + '/../processes/' + processName + '.svg';
-
-        let svg = await definitions.getSVG(processName);
-
-        response.header("Content-Type", "image/svg+xml");
-        response.send(svg);
-
-    }));
+            //        console.log(request);
+            response.status(200).send("");
+        }));
 
 
+        router.post('/edit/:process', awaitHandlerFactory(async (request, response) => {
+            console.log(" modeller posted");
 
+            let body = request.body;
 
-export default router;
+            let name = body.processId;
+            let bpmn = body.bpmn;
+            let svg = body.svg;
+
+            let definitionsPath = bpmnServer.configuration.definitionsPath;
+            let fullpath = definitionsPath + '/' + name + '.bpmn';
+
+            fsx.writeFile(fullpath, bpmn, function (err) {
+                if (err) throw err;
+                console.log(`Saved bpmn to ${fullpath}`);
+            });
+            await definitions.save(name, bpmn, svg);
+            console.log(" save completed");
+
+            //        console.log(request);
+            response.status(200).send("");
+        }));
+
+        router.get('/getSvg/:process', awaitHandlerFactory(async (request, response) => {
+
+            let processName = request.params.process;
+            let fileName = __dirname + '/../processes/' + processName + '.svg';
+
+            let svg = await definitions.getSVG(processName);
+
+            response.header("Content-Type", "image/svg+xml");
+            response.send(svg);
+
+        }));
+        return router;
+    }
+}
+

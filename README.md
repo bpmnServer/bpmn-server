@@ -21,6 +21,7 @@ A WebApp provides a UI from modeling and developing your workflow
 - [Features](./docs/features.md)
 - [Examples](./docs/examples.md)
 - [API](./docs/api-summary.md)
+- [BPMNClient /WebAPI](./docs/client-api.md)
 
 # Process modeller
 
@@ -51,6 +52,7 @@ Included is a sample web application (running Node.js and Express.js) to allow y
 This package requires Node.js and an access to MongoDB ()
 if you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas)
 
+## Installing Server and Web UI
 ```javascript
 $ mkdir myBPMN
 
@@ -66,15 +68,43 @@ xcopy /e /i /s /y node_modules\bpmn-server\WebApp\*.* .
 npm install
 
 ```
-Edit [configuration](./docs/setup.md#configuration) file to have MongoDB point to your server or free cloud account
+Edit .env file to point to MongoDB and set api-key
+
 the change would look like this:
-    db_url: "mongodb://localhost:27017?retryWrites=true&w=majority",
+
+    MONGO_DB_URL=//localhost:27017?retryWrites=true&w=majority
 or:
-    db_url: "mongodb://<userName>:<password>@ip?retryWrites=true&w=majority",
+    MONGO_DB_URL=mongodb://<userName>:<password>@ip?retryWrites=true&w=majority
 
 ```javascript
 node app
 ```
+## Installing Client (for remote access)
+```javascript
+$ mkdir myClient
+
+$ cd myClient
+
+$ npm install bpmn-client
+
+$ cp node_modules/bpmn-client/Sample/. ./  -r
+
+Windows: 
+xcopy /e /i /s /y node_modules\bpmn-client\Sample\*.* .
+
+npm install
+
+```
+
+Edit .env file to point to the server and set api-key 
+
+Add your own code in this directory
+
+```javascript
+node test
+
+```
+
 
 # Demo
 

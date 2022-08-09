@@ -7,6 +7,7 @@ interface IDefinition {
     flows: any[];
     source: any;
     logger: any;
+    accessRules: any[];
     load(): Promise<any>;
     getJson(): string;
     getDefinition(source: any, logger: ILogger): Promise<any>;

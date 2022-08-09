@@ -1,6 +1,7 @@
 const { BPMNServer , DefaultAppDelegate , Logger } = require("../../");
 const { configuration } = require('../testConfiguration');
 
+console.log('-------- car.js -----------');
 
 const logger = new Logger({ toConsole: false });
 
@@ -12,23 +13,28 @@ let process;
 let response;
 let instanceId;
 
-Feature('Buy Used Car', () => {
+Feature('Buy Used Car- clean and repair', () => {
         Scenario('Simple', () => {
             Given('Start Buy Used Car Process',async () => {
-                response = await server.engine.start(name, {});
+                response = await server.engine.start(name, {caseId: caseId});
+                instanceId = response.id;
+                console.log('**instanceId', response.id, instanceId);
+                console.log(' after start ', response.instance.caseId);
             });
             Then('check for output', () => {
                 expect(response).to.have.property('execution');
-                instanceId = response.execution.id;
+                expect(response.instance.data.caseId).equals(caseId);
                 expect(getItem('task_Buy').status).equals('wait');
-            });
+             });
 
             When('a process defintion is executed', async () => {
 
-                const data = { needsCleaning: "No", needsRepairs: "No" };
+                const data = { needsCleaning: "Yes", needsRepairs: "Yes" };
                 const query ={
                     id: instanceId ,
-                    "items.elementId": 'task_Buy' };
+                    "items.elementId": 'task_Buy'
+                };
+                console.log(query);
                 response= await server.engine.invoke(query ,data );
             });
 
@@ -48,9 +54,12 @@ Feature('Buy Used Car', () => {
             });
 
             and('Clean it', async () => {
+
                     const query = {
                         "data.caseId": caseId ,
-                        "items.elementId" : 'task_clean' };
+                    "items.elementId": 'task_clean'
+                };
+                console.log(query);
                     await server.engine.invoke(query, {});
             });
       
@@ -77,7 +86,8 @@ Feature('Buy Used Car', () => {
             let fileName = __dirname + '/../logs/car.log';
 
             and('write log file to ' + fileName, async () => {
-              logger.save(fileName);
+                logger.save(fileName);
+                console.log('filename:', __filename);
             });
 
         });
@@ -86,5 +96,5 @@ Feature('Buy Used Car', () => {
 
 function getItem(id)
 {
-    return response.items.filter(item => { return item.elementId == id; })[0];
+    return response.instance.items.filter(item => { return item.elementId == id; })[0];
 }

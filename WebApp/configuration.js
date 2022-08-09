@@ -3,20 +3,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.configuration = void 0;
 const _1 = require("./");
 const appDelegate_1 = require("./appDelegate");
-let definitionsPath = __dirname + '/processes/';
+const _2 = require("./");
+const dotenv = require('dotenv');
+const res = dotenv.config();
+const definitionsPath = __dirname + '/processes/';
+const templatesPath = __dirname + '/emailTemplates/';
 var configuration = new _1.Configuration({
     definitionsPath: definitionsPath,
+    templatesPath: templatesPath,
     timers: {
         //forceTimersDelay: 1000, 
         precision: 3000,
     },
     database: {
         MongoDB: {
-            db_url: "mongodb://localhost:27017?retryWrites=true&w=majority",
-            db: 'bpmn'
+            db_url: process.env.MONGO_DB_URL,
+            db: process.env.MONGO_DB_NAME, //'bpmn'
         }
     },
-    /* Define Server Components */
+    apiKey: process.env.API_KEY,
+    /* Define Server Services */
     logger: function (server) {
         new _1.Logger(server);
     },
@@ -28,6 +34,12 @@ var configuration = new _1.Configuration({
     },
     dataStore: function (server) {
         return new _1.DataStore(server);
+    },
+    IAM: function (server) {
+        return new _2.IAM(server);
+    },
+    ACL: function (server) {
+        return new _2.ACL(server);
     }
 });
 exports.configuration = configuration;

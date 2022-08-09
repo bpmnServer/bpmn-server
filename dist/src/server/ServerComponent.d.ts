@@ -8,11 +8,14 @@ declare class ServerComponent {
     constructor(server: IBPMNServer);
     get configuration(): any;
     get logger(): any;
-    get dataStore(): any;
-    get engine(): IEngine;
     get cron(): Cron;
     get cache(): CacheManager;
-    get definitions(): any;
     get appDelegate(): any;
+    get engine(): IEngine;
+    get dataStore(): any;
+    get definitions(): any;
+    get listener(): any;
+    get acl(): any;
+    get iam(): any;
 }
 export { ServerComponent };

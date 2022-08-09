@@ -58,7 +58,8 @@ class SignalEventBehaviour extends Behaviour {
         }
         else {  // throw a message
             // don't wait for it 
-            item.context.appDelegate.signalIssued(item);
+            //item.context.appDelegate.signalIssued(item);
+            item.context.appDelegate.signalThrown(this.signalId, null, null, item);
         }
 
 

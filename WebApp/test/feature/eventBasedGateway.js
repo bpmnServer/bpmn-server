@@ -2,7 +2,7 @@ const { BPMNServer , DefaultAppDelegate , Logger } = require("../../");
 const { configuration } = require('../testConfiguration');
 
 
-const logger = new Logger({ toConsole: false });
+const logger = new Logger({ toConsole: true });
 
 const server = new BPMNServer(configuration, logger);
 //server.cron.checkTimers(1000);
@@ -38,7 +38,7 @@ Feature('Event Based Gateway', () => {
                 // we restore to get latest status; since the timer did some work in the background!
 
                 response = await server.engine.restore({ "id": instanceId });
-                console.log(response.items.length);
+                console.log(response.instance.items.length);
                 let item = getItem('timerEvent');
                 log('timerEvent:' + item.id + " status: "+ item.status);
 
@@ -94,7 +94,7 @@ function log(msg) {
 }
 function getItem(id)
 {
-    const item = response.items.filter(item => { return item.elementId == id; })[0]
+    const item = response.instance.items.filter(item => { return item.elementId == id; })[0]
     if (!item) {
         log('item ' + id + ' not found');
     }

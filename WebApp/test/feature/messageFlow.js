@@ -21,7 +21,7 @@ Feature('messageFlow', () => {
 
     When('a process defintion is executed', async () => {
 
-         response=await server.engine.start(name, null);
+        response = await server.engine.start(name, null, 'StartEvent_1eaxb5g');
 
     });
 

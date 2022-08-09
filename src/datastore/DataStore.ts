@@ -1,7 +1,9 @@
 import { Execution } from '../engine/Execution';
-import { IDataStore, IBPMNServer } from '../interfaces';
+import { IDataStore, IBPMNServer, IInstanceData } from '../interfaces';
 
 import { ServerComponent } from '../server/ServerComponent';
+import { Authorization, Involvement, Assignment, Notification } from '../acl/Repository';
+import { ACL } from '../server/ACL';
 
 
 const fs = require('fs');
@@ -41,14 +43,14 @@ class DataStore extends ServerComponent  implements IDataStore {
 		let self = this;
 		listener.on('end', async function ({ item, event }) {
 			if (!self.isRunning) {
-				await self.check(event,item);
+//No Longer Needed				await self.check(event,item);
 			}
 		});
 
 
 		listener.on('wait', async function ({ item, event }) {
 			if (!self.isRunning) {
-				await self.check(event, item);
+//No Longer Needed				await self.check(event, item);
 			}
 		});
 	}
@@ -68,21 +70,23 @@ class DataStore extends ServerComponent  implements IDataStore {
 		if (this.isModified) {
 			this.logger.log('DataStore: saving ');
 			let state = await this.execution.getState();
-			if (state.saved !== this.execution.saved) {
+			if (state.saved !== this.execution.instance.saved) {
 				console.log("********* ERROR OLD State****");
 			}
+			console.log('1 Instance data:',state.id, state.data, "items", state.items.length);
 
 			await this.saveInstance(state, this.execution.getItems())
-			this.execution.saved = new Date().toISOString();;
-			this.logger.log('DataStore: saved ' + this.execution.saved);
+			this.execution.instance.saved = new Date().toISOString();;
+			this.logger.log('DataStore: saved ' + this.execution.instance.saved);
 
 			while (this.saveCounter > currentCounter) {	// will do it again
 				this.logger.log('DataStore:while i was busy other changes happended' + this.saveCounter);
 				currentCounter = this.saveCounter;
 				state = await this.execution.getState();
+				console.log('2 Instance data:',state.id, state.data, "items", state.items.length);
 				await this.saveInstance(state, this.execution.getItems())
-				this.execution.saved = new Date().toISOString();;
-				this.logger.log('DataStore: saved again ' + this.execution.saved);
+				this.execution.instance.saved = new Date().toISOString();;
+				this.logger.log('DataStore: saved again ' + this.execution.instance.saved);
 
 			}
 			this.isModified = false;
@@ -144,6 +148,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 	private async saveInstance(instance, items) {
 		this.logger.log("Saving...");
 
+		console.log('3 Instance data:',instance.id, instance.data, "items", instance.items.length,items.length);
 
 		//var json = JSON.stringify(instance.state, null, 2);
 		const tokensCount = instance.tokens.length;
@@ -168,7 +173,11 @@ class DataStore extends ServerComponent  implements IDataStore {
 					$set:
 					{
 						tokens: instance.tokens, items: instance.items, loops: instance.loops,
-						endedAt: instance.endedAt, status: instance.status, saved: instance.saved, logs: instance.logs, data: instance.data
+						endedAt: instance.endedAt, status: instance.status, saved: instance.saved,
+						logs: instance.logs, data: instance.data,
+						involvements: instance.involvements,
+						authorizations: instance.authorizations
+
 					}
 				}));
 
@@ -194,17 +203,41 @@ class DataStore extends ServerComponent  implements IDataStore {
 			return results[0];
 
 	}
-	async findInstance(query, options) {
+	async findInstance(query, options): Promise<IInstanceData> {
 
 		let results = await this.findInstances(query, options);
 		if (results.length == 0)
 			throw Error(" No instance found for " + JSON.stringify(query));
 		else if (results.length > 1)
 			throw Error(" More than one record found " + results.length + JSON.stringify(query));
-		else
-			return results[0];
+
+		const rec = results[0];
+
+		this.convertColl(rec.authorizations, Authorization);
+		this.convertColl(rec.involvements, Involvement);
+		rec.items.forEach(item => {
+			this.convertColl(item.authorizations, Authorization);
+			this.convertColl(item.assignments, Assignment);
+			this.convertColl(item.notifications, Notification);
+
+		});
+		return rec;
 
 	}
+	convertObj(obj, cls) {
+		return Object.assign(new cls,obj);
+
+    }
+	convertColl(coll, cls) {
+		if (coll)
+		{
+		for (let i = 0; i < coll.length; i++) {
+			const el = coll[i];
+			coll[i] = Object.assign(new cls, el);
+			}
+		}
+
+    }
 	async findInstances(query, option: 'summary' | 'full' | any ='summary') {
 
 		let projection;
@@ -254,6 +287,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 	private translateCriteria(query) {
 
 		let match = {};
+		let hasMatch = false;
 		let projection = {};
 		{
 			Object.keys(query).forEach(key => {
@@ -261,12 +295,13 @@ class DataStore extends ServerComponent  implements IDataStore {
 					let val = query[key];
 					key = key.replace('items.', '');
 					match[key] = val;
+					hasMatch = true;
 				}
 			});
-			if (match == {})
-				projection = { id: 1, data: 1, name: 1 };
-			else
+			if (hasMatch)
 				projection = { id: 1, data: 1, name: 1, "items": { $elemMatch: match } };
+			else
+				projection = { id: 1, data: 1, name: 1, "items": 1 };
 		}
 		return { query: query, projection: projection };
 	}
@@ -358,7 +393,7 @@ private translateCriteria2(criteria) {
 
 	async deleteInstances(query) {
 
-		this.cache.shutdown();
+		await this.cache.shutdown();
 		return await this.db.remove(this.dbConfiguration.db, Instance_collection, query );
 
 	}

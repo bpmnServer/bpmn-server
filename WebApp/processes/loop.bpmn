@@ -10,22 +10,28 @@
     <bpmn:startEvent id="StartEvent_1ohx91b">
       <bpmn:extensionElements>
         <camunda:script event="start"><![CDATA[console.log("This is the start event");
-          this.token.applyInput({records:[1,2,3]});
-          console.log(this.token.data);
-          console.log("This is the start event");]]></camunda:script>
+          this.token.applyInput({records:[1,2,3,4,5]});
+          console.log('=====from script',this.token.data);
+          this.log("====This is the start event");]]></camunda:script>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_18xinq3</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:task id="script_task" name="Script Task">
+    <bpmn:ScriptTask id="script_task" name="Script Task">
+      <bpmn:script><![CDATA[
+
+        this.log('this is a script task');
+
+        ]]></bpmn:script>
+    
       <bpmn:incoming>Flow_18xinq3</bpmn:incoming>
       <bpmn:outgoing>Flow_0xpjff0</bpmn:outgoing>
       <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="(this.records)" />
-    </bpmn:task>
-    <bpmn:task id="service_task" name="Service Task">
+    </bpmn:ScriptTask>
+    <bpmn:ServiceTask id="service_task" name="Service Task">
       <bpmn:incoming>Flow_0xpjff0</bpmn:incoming>
       <bpmn:outgoing>Flow_0s8ghrk</bpmn:outgoing>
       <bpmn:multiInstanceLoopCharacteristics camunda:collection="(this.records)" />
-    </bpmn:task>
+    </bpmn:ServiceTask>
     <bpmn:endEvent id="Event_0bf16wv">
       <bpmn:incoming>Flow_0s8ghrk</bpmn:incoming>
     </bpmn:endEvent>

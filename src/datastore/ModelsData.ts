@@ -1,6 +1,6 @@
-import { Definition, IModelsDatastore, IEventData } from "../..";
+import { Definition, IModelsDatastore } from "../..";
 import { ServerComponent , BPMNServer } from "../..";
-import { IProcessData, IBpmnModelData } from "../interfaces/datastore";
+import { IProcessData, IBpmnModelData, IEventData } from "../interfaces/";
 
 
 const fs = require('fs');

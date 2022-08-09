@@ -119,8 +119,10 @@ class Token implements IToken {
      * @param loop
      * @param data
      */
-    static async startNewToken(type:TOKEN_TYPE,execution, startNode, dataPath, parentToken: Token, originItem: Item, loop: Loop , data=null , noExecute=false) {
+    static async startNewToken(type: TOKEN_TYPE, execution, startNode, dataPath, parentToken: Token, originItem: Item, loop: Loop, data = null, noExecute = false) {
         const token = new Token(type,execution,  startNode ,dataPath, parentToken, originItem);
+        token.log("starting new Token start node:"+startNode.id+" noExecute: "+noExecute);
+
         token.loop = loop;
         execution.tokens.set(token.id, token);
         token.applyInput(data);
@@ -313,7 +315,7 @@ class Token implements IToken {
         // check if valid node and valid status
         // find the item
         const item = this.currentItem;
-        this.log(`..token.invoke ${this.currentNode.id} ${this.currentNode.type}`);
+        this.log(`..token.signal ${this.currentNode.id} ${this.currentNode.type}`);
 
         this.currentNode.setInput(item, data);
         if (item.status == ITEM_STATUS.wait) {

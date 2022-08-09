@@ -9,8 +9,12 @@ declare class Item implements IItem {
     element: Element;
     token: Token;
     seq: any;
+    userId: any;
     startedAt: any;
     _endedAt: any;
+    assignments: any[];
+    authorizations: any[];
+    notifications: any[];
     get endedAt(): any;
     set endedAt(val: any);
     _status: ITEM_STATUS;
@@ -19,7 +23,7 @@ declare class Item implements IItem {
     log(msg: any): void;
     get data(): any;
     set data(val: any);
-    get context(): import("../interfaces/engine").IExecutionContext;
+    get context(): import("../interfaces/engine").IExecution;
     get elementId(): any;
     get name(): any;
     get tokenId(): any;

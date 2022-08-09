@@ -2,10 +2,12 @@
 
 <!-- toc -->
 
-- [Introductory Examples](#introductory-examples)
-- [Invoking Proccess through API](#invoking-proccess-through-api)
+- Invoking Workflow Examples
+  - [Buy Used Car - Using WebApp ](./examples/BuyCar-Web.md)
+  - [Buy Used Car - Using API](./examples/BuyCar-Server.md)
+  - [Buy Used Car - Remotely Using WebServices](./examples/BuyCar-Remote.md)
   - [Async Execution](#async-execution)
-- [Process Definitions Examples](#process-definitions-examples)
+- Process Definitions Examples
   - [Service Task](#service-task)
   - [Script Task](#script-task)
   - [Conditional Flow](#conditional-flow)
@@ -20,15 +22,11 @@
   - [Message Flow](#message-flow)
   - [Throwing and Cathcing Messages](#throwing-and-cathcing-messages)
   - [Input and Output Data Handling](#input-and-output-data-handling)
+  - [Gateway](./examples/gateway.md)
+  - [Event Based Gateway ](./examples/gateway.md)
+  - [Boundary Events](./examples/boundary-events.md)
 
 <!-- tocstop -->
-
-## Introductory Examples
-- [Buy Used Car - Using WebApp ](./examples/BuyCar-Web.md)
-- [Buy Used Car - Using API](./examples/BuyCar-Server.md)
-- [Gateway](./examples/gateway.md)
-- [Event Based Gateway ](./examples/gateway.md)
-- [Boundary Events](./examples/boundary-events.md)
 
 ## Invoking Proccess through API
 

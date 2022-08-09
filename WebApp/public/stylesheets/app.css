@@ -1,4 +1,21 @@
- .CodeMirror {
+.buttonsTable tr {
+    margin: 5px;
+}
+
+.buttonsTable td {
+    text-align: center;
+    margin: 5px;
+    border: #1b3750 2px;
+    text-decoration: none;
+    background-color: #EEEEEE;
+    color: #333333;
+    padding: 2px 6px 2px 6px;
+    border: 1px solid #181818;
+}
+
+
+
+.CodeMirror {
     font-family: monospace;
     height: 460px !important;
     color: black;

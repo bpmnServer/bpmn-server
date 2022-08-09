@@ -2,13 +2,12 @@
 import { Node } from './Node';
 
 import { Token, TOKEN_TYPE } from '../engine/Token';
-import { ExecutionContext } from '../server/ExecutionContext';
 import { NODE_ACTION } from '../interfaces/Enums'
 
 import { Process } from './Process';
 import { IExecution } from '../interfaces/engine';
 import { EXECUTION_STATUS } from '../interfaces/Enums';
-import { DecisionTable } from 'dmn-engine';
+//NO_import { DecisionTable } from 'dmn-engine';
 
 // ---------------------------------------------
 class ScriptTask extends Node {
@@ -70,12 +69,15 @@ class BusinessRuleTask extends ServiceTask {
         let businessRule;
         const token: Token = item.token;
 
-        const config= token.execution.executionContext.configuration;
+        const config= token.execution.configuration;
         const path = config.definitionsPath;
 
         console.log('Business Rule Task'); //.loopCharacteristics.$attrs["camunda:collection"];
         console.log(this.def.$attrs); //.loopCharacteristics.$attrs["camunda:collection"];
         if (this.def.$attrs && this.def.$attrs["camunda:decisionRef"]) {
+
+            throw new Error("Business Rule Task Not supported in this release.");
+            /*
             businessRule = this.def.$attrs["camunda:decisionRef"];
             console.log("invoking business rule:" + businessRule)
             const dt = await DecisionTable.load(path + businessRule + '.json');
@@ -84,8 +86,9 @@ class BusinessRuleTask extends ServiceTask {
             const result = await dt.evaluate(data);
             console.log("result");
             console.log(result.actions);
-
+            
             await item.node.setInput(item, result.actions);
+            */
         }
         return NODE_ACTION.end;
     }
@@ -154,10 +157,9 @@ class CallActivity extends Node {
     get canBeInvoked() { return false; }
 
     static async executionEnded(execution: IExecution) {
-        const itemId = execution.parentItemId;
-        const executionContext: ExecutionContext = execution.executionContext;
-        const engine = executionContext.engine;
-        await engine.invoke({ "items.id": itemId }, execution.data);
+        const itemId = execution.instance.parentItemId;
+        const engine = execution.engine;
+        await engine.invoke({ "items.id": itemId }, execution.instance.data);
 
     }
     async start(item): Promise<NODE_ACTION> {

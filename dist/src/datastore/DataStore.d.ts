@@ -1,5 +1,5 @@
 import { Execution } from '../engine/Execution';
-import { IDataStore, IBPMNServer } from '../interfaces';
+import { IDataStore, IBPMNServer, IInstanceData } from '../interfaces';
 import { ServerComponent } from '../server/ServerComponent';
 declare class DataStore extends ServerComponent implements IDataStore {
     dbConfiguration: any;
@@ -23,7 +23,9 @@ declare class DataStore extends ServerComponent implements IDataStore {
     static seq: number;
     private saveInstance;
     findItem(query: any): Promise<any>;
-    findInstance(query: any, options: any): Promise<any>;
+    findInstance(query: any, options: any): Promise<IInstanceData>;
+    convertObj(obj: any, cls: any): any;
+    convertColl(coll: any, cls: any): void;
     findInstances(query: any, option?: 'summary' | 'full' | any): Promise<any>;
     /**
             * scenario:

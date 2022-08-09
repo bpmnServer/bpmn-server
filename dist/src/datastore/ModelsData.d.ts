@@ -1,5 +1,5 @@
-import { Definition, IEventData } from "../..";
-import { IProcessData, IBpmnModelData } from "../interfaces/datastore";
+import { Definition } from "../..";
+import { IProcessData, IBpmnModelData, IEventData } from "../interfaces/";
 declare class BpmnModelData implements IBpmnModelData {
     name: any;
     source: any;

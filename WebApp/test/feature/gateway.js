@@ -98,7 +98,7 @@ function log(msg) {
 }
 function getItem(id)
 {
-    const item = response.items.filter(item => { return item.elementId == id; })[0]
+    const item = response.instance.items.filter(item => { return item.elementId == id; })[0]
     if (!item) {
         log('item ' + id + ' not found');
     }

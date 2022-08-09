@@ -1,4 +1,5 @@
-import { IExecution , ILogger , IItemData , IDefinition, IConfiguration } from '../..';
+import { IExecution, ILogger,  IDefinition, IConfiguration } from './';
+import { IBpmnModelData, IItemData, IEventData } from './';
 import { EventEmitter } from 'events';
 import { BPMNServer } from '../server';
 
@@ -42,23 +43,7 @@ interface IModelsDatastore {
     renameModel(name: any, newName: any): Promise<boolean>;
 }
 
-interface IEventData {
-    elementId: string;
-    processId: string;
-    type;
-    name;
-    subType;
-    signalId?: string;
-    messageId?: string;
-    // timer info
-    expression;
-    expressionFormat; // cron/iso
-    referenceDateTime; //        start time of event   or last time timer ran
-    maxRepeat;
-    repeatCount;
-    timeDue?: Date;
 
-}
 class EventData implements IEventData  {
     elementId;
     type;
@@ -76,20 +61,5 @@ class EventData implements IEventData  {
     timeDue?: Date;
 }
 
-interface IBpmnModelData {
-    name;
-    source;
-    svg;
-    processes: IProcessData[];
-    events: IEventData[];
-    saved;
-//    parse(definition: IDefinition);
-}
-interface IProcessData {
-    id;
-    name;
-    isExecutable;
-}
 
-
-export {  IDataStore  , IModelsDatastore , IBpmnModelData , IProcessData , IEventData }
+export {  IDataStore  , IModelsDatastore  }

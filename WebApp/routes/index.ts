@@ -1,24 +1,19 @@
 import express = require('express');
-const router = express.Router();
-var bodyParser = require('body-parser')
 
 const FS = require('fs');
 
 import { BPMNServer, dateDiff, Behaviour_names   } from '../';
-import { configuration as config} from '../configuration';
+import { Common } from './common';
 
-const bpmnServer = new BPMNServer(config);
-
-const definitions = bpmnServer.definitions;
 
 var caseId = Math.floor(Math.random() * 10000);
 
 
 const docsFolder = __dirname + '/../bpmnServer/docs/';
 
-/* GET users listing. */
+// main functions
 
-const awaitAppDelegateFactory = (middleware) => {
+function awaitAppDelegateFactory (middleware) {
     return async (req, res, next) => {
         try {
             await middleware(req, res, next)
@@ -27,256 +22,294 @@ const awaitAppDelegateFactory = (middleware) => {
         }
     }
 }
-   {
-    router.get('/', awaitAppDelegateFactory(async (request, response) => {
-        let output = [];
-        output = show(output);
-        display(response, 'Show', output);
-    }));
+//   
+var bpmnServer;
+var definitions;
 
-    var test;
-    router.get('/readme_md', awaitAppDelegateFactory(async (request, response) => {
+export class Workflow extends Common {
 
-        let processName = request.params.process;
-        let fileName = docsFolder + '../README.md';
+    config() {
+        var router = express.Router();
 
-        let file = FS.readFileSync(fileName,
-            { encoding: 'utf8', flag: 'r' });
+        bpmnServer = this.webApp.bpmnServer;
+        definitions = bpmnServer.definitions;
 
-        response.send(file);
+        router.get('/home', home);
+        router.get('/', awaitAppDelegateFactory(async (request, response) => {
+            let output = [];
+            output = show(output);
+		//NOPASSPORT             console.log("isAuthenticated", request.isAuthenticated(), 'user', request.user);
 
-    }));
-    router.get('/example', awaitAppDelegateFactory(async (request, response) => {
-        /* Testing only
-         * 
-        */
-        let file = '../tests/bpmn-engine/getFields.js';
-        if (test)
-            delete require.cache[require.resolve(file)]
-
-        test = require(file);
-//        const test = require('../examples/example.js');
-
-    /* */
-    }));
-    /*
-     *  3 methods for execute:
-     *      get: /execute       fires execute without input
-     *      get: /executeInput  redirect to executeInput page -> call post: execute
-     *      post:/execute       from form with input data
-     *      
-     */
-    
-    router.get('/executeInput/:processName', awaitAppDelegateFactory(async (request, response) => {
-        let processName = request.params.processName;
-
-        response.render('executeInput', { processName });
-    }));
-
-
-    router.get('/execute/:processName', awaitAppDelegateFactory(async (request, response) => {
-
-        let processName = request.params.processName;
-
-        let context = await bpmnServer.engine.start(processName, { caseId: caseId++ });
-
-        if (context.errors) {
-            displayError(response, context.errors);
-        }
-
-
-        let execution = context.execution;
-        console.log(" insance id " + execution.id);
-
-        response.redirect('/instanceDetails?id=' + execution.id);
-        /*
-        let output = ['run ' + processName];
-        output = show(output);
-        display(response, 'Run Prcesses', output, instance.logs, instance.getItems({}));
-        */
-    }));
-
-
-    router.post('/execute', awaitAppDelegateFactory(async (request, response) => {
-
-        console.log(request.body);
-        let process = request.body.processName;
-        let data = {};
-        parseField(request.body.field1, request.body.value1, data);
-        parseField(request.body.field2, request.body.value2, data);
-
-        
-        let startNodeId = request.body.startNodeId
-
-        console.log(data);
-
-        data['caseId'] = caseId++;
-     
-        let context = await bpmnServer.engine.start(process,data , null,startNodeId);
-        if (context.errors) {
-            displayError(response, context.errors);
-        }
-        let instance = context.execution;
-
-        response.redirect('/instanceDetails?id=' + instance.id);
-        /*
-        console.log(" insance id " + instance.id);
-        let output = ['run ' + process];
-        output = show(output);
-        display(response, 'Run Prcesses', output, instance.logs, instance.getItems({})); */
-    }));
-
-    function parseField(field, value, data) {
-        if (field) {
-            if (value.substring(0, 1) == '[') {
-                value = value.substring(1);
-                value = value.substring(0, value.length - 1);
-                console.log('array'+value );
-                let array = value.split(',');
-                value = array;
+            if (request.session.views) {
+                request.session.views++
+            } else {
+                request.session.views = 1
             }
-            data[field] = value;
-        }
-    }
+            console.log('Session:', request.session);
 
-    router.get('/listDefinitions', function (req, res) {
-        let output = ['Data Reset'];
-        output = show(output);
-        display(res, 'Show', output);
 
-    });
 
-    router.get('/resetData', awaitAppDelegateFactory(async (request, response) => {
-        await bpmnServer.dataStore.deleteInstances();
-        console.log(" Data Reset");
-        let output = ['Data Reset'];
-        output = show(output);
-        display(response, 'Show', output);
-    }));
+            display(response, 'Show', output);
+        }));
 
-    router.get('/refresh', function (req, res) {
-        let output = [];
-        output = show(output);
-        display(res, 'Show', output);
-    });
 
-    router.get('/clearDebug', function (req, res) {
-    //    Logger.clear();
-        let output = [];
-        output = show(output);
-        display(res, 'Show', output);
-    });
+        router.get('/readme_md', awaitAppDelegateFactory(async (request, response) => {
 
-    router.get('/invokeItem', awaitAppDelegateFactory(async (request, response) => {
+            let processName = request.params.process;
+            let fileName = docsFolder + '../README.md';
 
-        let id = request.query.id;
-        let processName = request.query.processName;
-        let elementId = request.query.elementId;
+            let file = FS.readFileSync(fileName,
+                { encoding: 'utf8', flag: 'r' });
 
-        let fields = await getFields(processName, elementId);
+            response.send(file);
 
-        if (fields && fields.length > 0) {
-            response.render('invokeItem', {
-                id, fields, processName, elementId
-            });
-            return;
-        }
+        }));
+        router.get('/example', awaitAppDelegateFactory(async (request, response) => {
+            /* Testing only
+             * 
+            */
+            var test;
+            let file = '../tests/bpmn-engine/getFields.js';
+            if (test)
+                delete require.cache[require.resolve(file)]
 
-        let result = await bpmnServer.engine.invoke({ "items.id": id }, {});
+            test = require(file);
+            //        const test = require('../examples/example.js');
 
-        console.log("redirecting");
-        response.redirect('/instanceDetails?id=' + result.execution.id);
+            /* */
+        }));
         /*
-        let output = ['save' + id];
-        display(response, 'Save Instance', output); */
-    }));
-    router.post('/invokeItem', awaitAppDelegateFactory(async (request, response) => {
-        console.log('invoke');
-        console.log(request.body);
-        let id = request.body.itemId;
-        let data = {};
-        console.log(id);
+         *  3 methods for execute:
+         *      get: /execute       fires execute without input
+         *      get: /executeInput  redirect to executeInput page -> call post: execute
+         *      post:/execute       from form with input data
+         *      
+         */
 
-        Object.entries(request.body).forEach(entry => {
-            if (entry[0] == 'itemId') { }
-            else {
-                data[entry[0]] = entry[1];
+        router.get('/executeInput/:processName', awaitAppDelegateFactory(async (request, response) => {
+            let processName = request.params.processName;
+
+            response.render('executeInput', { processName });
+        }));
+
+
+        router.get('/execute/:processName', awaitAppDelegateFactory(async (request, response) => {
+
+            let processName = request.params.processName;
+
+            let context = await bpmnServer.engine.start(processName, { caseId: caseId++ });
+
+            if (context.errors) {
+                displayError(response, context.errors);
             }
+
+
+            let execution = context.execution;
+            console.log(" insance id " + execution.id);
+
+            response.redirect('/instanceDetails?id=' + execution.id);
+            /*
+            let output = ['run ' + processName];
+            output = show(output);
+            display(response, 'Run Prcesses', output, instance.logs, instance.getItems({}));
+            */
+        }));
+
+
+        router.post('/execute', awaitAppDelegateFactory(async (request, response) => {
+
+            console.log(request.body);
+            let process = request.body.processName;
+            let data = {};
+            parseField(request.body.field1, request.body.value1, data);
+            parseField(request.body.field2, request.body.value2, data);
+
+
+            let startNodeId = request.body.startNodeId
+
+            console.log(data);
+
+            data['caseId'] = caseId++;
+
+            let context = await bpmnServer.engine.start(process, data, null, startNodeId);
+            if (context.errors) {
+                displayError(response, context.errors);
+            }
+            let instance = context.execution;
+
+            response.redirect('/instanceDetails?id=' + instance.id);
+            /*
+            console.log(" insance id " + instance.id);
+            let output = ['run ' + process];
+            output = show(output);
+            display(response, 'Run Prcesses', output, instance.logs, instance.getItems({})); */
+        }));
+
+        router.get('/listDefinitions', function (req, res) {
+            let output = ['Data Reset'];
+            output = show(output);
+            display(res, 'Show', output);
+
         });
 
-        console.log(data);
-        
-        let result = await bpmnServer.engine.invoke({ "items.id": id },  data);
+        router.get('/resetData', awaitAppDelegateFactory(async (request, response) => {
+            await bpmnServer.dataStore.deleteInstances();
+            console.log(" Data Reset");
+            let output = ['Data Reset'];
+            output = show(output);
+            display(response, 'Show', output);
+        }));
 
+        router.get('/refresh', function (req, res) {
+            let output = [];
+            output = show(output);
+            display(res, 'Show', output);
+        });
 
-        response.redirect('/instanceDetails?id=' + result.execution.id);
-    }));
+        router.get('/clearDebug', function (req, res) {
+            //    Logger.clear();
+            let output = [];
+            output = show(output);
+            display(res, 'Show', output);
+        });
 
+        router.get('/invokeItem', awaitAppDelegateFactory(async (request, response) => {
 
-    router.get('/mocha', awaitAppDelegateFactory(async (request, response) => {
+            let id = request.query.id;
+            let processName = request.query.processName;
+            let elementId = request.query.elementId;
 
-        const mocha = require('../node_modules/mocha/bin/mocha');
-    }));
+            let fields = await getFields(processName, elementId);
 
-    router.get('/run/:process', awaitAppDelegateFactory(async (request, response) => {
-        let process = request.params.process;
-        let context = await bpmnServer.engine.start(process, { caseId: caseId++ });
-        if (context.errors) {
-            displayError(response, context.errors);
-        }
-        let instance = context.execution;
-        console.log(" insance id " + instance.id);
-        let output = ['run ' + process];
-        output = show(output);
-        display(response, 'Run Prcesses', output, instance.logs, context.items);
-    }));
-    router.get('/instanceDetails', awaitAppDelegateFactory(async (request, response) => {
+            if (fields && fields.length > 0) {
+                response.render('invokeItem', {
+                    id, fields, processName, elementId
+                });
+                return;
+            }
 
-        let imageId = request.query.id;
-        console.log("id: " + imageId);
-        await instanceDetails(response,imageId);        
+            let result = await bpmnServer.engine.invoke({ "items.id": id }, {});
 
-    }));
+            console.log("redirecting");
+            response.redirect('/instanceDetails?id=' + result.execution.id);
+            /*
+            let output = ['save' + id];
+            display(response, 'Save Instance', output); */
+        }));
+        router.post('/invokeItem', awaitAppDelegateFactory(async (request, response) => {
+            console.log('invoke');
+            console.log(request.body);
+            let id = request.body.itemId;
+            let data = {};
+            console.log(id);
 
-
-    router.get('/deleteInstance',async function (req, res) {
-
-        let instanceId = req.query.id;
-
-        await bpmnServer.dataStore.deleteInstances({ id: instanceId });
-
-        let output = ['Complete ' + instanceId];
-        console.log(" deleted");
-        display(res, 'Show', output);
-    });
-    router.get('/shutdown', async function (req, res) {
-
-        let instanceId = req.query.id;
-
-        await bpmnServer.cache.shutdown();
-
-        let output = ['Complete ' + instanceId];
-        console.log(" deleted");
-        display(res, 'Show', output);
-    });
-    router.get('/restart', async function (req, res) {
-
-        let instanceId = req.query.id;
-
-        await bpmnServer.cache.restart();
-
-        let output = ['Complete ' + instanceId];
-        console.log(" deleted");
-        display(res, 'Show', output);
-    });
-    router.get('/manage', async function (req, res) {
-
-        res.render('manageProcesses',
-            {
-                procs: await bpmnServer.definitions.getList(),
+            Object.entries(request.body).forEach(entry => {
+                if (entry[0] == 'itemId') { }
+                else {
+                    data[entry[0]] = entry[1];
+                }
             });
 
-    });}
+            console.log(data);
+
+            let result = await bpmnServer.engine.invoke({ "items.id": id }, data);
+
+
+            response.redirect('/instanceDetails?id=' + result.execution.id);
+        }));
+
+
+        router.get('/mocha', awaitAppDelegateFactory(async (request, response) => {
+
+            const mocha = require('../node_modules/mocha/bin/mocha');
+        }));
+
+        router.get('/run/:process', awaitAppDelegateFactory(async (request, response) => {
+            let process = request.params.process;
+            let exec = await bpmnServer.engine.start(process, { caseId: caseId++ });
+            if (exec.errors) {
+                displayError(response, exec.errors);
+            }
+
+            console.log(" insance id " + exec.id);
+            let output = ['run ' + process];
+            output = show(output);
+            display(response, 'Run Prcesses', output, exec.instance.logs, exec.instance.items);
+        }));
+        router.get('/instanceDetails', awaitAppDelegateFactory(async (request, response) => {
+
+            let imageId = request.query.id;
+            console.log("id: " + imageId);
+            await instanceDetails(response, imageId);
+
+        }));
+
+        router.get('/deleteInstance', deleteInstance);
+        router.get('/shutdown', shutdown);
+        router.get('/restart', restart);
+        router.get('/manage', manage);
+        return router;
+    }
+}
+
+
+async function home(request, response)  {
+        let output = [];
+        output = show(output);
+		//NOPASSPORT         console.log("isAuthenticated", request.isAuthenticated(), 'user', request.user);
+
+        if (request.session.views) {
+            request.session.views++
+        } else {
+            request.session.views = 1
+        }
+        console.log('Session:', request.session);
+
+
+
+        display(response, 'Show', output);
+}
+
+async function deleteInstance(req, res) {
+
+    let instanceId = req.query.id;
+
+    await bpmnServer.dataStore.deleteInstances({ id: instanceId });
+
+    let output = ['Complete ' + instanceId];
+    console.log(" deleted");
+    display(res, 'Show', output);
+}
+async function shutdown(req, res) {
+
+    let instanceId = req.query.id;
+
+    await bpmnServer.cache.shutdown();
+
+    let output = ['Complete ' + instanceId];
+    console.log(" deleted");
+    display(res, 'Show', output);
+}
+async function restart(req, res) {
+
+    let instanceId = req.query.id;
+
+    await bpmnServer.cache.restart();
+
+    let output = ['Complete ' + instanceId];
+    console.log(" deleted");
+    display(res, 'Show', output);
+}
+async function manage(req, res) {
+    res.render('manageProcesses',
+        {
+            procs: await bpmnServer.definitions.getList(),
+        });
+
+}
+
+
+
 async function displayError(res, error) {
     let msg = '';
 
@@ -337,9 +370,8 @@ function show(output) {
     return output;
 }
 async function instanceDetails(response,instanceId) {
-    let result = await bpmnServer.dataStore.loadInstance(instanceId);
-//    let items = await bpmnServer.findItems({ id : instanceId });
-    const instance = result.instance;
+    let instance = await bpmnServer.dataStore.findInstance({ id: instanceId },'Full');
+
 
     let logs = instance.logs;
     let svg = null;
@@ -351,12 +383,12 @@ async function instanceDetails(response,instanceId) {
 
     }
 
-    const lastItem = result.items[result.items.length - 1];
+    const lastItem = instance.items[instance.items.length - 1];
 
     const def = await bpmnServer.definitions.load(instance.name);
     await def.load();
     const defJson = def.getJson();
-
+    console.log('def access rules', def.accessRules);
     let output = ['View Process Log'];
     output = show(output);
 
@@ -371,14 +403,15 @@ async function instanceDetails(response,instanceId) {
         vars.push({ key, value });
     });
 
-    let decorations = JSON.stringify(calculateDecorations(result.items));
+    let decorations = JSON.stringify(calculateDecorations(instance.items));
 
     response.render('InstanceDetails',
         {
             instance, vars,
+            accessRules: def.accessRules,
             title: 'Instance Details',
-            logs,items: result.items, svg,
-            decorations , definition:defJson, lastItem
+            logs,items: instance.items, svg,
+            decorations, definition: defJson, lastItem,
         });
 
 }
@@ -397,6 +430,18 @@ async function getFields(processName, elementId) {
         return null;
 }
 
+function parseField(field, value, data) {
+    if (field) {
+        if (value.substring(0, 1) == '[') {
+            value = value.substring(1);
+            value = value.substring(0, value.length - 1);
+            console.log('array' + value);
+            let array = value.split(',');
+            value = array;
+        }
+        data[field] = value;
+    }
+}
 function calculateDecorations(items) {
     let decors = [];
     let seq = 1;
@@ -411,4 +456,4 @@ function calculateDecorations(items) {
     return decors;
 
 }
-export default router;
+//export default router;

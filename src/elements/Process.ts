@@ -60,6 +60,9 @@ class Process {
         }
         */
     }
+    public getStartNode(userInvokable = false) {
+        return this.getStartNodes(userInvokable)[0];
+    }
     public getStartNodes(userInvokable = false) {
         let starts = [];
         this.childrenNodes.forEach(node => {

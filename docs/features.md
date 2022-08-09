@@ -66,6 +66,7 @@ The following elements are tested and supported.
 - Call Task
 - Lane
 - Pool
+- ErrorEventDefinition
 ## Special
 - [Script Events](./examples#ScriptExtensions) 
 
@@ -73,7 +74,6 @@ The following elements are tested and supported.
 - BpmnError
 - compensate by outbound Association
 - Error
-- ErrorEventDefinition
 - EscalationEventDefinition
 
 		

@@ -15,10 +15,6 @@ __exportStar(require("./src/engine/"), exports);
 __exportStar(require("./src/elements/"), exports);
 __exportStar(require("./src/server/"), exports);
 __exportStar(require("./src/datastore/"), exports);
-__exportStar(require("./src/interfaces/Enums"), exports);
-__exportStar(require("./src/interfaces/common"), exports);
-__exportStar(require("./src/interfaces/server"), exports);
-__exportStar(require("./src/interfaces/engine"), exports);
-__exportStar(require("./src/interfaces/datastore"), exports);
-__exportStar(require("./src/interfaces/elements"), exports);
+__exportStar(require("./src/interfaces/"), exports);
+__exportStar(require("./src/server/ACL"), exports);
 //# sourceMappingURL=index.js.map

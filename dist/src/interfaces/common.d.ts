@@ -1,6 +1,7 @@
-import { IItem, IModelsDatastore, IExecutionContext, IDataStore } from '../..';
+import { IItem, IModelsDatastore, IDataStore } from '../..';
 interface IConfiguration {
     definitionsPath: string;
+    templatesPath: string;
     timers: {
         forceTimersDelay: number;
         precision: number;
@@ -11,6 +12,7 @@ interface IConfiguration {
             db: string;
         };
     };
+    apiKey: string;
     logger: ILogger;
     definitions(server: any): IModelsDatastore;
     appDelegate(server: any): IAppDelegate;
@@ -57,7 +59,8 @@ interface ILogger {
 interface IAppDelegate {
     moddleOptions: any;
     servicesProvider: any;
-    executionStarted(execution: IExecutionContext): any;
+    sendEmail(to: any, msg: any, body: any): any;
+    executionStarted(execution: any): any;
     executionEvent({ event, item, execution }: {
         event: any;
         item: any;

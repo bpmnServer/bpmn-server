@@ -12,12 +12,14 @@ declare class InstanceObject implements IInstanceData {
     endedAt: any;
     saved: any;
     data: any;
-    items: any;
+    items: any[];
     source: any;
-    logs: any;
-    tokens: any;
-    loops: any;
+    logs: any[];
+    tokens: any[];
+    loops: any[];
     parentItemId: any;
+    involvements: any[];
+    authorizations: any[];
 }
 /**
  *  as stroed in MongoDB
@@ -29,6 +31,7 @@ declare class ItemObject implements IItemData {
     name: any;
     type: BPMN_TYPE;
     status: ITEM_STATUS;
+    userId: any;
     startedAt: any;
     endedAt: any;
     tokenId: any;
@@ -42,6 +45,9 @@ declare class ItemObject implements IItemData {
     data: any;
     messageId: any;
     signalId: any;
+    assignments: any;
+    authorizations: any;
+    notifications: any;
 }
 declare class TokenObject {
     id: any;

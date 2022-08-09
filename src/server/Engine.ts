@@ -1,5 +1,5 @@
 
-import { Execution, ExecutionContext } from '../..';
+import { Execution } from '../..';
 import { ServerComponent } from '../server/ServerComponent';
 import { IEngine} from "../interfaces";
 
@@ -7,6 +7,11 @@ import { DataStore } from '../datastore';
 
 
 class Engine extends ServerComponent implements IEngine{
+
+
+	constructor(server) {
+		super(server);
+    }
 
 	/**
 	 *	loads a definitions  and start execution
@@ -18,7 +23,8 @@ class Engine extends ServerComponent implements IEngine{
 	async start(name: any,
 		data: any = {}, 
 		startNodeId: string = null,
-		options = {}): Promise<ExecutionContext> {
+		userKey: string=null,
+		options = {}): Promise<Execution> {
 
 		this.logger.log(`Action:engine.start ${name}`);
 
@@ -26,40 +32,29 @@ class Engine extends ServerComponent implements IEngine{
 		const definitions = this.definitions;
 		const source = await definitions.getSource(name);
 
-		const executionContext = new ExecutionContext(this.server);
-
-		const execution = new Execution(name, source, executionContext);
-		executionContext.execution = execution;
+		const execution = new Execution(this.server,name, source);
+		if (userKey) {
+			execution.currentUser = this.iam.getCurrentUser(userKey);
+		}
 
 		// new dataStore for every execution to be monitored 
-		const newDataStore =new DataStore(executionContext.server);
-		executionContext.server.dataStore = newDataStore;
+		const newDataStore =new DataStore(this.server);
+		this.server.dataStore = newDataStore;
 
 		newDataStore.monitorExecution(execution);
-		this.cache.add(executionContext);
+		this.cache.add(execution);
 
-		executionContext.worker = execution.execute(startNodeId, data, options);
+		execution.worker = execution.execute(startNodeId, data, options);
 
 		if (options['noWait'] == true) {
-			return executionContext;
+			return execution;
 		}
 		else {
-			const waiter = await executionContext.worker;
+			const waiter = await execution.worker;
 			this.logger.log(`.engine.start ended for ${name}`);
-			return executionContext;
+			return execution;
 		}
 
-
-
-		execution.promises.push(execution.execute(startNodeId, data, options));
-
-		
-		await execution.execute(startNodeId, data,options);
-
-		await executionContext.dataStore.save();
-
-		this.logger.log(`.engine.start ended for ${name}`);
-		return executionContext;
 		
 	}
 	/**
@@ -75,40 +70,42 @@ class Engine extends ServerComponent implements IEngine{
 	 *					{ items.item.itemKey : 'businesskey here'}
 	 *					
 	 */
-	async get(instanceQuery): Promise<ExecutionContext> {
+	async get(instanceQuery): Promise<Execution> {
 
 		return  await this.restore(instanceQuery);
 		
 	}
-	async restore(instanceQuery): Promise<ExecutionContext> {
+	async restore(instanceQuery): Promise<Execution> {
 
 		// need to load instance first
+		let execution;
 		const instance = await this.dataStore.findInstance(instanceQuery, 'Full');
-		let executionContext;
+
+
 		const live = this.cache.getInstance(instance.id);
 		if (live) {
 
-			executionContext = live;
+			execution = live;
 		}
 		else {
+			execution = await Execution.restore(this.server,instance);
 
-			executionContext = new ExecutionContext(this.server);
-			const execution = await Execution.restore(instance, executionContext);
-			executionContext.execution = execution;
 
 			// new dataStore for every execution to be monitored 
-			const newDataStore = new DataStore(executionContext.server);
-			executionContext.server.dataStore = newDataStore;
+			const newDataStore = new DataStore(execution.server);
+			execution.server.dataStore = newDataStore;
 
 			newDataStore.monitorExecution(execution);
 
-			this.cache.add(executionContext);
+
+			this.cache.add(execution);
 			this.logger.log("restore completed");
+
 		}
 
-		return executionContext;
+		return execution;
 	}
-	async invokeItem(itemQuery, data = {}): Promise<ExecutionContext> {
+	async invokeItem(itemQuery, data = {}): Promise<Execution> {
 
 		return await this.invoke(itemQuery, data);
 	}
@@ -124,11 +121,11 @@ class Engine extends ServerComponent implements IEngine{
 	 * @param itemQuery		criteria to retrieve the item
 	 * @param data
 	 */
-	async invoke(itemQuery, data = {}) : Promise<ExecutionContext> {
+	async invoke(itemQuery, data = {}, userKey: string = null): Promise<Execution> {
 
-		this.logger.log(`Action:engine.continue`);
+		this.logger.log(`Action:engine.invoke`);
+		console.log(itemQuery);
 		this.logger.log(itemQuery);
-		let executionContext;
 
 		try {
 
@@ -138,24 +135,28 @@ class Engine extends ServerComponent implements IEngine{
 			}
 			const item = items[0];
 			if (!item) {
-				this.logger.error(`query produced no items`);
+				this.logger.error(`query produced no items for ${itemQuery}`);
 			}
 
-			executionContext = await this.restore({ "id": item.instanceId });
+			const execution = await this.restore({ "id": item.instanceId });
 
-			executionContext.execution.log("Action:engineInvoke " + JSON.stringify(itemQuery));
-			await executionContext.execution.signal(item.id, data);
+			if (userKey) {
+				execution.currentUser = this.iam.getCurrentUser(userKey);
+			}
+			execution.log("Action:engineInvoke " + JSON.stringify(itemQuery));
+
+			await execution.signal(item.id, data);
 
 			this.logger.log(`..engine.continue execution ended saving.. `);
 
-			await executionContext.dataStore.save();
+			await this.server.dataStore.save();
 
 			this.logger.log(`.engine.continue ended`);
 
-			return executionContext;
+			return execution;
 		}
 		catch (exc) {
-			return this.error(exc,executionContext);
+			return this.logger.error(exc);
 
 		}
 	}
@@ -174,37 +175,36 @@ class Engine extends ServerComponent implements IEngine{
 	 * @param elementId
 	 * @param data
 	 */
-	async startEvent(instanceId, elementId, data = {}) : Promise<ExecutionContext> {
+	async startEvent(instanceId, elementId, data = {}) : Promise<Execution> {
 
-		let context;
 		// need to load instance first
 		this.logger.log('serverinvokeSignal');
 
 		try {
 
-			context = await this.restore({ "id": instanceId });
-			const execution = context.execution;
+			const execution= await this.restore({ "id": instanceId });
 
 			await execution.signal(elementId, data);
 
-			await context.dataStore.save();
+			await this.server.dataStore.save();
 
 			this.logger.log("invoke completed");
 
-			return context;
+			return execution;
 		}
 		catch (exc) {
-			return this.error(exc,context);
+			return this.logger.error(exc);
 
 		}
 	}
-	async throwMessage(messageId, data = {}, matchingQuery = {}): Promise<ExecutionContext> {
+	async throwMessage(messageId, data = {}, matchingQuery = {}): Promise<Execution> {
 
 		this.logger.log('Action:engine.throwMessage ' + messageId);
 
 		// need to load instance first
 		const eventsQuery = { "events.messageId": messageId };
 		const events = await this.definitions.findEvents(eventsQuery);
+
 		this.logger.log('..findEvents ' + events.length);
 		console.log(events);
 		if (events.length > 0) {
@@ -240,7 +240,7 @@ class Engine extends ServerComponent implements IEngine{
 	 * @param matchingQuery	should match the itemKey (if specified)
 	 * @param data			message data
 	 */
-	async throwSignal(messageId, data = {}, matchingQuery = {} ) : Promise<ExecutionContext>{
+	async throwSignal(messageId, data = {}, matchingQuery = {} ) : Promise<Execution>{
 
 		this.logger.log('Action:engine.signal '+messageId);
 
@@ -271,12 +271,7 @@ class Engine extends ServerComponent implements IEngine{
 	}
 
 
-	private error(exc, executionContext) {
-		if (!executionContext)
-			executionContext = new ExecutionContext(this.server);
-		executionContext.errors=exc;
-		return executionContext;
-	}
+
 }
 
 

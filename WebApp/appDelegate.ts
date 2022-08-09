@@ -1,5 +1,5 @@
 
-import { IExecution, Item, FLOW_ACTION , NODE_ACTION, IExecutionContext  } from './';
+import {  Item, FLOW_ACTION , NODE_ACTION, IExecution  } from './';
 import { DefaultAppDelegate } from './index';
 
 const fs = require('fs');
@@ -7,12 +7,46 @@ const fs = require('fs');
 var seq = 1;
 
 class MyAppDelegate extends DefaultAppDelegate{
-    constructor(logger = null) {
-        super(logger);
+    constructor(server) {
+        super(server);
         this.servicesProvider = new MyServices();
     }
+    sendEmail(to, msg, body) {
 
-    async executionStarted(execution: IExecutionContext) {
+        console.log(`Sending email to ${to}`);
+
+        const key = process.env.SENDGRID_API_KEY;
+
+        if (key && (key != '')) {
+            const sgMail = require('@sendgrid/mail')
+            sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
+            const email = {
+                to: to,
+                from: 'ralphhanna@hotmail.com', // Change to your verified sender
+                subject: msg,
+                text: body,
+                html: body
+            }
+
+            sgMail
+                .send(email)
+                .then((response) => {
+                    this.server.logger.log('responseCode', response[0].statusCode)
+                    this.server.logger.log('responseHeaders', response[0].headers)
+                })
+                .catch((error) => {
+                    console.error('Email Error:' + error)
+                })
+
+        }
+        else {
+            console.log(`email is disabled`);
+        }
+
+    }
+
+    async executionStarted(execution: IExecution) {
         await super.executionStarted(execution);}
     async executionEvent({ event, item, execution }) {
         let object;
@@ -28,6 +62,7 @@ class MyAppDelegate extends DefaultAppDelegate{
         await super.signalThrown(signalId, data, matchingQuery, item);
     }
     async serviceCalled(input, context) {
+        this.server.logger.log("service called");
 
     }
 }

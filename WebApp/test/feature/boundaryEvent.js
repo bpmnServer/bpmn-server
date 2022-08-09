@@ -133,5 +133,5 @@ function log(msg) {
 }
 function getItem(id)
 {
-    return response.items.filter(item => { return item.elementId == id; })[0];
+    return response.instance.items.filter(item => { return item.elementId == id; })[0];
 }

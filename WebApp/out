@@ -1,0 +1,803 @@
+
+E:\X4\dev\WebApp>call mocha --color=false -exit test/feature/  
+bpmn-server version 1.2.0
+start rebuilding processess
+bpmn-server version 1.2.0
+-------- car.js -----------
+bpmn-server version 1.2.0
+-------- carAccess.js -----------
+bpmn-server version 1.2.0
+bpmn-server version 1.2.0
+bpmn-server version 1.2.0
+bpmn-server version 1.2.0
+Configuration {
+  definitionsPath: 'E:\\X4\\dev\\WebApp\\test/../processes/',
+  templatesPath: 'E:\\X4\\dev\\WebApp\\test/../emailTemplates',
+  timers: { forceTimersDelay: 1000, precision: 3000 },
+  database: {
+    MongoDB: {
+      db_url: 'mongodb://localhost:27017?retryWrites=true&w=majority',
+      db: 'bpmn'
+    }
+  },
+  apiKey: '12345',
+  logger: [Function: logger],
+  definitions: [Function: definitions],
+  appDelegate: [Function: appDelegate],
+  dataStore: [Function: dataStore]
+}
+
+
+  Feature: Boundary Event
+    Scenario: do the task right-away- events will cancel
+process.loaded Definition
+Loading rules for boundary-event
+3 Instance data: 7afd9a63-7fd4-4ebe-b058-3b9f3d4d408f {} items 5 5
+{}
+done rebuilding processes
+ expression 5 * * * * base dateTue Aug 09 2022 13:05:00 GMT-0400 (Eastern Daylight Time) -> delay of 2296.431 sec 38.27385 min0.6378975 hours 
+scheduling process cron delayed by 2296.431 seconds, scheduled at: Tue Aug 09 2022 14:05:00 GMT-0400 (Eastern Daylight Time)
+saving is complete
+      √ Given Start boundary-event Process (274ms)
+      √ Then check for output
+{
+  id: '7afd9a63-7fd4-4ebe-b058-3b9f3d4d408f',
+  'items.elementId': 'user_task'
+}
+3 Instance data: 7afd9a63-7fd4-4ebe-b058-3b9f3d4d408f {} items 7 7
+saving is complete
+      √ When I invoke user_task
+      √ When I dont wait for events to complete
+writing to:E:\X4\dev\WebApp\test\feature/../logs/boundary-event1.log 115
+      √ And write log file to E:\X4\dev\WebApp\test\feature/../logs/boundary-event1.log
+    Scenario: Dont do the task right - away, wait for timer to fire
+process.loaded Definition
+Loading rules for boundary-event
+3 Instance data: d861d903-aa0d-4e65-a524-c8aaf3d607d3 {} items 5 5
+{}
+saving is complete
+      √ Given Start boundary-event Process (59ms)
+      √ Then check for output
+3 Instance data: d861d903-aa0d-4e65-a524-c8aaf3d607d3 {} items 7 7
+saving is complete
+      √ When wait for the timer to fire (2506ms)
+      √ When I wait for events to complete
+writing to:E:\X4\dev\WebApp\test\feature/../logs/boundary-event2.log 108
+      √ And write log file to E:\X4\dev\WebApp\test\feature/../logs/boundary-event2.log
+
+  Feature: Event Based Gateway
+    Scenario: All
+process.loaded Definition
+Loading rules for Event Based Gateway
+3 Instance data: 5f4d2080-9bec-4469-a29c-3974097fdfd1 { reminderCounter: 0, caseId: 1005 } items 11 11
+{ reminderCounter: 0, caseId: 1005 }
+saving is complete
+      √ Given Start Process (68ms)
+      √ Then events should fire and wait
+3 Instance data: 5f4d2080-9bec-4469-a29c-3974097fdfd1 { reminderCounter: 0, caseId: 1005 } items 13 13
+saving is complete
+      √ When we wait a bit for timer to complete (3011ms)
+      √ Then after wait - timer should have completed
+      √ And other events complete as well
+      √ And also reminder task will fire
+{
+  id: '5f4d2080-9bec-4469-a29c-3974097fdfd1',
+  'items.elementId': 'reminder'
+}
+3 Instance data: 5f4d2080-9bec-4469-a29c-3974097fdfd1 { reminderCounter: 0, caseId: 1005 } items 15 15
+saving is complete
+      √ When we issue reminder
+writing to:E:\X4\dev\WebApp\test\feature/../logs/Event Based Gateway.log 218
+      √ And write log file toEvent Based Gateway.log
+
+  Feature: Buy Used Car- clean and repair
+    Scenario: Simple
+process.loaded Definition
+Loading rules for Buy Used Car
+Rules loaded 8
+3 Instance data: bb0d37a6-9cf5-4b5b-bfa1-a2bb4acfcf67 { caseId: 2517 } items 3 3
+{ caseId: 2517 }
+saving is complete
+**instanceId bb0d37a6-9cf5-4b5b-bfa1-a2bb4acfcf67 bb0d37a6-9cf5-4b5b-bfa1-a2bb4acfcf67
+ after start  undefined
+      √ Given Start Buy Used Car Process (956ms)
+      √ Then check for output
+{
+  id: 'bb0d37a6-9cf5-4b5b-bfa1-a2bb4acfcf67',
+  'items.elementId': 'task_Buy'
+}
+{
+  id: 'bb0d37a6-9cf5-4b5b-bfa1-a2bb4acfcf67',
+  'items.elementId': 'task_Buy'
+}
+3 Instance data: bb0d37a6-9cf5-4b5b-bfa1-a2bb4acfcf67 { caseId: 2517, needsCleaning: 'Yes', needsRepairs: 'Yes' } items 9 9
+saving is complete
+      √ When a process defintion is executed
+      √ When engine get
+      √ Then check for output to have engine
+{ 'data.caseId': 2517, 'items.elementId': 'task_clean' }
+{ 'data.caseId': 2517, 'items.elementId': 'task_clean' }
+3 Instance data: bb0d37a6-9cf5-4b5b-bfa1-a2bb4acfcf67 { caseId: 2517, needsCleaning: 'Yes', needsRepairs: 'Yes' } items 11 11
+saving is complete
+      √ And Clean it
+{
+  id: 'bb0d37a6-9cf5-4b5b-bfa1-a2bb4acfcf67',
+  'items.elementId': 'task_repair'
+}
+3 Instance data: bb0d37a6-9cf5-4b5b-bfa1-a2bb4acfcf67 { caseId: 2517, needsCleaning: 'Yes', needsRepairs: 'Yes' } items 15 15
+email msg Notification for 'Buy Used Car' CaseId: 2517
+emailbody Notification for 'Buy Used Car' CaseId: 2517<p>Item 'task_Drive' now has the status of 'wait'</p>
+sendign email to ralphhanna@hotmail.com
+saving is complete
+      √ And Repair it (202ms)
+{
+  id: 'bb0d37a6-9cf5-4b5b-bfa1-a2bb4acfcf67',
+  'items.elementId': 'task_Drive'
+}
+3 Instance data: bb0d37a6-9cf5-4b5b-bfa1-a2bb4acfcf67 { caseId: 2517, needsCleaning: 'Yes', needsRepairs: 'Yes' } items 17 17
+saving is complete
+      √ And Drive it 1
+end
+end
+      √ And Case Complete
+writing to:E:\X4\dev\WebApp\test\feature/../logs/car.log 310
+filename: E:\X4\dev\WebApp\test\feature\car.js
+      √ And write log file to E:\X4\dev\WebApp\test\feature/../logs/car.log (90ms)
+
+  Feature: CarAccess.js - Checking for Access Rules
+    Scenario: Buy Used Car -complete
+process.loaded Definition
+Loading rules for Buy Used Car
+Rules loaded 8
+3 Instance data: be0b0ece-dda1-4cbd-b954-6dcf34f60949 { caseId: 4906 } items 3 3
+{ caseId: 4906 }
+saving is complete
+      √ Given Start Buy Used Car Process (105ms)
+      √ Then check for output
+{
+  id: 'be0b0ece-dda1-4cbd-b954-6dcf34f60949',
+  'items.elementId': 'task_Buy'
+}
+3 Instance data: be0b0ece-dda1-4cbd-b954-6dcf34f60949 { caseId: 4906, needsCleaning: 'Yes', needsRepairs: 'Yes' } items 9 9
+saving is complete
+      √ When a process defintion is executed
+      √ Then check for output to have engine
+{ 'data.caseId': 4906, 'items.elementId': 'task_clean' }
+3 Instance data: be0b0ece-dda1-4cbd-b954-6dcf34f60949 { caseId: 4906, needsCleaning: 'Yes', needsRepairs: 'Yes' } items 11 11
+saving is complete
+      √ And Clean it
+{
+  id: 'be0b0ece-dda1-4cbd-b954-6dcf34f60949',
+  'items.elementId': 'task_repair'
+}
+3 Instance data: be0b0ece-dda1-4cbd-b954-6dcf34f60949 { caseId: 4906, needsCleaning: 'Yes', needsRepairs: 'Yes' } items 15 15
+saving is complete
+      √ And Repair it
+{
+  id: 'be0b0ece-dda1-4cbd-b954-6dcf34f60949',
+  'items.elementId': 'task_Drive'
+}
+email msg Notification for 'Buy Used Car' CaseId: 4906
+emailbody Notification for 'Buy Used Car' CaseId: 4906<p>Item 'task_Drive' now has the status of 'wait'</p>
+sendign email to ralphhanna@hotmail.com
+3 Instance data: be0b0ece-dda1-4cbd-b954-6dcf34f60949 { caseId: 4906, needsCleaning: 'Yes', needsRepairs: 'Yes' } items 17 17
+saving is complete
+      √ And Drive it 1 (39ms)
+      √ And Case Complete
+ Items 17  auth  1 assign 2 notes 2
+      √ And Check Rules
+writing to:E:\X4\dev\WebApp\test\feature/../logs/carAccess.log 310
+filename: E:\X4\dev\WebApp\test\feature\carAccess.js
+      √ And write log file to E:\X4\dev\WebApp\test\feature/../logs/carAccess.log
+
+  Feature: Test Defintions
+    Scenario: defs.js for:scripts and services
+bpmn-server version 1.2.0
+process.loaded Definition
+Loading rules for scripts and services
+      √ Given a bpmn source 
+      √ When a process defintion is executed
+      √ And wait a bit 
+      √ And User Task
+      √ And Case Complete
+writing to:E:\X4\dev\WebApp\test\feature/../logs/scripts and services.log 0
+      √ And write log file toscripts and services.log
+
+  Feature: DataStore
+    Scenario: Find Items
+bpmn-server version 1.2.0
+Action:engine.start Buy Used Car
+ACTION:execute:
+process.loaded Definition
+Loading rules for Buy Used Car
+Rules loaded 8
+..starting at :StartEvent_158yep3
+starting new Token start node:StartEvent_158yep3 noExecute: true
+.executing item:StartEvent_158yep3 7b4aaae1-38a1-4cf5-8dcf-1c8972bceb05
+..>enter StartEvent_158yep3
+..>start StartEvent_158yep3
+..>run StartEvent_158yep3
+..>end StartEvent_158yep3
+setting item status to end7b4aaae1-38a1-4cf5-8dcf-1c8972bceb05statusend
+..executing item:StartEvent_158yep3 7b4aaae1-38a1-4cf5-8dcf-1c8972bceb05 is done
+..token.goNext StartEvent_158yep3 bpmn:StartEvent
+..Flow -flow_start_buy going to task_Buy action : take
+..return outbounds1
+...processing flowflow_start_buy to task_Buy
+... waiting for 1
+.executing item:task_Buy 30950694-2bab-493b-8607-276222da15e5
+..>enter task_Buy
+..>start task_Buy
+..>wait task_Buy
+Notification:executeNotify '$current' on 'wait' by Rule: 4
+..executing item:task_Buy 30950694-2bab-493b-8607-276222da15e5 is done
+..token.goNext is done task_Buy bpmn:UserTask
+.execute returned 
+Saving...
+3 Instance data: 68bbf217-662e-459e-80d2-3b1058487a65 { caseId: 3365 } items 3 3
+saving instance 1 tokens and items: 3
+{ caseId: 3365 }
+ inserted 1
+inserting instance
+DataStore:saving Complete
+saving is complete
+.Execution Report ----
+..Status:running
+..token: 0 - wait - Primary current: task_Buy from root child of - {"caseId":3365}
+..Item:0 -T# 0 StartEvent_158yep3 Type: bpmn:StartEvent status: end  from 2022-08-09T17:26:50.985Z to 2022-08-09T17:26:50.985Z id: 7b4aaae1-38a1-4cf5-8dcf-1c8972bceb05
+..Item:1 -T# 0 flow_start_buy Type: bpmn:SequenceFlow status: end
+..Item:2 -T# 0 task_Buy Type: bpmn:UserTask status: wait  from 2022-08-09T17:26:50.986Z to - id: 30950694-2bab-493b-8607-276222da15e5
+.data:
+{"caseId":3365}
+.engine.start ended for Buy Used Car
+3365 instnace Id: 68bbf217-662e-459e-80d2-3b1058487a65
+      √ Given execute a process to generate data (110ms)
+      √ And get an item
+find items for {"items.id":"30950694-2bab-493b-8607-276222da15e5"} result :{"query":{"items.id":"30950694-2bab-493b-8607-276222da15e5"},"projection":{"id":1,"data":1,"name":1,"items":{"$elemMatch":{"id":"30950694-2bab-493b-8607-276222da15e5"}}}} recs:1
+      √ And find items by item id only
+find items for {"id":"68bbf217-662e-459e-80d2-3b1058487a65","items.elementId":"task_Buy"} result :{"query":{"id":"68bbf217-662e-459e-80d2-3b1058487a65","items.elementId":"task_Buy"},"projection":{"id":1,"data":1,"name":1,"items":{"$elemMatch":{"elementId":"task_Buy"}}}} recs:1
+      √ And find items by instance and item elemetnId 
+find items for {"data.caseId":3365,"items.elementId":"task_Buy"} result :{"query":{"data.caseId":3365,"items.elementId":"task_Buy"},"projection":{"id":1,"data":1,"name":1,"items":{"$elemMatch":{"elementId":"task_Buy"}}}} recs:1
+      √ And find items by caseId and item elementId 
+find items for {"id":"68bbf217-662e-459e-80d2-3b1058487a65","items.status":"wait"} result :{"query":{"id":"68bbf217-662e-459e-80d2-3b1058487a65","items.status":"wait"},"projection":{"id":1,"data":1,"name":1,"items":{"$elemMatch":{"status":"wait"}}}} recs:1
+      √ And check for items "wait" 
+writing to:E:\X4\dev\WebApp\test\feature/../logs/ds.log 42
+      √ And write log file tods.log
+    Scenario: Find Instances
+bpmn-server version 1.2.0
+Action:engine.start Buy Used Car
+ACTION:execute:
+process.loaded Definition
+Loading rules for Buy Used Car
+Rules loaded 8
+..starting at :StartEvent_158yep3
+starting new Token start node:StartEvent_158yep3 noExecute: true
+.executing item:StartEvent_158yep3 803f7717-ec78-452a-a8e1-055aaea035b1
+..>enter StartEvent_158yep3
+..>start StartEvent_158yep3
+..>run StartEvent_158yep3
+..>end StartEvent_158yep3
+setting item status to end803f7717-ec78-452a-a8e1-055aaea035b1statusend
+..executing item:StartEvent_158yep3 803f7717-ec78-452a-a8e1-055aaea035b1 is done
+..token.goNext StartEvent_158yep3 bpmn:StartEvent
+..Flow -flow_start_buy going to task_Buy action : take
+..return outbounds1
+...processing flowflow_start_buy to task_Buy
+... waiting for 1
+.executing item:task_Buy 7ec3aa11-b564-4ac6-82dd-c75c9dd3df9b
+..>enter task_Buy
+..>start task_Buy
+..>wait task_Buy
+Notification:executeNotify '$current' on 'wait' by Rule: 4
+..executing item:task_Buy 7ec3aa11-b564-4ac6-82dd-c75c9dd3df9b is done
+..token.goNext is done task_Buy bpmn:UserTask
+.execute returned 
+Saving...
+3 Instance data: 42fdaa10-8182-4c83-ba2b-b7b4015f39bc { caseId: 3129 } items 3 3
+saving instance 1 tokens and items: 3
+{ caseId: 3129 }
+ inserted 1
+inserting instance
+DataStore:saving Complete
+saving is complete
+.Execution Report ----
+..Status:running
+..token: 0 - wait - Primary current: task_Buy from root child of - {"caseId":3129}
+..Item:0 -T# 0 StartEvent_158yep3 Type: bpmn:StartEvent status: end  from 2022-08-09T17:26:51.133Z to 2022-08-09T17:26:51.133Z id: 803f7717-ec78-452a-a8e1-055aaea035b1
+..Item:1 -T# 0 flow_start_buy Type: bpmn:SequenceFlow status: end
+..Item:2 -T# 0 task_Buy Type: bpmn:UserTask status: wait  from 2022-08-09T17:26:51.135Z to - id: 7ec3aa11-b564-4ac6-82dd-c75c9dd3df9b
+.data:
+{"caseId":3129}
+.engine.start ended for Buy Used Car
+3129
+      √ Given execute a process to generate data (125ms)
+      √ And get an item
+      √ And find instance by instance id only
+      √ And find instance by itemd id 
+      √ And find instance by caseId
+writing to:E:\X4\dev\WebApp\test\feature/../logs/ds2.log 38
+      √ And write log file tods.log
+
+  Feature: Event Based Gateway
+    Scenario: All
+Action:engine.start Event Based Gateway
+ACTION:execute:
+process.loaded Definition
+Loading rules for Event Based Gateway
+..starting at :startEvent
+starting new Token start node:startEvent noExecute: true
+.executing item:startEvent 1bccd200-a1c5-401a-bef7-533a77b84b53
+..>enter startEvent
+..>start startEvent
+..>run startEvent
+..>end startEvent
+setting item status to end1bccd200-a1c5-401a-bef7-533a77b84b53statusend
+..executing item:startEvent 1bccd200-a1c5-401a-bef7-533a77b84b53 is done
+..token.goNext startEvent bpmn:StartEvent
+..Flow -Flow_0blevc9 going to event_based_gatway action : take
+..return outbounds1
+...processing flowFlow_0blevc9 to event_based_gatway
+... waiting for 1
+.executing item:event_based_gatway 60b91cf6-ff57-4704-9e66-1ec252d95d9b
+..>enter event_based_gatway
+..>start event_based_gatway
+..>run event_based_gatway
+..EventBasedGateway is runningevent_based_gatway
+..>end event_based_gatway
+setting item status to end60b91cf6-ff57-4704-9e66-1ec252d95d9bstatusend
+..executing item:event_based_gatway 60b91cf6-ff57-4704-9e66-1ec252d95d9b is done
+..token.goNext event_based_gatway bpmn:EventBasedGateway
+..Flow -Flow_1onn7ih going to Task_receive action : take
+..Flow -Flow_029xear going to event_signal action : take
+..Flow -Flow_0fw6l41 going to timerEvent action : take
+..Flow -SequenceFlow_11hb718 going to messageEvent action : take
+..return outbounds4
+.execution ended.
+...processing flowFlow_1onn7ih to Task_receive
+starting new Token start node:Task_receive noExecute: false
+...processing flowFlow_029xear to event_signal
+starting new Token start node:event_signal noExecute: false
+...processing flowFlow_0fw6l41 to timerEvent
+starting new Token start node:timerEvent noExecute: false
+...processing flowSequenceFlow_11hb718 to messageEvent
+starting new Token start node:messageEvent noExecute: false
+... waiting for 4
+.executing item:Task_receive 24ac670f-b73c-47f2-995c-136da03b484d
+..>enter Task_receive
+.executing item:event_signal 48b02b86-d23b-4b99-b4b6-445cc516d311
+..>enter event_signal
+.executing item:timerEvent 3a097d75-29a9-48ca-b88f-c813a1996893
+..>enter timerEvent
+.executing item:messageEvent 9b55286d-feb9-4517-a441-e84d957be438
+..>enter messageEvent
+..>start Task_receive
+..>start event_signal
+..>start timerEvent
+..>start messageEvent
+..>wait Task_receive
+..------timer running --- 
+...Timer duration modified by the configuration to 1000
+timer is set at 1660066012.274 - 1970-01-20T05:07:46.012Z
+..setting timer for 1 seconds
+message event behaviour start
+..>wait event_signal
+..>wait timerEvent
+..>wait messageEvent
+..executing item:Task_receive 24ac670f-b73c-47f2-995c-136da03b484d is done
+..executing item:event_signal 48b02b86-d23b-4b99-b4b6-445cc516d311 is done
+..executing item:timerEvent 3a097d75-29a9-48ca-b88f-c813a1996893 is done
+..executing item:messageEvent 9b55286d-feb9-4517-a441-e84d957be438 is done
+..token.goNext is done event_based_gatway bpmn:EventBasedGateway
+..token.goNext is done event_based_gatway bpmn:EventBasedGateway
+.execute returned 
+Saving...
+3 Instance data: b5a8b9ff-9987-4857-a6f8-b0068397352d { reminderCounter: 0, caseId: 1005 } items 11 11
+saving instance 5 tokens and items: 11
+{ reminderCounter: 0, caseId: 1005 }
+ inserted 1
+inserting instance
+DataStore:saving Complete
+saving is complete
+.Execution Report ----
+..Status:end
+..token: 0 - end - Primary current: event_based_gatway from root child of - {"reminderCounter":0,"caseId":1005}
+..token: 1 - wait - Diverge current: Task_receive from event_based_gatway child of 0 {"reminderCounter":0,"caseId":1005}
+..token: 2 - wait - Diverge current: event_signal from event_based_gatway child of 0 {"reminderCounter":0,"caseId":1005}
+..token: 3 - wait - Diverge current: timerEvent from event_based_gatway child of 0 {"reminderCounter":0,"caseId":1005}
+..token: 4 - wait - Diverge current: messageEvent from event_based_gatway child of 0 {"reminderCounter":0,"caseId":1005}
+..Item:0 -T# 0 startEvent Type: bpmn:StartEvent status: end  from 2022-08-09T17:26:51.266Z to 2022-08-09T17:26:51.266Z id: 1bccd200-a1c5-401a-bef7-533a77b84b53
+..Item:1 -T# 0 Flow_0blevc9 Type: bpmn:SequenceFlow status: end
+..Item:2 -T# 0 event_based_gatway Type: bpmn:EventBasedGateway status: end  from 2022-08-09T17:26:51.267Z to 2022-08-09T17:26:51.270Z id: 60b91cf6-ff57-4704-9e66-1ec252d95d9b
+..Item:3 -T# 0 Flow_1onn7ih Type: bpmn:SequenceFlow status: end
+..Item:4 -T# 0 Flow_029xear Type: bpmn:SequenceFlow status: end
+..Item:5 -T# 0 Flow_0fw6l41 Type: bpmn:SequenceFlow status: end
+..Item:6 -T# 0 SequenceFlow_11hb718 Type: bpmn:SequenceFlow status: end
+..Item:7 -T# 1 Task_receive Type: bpmn:ReceiveTask status: wait  from 2022-08-09T17:26:51.273Z to - id: 24ac670f-b73c-47f2-995c-136da03b484d
+..Item:8 -T# 2 event_signal Type: bpmn:IntermediateCatchEvent status: wait  from 2022-08-09T17:26:51.273Z to - id: 48b02b86-d23b-4b99-b4b6-445cc516d311
+..Item:9 -T# 3 timerEvent Type: bpmn:IntermediateCatchEvent status: wait  from 2022-08-09T17:26:51.273Z to - id: 3a097d75-29a9-48ca-b88f-c813a1996893
+..Item:10 -T# 4 messageEvent Type: bpmn:IntermediateCatchEvent status: wait  from 2022-08-09T17:26:51.273Z to - id: 9b55286d-feb9-4517-a441-e84d957be438
+.data:
+{"reminderCounter":0,"caseId":1005}
+.engine.start ended for Event Based Gateway
+      √ Given Start Process (66ms)
+      √ Then events should fire and wait
+delaying ... 3000
+Action:---timer Expired --- 
+Action:signal 3a097d75-29a9-48ca-b88f-c813a1996893 startedAt 
+..launching a token signal
+..token.signal timerEvent bpmn:IntermediateCatchEvent
+--setting input {}
+..>transformInput timerEvent
+..>end timerEvent
+..EventBasedGateway:<event_based_gatway>-- cancelling  Task_receive 
+..>end Task_receive
+..EventBasedGateway:<event_based_gatway>-- cancelling  event_signal 
+..>end event_signal
+..EventBasedGateway:<event_based_gatway>-- cancelling  messageEvent 
+..>end messageEvent
+setting item status to end24ac670f-b73c-47f2-995c-136da03b484dstatusend
+setting item status to end48b02b86-d23b-4b99-b4b6-445cc516d311statusend
+setting item status to end9b55286d-feb9-4517-a441-e84d957be438statusend
+setting item status to end3a097d75-29a9-48ca-b88f-c813a1996893statusend
+..token.goNext timerEvent bpmn:IntermediateCatchEvent
+..Flow -Flow_1omm70g going to reminder action : take
+..return outbounds1
+...processing flowFlow_1omm70g to reminder
+... waiting for 1
+.executing item:reminder 8996c2d1-e1fb-4d56-9b37-d2081b83cd85
+..>enter reminder
+..>start reminder
+..>wait reminder
+..executing item:reminder 8996c2d1-e1fb-4d56-9b37-d2081b83cd85 is done
+..token.goNext is done reminder bpmn:UserTask
+..token.invoke ended reminder bpmn:UserTask
+..signal token is done
+.signal returning .. waiting for promises status:end id: 3a097d75-29a9-48ca-b88f-c813a1996893
+.signal returned process  status:end id: 3a097d75-29a9-48ca-b88f-c813a1996893
+Saving...
+3 Instance data: b5a8b9ff-9987-4857-a6f8-b0068397352d { reminderCounter: 0, caseId: 1005 } items 13 13
+saving instance 5 tokens and items: 13
+updating instance
+ updated 1
+DataStore:saving Complete
+saving is complete
+.Execution Report ----
+..Status:end
+..token: 0 - end - Primary current: event_based_gatway from root child of - {"reminderCounter":0,"caseId":1005}
+..token: 1 - end - Diverge current: Task_receive from event_based_gatway child of 0 {"reminderCounter":0,"caseId":1005}
+..token: 2 - end - Diverge current: event_signal from event_based_gatway child of 0 {"reminderCounter":0,"caseId":1005}
+..token: 3 - wait - Diverge current: reminder from event_based_gatway child of 0 {"reminderCounter":0,"caseId":1005}
+..token: 4 - end - Diverge current: messageEvent from event_based_gatway child of 0 {"reminderCounter":0,"caseId":1005}
+..Item:0 -T# 0 startEvent Type: bpmn:StartEvent status: end  from 2022-08-09T17:26:51.266Z to 2022-08-09T17:26:51.266Z id: 1bccd200-a1c5-401a-bef7-533a77b84b53
+..Item:1 -T# 0 Flow_0blevc9 Type: bpmn:SequenceFlow status: end
+..Item:2 -T# 0 event_based_gatway Type: bpmn:EventBasedGateway status: end  from 2022-08-09T17:26:51.267Z to 2022-08-09T17:26:51.270Z id: 60b91cf6-ff57-4704-9e66-1ec252d95d9b
+..Item:3 -T# 0 Flow_1onn7ih Type: bpmn:SequenceFlow status: end
+..Item:4 -T# 0 Flow_029xear Type: bpmn:SequenceFlow status: end
+..Item:5 -T# 0 Flow_0fw6l41 Type: bpmn:SequenceFlow status: end
+..Item:6 -T# 0 SequenceFlow_11hb718 Type: bpmn:SequenceFlow status: end
+..Item:7 -T# 1 Task_receive Type: bpmn:ReceiveTask status: end  from 2022-08-09T17:26:51.273Z to 2022-08-09T17:26:52.278Z id: 24ac670f-b73c-47f2-995c-136da03b484d
+..Item:8 -T# 2 event_signal Type: bpmn:IntermediateCatchEvent status: end  from 2022-08-09T17:26:51.273Z to 2022-08-09T17:26:52.279Z id: 48b02b86-d23b-4b99-b4b6-445cc516d311
+..Item:9 -T# 3 timerEvent Type: bpmn:IntermediateCatchEvent status: end  from 2022-08-09T17:26:51.273Z to 2022-08-09T17:26:52.278Z id: 3a097d75-29a9-48ca-b88f-c813a1996893
+..Item:10 -T# 4 messageEvent Type: bpmn:IntermediateCatchEvent status: end  from 2022-08-09T17:26:51.273Z to 2022-08-09T17:26:52.279Z id: 9b55286d-feb9-4517-a441-e84d957be438
+..Item:11 -T# 3 Flow_1omm70g Type: bpmn:SequenceFlow status: end
+..Item:12 -T# 3 reminder Type: bpmn:UserTask status: wait  from 2022-08-09T17:26:52.281Z to - id: 8996c2d1-e1fb-4d56-9b37-d2081b83cd85
+.data:
+{"reminderCounter":0,"caseId":1005}
+delayed is done.
+13
+timerEvent:3a097d75-29a9-48ca-b88f-c813a1996893 status: end
+      √ When we wait a bit for timer to complete (3012ms)
+      √ Then after wait - timer should have completed
+      √ And other events complete as well
+      √ And also reminder task will fire
+Action:engine.invoke
+{
+  id: 'b5a8b9ff-9987-4857-a6f8-b0068397352d',
+  'items.elementId': 'reminder'
+}
+{
+  id: 'b5a8b9ff-9987-4857-a6f8-b0068397352d',
+  'items.elementId': 'reminder'
+}
+find items for {"id":"b5a8b9ff-9987-4857-a6f8-b0068397352d","items.elementId":"reminder"} result :{"query":{"id":"b5a8b9ff-9987-4857-a6f8-b0068397352d","items.elementId":"reminder"},"projection":{"id":1,"data":1,"name":1,"items":{"$elemMatch":{"elementId":"reminder"}}}} recs:1
+Action:engineInvoke {"id":"b5a8b9ff-9987-4857-a6f8-b0068397352d","items.elementId":"reminder"}
+Action:signal 8996c2d1-e1fb-4d56-9b37-d2081b83cd85 startedAt 
+..launching a token signal
+..token.signal reminder bpmn:UserTask
+--setting input {}
+..>transformInput reminder
+..>end reminder
+setting item status to end8996c2d1-e1fb-4d56-9b37-d2081b83cd85statusend
+..token.goNext reminder bpmn:UserTask
+..Flow -Flow_1dij302 going to endEvent action : take
+..return outbounds1
+...processing flowFlow_1dij302 to endEvent
+... waiting for 1
+.executing item:endEvent bd3f09a9-ca44-49d0-9d7f-fc7f1e0f107e
+..>enter endEvent
+..>start endEvent
+..>run endEvent
+..>end endEvent
+setting item status to endbd3f09a9-ca44-49d0-9d7f-fc7f1e0f107estatusend
+..executing item:endEvent bd3f09a9-ca44-49d0-9d7f-fc7f1e0f107e is done
+..token.goNext endEvent bpmn:EndEvent
+..return outbounds0
+...no more outbounds - ending token 3
+.execution ended.
+..token.goNext is done endEvent bpmn:EndEvent
+..token.invoke ended endEvent bpmn:EndEvent
+..signal token is done
+.signal returning .. waiting for promises status:end id: 8996c2d1-e1fb-4d56-9b37-d2081b83cd85
+.signal returned process  status:end id: 8996c2d1-e1fb-4d56-9b37-d2081b83cd85
+Saving...
+3 Instance data: b5a8b9ff-9987-4857-a6f8-b0068397352d { reminderCounter: 0, caseId: 1005 } items 15 15
+saving instance 5 tokens and items: 15
+updating instance
+ updated 1
+DataStore:saving Complete
+saving is complete
+.Execution Report ----
+..Status:end
+..token: 0 - end - Primary current: event_based_gatway from root child of - {"reminderCounter":0,"caseId":1005}
+..token: 1 - end - Diverge current: Task_receive from event_based_gatway child of 0 {"reminderCounter":0,"caseId":1005}
+..token: 2 - end - Diverge current: event_signal from event_based_gatway child of 0 {"reminderCounter":0,"caseId":1005}
+..token: 3 - end - Diverge current: endEvent from event_based_gatway child of 0 {"reminderCounter":0,"caseId":1005}
+..token: 4 - end - Diverge current: messageEvent from event_based_gatway child of 0 {"reminderCounter":0,"caseId":1005}
+..Item:0 -T# 0 startEvent Type: bpmn:StartEvent status: end  from 2022-08-09T17:26:51.266Z to 2022-08-09T17:26:51.266Z id: 1bccd200-a1c5-401a-bef7-533a77b84b53
+..Item:1 -T# 0 Flow_0blevc9 Type: bpmn:SequenceFlow status: end
+..Item:2 -T# 0 event_based_gatway Type: bpmn:EventBasedGateway status: end  from 2022-08-09T17:26:51.267Z to 2022-08-09T17:26:51.270Z id: 60b91cf6-ff57-4704-9e66-1ec252d95d9b
+..Item:3 -T# 0 Flow_1onn7ih Type: bpmn:SequenceFlow status: end
+..Item:4 -T# 0 Flow_029xear Type: bpmn:SequenceFlow status: end
+..Item:5 -T# 0 Flow_0fw6l41 Type: bpmn:SequenceFlow status: end
+..Item:6 -T# 0 SequenceFlow_11hb718 Type: bpmn:SequenceFlow status: end
+..Item:7 -T# 1 Task_receive Type: bpmn:ReceiveTask status: end  from 2022-08-09T17:26:51.273Z to 2022-08-09T17:26:52.278Z id: 24ac670f-b73c-47f2-995c-136da03b484d
+..Item:8 -T# 2 event_signal Type: bpmn:IntermediateCatchEvent status: end  from 2022-08-09T17:26:51.273Z to 2022-08-09T17:26:52.279Z id: 48b02b86-d23b-4b99-b4b6-445cc516d311
+..Item:9 -T# 3 timerEvent Type: bpmn:IntermediateCatchEvent status: end  from 2022-08-09T17:26:51.273Z to 2022-08-09T17:26:52.278Z id: 3a097d75-29a9-48ca-b88f-c813a1996893
+..Item:10 -T# 4 messageEvent Type: bpmn:IntermediateCatchEvent status: end  from 2022-08-09T17:26:51.273Z to 2022-08-09T17:26:52.279Z id: 9b55286d-feb9-4517-a441-e84d957be438
+..Item:11 -T# 3 Flow_1omm70g Type: bpmn:SequenceFlow status: end
+..Item:12 -T# 3 reminder Type: bpmn:UserTask status: end  from 2022-08-09T17:26:52.281Z to 2022-08-09T17:26:54.327Z id: 8996c2d1-e1fb-4d56-9b37-d2081b83cd85
+..Item:13 -T# 3 Flow_1dij302 Type: bpmn:SequenceFlow status: end
+..Item:14 -T# 3 endEvent Type: bpmn:EndEvent status: end  from 2022-08-09T17:26:54.329Z to 2022-08-09T17:26:54.329Z id: bd3f09a9-ca44-49d0-9d7f-fc7f1e0f107e
+.data:
+{"reminderCounter":0,"caseId":1005}
+..engine.continue execution ended saving.. 
+.engine.continue ended
+      √ When we issue reminder
+writing to:E:\X4\dev\WebApp\test\feature/../logs/Event Based Gateway.log 219
+      √ And write log file toEvent Based Gateway.log
+
+  Feature: Event Based Gateway
+    Scenario: All
+process.loaded Definition
+Loading rules for Event Based Gateway
+3 Instance data: 79d45784-d634-4df2-8ea4-3c2d14b58e3d { reminderCounter: 0, caseId: 1005 } items 11 11
+{ reminderCounter: 0, caseId: 1005 }
+saving is complete
+      √ Given Start Process (116ms)
+      √ Then events should fire and wait
+3 Instance data: 79d45784-d634-4df2-8ea4-3c2d14b58e3d { reminderCounter: 0, caseId: 1005 } items 13 13
+saving is complete
+      √ When we wait a bit for timer to complete (3007ms)
+      √ Then after wait - timer should have completed
+      √ And other events complete as well
+      √ And also reminder task will fire
+{
+  id: '79d45784-d634-4df2-8ea4-3c2d14b58e3d',
+  'items.elementId': 'reminder'
+}
+3 Instance data: 79d45784-d634-4df2-8ea4-3c2d14b58e3d { reminderCounter: 0, caseId: 1005 } items 15 15
+saving is complete
+      √ When we issue reminder
+writing to:E:\X4\dev\WebApp\test\feature/../logs/Event Based Gateway.log 218
+      √ And write log file toEvent Based Gateway.log
+
+  Feature: GetFields
+    Scenario: All path
+bpmn-server version 1.2.0
+process.loaded Definition
+Loading rules for Buy Used Car
+Rules loaded 8
+      √ Given a bpmn source 
+      √ When a process defintion is executed
+
+  Feature: Loop
+    Scenario: All path
+process.loaded Definition
+Loading rules for loop
+This is the start event
+=====from script { records: [ 1, 2, 3, 4, 5 ] }
+3 Instance data: 7c1fe088-35fd-41c3-aac4-b57a7f87ba45 {
+  records: [ 1, 2, 3, 4, 5 ],
+  script_task: {
+    '0': { loopKey: 1 },
+    '1': { loopKey: 2 },
+    '2': { loopKey: 3 },
+    '3': { loopKey: 4 },
+    '4': { loopKey: 5 }
+  },
+  service_task: {
+    '0': { loopKey: 1 },
+    '1': { loopKey: 2 },
+    '2': { loopKey: 3 },
+    '3': { loopKey: 4 },
+    '4': { loopKey: 5 }
+  }
+} items 15 15
+{
+  records: [ 1, 2, 3, 4, 5 ],
+  script_task: {
+    '0': { loopKey: 1 },
+    '1': { loopKey: 2 },
+    '2': { loopKey: 3 },
+    '3': { loopKey: 4 },
+    '4': { loopKey: 5 }
+  },
+  service_task: {
+    '0': { loopKey: 1 },
+    '1': { loopKey: 2 },
+    '2': { loopKey: 3 },
+    '3': { loopKey: 4 },
+    '4': { loopKey: 5 }
+  }
+}
+saving is complete
+      √ Given a bpmn source with one user task (65ms)
+      1) And User Task
+writing to:E:\X4\dev\WebApp\test\feature/../logs/loop.log 238
+      √ And write log file toloop.log
+
+  Feature: messageFlow
+    Scenario: All path
+bpmn-server version 1.2.0
+      √ Given a bpmn source with one user task
+process.loaded Definition
+Loading rules for messageFlow
+3 Instance data: ef09f212-c165-4d8d-b0d7-2dd4385c7ec9 {} items 12 12
+{}
+saving is complete
+      √ When a process defintion is executed (56ms)
+      √ And Case Complete
+writing to:E:\X4\dev\WebApp\test\feature/../logs/messageFlow.log 132
+      √ And write log file tomessageFlow.log
+
+  Feature: TimerSample
+    Scenario: All path
+bpmn-server version 1.2.0
+      √ Given a bpmn source with one user task
+Action:engine.start timer-sample
+ACTION:execute:
+process.loaded Definition
+Loading rules for timer-sample
+..starting at :StartEvent_09in9bz
+starting new Token start node:StartEvent_09in9bz noExecute: true
+.executing item:StartEvent_09in9bz 2df548c7-c07e-4392-8e19-cfd196b8af5b
+..>enter StartEvent_09in9bz
+..>start StartEvent_09in9bz
+..>run StartEvent_09in9bz
+..>end StartEvent_09in9bz
+setting item status to end2df548c7-c07e-4392-8e19-cfd196b8af5bstatusend
+..executing item:StartEvent_09in9bz 2df548c7-c07e-4392-8e19-cfd196b8af5b is done
+..token.goNext StartEvent_09in9bz bpmn:StartEvent
+..Flow -Flow_07jc6tg going to Activity_03i6maz action : take
+..return outbounds1
+...processing flowFlow_07jc6tg to Activity_03i6maz
+... waiting for 1
+.executing item:Activity_03i6maz 35e0a2f4-60f2-4fd0-9725-753e59207df8
+..>enter Activity_03i6maz
+..>start Activity_03i6maz
+..>run Activity_03i6maz
+..>end Activity_03i6maz
+setting item status to end35e0a2f4-60f2-4fd0-9725-753e59207df8statusend
+..executing item:Activity_03i6maz 35e0a2f4-60f2-4fd0-9725-753e59207df8 is done
+..token.goNext Activity_03i6maz bpmn:Task
+..Flow -Flow_1sg7v2d going to Event_timer action : take
+..return outbounds1
+...processing flowFlow_1sg7v2d to Event_timer
+... waiting for 1
+.executing item:Event_timer 1e522f67-98d8-4180-aaba-38a705156f21
+..>enter Event_timer
+..>start Event_timer
+..------timer running --- 
+...Timer duration modified by the configuration to 1000
+timer is set at 1660066018.707 - 1970-01-20T05:07:46.018Z
+..setting timer for 1 seconds
+..>wait Event_timer
+..executing item:Event_timer 1e522f67-98d8-4180-aaba-38a705156f21 is done
+..token.goNext is done Event_timer bpmn:IntermediateCatchEvent
+..token.goNext is done Event_timer bpmn:IntermediateCatchEvent
+.execute returned 
+Saving...
+3 Instance data: 14aa8791-67f9-44ae-b1bd-9874c9325de1 {} items 5 5
+saving instance 1 tokens and items: 5
+{}
+ inserted 1
+inserting instance
+DataStore:saving Complete
+saving is complete
+.Execution Report ----
+..Status:running
+..token: 0 - wait - Primary current: Event_timer from root child of - {}
+..Item:0 -T# 0 StartEvent_09in9bz Type: bpmn:StartEvent status: end  from 2022-08-09T17:26:57.704Z to 2022-08-09T17:26:57.704Z id: 2df548c7-c07e-4392-8e19-cfd196b8af5b
+..Item:1 -T# 0 Flow_07jc6tg Type: bpmn:SequenceFlow status: end
+..Item:2 -T# 0 Activity_03i6maz Type: bpmn:Task status: end  from 2022-08-09T17:26:57.705Z to 2022-08-09T17:26:57.705Z id: 35e0a2f4-60f2-4fd0-9725-753e59207df8
+..Item:3 -T# 0 Flow_1sg7v2d Type: bpmn:SequenceFlow status: end
+..Item:4 -T# 0 Event_timer Type: bpmn:IntermediateCatchEvent status: wait  from 2022-08-09T17:26:57.706Z to - id: 1e522f67-98d8-4180-aaba-38a705156f21
+.data:
+{}
+.engine.start ended for timer-sample
+      √ When a process defintion is executed (42ms)
+delaying ... 4500
+Action:---timer Expired --- 
+Action:signal 1e522f67-98d8-4180-aaba-38a705156f21 startedAt 
+..launching a token signal
+..token.signal Event_timer bpmn:IntermediateCatchEvent
+--setting input {}
+..>transformInput Event_timer
+..>end Event_timer
+setting item status to end1e522f67-98d8-4180-aaba-38a705156f21statusend
+..token.goNext Event_timer bpmn:IntermediateCatchEvent
+..Flow -Flow_1nku8og going to Event_end action : take
+..return outbounds1
+...processing flowFlow_1nku8og to Event_end
+... waiting for 1
+.executing item:Event_end e3e3841b-1083-43be-84c4-b96a99b15c86
+..>enter Event_end
+..>start Event_end
+..>run Event_end
+..>end Event_end
+setting item status to ende3e3841b-1083-43be-84c4-b96a99b15c86statusend
+..executing item:Event_end e3e3841b-1083-43be-84c4-b96a99b15c86 is done
+..token.goNext Event_end bpmn:EndEvent
+..return outbounds0
+...no more outbounds - ending token 0
+.execution ended.
+..token.goNext is done Event_end bpmn:EndEvent
+..token.invoke ended Event_end bpmn:EndEvent
+..signal token is done
+.signal returning .. waiting for promises status:end id: 1e522f67-98d8-4180-aaba-38a705156f21
+.signal returned process  status:end id: 1e522f67-98d8-4180-aaba-38a705156f21
+Saving...
+3 Instance data: 14aa8791-67f9-44ae-b1bd-9874c9325de1 {} items 7 7
+saving instance 1 tokens and items: 7
+updating instance
+ updated 1
+DataStore:saving Complete
+saving is complete
+.Execution Report ----
+..Status:end
+..token: 0 - end - Primary current: Event_end from root child of - {}
+..Item:0 -T# 0 StartEvent_09in9bz Type: bpmn:StartEvent status: end  from 2022-08-09T17:26:57.704Z to 2022-08-09T17:26:57.704Z id: 2df548c7-c07e-4392-8e19-cfd196b8af5b
+..Item:1 -T# 0 Flow_07jc6tg Type: bpmn:SequenceFlow status: end
+..Item:2 -T# 0 Activity_03i6maz Type: bpmn:Task status: end  from 2022-08-09T17:26:57.705Z to 2022-08-09T17:26:57.705Z id: 35e0a2f4-60f2-4fd0-9725-753e59207df8
+..Item:3 -T# 0 Flow_1sg7v2d Type: bpmn:SequenceFlow status: end
+..Item:4 -T# 0 Event_timer Type: bpmn:IntermediateCatchEvent status: end  from 2022-08-09T17:26:57.706Z to 2022-08-09T17:26:58.716Z id: 1e522f67-98d8-4180-aaba-38a705156f21
+..Item:5 -T# 0 Flow_1nku8og Type: bpmn:SequenceFlow status: end
+..Item:6 -T# 0 Event_end Type: bpmn:EndEvent status: end  from 2022-08-09T17:26:58.717Z to 2022-08-09T17:26:58.717Z id: e3e3841b-1083-43be-84c4-b96a99b15c86
+.data:
+{}
+delayed is done.
+      √ And wait a bit  (4516ms)
+---case complete status:end
+      √ And Case Complete
+writing to:E:\X4\dev\WebApp\test\feature/../logs/timer-sample.log 103
+      √ And write log file totimer-sample.log
+
+
+  86 passing (19s)
+  1 failing
+
+  1) Feature: Loop
+       Scenario: All path
+         And User Task:
+
+      AssertionError: expected 5 to equal 3
+      + expected - actual
+
+      -5
+      +3
+      
+      at Context.<anonymous> (test\feature\loop.js:30:74)
+      at processImmediate (internal/timers.js:461:21)
+
+
+

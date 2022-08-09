@@ -6,6 +6,7 @@ import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, I
 
 import { Item } from '../engine/Item';
 import { Node, Element } from '.';
+import { IExecution } from '../interfaces';
 
 class Flow extends Element implements IFlow {
     from: Node;
@@ -73,7 +74,7 @@ class MessageFlow extends Flow {
     async execute(item: Item) {
         item.token.log('..MessageFlow -' + this.id + ' going to ' + this.to.id);
 
-        const execution = item.token.execution;
+        const execution:IExecution = item.token.execution;
         let token = null;
 
         execution.tokens.forEach(t => {
@@ -81,10 +82,12 @@ class MessageFlow extends Flow {
                 token = t;
         });
         if (token) {
+            item.token.log('    signalling token:' + token.id );
             execution.promises.push(token.signal(null));
 
         }
         else {
+            item.token.log('    signalling new token:');
             execution.promises.push(Token.startNewToken(TOKEN_TYPE.Primary,execution, this.to, null, null, null, null));
         }
     }

@@ -35,11 +35,12 @@ enum EXECUTION_EVENT {
     node_enter = 'enter', node_start = 'start', node_wait = 'wait', node_end = 'end', node_terminated = 'terminated',
     transform_input = 'transformInput', transform_output ='transformOutput',
     flow_take = 'take', flow_discard = 'discard',
-    execution_execute = 'execution.execute',   execution_executed = 'execution.executed',
-    execution_invoke = 'execution.invoke',     execution_invoked = 'execution.invoked',
-    execution_restored = 'execution.restored', execution_resumed = 'execution_resumed',
-    execution_wait = 'execution.wait',
-    execution_end = 'execution.end', execution_terminated = 'executeion.terminate' ,
+    process_loaded ='process.loaded',
+    process_start = 'process.start',   process_started = 'process.started',
+    process_invoke = 'process.invoke',     process_invoked = 'process.invoked',
+    process_restored = 'process.restored', process_resumed = 'process_resumed',
+    process_wait = 'process.wait',
+    process_end = 'process.end', process_terminated = 'executeion.terminate' ,
     token_start = 'token.start', token_wait = 'token.wait', token_end = 'token.end', token_terminated = 'token.terminated' 
 }
 /*

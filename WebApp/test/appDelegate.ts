@@ -1,5 +1,5 @@
 
-import { IExecution, Item, FLOW_ACTION, NODE_ACTION, IExecutionContext } from '..';
+import { IExecution, Item, FLOW_ACTION, NODE_ACTION} from '..';
 import { DefaultAppDelegate } from '..';
 
 const fs = require('fs');
@@ -11,8 +11,10 @@ class MyAppDelegate extends DefaultAppDelegate {
         super(logger);
         this.servicesProvider = new MyServices();
     }
-
-    async executionStarted(execution: IExecutionContext) {
+    sendEmail(to, msg, body) {
+        console.log(`sendign email to ${to}`);
+    }
+    async executionStarted(execution: IExecution) {
         await super.executionStarted(execution);
     }
     async executionEvent({ event, item, execution }) {

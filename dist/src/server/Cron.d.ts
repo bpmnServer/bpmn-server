@@ -1,5 +1,6 @@
 import { ServerComponent } from './ServerComponent';
-declare class Cron extends ServerComponent {
+import { ICron } from '../..';
+declare class Cron extends ServerComponent implements ICron {
     private static timersStarted;
     private static checkingTimers;
     private static timersFired;

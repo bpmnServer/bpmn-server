@@ -1,4 +1,5 @@
-import { IExecution, IDefinition } from '../..';
+import { IExecution, IDefinition } from './';
+import { IBpmnModelData } from './';
 interface IDataStore {
     dbConfiguration: any;
     db: any;
@@ -34,32 +35,4 @@ interface IModelsDatastore {
     deleteModel(name: any): Promise<void>;
     renameModel(name: any, newName: any): Promise<boolean>;
 }
-interface IEventData {
-    elementId: string;
-    processId: string;
-    type: any;
-    name: any;
-    subType: any;
-    signalId?: string;
-    messageId?: string;
-    expression: any;
-    expressionFormat: any;
-    referenceDateTime: any;
-    maxRepeat: any;
-    repeatCount: any;
-    timeDue?: Date;
-}
-interface IBpmnModelData {
-    name: any;
-    source: any;
-    svg: any;
-    processes: IProcessData[];
-    events: IEventData[];
-    saved: any;
-}
-interface IProcessData {
-    id: any;
-    name: any;
-    isExecutable: any;
-}
-export { IDataStore, IModelsDatastore, IBpmnModelData, IProcessData, IEventData };
+export { IDataStore, IModelsDatastore };

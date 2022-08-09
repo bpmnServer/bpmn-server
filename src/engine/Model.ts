@@ -1,4 +1,4 @@
-import { IItemData, IInstanceData, } from  '../../'
+import { IItemData, IInstanceData} from  '../../'
 import { ITEM_STATUS , EXECUTION_STATUS } from '../../';
 import { BPMN_TYPE } from '../elements';
 
@@ -13,12 +13,15 @@ class InstanceObject implements IInstanceData {
     endedAt;
     saved;
     data;
-    items;
+    items=[];
     source;
-    logs;
-    tokens;
-    loops;
+    logs=[];
+    tokens=[];
+    loops=[];
     parentItemId;
+    involvements=[];
+    authorizations=[];
+
 }
 /**
  *  as stroed in MongoDB
@@ -29,7 +32,8 @@ class ItemObject implements IItemData {
     itemKey;
     name;
     type : BPMN_TYPE;
-    status : ITEM_STATUS;
+    status: ITEM_STATUS;
+    userId;
     startedAt;
     endedAt;
     //   derived
@@ -44,6 +48,10 @@ class ItemObject implements IItemData {
     data;
     messageId;
     signalId;
+    assignments;
+    authorizations;
+    notifications;
+
 }
 class TokenObject {
     id;

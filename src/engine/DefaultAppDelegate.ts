@@ -1,19 +1,25 @@
-import { IExecution, Item, NODE_ACTION, FLOW_ACTION, IAppDelegate , IDefinition, IExecutionContext } from "../..";
+import { IExecution, Item, NODE_ACTION, FLOW_ACTION, IAppDelegate , IDefinition} from "../..";
 
 import { moddleOptions} from '../elements/js-bpmn-moddle';
 
-var seq = 1;
+
 
 class DefaultAppDelegate implements IAppDelegate {
+    server;
+
+    sendEmail(to, msg, body) {
+        throw Error("sendEmail must be implemented by AppDelegate");
+    }
+
     servicesProvider: any;
-    constructor(logger = null) {
-        this.servicesProvider= this;
+    constructor(server) {
+        this.server = server;
     }
 
     get moddleOptions() {
         return moddleOptions;
     }
-    async executionStarted(execution: IExecutionContext) {
+    async executionStarted(execution: IExecution) {
 
         let self = this;
         execution.listener.on('all',async function (eventApi) {
@@ -64,7 +70,7 @@ class DefaultAppDelegate implements IAppDelegate {
         const msgId = item.node.messageId;
         item.context.logger.log("Signal Issued" + signalId);
         // issue it back for others to receive
-        console.log(item.context.engine);
+
         const resp = await item.context.engine.throwSignal(msgId, data, messageMatchingKey);
         if (resp && resp.instance) {
             item.context.logger.log(" invoked another process " + resp.instance.id + " for " + resp.instance.name);
@@ -73,6 +79,7 @@ class DefaultAppDelegate implements IAppDelegate {
             await this.issueSignal(signalId, data);
     }
     async serviceCalled(serviceName, data, item: Item) {
+        item.context.logger.log("Service called:"+serviceName+data);
 
     }
     scopeEval(scope, script) {

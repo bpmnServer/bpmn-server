@@ -2,12 +2,14 @@
 import { Logger } from '../common/Logger';
 
 import { ServerComponent} from './ServerComponent';
-import { ExecutionContext } from '.';
+import { Engine } from '.';
+
+import { ICacheManager, IExecution } from '../interfaces';
 
 const fs = require('fs');
 
 
-class CacheManager extends ServerComponent {
+class CacheManager extends ServerComponent implements ICacheManager {
 	static liveInstances = new Map();
 
 	list() {
@@ -23,9 +25,9 @@ class CacheManager extends ServerComponent {
 		return instance;
 	}
 
-	add(executionContext:ExecutionContext) {
+	add(execution:IExecution) {
 
-		CacheManager.liveInstances.set(executionContext.execution.id, executionContext);
+		CacheManager.liveInstances.set(execution.id, execution);
 	}
 	remove(instanceId) {
 		CacheManager.liveInstances.delete(instanceId);
@@ -51,11 +53,13 @@ class CacheManager extends ServerComponent {
 		this.logger.log("Restarting..");
 		const list = await this.dataStore.findInstances({ endAt: null });
 		const self = this;
+
+		const engine = new Engine(this.server);
 		let i;
 		for (i = 0; i < list.length; i++) {
 			const instance = list[i];
 			self.logger.log("..restoring instance " + instance.id);
-			await self.engine.restore({ "id": instance.id });
+			await engine.restore({ "id": instance.id });
 			self.logger.log("..count :" + this.cache.list().length);
 		}
 

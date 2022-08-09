@@ -10,8 +10,12 @@ declare class Definition implements IDefinition {
     logger: any;
     server: any;
     moddle: any;
+    accessRules: any[];
     constructor(name: string, source: string, server: BPMNServer);
     private loadProcess;
+    /**
+     *
+     * */
     load(): Promise<any>;
     getJson(): string;
     getDefinition(source: any, logger: any): Promise<any>;

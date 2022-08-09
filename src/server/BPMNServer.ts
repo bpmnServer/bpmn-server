@@ -2,48 +2,46 @@
 import { Logger } from '../common/Logger';
 
 
-import { IConfiguration, ILogger, DataStore , IAppDelegate, IBPMNServer, IDataStore,ExecutionContext} from '../..';
+import { IConfiguration, ILogger, DataStore , IAppDelegate, IBPMNServer, IDataStore, IIAM, IACL} from '../..';
 import { Engine } from './Engine';
 import { CacheManager } from './CacheManager';
 import { Cron } from './Cron';
 import { EventEmitter } from 'events';
+import { ACL, IAM } from './ACL';
 
-const _version_ = "1.1.10";
+const _version_ = "1.2.0";
 
 const fs = require('fs');
 /**
  *	The main class of Server Layer
  *	provides the full functionalities:
  *	
- *		1.	access to Execution engine
- *		2.	data Presistence through DataStore class
- *		3.	access to models definitions, loading and saving of models
- *		4.	access to BPMN definition details
- *		
- *		primary Use Cases:
- *		a.	execute a process
- *			server= new BPMNServer(...);
- *			server.execute(...);
+ *		at start of the app:
+ *			new BPMNServer(configuration,options);
  *			
- *		b.	invoke a task in an already started process
- *			server= new BPMNServer(...);
- *			server.invoke(...);
- * 
- *		c.	find items (various options)
-  *			server= new BPMNServer(...);
- *			server.findItems(...);
-*/
+ *		after that point:
+ *		
+ *			BPMNServer.engine.start(...)
+ *			BPMNServer.engine.invoke(...)
+ *			BPMNServer.dataStore.findInstances(...)
+ *			BPMNServer.dataStore.findItems(...)
+ */
+
 class BPMNServer implements IBPMNServer {
 
 	engine: Engine;
 	listener: EventEmitter;
-	configuration: any;
+	configuration: IConfiguration;
 	logger: ILogger;
 	definitions;
 	appDelegate: IAppDelegate;
 	dataStore: IDataStore;
 	cache: CacheManager;
 	cron: Cron;
+	acl: IACL;
+	iam: IIAM;
+
+	private static instance: BPMNServer;
 
 	/**
 	 * Server Constructor
@@ -67,22 +65,33 @@ class BPMNServer implements IBPMNServer {
 		this.definitions = configuration.definitions(this);
 		this.appDelegate = configuration.appDelegate(this);
 
+		this.acl = new ACL(this);
+		this.iam = new IAM(this);
 		console.log("bpmn-server version " + BPMNServer.getVersion());
+
+		BPMNServer.instance=this;
+
 		if (options['cron'] == false)
 		{
 			return;
         }
 
 		this.cron.start();
-
 	}
 
 	static getVersion() {
-
 		return _version_;
-
     }
+	public static get engine() {
+		return BPMNServer.getInstance().engine;
+    }
+	public static getInstance(): BPMNServer {
+		if (!BPMNServer.instance) {
+			throw Error("BPMN Server Not initialized");
+		}
 
+		return BPMNServer.instance;
+	}
 }
 
 

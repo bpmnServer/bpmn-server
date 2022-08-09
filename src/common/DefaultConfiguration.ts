@@ -1,21 +1,25 @@
 
-import { ModelsDatastoreDB } from '../datastore/ModelsDatastoreDB';
+import { ModelsDatastoreDB, ModelsDatastore } from '../datastore/ModelsDatastore';
 import { DefaultAppDelegate } from '../engine/DefaultAppDelegate';
 
 import { IConfiguration, DataStore, ILogger, IModelsDatastore, IAppDelegate, IDataStore } from '../..';
 import { Logger } from './'
+import { ACL, IAM } from '../server/ACL';
 
 let definitionsPath = __dirname + '/processes/';
 
 class Configuration implements IConfiguration {
 	definitionsPath: string;
+	templatesPath: string;
 	timers: { forceTimersDelay: number; precision: number; };
 	database: { MongoDB: { db_url: string; db: string; }; };
 	logger: ILogger;
-	definitions(server)  {
+	apiKey: string;
+	sendGridAPIKey: string;
+	definitions(server) {
 		return new ModelsDatastoreDB(server); 
 	}
-	appDelegate(server) {
+	appDelegate(server) :IAppDelegate {
 		return new DefaultAppDelegate(server);
 	}
 	dataStore(server) {
@@ -23,14 +27,18 @@ class Configuration implements IConfiguration {
 	}
 
 	constructor({
-		definitionsPath, timers, database,
+		definitionsPath, templatesPath, timers, database, apiKey,
 		logger,
 		definitions,
 		appDelegate,
-		dataStore }) {
+		dataStore,
+		IAM,
+		ACL}) {
 		this.definitionsPath = definitionsPath;
+		this.templatesPath = templatesPath;
 		this.timers = timers;
 		this.database = database;
+		this.apiKey = apiKey;
 		this.logger = logger;
 		this.definitions = definitions;
 		this.appDelegate = appDelegate;
@@ -40,6 +48,7 @@ class Configuration implements IConfiguration {
 var defaultConfiguration = new Configuration(
 	{
 		definitionsPath: definitionsPath,
+		templatesPath: __dirname +'/emailTemplates',
 		timers: {
 			forceTimersDelay: 1000,
 			precision: 3000,
@@ -51,10 +60,25 @@ var defaultConfiguration = new Configuration(
 				db: 'bpmn'
 			}
 		},
-		logger: Logger,							// class
-		definitions: ModelsDatastoreDB,			// class
-		appDelegate: new DefaultAppDelegate(),		// object
-		dataStore: DataStore				// class	
+		apiKey: '1234',
+		logger: function (server) {
+			new Logger(server);
+		},
+		definitions: function (server) {
+			return new ModelsDatastore(server);
+		},
+		appDelegate: function (server) {
+			return new DefaultAppDelegate(server);
+		},
+		dataStore: function (server) {
+			return new DataStore(server);
+		},
+		IAM: function (server) {
+			return new IAM(server);
+		},
+		ACL: function (server) {
+			return new ACL(server);
+		}
 	});
 
 

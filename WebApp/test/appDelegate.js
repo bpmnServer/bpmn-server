@@ -18,6 +18,9 @@ class MyAppDelegate extends __1.DefaultAppDelegate {
         super(logger);
         this.servicesProvider = new MyServices();
     }
+    sendEmail(to, msg, body) {
+        console.log(`sendign email to ${to}`);
+    }
     executionStarted(execution) {
         const _super = Object.create(null, {
             executionStarted: { get: () => super.executionStarted }

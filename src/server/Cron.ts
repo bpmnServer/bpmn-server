@@ -3,7 +3,7 @@ import { Logger } from '../common/Logger';
 
 import { ServerComponent } from './ServerComponent';
 
-import { IEventData } from '../..';
+import { IEventData, ICron } from '../..';
 
 const duration = require('iso8601-duration');
 const parse = duration.parse;
@@ -12,7 +12,7 @@ const toSeconds = duration.toSeconds;
 
 
 
-class Cron  extends ServerComponent {
+class Cron  extends ServerComponent implements ICron {
 
 	private static timersStarted = false;
 	private static checkingTimers = false;
@@ -98,7 +98,7 @@ class Cron  extends ServerComponent {
 		const params: any = this as any;
 		const event = params.entry;
 		const cron = params.cron;
-		console.log(event);
+		console.log(event,cron);
 
 		await cron.definitions.updateTimer(event.modelName);
 

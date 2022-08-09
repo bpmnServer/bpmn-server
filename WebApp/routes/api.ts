@@ -1,7 +1,7 @@
 import express = require('express');
 const router = express.Router();
 var bodyParser = require('body-parser')
-import { ExecuteDecisionTable, ExecuteCondition, ExecuteExpression } from 'dmn-engine';
+//import { ExecuteDecisionTable, ExecuteCondition, ExecuteExpression } from 'dmn-engine';
 
 const FS = require('fs');
 
@@ -16,6 +16,8 @@ var caseId = Math.floor(Math.random() * 10000);
 
 /* GET users listing. */
 
+console.log("api.ts");
+
 const awaitAppDelegateFactory = (middleware) => {
     return async (req, res, next) => {
         try {
@@ -25,202 +27,262 @@ const awaitAppDelegateFactory = (middleware) => {
         }
     }
 }
-   {
-    router.get('/datastore/findItems', awaitAppDelegateFactory(async (request, response) => {
 
-        console.log(request.body);
-        let query;
-        if (request.body.query) {
-            query = request.body.query;
-        }
+function loggedIn(req, res, next) {
 
-        console.log(query);
-        let items;
-        let errors;
-        try {
-            items= await bpmnServer.dataStore.findItems(query);
-        }
-        catch (exc) {
-            errors = exc.toString();
-            console.log(errors);
-        }
-        response.json({ errors: errors, items});
-    }));
+    let apiKey = req.header('x-api-key');
 
-    router.get('/datastore/findInstances', awaitAppDelegateFactory(async (request, response) => {
+    if (!apiKey) {
+        apiKey= req.query.apiKey;
+    }
 
-
-        console.log(request.body);
-        let query;
-        if (request.body.query) {
-            query = request.body.query;
-        }
-
-        console.log(query);
-        let instances;
-        let errors;
-        try {
-            instances = await bpmnServer.dataStore.findInstances(query,'full');
-        }
-        catch (exc) {
-            errors = exc.toString();
-            console.log(errors);
-        }
-        response.json({ errors: errors, instances });
-    }));
-
-    router.post('/engine/start/:name?', awaitAppDelegateFactory(async (request, response) => {
-
-        try {
-        let name = request.params.name;
-        if (!name)
-            name = request.body.name;
-        console.log(' starting ' + name);
-        console.log(request.body);
-        let data = request.body.data;
-        let context;
-        console.log(data);
-            context = await bpmnServer.engine.start(name, data);
-            response.json(context.instance);
-        }
-        catch (exc) {
-            response.json({ error: exc.toString() });
-        }
-    }));
-
-    router.put('/engine/invoke', awaitAppDelegateFactory(async (request, response) => {
-
-        console.log(request.body);
-        let query, data;
-        if (request.body.query) {
-            query = request.body.query;
-        }
-        if (request.body.data) {
-            data = request.body.data;
-        }
-
-        console.log(query);
-        let context;
-        let instance;
-        let errors;
-        try {
-            context = await bpmnServer.engine.invoke(query, data);
-            instance = context.instance;
-            if (context && context.errors)
-                errors = context.errors.toString();
-        }
-        catch (exc) {
-            errors = exc.toString();
-            console.log(errors);
-        }
-        response.json({ errors: errors, instance });
-
-
-    }));
-
-    router.get('/engine/get', awaitAppDelegateFactory(async (request, response) => {
-
-        console.log(request.body);
-        let query;
-        if (request.body.query) {
-            query = request.body.query;
-        }
-
-        console.log(query);
-        let context;
-        let instance;
-        let errors;
-        try {
-            context = await bpmnServer.engine.get(query);
-            instance = context.instance;
-        }
-        catch (exc) {
-            errors = exc.toString();
-            console.log(errors);
-        }
-        response.json({errors: errors, instance});
-    }));
-
-
-    router.get('/definitions/list',async function (req, response) {
-
-        let list = await bpmnServer.definitions.getList();
-         console.log(list);
-        response.json(list);
-    });
-    router.get('/definitions/load/:name?',async function (request, response) {
-
-        console.log(request.params);
-        let name = request.params.name;
-
-        let definition= await bpmnServer.definitions.load(name);
-        response.json(JSON.parse(definition.getJson()));
-    });
-
-    router.delete('/datastore/deleteInstances', awaitAppDelegateFactory(async (request, response) => {
-
-        console.log(request.body);
-        let query;
-        if (request.body.query) {
-            query = request.body.query;
-        }
-
-        console.log(query);
-
-        let errors;
-        let result;
-        try {
-            result = await bpmnServer.dataStore.deleteInstances(query);
-        }
-        catch (exc) {
-            errors = exc.toString();
-            console.log(errors);
-        }
-        response.json({ errors: errors, result });
-
-    }));
-
-    router.get('/shutdown', async function (req, res) {
-
-        let instanceId = req.query.id;
-
-        await bpmnServer.cache.shutdown();
-
-        let output = ['Complete ' + instanceId];
-        console.log(" deleted");
-        display(res, 'Show', output);
-    });
-    router.get('/restart', async function (req, res) {
-
-        let instanceId = req.query.id;
-
-        await bpmnServer.cache.restart();
-
-        let output = ['Complete ' + instanceId];
-        console.log(" deleted");
-        display(res, 'Show', output);
-    });
-    router.put('/rules/invoke', awaitAppDelegateFactory(async (request, response) => {
-        /*
-         * 
-         * 
-    export async function WebService(request, response) {
-	console.log(request);
-	console.log(response);
-	let { definition, data, options, loadFrom } = request.body;
-	response.json(Execute(request.body));
+    if (apiKey == process.env.API_KEY) {  
+        next();
+    } else {
+        res.json({ errors: 'missing or invalid "x-api-key"'});
+    }
 }
-         */
-        try {
-            await response.json(ExecuteDecisionTable(request.body));
-            //await WebService(request, response);
-        }
-        catch (exc) {
-            console.log(exc);
-            response.json({ errors: JSON.stringify(exc,null,2)});
-        }
-    }));
+import { Common } from './common';
 
+export class API extends Common {
+    config() {
+
+        var router = express.Router();
+
+        router.get('/datastore/findItems', loggedIn, awaitAppDelegateFactory(async (request, response) => {
+
+            console.log(request.body);
+            let query;
+            if (request.body.query) {
+                query = request.body.query;
+            }
+            else
+                query = request.body;
+
+            console.log(query);
+            let items;
+            let errors;
+            try {
+                items = await bpmnServer.dataStore.findItems(query);
+            }
+            catch (exc) {
+                errors = exc.toString();
+                console.log(errors);
+            }
+            response.json({ errors: errors, items });
+        }));
+
+        router.get('/datastore/findInstances', loggedIn, awaitAppDelegateFactory(async (request, response) => {
+
+
+            console.log(request.body);
+            let query;
+            if (request.body.query) {
+                query = request.body.query;
+            }
+            else
+                query = request.body;
+            console.log(query);
+            let instances;
+            let errors;
+            try {
+
+                instances = await bpmnServer.dataStore.findInstances(query, 'full');
+            }
+            catch (exc) {
+                errors = exc.toString();
+                console.log(errors);
+            }
+            response.json({ errors: errors, instances });
+        }));
+
+        router.post('/engine/start/:name?', loggedIn, awaitAppDelegateFactory(async (request, response) => {
+
+            try {
+                let name = request.params.name;
+                if (!name)
+                    name = request.body.name;
+                console.log(' starting ' + name);
+                console.log(request.body);
+                let data = request.body.data;
+
+                let startNodeId, options = {};
+                if (request.body.startNodeId) {
+                    startNodeId = request.body.startNodeId;
+                }
+                if (request.body.options) {
+                    options = request.body.options;
+                }
+
+
+                let context;
+                console.log(data);
+                context = await bpmnServer.engine.start(name, data, startNodeId, null, options);
+                response.json(context.instance);
+            }
+            catch (exc) {
+                response.json({ error: exc.toString() });
+            }
+        }));
+
+        router.put('/engine/invoke', loggedIn, awaitAppDelegateFactory(async (request, response) => {
+
+            console.log(request.body);
+            let query, data;
+            if (request.body.query) {
+                query = request.body.query;
+            }
+            if (request.body.data) {
+                data = request.body.data;
+            }
+            console.log(query);
+            let context;
+            let instance;
+            let errors;
+            try {
+                context = await bpmnServer.engine.invoke(query, data );
+                instance = context.instance;
+                if (context && context.errors)
+                    errors = context.errors.toString();
+            }
+            catch (exc) {
+                errors = exc.toString();
+                console.log(errors);
+            }
+            response.json({ errors: errors, instance });
+
+
+        }));
+        /*
+         *      response = await bpmn.engine.throwMessage(messageId,data);
+        */
+        router.post('/engine/throwMessage', loggedIn, awaitAppDelegateFactory(async (request, response) => {
+
+            try {
+                let messageId = request.body.messageId;
+                console.log(' MessageId ' + messageId);
+                let data = request.body.data;
+                let context;
+                console.log(data);
+
+                context = await bpmnServer.engine.throwMessage(messageId, data);
+                response.json(context.instance);
+            }
+            catch (exc) {
+                response.json({ error: exc.toString() });
+            }
+        }));
+
+
+/*
+ *  engine.throwSignal     - issue a signal by id
+ *  ------------------
+ *      same as message except multiple receipients
+ *
+ *
+ *
+ */
+
+        router.post('/engine/throwSignal', loggedIn, awaitAppDelegateFactory(async (request, response) => {
+
+            try {
+                let messageId = request.body.messageId;
+                console.log(' Signal Id: ' + messageId);
+                let data = request.body.data;
+                let context;
+                console.log(data);
+                context = await bpmnServer.engine.throwSignal(messageId, data);
+                response.json(context.instance);
+            }
+            catch (exc) {
+                response.json({ error: exc.toString() });
+            }
+        }));
+
+
+        router.get('/definitions/list', loggedIn, async function (req, response) {
+
+            let list = await bpmnServer.definitions.getList();
+            console.log(list);
+            response.json(list);
+        });
+        router.get('/definitions/load/:name?', loggedIn, async function (request, response) {
+
+            console.log(request.params);
+            let name = request.params.name;
+
+            let definition = await bpmnServer.definitions.load(name);
+            response.json(JSON.parse(definition.getJson()));
+        });
+
+        router.delete('/datastore/deleteInstances', loggedIn, awaitAppDelegateFactory(async (request, response) => {
+
+            let query;
+            if (request.body.query) {
+                query = request.body.query;
+            }
+            else
+                query = request.body;
+
+            console.log(query);
+
+            let errors;
+            let result;
+            try {
+                result = await bpmnServer.dataStore.deleteInstances(query);
+            }
+            catch (exc) {
+                errors = exc.toString();
+                console.log(errors);
+            }
+            response.json({ errors: errors, result });
+
+        }));
+
+        router.get('/shutdown', loggedIn, async function (req, res) {
+
+            let instanceId = req.query.id;
+
+            await bpmnServer.cache.shutdown();
+
+            let output = ['Complete ' + instanceId];
+            console.log(" deleted");
+            display(res, 'Show', output);
+        });
+        router.get('/restart', loggedIn, async function (req, res) {
+
+            let instanceId = req.query.id;
+
+            await bpmnServer.cache.restart();
+
+            let output = ['Complete ' + instanceId];
+            console.log(" deleted");
+            display(res, 'Show', output);
+        });
+        router.put('/rules/invoke', loggedIn, awaitAppDelegateFactory(async (request, response) => {
+            /*
+             * 
+             * 
+        export async function WebService(request, response) {
+        console.log(request);
+        console.log(response);
+        let { definition, data, options, loadFrom } = request.body;
+        response.json(Execute(request.body));
+    }
+             */
+            try {
+                throw new Error("Decision Table not supported this release.");
+                // await response.json(ExecuteDecisionTable(request.body));
+                //await WebService(request, response);
+            }
+            catch (exc) {
+                console.log(exc);
+                response.json({ errors: JSON.stringify(exc, null, 2) });
+            }
+        }));
+
+        return router;
+    }
 }
 async function displayError(res, error) {
     let msg = '';

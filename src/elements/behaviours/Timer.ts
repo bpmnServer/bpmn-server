@@ -122,7 +122,10 @@ class TimerBehaviour extends Behaviour {
 
         item.token.log("Action:---timer Expired --- ");
         if (item.status == ITEM_STATUS.wait)    // just in case it was cancelled
-            item.token.signal(null);
+        {
+            //item.token.signal(null);
+            item.token.execution.signal(item.id, {});
+        }
     }
     end(item: Item) {
         Cron.timerEnded(item);

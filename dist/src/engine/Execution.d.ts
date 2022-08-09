@@ -1,40 +1,40 @@
-/// <reference types="node" />
 import { Item } from './Item';
 import { Token } from './Token';
-import { Node } from '../elements/';
-import { EXECUTION_STATUS, IDefinition, ExecutionContext } from '../../';
-import { IInstanceData, IExecution, IAppDelegate } from '../../';
-import { EventEmitter } from 'events';
+import { Node, Process } from '../elements/';
+import { EXECUTION_STATUS, IDefinition } from '../../';
+import { IInstanceData, IExecution } from '../../';
+import { ServerComponent } from '../server';
+import { InstanceObject } from './Model';
 /**
  *  is accessed two ways:
  *      execute - start process
  *      signal  - invoke a node (userTask, event, etc.)
  * */
-declare class Execution implements IExecution {
-    id: any;
-    name: any;
-    startedAt: any;
-    endedAt: any;
-    saved: any;
-    status: EXECUTION_STATUS;
+declare class Execution extends ServerComponent implements IExecution {
+    instance: InstanceObject;
     tokens: Map<any, any>;
     definition: IDefinition;
-    appDelegate: IAppDelegate;
-    source: any;
-    logger: any;
-    data: any;
-    logs: any[];
-    parentItemId: any;
-    listener: EventEmitter;
-    executionContext: any;
+    process: Process;
+    errors: any;
+    item: any;
+    input: any;
+    output: any;
+    messageMatchingKey: any;
+    worker: any;
+    currentUser: any;
     promises: any[];
+    get id(): any;
+    get name(): any;
+    get status(): EXECUTION_STATUS;
+    get execution(): this;
+    tillDone(): Promise<this>;
+    get listener(): any;
     /**
      *
      * @param name          process name
      * @param source        bpmn source
-     * @param executionContext
      */
-    constructor(name: string, source: any, executionContext: ExecutionContext);
+    constructor(server: any, name: string, source: any, state?: any);
     getNodeById(id: any): Node;
     getToken(id: number): Token;
     tokenEnded(token: Token): void;
@@ -62,17 +62,23 @@ declare class Execution implements IExecution {
      *
      */
     signal(executionId: any, inputData: any): Promise<void>;
+    private save;
     getItems(query?: any): Item[];
     getItemsData(): any[];
     getState(): IInstanceData;
-    static restore(state: IInstanceData, executionContext: any): Promise<Execution>;
+    /**
+     *  re-enstate the execution from db
+     * @param state
+
+     */
+    static restore(server: any, state: IInstanceData): Promise<Execution>;
     restored(): void;
     resume(): void;
     report(): void;
     uids: {};
     getNewId(scope: string): number;
     getUUID(): any;
-    doExecutionEvent(event: any): Promise<void>;
+    doExecutionEvent(process: any, event: any): Promise<void>;
     doItemEvent(item: any, event: any): Promise<void>;
     log(msg: any): void;
     error(msg: any): void;
