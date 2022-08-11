@@ -14,6 +14,7 @@ class ScriptTask extends Node {
     async run(item): Promise<NODE_ACTION> {
 
         if (this.def.script) {
+            item.token.log('executing script task');
             item.token.log(this.def.script);
             await item.token.execution.appDelegate.scopeJS(item, this.def.script);
         }
@@ -44,6 +45,8 @@ class ServiceTask extends Node {
             serviceName = this.def.implementation;
         }
         let ret;
+        item.log("invoking service:" +serviceName);
+
         if (serviceName && appDelegate.servicesProvider[serviceName])
             ret= await appDelegate.servicesProvider[serviceName](output,item.context);
         else

@@ -30,11 +30,7 @@ declare class DefaultAppDelegate implements IAppDelegate {
         })[];
     };
     executionStarted(execution: IExecution): Promise<void>;
-    executionEvent({ event, item, execution }: {
-        event: any;
-        item: any;
-        execution: any;
-    }): Promise<void>;
+    executionEvent(context: any, event: any): Promise<void>;
     /**
      *  is called when a event throws a message
      *

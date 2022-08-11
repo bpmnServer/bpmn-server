@@ -56,7 +56,7 @@ var EXECUTION_EVENT;
     EXECUTION_EVENT["process_resumed"] = "process_resumed";
     EXECUTION_EVENT["process_wait"] = "process.wait";
     EXECUTION_EVENT["process_end"] = "process.end";
-    EXECUTION_EVENT["process_terminated"] = "executeion.terminate";
+    EXECUTION_EVENT["process_terminated"] = "process.terminated";
     EXECUTION_EVENT["token_start"] = "token.start";
     EXECUTION_EVENT["token_wait"] = "token.wait";
     EXECUTION_EVENT["token_end"] = "token.end";

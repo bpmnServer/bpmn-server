@@ -12,7 +12,7 @@ Access Control Layer
 
     const server = new BPMNServer(configuration, logger, { cron: false });
 
-    const userKey = await server.acl.login("user1", 'password');
+    const conn = await server.acl.login("user1", 'password');
 
     const response= conn.engine.start(startNodeId,data,userkYe);
 ``` 
@@ -30,71 +30,31 @@ Access Control Layer
 
     // 3. at calls
 
+    const conn = await server.acl.login("user1", 'password');
     await conn.engine.start(startNodeId,data,request.session.userKey);  
 
 ``` 
 
-## API/REST
+## WebAPI/REST
 
 ```javascript
 
-    // 1. server startup:
+    // get api-key from header
+    // url/engine/start
 
-    const server = new BPMNServer(configuration, logger, { cron: false });
-
-    // 2. at login:
-    const userKey = await server.acl.login("user1", 'password');
-    // save in the header
-
-    // 3. at calls
-    // get userKey from header
-
-    const response=await conn.engine.start(startNodeId,data,userKey);  
+    const conn = await server.acl.login("user1", 'password');
+    await conn.engine.start(startNodeId,data);  
+    const response=await client.engine.start(startNodeId,data);  
 
 ``` 
 ## BPMN as a service
 
-Every Client Account has a unique URL and an APIKey
-All HTTP calls must include apiKey in the header or as a parameter
 ```javascript
 
-    // 1. server startup:
-    const server=new BPMNServer(configuration);
-
-
-    const definition = server.definitions.import(bpmnFile,name);
-    https://url/definitions/import/<name>
-
-   //or
-    const definition = server.definitions.load(name);
-    https://url/definitions/load/<name>
-    definition.describe();
-
-    https://url/definitions/describe/<name>
-
-    
-    let response=await server.engine.start(definitionName,startNodeId,data);  
-
-    https://url/engine/start
-    and body as follows:
-```json
-    { "name": "Buy Used Car",
-      "startNodeId": "Buy",
-      "data": {"caseId": 3030, "claim": "abc"}
-      "userId": "johnSmith"
-    }
+    const client= new BPMNClient(url,apiKey);
+    await client.engine.start(startNodeId,data);  
 ```
-    const itemId=await connection.dataStore.find({..});
-
-    https://url/datastore/find/<query>
-
-    response=await server.engine.invoke(itemId,data);  
-
-    https://url/engine/invoke/<itemId>/<data>
-
-``` 
-
-# User Identification and Authentication
+## User Identification and Authentication
 
 BPMNServer provides a simple user identification and authentication tool not inteded for production purposes but only for demonstration purposes only.
 
@@ -134,94 +94,37 @@ To add a User
 
 # Access Rules
 
-**Authorize** [User](#user) to perform [Action]() on [Element]()
+```json
+   [
+    { Authorize: {group:'public', toPerform: 'Execute', on: 'start'}},
+    { Designate: {user: currentUser, as : 'Owner'} , 
+        at:{ element: 'start', event:'start'}},
+    { Authorize: {actor:'Owner', toPerform: 'Execute', on: ['Buy','Drive'],}},
+    { Assign: {group:'Cleaners', toPerform: 'Execute', on:'Clean',}},
+    { Assign: {group:'Mechanics', toPerform: 'Execute', on:'Repair',}},
+    { Notify: {actor:'Owner'   },
+        at: {element: 'Drive', event:' start'}
+        delayed: { min: 15 , cancelOn: 'end' }
+   ]
+```
 
-evaluated on request;
+**Authorize** is evaluated on request:
+
 	- isAuthorized(user,action,object): true/false
 	- getAccessList(user,action): list of objects
 	- getAuthorizedUsers(action,object): list of users
 
-**Designate** [User]() as [Actor]() 
+**Designate** is evaluated at specified Event; creates an [Involvement]()
 
-- Evaluated at specified Event; creates an [Involvement]()
+**Assign** is evaluated at Start Event; creates an [Assignment]()
 
-**Assign** [User]() to [Object]()
+**Notify** is evaluated at specified Event; creates a [Notification]()
 
-- Evaluated at Start Event; creates an [Assignment]()
 
-**Notify** [User]() on [Event]() for [Object]() using [Template]()
-
-- Evaluated at Event; creates a [Notification]()
-
-```json
-{
-  "accessRules": [
-    {
-      "type": "DesignateRule",
-      "id": "1",
-      "event": "process.start",
-      "user": "$current",
-      "assignActor": "owner"
-    },
-    {
-      "type": "AuthorizeRule",
-      "id": "2",
-      "event": "process.start",
-      "userGroup": "Admin",
-      "privilege": "View"
-    },
-    {
-      "type": "AuthorizeRule",
-      "id": "3",
-      "event": "start",
-      "actor": "owner",
-      "privilege": "Perform",
-      "element": "task_Buy"
-    },
-    {
-      "type": "NotifyRule",
-      "id": "4",
-      "event": "wait",
-      "actor": "owner",
-      "element": "task_Buy",
-      "template": "test"
-    },
-    {
-      "type": "NotifyRule",
-      "id": "5",
-      "event": "end",
-      "user": "user1",
-      "element": "task_Buy",
-      "template": "test"
-    },
-    {
-      "type": "AssignRule",
-      "id": "6",
-      "event": "start",
-      "actor": "owner",
-      "element": "task_Buy"
-    },
-    {
-      "type": "AssignRule",
-      "id": "7",
-      "event": "start",
-      "userGroup": "cleaner",
-      "element": "task_Clean"
-    } ,
-    {
-      "type": "AssignRule",
-      "id": "8",
-      "event": "start",
-      "userGroup": "driver",
-      "element": "task_Drive"
-    }
-  ]
-}
-```
 ### AccessRules Internal Design
  
  - are define as Json file
- - are loaded with definition is loaded?? more work here??
+ - are loaded with definition is loaded
  - are evaluated at the specified event
  - they add objects to the running instance
    - Assignment

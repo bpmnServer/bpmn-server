@@ -26,69 +26,38 @@ the query syntax must be
 
 | example | will retrieve          |
 | -------------|-----------|
-|	 { "items.id": item.id }	|	find items by id only - unique |
-|		{ id: instanceId, "items.elementId": item.elementId }	| find items by instance id and elementId 	|
-|	{"data.caseId": caseId  ,"items.**elementId**" : item.elementId }	| find items by caseId and item elementId 	|
-|		{ id: instanceId, "items.status": 'wait' }	| check for items in "wait" |
-|		{"items.status": 'wait' }	| find all items that has "wait" status |
+| { "items.id": "value-of-id" }	|	find items by id only - unique |
+| { id: instanceId, "items.elementId": item.elementId }	| find items by instance id and elementId 	|
+| {"data.caseId": caseId  ,"items.elementId" : item.elementId }	| find items by caseId and item elementId 	|
+| { "name" : "processName" , "items.status": "wait"}| find items for the process in a wait state	|
+| { id: instanceId, "items.status": 'wait' }	| check for items in "wait" |
+|	{"items.status": "wait" , "items.elementId": "task_Buy" }	| find all items that has "wait" status |
+
 
 ```javascript
-        and('find items by item id only', async () => {
-
-            query = { "items.id": item.id };
-            items = await server.dataStore.findItems(query);
-            checkItem(items, { id: item.id });
-        });
-        and('find items by instance and item elemetnId ', async () => {
-
-            query = { id: instanceId, "items.elementId": item.elementId };
-            items = await server.dataStore.findItems(query);
-            checkItem(items, { id: item.id });
-        });
-
-        and('find items by caseId and item elementId ', async () => {
-
-            query = {"data.caseId": caseId  ,"items.elementId" : item.elementId };
-            items = await server.dataStore.findItems(query);
-            checkItem(items, { id: item.id });
-        });
-
-
-        and('check for items "wait" ', async () => {
-
-            query = { id: instanceId, "items.status": 'wait' };
-            items = await server.dataStore.findItems(query);
-            checkItem(items, { status: 'wait' });
-      });
+         query = { "items.id": item.id };
+         items = await server.dataStore.findItems(query);
 ```
 
 ## Instance Query
+
+Instance Queries are similar to Items Query but return entire Instances with all the items
+
 ```javascript
 
-        and('find instance by instance id only', async () => {
+        // find instances having elementId
 
-            query = { id: response.execution.id };
-            instances = await server.dataStore.findInstances(query);
-            checkInstance(instances, { id: response.execution.id });
+            instances = await server.dataStore.findInstances( 
+                    {
+                    "items.elementId": "task_Buy"
+                    });
+         
+        //  find instance by itemd id
 
-        });
+            instances = await server.dataStore.findInstances(
+                    {"items.id": item.id 
+                    });
 
-        and('find instance by itemd id ', async () => {
+        // find instance by caseId
 
-            query = {"items.id": item.id };
-            instances = await server.dataStore.findInstances(query);
-            checkInstance(instances, { id: response.execution.id });
-
-        });
-
-
-        and('find instance by caseId', async () => {
-
-            query = {
-                data: { caseId: caseId }};
-            instances = await server.dataStore.findInstances(query);
-            checkInstance(instances, { id: response.execution.id  });
-
-        });
-
-
+            instances = await server.dataStore.findInstances( {"data.caseId": 3030});

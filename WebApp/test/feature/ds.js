@@ -3,7 +3,7 @@ const { BPMNServer, DataStore, Execution, DefaultAppDelegate, Logger } = require
 
 const config = require("../testConfiguration.js").configuration;
 
-const logger = new Logger({ toConsole: true });
+const logger = new Logger({ toConsole: false });
 
 let name = 'ds';
 let process;
@@ -49,6 +49,7 @@ Feature('DataStore', () => {
 
             query = { id: instanceId, "items.elementId": item.elementId };
             items = await server.dataStore.findItems(query);
+            expect(items.length).equals(1);
             checkItem(items, { id: item.id });
         });
 
@@ -64,6 +65,7 @@ Feature('DataStore', () => {
 
             query = { id: instanceId, "items.status": 'wait' };
             items = await server.dataStore.findItems(query);
+            expect(items.length).equals(1);
             checkItem(items, { status: 'wait' });
       });
 

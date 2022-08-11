@@ -2,7 +2,7 @@ const { BPMNServer , DefaultAppDelegate , Logger } = require("../../");
 const { configuration } = require('../testConfiguration');
 
 
-const logger = new Logger({ toConsole: true });
+const logger = new Logger({ toConsole: false });
 
 const server = new BPMNServer(configuration, logger);
 //server.cron.checkTimers(1000);

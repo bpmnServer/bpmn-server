@@ -182,7 +182,7 @@ class Execution extends ServerComponent implements IExecution {
 
         await Promise.all(this.promises);
         this.log('.execute returned ');
-        await this.doExecutionEvent(this.process, EXECUTION_EVENT.process_started);
+        await this.doExecutionEvent(this.process, EXECUTION_EVENT.process_wait);
 
         await this.save();
 
@@ -273,7 +273,7 @@ class Execution extends ServerComponent implements IExecution {
 
         const state = this.getState();
         await this.server.dataStore.saveInstance(state, this.getItems());
-        console.log("saving is complete")
+        console.log("Execution:saving is complete")
 
     }
     getItems(query=null): Item[] {

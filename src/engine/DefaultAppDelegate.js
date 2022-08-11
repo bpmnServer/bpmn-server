@@ -24,20 +24,15 @@ class DefaultAppDelegate {
     executionStarted(execution) {
         return __awaiter(this, void 0, void 0, function* () {
             let self = this;
-            execution.listener.on('all', function (eventApi) {
+            execution.listener.on('all', function ({ context, event }) {
                 return __awaiter(this, void 0, void 0, function* () {
-                    yield self.executionEvent(eventApi);
+                    yield self.executionEvent(context, event);
                 });
             });
         });
     }
-    executionEvent({ event, item, execution }) {
+    executionEvent(context, event) {
         return __awaiter(this, void 0, void 0, function* () {
-            let object;
-            if (event.startsWith('execution.'))
-                object = execution;
-            else
-                object = item;
         });
     }
     /**
@@ -117,6 +112,7 @@ class DefaultAppDelegate {
                 scope.token.log("..executing js is done " + scope.id);
             }
             catch (exc) {
+                scope.token.log("ERROR in executing Script " + exc.message + "\n" + script);
                 console.log(exc);
             }
             return result;

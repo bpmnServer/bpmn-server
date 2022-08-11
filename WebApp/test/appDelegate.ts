@@ -17,13 +17,7 @@ class MyAppDelegate extends DefaultAppDelegate {
     async executionStarted(execution: IExecution) {
         await super.executionStarted(execution);
     }
-    async executionEvent({ event, item, execution }) {
-        let object;
-        if (event.startsWith('execution.'))
-            object = execution;
-        else
-            object = item;
-    }
+
     async messageThrown(messageId, data, matchingQuery, item: Item) {
         await super.messageThrown(messageId, data, matchingQuery, item);
     }

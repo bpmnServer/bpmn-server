@@ -40,7 +40,7 @@ enum EXECUTION_EVENT {
     process_invoke = 'process.invoke',     process_invoked = 'process.invoked',
     process_restored = 'process.restored', process_resumed = 'process_resumed',
     process_wait = 'process.wait',
-    process_end = 'process.end', process_terminated = 'executeion.terminate' ,
+    process_end = 'process.end', process_terminated = 'process.terminated' ,
     token_start = 'token.start', token_wait = 'token.wait', token_end = 'token.end', token_terminated = 'token.terminated' 
 }
 /*

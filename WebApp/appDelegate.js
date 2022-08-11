@@ -53,13 +53,15 @@ class MyAppDelegate extends index_1.DefaultAppDelegate {
             yield _super.executionStarted.call(this, execution);
         });
     }
-    executionEvent({ event, item, execution }) {
+    executionEvent(context, event) {
         return __awaiter(this, void 0, void 0, function* () {
-            let object;
-            if (event.startsWith('execution.'))
-                object = execution;
-            else
-                object = item;
+            if (context.item) {
+                //            console.log(`----->Event: '${event}' for ${context.item.element.type} '${context.item.element.id}' id: ${context.item.id}`);
+                if (event == 'wait' && context.item.element.type == 'bpmn:UserTask')
+                    console.log(`----->Waiting for User Input for '${context.item.element.id}' id: ${context.item.id}`);
+            }
+            //       else
+            //           console.log('----->All:' + event, context.definition.name);
         });
     }
     messageThrown(messageId, data, matchingQuery, item) {
@@ -117,8 +119,9 @@ class MyServices {
         return __awaiter(this, void 0, void 0, function* () {
             let item = context.item;
             seq++;
-            yield delay(3000 - (seq * 100), 'test');
-            item.token.log("SERVICE 1" + item.token.currentNode.id);
+            yield delay(5000, 'test');
+            item.token.log("SERVICE 1" + item.token.currentNode.id + " current seq: " + seq);
+            return seq;
         });
     }
 }

@@ -22,16 +22,12 @@ class DefaultAppDelegate implements IAppDelegate {
     async executionStarted(execution: IExecution) {
 
         let self = this;
-        execution.listener.on('all',async function (eventApi) {
-            await self.executionEvent(eventApi);
+        execution.listener.on('all', async function ({context,event }) {
+            await self.executionEvent(context,event);
         });
     }
-    async executionEvent({ event, item, execution }) {
-        let object;
-        if (event.startsWith('execution.'))
-            object = execution;
-        else
-            object = item;
+    async executionEvent(context,event) {
+
     }
     /**
      *  is called when a event throws a message
@@ -102,6 +98,7 @@ class DefaultAppDelegate implements IAppDelegate {
             scope.token.log("..executing js is done " + scope.id);
         }
         catch (exc) {
+            scope.token.log("ERROR in executing Script " + exc.message + "\n" + script);
             console.log(exc);
         }
         return result;

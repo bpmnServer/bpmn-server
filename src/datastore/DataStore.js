@@ -258,16 +258,22 @@ class DataStore extends ServerComponent_1.ServerComponent {
         let hasMatch = false;
         let projection = {};
         {
+            let newQuery = {};
             Object.keys(query).forEach(key => {
+                let val = query[key];
                 if (key.startsWith('items.')) {
-                    let val = query[key];
                     key = key.replace('items.', '');
                     match[key] = val;
                     hasMatch = true;
                 }
+                else
+                    newQuery[key] = val;
             });
-            if (hasMatch)
+            if (hasMatch) {
+                newQuery['items'] = { $elemMatch: match };
                 projection = { id: 1, data: 1, name: 1, "items": { $elemMatch: match } };
+                query = newQuery;
+            }
             else
                 projection = { id: 1, data: 1, name: 1, "items": 1 };
         }

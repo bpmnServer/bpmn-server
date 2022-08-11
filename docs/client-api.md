@@ -1,7 +1,13 @@
 
 ## BPMNClient/WebAPI
 
-for Example see [here](./examples/BuyCar-Remote.md)
+BPMNClient is a lightweight Node package to remotely access bpmn-server using bpmn-server WebApi
+
+[See code Example using bpmn-clienthere](./examples/BuyCar-Remote.md)
+
+Alternatively, you can access bpmn-server through http(https) calls, [view Postman documentation](https://documenter.getpostman.com/view/11781516/Szzn7wsm)
+
+bpmn-server provides api calls to the following objects:
 
 - [engine](#engine) 
 - [dataStore](#datastore)

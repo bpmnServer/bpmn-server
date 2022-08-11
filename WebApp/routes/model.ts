@@ -51,7 +51,7 @@ export class Model extends Common {
 
             let view = new Modeller();
 
-            view.displayNew(processName, request, response);
+            view.display(processName, request, response);
 
         }));
         router.get('/export', awaitHandlerFactory(async (request, response) => {

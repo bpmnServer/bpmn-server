@@ -45,7 +45,7 @@ class Model extends common_1.Common {
             let processName = request.params.process;
             console.log('adding ' + processName);
             let view = new Modeller_1.Modeller();
-            view.displayNew(processName, request, response);
+            view.display(processName, request, response);
         })));
         router.get('/export', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             console.log(request.params);

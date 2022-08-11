@@ -61,11 +61,6 @@ interface IAppDelegate {
     servicesProvider: any;
     sendEmail(to: any, msg: any, body: any): any;
     executionStarted(execution: any): any;
-    executionEvent({ event, item, execution }: {
-        event: any;
-        item: any;
-        execution: any;
-    }): any;
     messageThrown(signalId: any, data: any, messageMatchingKey: any, item: IItem): any;
     signalThrown(signalId: any, data: any, messageMatchingKey: any, item: IItem): any;
     /**

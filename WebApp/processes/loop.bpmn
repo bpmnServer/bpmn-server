@@ -27,7 +27,7 @@
       <bpmn:outgoing>Flow_0xpjff0</bpmn:outgoing>
       <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="(this.records)" />
     </bpmn:ScriptTask>
-    <bpmn:ServiceTask id="service_task" name="Service Task">
+    <bpmn:ServiceTask id="service_task" name="Service Task" implementation="service1">
       <bpmn:incoming>Flow_0xpjff0</bpmn:incoming>
       <bpmn:outgoing>Flow_0s8ghrk</bpmn:outgoing>
       <bpmn:multiInstanceLoopCharacteristics camunda:collection="(this.records)" />

@@ -20,6 +20,7 @@ class ScriptTask extends Node_1.Node {
     run(item) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.def.script) {
+                item.token.log('executing script task');
                 item.token.log(this.def.script);
                 yield item.token.execution.appDelegate.scopeJS(item, this.def.script);
             }
@@ -50,6 +51,7 @@ class ServiceTask extends Node_1.Node {
                 serviceName = this.def.implementation;
             }
             let ret;
+            item.log("invoking service:" + serviceName);
             if (serviceName && appDelegate.servicesProvider[serviceName])
                 ret = yield appDelegate.servicesProvider[serviceName](output, item.context);
             else

@@ -47,13 +47,21 @@ class MyAppDelegate extends DefaultAppDelegate{
     }
 
     async executionStarted(execution: IExecution) {
-        await super.executionStarted(execution);}
-    async executionEvent({ event, item, execution }) {
-        let object;
-        if (event.startsWith('execution.'))
-            object = execution;
-        else
-            object = item;
+        await super.executionStarted(execution);
+    }
+
+    async executionEvent(context, event) {
+
+        if (context.item) {
+
+//            console.log(`----->Event: '${event}' for ${context.item.element.type} '${context.item.element.id}' id: ${context.item.id}`);
+            if (event == 'wait' && context.item.element.type == 'bpmn:UserTask')
+                console.log(`----->Waiting for User Input for '${context.item.element.id}' id: ${context.item.id}`);
+        }
+ //       else
+ //           console.log('----->All:' + event, context.definition.name);
+
+    
     }
     async messageThrown(messageId, data, matchingQuery, item: Item) {
         await super.messageThrown(messageId, data, matchingQuery,item);
@@ -93,8 +101,9 @@ class MyServices {
     async service1(input, context) {
         let item = context.item;
         seq++;
-        await delay(3000 - (seq * 100), 'test');
-        item.token.log("SERVICE 1" + item.token.currentNode.id);
+        await delay(5000, 'test');
+        item.token.log("SERVICE 1" + item.token.currentNode.id + " current seq: " + seq);
+        return seq;
     }
 }
 export {MyAppDelegate}

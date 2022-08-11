@@ -29,15 +29,6 @@ class MyAppDelegate extends __1.DefaultAppDelegate {
             yield _super.executionStarted.call(this, execution);
         });
     }
-    executionEvent({ event, item, execution }) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let object;
-            if (event.startsWith('execution.'))
-                object = execution;
-            else
-                object = item;
-        });
-    }
     messageThrown(messageId, data, matchingQuery, item) {
         const _super = Object.create(null, {
             messageThrown: { get: () => super.messageThrown }

@@ -1,18 +1,17 @@
 {
   "accessRules": [
     {
-      "type": "DesignateRule",
+      "type": "AuthorizeRule",
       "id": "1",
+      "userGroup": "public",
+      "privilege": "start"
+    },
+    {
+      "type": "DesignateRule",
+      "id": "2",
       "event": "process.start",
       "user": "$current",
       "assignActor": "owner"
-    },
-    {
-      "type": "AuthorizeRule",
-      "id": "2",
-      "event": "process.start",
-      "userGroup": "Admin",
-      "privilege": "View"
     },
     {
       "type": "AuthorizeRule",
@@ -51,7 +50,7 @@
       "event": "start",
       "userGroup": "cleaner",
       "element": "task_Clean"
-    } ,
+    },
     {
       "type": "AssignRule",
       "id": "8",

@@ -137,6 +137,27 @@ class API extends common_1.Common {
             }
             response.json({ errors: errors, instance });
         })));
+        router.get('/engine/get', loggedIn, awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
+            let query;
+            if (request.body.query) {
+                query = request.body.query;
+            }
+            else
+                query = request.body;
+            console.log("Query", query);
+            let context;
+            let instance;
+            let errors;
+            try {
+                context = yield bpmnServer.engine.get(query);
+                instance = context.instance;
+            }
+            catch (exc) {
+                errors = exc.toString();
+                console.log(errors);
+            }
+            response.json({ errors: errors, instance });
+        })));
         /*
          *      response = await bpmn.engine.throwMessage(messageId,data);
         */

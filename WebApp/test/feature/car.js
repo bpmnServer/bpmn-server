@@ -13,13 +13,14 @@ let process;
 let response;
 let instanceId;
 
+
 Feature('Buy Used Car- clean and repair', () => {
         Scenario('Simple', () => {
             Given('Start Buy Used Car Process',async () => {
                 response = await server.engine.start(name, {caseId: caseId});
                 instanceId = response.id;
-                console.log('**instanceId', response.id, instanceId);
-                console.log(' after start ', response.instance.caseId);
+//                console.log('**instanceId', response.id, instanceId);
+//                console.log(' after start ', response.instance.caseId);
             });
             Then('check for output', () => {
                 expect(response).to.have.property('execution');
@@ -34,7 +35,7 @@ Feature('Buy Used Car- clean and repair', () => {
                     id: instanceId ,
                     "items.elementId": 'task_Buy'
                 };
-                console.log(query);
+//                console.log(query);
                 response= await server.engine.invoke(query ,data );
             });
 
@@ -59,7 +60,7 @@ Feature('Buy Used Car- clean and repair', () => {
                         "data.caseId": caseId ,
                     "items.elementId": 'task_clean'
                 };
-                console.log(query);
+//                console.log(query);
                     await server.engine.invoke(query, {});
             });
       
@@ -76,8 +77,8 @@ Feature('Buy Used Car- clean and repair', () => {
 
             and('Case Complete', async () => {
 
-                console.log(response.instance.status);
-                console.log(response.execution.status);
+//                console.log(response.instance.status);
+//                console.log(response.execution.status);
               expect(response.execution.status).equals('end');
                 expect(getItem('task_Drive').status).equals('end');
 
@@ -87,7 +88,7 @@ Feature('Buy Used Car- clean and repair', () => {
 
             and('write log file to ' + fileName, async () => {
                 logger.save(fileName);
-                console.log('filename:', __filename);
+//                console.log('filename:', __filename);
             });
 
         });

@@ -41,6 +41,7 @@ class Node extends _1.Element {
             item.token.log('..>' + event + ' ' + this.id);
             const script = this.scripts.get(event);
             if (script) {
+                item.token.log('--executing script for event:' + event);
                 yield item.token.execution.appDelegate.scopeJS(item, script);
             }
             return yield item.token.execution.doItemEvent(item, event);

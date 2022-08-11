@@ -45,7 +45,7 @@ declare enum EXECUTION_EVENT {
     process_resumed = "process_resumed",
     process_wait = "process.wait",
     process_end = "process.end",
-    process_terminated = "executeion.terminate",
+    process_terminated = "process.terminated",
     token_start = "token.start",
     token_wait = "token.wait",
     token_end = "token.end",

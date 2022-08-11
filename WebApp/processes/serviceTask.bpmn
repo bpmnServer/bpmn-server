@@ -7,7 +7,7 @@
     <bpmn2:endEvent id="EndEvent_07q3k5v">
       <bpmn2:incoming>SequenceFlow_0lo0xqi</bpmn2:incoming>
     </bpmn2:endEvent>
-    <bpmn2:serviceTask id="Task_0xh2iwa" name="unknown">
+    <bpmn2:serviceTask id="Task_0xh2iwa" name="service1" implementation="service1">
       <bpmn2:incoming>SequenceFlow_1q1veva</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0lo0xqi</bpmn2:outgoing>
     </bpmn2:serviceTask>

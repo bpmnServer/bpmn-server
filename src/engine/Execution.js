@@ -155,7 +155,7 @@ class Execution extends server_1.ServerComponent {
             yield token.execute(null);
             yield Promise.all(this.promises);
             this.log('.execute returned ');
-            yield this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_started);
+            yield this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_wait);
             yield this.save();
             this.report();
         });
@@ -229,7 +229,7 @@ class Execution extends server_1.ServerComponent {
             // save here :
             const state = this.getState();
             yield this.server.dataStore.saveInstance(state, this.getItems());
-            console.log("saving is complete");
+            console.log("Execution:saving is complete");
         });
     }
     getItems(query = null) {
