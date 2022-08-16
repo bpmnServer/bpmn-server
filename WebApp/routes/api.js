@@ -96,16 +96,21 @@ class API extends common_1.Common {
                 console.log(' starting ' + name);
                 console.log(request.body);
                 let data = request.body.data;
-                let startNodeId, options = {};
+                let userId;
+                let startNodeId, options = {}, userKey;
                 if (request.body.startNodeId) {
                     startNodeId = request.body.startNodeId;
                 }
                 if (request.body.options) {
                     options = request.body.options;
                 }
+                if (request.body.userId) {
+                    userId = request.body.userId;
+                }
+                userKey = bpmnServer.iam.getRemoteUser(userId);
                 let context;
                 console.log(data);
-                context = yield bpmnServer.engine.start(name, data, startNodeId, null, options);
+                context = yield bpmnServer.engine.start(name, data, startNodeId, userKey, options);
                 response.json(context.instance);
             }
             catch (exc) {
@@ -114,19 +119,26 @@ class API extends common_1.Common {
         })));
         router.put('/engine/invoke', loggedIn, awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             console.log(request.body);
-            let query, data;
+            let query, data, userId, options, userKey;
             if (request.body.query) {
                 query = request.body.query;
             }
             if (request.body.data) {
                 data = request.body.data;
             }
+            if (request.body.options) {
+                options = request.body.options;
+            }
+            if (request.body.userId) {
+                userId = request.body.userId;
+            }
             console.log(query);
             let context;
             let instance;
             let errors;
             try {
-                context = yield bpmnServer.engine.invoke(query, data);
+                userKey = bpmnServer.iam.getRemoteUser(userId);
+                context = yield bpmnServer.engine.invoke(query, data, userKey, options);
                 instance = context.instance;
                 if (context && context.errors)
                     errors = context.errors.toString();
@@ -300,17 +312,17 @@ function display(res, title, output, logs = [], items = []) {
         var instances = yield bpmnServer.dataStore.findInstances({}, 'full');
         let waiting = yield bpmnServer.dataStore.findItems({ items: { status: 'wait' } });
         waiting.forEach(item => {
-            item.fromNow = __1.dateDiff(item.startedAt);
+            item.fromNow = (0, __1.dateDiff)(item.startedAt);
         });
         let engines = bpmnServer.cache.list();
         engines.forEach(engine => {
-            engine.fromNow = __1.dateDiff(engine.startedAt);
-            engine.fromLast = __1.dateDiff(engine.lastAt);
+            engine.fromNow = (0, __1.dateDiff)(engine.startedAt);
+            engine.fromLast = (0, __1.dateDiff)(engine.lastAt);
         });
         instances.forEach(item => {
-            item.fromNow = __1.dateDiff(item.startedAt);
+            item.fromNow = (0, __1.dateDiff)(item.startedAt);
             if (item.endedAt)
-                item.endFromNow = __1.dateDiff(item.endedAt);
+                item.endFromNow = (0, __1.dateDiff)(item.endedAt);
             else
                 item.endFromNow = '';
         });

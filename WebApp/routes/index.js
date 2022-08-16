@@ -15,11 +15,18 @@ const FS = require('fs');
 const __1 = require("../");
 const common_1 = require("./common");
 var caseId = Math.floor(Math.random() * 10000);
+var userId;
 const docsFolder = __dirname + '/../bpmnServer/docs/';
 // main functions
 function awaitAppDelegateFactory(middleware) {
     return (req, res, next) => __awaiter(this, void 0, void 0, function* () {
         try {
+            if (req.query.userId && typeof (req.query.userId) !== 'undefined' && req.query.userId !== 'undefined') {
+                req.session.userId = req.query.userId;
+                req.session.userKey = bpmnServer.iam.getRemoteUser(req.session.userId);
+            }
+            else if (!req.session.userId)
+                req.session.userId = 'demoUser';
             yield middleware(req, res, next);
         }
         catch (err) {
@@ -47,13 +54,17 @@ class Workflow extends common_1.Common {
                 request.session.views = 1;
             }
             console.log('Session:', request.session);
-            display(response, 'Show', output);
+            userId = request.session.userId;
+            display(request, response, 'Show', output);
         })));
         router.get('/readme_md', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             let processName = request.params.process;
             let fileName = docsFolder + '../README.md';
             let file = FS.readFileSync(fileName, { encoding: 'utf8', flag: 'r' });
             response.send(file);
+        })));
+        router.get('/userId', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
+            response.send(request.session.userId);
         })));
         router.get('/example', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             /* Testing only
@@ -80,62 +91,48 @@ class Workflow extends common_1.Common {
         })));
         router.get('/execute/:processName', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             let processName = request.params.processName;
-            let context = yield bpmnServer.engine.start(processName, { caseId: caseId++ });
+            let context = yield bpmnServer.engine.start(processName, { caseId: caseId++ }, null, request.session.userKey);
             if (context.errors) {
                 displayError(response, context.errors);
             }
             let execution = context.execution;
-            console.log(" insance id " + execution.id);
             response.redirect('/instanceDetails?id=' + execution.id);
-            /*
-            let output = ['run ' + processName];
-            output = show(output);
-            display(response, 'Run Prcesses', output, instance.logs, instance.getItems({}));
-            */
         })));
         router.post('/execute', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
-            console.log(request.body);
             let process = request.body.processName;
             let data = {};
             parseField(request.body.field1, request.body.value1, data);
             parseField(request.body.field2, request.body.value2, data);
             let startNodeId = request.body.startNodeId;
-            console.log(data);
             data['caseId'] = caseId++;
-            let context = yield bpmnServer.engine.start(process, data, null, startNodeId);
+            let context = yield bpmnServer.engine.start(process, data, null, startNodeId, request.session.userKey);
             if (context.errors) {
                 displayError(response, context.errors);
             }
             let instance = context.execution;
             response.redirect('/instanceDetails?id=' + instance.id);
-            /*
-            console.log(" insance id " + instance.id);
-            let output = ['run ' + process];
-            output = show(output);
-            display(response, 'Run Prcesses', output, instance.logs, instance.getItems({})); */
         })));
         router.get('/listDefinitions', function (req, res) {
             let output = ['Data Reset'];
             output = show(output);
-            display(res, 'Show', output);
+            display(req, res, 'Show', output);
         });
         router.get('/resetData', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             yield bpmnServer.dataStore.deleteInstances();
-            console.log(" Data Reset");
             let output = ['Data Reset'];
             output = show(output);
-            display(response, 'Show', output);
+            display(request, response, 'Show', output);
         })));
         router.get('/refresh', function (req, res) {
             let output = [];
             output = show(output);
-            display(res, 'Show', output);
+            display(req, res, 'Show', output);
         });
         router.get('/clearDebug', function (req, res) {
             //    Logger.clear();
             let output = [];
             output = show(output);
-            display(res, 'Show', output);
+            display(req, res, 'Show', output);
         });
         router.get('/invokeItem', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             let id = request.query.id;
@@ -148,27 +145,20 @@ class Workflow extends common_1.Common {
                 });
                 return;
             }
-            let result = yield bpmnServer.engine.invoke({ "items.id": id }, {});
+            let result = yield bpmnServer.engine.invoke({ "items.id": id }, {}, request.session.userKey);
             console.log("redirecting");
             response.redirect('/instanceDetails?id=' + result.execution.id);
-            /*
-            let output = ['save' + id];
-            display(response, 'Save Instance', output); */
         })));
         router.post('/invokeItem', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
-            console.log('invoke');
-            console.log(request.body);
             let id = request.body.itemId;
             let data = {};
-            console.log(id);
             Object.entries(request.body).forEach(entry => {
                 if (entry[0] == 'itemId') { }
                 else {
                     data[entry[0]] = entry[1];
                 }
             });
-            console.log(data);
-            let result = yield bpmnServer.engine.invoke({ "items.id": id }, data);
+            let result = yield bpmnServer.engine.invoke({ "items.id": id }, data, request.session.userKey);
             response.redirect('/instanceDetails?id=' + result.execution.id);
         })));
         router.get('/mocha', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
@@ -176,18 +166,16 @@ class Workflow extends common_1.Common {
         })));
         router.get('/run/:process', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             let process = request.params.process;
-            let exec = yield bpmnServer.engine.start(process, { caseId: caseId++ });
+            let exec = yield bpmnServer.engine.start(process, { caseId: caseId++ }, null, request.session.userKey);
             if (exec.errors) {
                 displayError(response, exec.errors);
             }
-            console.log(" insance id " + exec.id);
             let output = ['run ' + process];
             output = show(output);
-            display(response, 'Run Prcesses', output, exec.instance.logs, exec.instance.items);
+            display(request, response, 'Run Prcesses', output, exec.instance.logs, exec.instance.items);
         })));
         router.get('/instanceDetails', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             let imageId = request.query.id;
-            console.log("id: " + imageId);
             yield instanceDetails(response, imageId);
         })));
         router.get('/deleteInstance', deleteInstance);
@@ -202,7 +190,6 @@ function home(request, response) {
     return __awaiter(this, void 0, void 0, function* () {
         let output = [];
         output = show(output);
-        //NOPASSPORT         console.log("isAuthenticated", request.isAuthenticated(), 'user', request.user);
         if (request.session.views) {
             request.session.views++;
         }
@@ -210,7 +197,7 @@ function home(request, response) {
             request.session.views = 1;
         }
         console.log('Session:', request.session);
-        display(response, 'Show', output);
+        display(request, response, 'Show', output);
     });
 }
 function deleteInstance(req, res) {
@@ -218,8 +205,7 @@ function deleteInstance(req, res) {
         let instanceId = req.query.id;
         yield bpmnServer.dataStore.deleteInstances({ id: instanceId });
         let output = ['Complete ' + instanceId];
-        console.log(" deleted");
-        display(res, 'Show', output);
+        display(req, res, 'Show', output);
     });
 }
 function shutdown(req, res) {
@@ -227,8 +213,7 @@ function shutdown(req, res) {
         let instanceId = req.query.id;
         yield bpmnServer.cache.shutdown();
         let output = ['Complete ' + instanceId];
-        console.log(" deleted");
-        display(res, 'Show', output);
+        display(req, res, 'Show', output);
     });
 }
 function restart(req, res) {
@@ -236,8 +221,7 @@ function restart(req, res) {
         let instanceId = req.query.id;
         yield bpmnServer.cache.restart();
         let output = ['Complete ' + instanceId];
-        console.log(" deleted");
-        display(res, 'Show', output);
+        display(req, res, 'Show', output);
     });
 }
 function manage(req, res) {
@@ -267,29 +251,29 @@ function displayError(res, error) {
         res.send(msg);
     });
 }
-function display(res, title, output, logs = [], items = []) {
+function display(req, res, title, output, logs = [], items = []) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log(" Display Started");
         var instances = yield bpmnServer.dataStore.findInstances({}, 'summary');
         let waiting = yield bpmnServer.dataStore.findItems({ "items.status": 'wait' });
         waiting.forEach(item => {
-            item.fromNow = __1.dateDiff(item.startedAt);
+            item.fromNow = (0, __1.dateDiff)(item.startedAt);
         });
         let engines = bpmnServer.cache.list();
         engines.forEach(engine => {
-            engine.fromNow = __1.dateDiff(engine.startedAt);
-            engine.fromLast = __1.dateDiff(engine.lastAt);
+            engine.fromNow = (0, __1.dateDiff)(engine.startedAt);
+            engine.fromLast = (0, __1.dateDiff)(engine.lastAt);
         });
         instances.forEach(item => {
-            item.fromNow = __1.dateDiff(item.startedAt);
+            item.fromNow = (0, __1.dateDiff)(item.startedAt);
             if (item.endedAt)
-                item.endFromNow = __1.dateDiff(item.endedAt);
+                item.endFromNow = (0, __1.dateDiff)(item.endedAt);
             else
                 item.endFromNow = '';
         });
         res.render('index', {
             title: title, output: output,
             engines,
+            userId: req.session.userId,
             procs: yield bpmnServer.definitions.getList(),
             debugMsgs: [],
             waiting: waiting,
@@ -315,7 +299,6 @@ function instanceDetails(response, instanceId) {
         const def = yield bpmnServer.definitions.load(instance.name);
         yield def.load();
         const defJson = def.getJson();
-        console.log('def access rules', def.accessRules);
         let output = ['View Process Log'];
         output = show(output);
         let vars = [];
@@ -342,10 +325,8 @@ function getFields(processName, elementId) {
         let definition = yield bpmnServer.definitions.load(processName);
         let node = definition.getNodeById(elementId);
         let extName = __1.Behaviour_names.CamundaFormData;
-        console.log("ext name:" + extName);
         let ext = node.getBehaviour(extName);
         if (ext) {
-            console.log('fields:' + ext.fields.length);
             return ext.fields;
         }
         else
@@ -357,7 +338,6 @@ function parseField(field, value, data) {
         if (value.substring(0, 1) == '[') {
             value = value.substring(1);
             value = value.substring(0, value.length - 1);
-            console.log('array' + value);
             let array = value.split(',');
             value = array;
         }

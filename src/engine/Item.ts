@@ -3,7 +3,7 @@ import { ITEM_STATUS, IItem, } from "../../";
 import { IItemData } from "../../";
 import { Element , Node } from '../elements';
 import { Token } from "./Token";
-import { Authorization, Assignment, Notification } from "../acl/Repository";
+import { Authorization, Assignment, Notification } from "../acl/";
 
 class Item implements IItem {
     id;                 

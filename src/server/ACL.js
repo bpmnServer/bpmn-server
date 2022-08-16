@@ -12,8 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.IAM = exports.ACL = void 0;
 const fs = require('fs');
 const path = require('path');
-const Rules_1 = require("../acl/Rules");
-const Repository_1 = require("../acl/Repository");
+const acl_1 = require("../acl/");
+const acl_2 = require("../acl/");
 const { v4: uuidv4 } = require('uuid');
 class IAM {
     constructor(server) {
@@ -21,24 +21,38 @@ class IAM {
     }
     addUser(userId, name, email, userGroups, password) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = new Repository_1.User();
+            const user = new acl_2.User();
             user.userId = userId;
             user.name = name;
             user.email = email;
             user.userGroups = userGroups;
             user.password = password;
-            yield Repository_1.User.Repository(this.server).insert([user]);
+            yield acl_2.User.Repository(this.server).insert([user]);
             return user;
         });
     }
     /**
      * Returns a key
      * @param userId
-     * @param password
      */
+    getRemoteUser(userId) {
+        let key;
+        IAM.currentUsers.forEach((user, ukey) => {
+            if (user.userId === userId) {
+                key = ukey;
+            }
+        });
+        if (key)
+            return key;
+        let user = new acl_2.User();
+        user.userId = userId;
+        key = uuidv4();
+        IAM.currentUsers.set(key, user);
+        return key;
+    }
     login(userId, password) {
         return __awaiter(this, void 0, void 0, function* () {
-            const users = yield Repository_1.User.Repository(this.server).find({ userId: userId, password: password });
+            const users = yield acl_2.User.Repository(this.server).find({ userId: userId, password: password });
             const user = users[0];
             const key = uuidv4();
             IAM.currentUsers.set(key, user);
@@ -51,18 +65,19 @@ class IAM {
      * @param key
      */
     getCurrentUser(key) {
+        console.log(IAM.currentUsers);
         const user = IAM.currentUsers.get(key);
         return user;
     }
     getUser(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const users = yield Repository_1.User.Repository(this.server).find({ userId: userId });
+            const users = yield acl_2.User.Repository(this.server).find({ userId: userId });
             return users[0];
         });
     }
     getUsersForGroup(userGroup) {
         return __awaiter(this, void 0, void 0, function* () {
-            const users = yield Repository_1.User.Repository(this.server).find({ userGroups: userGroup });
+            const users = yield acl_2.User.Repository(this.server).find({ userGroups: userGroup });
             return users;
         });
     }
@@ -107,7 +122,6 @@ class ACL {
         return flag;
     }
     loadAccessRules(processName) {
-        console.log('Loading rules for ' + processName);
         const filePath = this.server.configuration.definitionsPath + '/' + processName + '.json';
         const rules = [];
         if (this.checkFileExistsSync(filePath)) {
@@ -128,23 +142,22 @@ class ACL {
                 let spec = specs.accessRules[i];
                 rules.push(ACL.convertRule(spec));
             }
-            console.log("Rules loaded", rules.length);
         }
         return rules;
     }
     static convertRule(spec) {
         switch (spec.type) {
             case 'DesignateRule':
-                return new Rules_1.DesignateRule(spec);
+                return new acl_1.DesignateRule(spec);
                 break;
             case 'AuthorizeRule':
-                return new Rules_1.AuthorizeRule(spec);
+                return new acl_1.AuthorizeRule(spec);
                 break;
             case 'AssignRule':
-                return new Rules_1.AssignRule(spec);
+                return new acl_1.AssignRule(spec);
                 break;
             case 'NotifyRule':
-                return new Rules_1.NotifyRule(spec);
+                return new acl_1.NotifyRule(spec);
                 break;
         }
     }
@@ -152,7 +165,6 @@ class ACL {
         var seq = 0;
         const self = this;
         listener.on('process.loaded', function ({ context, event }) {
-            console.log('process.loaded', context.constructor.name);
             const definition = context;
             definition.accessRules = self.loadAccessRules(definition.name);
         });

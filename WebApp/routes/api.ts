@@ -105,8 +105,9 @@ export class API extends Common {
                 console.log(' starting ' + name);
                 console.log(request.body);
                 let data = request.body.data;
+                let userId;
 
-                let startNodeId, options = {};
+                let startNodeId, options = {}, userKey;
                 if (request.body.startNodeId) {
                     startNodeId = request.body.startNodeId;
                 }
@@ -114,10 +115,15 @@ export class API extends Common {
                     options = request.body.options;
                 }
 
+                if (request.body.userId) {
+                    userId = request.body.userId;
+                }
+
+                userKey = bpmnServer.iam.getRemoteUser(userId);
 
                 let context;
                 console.log(data);
-                context = await bpmnServer.engine.start(name, data, startNodeId, null, options);
+                context = await bpmnServer.engine.start(name, data, startNodeId, userKey, options);
                 response.json(context.instance);
             }
             catch (exc) {
@@ -128,19 +134,29 @@ export class API extends Common {
         router.put('/engine/invoke', loggedIn, awaitAppDelegateFactory(async (request, response) => {
 
             console.log(request.body);
-            let query, data;
+            let query, data,userId,options,userKey;
             if (request.body.query) {
                 query = request.body.query;
             }
             if (request.body.data) {
                 data = request.body.data;
             }
+            if (request.body.options) {
+                options = request.body.options;
+            }
+
+            if (request.body.userId) {
+                userId= request.body.userId;
+            }
+
             console.log(query);
             let context;
             let instance;
             let errors;
             try {
-                context = await bpmnServer.engine.invoke(query, data );
+                userKey = bpmnServer.iam.getRemoteUser(userId);
+
+                context = await bpmnServer.engine.invoke(query, data,userKey,options );
                 instance = context.instance;
                 if (context && context.errors)
                     errors = context.errors.toString();

@@ -7,6 +7,7 @@ import { Common } from './common';
 
 
 var caseId = Math.floor(Math.random() * 10000);
+var userId;
 
 
 const docsFolder = __dirname + '/../bpmnServer/docs/';
@@ -16,6 +17,14 @@ const docsFolder = __dirname + '/../bpmnServer/docs/';
 function awaitAppDelegateFactory (middleware) {
     return async (req, res, next) => {
         try {
+            if (req.query.userId && typeof (req.query.userId) !=='undefined' && req.query.userId !=='undefined') {
+                req.session.userId = req.query.userId;
+                req.session.userKey = bpmnServer.iam.getRemoteUser(req.session.userId);
+            }
+            else if (!req.session.userId)
+                req.session.userId = 'demoUser';
+
+
             await middleware(req, res, next)
         } catch (err) {
             next(err)
@@ -47,9 +56,9 @@ export class Workflow extends Common {
             }
             console.log('Session:', request.session);
 
+            userId = request.session.userId;
 
-
-            display(response, 'Show', output);
+            display(request,response, 'Show', output);
         }));
 
 
@@ -63,6 +72,9 @@ export class Workflow extends Common {
 
             response.send(file);
 
+        }));
+        router.get('/userId', awaitAppDelegateFactory(async (request, response) => {
+            response.send(request.session.userId);
         }));
         router.get('/example', awaitAppDelegateFactory(async (request, response) => {
             /* Testing only
@@ -95,9 +107,12 @@ export class Workflow extends Common {
 
         router.get('/execute/:processName', awaitAppDelegateFactory(async (request, response) => {
 
+
+
             let processName = request.params.processName;
 
-            let context = await bpmnServer.engine.start(processName, { caseId: caseId++ });
+            let context = await bpmnServer.engine.start(processName, { caseId: caseId++ },
+                null, request.session.userKey);
 
             if (context.errors) {
                 displayError(response, context.errors);
@@ -105,20 +120,13 @@ export class Workflow extends Common {
 
 
             let execution = context.execution;
-            console.log(" insance id " + execution.id);
 
             response.redirect('/instanceDetails?id=' + execution.id);
-            /*
-            let output = ['run ' + processName];
-            output = show(output);
-            display(response, 'Run Prcesses', output, instance.logs, instance.getItems({}));
-            */
         }));
 
 
         router.post('/execute', awaitAppDelegateFactory(async (request, response) => {
 
-            console.log(request.body);
             let process = request.body.processName;
             let data = {};
             parseField(request.body.field1, request.body.value1, data);
@@ -127,50 +135,43 @@ export class Workflow extends Common {
 
             let startNodeId = request.body.startNodeId
 
-            console.log(data);
 
             data['caseId'] = caseId++;
 
-            let context = await bpmnServer.engine.start(process, data, null, startNodeId);
+            let context = await bpmnServer.engine.start(process, data, null, startNodeId, request.session.userKey);
             if (context.errors) {
                 displayError(response, context.errors);
             }
             let instance = context.execution;
 
             response.redirect('/instanceDetails?id=' + instance.id);
-            /*
-            console.log(" insance id " + instance.id);
-            let output = ['run ' + process];
-            output = show(output);
-            display(response, 'Run Prcesses', output, instance.logs, instance.getItems({})); */
         }));
 
         router.get('/listDefinitions', function (req, res) {
             let output = ['Data Reset'];
             output = show(output);
-            display(res, 'Show', output);
+            display(req,res, 'Show', output);
 
         });
 
         router.get('/resetData', awaitAppDelegateFactory(async (request, response) => {
             await bpmnServer.dataStore.deleteInstances();
-            console.log(" Data Reset");
             let output = ['Data Reset'];
             output = show(output);
-            display(response, 'Show', output);
+            display(request,response, 'Show', output);
         }));
 
         router.get('/refresh', function (req, res) {
             let output = [];
             output = show(output);
-            display(res, 'Show', output);
+            display(req,res, 'Show', output);
         });
 
         router.get('/clearDebug', function (req, res) {
             //    Logger.clear();
             let output = [];
             output = show(output);
-            display(res, 'Show', output);
+            display(req,res, 'Show', output);
         });
 
         router.get('/invokeItem', awaitAppDelegateFactory(async (request, response) => {
@@ -188,20 +189,14 @@ export class Workflow extends Common {
                 return;
             }
 
-            let result = await bpmnServer.engine.invoke({ "items.id": id }, {});
+            let result = await bpmnServer.engine.invoke({ "items.id": id }, {}, request.session.userKey);
 
             console.log("redirecting");
             response.redirect('/instanceDetails?id=' + result.execution.id);
-            /*
-            let output = ['save' + id];
-            display(response, 'Save Instance', output); */
         }));
         router.post('/invokeItem', awaitAppDelegateFactory(async (request, response) => {
-            console.log('invoke');
-            console.log(request.body);
             let id = request.body.itemId;
             let data = {};
-            console.log(id);
 
             Object.entries(request.body).forEach(entry => {
                 if (entry[0] == 'itemId') { }
@@ -210,9 +205,8 @@ export class Workflow extends Common {
                 }
             });
 
-            console.log(data);
 
-            let result = await bpmnServer.engine.invoke({ "items.id": id }, data);
+            let result = await bpmnServer.engine.invoke({ "items.id": id }, data, request.session.userKey);
 
 
             response.redirect('/instanceDetails?id=' + result.execution.id);
@@ -226,20 +220,18 @@ export class Workflow extends Common {
 
         router.get('/run/:process', awaitAppDelegateFactory(async (request, response) => {
             let process = request.params.process;
-            let exec = await bpmnServer.engine.start(process, { caseId: caseId++ });
+            let exec = await bpmnServer.engine.start(process, { caseId: caseId++ }, null, request.session.userKey);
             if (exec.errors) {
                 displayError(response, exec.errors);
             }
 
-            console.log(" insance id " + exec.id);
             let output = ['run ' + process];
             output = show(output);
-            display(response, 'Run Prcesses', output, exec.instance.logs, exec.instance.items);
+            display(request,response, 'Run Prcesses', output, exec.instance.logs, exec.instance.items);
         }));
         router.get('/instanceDetails', awaitAppDelegateFactory(async (request, response) => {
 
             let imageId = request.query.id;
-            console.log("id: " + imageId);
             await instanceDetails(response, imageId);
 
         }));
@@ -256,7 +248,6 @@ export class Workflow extends Common {
 async function home(request, response)  {
         let output = [];
         output = show(output);
-		//NOPASSPORT         console.log("isAuthenticated", request.isAuthenticated(), 'user', request.user);
 
         if (request.session.views) {
             request.session.views++
@@ -267,7 +258,7 @@ async function home(request, response)  {
 
 
 
-        display(response, 'Show', output);
+        display(request,response, 'Show', output);
 }
 
 async function deleteInstance(req, res) {
@@ -277,8 +268,7 @@ async function deleteInstance(req, res) {
     await bpmnServer.dataStore.deleteInstances({ id: instanceId });
 
     let output = ['Complete ' + instanceId];
-    console.log(" deleted");
-    display(res, 'Show', output);
+    display(req,res, 'Show', output);
 }
 async function shutdown(req, res) {
 
@@ -287,8 +277,7 @@ async function shutdown(req, res) {
     await bpmnServer.cache.shutdown();
 
     let output = ['Complete ' + instanceId];
-    console.log(" deleted");
-    display(res, 'Show', output);
+    display(req,res, 'Show', output);
 }
 async function restart(req, res) {
 
@@ -297,8 +286,7 @@ async function restart(req, res) {
     await bpmnServer.cache.restart();
 
     let output = ['Complete ' + instanceId];
-    console.log(" deleted");
-    display(res, 'Show', output);
+    display(req,res, 'Show', output);
 }
 async function manage(req, res) {
     res.render('manageProcesses',
@@ -329,9 +317,8 @@ async function displayError(res, error) {
     res.send(msg);
 
 }
-async function display(res, title, output, logs = [], items = []) {
+async function display(req,res, title, output, logs = [], items = []) {
 
-    console.log(" Display Started");
     var instances = await bpmnServer.dataStore.findInstances({},'summary');
     let waiting = await bpmnServer.dataStore.findItems({"items.status": 'wait' }); 
 
@@ -358,6 +345,7 @@ async function display(res, title, output, logs = [], items = []) {
         {
             title: title, output: output,
             engines,
+            userId: req.session.userId,
             procs: await bpmnServer.definitions.getList(),
             debugMsgs: [], // Logger.get(),
             waiting: waiting,
@@ -388,7 +376,6 @@ async function instanceDetails(response,instanceId) {
     const def = await bpmnServer.definitions.load(instance.name);
     await def.load();
     const defJson = def.getJson();
-    console.log('def access rules', def.accessRules);
     let output = ['View Process Log'];
     output = show(output);
 
@@ -420,10 +407,8 @@ async function getFields(processName, elementId) {
     let definition = await bpmnServer.definitions.load(processName);
     let node = definition.getNodeById(elementId);
     let extName = Behaviour_names.CamundaFormData;
-    console.log("ext name:" + extName);
     let ext = node.getBehaviour(extName);
     if (ext) {
-        console.log('fields:' + ext.fields.length);
         return ext.fields;
     }
     else
@@ -435,7 +420,6 @@ function parseField(field, value, data) {
         if (value.substring(0, 1) == '[') {
             value = value.substring(1);
             value = value.substring(0, value.length - 1);
-            console.log('array' + value);
             let array = value.split(',');
             value = array;
         }

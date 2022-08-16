@@ -37,9 +37,7 @@ class Cron extends ServerComponent_1.ServerComponent {
             if (Cron.timersStarted)
                 return;
             Cron.timersStarted = true;
-            console.log('start rebuilding processess');
             yield this.definitions.rebuild();
-            console.log('done rebuilding processes');
             this.logger.log("Start timers");
             let promises = [];
             const self = this;
@@ -92,7 +90,6 @@ class Cron extends ServerComponent_1.ServerComponent {
             const params = this;
             const event = params.entry;
             const cron = params.cron;
-            console.log(event, cron);
             yield cron.definitions.updateTimer(event.modelName);
             event.referenceDateTime = new Date().getTime();
             cron.scheduleProcess(event);

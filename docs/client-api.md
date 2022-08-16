@@ -13,6 +13,15 @@ bpmn-server provides api calls to the following objects:
 - [dataStore](#datastore)
 - [definitions](#definitions) 
 
+## WebServices Architecture
+
+Web Applications can use **bpmn-server**  WebServices to manage workflow in a similar manner described here:
+
+- App logic decides to start a Process or throw a Message
+- App UI display to the User list of Processes to Start
+- App UI display to the User list of outstanding User Tasks to execute and prompt user for input parameters (if required)
+- Workflow App can notify involved users of new User Tasks
+
 ## engine:
 
 Perform WebAPI calls to the execution Engine 

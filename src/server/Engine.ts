@@ -121,10 +121,9 @@ class Engine extends ServerComponent implements IEngine{
 	 * @param itemQuery		criteria to retrieve the item
 	 * @param data
 	 */
-	async invoke(itemQuery, data = {}, userKey: string = null): Promise<Execution> {
+	async invoke(itemQuery, data = {}, userKey: string = null, options = {}): Promise<Execution> {
 
 		this.logger.log(`Action:engine.invoke`);
-		console.log(itemQuery);
 		this.logger.log(itemQuery);
 
 		try {
@@ -145,15 +144,23 @@ class Engine extends ServerComponent implements IEngine{
 			}
 			execution.log("Action:engineInvoke " + JSON.stringify(itemQuery));
 
-			await execution.signal(item.id, data);
+			execution.worker = execution.signal(item.id, data);
 
-			this.logger.log(`..engine.continue execution ended saving.. `);
+			if (options['noWait'] == true) {
+				return execution;
+			}
+			else {
+				const waiter = await execution.worker;
+				this.logger.log(`..engine.continue execution ended saving.. `);
 
-			await this.server.dataStore.save();
+				// not needed await this.server.dataStore.save();
 
-			this.logger.log(`.engine.continue ended`);
+				this.logger.log(`.engine.continue ended`);
 
-			return execution;
+				return execution;
+			}
+
+
 		}
 		catch (exc) {
 			return this.logger.error(exc);
@@ -206,7 +213,6 @@ class Engine extends ServerComponent implements IEngine{
 		const events = await this.definitions.findEvents(eventsQuery);
 
 		this.logger.log('..findEvents ' + events.length);
-		console.log(events);
 		if (events.length > 0) {
 
 			const event = events[0];
@@ -219,7 +225,6 @@ class Engine extends ServerComponent implements IEngine{
 		itemsQuery["items.messageId"] = messageId;
 
 		const items = await this.dataStore.findItems(itemsQuery);
-		console.log(items);
 		if (items.length > 0) {
 
 			const item = items[0];
@@ -248,7 +253,6 @@ class Engine extends ServerComponent implements IEngine{
 		const eventsQuery = { "events.messageId": messageId };
 		const events = await this.definitions.findEvents(eventsQuery);
 		this.logger.log('..findEvents '+events.length);
-		console.log(events);
 		if (events.length > 0) {
 
 			const event = events[0];
@@ -261,7 +265,6 @@ class Engine extends ServerComponent implements IEngine{
 		itemsQuery["items.messageId"] = messageId;
 
 		const items = await this.dataStore.findItems(itemsQuery);
-		console.log(items);
 		if (items.length > 0) {
 
 			const item = items[0];

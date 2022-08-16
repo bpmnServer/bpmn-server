@@ -7,7 +7,7 @@ For the model above we will walk-through how to execute it programaticaly.
 
 ## Using bpmn-server from bpmn-client package 
 
-Make sure you have installed 'bpmn-client'  using npm install bpmn-client
+Make sure you have installed 'bpmn-client' using npm install bpmn-client
 
 ```javascript
 const { BPMNServer } = require('bpmn-client');
@@ -25,6 +25,7 @@ async function test() {
 
     const client = new BPMNClient(HOST, PORT, API_KEY);
 // or if you had .net setup you could use:
+
    const client = new BPMNClient(process.env.HOST, process.env.PORT, process.env.API_KEY);
 
     const engine = server.engine;
@@ -60,7 +61,7 @@ BPMN definitions are saved our catalog as defined by the [configuration](../setu
 We now need to specify which node to invoke, keep in mind this can happen any time later
 so we need to identify the instance as well as the item, but since the ItemId is unique we can use it for the query.
 
-The [query](../query.md) is passed to MongoDB to select the appropriate item.
+The [query](../DataQuery.md) is passed to MongoDB to select the appropriate item.
    
 ```javascript
 

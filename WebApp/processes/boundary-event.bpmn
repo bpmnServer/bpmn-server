@@ -21,10 +21,10 @@
     <bpmn:boundaryEvent id="BoundaryEvent_timer" cancelActivity="false" attachedToRef="user_task">
       <bpmn:outgoing>flow_boundary_task2</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_07xu06a">
-        <bpmn:timeDuration>PT2S</bpmn:timeDuration>
+        <bpmn:timeDuration>PT5S</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
-    <bpmn:boundaryEvent id="BoundaryEvent_message" cancelActivity="false" attachedToRef="user_task">
+    <bpmn:boundaryEvent id="BoundaryEvent_message" cancelActivity="true" attachedToRef="user_task">
       <bpmn:messageEventDefinition />
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="flow_start_user" sourceRef="event_start" targetRef="user_task" />

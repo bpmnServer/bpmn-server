@@ -129,7 +129,6 @@ class ModelsDatastoreDB extends ServerComponent_1.ServerComponent {
     import(data) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('inserting');
-            console.log(data.length);
             return yield this.db.insert(this.dbConfiguration.db, Definition_collection, data);
         });
     }

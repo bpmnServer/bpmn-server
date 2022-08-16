@@ -37,9 +37,7 @@ class Cron  extends ServerComponent implements ICron {
 			return;
 		Cron.timersStarted = true;
 
-		console.log('start rebuilding processess');
 		await this.definitions.rebuild();
-		console.log('done rebuilding processes');
 
 		this.logger.log("Start timers");
 
@@ -98,7 +96,6 @@ class Cron  extends ServerComponent implements ICron {
 		const params: any = this as any;
 		const event = params.entry;
 		const cron = params.cron;
-		console.log(event,cron);
 
 		await cron.definitions.updateTimer(event.modelName);
 

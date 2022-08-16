@@ -1,0 +1,199 @@
+
+> bpmn-server.webapp@1.2.1 test E:\dev\node\bpmnServer\WebApp
+> mocha -color=false -exit test/feature
+
+bpmn-server version 1.2.4
+start rebuilding processess
+bpmn-server version 1.2.4
+-------- car.js -----------
+bpmn-server version 1.2.4
+-------- carAccess.js -----------
+bpmn-server version 1.2.4
+bpmn-server version 1.2.4
+bpmn-server version 1.2.4
+bpmn-server version 1.2.4
+Configuration {
+  definitionsPath: 'E:\\dev\\node\\bpmnServer\\WebApp\\test/../processes/',
+  templatesPath: 'E:\\dev\\node\\bpmnServer\\WebApp\\test/../emailTemplates',
+  timers: { forceTimersDelay: 1000, precision: 3000 },
+  database: {
+    MongoDB: {
+      db_url: 'mongodb+srv://analytics:analytics-password@cluster0.vom71.mongodb.net/?retryWrites=true&w=majority',
+      db: 'bpmn'
+    }
+  },
+  apiKey: '12345',
+  logger: [Function: logger],
+  definitions: [Function: definitions],
+  appDelegate: [Function: appDelegate],
+  dataStore: [Function: dataStore]
+}
+
+
+  Feature: Boundary Event
+    Scenario: do the task right-away- events will end
+      √ Given Start boundary-event Process (679ms)
+      √ Then check for output
+      √ When I invoke user_task (134ms)
+      √ When I dont wait for events to complete
+writing to:E:\dev\node\bpmnServer\WebApp\test\feature/../logs/boundary-event1.log 109
+      √ And write log file to E:\dev\node\bpmnServer\WebApp\test\feature/../logs/boundary-event1.log
+    Scenario: Dont do the task right - away, wait for timer to fire
+done rebuilding processes
+      √ Given Start boundary-event Process (551ms)
+      √ Then check for output
+      √ When wait for the timer to fire (2519ms)
+      √ When I wait for events to complete
+writing to:E:\dev\node\bpmnServer\WebApp\test\feature/../logs/boundary-event2.log 114
+      √ And write log file to E:\dev\node\bpmnServer\WebApp\test\feature/../logs/boundary-event2.log
+
+  Feature: Event Based Gateway
+    Scenario: All
+      √ Given Start Process (738ms)
+      √ Then events should fire and wait
+      √ When we wait a bit for timer to complete (3081ms)
+      √ Then after wait - timer should have completed
+      √ And other events complete as well
+      √ And also reminder task will fire
+      √ When we issue reminder (139ms)
+writing to:E:\dev\node\bpmnServer\WebApp\test\feature/../logs/Event Based Gateway.log 218
+      √ And write log file toEvent Based Gateway.log
+
+  Feature: Buy Used Car- clean and repair
+    Scenario: Simple
+      √ Given Start Buy Used Car Process (1009ms)
+      √ Then check for output
+      √ When a process defintion is executed (134ms)
+      √ When engine get (39ms)
+      √ Then check for output to have engine
+      √ And Clean it (128ms)
+      √ And Repair it (133ms)
+      √ And Drive it 1 (131ms)
+      √ And Case Complete
+writing to:E:\dev\node\bpmnServer\WebApp\test\feature/../logs/car.log 310
+      √ And write log file to E:\dev\node\bpmnServer\WebApp\test\feature/../logs/car.log
+
+  Feature: CarAccess.js - Checking for Access Rules
+    Scenario: Buy Used Car -complete
+      √ Given Start Buy Used Car Process (563ms)
+      √ Then check for output
+      √ When a process defintion is executed (130ms)
+      √ Then check for output to have engine
+      √ And Clean it (130ms)
+      √ And Repair it (135ms)
+      √ And Drive it 1 (126ms)
+      √ And Case Complete
+ Items 17  auth  1 assign 2 notes 2
+      √ And Check Rules
+writing to:E:\dev\node\bpmnServer\WebApp\test\feature/../logs/carAccess.log 310
+filename: E:\dev\node\bpmnServer\WebApp\test\feature\carAccess.js
+      √ And write log file to E:\dev\node\bpmnServer\WebApp\test\feature/../logs/carAccess.log
+
+  Feature: Test Defintions
+    Scenario: defs.js for:scripts and services
+bpmn-server version 1.2.4
+      √ Given a bpmn source 
+      √ When a process defintion is executed
+      √ And wait a bit 
+      √ And User Task
+      √ And Case Complete
+writing to:E:\dev\node\bpmnServer\WebApp\test\feature/../logs/scripts and services.log 0
+      √ And write log file toscripts and services.log
+
+  Feature: DataStore
+    Scenario: Find Items
+bpmn-server version 1.2.4
+5180 instnace Id: cdb12959-df4c-42a3-8594-5155bfbc3d1e
+      √ Given execute a process to generate data (577ms)
+      √ And get an item
+      √ And find items by item id only
+      √ And find items by instance and item elemetnId 
+      √ And find items by caseId and item elementId 
+      √ And check for items "wait"  (40ms)
+writing to:E:\dev\node\bpmnServer\WebApp\test\feature/../logs/ds.log 42
+      √ And write log file tods.log
+    Scenario: Find Instances
+bpmn-server version 1.2.4
+9750
+      √ Given execute a process to generate data (640ms)
+      √ And get an item
+      √ And find instance by instance id only (40ms)
+      √ And find instance by itemd id  (42ms)
+      √ And find instance by caseId (39ms)
+writing to:E:\dev\node\bpmnServer\WebApp\test\feature/../logs/ds2.log 38
+      √ And write log file tods.log
+
+  Feature: Event Based Gateway
+    Scenario: All
+      √ Given Start Process (567ms)
+      √ Then events should fire and wait
+13
+      √ When we wait a bit for timer to complete (3088ms)
+      √ Then after wait - timer should have completed
+      √ And other events complete as well
+      √ And also reminder task will fire
+      √ When we issue reminder (133ms)
+writing to:E:\dev\node\bpmnServer\WebApp\test\feature/../logs/Event Based Gateway.log 219
+      √ And write log file toEvent Based Gateway.log
+
+  Feature: Event Based Gateway
+    Scenario: All
+      √ Given Start Process (553ms)
+      √ Then events should fire and wait
+      √ When we wait a bit for timer to complete (3089ms)
+      √ Then after wait - timer should have completed
+      √ And other events complete as well
+      √ And also reminder task will fire
+      √ When we issue reminder (131ms)
+writing to:E:\dev\node\bpmnServer\WebApp\test\feature/../logs/Event Based Gateway.log 218
+      √ And write log file toEvent Based Gateway.log
+
+  Feature: GetFields
+    Scenario: All path
+bpmn-server version 1.2.4
+      √ Given a bpmn source 
+      √ When a process defintion is executed
+
+  Feature: Loop
+    Scenario: All path
+This is the start event
+=====from script { records: [ 1, 2, 3, 4, 5 ] }
+delaying ... 2800
+delayed is done.
+delaying ... 2700
+delayed is done.
+delaying ... 2600
+delayed is done.
+delaying ... 2500
+delayed is done.
+delaying ... 2400
+delayed is done.
+      √ Given a bpmn source with one user task (13599ms)
+      √ And User Task
+writing to:E:\dev\node\bpmnServer\WebApp\test\feature/../logs/loop.log 254
+      √ And write log file toloop.log
+
+  Feature: messageFlow
+    Scenario: All path
+bpmn-server version 1.2.4
+      √ Given a bpmn source with one user task
+      √ When a process defintion is executed (557ms)
+      √ And Case Complete
+writing to:E:\dev\node\bpmnServer\WebApp\test\feature/../logs/messageFlow.log 134
+      √ And write log file tomessageFlow.log
+
+  Feature: TimerSample
+    Scenario: All path
+bpmn-server version 1.2.4
+      √ Given a bpmn source with one user task
+      √ When a process defintion is executed (525ms)
+delaying ... 4500
+delayed is done.
+      √ And wait a bit  (4546ms)
+      √ And Case Complete
+writing to:E:\dev\node\bpmnServer\WebApp\test\feature/../logs/timer-sample.log 103
+      √ And write log file totimer-sample.log
+
+
+  87 passing (39s)
+

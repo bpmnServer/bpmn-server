@@ -136,7 +136,6 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
     }
     async import(data) {
         console.log('inserting');
-        console.log(data.length);
         return await this.db.insert(this.dbConfiguration.db, Definition_collection, data);
 
     }

@@ -18,6 +18,7 @@ else {
     console.log("please run this script from the folder containing 'configuration.js'");
 }
 
+
 async function install() {
 
     console.log('Installing a new Database');
@@ -28,30 +29,23 @@ async function install() {
     console.log(configuration);
     console.log(configuration.database);
 
-    const server = new BPMNServer(configuration);
+    const server = new BPMNServer(configuration, null, { cron: false });
 
     const dataStore = server.dataStore;
 
     const modelsDataStore = server.definitions;
+    try {
+        await dataStore.install();
 
-    await dataStore.install();
+        await modelsDataStore.install();
 
-    await modelsDataStore.install();
-    /* not needed
-    const sampleModelsJson = fs.readFileSync(__dirname+'/sampleModels.json',
-            { encoding: 'utf8', flag: 'r' });
+    }
+    catch (exc) {
+        console.log(exc);
+    }
 
-    const models = JSON.parse(sampleModelsJson);
-    models.forEach(model => {
-        model._id = undefined;
-    });
-
-
-    const res = await modelsDataStore.import(models);
-    console.log(res);
-    */
     console.log('---done.');
-
+    process.exit();
 }
 
 

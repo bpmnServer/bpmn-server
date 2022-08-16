@@ -7,7 +7,6 @@ const CacheManager_1 = require("./CacheManager");
 const Cron_1 = require("./Cron");
 const events_1 = require("events");
 const ACL_1 = require("./ACL");
-const _version_ = "1.2.0";
 const fs = require('fs');
 /**
  *	The main class of Server Layer
@@ -53,7 +52,14 @@ class BPMNServer {
         this.cron.start();
     }
     static getVersion() {
-        return _version_;
+        const configPath = __dirname + '/../../package.json';
+        if (fs.existsSync(configPath)) {
+            var configuration = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+            var _version = configuration['version'];
+            return _version;
+        }
+        else
+            return 'cannot locate package.json current: ' + __dirname + ' path ' + configPath;
     }
     static get engine() {
         return BPMNServer.getInstance().engine;

@@ -76,7 +76,6 @@ class BusinessRuleTask extends ServiceTask {
         const path = config.definitionsPath;
 
         console.log('Business Rule Task'); //.loopCharacteristics.$attrs["camunda:collection"];
-        console.log(this.def.$attrs); //.loopCharacteristics.$attrs["camunda:collection"];
         if (this.def.$attrs && this.def.$attrs["camunda:decisionRef"]) {
 
             throw new Error("Business Rule Task Not supported in this release.");

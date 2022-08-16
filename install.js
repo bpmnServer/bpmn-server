@@ -30,25 +30,18 @@ function install() {
         console.log('current directory is ' + process.cwd());
         console.log(configuration);
         console.log(configuration.database);
-        const server = new _1.BPMNServer(configuration);
+        const server = new _1.BPMNServer(configuration, null, { cron: false });
         const dataStore = server.dataStore;
         const modelsDataStore = server.definitions;
-        yield dataStore.install();
-        yield modelsDataStore.install();
-        /* not needed
-        const sampleModelsJson = fs.readFileSync(__dirname+'/sampleModels.json',
-                { encoding: 'utf8', flag: 'r' });
-    
-        const models = JSON.parse(sampleModelsJson);
-        models.forEach(model => {
-            model._id = undefined;
-        });
-    
-    
-        const res = await modelsDataStore.import(models);
-        console.log(res);
-        */
+        try {
+            yield dataStore.install();
+            yield modelsDataStore.install();
+        }
+        catch (exc) {
+            console.log(exc);
+        }
         console.log('---done.');
+        process.exit();
     });
 }
 //# sourceMappingURL=install.js.map

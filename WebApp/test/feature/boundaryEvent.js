@@ -24,7 +24,7 @@ Feature('Boundary Event', () => {
 ///```
 ///## Do the task right-away
 ///```javascript
-        Scenario('do the task right-away- events will cancel', () => {
+        Scenario('do the task right-away- events will end', () => {
             Given('Start '+ name + ' Process',async () => {
                 response = await server.engine.start(name, {});
             });

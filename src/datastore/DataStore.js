@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DataStore = void 0;
 const ServerComponent_1 = require("../server/ServerComponent");
-const Repository_1 = require("../acl/Repository");
+const acl_1 = require("../acl/");
 const fs = require('fs');
 const MongoDB = require('./MongoDB').MongoDB;
 const Instance_collection = 'wf_instances';
@@ -67,7 +67,6 @@ class DataStore extends ServerComponent_1.ServerComponent {
                 if (state.saved !== this.execution.instance.saved) {
                     console.log("********* ERROR OLD State****");
                 }
-                console.log('1 Instance data:', state.id, state.data, "items", state.items.length);
                 yield this.saveInstance(state, this.execution.getItems());
                 this.execution.instance.saved = new Date().toISOString();
                 ;
@@ -76,7 +75,6 @@ class DataStore extends ServerComponent_1.ServerComponent {
                     this.logger.log('DataStore:while i was busy other changes happended' + this.saveCounter);
                     currentCounter = this.saveCounter;
                     state = yield this.execution.getState();
-                    console.log('2 Instance data:', state.id, state.data, "items", state.items.length);
                     yield this.saveInstance(state, this.execution.getItems());
                     this.execution.instance.saved = new Date().toISOString();
                     ;
@@ -136,7 +134,6 @@ class DataStore extends ServerComponent_1.ServerComponent {
     saveInstance(instance, items) {
         return __awaiter(this, void 0, void 0, function* () {
             this.logger.log("Saving...");
-            console.log('3 Instance data:', instance.id, instance.data, "items", instance.items.length, items.length);
             //var json = JSON.stringify(instance.state, null, 2);
             const tokensCount = instance.tokens.length;
             let itemsCount = instance.items.length;
@@ -144,7 +141,6 @@ class DataStore extends ServerComponent_1.ServerComponent {
             var recs;
             if (!instance.saved) {
                 instance.saved = new Date().toISOString();
-                console.log(instance.data);
                 //this.promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]));
                 //this.promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]));
                 yield this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]);
@@ -189,12 +185,12 @@ class DataStore extends ServerComponent_1.ServerComponent {
             else if (results.length > 1)
                 throw Error(" More than one record found " + results.length + JSON.stringify(query));
             const rec = results[0];
-            this.convertColl(rec.authorizations, Repository_1.Authorization);
-            this.convertColl(rec.involvements, Repository_1.Involvement);
+            this.convertColl(rec.authorizations, acl_1.Authorization);
+            this.convertColl(rec.involvements, acl_1.Involvement);
             rec.items.forEach(item => {
-                this.convertColl(item.authorizations, Repository_1.Authorization);
-                this.convertColl(item.assignments, Repository_1.Assignment);
-                this.convertColl(item.notifications, Repository_1.Notification);
+                this.convertColl(item.authorizations, acl_1.Authorization);
+                this.convertColl(item.assignments, acl_1.Assignment);
+                this.convertColl(item.notifications, acl_1.Notification);
             });
             return rec;
         });
@@ -234,9 +230,9 @@ class DataStore extends ServerComponent_1.ServerComponent {
         just like MongoDB
             * itemId			{ items { id : value } }
             * itemKey			{ items {key: value } }
-            * instance, task	{ instance: { id: instanceId }, items: { elementId: value }}
-            * message			{ items: { messageId: nameofmessage, key: value } {}
-            * status			{ items: {status: 'wait' } }
+            * instance, task	{  id: instanceId , items.elementId: value }
+            * message			{ items.messageId: nameofmessage, key: value } {}
+            * status			{ items.status: 'wait' } }
             * custom: { query: query, projection: projection }
 
             
@@ -286,18 +282,12 @@ class DataStore extends ServerComponent_1.ServerComponent {
         if (criteria.query) {
             let query = criteria.query;
             let projection;
-            console.log('checking  criteria projection?');
-            console.log(criteria.projection);
             if (!criteria.projection) {
-                console.log('no projection');
                 Object.keys(query).forEach(key => {
-                    console.log(' key:' + key);
                     if (key.startsWith('items.')) {
                         let val = query[key];
                         key = key.replace('items.', '');
                         match[key] = val;
-                        console.log(' key:' + key + " " + val);
-                        console.log(match);
                     }
                 });
                 if (match == {})

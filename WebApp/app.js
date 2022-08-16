@@ -32,7 +32,8 @@ class WebApp {
         this.initExpress();
         this.initMongo();
         //NOPASSPORT 		this.initPassport();
-        this.bpmnServer = new _1.BPMNServer(configuration_1.configuration);
+        const wflogger = new _1.Logger({ toConsole: false });
+        this.bpmnServer = new _1.BPMNServer(configuration_1.configuration, wflogger);
         this.setupExpress();
     }
     /**
@@ -81,7 +82,6 @@ class WebApp {
         });
         mongoose.connection.on('open', function () {
             console.log('db connection open');
-            console.log("MongoDB started ", process.env.MONGODB_URI);
         });
     }
     /* //NOPASSPORT

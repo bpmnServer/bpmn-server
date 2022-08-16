@@ -9,7 +9,6 @@ import { Cron } from './Cron';
 import { EventEmitter } from 'events';
 import { ACL, IAM } from './ACL';
 
-const _version_ = "1.2.0";
 
 const fs = require('fs');
 /**
@@ -80,7 +79,19 @@ class BPMNServer implements IBPMNServer {
 	}
 
 	static getVersion() {
-		return _version_;
+
+		const configPath = __dirname+'/../../package.json';
+
+		if (fs.existsSync(configPath)) {
+
+			var configuration = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+			var _version = configuration['version'];
+			return _version;
+		}
+		else
+			return 'cannot locate package.json current: ' + __dirname+' path '+configPath;
+
+
     }
 	public static get engine() {
 		return BPMNServer.getInstance().engine;

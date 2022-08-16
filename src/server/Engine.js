@@ -105,10 +105,9 @@ class Engine extends ServerComponent_1.ServerComponent {
      * @param itemQuery		criteria to retrieve the item
      * @param data
      */
-    invoke(itemQuery, data = {}, userKey = null) {
+    invoke(itemQuery, data = {}, userKey = null, options = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             this.logger.log(`Action:engine.invoke`);
-            console.log(itemQuery);
             this.logger.log(itemQuery);
             try {
                 const items = yield this.server.dataStore.findItems(itemQuery);
@@ -124,11 +123,17 @@ class Engine extends ServerComponent_1.ServerComponent {
                     execution.currentUser = this.iam.getCurrentUser(userKey);
                 }
                 execution.log("Action:engineInvoke " + JSON.stringify(itemQuery));
-                yield execution.signal(item.id, data);
-                this.logger.log(`..engine.continue execution ended saving.. `);
-                yield this.server.dataStore.save();
-                this.logger.log(`.engine.continue ended`);
-                return execution;
+                execution.worker = execution.signal(item.id, data);
+                if (options['noWait'] == true) {
+                    return execution;
+                }
+                else {
+                    const waiter = yield execution.worker;
+                    this.logger.log(`..engine.continue execution ended saving.. `);
+                    // not needed await this.server.dataStore.save();
+                    this.logger.log(`.engine.continue ended`);
+                    return execution;
+                }
             }
             catch (exc) {
                 return this.logger.error(exc);
@@ -173,7 +178,6 @@ class Engine extends ServerComponent_1.ServerComponent {
             const eventsQuery = { "events.messageId": messageId };
             const events = yield this.definitions.findEvents(eventsQuery);
             this.logger.log('..findEvents ' + events.length);
-            console.log(events);
             if (events.length > 0) {
                 const event = events[0];
                 return yield this.start(event.modelName, data, null, event.elementId);
@@ -183,7 +187,6 @@ class Engine extends ServerComponent_1.ServerComponent {
                 itemsQuery = Object.assign({}, matchingQuery);
             itemsQuery["items.messageId"] = messageId;
             const items = yield this.dataStore.findItems(itemsQuery);
-            console.log(items);
             if (items.length > 0) {
                 const item = items[0];
                 return yield this.invoke({ "items.id": item.id }, data);
@@ -210,7 +213,6 @@ class Engine extends ServerComponent_1.ServerComponent {
             const eventsQuery = { "events.messageId": messageId };
             const events = yield this.definitions.findEvents(eventsQuery);
             this.logger.log('..findEvents ' + events.length);
-            console.log(events);
             if (events.length > 0) {
                 const event = events[0];
                 return yield this.start(event.modelName, data, null, event.elementId);
@@ -220,7 +222,6 @@ class Engine extends ServerComponent_1.ServerComponent {
                 itemsQuery = Object.assign({}, matchingQuery);
             itemsQuery["items.messageId"] = messageId;
             const items = yield this.dataStore.findItems(itemsQuery);
-            console.log(items);
             if (items.length > 0) {
                 const item = items[0];
                 return yield this.invoke({ "items.id": item.id }, data);

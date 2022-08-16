@@ -4,9 +4,9 @@ import { BPMNServer } from '../server';
 const fs = require('fs');
 const path = require('path');
 
-import { DesignateRule, NotifyRule, AssignRule ,AuthorizeRule } from '../acl/Rules';
+import { DesignateRule, NotifyRule, AssignRule ,AuthorizeRule } from '../acl/';
 
-import { User, Assignment } from '../acl/Repository';
+import { User, Assignment } from '../acl/';
 import { IACL, IIAM } from "../interfaces/server";
 const { v4: uuidv4 } = require('uuid');
 
@@ -33,8 +33,22 @@ class IAM implements IIAM {
     /**
      * Returns a key
      * @param userId
-     * @param password
      */
+    getRemoteUser(userId) {
+        let key;
+        IAM.currentUsers.forEach((user,ukey) => {
+            if (user.userId === userId) {
+                key = ukey;
+            }
+        });
+        if (key)
+            return key;
+        let user = new User();
+        user.userId = userId;
+        key = uuidv4();
+        IAM.currentUsers.set(key, user)
+        return key;
+    }
 
     async login(userId, password) {
         const users = await User.Repository(this.server).find({ userId: userId, password: password });
@@ -50,9 +64,11 @@ class IAM implements IIAM {
      * @param key
      */
     getCurrentUser(key): User {
+        console.log(IAM.currentUsers);
         const user = IAM.currentUsers.get(key)
         return user;
     }
+
     async getUser(userId): Promise<User> {
         const users = await User.Repository(this.server).find({ userId: userId });
         return users[0];
@@ -108,7 +124,6 @@ class ACL implements IACL {
     }
     loadAccessRules(processName) {
 
-        console.log('Loading rules for ' + processName);
         const filePath = this.server.configuration.definitionsPath + '/' + processName + '.json';
         const rules = [];
 
@@ -132,7 +147,6 @@ class ACL implements IACL {
                 let spec = specs.accessRules[i];
                 rules.push(ACL.convertRule(spec));
             }
-            console.log("Rules loaded",rules.length);
         }
         return rules;
 
@@ -158,7 +172,6 @@ class ACL implements IACL {
         var seq = 0;
         const self = this;
         listener.on('process.loaded', function ({ context, event }) {
-            console.log('process.loaded', context.constructor.name);
 
             const definition = context;
             definition.accessRules = self.loadAccessRules(definition.name);

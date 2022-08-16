@@ -1,6 +1,6 @@
 h3 Processes (BPMN Definitions)
 	script(type="text/javascript").
-		var selectedProcess;
+		var selectedProcess,userId;
 
 		$(window).on('pageshow', function(){
 
@@ -15,9 +15,22 @@ h3 Processes (BPMN Definitions)
 			setLinks();
 
 		});
+
 		$(document).ready(function(){
+			userId=$("userId").val();
+
 			$("#process").change(function(){
 				selectedProcess = $(this).children("option:selected").val();
+				$("#svg").attr("src", "/model/getSVg/"+selectedProcess);
+				setLinks();
+			});
+			$("#userId").change(function(){
+				var userId=$(this).val();
+				  $.get("userId?userId="+userId, function(data, status){
+						});
+			});
+			$("#userId").keyup(function(){
+				userId=$(this).val();
 				setLinks();
 			});
 		});
@@ -25,15 +38,17 @@ h3 Processes (BPMN Definitions)
 		{
 			if (selectedProcess)
 				{
-				$("#svg").attr("src", "/model/getSVg/"+selectedProcess);
+				var ext=selectedProcess+"/?userId="+userId;
 
-				$('#execLink').attr("href","/execute/"+selectedProcess);
-				$('#execInputLink').attr("href","/executeInput/"+selectedProcess);
-				$('#modelLink').attr("href","/model/edit/"+selectedProcess);
-				$('#deleteLink').attr("href","/model/delete/"+selectedProcess);
-				$('#renameLink').attr("href","/model/rename/"+selectedProcess);
+				$('#execLink').attr("href","/execute/"+ext);
+				$('#execButton').attr("value","/execute/"+ext);
+				$('#execInputLink').attr("href","/executeInput/"+ext);
+				$('#modelLink').attr("href","/model/edit/"+ext);
+				$('#deleteLink').attr("href","/model/delete/"+ext);
+				$('#renameLink').attr("href","/model/rename/"+ext);
 				}
 		}
+
 div(id="processes")
 	table
 		tr 
@@ -55,7 +70,7 @@ div(id="processes")
 
 				td
 					div(id="image",style="overflow:auto;")
-						image(id="svg",alt="No image to display",style="max-width: 100%;max-height: 600px;padding: 0;margin: 0;background: lightgray;")
+						image(id="svg",alt="No image to display",style="max-width: 100%;max-height: 270px;padding: 0;margin: 0;background: lightgray;")
 
 
 div(id="actions")
@@ -68,29 +83,37 @@ div(id="actions")
 					table(class="buttonsTable")
 						tr
 							td  
-									a(id='execLink',href="javascript:alert('please select a Process');") Execute 
+								a(id='execLink',href="javascript:alert('please select a Process');") 
+									div Execute
 						tr
 							td  
-									a(id='execInputLink',href="javascript:alert('please select a Process');") Execute with Options
+								a(id='execInputLink',href="javascript:alert('please select a Process');") 
+									div Execute with Options
 						tr
 							td  
-									a(id='modelLink',href="javascript:alert('please select a Process');") Model
+								a(id='modelLink',href="javascript:alert('please select a Process');")
+									div Model
 				td
 					table(class="buttonsTable")
 						tr
 							td  
-									a(id='deleteLink',href="javascript:alert('please select a Process');") Delete
+									a(id='deleteLink',href="javascript:alert('please select a Process');")
+										div Delete
 						tr
 							td  
-									a(id='renameLink',href="javascript:alert('please select a Process');") Rename
+									a(id='renameLink',href="javascript:alert('please select a Process');")
+										div Rename
 				td
 					table(class="buttonsTable")
 						tr
 							td  
-									a(href="/model/new") New Model
+									a(href="/model/new")
+										div New Model
 						tr
 							td  
-									a(href="/model/import") Import
+									a(href="/model/import") 
+										div Import
 						tr
 							td  
-									a(href="/model/export") Export
+									a(href="/model/export") 
+										div Export

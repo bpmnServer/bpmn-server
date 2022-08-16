@@ -229,7 +229,6 @@ class Execution extends server_1.ServerComponent {
             // save here :
             const state = this.getState();
             yield this.server.dataStore.saveInstance(state, this.getItems());
-            console.log("Execution:saving is complete");
         });
     }
     getItems(query = null) {

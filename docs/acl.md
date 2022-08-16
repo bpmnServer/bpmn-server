@@ -6,15 +6,21 @@ Access Control Layer
 # Architecture
 
 # Initialization
+## User Login
+
+    const userKey = await server.iam.login("user1", 'password');
+
+    let user = server.iam.getCurrentUser(userKey);
+
 ## CLI
 
 ```javascript
 
     const server = new BPMNServer(configuration, logger, { cron: false });
 
-    const conn = await server.acl.login("user1", 'password');
-
-    const response= conn.engine.start(startNodeId,data,userkYe);
+    const userKey = await server.acl.login("user1", 'password');
+    const options={};
+    const response= conn.engine.start(startNodeId,data,options,userKey);
 ``` 
 
 ## Web
@@ -30,21 +36,20 @@ Access Control Layer
 
     // 3. at calls
 
-    const conn = await server.acl.login("user1", 'password');
-    await conn.engine.start(startNodeId,data,request.session.userKey);  
+    await server.engine.start(startNodeId,data,{},request.session.userKey);  
 
 ``` 
 
 ## WebAPI/REST
+
+    Since WebAPP is already authenticated by **APIKey** is trusted to pass user object
 
 ```javascript
 
     // get api-key from header
     // url/engine/start
 
-    const conn = await server.acl.login("user1", 'password');
-    await conn.engine.start(startNodeId,data);  
-    const response=await client.engine.start(startNodeId,data);  
+    await server.engine.start(startNodeId,data,{},{userId:'user1'});  
 
 ``` 
 ## BPMN as a service

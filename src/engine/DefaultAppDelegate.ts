@@ -41,7 +41,6 @@ class DefaultAppDelegate implements IAppDelegate {
         const msgId = item.node.messageId;
         item.context.logger.log("Message Issued" + msgId);
         // issue it back for others to receive
-        console.log(item.context.engine);
         const resp = await item.context.engine.throwMessage(msgId, data, messageMatchingKey);
         if (resp && resp.instance) {
             item.context.logger.log(" invoked another process " + resp.instance.id + " for " + resp.instance.name);

@@ -12,6 +12,20 @@ and here
 
 ### Changed
 -->
+## Release 1.2.4    - 2022-08-08
+
+### Added:
+
+- Access Control Rules 
+- Client API can specify the userId 
+- Improved documentation
+
+
+## Release 1.2.0    - 2022-08-08
+
+Added WebAPI calls
+Added Remote access through bpmn-client package
+improved documentation
 
 ## Release 1.1.4    - 2020-07-21
 

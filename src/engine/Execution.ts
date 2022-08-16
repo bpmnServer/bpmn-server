@@ -8,7 +8,7 @@ import { Element, Node, Flow , Definition, CallActivity, Process } from '../elem
 import { EXECUTION_EVENT, NODE_ACTION, FLOW_ACTION, TOKEN_STATUS, EXECUTION_STATUS, ITEM_STATUS, IDefinition } from '../../';
 import { IInstanceData, IBPMNServer, IExecution, IAppDelegate , DefaultAppDelegate } from '../../';
 import { EventEmitter } from 'events';
-import { Authorization, Involvement } from '../acl/Repository';
+import { Authorization, Involvement } from '../acl/';
 import { BPMNServer, ServerComponent } from '../server';
 import { InstanceObject } from './Model';
 
@@ -273,7 +273,6 @@ class Execution extends ServerComponent implements IExecution {
 
         const state = this.getState();
         await this.server.dataStore.saveInstance(state, this.getItems());
-        console.log("Execution:saving is complete")
 
     }
     getItems(query=null): Item[] {

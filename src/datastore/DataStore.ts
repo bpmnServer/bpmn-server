@@ -2,7 +2,7 @@ import { Execution } from '../engine/Execution';
 import { IDataStore, IBPMNServer, IInstanceData } from '../interfaces';
 
 import { ServerComponent } from '../server/ServerComponent';
-import { Authorization, Involvement, Assignment, Notification } from '../acl/Repository';
+import { Authorization, Involvement, Assignment, Notification } from '../acl/';
 import { ACL } from '../server/ACL';
 
 
@@ -73,7 +73,6 @@ class DataStore extends ServerComponent  implements IDataStore {
 			if (state.saved !== this.execution.instance.saved) {
 				console.log("********* ERROR OLD State****");
 			}
-			console.log('1 Instance data:',state.id, state.data, "items", state.items.length);
 
 			await this.saveInstance(state, this.execution.getItems())
 			this.execution.instance.saved = new Date().toISOString();;
@@ -83,7 +82,6 @@ class DataStore extends ServerComponent  implements IDataStore {
 				this.logger.log('DataStore:while i was busy other changes happended' + this.saveCounter);
 				currentCounter = this.saveCounter;
 				state = await this.execution.getState();
-				console.log('2 Instance data:',state.id, state.data, "items", state.items.length);
 				await this.saveInstance(state, this.execution.getItems())
 				this.execution.instance.saved = new Date().toISOString();;
 				this.logger.log('DataStore: saved again ' + this.execution.instance.saved);
@@ -148,7 +146,6 @@ class DataStore extends ServerComponent  implements IDataStore {
 	private async saveInstance(instance, items) {
 		this.logger.log("Saving...");
 
-		console.log('3 Instance data:',instance.id, instance.data, "items", instance.items.length,items.length);
 
 		//var json = JSON.stringify(instance.state, null, 2);
 		const tokensCount = instance.tokens.length;
@@ -158,7 +155,6 @@ class DataStore extends ServerComponent  implements IDataStore {
 		var recs;
 		if (!instance.saved) {
 			instance.saved = new Date().toISOString();
-			console.log(instance.data);
 
 			//this.promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]));
 			//this.promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]));
@@ -263,9 +259,9 @@ class DataStore extends ServerComponent  implements IDataStore {
 		just like MongoDB
 	        * itemId			{ items { id : value } }
             * itemKey			{ items {key: value } }
-            * instance, task	{ instance: { id: instanceId }, items: { elementId: value }}
-            * message			{ items: { messageId: nameofmessage, key: value } {}
-            * status			{ items: {status: 'wait' } }
+            * instance, task	{  id: instanceId , items.elementId: value }
+            * message			{ items.messageId: nameofmessage, key: value } {}
+            * status			{ items.status: 'wait' } }
             * custom: { query: query, projection: projection }
 
             
@@ -321,18 +317,13 @@ private translateCriteria2(criteria) {
 		if (criteria.query) {
 			let query = criteria.query;
 			let projection;
-			console.log('checking  criteria projection?');
-			console.log(criteria.projection);
 			if (!criteria.projection) {
-				console.log('no projection');
+
 				Object.keys(query).forEach(key => {
-					console.log(' key:' + key);
 					if (key.startsWith('items.')) {
 						let val = query[key];
 						key = key.replace('items.', '');
 						match[key] = val;
-						console.log(' key:' + key + " " + val);
-						console.log(match);
 					}
 				});
 				if (match == {})

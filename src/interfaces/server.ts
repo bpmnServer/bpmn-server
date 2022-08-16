@@ -67,7 +67,7 @@ interface IEngine extends IServerComponent {
      * @param itemQuery		criteria to retrieve the item
      * @param data
      */
-    invoke(itemQuery: any, data?: {}, userKey?: string): Promise<IExecution>;
+    invoke(itemQuery: any, data?: {}, userKey?: string, options?: {}): Promise<IExecution>;
     /**
      *
      * Invoking an event (usually start event of a secondary process) against an existing instance
@@ -107,6 +107,7 @@ interface IEngine extends IServerComponent {
 }
 interface IIAM {
     login(userId, password);
+    getRemoteUser(userId); 
     getCurrentUser(key): IUser;
     getUser(userId): Promise<IUser>;
     getUsersForGroup(userGroup): Promise<IUser[]>;

@@ -18,7 +18,7 @@ var configuration = new __1.Configuration({
     },
     database: {
         MongoDB: {
-            db_url: "mongodb://localhost:27017?retryWrites=true&w=majority",
+            db_url: process.env.MONGO_DB_URL,
             db: 'bpmn'
         }
     },
