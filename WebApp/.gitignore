@@ -2,9 +2,8 @@
 /obj
 *.log
 /bin
-/webApp/node_modules
-/webApp/obj
-/webApp/bin
-*.log
+/bpmnServer/node_modules
+/bpmnServer/obj
+/bpmnServer/bin
 
-/bin
+

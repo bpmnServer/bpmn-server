@@ -5,7 +5,7 @@ var bodyParser = require('body-parser')
 
 const FS = require('fs');
 
-import { BPMNServer, dateDiff, Behaviour_names   } from '..';
+import { BPMNServer, dateDiff, Behaviour_names, CacheManager   } from '..';
 import { configuration as config} from '../configuration';
 
 const bpmnServer = new BPMNServer(config);
@@ -94,6 +94,23 @@ export class API extends Common {
                 console.log(errors);
             }
             response.json({ errors: errors, instances });
+        }));
+        /*
+        returns list of current instances running or ended
+         */
+        router.get('/engine/status', loggedIn, awaitAppDelegateFactory(async (request, response) => {
+
+            try {
+
+                var list = [];
+                CacheManager.liveInstances.forEach(exec => {
+                    list.push({ instance: exec.instance, currentItem: exec.item.id,currentElement: exec.item.elementId, status: exec.instance.status });
+                });
+                response.json(list);
+            }
+            catch (exc) {
+                response.json({ error: exc.toString() });
+            }
         }));
 
         router.post('/engine/start/:name?', loggedIn, awaitAppDelegateFactory(async (request, response) => {

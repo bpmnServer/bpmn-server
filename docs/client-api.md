@@ -26,6 +26,7 @@ Web Applications can use **bpmn-server**  WebServices to manage workflow in a si
 
 Perform WebAPI calls to the execution Engine 
 
+
 | Method| parameters           | return  | description |
 | ------------- |:-------------:| -----| ----------|
 | **start** | name, input , startNodeId?,options? 	 | [Instance](api/interfaces/iinstancedata.md) | - Start a new Process execution |
@@ -33,6 +34,7 @@ Perform WebAPI calls to the execution Engine
 | **throwMessage**|messageId,input| [Instance](api/interfaces/iinstancedata.md) | Issue a signal or message|
 | **throwSignal**|signalId,input| [Instance](api/interfaces/iinstancedata.md) | Issue a signal or message|
 | **get**|[instanceQuery](./dataQuery.md#instance-query) |		[Instance](api/interfaces/iinstancedata.md) | Get an already running or idle Instance |
+| **status**| |		 | Return as list of running instances or recently completed |
 
 
 ## definitions

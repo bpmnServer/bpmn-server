@@ -88,6 +88,21 @@ class API extends common_1.Common {
             }
             response.json({ errors: errors, instances });
         })));
+        /*
+        returns list of current instances running or ended
+         */
+        router.get('/engine/status', loggedIn, awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                var list = [];
+                __1.CacheManager.liveInstances.forEach(exec => {
+                    list.push({ instance: exec.instance, currentItem: exec.item.id, currentElement: exec.item.elementId, status: exec.instance.status });
+                });
+                response.json(list);
+            }
+            catch (exc) {
+                response.json({ error: exc.toString() });
+            }
+        })));
         router.post('/engine/start/:name?', loggedIn, awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             try {
                 let name = request.params.name;
@@ -312,17 +327,17 @@ function display(res, title, output, logs = [], items = []) {
         var instances = yield bpmnServer.dataStore.findInstances({}, 'full');
         let waiting = yield bpmnServer.dataStore.findItems({ items: { status: 'wait' } });
         waiting.forEach(item => {
-            item.fromNow = (0, __1.dateDiff)(item.startedAt);
+            item.fromNow = __1.dateDiff(item.startedAt);
         });
         let engines = bpmnServer.cache.list();
         engines.forEach(engine => {
-            engine.fromNow = (0, __1.dateDiff)(engine.startedAt);
-            engine.fromLast = (0, __1.dateDiff)(engine.lastAt);
+            engine.fromNow = __1.dateDiff(engine.startedAt);
+            engine.fromLast = __1.dateDiff(engine.lastAt);
         });
         instances.forEach(item => {
-            item.fromNow = (0, __1.dateDiff)(item.startedAt);
+            item.fromNow = __1.dateDiff(item.startedAt);
             if (item.endedAt)
-                item.endFromNow = (0, __1.dateDiff)(item.endedAt);
+                item.endFromNow = __1.dateDiff(item.endedAt);
             else
                 item.endFromNow = '';
         });

@@ -115,7 +115,7 @@ class Execution extends ServerComponent implements IExecution {
         if (this.instance.parentItemId) {
             CallActivity.executionEnded(this);
         }
-        this.doExecutionEvent(this.process,EXECUTION_EVENT.process_end);
+        await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_end);
     }
     /**
      * 
@@ -167,9 +167,9 @@ class Execution extends ServerComponent implements IExecution {
         }
 
         this.process = startNode.process;
-        //this.doExecutionEvent(this, EXECUTION_EVENT.process_loaded);
+        //await this.doExecutionEvent(this, EXECUTION_EVENT.process_loaded);
 
-        this.doExecutionEvent(this.process, EXECUTION_EVENT.process_start);
+        await this.doExecutionEvent(this.process, EXECUTION_EVENT.process_start);
 
         this.log('..starting at :' + startNode.id);
         let token = await Token.startNewToken(TOKEN_TYPE.Primary,this, startNode, null, null, null, null,null,true);
@@ -181,12 +181,14 @@ class Execution extends ServerComponent implements IExecution {
         await token.execute(null);
 
         await Promise.all(this.promises);
-        this.log('.execute returned ');
+        this.log('.execute returned');
         await this.doExecutionEvent(this.process, EXECUTION_EVENT.process_wait);
+
+        this.report();
+
 
         await this.save();
 
-        this.report();
     }
     /**
      * 
@@ -205,7 +207,7 @@ class Execution extends ServerComponent implements IExecution {
         let token = null;
 
         this.appDelegate.executionStarted(this);
-        this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoke);
+        await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoke);
 
         this.tokens.forEach(t => {
             if (t.currentItem && t.currentItem.id == executionId)
@@ -258,14 +260,13 @@ class Execution extends ServerComponent implements IExecution {
         await Promise.all(this.promises);
 
 
-        this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoked);
+        await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoked);
 
         this.log('.signal returned process  status:' + this.instance.status + " id: " + executionId);
 
-        await this.save();
-
-
         this.report();
+
+        await this.save();
     }
 
     private async save() {
@@ -380,18 +381,18 @@ class Execution extends ServerComponent implements IExecution {
 
         const proc = execution.definition.getStartNode().process;
 
-        execution.restored();
+        await execution.restored();
         return execution;
     }
-    restored() {
-        this.doExecutionEvent(this,EXECUTION_EVENT.process_restored);
+    async restored() {
+        await this.doExecutionEvent(this,EXECUTION_EVENT.process_restored);
         this.tokens.forEach(t => {
             t.restored();
         });
 
     }
-    resume() {
-        this.doExecutionEvent(this.process,EXECUTION_EVENT.process_resumed);
+    async resume() {
+        await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_resumed);
         this.tokens.forEach(t => {
             t.resume();});
     }

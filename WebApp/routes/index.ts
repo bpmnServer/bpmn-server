@@ -19,7 +19,6 @@ function awaitAppDelegateFactory (middleware) {
         try {
             if (req.query.userId && typeof (req.query.userId) !=='undefined' && req.query.userId !=='undefined') {
                 req.session.userId = req.query.userId;
-                req.session.userKey = bpmnServer.iam.getRemoteUser(req.session.userId);
             }
             else if (!req.session.userId)
                 req.session.userId = 'demoUser';
@@ -110,9 +109,10 @@ export class Workflow extends Common {
 
 
             let processName = request.params.processName;
+            let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
 
             let context = await bpmnServer.engine.start(processName, { caseId: caseId++ },
-                null, request.session.userKey);
+                null, userKey);
 
             if (context.errors) {
                 displayError(response, context.errors);
@@ -138,7 +138,8 @@ export class Workflow extends Common {
 
             data['caseId'] = caseId++;
 
-            let context = await bpmnServer.engine.start(process, data, null, startNodeId, request.session.userKey);
+            let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
+            let context = await bpmnServer.engine.start(process, data, null, startNodeId, userKey);
             if (context.errors) {
                 displayError(response, context.errors);
             }
@@ -188,16 +189,21 @@ export class Workflow extends Common {
                 });
                 return;
             }
+            try {
+                let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
+                let result = await bpmnServer.engine.invoke({ "items.id": id }, {}, userKey);
 
-            let result = await bpmnServer.engine.invoke({ "items.id": id }, {}, request.session.userKey);
-
-            console.log("redirecting");
-            response.redirect('/instanceDetails?id=' + result.execution.id);
+                console.log("redirecting");
+                response.redirect('/instanceDetails?id=' + result.execution.id);
+            }
+            catch (exc) {
+                response.send(exc.toString());
+            }
         }));
         router.post('/invokeItem', awaitAppDelegateFactory(async (request, response) => {
             let id = request.body.itemId;
             let data = {};
-
+            
             Object.entries(request.body).forEach(entry => {
                 if (entry[0] == 'itemId') { }
                 else {
@@ -205,11 +211,17 @@ export class Workflow extends Common {
                 }
             });
 
+            try {
 
-            let result = await bpmnServer.engine.invoke({ "items.id": id }, data, request.session.userKey);
+                let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
+                let result = await bpmnServer.engine.invoke({ "items.id": id }, data, userKey);
 
+                response.redirect('/instanceDetails?id=' + result.execution.id);
+            }
+            catch (exc) {
+                response.send(exc.toString());
+            }
 
-            response.redirect('/instanceDetails?id=' + result.execution.id);
         }));
 
 
@@ -220,7 +232,8 @@ export class Workflow extends Common {
 
         router.get('/run/:process', awaitAppDelegateFactory(async (request, response) => {
             let process = request.params.process;
-            let exec = await bpmnServer.engine.start(process, { caseId: caseId++ }, null, request.session.userKey);
+            let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
+            let exec = await bpmnServer.engine.start(process, { caseId: caseId++ }, null, userKey);
             if (exec.errors) {
                 displayError(response, exec.errors);
             }

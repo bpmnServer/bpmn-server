@@ -102,7 +102,7 @@ class Execution extends server_1.ServerComponent {
             if (this.instance.parentItemId) {
                 elements_1.CallActivity.executionEnded(this);
             }
-            this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_end);
+            yield this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_end);
         });
     }
     /**
@@ -145,8 +145,8 @@ class Execution extends server_1.ServerComponent {
                 return;
             }
             this.process = startNode.process;
-            //this.doExecutionEvent(this, EXECUTION_EVENT.process_loaded);
-            this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_start);
+            //await this.doExecutionEvent(this, EXECUTION_EVENT.process_loaded);
+            yield this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_start);
             this.log('..starting at :' + startNode.id);
             let token = yield Token_1.Token.startNewToken(Token_1.TOKEN_TYPE.Primary, this, startNode, null, null, null, null, null, true);
             // start all event sub processes for the process
@@ -154,10 +154,10 @@ class Execution extends server_1.ServerComponent {
             yield proc.start(this, token);
             yield token.execute(null);
             yield Promise.all(this.promises);
-            this.log('.execute returned ');
+            this.log('.execute returned');
             yield this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_wait);
-            yield this.save();
             this.report();
+            yield this.save();
         });
     }
     /**
@@ -176,7 +176,7 @@ class Execution extends server_1.ServerComponent {
             this.log('Action:signal ' + executionId + ' startedAt ');
             let token = null;
             this.appDelegate.executionStarted(this);
-            this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_invoke);
+            yield this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_invoke);
             this.tokens.forEach(t => {
                 if (t.currentItem && t.currentItem.id == executionId)
                     token = t;
@@ -218,10 +218,10 @@ class Execution extends server_1.ServerComponent {
             }
             this.log('.signal returning .. waiting for promises status:' + this.instance.status + " id: " + executionId);
             yield Promise.all(this.promises);
-            this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_invoked);
+            yield this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_invoked);
             this.log('.signal returned process  status:' + this.instance.status + " id: " + executionId);
-            yield this.save();
             this.report();
+            yield this.save();
         });
     }
     save() {
@@ -317,20 +317,24 @@ class Execution extends server_1.ServerComponent {
             execution.log('.restore completed');
             execution.report();
             const proc = execution.definition.getStartNode().process;
-            execution.restored();
+            yield execution.restored();
             return execution;
         });
     }
     restored() {
-        this.doExecutionEvent(this, __1.EXECUTION_EVENT.process_restored);
-        this.tokens.forEach(t => {
-            t.restored();
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.doExecutionEvent(this, __1.EXECUTION_EVENT.process_restored);
+            this.tokens.forEach(t => {
+                t.restored();
+            });
         });
     }
     resume() {
-        this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_resumed);
-        this.tokens.forEach(t => {
-            t.resume();
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_resumed);
+            this.tokens.forEach(t => {
+                t.resume();
+            });
         });
     }
     report() {

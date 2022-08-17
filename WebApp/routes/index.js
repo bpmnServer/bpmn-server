@@ -23,7 +23,6 @@ function awaitAppDelegateFactory(middleware) {
         try {
             if (req.query.userId && typeof (req.query.userId) !== 'undefined' && req.query.userId !== 'undefined') {
                 req.session.userId = req.query.userId;
-                req.session.userKey = bpmnServer.iam.getRemoteUser(req.session.userId);
             }
             else if (!req.session.userId)
                 req.session.userId = 'demoUser';
@@ -91,7 +90,8 @@ class Workflow extends common_1.Common {
         })));
         router.get('/execute/:processName', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             let processName = request.params.processName;
-            let context = yield bpmnServer.engine.start(processName, { caseId: caseId++ }, null, request.session.userKey);
+            let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
+            let context = yield bpmnServer.engine.start(processName, { caseId: caseId++ }, null, userKey);
             if (context.errors) {
                 displayError(response, context.errors);
             }
@@ -105,7 +105,8 @@ class Workflow extends common_1.Common {
             parseField(request.body.field2, request.body.value2, data);
             let startNodeId = request.body.startNodeId;
             data['caseId'] = caseId++;
-            let context = yield bpmnServer.engine.start(process, data, null, startNodeId, request.session.userKey);
+            let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
+            let context = yield bpmnServer.engine.start(process, data, null, startNodeId, userKey);
             if (context.errors) {
                 displayError(response, context.errors);
             }
@@ -145,9 +146,15 @@ class Workflow extends common_1.Common {
                 });
                 return;
             }
-            let result = yield bpmnServer.engine.invoke({ "items.id": id }, {}, request.session.userKey);
-            console.log("redirecting");
-            response.redirect('/instanceDetails?id=' + result.execution.id);
+            try {
+                let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
+                let result = yield bpmnServer.engine.invoke({ "items.id": id }, {}, userKey);
+                console.log("redirecting");
+                response.redirect('/instanceDetails?id=' + result.execution.id);
+            }
+            catch (exc) {
+                response.send(exc.toString());
+            }
         })));
         router.post('/invokeItem', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             let id = request.body.itemId;
@@ -158,15 +165,22 @@ class Workflow extends common_1.Common {
                     data[entry[0]] = entry[1];
                 }
             });
-            let result = yield bpmnServer.engine.invoke({ "items.id": id }, data, request.session.userKey);
-            response.redirect('/instanceDetails?id=' + result.execution.id);
+            try {
+                let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
+                let result = yield bpmnServer.engine.invoke({ "items.id": id }, data, userKey);
+                response.redirect('/instanceDetails?id=' + result.execution.id);
+            }
+            catch (exc) {
+                response.send(exc.toString());
+            }
         })));
         router.get('/mocha', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             const mocha = require('../node_modules/mocha/bin/mocha');
         })));
         router.get('/run/:process', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             let process = request.params.process;
-            let exec = yield bpmnServer.engine.start(process, { caseId: caseId++ }, null, request.session.userKey);
+            let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
+            let exec = yield bpmnServer.engine.start(process, { caseId: caseId++ }, null, userKey);
             if (exec.errors) {
                 displayError(response, exec.errors);
             }
@@ -256,17 +270,17 @@ function display(req, res, title, output, logs = [], items = []) {
         var instances = yield bpmnServer.dataStore.findInstances({}, 'summary');
         let waiting = yield bpmnServer.dataStore.findItems({ "items.status": 'wait' });
         waiting.forEach(item => {
-            item.fromNow = (0, __1.dateDiff)(item.startedAt);
+            item.fromNow = __1.dateDiff(item.startedAt);
         });
         let engines = bpmnServer.cache.list();
         engines.forEach(engine => {
-            engine.fromNow = (0, __1.dateDiff)(engine.startedAt);
-            engine.fromLast = (0, __1.dateDiff)(engine.lastAt);
+            engine.fromNow = __1.dateDiff(engine.startedAt);
+            engine.fromLast = __1.dateDiff(engine.lastAt);
         });
         instances.forEach(item => {
-            item.fromNow = (0, __1.dateDiff)(item.startedAt);
+            item.fromNow = __1.dateDiff(item.startedAt);
             if (item.endedAt)
-                item.endFromNow = (0, __1.dateDiff)(item.endedAt);
+                item.endFromNow = __1.dateDiff(item.endedAt);
             else
                 item.endFromNow = '';
         });
