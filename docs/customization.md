@@ -1,28 +1,100 @@
-# Customization and Integration
+# Workflow as a Service
+In this document, we discuss how to integrate your application with bpmn-server as a Service.
 
-## configuration object
+We assume that you are already familiar with setting up bpmn-server along with your processes and having them running.
 
-## BPMN 2 Extensions
+Please note code in this page is for illustration purposes only.
 
-### Conditions
-### Scripts
-### Services
-Several Task types and Event types can invoke an application service, these are:
+We have two major Applications here, [AppServer](#appServer) and [WorflowServer](#WorkflowServer)
 
-- Service Task
-- Send Task
-- Receive Task
-- Message Event
-- Signal Event
-- 
-### Expressions
+## AppServer
+This is your standard Business Application providing various tiers/layers including a UI and Business logic
 
-## Application Handler
+This app requires 'bpmn-client'
 
-## Interactions with other Apps
+In this Application we will designate a class to handle workflow functions, namely 'WorkflowManager'
 
-### 
-Services Services can invoke
-- 
+```javascript
+requires 'bpmn-client';
 
+class WorkflowManager
+{
+	/**
+		from your business logic you decide to issue invoice
+	*/
+	startInvoice(data)
+	{
+		var response= await getServer().engine.start('invoice',data,null,userId,{noWait: true});
+		...
+	}
+	/**
+		from UI you want to show to the user list of outstanding invoices that need approval
+		
+	*/
+	listDueTasks()
+	{
+	var items= await getServer().datastore.findInstances({'items.elementId'='Approve','items.status'='wait'});
+	
+	}
+	/**
+		as a result of ListDueTasks, your app will provide a UI Form for user input
+		
+	**/
+	approveInvoice(data)
+	{
+		/**
+		this will invoke (complete) that item the user have selected and pass any data
+		**/
+		var response= await getServer().engine.invoke({'items.id': data.itemId},data,userId,{noWait: true});
+	}
+
+}
+
+```
+
+## WorkflowServer
+
+This is your custom installation of bpmn-server 
+
+###	AppDelegate
+
+This is your custom logic to support bpmn-server processes
+
+```javascript
+requires 'bpmn-server';
+
+class MyAppDelegate extends DefaultAppDelegate{
+{
+	/**
+		This is the EventHandler, receives a notification on every event
+
+		issue a notification (email) to appropriate user(s) when a process reaches a User Task
+		
+	*/
+	async executionEvent(context, event) {
+
+		if (context.item) {
+			if (event == 'wait' && context.item.element.type == 'bpmn:UserTask')
+			{
+				 msg=`Notification for '#{context.definition.name}' CaseId: #{context.instance.data.caseId}
+						Item '#{context.item.elementId}' now has the status of '#{context.item.status}';
+		
+				console.log(msg);
+			}
+		}
+	}
+		
+	}
+```
+# Putting it Togother
+
+## Use Case 1: Starging a Process
+In this use case a User invokes some business logic that requires a process start ...
+When a process reaches a User Task it issues a notification to user(s).
+
+![Image description](./processStart.png)
+
+## Use Case 2: Viewing Oustatnding Tasks
+
+![Image description](./viewTasks.png)
 
