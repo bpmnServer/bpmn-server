@@ -86,7 +86,7 @@ In the above example; engine.start return immediatly, but a listener keep track 
 ### Service Task
 In Process definition (.bpmn file), use `implementation` attribute to define name of JavaScript/TypeScript Method to perform the Task:
 
-![Using Modeler](bb-service.png)
+![Using Modeler](bb-service.PNG)
 ```xml
     <bpmn:serviceTask id="serviceTask" name="Service Task" implementation="service1">
     ...
@@ -110,7 +110,7 @@ class MyAppDelegate extends DefaultAppDelegate{
 ```
 ### Script Task
 
-![Using Modeler](bb-script.png)
+![Using Modeler](bb-script.PNG)
 ```xml
     <bpmn2:scriptTask id="Activity_06typtl" name="script" scriptFormat="JavaScript">
       <bpmn2:script>
@@ -124,7 +124,7 @@ class MyAppDelegate extends DefaultAppDelegate{
 
 ### Conditional Flow
 
-![Using Modeler](bb-conditional-flow.png)
+![Using Modeler](bb-conditional-flow.PNG)
 ```xml
 
   <bpmn:sequenceFlow>    
@@ -136,7 +136,7 @@ class MyAppDelegate extends DefaultAppDelegate{
 
 ```
 ### Form Input Fields
-![Using Modeler](bb-form.png)
+![Using Modeler](bb-form.PNG)
 
 ```xml
     <bpmn:userTask id="task_Buy" name="Buy">
@@ -185,7 +185,7 @@ Scripts can be added to listen to two events:
 - Start before the Task is executed
 - End after the task is executed
 
-![Using Modeler](bb-event-scripts.png)
+![Using Modeler](bb-event-scripts.PNG)
 
 In this example we are adding a script to bpmn:startEvent
 
@@ -216,7 +216,7 @@ In this example we are adding a script to bpmn:startEvent
 
 ### Timer Event
 
-![Using Modeler](bb-timer.png)
+![Using Modeler](bb-timer.PNG)
 ```xml
     <bpmn:intermediateCatchEvent id="Event_timer">
       <bpmn:incoming>Flow_1sg7v2d</bpmn:incoming>
@@ -229,7 +229,7 @@ In this example we are adding a script to bpmn:startEvent
 More on [timers](./timers.md)
 ### Multi-instances Tasks
 
-![Using Modeler](bb-multi-instance.png)
+![Using Modeler](bb-multi-instance.PNG)
 ```xml
     <bpmn:scriptTask id="scriptTask" name="Script Task">
       <bpmn:incoming>Flow_159xzcz</bpmn:incoming>
@@ -242,7 +242,7 @@ For Multi-instance data handling [see](./data.md)
 
 ### Call Process
 
-![Using Modeler](bb-call.png)
+![Using Modeler](bb-call.PNG)
 ```xml
     <bpmn:callActivity id="activity_call" name="Call Task" calledElement="loop">
     ...
@@ -257,7 +257,7 @@ In the above example 'loop' is the name of process to be called.
 ### Throwing and Cathcing Messages
 In this example, we will demonstrate how can two seperate processes communicate through "Messages"
 
-![Using Modeler](bb-message.png)
+![Using Modeler](bb-message.PNG)
 
 #### 1 Throw a message with data
 When a process throw a message, bpmn-server checks if there is another process that can catch this message before dispatching it to AppDelegate.
