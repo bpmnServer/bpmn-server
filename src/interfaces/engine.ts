@@ -47,7 +47,7 @@ interface IToken {
      * this is the primary exectuion method for a token
      */
     execute(inputData): Promise<any>;
-    applyInput(inputData: any): void;
+    appendData(inputData: any): void;
     /**
      *  is called by Gateways to cancel current token
      *
@@ -119,7 +119,7 @@ interface IExecution extends IServerComponent {
     doItemEvent(item: any, event: any): Promise<any>;
     log(msg: any): void;
     error(msg: any): void;
-    applyInput(inputData: any, dataPath?: any): void;
+    appendData(inputData: any, dataPath?: any): void;
     getData(dataPath: any): any;
     getAndCreateData(dataPath: any, asArray?: boolean): any;
 }

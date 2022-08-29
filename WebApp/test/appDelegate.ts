@@ -57,6 +57,8 @@ class MyServices {
         seq++;
         await delay(3000 - (seq * 100), 'test');
         item.token.log("SERVICE 1" + item.token.currentNode.id);
+        return { seq, text: 'test' };
+
     }
 }
 export { MyAppDelegate }

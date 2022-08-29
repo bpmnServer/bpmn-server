@@ -39,15 +39,19 @@ class Node extends _1.Element {
             if (newStatus)
                 item.status = newStatus;
             item.token.log('..>' + event + ' ' + this.id);
-            const script = this.scripts.get(event);
-            if (script) {
-                item.token.log('--executing script for event:' + event);
-                yield item.token.execution.appDelegate.scopeJS(item, script);
+            const scripts = this.scripts.get(event);
+            if (scripts) {
+                for (var s = 0; s < scripts.length; s++) {
+                    var script = scripts[s];
+                    item.token.log('--executing script for event:' + event);
+                    yield item.token.execution.appDelegate.scopeJS(item, script);
+                }
             }
             return yield item.token.execution.doItemEvent(item, event);
         });
     }
     /**
+     * is Called after execution
      * transform data using input rules
      * todo
      * @param item
@@ -57,7 +61,7 @@ class Node extends _1.Element {
             //
             item.token.log('--setting input ' + JSON.stringify(input));
             const data = yield this.getInput(item, input);
-            item.token.applyInput(data);
+            item.token.appendData(data);
         });
     }
     getInput(item, input) {
@@ -74,8 +78,8 @@ class Node extends _1.Element {
      */
     getOutput(item) {
         return __awaiter(this, void 0, void 0, function* () {
-            item.context.output = item.data;
-            item.context.messageMatchingKey = {};
+            if (item.context.output == {})
+                item.context.output = item.data;
             yield this.doEvent(item, Enums_1.EXECUTION_EVENT.transform_output, null);
             return item.context.output;
         });

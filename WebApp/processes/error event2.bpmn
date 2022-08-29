@@ -26,7 +26,7 @@
     <sequenceFlow id="SequenceFlow_14hrhu3" sourceRef="StartEvent_1" targetRef="Task_1" />
     <sequenceFlow id="SequenceFlow_1nocp02" sourceRef="Task_1" targetRef="ExclusiveGateway_1" />
     <sequenceFlow id="SequenceFlow_16b9no2" sourceRef="ExclusiveGateway_1" targetRef="EndEvent_error1">
-      <conditionExpression>(this.errorCode=="error1")</conditionExpression>
+      <conditionExpression>(item.data.errorCode=="error1")</conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="SequenceFlow_1iyph8g" sourceRef="ExclusiveGateway_1" targetRef="SubProcess_A" />
     <sequenceFlow id="SequenceFlow_1tcs3s2" sourceRef="SubProcess_A" targetRef="EndEvent_11xtoby" />
@@ -50,7 +50,7 @@
       </endEvent>
       <sequenceFlow id="SequenceFlow_1j95ipt" sourceRef="ExclusiveGateway_2" targetRef="EndEvent_A" />
       <sequenceFlow id="SequenceFlow_0ypyxod" sourceRef="ExclusiveGateway_2" targetRef="EndEvent_error2">
-        <conditionExpression>(this.errorCode=="error2")</conditionExpression>
+        <conditionExpression>(item.data.errorCode=="error2")</conditionExpression>
       </sequenceFlow>
       <endEvent id="EndEvent_error2" name="Throw Error 2">
         <incoming>SequenceFlow_0ypyxod</incoming>

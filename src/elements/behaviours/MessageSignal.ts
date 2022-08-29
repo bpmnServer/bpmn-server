@@ -25,7 +25,7 @@ class MessageEventBehaviour extends Behaviour {
             item.messageId = this.messageId;
         }
         else {  // throw a message
-             const output = await this.node.getOutput(item);
+            const output = await this.node.getOutput(item);
             const matchingKey = item.context.messageMatchingKey;
             item.token.log(`.Throwing Message <${this.messageId}> - output: ${JSON.stringify(output)} - matching key : ${JSON.stringify(matchingKey)}`);
             await item.context.appDelegate.messageThrown(this.messageId,output, matchingKey, item);

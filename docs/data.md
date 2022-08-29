@@ -54,7 +54,7 @@ Instance Data can be manipulated in several ways:
 
 ## AppDelegate
 
-   Similar to Script and Service AppDelegate can manupilate Instance data, however AppDelegate are stateless.
+   Similar to Script and Service AppDelegate can manupilate Instance data.
 
 ## Script Extensions
 
@@ -90,8 +90,6 @@ However, for SubProcess and Loop elements a seperate scope
 ![Image description](./Data_Scripts_Services_model.PNG)
 ![Image description](./Data_Scripts_Services.PNG)
 
-## Accessing data outside your scoe
-TOCOME
 # Query on Data
 You can use Instance data as part of your query for Instances or Items
 For Details on Query see [Data Query](./api-summary#data-query) 
@@ -99,44 +97,65 @@ For Details on Query see [Data Query](./api-summary#data-query)
 # Input-Output Data
 
 Input and output is used in the following scenarios:
-- Subprocess
-- Service Tasks
-- Call Tasks
-- Message Events
-- Signal Events
+- Subprocess (input/output)
+- Service Tasks (input/output)
+- Call Tasks (input/output)
+- Throw Message/Signal (input)
+- Catch Message/Signal (output)
+
+
+
+| before call | called object | after call| |
+|--|--|--|--|--|
+| input= .. | input..called object | after call|
 
 Default behaviour is all instance data is passed as an input and all output data is saved or added to the instance data.
 
 But you can modify this behaviour by specifying Input and Output variables;
 
-## Using TransformOutput/TransformInput Events
-TransformOutput script when specified it generate an output object of all output variables
-This output object is defined as `this.context.response.output`
+## Input/Output using Scripts
 
-Similarly, you used TransformInput event to return `this.context.response.input`
+| variable | description |
+|--|--|
+| **item.data** | refers to Instance Data or the token data for multi-instance tokens |
+| **item.input** | refers to input variable into the called task/event |
+| **item.output** |  is the output of the called task/event |
 
-The sequence is as follows:
+```xml
+    <bpmn2:serviceTask id="Activity_00ticbc" name="Add 2 Using scripts" implementation="add" camunda:delegateExpression="add">
+        <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">
 
-  1.    Event:TransformOutput is called; script set `context.response.output`
-  2.    System will invoke the Service
-        a.    Passing `context.response.output` to the Service as in input
-        b.    System will save Service results as `context.response.input`
-  3.    Event:TransformInput is called; script will convert data from `context.response.input`
-    
+            item.input.v1=33;
+            item.input.v2=25;
 
-```js
-    <bpmn2:serviceTask id="Task_1gpov6r" name="add" implementation="add">
-      
-      <bpmn2:extensionElements>
-        <camunda:script event="transformOutput"><![CDATA[
-        this.context.response.output={v1: this.data.v1 , v2: this.data.v2};
-        ]]></camunda:script>
-        <camunda:script event="transformInput"><![CDATA[
-        this.data.result=this.context.response.input;
-        ]]></camunda:script>
+          </camunda:script>
+        </camunda:executionListener>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">
+            
+            item.data.result2= item.output + 100;
+
+          </camunda:script>
+        </camunda:executionListener>
       </bpmn2:extensionElements>
-      
-      <bpmn2:incoming>SequenceFlow_0cr3d6e</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_1kdq5qw</bpmn2:outgoing>
-    </bpmn2:serviceTask>
+
 ```
+
+## Input/Output using Camunda Extension of Input/Output Parameter
+
+```xml
+    <bpmn2:serviceTask id="Task_0xh2iwa" name="service1" implementation="service1">
+      <bpmn2:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="repeat">item.data.count</camunda:inputParameter>
+          <camunda:outputParameter name="sequence">this.output.seq</camunda:outputParameter>
+          <camunda:outputParameter name="returnText">'out text:'+this.output.text</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn2:extensionElements>
+
+```
+* parameter name is the name of variable
+* value is a JavaScript expression
+    

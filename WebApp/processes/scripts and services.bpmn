@@ -11,14 +11,14 @@
     <bpmn:scriptTask id="scriptTask" name="Script Task">
       <bpmn:incoming>Flow_159xzcz</bpmn:incoming>
       <bpmn:outgoing>Flow_0t7z2os</bpmn:outgoing>
-      <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="(this.records)" />
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="(this.data.records)" />
       <bpmn:script>this.token.log('testing from the inside: '+this.token.data.loopKey);
 console.log('test');</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:serviceTask id="serviceTask" name="Service Task" implementation="service1">
       <bpmn:incoming>Flow_0t7z2os</bpmn:incoming>
       <bpmn:outgoing>Flow_0at2lca</bpmn:outgoing>
-      <bpmn:multiInstanceLoopCharacteristics camunda:collection="(this.records)" />
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="(this.data.records)" />
     </bpmn:serviceTask>
     <bpmn:sendTask id="sendTask" name="Send Task">
       <bpmn:incoming>Flow_0at2lca</bpmn:incoming>

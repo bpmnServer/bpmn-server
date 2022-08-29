@@ -94,16 +94,18 @@ class MyServices {
         console.log(" Hi this is the serviceTask from appDelegate says bye");
     }
     async add({ v1, v2 }) {
-        console.log("Add Service");
-        console.log(v1, v2);
-        return v1 + v2;
+        console.log("Add Service", v1, v2);
+
+        return Number(v1) + Number(v2);
     }
     async service1(input, context) {
         let item = context.item;
         seq++;
         await delay(5000, 'test');
-        item.token.log("SERVICE 1" + item.token.currentNode.id + " current seq: " + seq);
-        return seq;
+        item.token.log("SERVICE 1: input: " + input + item.token.currentNode.id + " current seq: " + seq);
+
+        console.log('appDelegate service1 is now complete input:', input, 'output:',seq);
+        return { seq , text: 'test' };
     }
 }
 export {MyAppDelegate}

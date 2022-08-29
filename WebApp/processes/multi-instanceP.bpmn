@@ -13,7 +13,7 @@
     <bpmn:userTask id="Activity_178f3tm" name="multi-instance">
       <bpmn:incoming>Flow_0itebs3</bpmn:incoming>
       <bpmn:outgoing>Flow_09nqea3</bpmn:outgoing>
-      <bpmn:multiInstanceLoopCharacteristics isSequential="true" js:collection="this.records" />      
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true" js:collection="this.data.records" />      
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_0itebs3" sourceRef="StartEvent_04m8zbb" targetRef="Activity_178f3tm" />
     <bpmn:sequenceFlow id="Flow_09nqea3" sourceRef="Activity_178f3tm" targetRef="Event_0ijhszr" />

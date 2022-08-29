@@ -85,7 +85,9 @@ In the above example; engine.start return immediatly, but a listener keep track 
 
 ### Service Task
 In Process definition (.bpmn file), use `implementation` attribute to define name of JavaScript/TypeScript Method to perform the Task:
-```js
+
+![Using Modeler](bb-service.png)
+```xml
     <bpmn:serviceTask id="serviceTask" name="Service Task" implementation="service1">
     ...
     </bpmn:serviceTask>
@@ -107,29 +109,36 @@ class MyAppDelegate extends DefaultAppDelegate{
 
 ```
 ### Script Task
-```js
-    <bpmn:scriptTask id="scriptTask" name="Script Task">
-      <bpmn:script><![CDATA[
 
-        this.log('testing from the inside: '+this.data.loopKey);
-
-        ]]></bpmn:script>
-    ..
-    </bpmn:scriptTask>
+![Using Modeler](bb-script.png)
+```xml
+    <bpmn2:scriptTask id="Activity_06typtl" name="script" scriptFormat="JavaScript">
+      <bpmn2:script>
+        
+       this.log('testing from &lt;testing&gt; the inside: '+data.loopKey);
+      </bpmn2:script>
+ ..
+    </bpmn2:scriptTask>
 ```
 
 
 ### Conditional Flow
-```js
-      <bpmn:conditionExpression xsi:type="bpmn:tExpression"><![CDATA[
-      (this.needsCleaning=="Yes")
-      ]]>
-</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>    
+
+![Using Modeler](bb-conditional-flow.png)
+```xml
+
+  <bpmn:sequenceFlow>    
+
+   <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">
+      (data.needsCleaning=="Yes")
+   </bpmn:conditionExpression>
+  ..
 
 ```
-### Input Fields
-```js
+### Form Input Fields
+![Using Modeler](bb-form.png)
+
+```xml
     <bpmn:userTask id="task_Buy" name="Buy">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -172,28 +181,43 @@ This will load the file 'Vacation.json' form the Processes folder as defined in 
 
 ### Script Extensions
 
-Script Extensions are supported in release 1.1 and later, allowing you to add a script to any node.
+Scripts can be added to listen to two events:
+- Start before the Task is executed
+- End after the task is executed
+
+![Using Modeler](bb-event-scripts.png)
 
 In this example we are adding a script to bpmn:startEvent
 
-```javascript
+```xml
+    <bpmn2:extensionElements>
+      <camunda:executionListener event="start">
+        <camunda:script scriptFormat="JavaScript">
+          
+           console.log("This is the start event");
+          data.records=[1,2,3];
+          console.log(data);
 
-    <bpmn:startEvent id="StartEvent_1ohx91b">
-      <bpmn:extensionElements>
-        <camunda:script event="start"><![CDATA[
-        console.log("This is the start event");
-          this.applyInput({records:[1,2,3]});
-          console.log(this.data);
-          console.log("This is the start event");]]></camunda:script>
-      </bpmn:extensionElements>
-      <bpmn:outgoing>Flow_18xinq3</bpmn:outgoing>
-    </bpmn:startEvent>
-    
+        </camunda:script>
+      </camunda:executionListener>
+      <camunda:executionListener event="end">
+        <camunda:script scriptFormat="JavaScript">
+          
+          console.log("This is the end event");          
+
+
+          </camunda:script>
+      </camunda:executionListener>
+    </bpmn2:extensionElements>
+
+   
 ```
 
 
 ### Timer Event
-```js
+
+![Using Modeler](bb-timer.png)
+```xml
     <bpmn:intermediateCatchEvent id="Event_timer">
       <bpmn:incoming>Flow_1sg7v2d</bpmn:incoming>
       <bpmn:outgoing>Flow_1nku8og</bpmn:outgoing>
@@ -205,20 +229,21 @@ In this example we are adding a script to bpmn:startEvent
 More on [timers](./timers.md)
 ### Multi-instances Tasks
 
-```js
+![Using Modeler](bb-multi-instance.png)
+```xml
     <bpmn:scriptTask id="scriptTask" name="Script Task">
       <bpmn:incoming>Flow_159xzcz</bpmn:incoming>
       <bpmn:outgoing>Flow_0t7z2os</bpmn:outgoing>
-      <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="(this.records)" />
-      <bpmn:script><![CDATA[this.token.log('testing from the inside: '+this.token.data.loopKey);]]></bpmn:script>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="(data.records)" />
+      <bpmn:script><![CDATA[this.log('testing from the inside: '+data.loopKey);]]></bpmn:script>
     </bpmn:scriptTask>
 ```
 For Multi-instance data handling [see](./data.md)
-### SubProcess
-```js
-```
+
 ### Call Process
-```js
+
+![Using Modeler](bb-call.png)
+```xml
     <bpmn:callActivity id="activity_call" name="Call Task" calledElement="loop">
     ...
     </bpmn:callActivity>
@@ -232,16 +257,18 @@ In the above example 'loop' is the name of process to be called.
 ### Throwing and Cathcing Messages
 In this example, we will demonstrate how can two seperate processes communicate through "Messages"
 
+![Using Modeler](bb-message.png)
+
 #### 1 Throw a message with data
 When a process throw a message, bpmn-server checks if there is another process that can catch this message before dispatching it to AppDelegate.
 
-```js
+```xml
     <bpmn2:intermediateThrowEvent id="throw_msg1" name="msg1">
       <bpmn2:messageEventDefinition id="messageEventDef1" messageRef="Msg1" />
       <bpmn2:extensionElements>
-        <camunda:script event="transformOutput"><![CDATA[
-        this.context.response.output={caseId: this.token.data.caseId};
-        this.context.response.messageMatchingKey={'data.caseId': this.token.data.caseId };
+        <camunda:script event="start"><![CDATA[
+        input.caseId= data.caseId;
+        this.messageMatchingKey={'data.caseId': data.caseId };
         ]]></camunda:script>
       </bpmn2:extensionElements>
       ...
@@ -253,7 +280,7 @@ The above will through a messsage as follows:
 
 #### 2 Catch a message with data
 The second process defines a start event to catch the message `Msg1`
-```js
+```xml
     <bpmn2:startEvent id="StartEvent_1w66wpl" name="msg1">
       ...
       <bpmn2:messageEventDefinition id="messageEventDef4" messageRef="Msg1" />
@@ -265,13 +292,15 @@ Therefore, the system will create a new instance of the second process and assig
 #### 3 Throw a message with data and a Key
 
 In addition, the second process sends a confirmation message `Confirm1` to the first process
-```js
+```xml
     <bpmn2:intermediateThrowEvent id="throw_confirm1" name="confirm1">
       <bpmn2:messageEventDefinition id="messageEventDef2" messageRef="Confirm1" />
       <bpmn2:extensionElements>
         <camunda:script event="transformOutput"><![CDATA[
-        this.context.response.output={confirm: true};
-        this.context.response.messageMatchingKey={'data.caseId': this.token.data.caseId };
+
+        this.output.confirm=true;
+        this.context.messageMatchingKey={'data.caseId': this.token.data.caseId };
+
         ]]></camunda:script>
       </bpmn2:extensionElements>
         ...
@@ -290,36 +319,5 @@ Howerver, the challenge here is that make sure the message is sent to the specif
 
 ### Input and Output Data Handling
 
-```js
-    <bpmn2:serviceTask id="Task_1gpov6r" name="add" implementation="add">
-      
-      <bpmn2:extensionElements>
-        <camunda:script event="transformOutput"><![CDATA[
-        this.context.response.output={v1: this.data.v1 , v2: this.data.v2};
-        ]]></camunda:script>
-        <camunda:script event="transformInput"><![CDATA[
-        this.data.result=this.context.response.input;
-        ]]></camunda:script>
-      </bpmn2:extensionElements>
-      
-      <bpmn2:incoming>SequenceFlow_0cr3d6e</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_1kdq5qw</bpmn2:outgoing>
-    </bpmn2:serviceTask>
-```
-AppDelegate.ts has a service:
+[this for details](data.md#Input-Output_Data)
 
-```js
-    async add({ v1, v2 }) {
-        console.log("Add Service");
-        console.log(v1, v2);
-        return v1 + v2;
-    }
-```
-    To test the above:
-```js
-    const server = new BPMNServer(configuration, logger, { cron: false });
-    let response = await server.engine.start('serviceTask', { v1: 1, v2: 2 });
-    console.log(response.instance.data)
-```
-Output:
-{ v1: 1, v2: 2, result: 3 }

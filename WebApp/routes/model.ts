@@ -2,7 +2,8 @@
  * GET users listing.
  */
 import express = require('express');
-import { Modeller } from '../views/Modeller';
+import { ModelerNoProp } from '../views/Modeler-noProp';
+import { ModelerWProp } from '../views/Modeler-wProp';
 var bodyParser = require('body-parser')
 
 const FS = require('fs');
@@ -43,13 +44,24 @@ export class Model extends Common {
 
             response.redirect('/model/add/' + processName);
         }));
+        router.get('/addNoProp/:process', awaitHandlerFactory(async (request, response) => {
+
+            let processName = request.params.process;
+
+            console.log('adding ' + processName);
+
+            let view = new ModelerNoProp();
+
+            view.displayNew(processName, request, response);
+
+        }));
         router.get('/add/:process', awaitHandlerFactory(async (request, response) => {
 
             let processName = request.params.process;
 
             console.log('adding ' + processName);
 
-            let view = new Modeller();
+            let view = new ModelerWProp();
 
             view.displayNew(processName, request, response);
 
@@ -134,6 +146,22 @@ export class Model extends Common {
             response.render('models/rename', { processName: request.params.process });
 
         }));
+        router.get('/editNoProp/:process', awaitHandlerFactory(async (request, response) => {
+            let output = [];
+
+            console.log('model.ts/:process ');
+            const config = require('../configuration.js').configuration;
+            let xml, base_url, title, processName;
+
+            processName = request.params.process;
+            xml = await definitions.getSource(processName);
+            title = processName;
+
+            let view = new ModelerNoProp();
+
+            view.display(processName, request, response);
+
+        }));
         router.get('/edit/:process', awaitHandlerFactory(async (request, response) => {
             let output = [];
 
@@ -145,13 +173,26 @@ export class Model extends Common {
             xml = await definitions.getSource(processName);
             title = processName;
 
-            let view = new Modeller();
+            let view = new ModelerWProp();
 
             view.display(processName, request, response);
 
         }));
+        router.post('/addNoProp/:process?', awaitHandlerFactory(async (request, response) => {
+
+            let body = request.body;
+
+            let name = body.processId;
+            let bpmn = body.bpmn;
+            let svg = body.svg;
+
+            await definitions.save(name, bpmn, svg);
+            console.log(" save completed");
+
+            //        console.log(request);
+            response.status(200).send("");
+        }));
         router.post('/add/:process?', awaitHandlerFactory(async (request, response) => {
-            console.log(" modeller add");
 
             let body = request.body;
 
@@ -167,8 +208,7 @@ export class Model extends Common {
         }));
 
 
-        router.post('/edit/:process', awaitHandlerFactory(async (request, response) => {
-            console.log(" modeller posted");
+        router.post('/editNoProp/:process', awaitHandlerFactory(async (request, response) => {
 
             let body = request.body;
 
@@ -189,6 +229,28 @@ export class Model extends Common {
             //        console.log(request);
             response.status(200).send("");
         }));
+        router.post('/edit/:process', awaitHandlerFactory(async (request, response) => {
+
+            let body = request.body;
+
+            let name = body.processId;
+            let bpmn = body.bpmn;
+            let svg = body.svg;
+
+            let definitionsPath = bpmnServer.configuration.definitionsPath;
+            let fullpath = definitionsPath + '/' + name + '.bpmn';
+
+            fsx.writeFile(fullpath, bpmn, function (err) {
+                if (err) throw err;
+                console.log(`Saved bpmn to ${fullpath}`);
+            });
+            await definitions.save(name, bpmn, svg);
+            console.log(" save completed");
+
+            //        console.log(request);
+            response.status(200).send("");
+        }));
+
 
         router.get('/getSvg/:process', awaitHandlerFactory(async (request, response) => {
 

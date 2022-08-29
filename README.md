@@ -28,6 +28,9 @@ A WebApp provides a UI from modeling and developing your workflow
 A web based modeler is included based on http://bpmn.io , models definitions are saved at your server
 ![Modeller](./docs/model-demo.gif)
 
+Also included is BPMN-Properties-Panel to define the entire BPMN definition on-line, without the need to edit bpmn files.
+
+![Modeller](./docs/bb-1.png)
 
 # Process Execution
 

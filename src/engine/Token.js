@@ -119,7 +119,7 @@ class Token {
             token.log("starting new Token start node:" + startNode.id + " noExecute: " + noExecute);
             token.loop = loop;
             execution.tokens.set(token.id, token);
-            token.applyInput(data);
+            token.appendData(data);
             if (noExecute == false)
                 yield token.execute(data);
             return token;
@@ -276,8 +276,13 @@ class Token {
             }
         });
     }
-    applyInput(inputData) {
-        this.execution.applyInput(inputData, this.dataPath);
+    /**
+     *
+     *  renamed from applyInput to appendData
+     * @param inputData
+     */
+    appendData(inputData) {
+        this.execution.appendData(inputData, this.dataPath);
     }
     /**
      *  is called by Gateways to cancel current token
@@ -299,7 +304,7 @@ class Token {
             // find the item
             const item = this.currentItem;
             this.log(`..token.signal ${this.currentNode.id} ${this.currentNode.type}`);
-            this.currentNode.setInput(item, data);
+            yield this.currentNode.setInput(item, data);
             if (item.status == __1.ITEM_STATUS.wait) {
                 const ret = yield this.currentNode.run(item);
                 let result = yield this.currentNode.continue(item);

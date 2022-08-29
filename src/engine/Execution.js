@@ -53,6 +53,8 @@ class Execution extends server_1.ServerComponent {
     
          */
         this.tokens = new Map();
+        this.input = {};
+        this.output = {};
         this.promises = [];
         this.uids = {};
         if (state == null) {
@@ -127,6 +129,8 @@ class Execution extends server_1.ServerComponent {
         return __awaiter(this, void 0, void 0, function* () {
             this.log('ACTION:execute:');
             yield this.definition.load();
+            this.input = {};
+            this.output = {};
             this.instance.status = __1.EXECUTION_STATUS.running;
             this.appDelegate.executionStarted(this);
             if (inputData)
@@ -391,9 +395,9 @@ class Execution extends server_1.ServerComponent {
     }
     // Data Handling 
     /*
-     *
+     * renamed from applyInput to appendData
      */
-    applyInput(inputData, dataPath = null) {
+    appendData(inputData, dataPath = null) {
         let asArray = false;
         if (Array.isArray(inputData))
             asArray = true;

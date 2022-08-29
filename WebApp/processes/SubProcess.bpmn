@@ -20,7 +20,7 @@
       <bpmn2:scriptTask id="sub_task_1" name="Send Emails to Clients">
         <bpmn2:incoming>SequenceFlow_1e6hdeg</bpmn2:incoming>
         <bpmn2:outgoing>SequenceFlow_1811kcu</bpmn2:outgoing>
-        <bpmn2:multiInstanceLoopCharacteristics camunda:collection="(this.clients)" />
+        <bpmn2:multiInstanceLoopCharacteristics camunda:collection="(this.data.clients)" />
       </bpmn2:scriptTask>
       <bpmn2:sequenceFlow id="SequenceFlow_0x4vp34" sourceRef="sub_usertask_2" targetRef="sub_endEvent" />
       <bpmn2:userTask id="sub_usertask_2" name="Follow-up with Clients">

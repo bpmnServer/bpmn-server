@@ -17,7 +17,9 @@ const Behaviour_names = {
     SignalEventDefinition: 'bpmn:SignalEventDefinition',
     ErrorEventDefinition: 'bpmn:ErrorEventDefinition',
     CamundaFormData: 'camunda:formData',
-    CamundaScript: 'camunda:script'
+    CamundaScript: 'camunda:script',
+    CamundaScript2: 'camunda:executionListener',
+    CamundaIO: 'camunda:inputOutput'
 };
 exports.Behaviour_names = Behaviour_names;
 class BehaviourLoader {
@@ -92,7 +94,7 @@ BehaviourLoader.behaviours = [
         }
     },
     {
-        name: Behaviour_names.IOSpecification, funct: function (node, def) {
+        name: Behaviour_names.CamundaIO, funct: function (node, def) {
             return new _1.IOBehaviour(node, def);
         }
     },
@@ -109,6 +111,11 @@ BehaviourLoader.behaviours = [
     {
         name: Behaviour_names.ErrorEventDefinition, funct: function (node, def) {
             return new Error_1.ErrorEventBehaviour(node, def);
+        }
+    },
+    {
+        name: Behaviour_names.CamundaScript2, funct: function (node, def) {
+            return new Script_1.ScriptBehaviour(node, def);
         }
     },
     {

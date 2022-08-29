@@ -13,13 +13,13 @@
       <bpmn:incoming>SequenceFlow_1gfmf6g</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0d7mfls</bpmn:incoming>
       <bpmn:outgoing>Flow_0s8ghrk</bpmn:outgoing>
-      <bpmn:multiInstanceLoopCharacteristics camunda:collection="(this.records)" />
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="(this.data.records)" />
     </bpmn:task>
     <bpmn:task id="script_task" name="Script Task">
       <bpmn:incoming>Flow_18xinq3</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_1o63npk</bpmn:incoming>
       <bpmn:outgoing>Flow_0xpjff0</bpmn:outgoing>
-      <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="(this.records)" />
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="(this.data.records)" />
     </bpmn:task>
     <bpmn:endEvent id="Event_0bf16wv">
       <bpmn:incoming>Flow_0s8ghrk</bpmn:incoming>

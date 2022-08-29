@@ -14,7 +14,69 @@ and here
 -->
 
 
+## Release 1.3.0    - 2022-21-08
 
+This is a major release, requires an upgrade and changes to existing code base.
+
+### Support bpmnjs properties-panel
+
+Provides a UI to edit bpmn definition, therefore, no longer a need to edit the bpmn file
+
+In order to provide this, changes to bpmn specification to be more compliant as follows:
+
+#### Event Script definition
+
+- the only events are: start,end 
+- old format:
+
+```xml
+
+    <bpmn:startEvent id="StartEvent_1ohx91b">
+      <bpmn:extensionElements>
+        <camunda:script event="start"><![CDATA[
+        console.log("This is the start event");
+          this.applyInput({records:[1,2,3]});
+          console.log(this.data);
+          console.log("This is the start event");]]></camunda:script>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_18xinq3</bpmn:outgoing>
+    </bpmn:startEvent>
+    
+```
+- New format:
+```xml
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">
+			script1
+		  </camunda:script>
+        </camunda:executionListener>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">
+			script2
+			</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+```
+
+
+#### Input/Output Definition
+
+Handling Input and Output has changed please [this for details](data.md#Input-Output_Data)
+
+#### Conditional Flow
+- Old Format:
+```xml
+    <bpmn:conditionExpression xsi:type="bpmn:tExpression">
+		<![CDATA[(this.needsCleaning=="Yes")]]>
+	</bpmn:conditionExpression>
+```
+- New Format:
+```xml 
+    <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">
+		(item.data.needsCleaning=="Yes")
+	</bpmn:conditionExpression>
+```
 
 
 ## Release 1.2.5    - 2022-16-08

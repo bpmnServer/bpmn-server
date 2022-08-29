@@ -32,7 +32,7 @@ class Loop {
             token.log('loop collection:' + coll);
             this.completed = 0;
 
-            this.items = token.execution.appDelegate.scopeEval(token.data, coll);
+            this.items = token.execution.appDelegate.scopeEval(token, coll);
             this.dataPath = token.dataPath + '.'+this.node.id+'[]';
             this.sequence = 0;
         }

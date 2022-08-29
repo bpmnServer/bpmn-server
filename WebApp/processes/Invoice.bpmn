@@ -47,7 +47,7 @@
       <bpmn2:incoming>SequenceFlow_1h10gv4</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0cokf0m</bpmn2:outgoing>
       <bpmn2:script><![CDATA[
-            let data = this.token.data;
+            let data = item.data;
             console.log("sending a reminder scirpt");
             console.log(data);
             
@@ -65,7 +65,7 @@
     <bpmn2:sequenceFlow id="SequenceFlow_147bbuq" sourceRef="ExclusiveGateway_04dgpye" targetRef="task_got_payment" />
     <bpmn2:sequenceFlow id="SequenceFlow_1ucmquu" sourceRef="ExclusiveGateway_04dgpye" targetRef="event_timer">
       <bpmn2:conditionExpression xsi:type="bpmn:tExpression">
-        <![CDATA[(this.reminderCounter < 1)]]>
+        <![CDATA[(item.data.reminderCounter < 1)]]>
       </bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:sequenceFlow id="SequenceFlow_0dq5qq6" sourceRef="ExclusiveGateway_04dgpye" targetRef="event_cancel" />

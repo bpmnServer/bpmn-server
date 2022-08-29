@@ -46,9 +46,9 @@ class Flow extends _1.Element {
         if (this.def.conditionExpression) {
             // conditionExpression:{"$type":"bpmn:Expression","body":"true"}
             let expression = this.def.conditionExpression.body;
-            item.token.log('..conditionExpression:' + JSON.stringify(this.def.conditionExpression));
+            item.token.log('..conditionExpression:' + JSON.stringify(expression));
             item.token.log(JSON.stringify(item.token.data));
-            let result = item.token.execution.appDelegate.scopeEval(item.token.data, expression);
+            let result = item.token.execution.appDelegate.scopeEval(item, expression);
             item.token.log('..conditionExpression:' + expression + " result: " + result);
             if (result == false) {
                 action = __1.FLOW_ACTION.discard;

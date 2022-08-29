@@ -9,7 +9,7 @@
     "clean": "tsc --build --clean",
     "start:watch": "tsc-watch --project . --onSuccess \"nodemon ./app.ts\"",
     "start": "node app",
-    "test": "mocha -exit --config=test\\.mocharc.json"
+    "test": "mocha -exit --config=test/.mocharc.json"
   },
   "description": "bpmn-server.webApp",
   "author": {

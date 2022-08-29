@@ -9,29 +9,26 @@
     <bpmn:sequenceFlow id="Flow_0s8ghrk" sourceRef="service_task" targetRef="Event_0bf16wv" />
     <bpmn:startEvent id="StartEvent_1ohx91b">
       <bpmn:extensionElements>
-        <camunda:script event="start"><![CDATA[console.log("This is the start event");
-          this.token.applyInput({records:[1,2,3,4,5]});
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">console.log("This is the start event");
+          this.token.appendData({records:[1,2,3,4,5]});
           console.log('=====from script',this.token.data);
-          this.log("====This is the start event");]]></camunda:script>
+          this.log("====This is the start event");</camunda:script>
+        </camunda:executionListener>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_18xinq3</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:ScriptTask id="script_task" name="Script Task">
-      <bpmn:script><![CDATA[
-
-        this.log('this is a script task');
-
-        ]]></bpmn:script>
-    
+    <bpmn:scriptTask id="script_task" name="Script Task" scriptFormat="JavaScript">
       <bpmn:incoming>Flow_18xinq3</bpmn:incoming>
       <bpmn:outgoing>Flow_0xpjff0</bpmn:outgoing>
-      <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="(this.records)" />
-    </bpmn:ScriptTask>
-    <bpmn:ServiceTask id="service_task" name="Service Task" implementation="service1">
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="(item.data.records)" />
+      <bpmn:script>this.log('this is a script task');</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="service_task" name="Service Task" implementation="service1" camunda:delegateExpression="service1">
       <bpmn:incoming>Flow_0xpjff0</bpmn:incoming>
       <bpmn:outgoing>Flow_0s8ghrk</bpmn:outgoing>
-      <bpmn:multiInstanceLoopCharacteristics camunda:collection="(this.records)" />
-    </bpmn:ServiceTask>
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="(this.data.records)" />
+    </bpmn:serviceTask>
     <bpmn:endEvent id="Event_0bf16wv">
       <bpmn:incoming>Flow_0s8ghrk</bpmn:incoming>
     </bpmn:endEvent>
@@ -41,27 +38,27 @@
       <bpmndi:BPMNShape id="Participant_0zpon3h_di" bpmnElement="Participant_0zpon3h" isHorizontal="true">
         <dc:Bounds x="156" y="61" width="495" height="181" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_18xinq3_di" bpmnElement="Flow_18xinq3">
-        <di:waypoint xsi:type="dc:Point" x="244" y="154" />
-        <di:waypoint xsi:type="dc:Point" x="270" y="154" />
+      <bpmndi:BPMNEdge id="Flow_0s8ghrk_di" bpmnElement="Flow_0s8ghrk">
+        <di:waypoint x="515" y="154" />
+        <di:waypoint x="572" y="154" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="212" y="129" width="90" height="20" />
+          <dc:Bounds x="498.5" y="129" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0xpjff0_di" bpmnElement="Flow_0xpjff0">
-        <di:waypoint xsi:type="dc:Point" x="370" y="154" />
-        <di:waypoint xsi:type="dc:Point" x="395" y="154" />
-        <di:waypoint xsi:type="dc:Point" x="395" y="154" />
-        <di:waypoint xsi:type="dc:Point" x="415" y="154" />
+        <di:waypoint x="370" y="154" />
+        <di:waypoint x="395" y="154" />
+        <di:waypoint x="395" y="154" />
+        <di:waypoint x="415" y="154" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="365" y="144" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0s8ghrk_di" bpmnElement="Flow_0s8ghrk">
-        <di:waypoint xsi:type="dc:Point" x="515" y="154" />
-        <di:waypoint xsi:type="dc:Point" x="572" y="154" />
+      <bpmndi:BPMNEdge id="Flow_18xinq3_di" bpmnElement="Flow_18xinq3">
+        <di:waypoint x="244" y="154" />
+        <di:waypoint x="270" y="154" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="498.5" y="129" width="90" height="20" />
+          <dc:Bounds x="212" y="129" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1ohx91b">

@@ -39,7 +39,7 @@ class ServiceTask extends Node {
         const appDelegate = item.token.execution.appDelegate;
         let serviceName;
 
-        let output = await item.node.getOutput(item);
+        // let output = await item.node.getOutput(item);
 
         if (this.def.implementation) {
             serviceName = this.def.implementation;
@@ -48,13 +48,14 @@ class ServiceTask extends Node {
         item.log("invoking service:" +serviceName);
 
         if (serviceName && appDelegate.servicesProvider[serviceName])
-            ret= await appDelegate.servicesProvider[serviceName](output,item.context);
+            ret = await appDelegate.servicesProvider[serviceName](item.context.input,item.context);
         else
-            ret =await appDelegate['serviceCalled'](output,item.context);
+            ret = await appDelegate['serviceCalled'](item.context.input,item.context);
 
         item.log("service returned " + ret);
-
-        await item.node.setInput(item,ret);
+        item.context.output = ret;
+        console.log('service ', serviceName,'completed-output', ret, item.context.output);
+        // await item.node.setInput(item,ret);
 
         if (item.context.action && item.context.action == NODE_ACTION.wait) {
 
@@ -149,6 +150,21 @@ class SubProcess extends Node {
  * 
  * the called process need to call me back when done.
  * 
+ *  Scenario
+ *      a process 'D1' element 'E' is a 'CallActivity' calling Definition 'D2'
+ * steps:
+ * 
+ *      1.  Item 'E': item start: start event is fired to prepare for input
+ *      2.  Item 'E': item start: executing the call process passing input
+ *      3.  If Process 'D2' is completed immediatly
+ *              we continue, skip next steps
+  *     4.  Process 'D1' goes on a wait state
+ *      5.  When the process 'D2' is completed it calls 'executionEnded'
+ *      6.  We continue with Item:Invoke 
+ *      7.  event 'end' is fired to handle output of the process
+ *      
+ *      
+ * 
  * */
 class CallActivity extends Node {
     get calledElement() {
@@ -172,9 +188,9 @@ class CallActivity extends Node {
 
         const context = item.context;
         const modelName = this.calledElement;
-        const data = await item.node.getOutput(item);
+        //const data = await item.node.getOutput(item);
 
-        const response = await context.engine.start(modelName, data);
+        const response = await context.engine.start(modelName, item.input);
 
         token.log('..end of executing a call activity for item:' + item.id + " calling " + this.calledElement);
 

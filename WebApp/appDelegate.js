@@ -110,9 +110,8 @@ class MyServices {
     }
     add({ v1, v2 }) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("Add Service");
-            console.log(v1, v2);
-            return v1 + v2;
+            console.log("Add Service", v1, v2);
+            return Number(v1) + Number(v2);
         });
     }
     service1(input, context) {
@@ -120,8 +119,9 @@ class MyServices {
             let item = context.item;
             seq++;
             yield delay(5000, 'test');
-            item.token.log("SERVICE 1" + item.token.currentNode.id + " current seq: " + seq);
-            return seq;
+            item.token.log("SERVICE 1: input: " + input + item.token.currentNode.id + " current seq: " + seq);
+            console.log('appDelegate service1 is now complete input:', input, 'output:', seq);
+            return { seq, text: 'test' };
         });
     }
 }

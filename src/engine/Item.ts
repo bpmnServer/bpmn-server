@@ -36,9 +36,12 @@ class Item implements IItem {
         if (this._dbAction == null)
             this._dbAction = 'update';
     }
+    get input() { return this.context.input; }
+    get output() { return this.context.output; }
     log(msg) { return this.token.log(msg); }
     get data() { return this.token.data; }
-    set data(val) { this.token.applyInput(val); }
+    set data(val) { this.token.appendData(val); }
+    setData(val) { this.token.appendData(val); }
     get context() { return this.token.execution; }
     get elementId() { return this.element.id; }
     get name() {

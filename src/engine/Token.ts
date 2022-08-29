@@ -68,6 +68,9 @@ class Token implements IToken {
     currentNode: Node;
     processId;
     status: TOKEN_STATUS;
+    input: {};
+    output: {};
+    messageMatchingKey: {};
 
     get data():any {
         return this.execution.getData(this.dataPath);
@@ -125,7 +128,7 @@ class Token implements IToken {
 
         token.loop = loop;
         execution.tokens.set(token.id, token);
-        token.applyInput(data);
+        token.appendData(data);
         if (noExecute==false)
             await token.execute(data);
         return token;
@@ -230,6 +233,7 @@ class Token implements IToken {
 
         if (input)
             await this.currentNode.setInput(item,input);
+            
 
         ret = await this.currentNode.execute(item);
 /*
@@ -295,8 +299,13 @@ class Token implements IToken {
         }
 
     }
-    applyInput(inputData) {
-        this.execution.applyInput(inputData, this.dataPath);
+    /**
+     * 
+     *  renamed from applyInput to appendData
+     * @param inputData
+     */
+    appendData(inputData) {
+        this.execution.appendData(inputData, this.dataPath);
     }
     /**
      *  is called by Gateways to cancel current token
@@ -317,7 +326,7 @@ class Token implements IToken {
         const item = this.currentItem;
         this.log(`..token.signal ${this.currentNode.id} ${this.currentNode.type}`);
 
-        this.currentNode.setInput(item, data);
+        await this.currentNode.setInput(item, data);
         if (item.status == ITEM_STATUS.wait) {
             const ret = await this.currentNode.run(item);
 

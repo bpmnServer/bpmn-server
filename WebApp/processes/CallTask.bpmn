@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1nlhb7m" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="7.2.0">
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1nlhb7m" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="7.2.0">
   <bpmn:collaboration id="Collaboration_0wk2w5j">
     <bpmn:participant id="Participant_0u9at2e" processRef="Process_0aa7grp" />
   </bpmn:collaboration>
@@ -8,7 +8,14 @@
       <bpmn:extensionElements />
       <bpmn:outgoing>Flow_0wric3t</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:callActivity id="activity_call" name="Call Task" calledElement="loop">
+    <bpmn:callActivity id="activity_call" name="Call Task" calledElement="Simple-Script">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="input1">5</camunda:inputParameter>
+          <camunda:inputParameter name="input2">15</camunda:inputParameter>
+          <camunda:outputParameter name="output1">data,var1</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_0wric3t</bpmn:incoming>
       <bpmn:outgoing>Flow_0irf9tz</bpmn:outgoing>
       <bpmn:dataOutputAssociation id="DataOutputAssociation_0g58m6u">

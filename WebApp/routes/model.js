@@ -14,7 +14,8 @@ exports.Model = void 0;
  * GET users listing.
  */
 const express = require("express");
-const Modeller_1 = require("../views/Modeller");
+const Modeler_noProp_1 = require("../views/Modeler-noProp");
+const Modeler_wProp_1 = require("../views/Modeler-wProp");
 var bodyParser = require('body-parser');
 const FS = require('fs');
 const common_1 = require("./common");
@@ -41,10 +42,16 @@ class Model extends common_1.Common {
             let processName = request.body.processName;
             response.redirect('/model/add/' + processName);
         })));
+        router.get('/addNoProp/:process', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
+            let processName = request.params.process;
+            console.log('adding ' + processName);
+            let view = new Modeler_noProp_1.ModelerNoProp();
+            view.displayNew(processName, request, response);
+        })));
         router.get('/add/:process', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             let processName = request.params.process;
             console.log('adding ' + processName);
-            let view = new Modeller_1.Modeller();
+            let view = new Modeler_wProp_1.ModelerWProp();
             view.displayNew(processName, request, response);
         })));
         router.get('/export', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
@@ -105,6 +112,17 @@ class Model extends common_1.Common {
         router.get('/rename/:process', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             response.render('models/rename', { processName: request.params.process });
         })));
+        router.get('/editNoProp/:process', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
+            let output = [];
+            console.log('model.ts/:process ');
+            const config = require('../configuration.js').configuration;
+            let xml, base_url, title, processName;
+            processName = request.params.process;
+            xml = yield definitions.getSource(processName);
+            title = processName;
+            let view = new Modeler_noProp_1.ModelerNoProp();
+            view.display(processName, request, response);
+        })));
         router.get('/edit/:process', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             let output = [];
             console.log('model.ts/:process ');
@@ -113,11 +131,10 @@ class Model extends common_1.Common {
             processName = request.params.process;
             xml = yield definitions.getSource(processName);
             title = processName;
-            let view = new Modeller_1.Modeller();
+            let view = new Modeler_wProp_1.ModelerWProp();
             view.display(processName, request, response);
         })));
-        router.post('/add/:process?', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
-            console.log(" modeller add");
+        router.post('/addNoProp/:process?', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             let body = request.body;
             let name = body.processId;
             let bpmn = body.bpmn;
@@ -127,8 +144,34 @@ class Model extends common_1.Common {
             //        console.log(request);
             response.status(200).send("");
         })));
+        router.post('/add/:process?', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
+            let body = request.body;
+            let name = body.processId;
+            let bpmn = body.bpmn;
+            let svg = body.svg;
+            yield definitions.save(name, bpmn, svg);
+            console.log(" save completed");
+            //        console.log(request);
+            response.status(200).send("");
+        })));
+        router.post('/editNoProp/:process', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
+            let body = request.body;
+            let name = body.processId;
+            let bpmn = body.bpmn;
+            let svg = body.svg;
+            let definitionsPath = bpmnServer.configuration.definitionsPath;
+            let fullpath = definitionsPath + '/' + name + '.bpmn';
+            fsx.writeFile(fullpath, bpmn, function (err) {
+                if (err)
+                    throw err;
+                console.log(`Saved bpmn to ${fullpath}`);
+            });
+            yield definitions.save(name, bpmn, svg);
+            console.log(" save completed");
+            //        console.log(request);
+            response.status(200).send("");
+        })));
         router.post('/edit/:process', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
-            console.log(" modeller posted");
             let body = request.body;
             let name = body.processId;
             let bpmn = body.bpmn;

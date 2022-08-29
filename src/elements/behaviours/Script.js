@@ -4,31 +4,39 @@ exports.ScriptBehaviour = void 0;
 const _1 = require(".");
 class ScriptBehaviour extends _1.Behaviour {
     init() {
-        const event = this.definition.event;
-        const script = this.definition.$body;
-        this.node.scripts.set(event, script);
+        this.scripts = [];
+        var scrs = this.definition['$children'];
+        for (var i = 0; i < scrs.length; i++) {
+            var scr = scrs[i];
+            this.scripts.push(scr.$body);
+            this.node.scripts.set(this.definition.event, this.scripts);
+        }
     }
-    start(item) {
+    /*
+    start(item: Item) {
+
         if ((!this.event) || (this.event == 'start'))
             this.executeScript(item);
     }
-    run(item) {
+    run(item: Item) {
+
         if ((this.event) && (this.event == 'run'))
             this.executeScript(item);
     }
-    end(item) {
+    end(item: Item) {
+
         if ((this.event) && (this.event == 'end'))
             this.executeScript(item);
     }
-    resume(item) {
+    resume(item: Item) {
     }
     executeScript(item) {
         item.token.log('invoking script call ' + " for " + item.id);
         item.token.execution.appDelegate.scopeJS(item, this.script);
         item.token.log('returned from script call ' + " for " + item.id);
-    }
+    } */
     describe() {
-        return ['script on ' + this.event, this.script];
+        return ['script on ' + this.event, this.scripts];
     }
 }
 exports.ScriptBehaviour = ScriptBehaviour;

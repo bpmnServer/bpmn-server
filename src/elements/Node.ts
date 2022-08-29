@@ -41,16 +41,21 @@ class Node extends Element {
         if (newStatus)
             item.status = newStatus;
         item.token.log('..>' + event + ' ' + this.id);
-        const script = this.scripts.get(event);
-        if (script) {
-            item.token.log('--executing script for event:'+event);
+        const scripts = this.scripts.get(event);
+        if (scripts) {
+            for (var s = 0; s < scripts.length; s++) {
+                var script = scripts[s];
+                item.token.log('--executing script for event:' + event);
 
-            await item.token.execution.appDelegate.scopeJS(item, script);
+                await item.token.execution.appDelegate.scopeJS(item, script);
+
+            }
         }
         return await item.token.execution.doItemEvent(item, event);
 
     }
     /**
+     * is Called after execution 
      * transform data using input rules
      * todo
      * @param item
@@ -62,7 +67,7 @@ class Node extends Element {
 
         const data = await this.getInput(item, input);
 
-        item.token.applyInput(data);
+        item.token.appendData(data);
 
     }
     async getInput(item: Item, input) {
@@ -79,8 +84,8 @@ class Node extends Element {
      * @param item
      */
     async getOutput(item: Item) {
-        item.context.output = item.data;
-        item.context.messageMatchingKey = {};
+        if (item.context.output == {} )
+            item.context.output = item.data;
 
         await this.doEvent(item, EXECUTION_EVENT.transform_output, null);
 

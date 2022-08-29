@@ -92,9 +92,16 @@ class DefaultAppDelegate {
     scopeEval(scope, script) {
         let result;
         try {
-            result = Function('"use strict";return (' + script + ')').bind(scope)();
+            var js = `
+            var item=this;
+            var data=this.data;
+            var input=this.input;
+            var output=this.output;
+            return (${script});`;
+            result = Function(js).bind(scope)();
         }
         catch (exc) {
+            console.log('error in script evaluation', js);
             console.log(exc);
         }
         return result;
@@ -106,12 +113,18 @@ class DefaultAppDelegate {
             }).constructor;
             let result;
             try {
-                scope.token.log("..executing js " + scope.id);
-                result = yield new AsyncFunction('"use strict";' + script).bind(scope)();
+                var js = `
+            var item=this;
+            var data=this.data;
+            var input=this.input;
+            var output=this.output;
+            ${script}`;
+                result = yield new AsyncFunction(js).bind(scope)();
                 scope.token.log("..executing js is done " + scope.id);
             }
             catch (exc) {
                 scope.token.log("ERROR in executing Script " + exc.message + "\n" + script);
+                console.log('error in script execution', js);
                 console.log(exc);
             }
             return result;

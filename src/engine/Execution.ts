@@ -50,8 +50,8 @@ class Execution extends ServerComponent implements IExecution {
     // moved from Execution Context
     errors;
     item;
-    input;
-    output;
+    input = {};
+    output = {} ;
     messageMatchingKey;
     worker;
     currentUser;
@@ -80,7 +80,6 @@ class Execution extends ServerComponent implements IExecution {
      */
     constructor(server,name:string, source , state=null ) {
         super(server);
-
         if (state == null) {
             this.instance = new InstanceObject();
             this.instance.id = this.getUUID();
@@ -142,6 +141,9 @@ class Execution extends ServerComponent implements IExecution {
 
         this.log('ACTION:execute:');
         await this.definition.load();
+
+        this.input = {};
+        this.output = {};
 
         this.instance.status = EXECUTION_STATUS.running;
         this.appDelegate.executionStarted(this);
@@ -459,9 +461,9 @@ class Execution extends ServerComponent implements IExecution {
     }
     // Data Handling 
     /*
-     * 
+     * renamed from applyInput to appendData
      */
-    applyInput(inputData, dataPath = null) {
+    appendData(inputData, dataPath = null) {
         let asArray = false;
 
         if (Array.isArray(inputData))
