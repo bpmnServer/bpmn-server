@@ -30,7 +30,7 @@ A web based modeler is included based on http://bpmn.io , models definitions are
 
 Also included is BPMN-Properties-Panel to define the entire BPMN definition on-line, without the need to edit bpmn files.
 
-![Modeller](./docs/bb-1.png)
+![Modeller](./docs/bb-1.PNG)
 
 # Process Execution
 
