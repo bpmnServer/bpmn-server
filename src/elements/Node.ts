@@ -84,7 +84,7 @@ class Node extends Element {
      * @param item
      */
     async getOutput(item: Item) {
-        if (item.context.output == {} )
+        if (Object.keys(item.context.output).length  == 0 )
             item.context.output = item.data;
 
         await this.doEvent(item, EXECUTION_EVENT.transform_output, null);

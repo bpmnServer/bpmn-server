@@ -36,7 +36,7 @@ class IOBehaviour extends _1.Behaviour {
                 data[param.name] = val;
             }
         });
-        if (data !== {})
+        if (Object.keys(data).length !== 0)
             item.context.input = data;
     }
     /*
@@ -57,7 +57,7 @@ class IOBehaviour extends _1.Behaviour {
                     data[param.name] = item.context.output;
             }
         });
-        if (data !== {})
+        if (Object.keys(data).length !== 0)
             item.token.appendData(data);
     }
     describe() {

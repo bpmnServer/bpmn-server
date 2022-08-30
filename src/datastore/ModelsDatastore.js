@@ -107,7 +107,7 @@ class ModelsDatastoreDB extends ServerComponent_1.ServerComponent {
                     match[key] = val;
                 }
             });
-            if (match == {})
+            if (Object.keys(match).length == 0)
                 projection = { id: 1, name: 1 };
             else
                 projection = { id: 1, name: 1, "events": { $elemMatch: match } };

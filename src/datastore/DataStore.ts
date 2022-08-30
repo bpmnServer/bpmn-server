@@ -326,7 +326,7 @@ private translateCriteria2(criteria) {
 						match[key] = val;
 					}
 				});
-				if (match == {})
+				if (Object.keys(match).length == 0)
 					projection = { id: 1, data: 1, name: 1 };
 				else
 					projection = { id: 1, data: 1, name: 1, "items": { $elemMatch: match } };

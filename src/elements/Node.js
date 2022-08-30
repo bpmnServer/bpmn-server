@@ -78,7 +78,7 @@ class Node extends _1.Element {
      */
     getOutput(item) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (item.context.output == {})
+            if (Object.keys(item.context.output).length == 0)
                 item.context.output = item.data;
             yield this.doEvent(item, Enums_1.EXECUTION_EVENT.transform_output, null);
             return item.context.output;
