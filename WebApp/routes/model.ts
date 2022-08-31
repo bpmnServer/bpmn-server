@@ -11,6 +11,7 @@ const FS = require('fs');
 import { BPMNServer} from '../';
 import { Common } from './common';
 
+
 const awaitHandlerFactory = (middleware) => {
     return async (req, res, next) => {
         try {
@@ -93,9 +94,17 @@ export class Model extends Common {
         router.post('/import', awaitHandlerFactory(async (req, res) => {
 
             var fstream;
-            req.pipe(req.busboy);
+
+            try
+                {
+                   req.pipe(req.busboy);
+                }
+                catch(exc)
+                {
+                    console.log(exc);
+                }
             req.busboy.on('file', function (fileUploaded, file, filename) {
-                console.log("Uploading: " + filename);
+                console.log("Uploading: " ,filename);
 
                 //Path where image will be uploaded
                 const filepath = __dirname + '/../tmp/' + filename;
@@ -103,7 +112,7 @@ export class Model extends Common {
                 file.pipe(fstream);
                 fstream.on('close', async function () {
                     console.log("Upload Finished of " + filename);
-                    const name = filename;
+                    const name = filename.filename;
                     const source = fsx.readFileSync(filepath,
                         { encoding: 'utf8', flag: 'r' });
                     await definitions.save(name, source, null);

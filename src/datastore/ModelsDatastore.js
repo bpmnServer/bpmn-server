@@ -364,7 +364,7 @@ class ModelsDatastore extends ModelsDatastoreDB {
                 svg = yield this.getSVG(name);
             }
             catch (exc) {
-                console.log(exc);
+                //console.log(exc);
             }
             yield _super.save.call(this, name, source, svg);
         });

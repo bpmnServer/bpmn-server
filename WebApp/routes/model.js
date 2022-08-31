@@ -72,9 +72,14 @@ class Model extends common_1.Common {
         var fsx = require('fs-extra'); //File System - for file manipulation
         router.post('/import', awaitHandlerFactory((req, res) => __awaiter(this, void 0, void 0, function* () {
             var fstream;
-            req.pipe(req.busboy);
+            try {
+                req.pipe(req.busboy);
+            }
+            catch (exc) {
+                console.log(exc);
+            }
             req.busboy.on('file', function (fileUploaded, file, filename) {
-                console.log("Uploading: " + filename);
+                console.log("Uploading: ", filename);
                 //Path where image will be uploaded
                 const filepath = __dirname + '/../tmp/' + filename;
                 fstream = fsx.createWriteStream(filepath);
@@ -82,7 +87,7 @@ class Model extends common_1.Common {
                 fstream.on('close', function () {
                     return __awaiter(this, void 0, void 0, function* () {
                         console.log("Upload Finished of " + filename);
-                        const name = filename;
+                        const name = filename.filename;
                         const source = fsx.readFileSync(filepath, { encoding: 'utf8', flag: 'r' });
                         yield definitions.save(name, source, null);
                         res.redirect('/');

@@ -84,6 +84,7 @@ export class WebApp {
 				autoReconnect: true,
 			})
 		}));
+		app.use(busboy());
 
 		this.app = app;
 	}

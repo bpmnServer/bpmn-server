@@ -385,7 +385,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
             svg = await this.getSVG(name);
         }
         catch (exc) {
-            console.log(exc);
+            //console.log(exc);
         }
         await super.save(name, source, svg);
 

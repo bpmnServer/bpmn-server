@@ -12,6 +12,14 @@ and here
 
 ### Changed
 -->
+## Release 1.3.2    - 2022-30-08
+
+Fixed import process error due to old version of connect-busboy
+
+
+## Release 1.3.1    - 2022-30-08
+
+Fixed compile error with updated tsc
 
 
 ## Release 1.3.0    - 2022-21-08
