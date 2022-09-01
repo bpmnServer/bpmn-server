@@ -6,53 +6,68 @@ const moddleOptions =
   "xml": {
     "tagAlias": "lowerCase"
   },
-  "types": [{
-    "name": "Task",
-    "isAbstract": true,
-    "extends": [
-      "bpmn:Task"
-    ],
-    "properties": [
-      {
-        "name": "result",
-        "isAttr": true,
-        "type": "String"
-      }
+    "types": [
+        {
+        "name": "Task",
+        "isAbstract": true,
+        "extends": ["bpmn:Task"],
+        "properties": [
+          {
+            "name": "result",
+            "isAttr": true,
+            "type": "String"
+          }]
+        },
+         {
+        "name": "Output",
+        "superClass": ["Element"]
+        },
+        {
+        "name": "Collectable",
+        "isAbstract": true,
+        "extends": ["bpmn:MultiInstanceLoopCharacteristics"],
+        "properties": [
+          {
+            "name": "collection",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "elementVariable",
+            "isAttr": true,
+            "type": "String"
+          }    ]
+        },
+        {
+        "name": "FormSupported",
+        "isAbstract": true,
+        "extends": [
+          "bpmn:StartEvent",
+          "bpmn:UserTask"
+                ],
+        "properties": [
+          {
+                "name": "camunda:formKey",
+            "isAttr": true,
+            "type": "String"
+          }
+            ]
+        },
+        {
+            "name": "ServiceCall",
+            "isAbstract": true,
+            "extends": [
+                "bpmn:ServiceTask"
+                ],
+            "properties": [
+                {
+                    "name": "camunda:delegateExpression",
+                    "isAttr": true,
+                    "type": "String"
+                }
+            ]
+        }
     ]
-  }, {
-    "name": "Output",
-    "superClass": ["Element"]
-  }, {
-    "name": "Collectable",
-    "isAbstract": true,
-    "extends": ["bpmn:MultiInstanceLoopCharacteristics"],
-    "properties": [
-      {
-        "name": "collection",
-        "isAttr": true,
-        "type": "String"
-      },
-      {
-        "name": "elementVariable",
-        "isAttr": true,
-        "type": "String"
-      }
-    ]
-  }, {
-    "name": "FormSupported",
-    "isAbstract": true,
-    "extends": [
-      "bpmn:StartEvent",
-      "bpmn:UserTask"
-    ],
-    "properties": [
-      {
-        "name": "formKey",
-        "isAttr": true,
-        "type": "String"
-      }
-    ]
-  }]
 };
 
 export {moddleOptions}

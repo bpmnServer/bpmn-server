@@ -8,12 +8,11 @@ const moddleOptions = {
     "xml": {
         "tagAlias": "lowerCase"
     },
-    "types": [{
+    "types": [
+        {
             "name": "Task",
             "isAbstract": true,
-            "extends": [
-                "bpmn:Task"
-            ],
+            "extends": ["bpmn:Task"],
             "properties": [
                 {
                     "name": "result",
@@ -21,10 +20,12 @@ const moddleOptions = {
                     "type": "String"
                 }
             ]
-        }, {
+        },
+        {
             "name": "Output",
             "superClass": ["Element"]
-        }, {
+        },
+        {
             "name": "Collectable",
             "isAbstract": true,
             "extends": ["bpmn:MultiInstanceLoopCharacteristics"],
@@ -40,7 +41,8 @@ const moddleOptions = {
                     "type": "String"
                 }
             ]
-        }, {
+        },
+        {
             "name": "FormSupported",
             "isAbstract": true,
             "extends": [
@@ -49,12 +51,27 @@ const moddleOptions = {
             ],
             "properties": [
                 {
-                    "name": "formKey",
+                    "name": "camunda:formKey",
                     "isAttr": true,
                     "type": "String"
                 }
             ]
-        }]
+        },
+        {
+            "name": "ServiceCall",
+            "isAbstract": true,
+            "extends": [
+                "bpmn:ServiceTask"
+            ],
+            "properties": [
+                {
+                    "name": "camunda:delegateExpression",
+                    "isAttr": true,
+                    "type": "String"
+                }
+            ]
+        }
+    ]
 };
 exports.moddleOptions = moddleOptions;
 //# sourceMappingURL=js-bpmn-moddle.js.map

@@ -4,7 +4,7 @@ import { Logger } from '../common/Logger';
 import { ServerComponent} from './ServerComponent';
 import { Engine } from '.';
 
-import { ICacheManager, IExecution } from '../interfaces';
+import { EXECUTION_EVENT, ICacheManager, IExecution } from '../interfaces';
 
 const fs = require('fs');
 
@@ -26,6 +26,13 @@ class CacheManager extends ServerComponent implements ICacheManager {
 	}
 
 	add(execution:IExecution) {
+
+		var self = this;
+		execution.listener.on(EXECUTION_EVENT.process_end,
+			function ({ context, event, }) {
+				console.log(`--->Cache Event: ${event} Removing Instance:`, context.instance.id);
+				self.remove(context.instance.id);
+			});
 
 		CacheManager.liveInstances.set(execution.id, execution);
 	}

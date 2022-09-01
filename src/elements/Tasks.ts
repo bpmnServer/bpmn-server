@@ -44,6 +44,9 @@ class ServiceTask extends Node {
         if (this.def.implementation) {
             serviceName = this.def.implementation;
         }
+        else if (this.def.delegateExpression) {
+            serviceName = this.def.delegateExpression;
+        }
         let ret;
         item.log("invoking service:" +serviceName);
 

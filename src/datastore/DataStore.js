@@ -235,7 +235,7 @@ class DataStore extends ServerComponent_1.ServerComponent {
             * status			{ items.status: 'wait' } }
             * custom: { query: query, projection: projection }
 
-            
+     Problem with Mongodb:	projection $elematch returns only the first record
      *
      * @param query
      */
@@ -245,8 +245,7 @@ class DataStore extends ServerComponent_1.ServerComponent {
             const result = this.translateCriteria(query);
             var records = yield this.db.find(this.dbConfiguration.db, Instance_collection, result.query, result.projection);
             this.logger.log('find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result) + " recs:" + records.length);
-            //		return this.getItemsFromInstances(records,query);
-            return this.getItemsFromInstances(records, null);
+            return this.getItemsFromInstances(records, result.match);
         });
     }
     translateCriteria(query) {
@@ -267,13 +266,13 @@ class DataStore extends ServerComponent_1.ServerComponent {
             });
             if (hasMatch) {
                 newQuery['items'] = { $elemMatch: match };
-                projection = { id: 1, data: 1, name: 1, "items": { $elemMatch: match } };
+                projection = { id: 1, data: 1, name: 1, "items": 1 }; // { $elemMatch: match } };
                 query = newQuery;
             }
             else
                 projection = { id: 1, data: 1, name: 1, "items": 1 };
         }
-        return { query: query, projection: projection };
+        return { query: query, projection: projection, match };
     }
     translateCriteria2(criteria) {
         let match = {};

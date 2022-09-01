@@ -12,6 +12,22 @@ and here
 
 ### Changed
 -->
+## Release 1.3.3    - 2022-31-08
+
+### [Issue #41](https://github.com/ralphhanna/bpmn-server/issues/41) Fixed - configuring service task in BPMN-Properties-Panel
+
+No need to edit the bpmn file.
+
+### [Issue #42](https://github.com/ralphhanna/bpmn-server/issues/42) Fixed - running engines after processes end
+
+Now engines are removed as they complete
+
+### [Issue #43](https://github.com/ralphhanna/bpmn-server/issues/43) Fixed - Discrepancy with findItems
+
+Now FindItems returns all the items within the instance that meet the condition
+
+
+
 ## Release 1.3.2    - 2022-30-08
 
 Fixed import process error due to old version of connect-busboy

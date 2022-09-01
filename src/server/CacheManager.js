@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CacheManager = void 0;
 const ServerComponent_1 = require("./ServerComponent");
 const _1 = require(".");
+const interfaces_1 = require("../interfaces");
 const fs = require('fs');
 class CacheManager extends ServerComponent_1.ServerComponent {
     list() {
@@ -26,6 +27,11 @@ class CacheManager extends ServerComponent_1.ServerComponent {
         return instance;
     }
     add(execution) {
+        var self = this;
+        execution.listener.on(interfaces_1.EXECUTION_EVENT.process_end, function ({ context, event, }) {
+            console.log(`--->Cache Event: ${event} Removing Instance:`, context.instance.id);
+            self.remove(context.instance.id);
+        });
         CacheManager.liveInstances.set(execution.id, execution);
     }
     remove(instanceId) {
