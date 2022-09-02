@@ -12,6 +12,18 @@ const fs = require('fs');
 class CacheManager extends ServerComponent implements ICacheManager {
 	static liveInstances = new Map();
 
+	constructor(server)  {
+		super(server);
+
+		var self = this;
+		server.listener.on(EXECUTION_EVENT.process_end,
+			function ({ context, event, }) {
+				console.log(`--->Cache Event: ${event} Removing Instance:`, context.instance.id);
+				self.remove(context.instance.id);
+			});
+
+    }
+
 	list() {
 		const items = [];
 		CacheManager.liveInstances.forEach(item => { items.push(item); });
@@ -26,13 +38,6 @@ class CacheManager extends ServerComponent implements ICacheManager {
 	}
 
 	add(execution:IExecution) {
-
-		var self = this;
-		execution.listener.on(EXECUTION_EVENT.process_end,
-			function ({ context, event, }) {
-				console.log(`--->Cache Event: ${event} Removing Instance:`, context.instance.id);
-				self.remove(context.instance.id);
-			});
 
 		CacheManager.liveInstances.set(execution.id, execution);
 	}

@@ -218,11 +218,13 @@ class Engine extends ServerComponent implements IEngine{
 			const event = events[0];
 			return await this.start(event.modelName, data, null, event.elementId);
 		}
-		let itemsQuery;
+		let itemsQuery = {};
 		if (matchingQuery)
 			itemsQuery = Object.assign({}, matchingQuery);
 
 		itemsQuery["items.messageId"] = messageId;
+		itemsQuery["items.status"] = 'wait';
+
 
 		const items = await this.dataStore.findItems(itemsQuery);
 		if (items.length > 0) {
@@ -245,12 +247,12 @@ class Engine extends ServerComponent implements IEngine{
 	 * @param matchingQuery	should match the itemKey (if specified)
 	 * @param data			message data
 	 */
-	async throwSignal(messageId, data = {}, matchingQuery = {} ) : Promise<Execution>{
+	async throwSignal(signalId, data = {}, matchingQuery = {} ) : Promise<Execution>{
 
-		this.logger.log('Action:engine.signal '+messageId);
+		this.logger.log('Action:engine.signal '+signalId);
 
 		// need to load instance first
-		const eventsQuery = { "events.messageId": messageId };
+		const eventsQuery = { "events.signalId": signalId };
 		const events = await this.definitions.findEvents(eventsQuery);
 		this.logger.log('..findEvents '+events.length);
 		if (events.length > 0) {
@@ -258,17 +260,20 @@ class Engine extends ServerComponent implements IEngine{
 			const event = events[0];
 			return await this.start(event.modelName, data, null, event.elementId);
         }
-		let itemsQuery;
+		let itemsQuery = {};
 		if (matchingQuery)
 			itemsQuery = Object.assign({}, matchingQuery);
 
-		itemsQuery["items.messageId"] = messageId;
+		itemsQuery["items.signalId"] = signalId;
+		itemsQuery["items.status"] = 'wait';
 
 		const items = await this.dataStore.findItems(itemsQuery);
 		if (items.length > 0) {
 
-			const item = items[0];
-			return await this.invoke({ "items.id": item.id }, data);
+			for (var i = 0; i < items.length; i++) {
+				let item = items[i];
+				this.invoke({ "items.id": item.id }, data);
+            }
 		}
 		return null;
 	}

@@ -73,10 +73,9 @@ class DefaultAppDelegate {
     }
     signalThrown(signalId, data, messageMatchingKey, item) {
         return __awaiter(this, void 0, void 0, function* () {
-            const msgId = item.node.messageId;
             item.context.logger.log("Signal Issued" + signalId);
             // issue it back for others to receive
-            const resp = yield item.context.engine.throwSignal(msgId, data, messageMatchingKey);
+            const resp = yield item.context.engine.throwSignal(signalId, data, messageMatchingKey);
             if (resp && resp.instance) {
                 item.context.logger.log(" invoked another process " + resp.instance.id + " for " + resp.instance.name);
             }

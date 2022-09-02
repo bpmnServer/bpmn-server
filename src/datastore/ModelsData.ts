@@ -50,14 +50,14 @@ class BpmnModelData implements IBpmnModelData {
                 if (msg) {
                     event.messageId = msg.messageId;
                     event.subType = 'Message';
-                    //console.log('message:' + msg.messageId);
+                    console.log('message:' + msg.messageId);
                     //console.log('timer:' + timer.timeDueInSeconds());
                 }
                 let signal = n.hasSignal();
                 if (signal) {
                     event.signalId = signal.signalId;
                     event.subType = 'Signal';
-                    //console.log('signal:' + signal.signalId);
+                    console.log('signal:' + signal.signalId);
                 }
                 this.events.push(event);
             }

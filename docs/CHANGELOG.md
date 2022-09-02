@@ -12,6 +12,11 @@ and here
 
 ### Changed
 -->
+
+## Release 1.3.4    - 2022-01-09
+
+Fix bugs with Throwing Messages and Signals
+
 ## Release 1.3.3    - 2022-31-08
 
 ### [Issue #41](https://github.com/ralphhanna/bpmn-server/issues/41) Fixed - configuring service task in BPMN-Properties-Panel

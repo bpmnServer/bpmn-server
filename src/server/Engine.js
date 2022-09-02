@@ -182,10 +182,11 @@ class Engine extends ServerComponent_1.ServerComponent {
                 const event = events[0];
                 return yield this.start(event.modelName, data, null, event.elementId);
             }
-            let itemsQuery;
+            let itemsQuery = {};
             if (matchingQuery)
                 itemsQuery = Object.assign({}, matchingQuery);
             itemsQuery["items.messageId"] = messageId;
+            itemsQuery["items.status"] = 'wait';
             const items = yield this.dataStore.findItems(itemsQuery);
             if (items.length > 0) {
                 const item = items[0];
@@ -206,25 +207,28 @@ class Engine extends ServerComponent_1.ServerComponent {
      * @param matchingQuery	should match the itemKey (if specified)
      * @param data			message data
      */
-    throwSignal(messageId, data = {}, matchingQuery = {}) {
+    throwSignal(signalId, data = {}, matchingQuery = {}) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.logger.log('Action:engine.signal ' + messageId);
+            this.logger.log('Action:engine.signal ' + signalId);
             // need to load instance first
-            const eventsQuery = { "events.messageId": messageId };
+            const eventsQuery = { "events.signalId": signalId };
             const events = yield this.definitions.findEvents(eventsQuery);
             this.logger.log('..findEvents ' + events.length);
             if (events.length > 0) {
                 const event = events[0];
                 return yield this.start(event.modelName, data, null, event.elementId);
             }
-            let itemsQuery;
+            let itemsQuery = {};
             if (matchingQuery)
                 itemsQuery = Object.assign({}, matchingQuery);
-            itemsQuery["items.messageId"] = messageId;
+            itemsQuery["items.signalId"] = signalId;
+            itemsQuery["items.status"] = 'wait';
             const items = yield this.dataStore.findItems(itemsQuery);
             if (items.length > 0) {
-                const item = items[0];
-                return yield this.invoke({ "items.id": item.id }, data);
+                for (var i = 0; i < items.length; i++) {
+                    let item = items[i];
+                    this.invoke({ "items.id": item.id }, data);
+                }
             }
             return null;
         });

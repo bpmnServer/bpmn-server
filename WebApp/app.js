@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebApp = void 0;
-console.log("app.ts v1.2");
+console.log("bpmn-server WebApp.ts version " + getVersion());
 /**
  * Module dependencies.
  */
@@ -25,6 +25,17 @@ const upload = multer({ dest: path.join(__dirname, 'uploads') });
 const _1 = require("./");
 const configuration_1 = require("./configuration");
 var busboy = require('connect-busboy'); //middleware for form/file upload
+function getVersion() {
+    const fs = require('fs');
+    const configPath = __dirname + '/package.json';
+    if (fs.existsSync(configPath)) {
+        var configuration = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        var _version = configuration['version'];
+        return _version;
+    }
+    else
+        return 'cannot locate package.json current: ' + __dirname + ' path ' + configPath;
+}
 class WebApp {
     constructor() {
         //NOPASSPORT 		this.passport = passport;

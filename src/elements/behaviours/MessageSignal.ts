@@ -37,7 +37,7 @@ class MessageEventBehaviour extends Behaviour {
     }
     get messageId() {
         if (this.definition['messageRef'])
-            return this.definition['messageRef']['id'];
+            return this.definition['messageRef']['name'];
     }
     describe() {
         if (this.node.isCatching) 
@@ -74,7 +74,7 @@ class SignalEventBehaviour extends Behaviour {
     }
     get signalId() {
         if (this.definition['signalRef'])
-            return this.definition['signalRef']['id'];
+            return this.definition['signalRef']['name'];
     }
 }
 

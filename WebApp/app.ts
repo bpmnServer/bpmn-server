@@ -1,4 +1,4 @@
-console.log("app.ts v1.2");
+console.log("bpmn-server WebApp.ts version "+ getVersion());
 
 import debug = require('debug');
 
@@ -31,6 +31,24 @@ import { configuration as config } from './configuration';
 
 
 var busboy = require('connect-busboy'); //middleware for form/file upload
+
+
+function getVersion() {
+	const fs = require('fs');
+
+	const configPath = __dirname + '/package.json';
+
+	if (fs.existsSync(configPath)) {
+
+		var configuration = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+		var _version = configuration['version'];
+		return _version;
+	}
+	else
+		return 'cannot locate package.json current: ' + __dirname + ' path ' + configPath;
+
+
+}
 
 export class WebApp {
 	app;
