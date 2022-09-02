@@ -95,7 +95,7 @@ $ cp node_modules/bpmn-client/Sample/. ./  -r
 Windows: 
 xcopy /e /i /s /y node_modules\bpmn-client\Sample\*.* .
 
-npm install
+npm update
 
 ```
 
