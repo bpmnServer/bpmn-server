@@ -69,7 +69,7 @@ class MongoDB {
                         reject(err);
                     }
                     else {
-                        self.logger.log(" inserted " + result.result);
+                        //  self.logger.log(" inserted " + result.result);
                         //                console.log(result);
                         resolve(result.result);
                     }
@@ -91,7 +91,7 @@ class MongoDB {
                         reject(err);
                     }
                     else {
-                        self.logger.log(" inserted " + result.result.n);
+                        // self.logger.log(" inserted " + result.result.n);
                         //                console.log(result);
                         resolve(result.result.n);
                     }

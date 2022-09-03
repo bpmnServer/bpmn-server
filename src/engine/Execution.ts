@@ -142,7 +142,7 @@ class Execution extends ServerComponent implements IExecution {
         this.log('ACTION:execute:');
         await this.definition.load();
 
-        this.input = {};
+        this.input= Object.assign({}, inputData);
         this.output = {};
 
         this.instance.status = EXECUTION_STATUS.running;
@@ -150,7 +150,7 @@ class Execution extends ServerComponent implements IExecution {
 
         
         if (inputData)
-            this.instance.data = inputData;
+            this.instance.data = Object.assign({}, inputData);
         else
             this.instance.data = {};
 

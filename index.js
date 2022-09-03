@@ -16,5 +16,5 @@ __exportStar(require("./src/elements/"), exports);
 __exportStar(require("./src/server/"), exports);
 __exportStar(require("./src/datastore/"), exports);
 __exportStar(require("./src/interfaces/"), exports);
-__exportStar(require("./src/server/ACL"), exports);
+__exportStar(require("./src/acl/"), exports);
 //# sourceMappingURL=index.js.map

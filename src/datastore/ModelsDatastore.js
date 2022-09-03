@@ -82,15 +82,26 @@ class ModelsDatastoreDB extends ServerComponent_1.ServerComponent {
     }
     findEvents(query) {
         return __awaiter(this, void 0, void 0, function* () {
-            let projection = this.getProjection(query);
+            let projection = {}; // this.getProjection(query);
             var records = yield this.db.find(this.dbConfiguration.db, Definition_collection, query, projection);
-            this.logger.log('find events for ' + JSON.stringify(query) + " recs:" + records.length);
+            this.logger.log('...find events for ' + JSON.stringify(query) + " recs:" + records.length);
             const events = [];
             records.forEach(rec => {
                 rec.events.forEach(ev => {
-                    ev.modelName = rec.name;
-                    ev._id = rec._id;
-                    events.push(ev);
+                    let pass = true;
+                    if (query) {
+                        const keys = Object.keys(query);
+                        keys.forEach(key => {
+                            let prop = key.replace('events.', '');
+                            if (ev[prop] !== query[key])
+                                pass = false;
+                        });
+                    }
+                    if (pass) {
+                        ev.modelName = rec.name;
+                        ev._id = rec._id;
+                        events.push(ev);
+                    }
                 });
             });
             return events;

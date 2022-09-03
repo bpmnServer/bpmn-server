@@ -60,14 +60,17 @@ class SignalEventBehaviour extends _1.Behaviour {
         this.node.subType = __1.NODE_SUBTYPE.signal;
     }
     start(item) {
-        if (this.node.isCatching) {
-            item.signalId = this.signalId;
-        }
-        else { // throw a message
-            // don't wait for it 
-            //item.context.appDelegate.signalIssued(item);
-            item.context.appDelegate.signalThrown(this.signalId, null, null, item);
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.node.isCatching) {
+                item.signalId = this.signalId;
+            }
+            else { // throw a message
+                const output = yield this.node.getOutput(item);
+                const matchingKey = item.context.messageMatchingKey;
+                item.token.log(`.Throwing Signal <${this.signalId}> - output: ${JSON.stringify(output)} - matching key : ${JSON.stringify(matchingKey)}`);
+                item.context.appDelegate.signalThrown(this.signalId, output, matchingKey, item);
+            }
+        });
     }
     end(item) {
     }

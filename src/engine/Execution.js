@@ -129,12 +129,12 @@ class Execution extends server_1.ServerComponent {
         return __awaiter(this, void 0, void 0, function* () {
             this.log('ACTION:execute:');
             yield this.definition.load();
-            this.input = {};
+            this.input = Object.assign({}, inputData);
             this.output = {};
             this.instance.status = __1.EXECUTION_STATUS.running;
             this.appDelegate.executionStarted(this);
             if (inputData)
-                this.instance.data = inputData;
+                this.instance.data = Object.assign({}, inputData);
             else
                 this.instance.data = {};
             this.instance.startedAt = new Date().toISOString();

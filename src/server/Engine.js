@@ -180,7 +180,7 @@ class Engine extends ServerComponent_1.ServerComponent {
             this.logger.log('..findEvents ' + events.length);
             if (events.length > 0) {
                 const event = events[0];
-                return yield this.start(event.modelName, data, null, event.elementId);
+                return yield this.start(event.modelName, data, event.elementId, event.elementId);
             }
             let itemsQuery = {};
             if (matchingQuery)
@@ -210,13 +210,17 @@ class Engine extends ServerComponent_1.ServerComponent {
     throwSignal(signalId, data = {}, matchingQuery = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             this.logger.log('Action:engine.signal ' + signalId);
+            if (!signalId)
+                return null;
             // need to load instance first
             const eventsQuery = { "events.signalId": signalId };
             const events = yield this.definitions.findEvents(eventsQuery);
             this.logger.log('..findEvents ' + events.length);
             if (events.length > 0) {
-                const event = events[0];
-                return yield this.start(event.modelName, data, null, event.elementId);
+                for (var i = 0; i < events.length; i++) {
+                    let event = events[i];
+                    this.start(event.modelName, data, event.elementId, event.elementId);
+                }
             }
             let itemsQuery = {};
             if (matchingQuery)

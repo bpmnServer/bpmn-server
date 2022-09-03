@@ -62,12 +62,12 @@ class Cron extends ServerComponent_1.ServerComponent {
                 //query = { query: { "items.timeDue": { $lt: new Date(target).toISOString() } } };
                 //query = { items: {timeDue: { $lt: new Date(target).toISOString() } }};
                 list = yield this.dataStore.findItems(query);
-                this.logger.log("items query returend " + list.length);
+                this.logger.log("...items query returend " + list.length);
                 for (i = 0; i < list.length; i++) {
                     let item = list[i];
                     if (item.timeDue) {
                         let now = new Date();
-                        self.logger.log(`checking timer: ${item.timeDue}`);
+                        self.logger.log(`...checking timer: ${item.timeDue}`);
                         this.scheduleItem(item);
                     }
                 }
@@ -76,7 +76,7 @@ class Cron extends ServerComponent_1.ServerComponent {
                 console.log(exc);
             }
             yield Promise.all(promises);
-            this.logger.log(" all timers are done.");
+            //this.logger.log("... all timers are done.");
         });
     }
     itemTimerExpired() {

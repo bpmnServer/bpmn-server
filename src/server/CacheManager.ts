@@ -18,7 +18,7 @@ class CacheManager extends ServerComponent implements ICacheManager {
 		var self = this;
 		server.listener.on(EXECUTION_EVENT.process_end,
 			function ({ context, event, }) {
-				console.log(`--->Cache Event: ${event} Removing Instance:`, context.instance.id);
+//				console.log(`--->Cache Event: ${event} Removing Instance:`, context.instance.id);
 				self.remove(context.instance.id);
 			});
 

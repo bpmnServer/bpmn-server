@@ -88,20 +88,33 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
     }
     async findEvents(query): Promise<IEventData[]> {
 
-        let projection = this.getProjection(query);
+        let projection = {}; // this.getProjection(query);
         var records = await this.db.find(this.dbConfiguration.db, Definition_collection, query, projection);
 
-        this.logger.log('find events for ' + JSON.stringify(query) + " recs:" + records.length);
+        this.logger.log('...find events for ' + JSON.stringify(query) + " recs:" + records.length);
+
         const events = [];
+
         records.forEach(rec => {
             rec.events.forEach(ev => {
-                ev.modelName = rec.name;
-                ev._id = rec._id;
-                events.push(ev);
+                let pass = true;
 
+                if (query) {
+                    const keys = Object.keys(query);
+                    keys.forEach(key => {
+                        let prop=key.replace('events.', '');
+                        if (ev[prop] !== query[key])
+                            pass = false;
+                    });
+                }
+                if (pass) {
+                    ev.modelName = rec.name;
+                    ev._id = rec._id;
+                    events.push(ev);
+                }
             });
-
         });
+
         return events;
 
     }

@@ -62,7 +62,7 @@ class DataStore extends ServerComponent_1.ServerComponent {
             let currentCounter = this.saveCounter;
             this.inSaving = true;
             if (this.isModified) {
-                this.logger.log('DataStore: saving ');
+                //			this.logger.log('DataStore: saving ');
                 let state = yield this.execution.getState();
                 if (state.saved !== this.execution.instance.saved) {
                     console.log("********* ERROR OLD State****");
@@ -70,7 +70,7 @@ class DataStore extends ServerComponent_1.ServerComponent {
                 yield this.saveInstance(state, this.execution.getItems());
                 this.execution.instance.saved = new Date().toISOString();
                 ;
-                this.logger.log('DataStore: saved ' + this.execution.instance.saved);
+                //			this.logger.log('DataStore: saved ' + this.execution.instance.saved);
                 while (this.saveCounter > currentCounter) { // will do it again
                     this.logger.log('DataStore:while i was busy other changes happended' + this.saveCounter);
                     currentCounter = this.saveCounter;
@@ -81,7 +81,7 @@ class DataStore extends ServerComponent_1.ServerComponent {
                     this.logger.log('DataStore: saved again ' + this.execution.instance.saved);
                 }
                 this.isModified = false;
-                this.logger.log('DataStore: save is now done ');
+                //			this.logger.log('DataStore: save is now done ');
             }
             this.inSaving = false;
         });
@@ -105,7 +105,7 @@ class DataStore extends ServerComponent_1.ServerComponent {
                 return null;
             }
             const instanceData = recs[0];
-            this.logger.log(" instance obj found" + instanceData.id);
+            //		this.logger.log(" instance obj found" + instanceData.id);
             return { instance: instanceData, items: this.getItemsFromInstances([instanceData]) };
         });
     }
@@ -133,18 +133,18 @@ class DataStore extends ServerComponent_1.ServerComponent {
     }
     saveInstance(instance, items) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.logger.log("Saving...");
+            //		this.logger.log("Saving...");
             //var json = JSON.stringify(instance.state, null, 2);
             const tokensCount = instance.tokens.length;
             let itemsCount = instance.items.length;
-            this.logger.log('saving instance ' + tokensCount + " tokens and items: " + itemsCount);
+            //		this.logger.log('saving instance ' + tokensCount + " tokens and items: " + itemsCount);
             var recs;
             if (!instance.saved) {
                 instance.saved = new Date().toISOString();
                 //this.promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]));
                 //this.promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]));
                 yield this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]);
-                this.logger.log("inserting instance");
+                //			this.logger.log("inserting instance");
             }
             else {
                 this.promises.push(this.db.update(this.dbConfiguration.db, Instance_collection, { id: instance.id }, {
@@ -156,14 +156,14 @@ class DataStore extends ServerComponent_1.ServerComponent {
                         authorizations: instance.authorizations
                     }
                 }));
-                this.logger.log("updating instance");
+                //			this.logger.log("updating instance");
             }
             /*t fileName = instance.name + '_' + DataStore.seq++ + '.state';
             await fs.writeFile(fileName, JSON.stringify(instance), function (err) {
                 if (err) throw err;
             });*/
             yield Promise.all(this.promises);
-            this.logger.log('DataStore:saving Complete');
+            this.logger.log('..DataStore:saving Complete');
         });
     }
     findItem(query) {
@@ -244,7 +244,7 @@ class DataStore extends ServerComponent_1.ServerComponent {
             // let us rebuild the query form {status: value} to >  "tokens.items.status": "wait" 
             const result = this.translateCriteria(query);
             var records = yield this.db.find(this.dbConfiguration.db, Instance_collection, result.query, result.projection);
-            this.logger.log('find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result) + " recs:" + records.length);
+            this.logger.log('...find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result) + " recs:" + records.length);
             return this.getItemsFromInstances(records, result.match);
         });
     }

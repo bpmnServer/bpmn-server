@@ -68,7 +68,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		let currentCounter = this.saveCounter;
 		this.inSaving = true;
 		if (this.isModified) {
-			this.logger.log('DataStore: saving ');
+//			this.logger.log('DataStore: saving ');
 			let state = await this.execution.getState();
 			if (state.saved !== this.execution.instance.saved) {
 				console.log("********* ERROR OLD State****");
@@ -76,7 +76,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 			await this.saveInstance(state, this.execution.getItems())
 			this.execution.instance.saved = new Date().toISOString();;
-			this.logger.log('DataStore: saved ' + this.execution.instance.saved);
+//			this.logger.log('DataStore: saved ' + this.execution.instance.saved);
 
 			while (this.saveCounter > currentCounter) {	// will do it again
 				this.logger.log('DataStore:while i was busy other changes happended' + this.saveCounter);
@@ -88,7 +88,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 			}
 			this.isModified = false;
-			this.logger.log('DataStore: save is now done ');
+//			this.logger.log('DataStore: save is now done ');
 		}
 		this.inSaving = false;
 	}
@@ -113,7 +113,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		}
 		const instanceData = recs[0];
 
-		this.logger.log(" instance obj found" + instanceData.id);
+//		this.logger.log(" instance obj found" + instanceData.id);
 
 		return { instance: instanceData, items: this.getItemsFromInstances([instanceData]) };
 	}
@@ -144,13 +144,13 @@ class DataStore extends ServerComponent  implements IDataStore {
 	// save instance to DB
 	static seq = 0;
 	private async saveInstance(instance, items) {
-		this.logger.log("Saving...");
+//		this.logger.log("Saving...");
 
 
 		//var json = JSON.stringify(instance.state, null, 2);
 		const tokensCount = instance.tokens.length;
 		let itemsCount = instance.items.length;
-		this.logger.log('saving instance ' + tokensCount + " tokens and items: " + itemsCount);
+//		this.logger.log('saving instance ' + tokensCount + " tokens and items: " + itemsCount);
 
 		var recs;
 		if (!instance.saved) {
@@ -160,7 +160,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 			//this.promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]));
 			await this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]);
 
-			this.logger.log("inserting instance");
+//			this.logger.log("inserting instance");
 		}
 		else {
 			this.promises.push(this.db.update(this.dbConfiguration.db, Instance_collection,
@@ -177,7 +177,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 					}
 				}));
 
-			this.logger.log("updating instance");
+//			this.logger.log("updating instance");
 		}
 		/*t fileName = instance.name + '_' + DataStore.seq++ + '.state';
 		await fs.writeFile(fileName, JSON.stringify(instance), function (err) {
@@ -185,7 +185,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		});*/
 
 		await Promise.all(this.promises);
-		this.logger.log('DataStore:saving Complete');
+		this.logger.log('..DataStore:saving Complete');
 
 	}
 
@@ -274,7 +274,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 		var records = await this.db.find(this.dbConfiguration.db, Instance_collection, result.query, result.projection);
 
-		this.logger.log('find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result)+" recs:"+records.length);
+		this.logger.log('...find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result)+" recs:"+records.length);
 
 		return this.getItemsFromInstances(records, result.match);
 

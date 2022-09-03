@@ -216,7 +216,7 @@ class Engine extends ServerComponent implements IEngine{
 		if (events.length > 0) {
 
 			const event = events[0];
-			return await this.start(event.modelName, data, null, event.elementId);
+			return await this.start(event.modelName, data, event.elementId, event.elementId);
 		}
 		let itemsQuery = {};
 		if (matchingQuery)
@@ -251,14 +251,18 @@ class Engine extends ServerComponent implements IEngine{
 
 		this.logger.log('Action:engine.signal '+signalId);
 
+		if (!signalId)
+			return null;
+
 		// need to load instance first
 		const eventsQuery = { "events.signalId": signalId };
 		const events = await this.definitions.findEvents(eventsQuery);
 		this.logger.log('..findEvents '+events.length);
 		if (events.length > 0) {
-
-			const event = events[0];
-			return await this.start(event.modelName, data, null, event.elementId);
+			for (var i = 0; i < events.length; i++) {
+				let event = events[i];
+				this.start(event.modelName, data, event.elementId, event.elementId);
+			}
         }
 		let itemsQuery = {};
 		if (matchingQuery)

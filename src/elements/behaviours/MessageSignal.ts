@@ -51,15 +51,16 @@ class SignalEventBehaviour extends Behaviour {
         this.node.signalId = this.signalId;
         this.node.subType = NODE_SUBTYPE.signal;
     }
-    start(item: Item) {
+    async start(item: Item) {
 
         if (this.node.isCatching) {
             item.signalId = this.signalId;
         }
         else {  // throw a message
-            // don't wait for it 
-            //item.context.appDelegate.signalIssued(item);
-            item.context.appDelegate.signalThrown(this.signalId, null, null, item);
+            const output = await this.node.getOutput(item);
+            const matchingKey = item.context.messageMatchingKey;
+            item.token.log(`.Throwing Signal <${this.signalId}> - output: ${JSON.stringify(output)} - matching key : ${JSON.stringify(matchingKey)}`);
+            item.context.appDelegate.signalThrown(this.signalId, output, matchingKey, item);
         }
 
 
