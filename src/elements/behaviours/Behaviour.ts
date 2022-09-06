@@ -45,9 +45,11 @@ class Behaviour implements IBehaviour {
     restored(item) { }
     describe() { return [];}
     init() {}
+    enter(item: Item) { }
     start(item: Item) { }
     run(item: Item) { }
     end(item: Item) { }
+    exit(item: Item) { }
     resume(item: Item) { }
     getNodeAttributes(attributes: any[]) {}
     getItemAttributes(item: Item, attributes: any[]) { }

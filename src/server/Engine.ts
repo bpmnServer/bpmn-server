@@ -206,8 +206,10 @@ class Engine extends ServerComponent implements IEngine{
 	}
 	async throwMessage(messageId, data = {}, matchingQuery = {}): Promise<Execution> {
 
-		this.logger.log('Action:engine.throwMessage ' + messageId);
+		this.logger.log('..Action:engine.throwMessage ', messageId,data,matchingQuery);
 
+		if (!messageId)
+			return null;
 		// need to load instance first
 		const eventsQuery = { "events.messageId": messageId };
 		const events = await this.definitions.findEvents(eventsQuery);
@@ -216,6 +218,7 @@ class Engine extends ServerComponent implements IEngine{
 		if (events.length > 0) {
 
 			const event = events[0];
+			this.logger.log('..Action:engine.throwMessage found target event ', event.modelName, data, event.elementId, event.elementId);
 			return await this.start(event.modelName, data, event.elementId, event.elementId);
 		}
 		let itemsQuery = {};
@@ -230,6 +233,7 @@ class Engine extends ServerComponent implements IEngine{
 		if (items.length > 0) {
 
 			const item = items[0];
+			this.logger.log('..Action:engine.throwMessage found target ', item.processName, item.id);
 			return await this.invoke({ "items.id": item.id }, data);
 		}
 		return null;
@@ -249,7 +253,7 @@ class Engine extends ServerComponent implements IEngine{
 	 */
 	async throwSignal(signalId, data = {}, matchingQuery = {} ) : Promise<Execution>{
 
-		this.logger.log('Action:engine.signal '+signalId);
+		this.logger.log('..Action:engine.Throw Signal ',signalId,data,matchingQuery);
 
 		if (!signalId)
 			return null;
@@ -261,7 +265,9 @@ class Engine extends ServerComponent implements IEngine{
 		if (events.length > 0) {
 			for (var i = 0; i < events.length; i++) {
 				let event = events[i];
-				this.start(event.modelName, data, event.elementId, event.elementId);
+				this.logger.log('..Action:engine.Throw Signal found target', event.modelName, data, event.elementId);
+				
+				this.start(event.modelName, data, event.elementId, null);
 			}
         }
 		let itemsQuery = {};
@@ -276,6 +282,7 @@ class Engine extends ServerComponent implements IEngine{
 
 			for (var i = 0; i < items.length; i++) {
 				let item = items[i];
+				this.logger.log('..Action:engine.Throw Signal found target', item.processName,item.id );
 				this.invoke({ "items.id": item.id }, data);
             }
 		}

@@ -127,13 +127,11 @@ export class Model extends Common {
 
 
         router.get('/delete/:process', awaitHandlerFactory(async (request, response) => {
-            console.log(request.params);
             response.render('models/delete', { processName: request.params.process });
 
         }));
         router.post('/delete', awaitHandlerFactory(async (request, response) => {
 
-            console.log(request.body);
             let process = request.body.processName;
             await definitions.deleteModel(process);
             console.log('deleting ' + process);
@@ -142,7 +140,6 @@ export class Model extends Common {
         }));
         router.post('/rename', awaitHandlerFactory(async (request, response) => {
 
-            console.log(request.body);
             let process = request.body.processName;
             let newName = request.body.newName;
             await definitions.renameModel(process, newName);
@@ -184,7 +181,7 @@ export class Model extends Common {
 
             let view = new ModelerWProp();
 
-            view.display(processName, request, response);
+            view.display(processName,xml, request, response);
 
         }));
         router.post('/addNoProp/:process?', awaitHandlerFactory(async (request, response) => {
@@ -240,6 +237,7 @@ export class Model extends Common {
         }));
         router.post('/edit/:process', awaitHandlerFactory(async (request, response) => {
 
+            console.log('edit/process request.body', request.params, request.query)
             let body = request.body;
 
             let name = body.processId;

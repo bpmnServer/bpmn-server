@@ -14,9 +14,11 @@ class Behaviour {
     restored(item) { }
     describe() { return []; }
     init() { }
+    enter(item) { }
     start(item) { }
     run(item) { }
     end(item) { }
+    exit(item) { }
     resume(item) { }
     getNodeAttributes(attributes) { }
     getItemAttributes(item, attributes) { }

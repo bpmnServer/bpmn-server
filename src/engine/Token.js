@@ -305,7 +305,7 @@ class Token {
             const item = this.currentItem;
             this.log(`..token.signal ${this.currentNode.id} ${this.currentNode.type}`);
             yield this.currentNode.setInput(item, data);
-            if (item.status == __1.ITEM_STATUS.wait) {
+            if (item.status == __1.ITEM_STATUS.wait) { // || item.type=='bpmn:SubProcess') {
                 const ret = yield this.currentNode.run(item);
                 let result = yield this.currentNode.continue(item);
                 result = yield this.goNext();

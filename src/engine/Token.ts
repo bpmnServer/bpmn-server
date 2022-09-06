@@ -122,7 +122,8 @@ class Token implements IToken {
      * @param loop
      * @param data
      */
-    static async startNewToken(type: TOKEN_TYPE, execution, startNode, dataPath, parentToken: Token, originItem: Item, loop: Loop, data = null, noExecute = false) {
+    static async startNewToken(type: TOKEN_TYPE, execution, startNode, dataPath, parentToken: Token,
+        originItem: Item, loop: Loop, data = null, noExecute = false) {
         const token = new Token(type,execution,  startNode ,dataPath, parentToken, originItem);
         token.log("starting new Token start node:"+startNode.id+" noExecute: "+noExecute);
 
@@ -327,7 +328,7 @@ class Token implements IToken {
         this.log(`..token.signal ${this.currentNode.id} ${this.currentNode.type}`);
 
         await this.currentNode.setInput(item, data);
-        if (item.status == ITEM_STATUS.wait) {
+        if (item.status == ITEM_STATUS.wait) {// || item.type=='bpmn:SubProcess') {
             const ret = await this.currentNode.run(item);
 
 

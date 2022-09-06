@@ -7,13 +7,19 @@ import { moddleOptions} from '../elements/js-bpmn-moddle';
 class DefaultAppDelegate implements IAppDelegate {
     server;
 
-    sendEmail(to, msg, body) {
-        throw Error("sendEmail must be implemented by AppDelegate");
-    }
 
     servicesProvider: any;
+
     constructor(server) {
         this.server = server;
+        let self = this;
+        server.listener.on('all', async function ({ context, event }) {
+            await self.executionEvent(context, event);
+        });
+    }
+
+    sendEmail(to, msg, body) {
+        throw Error("sendEmail must be implemented by AppDelegate");
     }
 
     get moddleOptions() {
@@ -21,10 +27,6 @@ class DefaultAppDelegate implements IAppDelegate {
     }
     async executionStarted(execution: IExecution) {
 
-        let self = this;
-        execution.listener.on('all', async function ({context,event }) {
-            await self.executionEvent(context,event);
-        });
     }
     async executionEvent(context,event) {
 

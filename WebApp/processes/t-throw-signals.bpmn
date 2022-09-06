@@ -24,10 +24,7 @@
       <bpmn2:signalEventDefinition id="SignalEventDefinition_0be5z8q" signalRef="Signal_0fj0agj" />
     </bpmn2:intermediateThrowEvent>
     <bpmn2:sequenceFlow id="Flow_10ronv9" sourceRef="Event_190dv7t" targetRef="Event_097goil" />
-    <bpmn2:sequenceFlow id="Flow_1us2bul" sourceRef="Event_097goil" targetRef="Event_0sioi73" />
-    <bpmn2:endEvent id="Event_0sioi73">
-      <bpmn2:incoming>Flow_1us2bul</bpmn2:incoming>
-    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="Flow_1reyp2t" sourceRef="Event_097goil" targetRef="Event_1caeuws" />
     <bpmn2:intermediateThrowEvent id="Event_097goil">
       <bpmn2:extensionElements>
         <camunda:inputOutput>
@@ -35,24 +32,28 @@
         </camunda:inputOutput>
       </bpmn2:extensionElements>
       <bpmn2:incoming>Flow_10ronv9</bpmn2:incoming>
-      <bpmn2:outgoing>Flow_1us2bul</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_1reyp2t</bpmn2:outgoing>
       <bpmn2:signalEventDefinition id="SignalEventDefinition_020dksi" signalRef="Signal_10pv686" />
     </bpmn2:intermediateThrowEvent>
+    <bpmn2:endEvent id="Event_1caeuws">
+      <bpmn2:incoming>Flow_1reyp2t</bpmn2:incoming>
+    </bpmn2:endEvent>
   </bpmn2:process>
   <bpmn2:signal id="Signal_0fj0agj" name="Signal-101" />
   <bpmn2:signal id="Signal_10pv686" name="Signal-102" />
+  <bpmn2:message id="Message_16aaz57" name="confirmSignal" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_157epcn">
       <bpmndi:BPMNShape id="Participant_11ag70j_di" bpmnElement="Participant_11ag70j" isHorizontal="true">
-        <dc:Bounds x="230" y="90" width="600" height="250" />
+        <dc:Bounds x="230" y="90" width="688" height="310" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_1us2bul_di" bpmnElement="Flow_1us2bul">
-        <di:waypoint x="618" y="210" />
-        <di:waypoint x="672" y="210" />
+      <bpmndi:BPMNEdge id="Flow_1reyp2t_di" bpmnElement="Flow_1reyp2t">
+        <di:waypoint x="598" y="210" />
+        <di:waypoint x="642" y="210" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_10ronv9_di" bpmnElement="Flow_10ronv9">
         <di:waypoint x="518" y="210" />
-        <di:waypoint x="582" y="210" />
+        <di:waypoint x="562" y="210" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1plxf7i_di" bpmnElement="Flow_1plxf7i">
         <di:waypoint x="440" y="210" />
@@ -71,11 +72,11 @@
       <bpmndi:BPMNShape id="Event_01f9goy_di" bpmnElement="Event_190dv7t">
         <dc:Bounds x="482" y="192" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0sioi73_di" bpmnElement="Event_0sioi73">
-        <dc:Bounds x="672" y="192" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_07x8rkk_di" bpmnElement="Event_097goil">
-        <dc:Bounds x="582" y="192" width="36" height="36" />
+        <dc:Bounds x="562" y="192" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1caeuws_di" bpmnElement="Event_1caeuws">
+        <dc:Bounds x="642" y="192" width="36" height="36" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

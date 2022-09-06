@@ -118,24 +118,23 @@ block content
 					td 
 					td #{auth.describe()}
 
+	if (instance.authorizations.length>0)
+		h4 Process Level Auhtorizations
+		ul
+			each auth in instance.authorizations
+						li #{auth.describe()}
+	if (instance.involvements.length>0)
+		h4 Process Involvements
+		ul
 
-	h4 Process Level Auhtorizations
-	ul
-		each auth in instance.authorizations
-					li #{auth.describe()}
-	h4 Process Involvements
-	ul
+			each auth in instance.involvements
+						li #{auth.describe()}
 
-		each auth in instance.involvements
-					li #{auth.describe()}
-
-
-
-	h4 Process Access Rules
-
-	ul
-		each rule in accessRules
-			li #{rule.describe()}
+	if (accessRules.length>0)
+		h4 Process Access Rules
+		ul
+			each rule in accessRules
+				li #{rule.describe()}
 
 	h4 Instance Logs <button id="showHide" onclick="showLogs()">&darr;</button>
 	div(id="logs" style="display:none;") 

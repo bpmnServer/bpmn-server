@@ -8,9 +8,9 @@ const FS = require('fs');
 import { BPMNServer, dateDiff, Behaviour_names, CacheManager   } from '..';
 import { configuration as config} from '../configuration';
 
-const bpmnServer = new BPMNServer(config);
+//const bpmnServer = new BPMNServer(config);
 
-const definitions = bpmnServer.definitions;
+//const definitions = bpmnServer.definitions;
 
 var caseId = Math.floor(Math.random() * 10000);
 
@@ -45,6 +45,7 @@ function loggedIn(req, res, next) {
 import { Common } from './common';
 
 export class API extends Common {
+    get bpmnServer() { return this.webApp.bpmnServer; }
     config() {
 
         var router = express.Router();
@@ -63,7 +64,7 @@ export class API extends Common {
             let items;
             let errors;
             try {
-                items = await bpmnServer.dataStore.findItems(query);
+                items = await this.bpmnServer.dataStore.findItems(query);
             }
             catch (exc) {
                 errors = exc.toString();
@@ -87,7 +88,7 @@ export class API extends Common {
             let errors;
             try {
 
-                instances = await bpmnServer.dataStore.findInstances(query, 'full');
+                instances = await this.bpmnServer.dataStore.findInstances(query, 'full');
             }
             catch (exc) {
                 errors = exc.toString();
@@ -136,11 +137,11 @@ export class API extends Common {
                     userId = request.body.userId;
                 }
 
-                userKey = bpmnServer.iam.getRemoteUser(userId);
+                userKey = this.bpmnServer.iam.getRemoteUser(userId);
 
                 let context;
                 console.log(data);
-                context = await bpmnServer.engine.start(name, data, startNodeId, userKey, options);
+                context = await this.bpmnServer.engine.start(name, data, startNodeId, userKey, options);
                 response.json(context.instance);
             }
             catch (exc) {
@@ -171,9 +172,9 @@ export class API extends Common {
             let instance;
             let errors;
             try {
-                userKey = bpmnServer.iam.getRemoteUser(userId);
+                userKey = this.bpmnServer.iam.getRemoteUser(userId);
 
-                context = await bpmnServer.engine.invoke(query, data,userKey,options );
+                context = await this.bpmnServer.engine.invoke(query, data,userKey,options );
                 instance = context.instance;
                 if (context && context.errors)
                     errors = context.errors.toString();
@@ -201,7 +202,7 @@ export class API extends Common {
             let instance;
             let errors;
             try {
-                context = await bpmnServer.engine.get(query);
+                context = await this.bpmnServer.engine.get(query);
                 instance = context.instance;
             }
             catch (exc) {
@@ -224,7 +225,7 @@ export class API extends Common {
                 let context;
                 console.log(data);
 
-                context = await bpmnServer.engine.throwMessage(messageId, data);
+                context = await this.bpmnServer.engine.throwMessage(messageId, data);
                 response.json(context.instance);
             }
             catch (exc) {
@@ -250,7 +251,7 @@ export class API extends Common {
                 let data = request.body.data;
                 let context;
                 console.log(data);
-                context = await bpmnServer.engine.throwSignal(messageId, data);
+                context = await this.bpmnServer.engine.throwSignal(messageId, data);
                 response.json(context.instance);
             }
             catch (exc) {
@@ -261,7 +262,7 @@ export class API extends Common {
 
         router.get('/definitions/list', loggedIn, async function (req, response) {
 
-            let list = await bpmnServer.definitions.getList();
+            let list = await this.bpmnServer.definitions.getList();
             console.log(list);
             response.json(list);
         });
@@ -270,7 +271,7 @@ export class API extends Common {
             console.log(request.params);
             let name = request.params.name;
 
-            let definition = await bpmnServer.definitions.load(name);
+            let definition = await this.bpmnServer.definitions.load(name);
             response.json(JSON.parse(definition.getJson()));
         });
 
@@ -288,7 +289,7 @@ export class API extends Common {
             let errors;
             let result;
             try {
-                result = await bpmnServer.dataStore.deleteInstances(query);
+                result = await this.bpmnServer.dataStore.deleteInstances(query);
             }
             catch (exc) {
                 errors = exc.toString();
@@ -302,7 +303,7 @@ export class API extends Common {
 
             let instanceId = req.query.id;
 
-            await bpmnServer.cache.shutdown();
+            await this.bpmnServer.cache.shutdown();
 
             let output = ['Complete ' + instanceId];
             console.log(" deleted");
@@ -312,7 +313,7 @@ export class API extends Common {
 
             let instanceId = req.query.id;
 
-            await bpmnServer.cache.restart();
+            await this.bpmnServer.cache.restart();
 
             let output = ['Complete ' + instanceId];
             console.log(" deleted");
@@ -343,36 +344,17 @@ export class API extends Common {
         return router;
     }
 }
-async function displayError(res, error) {
-    let msg = '';
-
-    if (typeof error === 'object') {
-        if (error.message) {
-//            msg += error.message;
-            msg += '<br/>Error Message: ' + error.message;
-        }
-        if (error.stack) {
-            msg += '<br/>Stacktrace:';
-            msg += '<br/>====================<br/>';
-            msg += error.stack.split('\n').join('<br/>');
-        }
-    } else {
-        msg +=error;
-    }
-    res.send(msg);
-
-}
 async function display(res, title, output, logs = [], items = []) {
 
     console.log(" Display Started");
-    var instances = await bpmnServer.dataStore.findInstances({},'full');
-    let waiting = await bpmnServer.dataStore.findItems({ items: { status: 'wait' } }); 
+    var instances = await this.bpmnServer.dataStore.findInstances({},'full');
+    let waiting = await this.bpmnServer.dataStore.findItems({ items: { status: 'wait' } }); 
 
     waiting.forEach(item => {
         item.fromNow = dateDiff(item.startedAt);
     });
 
-    let engines = bpmnServer.cache.list();
+    let engines = this.bpmnServer.cache.list();
 
     engines.forEach(engine => {
         engine.fromNow = dateDiff(engine.startedAt); 
@@ -391,7 +373,7 @@ async function display(res, title, output, logs = [], items = []) {
         {
             title: title, output: output,
             engines,
-            procs: bpmnServer.definitions.getList(),
+            procs: this.bpmnServer.definitions.getList(),
             debugMsgs: [], // Logger.get(),
             waiting: waiting,
             instances,
@@ -399,82 +381,5 @@ async function display(res, title, output, logs = [], items = []) {
         });
 
 }
-function show(output) {
-    return output;
-}
-async function instanceDetails(response,instanceId) {
-    let result = await bpmnServer.dataStore.loadInstance(instanceId);
-//    let items = await bpmnServer.findItems({ id : instanceId });
-    const instance = result.instance;
 
-    let logs = instance.logs;
-    let svg = null;
-    try {
-        svg = await definitions.getSVG(instance.name);
-
-    }
-    catch (ex) {
-
-    }
-
-    const lastItem = result.items[result.items.length - 1];
-
-    const def = await bpmnServer.definitions.load(instance.name);
-    await def.load();
-    const defJson = def.getJson();
-
-    let output = ['View Process Log'];
-    output = show(output);
-
-    let vars = [];
-    Object.keys(instance.data).forEach(function (key) {
-        let value = instance.data[key];
-        if (Array.isArray(value)) 
-            value = JSON.stringify(value);
-        if (typeof value === 'object' && value !== null)
-            value = JSON.stringify(value);
-        
-        vars.push({ key, value });
-    });
-
-    let decorations = JSON.stringify(calculateDecorations(result.items));
-
-    response.render('InstanceDetails',
-        {
-            instance, vars,
-            title: 'Instance Details',
-            logs,items: result.items, svg,
-            decorations , definition:defJson, lastItem
-        });
-
-}
-async function getFields(processName, elementId) {
-
-    let definition = await bpmnServer.definitions.load(processName);
-    let node = definition.getNodeById(elementId);
-    let extName = Behaviour_names.CamundaFormData;
-    console.log("ext name:" + extName);
-    let ext = node.getBehaviour(extName);
-    if (ext) {
-        console.log('fields:' + ext.fields.length);
-        return ext.fields;
-    }
-    else
-        return null;
-}
-
-function calculateDecorations(items) {
-    let decors = [];
-    let seq = 1;
-    items.forEach(item => {
-        let color = 'red';
-        if (item.status == 'end')
-            color = 'black';
-        let decor = { id: item.elementId, color, seq };
-        decors.push(decor);
-        seq++;
-    });
-    return decors;
-
-}
 export default router;

@@ -385,9 +385,8 @@ class Execution extends server_1.ServerComponent {
             yield this.listener.emit('all', { event, context: this });
         });
     }
-    log(msg) {
-        this.instance.logs.push(msg);
-        this.logger.log(msg);
+    log(...msg) {
+        this.instance.logs.push(this.logger.log(...msg));
     }
     error(msg) {
         this.instance.logs.push(msg);

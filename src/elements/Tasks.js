@@ -132,11 +132,15 @@ class SubProcess extends Node_1.Node {
             const token = item.token;
             token.log('..executing a sub process item:' + item.id);
             const startNode = this.childProcess.getStartNodes()[0];
+            item.status = Enums_1.ITEM_STATUS.wait;
             const newToken = yield Token_1.Token.startNewToken(Token_1.TOKEN_TYPE.SubProcess, token.execution, startNode, this.id, token, item, null, null, true);
             yield this.childProcess.start(token.execution, newToken);
             yield this.startBoundaryEvents(item, newToken);
             yield newToken.execute(null);
-            return Enums_1.NODE_ACTION.wait;
+            if (item.status == Enums_1.ITEM_STATUS.wait)
+                return Enums_1.NODE_ACTION.wait;
+            else
+                return Enums_1.NODE_ACTION.continue;
         });
     }
 }

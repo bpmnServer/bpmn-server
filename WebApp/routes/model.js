@@ -96,18 +96,15 @@ class Model extends common_1.Common {
             });
         })));
         router.get('/delete/:process', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
-            console.log(request.params);
             response.render('models/delete', { processName: request.params.process });
         })));
         router.post('/delete', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
-            console.log(request.body);
             let process = request.body.processName;
             yield definitions.deleteModel(process);
             console.log('deleting ' + process);
             response.redirect('/');
         })));
         router.post('/rename', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
-            console.log(request.body);
             let process = request.body.processName;
             let newName = request.body.newName;
             yield definitions.renameModel(process, newName);
@@ -137,7 +134,7 @@ class Model extends common_1.Common {
             xml = yield definitions.getSource(processName);
             title = processName;
             let view = new Modeler_wProp_1.ModelerWProp();
-            view.display(processName, request, response);
+            view.display(processName, xml, request, response);
         })));
         router.post('/addNoProp/:process?', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             let body = request.body;
@@ -177,6 +174,7 @@ class Model extends common_1.Common {
             response.status(200).send("");
         })));
         router.post('/edit/:process', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
+            console.log('edit/process request.body', request.params, request.query);
             let body = request.body;
             let name = body.processId;
             let bpmn = body.bpmn;

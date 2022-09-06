@@ -19,6 +19,14 @@ class IAM {
     constructor(server) {
         this.server = server;
     }
+    /**
+     * Registering a new user
+     * @param userId
+     * @param name
+     * @param email
+     * @param userGroups
+     * @param password
+     */
     addUser(userId, name, email, userGroups, password) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = new acl_2.User();
@@ -32,7 +40,9 @@ class IAM {
         });
     }
     /**
-     * Returns a key
+     * Returns a userKey for a given user
+     * Temporary bypass to authentication
+     * Bypassing authentication, assuming the an API Key was already provided
      * @param userId
      */
     getRemoteUser(userId) {
@@ -60,12 +70,12 @@ class IAM {
         });
     }
     /**
-     *
+     * Returns a UserProfile for an already authenticated user
      *
      * @param key
      */
     getCurrentUser(key) {
-        console.log(IAM.currentUsers);
+        //console.log(IAM.currentUsers);
         const user = IAM.currentUsers.get(key);
         return user;
     }

@@ -173,13 +173,16 @@ class Engine extends ServerComponent_1.ServerComponent {
     }
     throwMessage(messageId, data = {}, matchingQuery = {}) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.logger.log('Action:engine.throwMessage ' + messageId);
+            this.logger.log('..Action:engine.throwMessage ', messageId, data, matchingQuery);
+            if (!messageId)
+                return null;
             // need to load instance first
             const eventsQuery = { "events.messageId": messageId };
             const events = yield this.definitions.findEvents(eventsQuery);
             this.logger.log('..findEvents ' + events.length);
             if (events.length > 0) {
                 const event = events[0];
+                this.logger.log('..Action:engine.throwMessage found target event ', event.modelName, data, event.elementId, event.elementId);
                 return yield this.start(event.modelName, data, event.elementId, event.elementId);
             }
             let itemsQuery = {};
@@ -190,6 +193,7 @@ class Engine extends ServerComponent_1.ServerComponent {
             const items = yield this.dataStore.findItems(itemsQuery);
             if (items.length > 0) {
                 const item = items[0];
+                this.logger.log('..Action:engine.throwMessage found target ', item.processName, item.id);
                 return yield this.invoke({ "items.id": item.id }, data);
             }
             return null;
@@ -209,7 +213,7 @@ class Engine extends ServerComponent_1.ServerComponent {
      */
     throwSignal(signalId, data = {}, matchingQuery = {}) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.logger.log('Action:engine.signal ' + signalId);
+            this.logger.log('..Action:engine.Throw Signal ', signalId, data, matchingQuery);
             if (!signalId)
                 return null;
             // need to load instance first
@@ -219,7 +223,8 @@ class Engine extends ServerComponent_1.ServerComponent {
             if (events.length > 0) {
                 for (var i = 0; i < events.length; i++) {
                     let event = events[i];
-                    this.start(event.modelName, data, event.elementId, event.elementId);
+                    this.logger.log('..Action:engine.Throw Signal found target', event.modelName, data, event.elementId);
+                    this.start(event.modelName, data, event.elementId, null);
                 }
             }
             let itemsQuery = {};
@@ -231,6 +236,7 @@ class Engine extends ServerComponent_1.ServerComponent {
             if (items.length > 0) {
                 for (var i = 0; i < items.length; i++) {
                     let item = items[i];
+                    this.logger.log('..Action:engine.Throw Signal found target', item.processName, item.id);
                     this.invoke({ "items.id": item.id }, data);
                 }
             }

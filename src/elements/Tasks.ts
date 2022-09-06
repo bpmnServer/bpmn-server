@@ -2,7 +2,7 @@
 import { Node } from './Node';
 
 import { Token, TOKEN_TYPE } from '../engine/Token';
-import { NODE_ACTION } from '../interfaces/Enums'
+import { ITEM_STATUS, NODE_ACTION } from '../interfaces/Enums'
 
 import { Process } from './Process';
 import { IExecution } from '../interfaces/engine';
@@ -137,14 +137,20 @@ class SubProcess extends Node {
         token.log('..executing a sub process item:' + item.id );
         const startNode = this.childProcess.getStartNodes()[0];
 
-        const newToken=await Token.startNewToken(TOKEN_TYPE.SubProcess, token.execution, startNode, this.id, token, item, null,null,true);
+        item.status = ITEM_STATUS.wait;
+
+        const newToken = await Token.startNewToken(TOKEN_TYPE.SubProcess, token.execution,
+                startNode, this.id, token, item, null, null, true);
 
         await this.childProcess.start(token.execution,newToken);
 
         await this.startBoundaryEvents(item, newToken);
         await newToken.execute(null);
 
-        return NODE_ACTION.wait;
+        if (item.status == ITEM_STATUS.wait)
+            return NODE_ACTION.wait;
+        else
+            return NODE_ACTION.continue;
     }
 }
 /**

@@ -34,6 +34,11 @@ Feature('serviceTask', () => {
                 expect(data.result2).equals(158);
                 expect(data.returnText).equals('out text:test');
             });
+
+            and('write log file to' + name + '.log', async () => {
+                let fileName = __dirname + '/../logs/' + name + '.log';
+                logger.save(fileName);
+            });
 ///```
 /*
 

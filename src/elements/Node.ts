@@ -84,10 +84,12 @@ class Node extends Element {
      * @param item
      */
     async getOutput(item: Item) {
+        return item.context.output;
+        console.log(item.context.output);
+        if (item.context.output)
+            {}
         if (Object.keys(item.context.output).length  == 0 )
             item.context.output = item.data;
-
-        await this.doEvent(item, EXECUTION_EVENT.transform_output, null);
 
         return item.context.output;
 
@@ -119,12 +121,20 @@ class Node extends Element {
      */
     async execute(item: Item) {
 
-
         //  2  enter
         //  --------
         await this.doEvent(item, EXECUTION_EVENT.node_enter, ITEM_STATUS.enter);
 
         this.enter(item);   // no choice
+        const behaviourlist = [];
+        this.behaviours.forEach(b => { behaviourlist.push(b) });
+
+
+        for (var i = 0; i < behaviourlist.length; i++) {
+            const b = behaviourlist[i];
+            const bRet = await b.enter(item);
+        }
+
 
         //  3   start
         //  --------
@@ -133,10 +143,7 @@ class Node extends Element {
 
         let ret =await this.start(item);
 
-        let i;
-        const behaviourlist = [];
-        this.behaviours.forEach(b => { behaviourlist.push(b) });
-        for (i = 0; i < behaviourlist.length; i++) {
+        for (var i = 0; i < behaviourlist.length; i++) {
             const b = behaviourlist[i];
             const bRet = await b.start(item);
             if (bRet > ret) ret = bRet;
@@ -222,7 +229,9 @@ class Node extends Element {
         item.endedAt = new Date().toISOString();;
         this.behaviours.forEach(async function (b) { await b.end(item); });
         await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end);
-        item.log('setting item status to end'+ item.id + 'status'+ item.status);
+        item.log('setting item status to end' + item.id + 'status' + item.status);
+        this.behaviours.forEach(async function (b) { await b.exit(item); });
+
     }
     /**
      * is called by the token after an execution resume for every active (in wait) item

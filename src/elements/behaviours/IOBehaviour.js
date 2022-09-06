@@ -27,38 +27,63 @@ class IOBehaviour extends _1.Behaviour {
     }
     /*
      * process input parameters here
+     *
+     * generate item.context.input
+     *
      */
-    start(item) {
-        var data = {};
+    enter(item) {
+        if (!item.context.input)
+            item.context.input = {};
+        var hasInput = false;
         this.parameters.forEach(param => {
             if (param.isInput()) {
+                /**
+                 * scenario for call
+                 * */
+                hasInput = true;
                 var val = item.token.execution.appDelegate.scopeEval(item, param.value);
-                data[param.name] = val;
+                item.context.input[param.name] = val;
+                item.log('...set at enter data input : input.' + param.name + ' = ' + val);
             }
         });
-        if (Object.keys(data).length !== 0)
-            item.context.input = data;
+        if (hasInput == false) {
+            /**
+             * scenario for throw
+             * */
+            this.parameters.forEach(param => {
+                if (param.isOutput()) {
+                    var val = item.token.execution.appDelegate.scopeEval(item, param.value);
+                    item.context.output[param.name] = val;
+                    item.log('...set at enter data output : output.' + param.name + ' = ' + val);
+                }
+            });
+        }
+    }
+    process(item) {
     }
     /*
      * process output parameters here
      *
      * value is an expression need to be evaluated
      *
+     *      moving output into data
+     *
      */
-    end(item) {
-        var data = {};
+    exit(item) {
         this.parameters.forEach(param => {
             if (param.isOutput()) {
+                /**
+                 * scenario for call results
+                 * */
                 if (typeof param.value !== 'undefined' && param.value !== '') {
                     var val = item.token.execution.appDelegate.scopeEval(item, param.value);
-                    data[param.name] = val;
+                    item.log('...set at exit data output : data.' + param.name + ' = ' + val);
+                    item.token.data[param.name] = val;
                 }
                 else
-                    data[param.name] = item.context.output;
+                    item.token.data[param.name] = item.context.output;
             }
         });
-        if (Object.keys(data).length !== 0)
-            item.token.appendData(data);
     }
     describe() {
         return ['', 'manages IO'];

@@ -26,7 +26,8 @@ class Logger implements ILogger {
         if (this.callback) {
             this.callback(message, type);
         }
-        this.debugMsgs.push({ message,type});
+        this.debugMsgs.push({ message, type });
+        return message;
     }
     clear() {
 
@@ -36,15 +37,29 @@ class Logger implements ILogger {
 
         return this.debugMsgs;
     }
-    debug(message)
+    debug(...message)
     {
-        this.msg(message,'debug');
+        this.msg(this.toString(...message),'debug');
     }
-    warn(message) {
-        this.msg(message,'warn');
+    warn(...message) {
+        this.msg(this.toString(...message),'warn');
     }
-    log(message) {
-        this.msg(message);
+    log(...message) {
+        return this.msg(this.toString(...message));
+    }
+    toString(...args) {
+        var out = '';
+        for (var i = 0; i < args.length; i++) {
+            var val = args[i];
+            if (i > 0)
+                out += ' ,';
+            var cls = val.constructor.name;
+            if (cls === 'String') 
+                out += val;
+            else
+                out += cls + " "+JSON.stringify(val,null,2);
+        }
+        return out;
     }
     error(err) {
        if (typeof err === 'object') {

@@ -10,33 +10,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ModelerWProp = void 0;
-const __1 = require("../");
-const config = require('../configuration.js').configuration;
-const bpmnServer = new __1.BPMNServer(config);
-const definitions = bpmnServer.definitions;
-let xml, base_url, title, processName;
+//const config = require('../configuration.js').configuration;
+//const bpmnServer = new BPMNServer(config);
+//const definitions = bpmnServer.definitions;
 class ModelerWProp {
     displayNew(name, request, response) {
         return __awaiter(this, void 0, void 0, function* () {
-            processName = name;
-            title = processName;
-            xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn2:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn2=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xsi:schemaLocation=\"http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd\" id=\"sample-diagram\" targetNamespace=\"http://bpmn.io/schema/bpmn\">\n  <bpmn2:process id=\"Process_1\" isExecutable=\"false\">\n    <bpmn2:startEvent id=\"StartEvent_1\"/>\n  </bpmn2:process>\n  <bpmndi:BPMNDiagram id=\"BPMNDiagram_1\">\n    <bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\">\n      <bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\">\n        <dc:Bounds height=\"36.0\" width=\"36.0\" x=\"412.0\" y=\"240.0\"/>\n      </bpmndi:BPMNShape>\n    </bpmndi:BPMNPlane>\n  </bpmndi:BPMNDiagram>\n</bpmn2:definitions>";
-            response.write(getText());
+            let xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn2:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn2=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xsi:schemaLocation=\"http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd\" id=\"sample-diagram\" targetNamespace=\"http://bpmn.io/schema/bpmn\">\n  <bpmn2:process id=\"Process_1\" isExecutable=\"false\">\n    <bpmn2:startEvent id=\"StartEvent_1\"/>\n  </bpmn2:process>\n  <bpmndi:BPMNDiagram id=\"BPMNDiagram_1\">\n    <bpmndi:BPMNPlane id=\"BPMNPlane_1\" bpmnElement=\"Process_1\">\n      <bpmndi:BPMNShape id=\"_BPMNShape_StartEvent_2\" bpmnElement=\"StartEvent_1\">\n        <dc:Bounds height=\"36.0\" width=\"36.0\" x=\"412.0\" y=\"240.0\"/>\n      </bpmndi:BPMNShape>\n    </bpmndi:BPMNPlane>\n  </bpmndi:BPMNDiagram>\n</bpmn2:definitions>";
+            response.write(getText(name, xml));
             response.end();
         });
     }
-    display(process, request, response) {
+    display(process, xml, request, response) {
         return __awaiter(this, void 0, void 0, function* () {
-            processName = process;
-            xml = yield definitions.getSource(processName);
-            title = processName;
-            response.write(getText());
+            //xml = await definitions.getSource(processName);
+            response.write(getText(process, xml));
             response.end();
         });
     }
 }
 exports.ModelerWProp = ModelerWProp;
-function getText() {
+function getText(processName, xml) {
+    let title = processName;
     return `<!DOCTYPE html>
 <html lang="en-CA" class="no-js">
 <head>
@@ -68,7 +63,6 @@ function getText() {
 </head>
 <body>
 <script>
-    var omni_base_url="${base_url}";
     var ajax_object =null;					
 </script>        
 <!--- Views::header -->
@@ -95,8 +89,11 @@ function getText() {
         <ul class="nav navbar-nav">
         </ul>
 <ul class="nav navbar-nav navbar-right">
+<!--li><a href='/execute/${processName}' target="execute">Run</a></li-->
+<li><a href='javascript:window.saveDiagramFunct("run");'>Save & Run</a></li>
 <li><a href='javascript:window.saveDiagramFunct();'>Save Model</a></li>
-<li>
+
+<li><a href='/docs' target="docs">Docs</a>
   </li>        
 </ul></div>
 </nav>         
@@ -160,8 +157,8 @@ ${xml}
 	var propertyPanel=false;
 
 
-    //$("div#js-properties-panel").draggable();
-    //$("div#js-properties-panel").draggable();
+    $("div#js-properties-panel").draggable();
+    $("div#js-properties-panel").draggable();
     var control=$("#property-panel-control");
     var panel=$("div#js-properties-panel");
     //$("#property-panel-control").draggable();

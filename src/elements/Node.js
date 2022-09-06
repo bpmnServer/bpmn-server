@@ -78,9 +78,11 @@ class Node extends _1.Element {
      */
     getOutput(item) {
         return __awaiter(this, void 0, void 0, function* () {
+            return item.context.output;
+            console.log(item.context.output);
+            if (item.context.output) { }
             if (Object.keys(item.context.output).length == 0)
                 item.context.output = item.data;
-            yield this.doEvent(item, Enums_1.EXECUTION_EVENT.transform_output, null);
             return item.context.output;
         });
     }
@@ -114,14 +116,17 @@ class Node extends _1.Element {
             //  --------
             yield this.doEvent(item, Enums_1.EXECUTION_EVENT.node_enter, Enums_1.ITEM_STATUS.enter);
             this.enter(item); // no choice
+            const behaviourlist = [];
+            this.behaviours.forEach(b => { behaviourlist.push(b); });
+            for (var i = 0; i < behaviourlist.length; i++) {
+                const b = behaviourlist[i];
+                const bRet = yield b.enter(item);
+            }
             //  3   start
             //  --------
             yield this.doEvent(item, Enums_1.EXECUTION_EVENT.node_start, Enums_1.ITEM_STATUS.start);
             let ret = yield this.start(item);
-            let i;
-            const behaviourlist = [];
-            this.behaviours.forEach(b => { behaviourlist.push(b); });
-            for (i = 0; i < behaviourlist.length; i++) {
+            for (var i = 0; i < behaviourlist.length; i++) {
                 const b = behaviourlist[i];
                 const bRet = yield b.start(item);
                 if (bRet > ret)
@@ -208,6 +213,9 @@ class Node extends _1.Element {
             });
             yield this.doEvent(item, Enums_1.EXECUTION_EVENT.node_end, Enums_1.ITEM_STATUS.end);
             item.log('setting item status to end' + item.id + 'status' + item.status);
+            this.behaviours.forEach(function (b) {
+                return __awaiter(this, void 0, void 0, function* () { yield b.exit(item); });
+            });
         });
     }
     /**

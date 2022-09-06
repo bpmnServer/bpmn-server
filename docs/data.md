@@ -103,16 +103,6 @@ Input and output is used in the following scenarios:
 - Throw Message/Signal (input)
 - Catch Message/Signal (output)
 
-
-
-| before call | called object | after call| |
-|--|--|--|--|--|
-| input= .. | input..called object | after call|
-
-Default behaviour is all instance data is passed as an input and all output data is saved or added to the instance data.
-
-But you can modify this behaviour by specifying Input and Output variables;
-
 ## Input/Output using Scripts
 
 | variable | description |
@@ -159,3 +149,72 @@ But you can modify this behaviour by specifying Input and Output variables;
 * parameter name is the name of variable
 * value is a JavaScript expression
     
+
+
+| Scenario | before call | caller Syntax| after call|
+|--|--|--|--|--|
+|  Throw Msg| parameters.var1= '123';<br />output.var1 | throw(msg,parameters)| - | 
+|  Catch Msg| - | catch(msg,parameters)| data.var1= parameters.var1;|
+|  Call Process| parameters.var1= '123';  | result=call(parameters)|data.var1= result.var1; |
+|  Service Call | parameters.var1= '123';  | result=call(parameters)| data.var1= result.var1;|
+|  Start Event| -| start(parameters)| data.var1= parameters.var1;<br /> data.var1=input.var1;|
+
+* Call
+ specs:
+
+        input:
+            var1    ->  data.myVar1
+            var2    ->  5
+
+        output:
+            scenario 1:
+            result  ->  <nothing>
+            scenario 2:
+            result  ->  output.result
+
+  on-entry:
+        context.input.var1= 51;
+
+  on-run:
+        context.output=call fun(context.input)
+  
+  on-exit:
+
+        scenario 1:
+        data.result  = context.output;
+        scenario 2:
+        data.result  = context.output.result;
+
+* Throw
+
+    specs:
+        
+    output:
+
+            caseId  ->  data.caseId
+    
+    on-entry:
+       
+         context.output.caseId= data.caseId;
+
+    on-call:
+
+        throw (signal,context.output)
+
+* Catch
+
+    specs:  none 
+
+    start trigger:
+
+            data.caseId=input.caseId;
+
+* Start
+
+    specs:  none 
+
+    start trigger:
+
+            data.caseId=input.caseId;
+
+

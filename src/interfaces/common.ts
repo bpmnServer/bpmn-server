@@ -47,9 +47,9 @@ interface ILogger {
     }): void;
     clear(): void;
     get(): any[];
-    debug(message: any): void;
-    warn(message: any): void;
-    log(message: any): void;
+    debug(...message: any): void;
+    warn(...message: any): void;
+    log(...message: any): void;
     error(err: any): void;
     save(filename: any): Promise<void>;
 }

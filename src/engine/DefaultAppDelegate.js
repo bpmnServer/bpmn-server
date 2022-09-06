@@ -14,6 +14,12 @@ const js_bpmn_moddle_1 = require("../elements/js-bpmn-moddle");
 class DefaultAppDelegate {
     constructor(server) {
         this.server = server;
+        let self = this;
+        server.listener.on('all', function ({ context, event }) {
+            return __awaiter(this, void 0, void 0, function* () {
+                yield self.executionEvent(context, event);
+            });
+        });
     }
     sendEmail(to, msg, body) {
         throw Error("sendEmail must be implemented by AppDelegate");
@@ -23,12 +29,6 @@ class DefaultAppDelegate {
     }
     executionStarted(execution) {
         return __awaiter(this, void 0, void 0, function* () {
-            let self = this;
-            execution.listener.on('all', function ({ context, event }) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    yield self.executionEvent(context, event);
-                });
-            });
         });
     }
     executionEvent(context, event) {

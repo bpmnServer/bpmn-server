@@ -28,26 +28,38 @@ Feature('Throwing Signals from t-throw-signals', () => {
             Given('Throw signals', async () => {
                 await server.dataStore.deleteInstances({ "data.caseId": 5001 });
                 response = await server.engine.start(name, { caseId: 5001 });
+                await delay(2000);
             });
             Then('signals 1 need to have caught 1:', async () => {
-                var data = response.instance.data;
-                console.log('data:', data);
                 let instances1 = await server.dataStore.findInstances(
                     { name: 't-catch-signals1', "data.caseId": 5001 , "data.signal": 'signal-101' });
+
+                expect(instances1.length).equals(1);
+            });
+            Then('signals 2 need to have caught 1:', async () => {
                 let instances2 = await server.dataStore.findInstances(
                     { name: 't-catch-signals1', "data.caseId": 5001, "data.signal": 'signal-102' });
+                expect(instances2.length).equals(1);
+            });
+            Then('signals 3 need to have caught 1:', async () => {
                 let instances3 = await server.dataStore.findInstances(
                     { name: 't-catch-signals2', "data.caseId": 5001, "data.signal": 'signal-101' });
+                expect(instances3.length).equals(1);
+            });
+            Then('signals 4 need to have caught 1:', async () => {
                 let instances4 = await server.dataStore.findInstances(
                     { name: 't-catch-signals2', "data.caseId": 5001, "data.signal": 'signal-102' });
 
-                expect(instances1.length).equals(1);
-                expect(instances2.length).equals(1);
-                expect(instances3.length).equals(1);
                 expect(instances4.length).equals(1);
-
-                console.log(instances1.length, instances2.length, instances3.length, instances4.length);
             });
+
+            let fileName = __dirname + '/../logs/signals.log';
+
+            and('write log file to ' + fileName, async () => {
+                logger.save(fileName);
+                //                console.log('filename:', __filename);
+            });
+
         });
 
 }); 

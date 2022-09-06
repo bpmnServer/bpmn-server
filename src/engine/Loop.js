@@ -25,15 +25,20 @@ class Loop {
         else {
             this.id = token.execution.getNewId('loop');
             this.definition = node.getBehaviour(elements_1.Behaviour_names.LoopCharacteristics);
-            const coll = this.definition.collection;
-            token.log('loop collection:' + coll);
             this.completed = 0;
-            this.items = token.execution.appDelegate.scopeEval(token, coll);
-            this.dataPath = token.dataPath + '.' + this.node.id + '[]';
             this.sequence = 0;
+            const coll = this.definition.collection;
+            this.dataPath = token.dataPath + '.' + this.node.id + '[]';
+            if (coll) {
+                token.log('loop collection:' + coll);
+                this.items = token.execution.appDelegate.scopeEval(token, coll);
+            }
+            else
+                this.items = [];
         }
     }
     isSequential() { return (this.definition.isSequential()); }
+    isStandard() { return (this.definition.isStandard()); }
     save() {
         return {
             id: this.id, nodeId: this.node.id, ownerTokenId: this.ownerToken.id, dataPath: this.dataPath,
@@ -75,6 +80,23 @@ class Loop {
                     let data = {};
                     data[loop.getKeyName()] = seq;
                     let newToken = yield Token_1.Token.startNewToken(Token_1.TOKEN_TYPE.Instance, token.execution, token.currentNode, loop.dataPath + '.' + seq, token, token.currentItem, loop, data);
+                    return false; // launching new token; stop this one
+                }
+                else if (loopDefinition.isStandard()) {
+                    console.log("standard loop");
+                    // are we starting a new loop or continueing in an exiting one?
+                    if (token.loop) // already assigned a loop
+                        return true; // go ahead and execute
+                    let loop = new Loop(token.currentNode, token);
+                    try {
+                        let seq = loop.getNext();
+                        let data = {};
+                        data[loop.getKeyName()] = seq;
+                        let newToken = yield Token_1.Token.startNewToken(Token_1.TOKEN_TYPE.Instance, token.execution, token.currentNode, loop.dataPath + '.' + seq, token, token.currentItem, loop, data);
+                    }
+                    catch (exc) {
+                        console.log(exc);
+                    }
                     return false; // launching new token; stop this one
                 }
                 else { // parallel 
@@ -120,6 +142,15 @@ class Loop {
                         let newToken = yield Token_1.Token.startNewToken(Token_1.TOKEN_TYPE.Instance, token.execution, token.currentNode, token.loop.dataPath, token, token.currentItem, token.loop, data);
                         return false;
                     }
+                }
+                else if (token.loop.isStandard()) {
+                    token.loop.completed++;
+                    token.end();
+                    if (token.loop.completed == token.loop.items.length) {
+                        // need to converge here ;
+                        yield token.parentToken.goNext();
+                    }
+                    return false; // no further action
                 }
                 else { // parallel 
                     token.loop.completed++;

@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:message id="Message_04uwjgl" name="hotel_stay_period" />
   <bpmn2:signal id="Signal_1wv5k67" name="confirm_stay_end" />
   <bpmn2:collaboration id="Collaboration_0j6rsbk">
-   <bpmn2:participant id="Participant_1v6uv8j" processRef="rtp_test_msg_throw" />
+    <bpmn2:participant id="Participant_1v6uv8j" processRef="rtp_test_msg_throw" />
   </bpmn2:collaboration>
   <bpmn2:process id="rtp_test_msg_throw" isExecutable="false">
     <bpmn2:intermediateThrowEvent id="Event_04d5bzt" name="Hotel Stay">
+      <bpmn2:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="caseId">data.caseId</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn2:extensionElements>
       <bpmn2:incoming>Flow_1psk1k8</bpmn2:incoming>
       <bpmn2:outgoing>Flow_0mnkxzq</bpmn2:outgoing>
       <bpmn2:messageEventDefinition id="MessageEventDefinition_0sqol4b" messageRef="Message_04uwjgl" />
@@ -41,25 +46,25 @@
       <bpmndi:BPMNShape id="Participant_1v6uv8j_di" bpmnElement="Participant_1v6uv8j" isHorizontal="true">
         <dc:Bounds x="150" y="70" width="700" height="250" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_0o8o9p2_di" bpmnElement="Flow_0o8o9p2">
-        <di:waypoint x="730" y="170" />
-        <di:waypoint x="792" y="170" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0k2hqc7_di" bpmnElement="Flow_0k2hqc7">
-        <di:waypoint x="568" y="170" />
-        <di:waypoint x="630" y="170" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0mnkxzq_di" bpmnElement="Flow_0mnkxzq">
-        <di:waypoint x="478" y="170" />
-        <di:waypoint x="532" y="170" />
+      <bpmndi:BPMNEdge id="Flow_06l4doj_di" bpmnElement="Flow_06l4doj">
+        <di:waypoint x="238" y="170" />
+        <di:waypoint x="290" y="170" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1psk1k8_di" bpmnElement="Flow_1psk1k8">
         <di:waypoint x="390" y="170" />
         <di:waypoint x="442" y="170" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_06l4doj_di" bpmnElement="Flow_06l4doj">
-        <di:waypoint x="238" y="170" />
-        <di:waypoint x="290" y="170" />
+      <bpmndi:BPMNEdge id="Flow_0mnkxzq_di" bpmnElement="Flow_0mnkxzq">
+        <di:waypoint x="478" y="170" />
+        <di:waypoint x="532" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0k2hqc7_di" bpmnElement="Flow_0k2hqc7">
+        <di:waypoint x="568" y="170" />
+        <di:waypoint x="630" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0o8o9p2_di" bpmnElement="Flow_0o8o9p2">
+        <di:waypoint x="730" y="170" />
+        <di:waypoint x="792" y="170" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Event_110yadi_di" bpmnElement="Event_04d5bzt">
         <dc:Bounds x="442" y="152" width="36" height="36" />

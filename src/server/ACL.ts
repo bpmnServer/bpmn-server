@@ -18,7 +18,14 @@ class IAM implements IIAM {
     constructor(server) {
         this.server = server;
     }
-
+    /**
+     * Registering a new user
+     * @param userId
+     * @param name
+     * @param email
+     * @param userGroups
+     * @param password
+     */
     async addUser(userId, name, email, userGroups, password) {
         const user = new User();
         user.userId = userId;
@@ -31,7 +38,9 @@ class IAM implements IIAM {
         return user;
     }
     /**
-     * Returns a key
+     * Returns a userKey for a given user
+     * Temporary bypass to authentication
+     * Bypassing authentication, assuming the an API Key was already provided
      * @param userId
      */
     getRemoteUser(userId) {
@@ -59,12 +68,12 @@ class IAM implements IIAM {
 
     }
     /**
-     * 
+     * Returns a UserProfile for an already authenticated user
      * 
      * @param key
      */
     getCurrentUser(key): User {
-        console.log(IAM.currentUsers);
+        //console.log(IAM.currentUsers);
         const user = IAM.currentUsers.get(key)
         return user;
     }
