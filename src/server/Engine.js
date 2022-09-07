@@ -233,11 +233,17 @@ class Engine extends ServerComponent_1.ServerComponent {
             itemsQuery["items.signalId"] = signalId;
             itemsQuery["items.status"] = 'wait';
             const items = yield this.dataStore.findItems(itemsQuery);
+            console.log('itemsQuery:', itemsQuery, items.length);
             if (items.length > 0) {
                 for (var i = 0; i < items.length; i++) {
                     let item = items[i];
+                    console.log(`Throw Signal ${signalId} found target: ${item.processName} ${item.id}`);
+                }
+                for (var i = 0; i < items.length; i++) {
+                    let item = items[i];
+                    //				console.log(`Throw Signal ${signalId} found target: ${item.processName} ${item.id}`);
                     this.logger.log('..Action:engine.Throw Signal found target', item.processName, item.id);
-                    this.invoke({ "items.id": item.id }, data);
+                    yield this.invoke({ "items.id": item.id }, data);
                 }
             }
             return null;

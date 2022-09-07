@@ -36,23 +36,6 @@ class DataStore extends ServerComponent  implements IDataStore {
 	monitorExecution(execution: Execution) {
 		this.execution = execution;
 		const listener = execution.listener;
-		this.setListener(listener);
-	}
-	private setListener(listener) {
-
-		let self = this;
-		listener.on('end', async function ({ item, event }) {
-			if (!self.isRunning) {
-//No Longer Needed				await self.check(event,item);
-			}
-		});
-
-
-		listener.on('wait', async function ({ item, event }) {
-			if (!self.isRunning) {
-//No Longer Needed				await self.check(event, item);
-			}
-		});
 	}
 	saveCounter = 0;
 

@@ -30,24 +30,6 @@ class DataStore extends ServerComponent_1.ServerComponent {
     monitorExecution(execution) {
         this.execution = execution;
         const listener = execution.listener;
-        this.setListener(listener);
-    }
-    setListener(listener) {
-        let self = this;
-        listener.on('end', function ({ item, event }) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (!self.isRunning) {
-                    //No Longer Needed				await self.check(event,item);
-                }
-            });
-        });
-        listener.on('wait', function ({ item, event }) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (!self.isRunning) {
-                    //No Longer Needed				await self.check(event, item);
-                }
-            });
-        });
     }
     save() {
         return __awaiter(this, void 0, void 0, function* () {
