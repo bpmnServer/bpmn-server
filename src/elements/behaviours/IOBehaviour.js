@@ -86,7 +86,16 @@ class IOBehaviour extends _1.Behaviour {
         });
     }
     describe() {
-        return ['', 'manages IO'];
+        var input = '';
+        var output = '';
+        this.parameters.forEach(param => {
+            if (param.isOutput()) {
+                output += param.name + '=' + param.value;
+            }
+            else
+                input += param.name + '=' + param.value;
+        });
+        return [['Input', input], ['output', output]];
     }
 }
 exports.IOBehaviour = IOBehaviour;

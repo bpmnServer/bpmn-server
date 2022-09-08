@@ -13,6 +13,17 @@ and here
 ### Changed
 -->
 
+## Release 1.3.8    - 2022-07-09
+
+- Fix errors in throwSignal/throwMessage in bpmn-client
+- Fix errors in throwSignal/throwMessage in api [#52](/../../issues/52)
+- Fix bug showing instance 'end' while still running when in gateway
+- Fix issue with editing element name in property panel [#54](/../../issues/54)
+- Include tmp folder in install [#56](/../../issues/56)
+- Minor changes to UI - preserve the last process
+
+
+
 ## Release 1.3.4    - 2022-01-09
 
 Fix bugs with Throwing Messages and Signals

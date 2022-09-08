@@ -20,6 +20,10 @@ class ScriptTask extends Node {
         }
         return NODE_ACTION.end;
     }
+    describe() {
+
+        return [[`script on ${this.def.script} ${this.scripts}`]];
+    }
 }
 /**
  * 
@@ -32,32 +36,34 @@ class ScriptTask extends Node {
  *              output= service (input,context)
  */
 class ServiceTask extends Node {
+    get serviceName() {
+        if (this.def.implementation) {
+            return this.def.implementation;
+        }
+        else if (this.def.delegateExpression) {
+            return this.def.delegateExpression;
+        }
+
+    }
     async run(item): Promise<NODE_ACTION> {
 
         item.context.action = null;
         // calling appDelegate by service name
         const appDelegate = item.token.execution.appDelegate;
-        let serviceName;
 
         // let output = await item.node.getOutput(item);
 
-        if (this.def.implementation) {
-            serviceName = this.def.implementation;
-        }
-        else if (this.def.delegateExpression) {
-            serviceName = this.def.delegateExpression;
-        }
         let ret;
-        item.log("invoking service:" +serviceName);
+        item.log("invoking service:" +this.serviceName);
 
-        if (serviceName && appDelegate.servicesProvider[serviceName])
-            ret = await appDelegate.servicesProvider[serviceName](item.context.input,item.context);
+        if (this.serviceName && appDelegate.servicesProvider[this.serviceName])
+            ret = await appDelegate.servicesProvider[this.serviceName](item.context.input,item.context);
         else
             ret = await appDelegate['serviceCalled'](item.context.input,item.context);
 
         item.log("service returned " + ret);
         item.context.output = ret;
-        console.log('service ', serviceName,'completed-output', ret, item.context.output);
+        console.log('service ', this.serviceName,'completed-output', ret, item.context.output);
         // await item.node.setInput(item,ret);
 
         if (item.context.action && item.context.action == NODE_ACTION.wait) {
@@ -66,6 +72,10 @@ class ServiceTask extends Node {
         }
 
         return NODE_ACTION.end;
+    }
+    describe() {
+
+        return [[`service  ${this.serviceName}`]];
     }
 }
 //    <bpmn2:businessRuleTask id="Task_1lcamp6" name="Vacation"  camunda:decisionRef="Vacation">

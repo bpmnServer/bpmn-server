@@ -90,6 +90,7 @@ class Workflow extends common_1.Common {
         })));
         router.get('/execute/:processName', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             let processName = request.params.processName;
+            request.session.processName = processName;
             let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
             let context = yield bpmnServer.engine.start(processName, { caseId: caseId++ }, null, userKey);
             if (context.errors) {
@@ -100,6 +101,7 @@ class Workflow extends common_1.Common {
         })));
         router.post('/execute', awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             let process = request.body.processName;
+            request.session.processName = process;
             let data = {};
             parseField(request.body.field1, request.body.value1, data);
             parseField(request.body.field2, request.body.value2, data);
@@ -292,6 +294,7 @@ function display(req, res, title, output, logs = [], items = []) {
             debugMsgs: [],
             waiting: waiting,
             instances,
+            request: req,
             logs, items
         });
     });

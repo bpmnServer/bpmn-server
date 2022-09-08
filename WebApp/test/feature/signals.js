@@ -11,7 +11,7 @@ const { BPMNServer , DefaultHandler , Logger } = require("../../");
 const { configuration } = require('../testConfiguration');
 
 
-const logger = new Logger({ toConsole: true });
+const logger = new Logger({ toConsole: false});
 
 const server = new BPMNServer(configuration, logger, { cron: false });
 
@@ -28,7 +28,7 @@ Feature('Throwing Signals from t-throw-signals', () => {
             Given('Throw signals', async () => {
                 await server.dataStore.deleteInstances({ "data.caseId": 5001 });
                 response = await server.engine.start(name, { caseId: 5001 });
-                await delay(2000);
+                await delay(3000);
             });
             Then('signals 1 need to have caught 1:', async () => {
                 let instances1 = await server.dataStore.findInstances(

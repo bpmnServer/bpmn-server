@@ -54,11 +54,16 @@ class Logger {
             var val = args[i];
             if (i > 0)
                 out += ' ,';
-            var cls = val.constructor.name;
-            if (cls === 'String')
+            if (typeof val === 'undefined') {
                 out += val;
-            else
-                out += cls + " " + JSON.stringify(val, null, 2);
+            }
+            else {
+                var cls = val.constructor.name;
+                if (cls === 'String')
+                    out += val;
+                else
+                    out += cls + " " + JSON.stringify(val, null, 2);
+            }
         }
         return out;
     }

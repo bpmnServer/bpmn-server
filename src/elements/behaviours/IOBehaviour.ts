@@ -98,7 +98,18 @@ class IOBehaviour extends Behaviour {
 
     }
     describe() {
-        return ['', 'manages IO'];
+        var input = '';
+        var output = '';
+        this.parameters.forEach(param => {
+            if (param.isOutput()) {
+                    output += param.name +'='+param.value;
+            }
+            else
+                input+= param.name + '=' + param.value;
+
+        });
+
+        return [['Input', input],['output',output]];
     }
 }
 

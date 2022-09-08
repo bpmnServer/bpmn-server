@@ -222,13 +222,23 @@ export class API extends Common {
                 let messageId = request.body.messageId;
                 console.log(' MessageId ' + messageId);
                 let data = request.body.data;
+                let messageMatchingKey = {};
+                
+                if (request.body.messageMatchingKey)
+                    messageMatchingKey = request.body.messageMatchingKey;
+
                 let context;
                 console.log(data);
 
-                context = await this.bpmnServer.engine.throwMessage(messageId, data);
-                response.json(context.instance);
+                context = await this.bpmnServer.engine.throwMessage(messageId, data, messageMatchingKey);
+                if (context)
+                    response.json(context.instance);
+                else
+                    response.json({});
+
             }
             catch (exc) {
+                console.log(exc);
                 response.json({ error: exc.toString() });
             }
         }));
@@ -246,15 +256,20 @@ export class API extends Common {
         router.post('/engine/throwSignal', loggedIn, awaitAppDelegateFactory(async (request, response) => {
 
             try {
-                let messageId = request.body.messageId;
-                console.log(' Signal Id: ' + messageId);
+                let signalId = request.body.signalId;
+                console.log(' Signal Id: ' + signalId);
                 let data = request.body.data;
+                let messageMatchingKey = {};
+
+                if (request.body.messageMatchingKey)
+                    messageMatchingKey = request.body.messageMatchingKey;
                 let context;
-                console.log(data);
-                context = await this.bpmnServer.engine.throwSignal(messageId, data);
-                response.json(context.instance);
+
+                context = await this.bpmnServer.engine.throwSignal(signalId, data, messageMatchingKey);
+                response.json(context);
             }
             catch (exc) {
+                console.log(exc);
                 response.json({ error: exc.toString() });
             }
         }));

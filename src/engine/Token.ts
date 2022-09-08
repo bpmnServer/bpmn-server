@@ -385,9 +385,9 @@ class Token implements IToken {
         let thisItem = this.currentItem;
         const self = this;
         const promises = [];
-        if (outbounds.length > 1) {
-            this.end();
-        }
+//        if (outbounds.length > 1) {
+//            this.end();
+//        }
         outbounds.forEach(async function (flowItem) {
 
             /// need to check if next node is converging; therefore no new item``
@@ -405,6 +405,9 @@ class Token implements IToken {
                }
             }
         });
+        if (outbounds.length > 1) {
+            this.end();
+        }
         this.log(`... waiting for ${promises.length}`);
         await Promise.all(promises);
         this.log(`..token.goNext is done ${this.currentNode.id} ${this.currentNode.type}`);

@@ -40,6 +40,7 @@ class Model extends common_1.Common {
         })));
         router.post('/new', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             let processName = request.body.processName;
+            request.session.processName = processName;
             response.redirect('/model/add/' + processName);
         })));
         router.get('/addNoProp/:process', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
@@ -50,6 +51,7 @@ class Model extends common_1.Common {
         })));
         router.get('/add/:process', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             let processName = request.params.process;
+            request.session.processName = processName;
             console.log('adding ' + processName);
             let view = new Modeler_wProp_1.ModelerWProp();
             view.displayNew(processName, request, response);
@@ -81,12 +83,12 @@ class Model extends common_1.Common {
             req.busboy.on('file', function (fileUploaded, file, filename) {
                 console.log("Uploading: ", filename);
                 //Path where image will be uploaded
-                const filepath = __dirname + '/../tmp/' + filename;
+                const filepath = __dirname + '/../tmp/' + filename.filename;
                 fstream = fsx.createWriteStream(filepath);
                 file.pipe(fstream);
                 fstream.on('close', function () {
                     return __awaiter(this, void 0, void 0, function* () {
-                        console.log("Upload Finished of " + filename);
+                        console.log("Upload Finished of " + filename.filename);
                         const name = filename.filename;
                         const source = fsx.readFileSync(filepath, { encoding: 'utf8', flag: 'r' });
                         yield definitions.save(name, source, null);
@@ -131,6 +133,7 @@ class Model extends common_1.Common {
             const config = require('../configuration.js').configuration;
             let xml, base_url, title, processName;
             processName = request.params.process;
+            request.session.processName = processName;
             xml = yield definitions.getSource(processName);
             title = processName;
             let view = new Modeler_wProp_1.ModelerWProp();
@@ -149,6 +152,7 @@ class Model extends common_1.Common {
         router.post('/add/:process?', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             let body = request.body;
             let name = body.processId;
+            request.session.processName = name;
             let bpmn = body.bpmn;
             let svg = body.svg;
             yield definitions.save(name, bpmn, svg);
@@ -177,6 +181,7 @@ class Model extends common_1.Common {
             console.log('edit/process request.body', request.params, request.query);
             let body = request.body;
             let name = body.processId;
+            request.session.processName = name;
             let bpmn = body.bpmn;
             let svg = body.svg;
             let definitionsPath = bpmnServer.configuration.definitionsPath;

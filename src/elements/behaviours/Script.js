@@ -36,7 +36,13 @@ class ScriptBehaviour extends _1.Behaviour {
         item.token.log('returned from script call ' + " for " + item.id);
     } */
     describe() {
-        return ['script on ' + this.event, this.scripts];
+        var scrs = this.definition['$children'];
+        var desc = [];
+        for (var i = 0; i < scrs.length; i++) {
+            var scr = scrs[i];
+            desc.push([`script on ${this.definition.event}`, ` ${this.scripts}`]);
+        }
+        return desc;
     }
 }
 exports.ScriptBehaviour = ScriptBehaviour;

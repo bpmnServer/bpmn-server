@@ -1,5 +1,7 @@
 h3 Processes (BPMN Definitions)
 	script(type="text/javascript").
+
+		var currentProcess="#{request.session.processName}";
 		var selectedProcess,userId;
 
 		$(window).on('pageshow', function(){
@@ -33,6 +35,7 @@ h3 Processes (BPMN Definitions)
 				userId=$(this).val();
 				setLinks();
 			});
+			$("#process")[0].value = currentProcess;
 		});
 		function setLinks()
 		{

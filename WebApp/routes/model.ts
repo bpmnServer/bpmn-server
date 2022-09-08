@@ -42,6 +42,7 @@ export class Model extends Common {
         router.post('/new', awaitHandlerFactory(async (request, response) => {
 
             let processName = request.body.processName;
+            request.session.processName = processName;
 
             response.redirect('/model/add/' + processName);
         }));
@@ -59,6 +60,7 @@ export class Model extends Common {
         router.get('/add/:process', awaitHandlerFactory(async (request, response) => {
 
             let processName = request.params.process;
+            request.session.processName = processName;
 
             console.log('adding ' + processName);
 
@@ -104,14 +106,14 @@ export class Model extends Common {
                     console.log(exc);
                 }
             req.busboy.on('file', function (fileUploaded, file, filename) {
-                console.log("Uploading: " ,filename);
+                console.log("Uploading: ",filename);
 
                 //Path where image will be uploaded
-                const filepath = __dirname + '/../tmp/' + filename;
+                const filepath = __dirname + '/../tmp/' + filename.filename;
                 fstream = fsx.createWriteStream(filepath);
                 file.pipe(fstream);
                 fstream.on('close', async function () {
-                    console.log("Upload Finished of " + filename);
+                    console.log("Upload Finished of " + filename.filename);
                     const name = filename.filename;
                     const source = fsx.readFileSync(filepath,
                         { encoding: 'utf8', flag: 'r' });
@@ -176,6 +178,7 @@ export class Model extends Common {
             let xml, base_url, title, processName;
 
             processName = request.params.process;
+            request.session.processName = processName;
             xml = await definitions.getSource(processName);
             title = processName;
 
@@ -203,6 +206,7 @@ export class Model extends Common {
             let body = request.body;
 
             let name = body.processId;
+            request.session.processName = name;
             let bpmn = body.bpmn;
             let svg = body.svg;
 
@@ -241,6 +245,7 @@ export class Model extends Common {
             let body = request.body;
 
             let name = body.processId;
+            request.session.processName = name;
             let bpmn = body.bpmn;
             let svg = body.svg;
 

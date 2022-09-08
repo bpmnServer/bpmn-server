@@ -27,6 +27,9 @@ class ScriptTask extends Node_1.Node {
             return Enums_1.NODE_ACTION.end;
         });
     }
+    describe() {
+        return [[`script on ${this.def.script} ${this.scripts}`]];
+    }
 }
 exports.ScriptTask = ScriptTask;
 /**
@@ -40,34 +43,38 @@ exports.ScriptTask = ScriptTask;
  *              output= service (input,context)
  */
 class ServiceTask extends Node_1.Node {
+    get serviceName() {
+        if (this.def.implementation) {
+            return this.def.implementation;
+        }
+        else if (this.def.delegateExpression) {
+            return this.def.delegateExpression;
+        }
+    }
     run(item) {
         return __awaiter(this, void 0, void 0, function* () {
             item.context.action = null;
             // calling appDelegate by service name
             const appDelegate = item.token.execution.appDelegate;
-            let serviceName;
             // let output = await item.node.getOutput(item);
-            if (this.def.implementation) {
-                serviceName = this.def.implementation;
-            }
-            else if (this.def.delegateExpression) {
-                serviceName = this.def.delegateExpression;
-            }
             let ret;
-            item.log("invoking service:" + serviceName);
-            if (serviceName && appDelegate.servicesProvider[serviceName])
-                ret = yield appDelegate.servicesProvider[serviceName](item.context.input, item.context);
+            item.log("invoking service:" + this.serviceName);
+            if (this.serviceName && appDelegate.servicesProvider[this.serviceName])
+                ret = yield appDelegate.servicesProvider[this.serviceName](item.context.input, item.context);
             else
                 ret = yield appDelegate['serviceCalled'](item.context.input, item.context);
             item.log("service returned " + ret);
             item.context.output = ret;
-            console.log('service ', serviceName, 'completed-output', ret, item.context.output);
+            console.log('service ', this.serviceName, 'completed-output', ret, item.context.output);
             // await item.node.setInput(item,ret);
             if (item.context.action && item.context.action == Enums_1.NODE_ACTION.wait) {
                 return item.context.action;
             }
             return Enums_1.NODE_ACTION.end;
         });
+    }
+    describe() {
+        return [[`service  ${this.serviceName}`]];
     }
 }
 exports.ServiceTask = ServiceTask;

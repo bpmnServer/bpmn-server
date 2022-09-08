@@ -157,8 +157,8 @@ ${xml}
 	var propertyPanel=false;
 
 
-    $("div#js-properties-panel").draggable();
-    $("div#js-properties-panel").draggable();
+    //$("div#js-properties-panel").draggable();
+    //$("div#js-properties-panel").draggable();
     var control=$("#property-panel-control");
     var panel=$("div#js-properties-panel");
     //$("#property-panel-control").draggable();

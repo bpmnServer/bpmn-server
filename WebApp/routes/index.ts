@@ -109,6 +109,7 @@ export class Workflow extends Common {
 
 
             let processName = request.params.processName;
+            request.session.processName = processName;
             let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
 
             let context = await bpmnServer.engine.start(processName, { caseId: caseId++ },
@@ -128,6 +129,7 @@ export class Workflow extends Common {
         router.post('/execute', awaitAppDelegateFactory(async (request, response) => {
 
             let process = request.body.processName;
+            request.session.processName = process;
             let data = {};
             parseField(request.body.field1, request.body.value1, data);
             parseField(request.body.field2, request.body.value2, data);
@@ -363,6 +365,7 @@ async function display(req,res, title, output, logs = [], items = []) {
             debugMsgs: [], // Logger.get(),
             waiting: waiting,
             instances,
+            request: req,
             logs, items
         });
 

@@ -230,9 +230,13 @@ class Engine extends ServerComponent implements IEngine{
 
 
 		const items = await this.dataStore.findItems(itemsQuery);
+
+		console.log('throw message itemsQuery:', itemsQuery, items.length);
 		if (items.length > 0) {
 
 			const item = items[0];
+			console.log(`Throw Signal ${messageId} found target: ${item.processName} ${item.id}`);
+
 			this.logger.log('..Action:engine.throwMessage found target ', item.processName, item.id);
 			return await this.invoke({ "items.id": item.id }, data);
 		}
@@ -251,10 +255,11 @@ class Engine extends ServerComponent implements IEngine{
 	 * @param matchingQuery	should match the itemKey (if specified)
 	 * @param data			message data
 	 */
-	async throwSignal(signalId, data = {}, matchingQuery = {} ) : Promise<Execution>{
+	async throwSignal(signalId, data = {}, matchingQuery = {} ) {
 
 		this.logger.log('..Action:engine.Throw Signal ',signalId,data,matchingQuery);
 
+		var instances = [];
 		if (!signalId)
 			return null;
 
@@ -267,7 +272,8 @@ class Engine extends ServerComponent implements IEngine{
 				let event = events[i];
 				this.logger.log('..Action:engine.Throw Signal found target', event.modelName, data, event.elementId);
 				
-				this.start(event.modelName, data, event.elementId, null);
+				var res=await this.start(event.modelName, data, event.elementId, null);
+				instances.push(res.instance.id);
 			}
         }
 		let itemsQuery = {};
@@ -278,7 +284,7 @@ class Engine extends ServerComponent implements IEngine{
 		itemsQuery["items.status"] = 'wait';
 
 		const items = await this.dataStore.findItems(itemsQuery);
-		console.log('itemsQuery:', itemsQuery,items.length);
+		console.log('throw signal itemsQuery:', itemsQuery,items.length);
 		if (items.length > 0) {
 			for (var i = 0; i < items.length; i++) {
 				let item = items[i];
@@ -289,10 +295,11 @@ class Engine extends ServerComponent implements IEngine{
 				let item = items[i];
 //				console.log(`Throw Signal ${signalId} found target: ${item.processName} ${item.id}`);
 				this.logger.log('..Action:engine.Throw Signal found target', item.processName,item.id );
-				await this.invoke({ "items.id": item.id }, data);
+				var res=await this.invoke({ "items.id": item.id }, data);
+				instances.push(res.instance.id);
             }
 		}
-		return null;
+		return instances;
 	}
 
 
