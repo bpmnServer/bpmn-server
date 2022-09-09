@@ -29,10 +29,10 @@
     <bpmn2:sequenceFlow id="Flow_10ogv2p" sourceRef="Event_190dv7t" targetRef="Event_097goil" />
     <bpmn2:sequenceFlow id="Flow_0uncxrt" sourceRef="Event_097goil" targetRef="Event_1cb4pzi" />
     <bpmn2:sequenceFlow id="Flow_18sqtjr" sourceRef="Event_07suegq" targetRef="Event_14e4p87" />
-    <bpmn2:intermediateThrowEvent id="Event_14e4p87">
+    <bpmn2:intermediateThrowEvent id="Event_14e4p87" name="Message-104">
       <bpmn2:extensionElements>
         <camunda:executionListener event="start">
-          <camunda:script scriptFormat="JavaScript">this.context.messageMatchingKey={"data.clientId":101};</camunda:script>
+          <camunda:script scriptFormat="JavaScript">this.context.messageMatchingKey={"data.clientId":101 , "data.caseId": data.caseId };</camunda:script>
         </camunda:executionListener>
       </bpmn2:extensionElements>
       <bpmn2:incoming>Flow_18sqtjr</bpmn2:incoming>
@@ -134,6 +134,9 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0vizq5u_di" bpmnElement="Event_14e4p87">
         <dc:Bounds x="682" y="272" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="666" y="315" width="68" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_01f9goy_di" bpmnElement="Event_190dv7t">
         <dc:Bounds x="472" y="192" width="36" height="36" />

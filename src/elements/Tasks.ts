@@ -113,7 +113,7 @@ class BusinessRuleTask extends ServiceTask {
 class SendTask extends ServiceTask {
 
     get isCatching(): boolean { return false; } 
-
+    /*
     async run(item): Promise<NODE_ACTION> {
 
         if (this.def.script) {
@@ -121,7 +121,7 @@ class SendTask extends ServiceTask {
             await item.token.execution.appDelegate.scopeJS(item, this.def.script);
         }
         return NODE_ACTION.end;
-    }
+    } */
 }
 class UserTask extends Node {
 

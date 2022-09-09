@@ -317,6 +317,15 @@ class Token implements IToken {
         await this.end();
 
     }
+    /**
+     *  is called by events to cancel current token
+     *  
+     * */
+    async continue() {
+        await this.currentNode.end(this.currentItem);
+        await this.goNext();
+
+    }
     /*
      *  is called to invoke an element like userTask, or trigger an envent or signal
      *  

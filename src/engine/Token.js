@@ -294,6 +294,16 @@ class Token {
             yield this.end();
         });
     }
+    /**
+     *  is called by events to cancel current token
+     *
+     * */
+    continue() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.currentNode.end(this.currentItem);
+            yield this.goNext();
+        });
+    }
     /*
      *  is called to invoke an element like userTask, or trigger an envent or signal
      *

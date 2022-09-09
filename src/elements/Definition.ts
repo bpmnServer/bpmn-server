@@ -156,8 +156,13 @@ references:
             }
             else if ((ref.element.$type == "bpmn:MessageEventDefinition")
                 || (ref.element.$type == "bpmn:SignalEventDefinition")) {
-                const eventDef = definition.elementsById[ref.element.id];
-                eventDef[ref.property] = ref.id;
+                var eventDef;
+                if (ref.element.id) {
+                    eventDef = definition.elementsById[ref.element.id];
+                    eventDef[ref.property] = ref.id;
+                }
+                else
+                    eventDef = definition.elementsById[ref.id];
             }
         });
         refs.forEach(ref => {

@@ -24,16 +24,17 @@ Feature('Boundary Event', () => {
 ///```
 ///## Do the task right-away
 ///```javascript
-        Scenario('do the task right-away- events will end', () => {
+        Scenario('1. do the task right-away- events will end', () => {
             Given('Start '+ name + ' Process',async () => {
-                response = await server.engine.start(name, {});
+                response = await server.engine.start(name, {caseId:1001});
             });
             Then('check for output', () => {
                 expect(response).to.have.property('execution');
                 instanceId = response.execution.id;
                 expect(getItem('user_task').status).equals('wait');
-                expect(getItem('BoundaryEvent_timer').status).equals('wait');
-                expect(getItem('BoundaryEvent_message').status).equals('wait');
+                expect(getItem('Reminder-Timer').status).equals('wait');
+                expect(getItem('Expired-Timer').status).equals('wait');
+                expect(getItem('Cancel-Message').status).equals('wait');
             });
 ///```
 ///![BPMN Diagram](boundary-event2.png)
@@ -55,10 +56,14 @@ Feature('Boundary Event', () => {
 ///Events are terminated.
 ///```javascript
 
-            When('I dont wait for events to complete', async () => {
+            Then('All events are complete', async () => {
 
-                expect(getItem('BoundaryEvent_timer').status).equals('end');
-                expect(getItem('BoundaryEvent_message').status).equals('end');
+                expect(getItem('user_task').status).equals('end');
+                expect(getItem('Reminder-Timer').status).equals('end');
+                expect(getItem('Expired-Timer').status).equals('end');
+                expect(getItem('Cancel-Message').status).equals('end');
+                expect(getItem('process_request').status).equals('end');
+                expect(getItem('event_end').status).equals('end');
 
             });
 
@@ -71,33 +76,58 @@ Feature('Boundary Event', () => {
 ///```
 ///## Don't do the task right-away , wait for timer to fire
 ///```javascript
-            Scenario('Dont do the task right - away, wait for timer to fire', () => {
+            Scenario('2. Dont do the task right - away, wait for timer to fire', () => {
                 Given('Start ' + name + ' Process', async () => {
-                    response = await server.engine.start(name, {});
-                });
-                Then('check for output', () => {
-                    expect(response).to.have.property('execution');
-                    instanceId = response.execution.id;
-                    expect(getItem('user_task').status).equals('wait');
-                    expect(getItem('BoundaryEvent_timer').status).equals('wait');
-                    expect(getItem('BoundaryEvent_message').status).equals('wait');
+                    response = await server.engine.start(name, {caseId:1002, scenario: 'wait for timers' });
                 });
 ///```
 ///![BPMN Diagram](boundary-event2.png)
 ///
 ///boundary events have started in a wait state
 ///```javascript
-            When('wait for the timer to fire', async () => {
+                When('wait for the reminder timers to fire', async () => {
 
-                await delay(2500);
-            });
+                    await delay(2500);
+                   // displayItems();
+                });
+/*  
+                Then('      user task', () => {
+                    expect(getItem('user_task').status).equals('wait');
+                });
+                Then('      reminder timer', () => {
+                    expect(getItem('Reminder-Timer').status).equals('end');
+                });
+                Then('      expired timer', () => {
+                    expect(getItem('Expired-Timer').status).equals('wait');
+                });
+                Then('      cancel message', () => {
+                    expect(getItem('Cancel-Message').status).equals('wait');
+                });
+                */
+                When('wait for the expired timer to fire', async () => {
+
+                    await delay(15000);
+                });
+
+                    Then('      user task', () => {
+                        expect(getItem('user_task').status).equals('end');
+                    });
+                    Then('      reminder timer', () => {
+                        expect(getItem('Reminder-Timer').status).equals('end');
+                    });
+                    Then('      expired timer', () => {
+                        expect(getItem('Expired-Timer').status).equals('end');
+                    });
+                    Then('      cancel message', () => {
+                        expect(getItem('Cancel-Message').status).equals('end');
+                    });
 
 ///```
 ///![BPMN Diagram](boundary-event3.png)
 ///
 ///
 ///```javascript
-
+                /*
             When('I wait for events to complete', async () => {
 
                 expect(getItem('BoundaryEvent_timer').status).equals('end');
@@ -105,7 +135,7 @@ Feature('Boundary Event', () => {
                 expect(getItem('task_2').status).equals('end');     // issue reminder
                 
 
-            });
+            }); */
 
             let fileName = __dirname + '/../logs/' + name + '2.log';
 
@@ -130,6 +160,14 @@ async function delay(time) {
 }
 function log(msg) {
     logger.log(msg);
+}
+function displayItems() {
+    console.log('instance data:', response.instance.data);
+    response.instance.items.forEach(item => {
+
+        console.log(`${item.elementId} -  ${item.status} - Item ${item.id}`);   
+    });
+
 }
 function getItem(id)
 {

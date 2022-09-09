@@ -109,15 +109,6 @@ class BusinessRuleTask extends ServiceTask {
 exports.BusinessRuleTask = BusinessRuleTask;
 class SendTask extends ServiceTask {
     get isCatching() { return false; }
-    run(item) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (this.def.script) {
-                item.token.log(this.def.script);
-                yield item.token.execution.appDelegate.scopeJS(item, this.def.script);
-            }
-            return Enums_1.NODE_ACTION.end;
-        });
-    }
 }
 exports.SendTask = SendTask;
 class UserTask extends Node_1.Node {

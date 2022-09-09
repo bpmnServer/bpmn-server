@@ -2,6 +2,7 @@ import { Node } from ".";
 import { Behaviour_names } from "./behaviours";
 import { NODE_ACTION } from "../../";
 import { Item } from "../engine/Item";
+import { ITEM_STATUS } from "../interfaces";
 class Event extends Node {
 
     hasMessage() {
@@ -50,6 +51,15 @@ class BoundaryEvent extends Event {
 
     get isCatching(): boolean { return true; } 
 
+    isCancelling: boolean;
+    constructor(id, process, type, def) {
+        super(id, process, type, def);
+
+        this.isCancelling = true;
+        if ((typeof this.def['cancelActivity'] !=='undefined') && (this.def['cancelActivity'] === false))
+            this.isCancelling=false;
+
+    }
     get requiresWait() {
         return true; 
     }
@@ -59,6 +69,24 @@ class BoundaryEvent extends Event {
 
     async start(item: Item): Promise<NODE_ACTION> {
         return super.start(item);
+    }
+    async run(item: Item): Promise<NODE_ACTION> {
+
+        if (item.token.parentToken.currentItem.status == ITEM_STATUS.end)   // in cancelling mode
+            return;
+        if (this.isCancelling) {
+            // cancel the parent item
+            /* option 1:
+            await item.token.parentToken.continue();
+            */
+            /* option 2:
+             * or Terminate the parent task, this will kill the flow as well
+             * */
+            item.token.parentToken.currentItem.status = ITEM_STATUS.end; //force status so it would not run
+            await item.token.parentToken.terminate();
+            
+        }
+        return super.run(item);
     }
 }
 class ThrowEvent extends Event {

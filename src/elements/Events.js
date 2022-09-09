@@ -13,6 +13,7 @@ exports.BoundaryEvent = exports.ThrowEvent = exports.CatchEvent = exports.EndEve
 const _1 = require(".");
 const behaviours_1 = require("./behaviours");
 const __1 = require("../../");
+const interfaces_1 = require("../interfaces");
 class Event extends _1.Node {
     hasMessage() {
         return this.getBehaviour(behaviours_1.Behaviour_names.MessageEventDefinition);
@@ -62,6 +63,12 @@ class CatchEvent extends Event {
 }
 exports.CatchEvent = CatchEvent;
 class BoundaryEvent extends Event {
+    constructor(id, process, type, def) {
+        super(id, process, type, def);
+        this.isCancelling = true;
+        if ((typeof this.def['cancelActivity'] !== 'undefined') && (this.def['cancelActivity'] === false))
+            this.isCancelling = false;
+    }
     get isCatching() { return true; }
     get requiresWait() {
         return true;
@@ -75,6 +82,27 @@ class BoundaryEvent extends Event {
         });
         return __awaiter(this, void 0, void 0, function* () {
             return _super.start.call(this, item);
+        });
+    }
+    run(item) {
+        const _super = Object.create(null, {
+            run: { get: () => super.run }
+        });
+        return __awaiter(this, void 0, void 0, function* () {
+            if (item.token.parentToken.currentItem.status == interfaces_1.ITEM_STATUS.end) // in cancelling mode
+                return;
+            if (this.isCancelling) {
+                // cancel the parent item
+                /* option 1:
+                await item.token.parentToken.continue();
+                */
+                /* option 2:
+                 * or Terminate the parent task, this will kill the flow as well
+                 * */
+                item.token.parentToken.currentItem.status = interfaces_1.ITEM_STATUS.end; //force status so it would not run
+                yield item.token.parentToken.terminate();
+            }
+            return _super.run.call(this, item);
         });
     }
 }

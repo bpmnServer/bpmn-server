@@ -70,7 +70,7 @@ class TimerBehaviour extends _1.Behaviour {
             }
             else if (this.timeCycle) {
                 //seconds = toSeconds((parse(this.timeCycle)));
-                seconds = Cron_1.Cron.timeDue(this.duration, null);
+                seconds = Cron_1.Cron.timeDue(this.timeCycle, null);
             }
         }
         let timeDue = new Date().getTime() / 1000;

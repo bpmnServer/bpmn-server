@@ -13,6 +13,14 @@ and here
 ### Changed
 -->
 
+## Release 1.3.9    - 2022-07-09
+
+- SendTask now behaves same as ServiceTask
+- BoundaryEvents
+  - Handle interrupting and non-interrupting
+  - Interrupting cancel the parent task and its flow
+   
+
 ## Release 1.3.8    - 2022-07-09
 
 - Fix errors in throwSignal/throwMessage in bpmn-client
