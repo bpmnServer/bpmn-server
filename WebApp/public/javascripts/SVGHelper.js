@@ -68,14 +68,20 @@ $('document').ready(function () {
 
                 if (id.indexOf('_label') > 0) { }
                 else {
-
                     let g = $(this);
+
 
             //        setElementClick(g);
 
                     let decorSet = map.get(id);
-                    if (decorSet)
+                    if (decorSet) {
+
+/*                        $('[data-element-id="' + id + '"]>.djs-visual>rect').css('stroke', cl).css('fill','#d3dfd2');
+                        $('[data-element-id="' + id + '"]>.djs-visual>path').css('stroke', cl);
+                        $('[data-element-id="' + id + '"]>.djs-visual circle').css('stroke', cl).css('fill', '#d3dfd2');
+*/
                         setElementDecor(svg, g, decorSet);
+                    }
                 }
 
             });
@@ -95,11 +101,16 @@ function textDumm() {
 function setElementDecor(svg, g, decorSet) {
 
     let id = g.attr('data-element-id');
-    console.log(decorSet);
-
-//    let g2 = $(g).children('g');
-
-    // $(g).appendChild('< text class="djs-label><tspan x='4' y='-3'>7</tspan></text>');
+    let jsonInfo=getItemElement(id);
+    if (jsonInfo.type) {
+        let bpmnType = jsonInfo.type.replace('bpmn:', 'bpmn_');
+        $(g)[0].classList.add(bpmnType);
+    }
+ 
+    if (decorSet[0].color == 'black')
+        $(g)[0].classList.add("Completed");
+    else
+        $(g)[0].classList.add("Pending");
 
     var svgNS = "http://www.w3.org/2000/svg";
 
@@ -109,8 +120,10 @@ function setElementDecor(svg, g, decorSet) {
         let el = $(g).get(0);   // base html element
         let txtEl = document.createElementNS(svgNS, "text");
 
-
-        txtEl.setAttributeNS(null, 'class', 'djs-label');
+        if (decor.color=='black')
+            txtEl.setAttributeNS(null, 'class', 'djs-label Completed-Seq');
+        else
+            txtEl.setAttributeNS(null, 'class', 'djs-label Pending-Seq');
         txtEl.setAttributeNS(null, 'stroke', decor.color);
         txtEl.setAttributeNS(null, 'x', x);
         txtEl.setAttributeNS(null, 'y', -3);

@@ -44,7 +44,7 @@ exports.ScriptTask = ScriptTask;
  */
 class ServiceTask extends Node_1.Node {
     get serviceName() {
-        if (this.def.implementation) {
+        if (this.def.implementation && typeof this.def.implementation !== 'undefined') {
             return this.def.implementation;
         }
         else if (this.def.delegateExpression) {

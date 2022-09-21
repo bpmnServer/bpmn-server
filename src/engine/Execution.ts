@@ -253,7 +253,7 @@ class Execution extends ServerComponent implements IExecution {
                 this.getItems().forEach(i => {
                     this.logger.log(`Item: ${i.id} - ${i.elementId} - ${i.status} - ${i.timeDue}`);
                 });
-                this.logger.error("*** ERROR *** task id not valid");
+                this.logger.error("*** ERROR *** task id not valid" + executionId);
             }
         }
 
@@ -278,7 +278,7 @@ class Execution extends ServerComponent implements IExecution {
         await this.server.dataStore.saveInstance(state, this.getItems());
 
     }
-    getItems(query=null): Item[] {
+    getItems(): Item[] {
         const items = [];
         this.tokens.forEach(t => {
             t.path.forEach(i => {

@@ -58,6 +58,8 @@ class Item implements IItem {
     }
     // timer
     timeDue: Date;
+    timerCount;
+
     messageId;
     signalId;
 

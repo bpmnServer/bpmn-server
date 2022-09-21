@@ -11,9 +11,6 @@
     <bpmn2:startEvent id="StartEvent_1">
       <bpmn2:outgoing>Flow_0cdf82b</bpmn2:outgoing>
     </bpmn2:startEvent>
-    <bpmn2:endEvent id="Event_1caeuws">
-      <bpmn2:incoming>Flow_12vwsi3</bpmn2:incoming>
-    </bpmn2:endEvent>
     <bpmn2:intermediateThrowEvent id="Event_07suegq" name="Signal-103">
       <bpmn2:extensionElements>
         <camunda:executionListener event="start">
@@ -39,7 +36,7 @@
       <bpmn2:outgoing>Flow_12vwsi3</bpmn2:outgoing>
       <bpmn2:messageEventDefinition id="MessageEventDefinition_1ps18b2" messageRef="Message_0wgmc6e" camunda:delegateExpression="service1" />
     </bpmn2:intermediateThrowEvent>
-    <bpmn2:sequenceFlow id="Flow_12vwsi3" sourceRef="Event_14e4p87" targetRef="Event_1caeuws" />
+    <bpmn2:sequenceFlow id="Flow_12vwsi3" sourceRef="Event_14e4p87" targetRef="Event_029t7ee" />
     <bpmn2:sequenceFlow id="Flow_1w9irs2" sourceRef="Event_1cb4pzi" targetRef="Event_07suegq" />
     <bpmn2:intermediateThrowEvent id="Event_190dv7t" name="Signal-10">
       <bpmn2:extensionElements>
@@ -68,6 +65,15 @@
         <bpmn2:timeDuration xsi:type="bpmn2:tFormalExpression">PT5S</bpmn2:timeDuration>
       </bpmn2:timerEventDefinition>
     </bpmn2:intermediateCatchEvent>
+    <bpmn2:sequenceFlow id="Flow_1sbizfa" sourceRef="Event_029t7ee" targetRef="Event_1caeuws" />
+    <bpmn2:endEvent id="Event_1caeuws">
+      <bpmn2:incoming>Flow_1sbizfa</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:intermediateThrowEvent id="Event_029t7ee" name="Message-105">
+      <bpmn2:incoming>Flow_12vwsi3</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1sbizfa</bpmn2:outgoing>
+      <bpmn2:messageEventDefinition id="MessageEventDefinition_0jpkav1" messageRef="Message_0nok4r9" camunda:delegateExpression="" />
+    </bpmn2:intermediateThrowEvent>
     <bpmn2:textAnnotation id="TextAnnotation_1bro64x">
       <bpmn2:text>output: caseId = data.caseId</bpmn2:text>
     </bpmn2:textAnnotation>
@@ -82,6 +88,7 @@
   <bpmn2:message id="Message_16aaz57" name="confirmSignal" />
   <bpmn2:signal id="Signal_1mmbd4z" name="Signal-103" />
   <bpmn2:message id="Message_0wgmc6e" name="Message-104" />
+  <bpmn2:message id="Message_0nok4r9" name="Message-105" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_157epcn">
       <bpmndi:BPMNShape id="Participant_11ag70j_di" bpmnElement="Participant_11ag70j" isHorizontal="true">
@@ -93,9 +100,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_12vwsi3_di" bpmnElement="Flow_12vwsi3">
         <di:waypoint x="718" y="290" />
-        <di:waypoint x="760" y="290" />
-        <di:waypoint x="760" y="210" />
-        <di:waypoint x="802" y="210" />
+        <di:waypoint x="762" y="290" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_18sqtjr_di" bpmnElement="Flow_18sqtjr">
         <di:waypoint x="700" y="228" />
@@ -117,14 +122,15 @@
         <di:waypoint x="440" y="210" />
         <di:waypoint x="472" y="210" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sbizfa_di" bpmnElement="Flow_1sbizfa">
+        <di:waypoint x="798" y="290" />
+        <di:waypoint x="852" y="290" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Activity_0qvvenf_di" bpmnElement="Activity_0e7kv35">
         <dc:Bounds x="340" y="170" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="272" y="192" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1caeuws_di" bpmnElement="Event_1caeuws">
-        <dc:Bounds x="802" y="192" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1cv7obt_di" bpmnElement="Event_07suegq">
         <dc:Bounds x="682" y="192" width="36" height="36" />
@@ -158,6 +164,15 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_09wpd67_di" bpmnElement="TextAnnotation_09wpd67">
         <dc:Bounds x="600" y="130" width="100" height="55" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1caeuws_di" bpmnElement="Event_1caeuws">
+        <dc:Bounds x="852" y="272" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0fbkvxr_di" bpmnElement="Event_029t7ee">
+        <dc:Bounds x="762" y="272" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="747" y="315" width="67" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1qp2dje_di" bpmnElement="Association_1qp2dje">
         <di:waypoint x="493" y="192" />

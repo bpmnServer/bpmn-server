@@ -24,4 +24,5 @@ __exportStar(require("./Events"), exports);
 __exportStar(require("./behaviours/."), exports);
 __exportStar(require("./Gateway"), exports);
 __exportStar(require("./Process"), exports);
+__exportStar(require("./Transaction"), exports);
 //# sourceMappingURL=index.js.map

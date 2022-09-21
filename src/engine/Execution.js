@@ -217,7 +217,7 @@ class Execution extends server_1.ServerComponent {
                     this.getItems().forEach(i => {
                         this.logger.log(`Item: ${i.id} - ${i.elementId} - ${i.status} - ${i.timeDue}`);
                     });
-                    this.logger.error("*** ERROR *** task id not valid");
+                    this.logger.error("*** ERROR *** task id not valid" + executionId);
                 }
             }
             this.log('.signal returning .. waiting for promises status:' + this.instance.status + " id: " + executionId);
@@ -235,7 +235,7 @@ class Execution extends server_1.ServerComponent {
             yield this.server.dataStore.saveInstance(state, this.getItems());
         });
     }
-    getItems(query = null) {
+    getItems() {
         const items = [];
         this.tokens.forEach(t => {
             t.path.forEach(i => {

@@ -1,5 +1,5 @@
 
-import { Token, Execution  } from '../../engine';
+import { Token, Execution, TOKEN_TYPE  } from '../../engine';
 import { Node } from '..';
 import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../../..';
 import { Item } from '../../engine/Item';
@@ -36,9 +36,18 @@ Example (3 repeating intervals, each lasting 10 hours):
       <bpmn:timerEventDefinition id="TimerEventDefinition_07xu06a">
         <bpmn:timeDuration xsi:type="bpmn:tExpression">PT2S</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
+
+
+Item Attributes:
+    item.timeDue
+    -- only for repeated timers --
+
+    item.timerCount     - count of completed timers 
+
  */
 class TimerBehaviour extends Behaviour {
     duration;
+    repeat=1;
     timeCycle;
     init() {
         let def;
@@ -81,6 +90,9 @@ class TimerBehaviour extends Behaviour {
             else if (this.timeCycle) {
                 //seconds = toSeconds((parse(this.timeCycle)));
                 seconds = Cron.timeDue(this.timeCycle, null);
+                // hard code repeat for now
+                if (this.timeCycle.startsWith('R'))
+                    this.repeat = 3;
             }
         }
         let timeDue = new Date().getTime()/1000;
@@ -93,8 +105,7 @@ class TimerBehaviour extends Behaviour {
             return;
         item.token.log("..------timer running --- " );
         this.startTimer(item);
-
-        //setTimeout(this.expires.bind(item), seconds * 1000);
+        item.timerCount = 0;
 
         return NODE_ACTION.wait;
     }
@@ -115,16 +126,28 @@ class TimerBehaviour extends Behaviour {
         const seconds = item.timeDue - (new Date().getTime()/1000);
 
         item.log("..setting timer for " + seconds + " seconds");
-        setTimeout(this.expires.bind(item), seconds * 1000);
+        setTimeout(this.expires.bind({ item, timer: this }), seconds * 1000);
     }
-    expires() {
-        let item = this as unknown as Item;
-
+    async expires() {
+        let item = this['item'] as unknown as Item;
+        let timer = this['timer'];
+     
+        item.timerCount++;
         item.token.log("Action:---timer Expired --- ");
         if (item.status == ITEM_STATUS.wait)    // just in case it was cancelled
         {
             //item.token.signal(null);
-            item.token.execution.signal(item.id, {});
+            await item.token.execution.signal(item.id, {});
+        }
+        // check for repeat
+        console.log('-------- timer repeat check -----------',timer.repeat,item.timerCount);
+        if (timer.repeat > item.timerCount) {
+            let newToken=await Token.startNewToken(TOKEN_TYPE.BoundaryEvent, item.token.execution, item.node, null, item.token, item, null);
+            let newItem = newToken.currentItem;
+            console.log('new token', newItem.elementId);
+            newItem.timerCount = item.timerCount;     
+
+            //await timer.startTimer(new);
         }
     }
     end(item: Item) {

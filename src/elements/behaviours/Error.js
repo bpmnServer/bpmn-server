@@ -26,16 +26,12 @@ class ErrorEventBehaviour extends _1.Behaviour {
             else { // throw a message
                 item.context.logger.log("Error Event is throwing an error");
                 return interfaces_1.NODE_ACTION.error;
-                const output = yield this.node.getOutput(item);
-                const matchingKey = item.context.messageMatchingKey;
-                item.token.log(`.Throwing Message <${this.errorId}> - output: ${JSON.stringify(output)} - matching key : ${JSON.stringify(matchingKey)}`);
-                yield item.context.appDelegate.messageThrown(this.errorId, output, matchingKey, item);
             }
         });
     }
     get errorId() {
-        if (this.definition['errormessageRef'])
-            return this.definition['messageRef']['id'];
+        if (this.definition['errorRef'])
+            return this.definition['errorRef']['id'];
     }
     describe() {
         if (this.node.isCatching)

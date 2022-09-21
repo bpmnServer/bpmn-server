@@ -1,7 +1,7 @@
 import { TimerBehaviour } from ".";
 import { Node } from "..";
 import { Behaviour } from '.';
-import { Item } from "../../engine/Item";
+import type { Item } from "../../engine/Item";
 
 /*
  * will prepare input at start

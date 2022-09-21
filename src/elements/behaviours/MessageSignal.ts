@@ -1,5 +1,5 @@
-import { TimerBehaviour } from ".";
-import { Node } from "..";
+import type { TimerBehaviour } from ".";
+import type { Node } from "..";
 import { Behaviour } from '.';
 import { Item } from "../../engine/Item";
 import { NODE_SUBTYPE } from "../../..";

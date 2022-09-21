@@ -13,9 +13,6 @@
     </bpmn2:endEvent>
 ```
 
-### Through API
-
-
 ## Error Handling
 
 - If there is a Boundary Event to catch, it will be invoked

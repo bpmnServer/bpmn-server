@@ -1,9 +1,11 @@
 import { TimerBehaviour, CamundaFormData, IOBehaviour, MessageEventBehaviour, SignalEventBehaviour, TerminateBehaviour, LoopBehaviour } from ".";
-import { Node } from "..";
+import { Node } from "../Node";
 import { Item } from "../../engine/Item";
 import { IItem } from "../../..";
 import { ScriptBehaviour } from "./Script";
-import { ErrorEventBehaviour } from "./Error";
+import { CancelEventBehaviour, CompensateEventBehaviour } from "./TransEvents";
+import { EscalationEventBehaviour } from "./Escalation";
+import { ErrorEventBehaviour } from './Error';
 
 
 const duration = require('iso8601-duration');
@@ -19,6 +21,9 @@ const Behaviour_names = {
     MessageEventDefinition: 'bpmn:MessageEventDefinition',
     SignalEventDefinition: 'bpmn:SignalEventDefinition',
     ErrorEventDefinition: 'bpmn:ErrorEventDefinition',
+    EscalationEventDefinition: 'bpmn:EscalationEventDefinition',
+    CancelEventDefinition: 'bpmn:CancelEventDefinition',
+    CompensateEventDefinition: 'bpmn:CompensateEventDefinition',
     CamundaFormData: 'camunda:formData',
     CamundaScript: 'camunda:script',
     CamundaScript2: 'camunda:executionListener',
@@ -60,9 +65,30 @@ class BehaviourLoader {
         },
         {
             name: Behaviour_names.ErrorEventDefinition, funct: function (node, def) {
+
                 return new ErrorEventBehaviour(node, def);
             }
         },
+        {
+            name: Behaviour_names.EscalationEventDefinition, funct: function (node, def) {
+
+                return new EscalationEventBehaviour(node, def);
+            }
+        },
+        {
+            name: Behaviour_names.CompensateEventDefinition, funct: function (node, def) {
+
+                return new CompensateEventBehaviour(node, def);
+            }
+        },
+        {
+            name: Behaviour_names.CancelEventDefinition, funct: function (node, def) {
+
+                return new CancelEventBehaviour(node, def);
+            }
+        } ,
+
+
         {
             name: Behaviour_names.CamundaScript2, funct: function (node, def) {
                  return new ScriptBehaviour(node, def);

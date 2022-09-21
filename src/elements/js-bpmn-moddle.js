@@ -58,6 +58,20 @@ const moddleOptions = {
             ]
         },
         {
+            "name": "SendCall",
+            "isAbstract": true,
+            "extends": [
+                "bpmn:SendTask"
+            ],
+            "properties": [
+                {
+                    "name": "camunda:delegateExpression",
+                    "isAttr": true,
+                    "type": "String"
+                }
+            ]
+        },
+        {
             "name": "ServiceCall",
             "isAbstract": true,
             "extends": [

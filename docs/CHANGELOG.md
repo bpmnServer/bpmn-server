@@ -13,13 +13,24 @@ and here
 ### Changed
 -->
 
+## Release 1.3.10 -- 2022-09-20
+- SendTask is working same as Service Task - Issue #58
+- Support Repeat Timers using format R3/PT3S
+- Improved support for Error Event
+    need to support errorId
+- Added Escalation Event Type
+- Added Transaction support
+-   Cancel Transaction
+-   Compensate Transaction
+- Added Color scheme for Activity Status
+
+
 ## Release 1.3.9    - 2022-07-09
 
 - SendTask now behaves same as ServiceTask
 - BoundaryEvents
   - Handle interrupting and non-interrupting
   - Interrupting cancel the parent task and its flow
-   
 
 ## Release 1.3.8    - 2022-07-09
 

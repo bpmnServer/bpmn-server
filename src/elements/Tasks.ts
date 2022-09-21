@@ -2,11 +2,12 @@
 import { Node } from './Node';
 
 import { Token, TOKEN_TYPE } from '../engine/Token';
-import { ITEM_STATUS, NODE_ACTION } from '../interfaces/Enums'
+import { BPMN_TYPE, ITEM_STATUS, NODE_ACTION } from '../interfaces/Enums'
 
 import { Process } from './Process';
 import { IExecution } from '../interfaces/engine';
 import { EXECUTION_STATUS } from '../interfaces/Enums';
+import { Item } from '../engine/Item';
 //NO_import { DecisionTable } from 'dmn-engine';
 
 // ---------------------------------------------
@@ -37,7 +38,7 @@ class ScriptTask extends Node {
  */
 class ServiceTask extends Node {
     get serviceName() {
-        if (this.def.implementation) {
+        if (this.def.implementation && typeof this.def.implementation!=='undefined') {
             return this.def.implementation;
         }
         else if (this.def.delegateExpression) {
@@ -54,6 +55,7 @@ class ServiceTask extends Node {
         // let output = await item.node.getOutput(item);
 
         let ret;
+
         item.log("invoking service:" +this.serviceName);
 
         if (this.serviceName && appDelegate.servicesProvider[this.serviceName])
@@ -221,5 +223,6 @@ class CallActivity extends Node {
             return NODE_ACTION.wait;
     }
 }
+
 
 export {  UserTask, ScriptTask, ServiceTask, BusinessRuleTask, SendTask, ReceiveTask, SubProcess , CallActivity }

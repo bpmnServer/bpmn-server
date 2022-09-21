@@ -13,7 +13,7 @@ h3 Processes (BPMN Definitions)
 
 			
 			selectedProcess = $("#process").val();
-
+			$("#svg").attr("src", "/model/getSVg/"+selectedProcess);
 			setLinks();
 
 		});

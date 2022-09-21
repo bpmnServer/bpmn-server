@@ -266,7 +266,8 @@ class Node extends Element {
         // check for attachments - boundary events:
         for (i = 0; i < this.attachments.length; i++) {
             let event = this.attachments[i];
-            await Token.startNewToken(TOKEN_TYPE.BoundaryEvent, item.token.execution, event, null, token, item, null);
+            if (event.subType!==NODE_SUBTYPE.compensate)
+                await Token.startNewToken(TOKEN_TYPE.BoundaryEvent, item.token.execution, event, null, token, item, null);
         }
 
 

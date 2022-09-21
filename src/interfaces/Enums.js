@@ -31,6 +31,8 @@ var NODE_SUBTYPE;
     NODE_SUBTYPE["signal"] = "signal";
     NODE_SUBTYPE["error"] = "error";
     NODE_SUBTYPE["escalation"] = "escalation";
+    NODE_SUBTYPE["cancel"] = "cancel";
+    NODE_SUBTYPE["compensate"] = "compensate";
 })(NODE_SUBTYPE || (NODE_SUBTYPE = {}));
 exports.NODE_SUBTYPE = NODE_SUBTYPE;
 /*

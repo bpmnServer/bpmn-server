@@ -1,6 +1,16 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TimerBehaviour = void 0;
+const engine_1 = require("../../engine");
 const __1 = require("../../..");
 const _1 = require("./");
 const Cron_1 = require("../../server/Cron");
@@ -32,8 +42,20 @@ Example (3 repeating intervals, each lasting 10 hours):
       <bpmn:timerEventDefinition id="TimerEventDefinition_07xu06a">
         <bpmn:timeDuration xsi:type="bpmn:tExpression">PT2S</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
+
+
+Item Attributes:
+    item.timeDue
+    -- only for repeated timers --
+
+    item.timerCount     - count of completed timers
+
  */
 class TimerBehaviour extends _1.Behaviour {
+    constructor() {
+        super(...arguments);
+        this.repeat = 1;
+    }
     init() {
         let def;
         this.node.subType = interfaces_1.NODE_SUBTYPE.timer;
@@ -71,6 +93,9 @@ class TimerBehaviour extends _1.Behaviour {
             else if (this.timeCycle) {
                 //seconds = toSeconds((parse(this.timeCycle)));
                 seconds = Cron_1.Cron.timeDue(this.timeCycle, null);
+                // hard code repeat for now
+                if (this.timeCycle.startsWith('R'))
+                    this.repeat = 3;
             }
         }
         let timeDue = new Date().getTime() / 1000;
@@ -82,7 +107,7 @@ class TimerBehaviour extends _1.Behaviour {
             return;
         item.token.log("..------timer running --- ");
         this.startTimer(item);
-        //setTimeout(this.expires.bind(item), seconds * 1000);
+        item.timerCount = 0;
         return __1.NODE_ACTION.wait;
     }
     startTimer(item) {
@@ -96,16 +121,29 @@ class TimerBehaviour extends _1.Behaviour {
         item.token.log("timer is set at " + item.timeDue + " - " + new Date(item.timeDue).toISOString());
         const seconds = item.timeDue - (new Date().getTime() / 1000);
         item.log("..setting timer for " + seconds + " seconds");
-        setTimeout(this.expires.bind(item), seconds * 1000);
+        setTimeout(this.expires.bind({ item, timer: this }), seconds * 1000);
     }
     expires() {
-        let item = this;
-        item.token.log("Action:---timer Expired --- ");
-        if (item.status == __1.ITEM_STATUS.wait) // just in case it was cancelled
-         {
-            //item.token.signal(null);
-            item.token.execution.signal(item.id, {});
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            let item = this['item'];
+            let timer = this['timer'];
+            item.timerCount++;
+            item.token.log("Action:---timer Expired --- ");
+            if (item.status == __1.ITEM_STATUS.wait) // just in case it was cancelled
+             {
+                //item.token.signal(null);
+                yield item.token.execution.signal(item.id, {});
+            }
+            // check for repeat
+            console.log('-------- timer repeat check -----------', timer.repeat, item.timerCount);
+            if (timer.repeat > item.timerCount) {
+                let newToken = yield engine_1.Token.startNewToken(engine_1.TOKEN_TYPE.BoundaryEvent, item.token.execution, item.node, null, item.token, item, null);
+                let newItem = newToken.currentItem;
+                console.log('new token', newItem.elementId);
+                newItem.timerCount = item.timerCount;
+                //await timer.startTimer(new);
+            }
+        });
     }
     end(item) {
         Cron_1.Cron.timerEnded(item);

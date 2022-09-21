@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Behaviour_names = exports.BehaviourLoader = void 0;
 const _1 = require(".");
 const Script_1 = require("./Script");
+const TransEvents_1 = require("./TransEvents");
+const Escalation_1 = require("./Escalation");
 const Error_1 = require("./Error");
 const duration = require('iso8601-duration');
 const parse = duration.parse;
@@ -16,6 +18,9 @@ const Behaviour_names = {
     MessageEventDefinition: 'bpmn:MessageEventDefinition',
     SignalEventDefinition: 'bpmn:SignalEventDefinition',
     ErrorEventDefinition: 'bpmn:ErrorEventDefinition',
+    EscalationEventDefinition: 'bpmn:EscalationEventDefinition',
+    CancelEventDefinition: 'bpmn:CancelEventDefinition',
+    CompensateEventDefinition: 'bpmn:CompensateEventDefinition',
     CamundaFormData: 'camunda:formData',
     CamundaScript: 'camunda:script',
     CamundaScript2: 'camunda:executionListener',
@@ -111,6 +116,21 @@ BehaviourLoader.behaviours = [
     {
         name: Behaviour_names.ErrorEventDefinition, funct: function (node, def) {
             return new Error_1.ErrorEventBehaviour(node, def);
+        }
+    },
+    {
+        name: Behaviour_names.EscalationEventDefinition, funct: function (node, def) {
+            return new Escalation_1.EscalationEventBehaviour(node, def);
+        }
+    },
+    {
+        name: Behaviour_names.CompensateEventDefinition, funct: function (node, def) {
+            return new TransEvents_1.CompensateEventBehaviour(node, def);
+        }
+    },
+    {
+        name: Behaviour_names.CancelEventDefinition, funct: function (node, def) {
+            return new TransEvents_1.CancelEventBehaviour(node, def);
         }
     },
     {

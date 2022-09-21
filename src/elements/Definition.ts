@@ -6,16 +6,19 @@ const BpmnModdle = require('bpmn-moddle');
 //const moddleOptions = require('./js-bpmn-moddle.json');
 
 import { Logger } from '../common/Logger';
-import { Node, Flow , MessageFlow ,SubProcess , NodeLoader , Process, Behaviour_names } from '.'; 
+import { Node, Flow , MessageFlow ,NodeLoader , Process, Behaviour_names } from '.'; 
 import { BPMN_TYPE } from './NodeLoader';
 import { IDefinition } from '../interfaces/elements';
 import { BPMNServer } from '../server/BPMNServer';
 import { NODE_SUBTYPE, EXECUTION_EVENT } from '../interfaces';
+import { Transaction, SubProcess } from '.';
 
 const fs = require('fs');
 
-//console.log(moddleOptions);
-
+//DEBUG(moddleOptions);
+function DEBUG(...args) {
+    console.log('Definition.ts',...args);
+}
 
 class Definition implements IDefinition{
     name;
@@ -56,6 +59,15 @@ class Definition implements IDefinition{
                 if (el.triggeredByEvent)
                     eventSubProcesses.push(node.childProcess);
             }
+            else if (el.$type == 'bpmn:Transaction') { // subprocess
+                  node = new Transaction(el.id, process, el.$type, el);
+                  //node = new SubProcess(el.id, process, el.$type, el);
+
+                node.childProcess = this.loadProcess(definition, el, process);
+                if (el.triggeredByEvent)
+                    eventSubProcesses.push(node.childProcess);
+            }
+       
             else {
                 node = NodeLoader.loadNode(el, process);
 
@@ -63,6 +75,29 @@ class Definition implements IDefinition{
             this.nodes.set(el.id, node);
             children.push(node);
         });
+        // handle compensate association
+        // associationDirection="One" 
+        if (processElement.artifacts) {
+            processElement.artifacts.forEach(art => {
+                if (art.associationDirection == "One") {
+                    let from = art.sourceRef;
+                    let to = art.targetRef;
+                    if (from && to) {
+                        let src = definition.elementsById[from.id];
+                        let target = definition.elementsById[to.id];
+
+                        const fromNode = this.getNodeById(from.id);
+                        const toNode = this.getNodeById(to.id);
+                        const flow = new Flow(art.id, art.type, fromNode, toNode, definition.elementsById[art.id]);
+                        this.flows.push(flow);
+                        DEBUG("assoc: ", from.id, to.id, fromNode.id, toNode.id);
+                        fromNode.outbounds.push(flow);
+                        toNode.inbounds.push(flow)
+                    }
+                }
+            });
+        }
+
         process.init(children, eventSubProcesses)
         return process;
     }
@@ -155,7 +190,11 @@ references:
                 }
             }
             else if ((ref.element.$type == "bpmn:MessageEventDefinition")
-                || (ref.element.$type == "bpmn:SignalEventDefinition")) {
+                || (ref.element.$type == "bpmn:SignalEventDefinition")
+                || (ref.element.$type == "bpmn:EscalationEventDefinition")
+                || (ref.element.$type == "bpmn:CancelEventDefinition")
+                || (ref.element.$type == "bpmn:CompensateEventDefinition")
+                || (ref.element.$type == "bpmn:ErrorEventDefinition")) {
                 var eventDef;
                 if (ref.element.id) {
                     eventDef = definition.elementsById[ref.element.id];

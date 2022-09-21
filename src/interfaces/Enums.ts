@@ -26,7 +26,9 @@ enum NODE_SUBTYPE {
     message = 'message',
     signal = 'signal',
     error = 'error',
-    escalation = 'escalation'
+    escalation = 'escalation',
+    cancel = 'cancel',
+    compensate = 'compensate'
 }
 /*
  * ALL events 

@@ -13,8 +13,12 @@ exports.Definition = void 0;
 const BpmnModdle = require('bpmn-moddle');
 const _1 = require(".");
 const interfaces_1 = require("../interfaces");
+const _2 = require(".");
 const fs = require('fs');
-//console.log(moddleOptions);
+//DEBUG(moddleOptions);
+function DEBUG(...args) {
+    console.log('Definition.ts', ...args);
+}
 class Definition {
     constructor(name, source, server) {
         this.processes = new Map();
@@ -38,7 +42,14 @@ class Definition {
             let el = definition.elementsById[child.id];
             let node;
             if (el.$type == 'bpmn:SubProcess') { // subprocess
-                node = new _1.SubProcess(el.id, process, el.$type, el);
+                node = new _2.SubProcess(el.id, process, el.$type, el);
+                node.childProcess = this.loadProcess(definition, el, process);
+                if (el.triggeredByEvent)
+                    eventSubProcesses.push(node.childProcess);
+            }
+            else if (el.$type == 'bpmn:Transaction') { // subprocess
+                node = new _2.Transaction(el.id, process, el.$type, el);
+                //node = new SubProcess(el.id, process, el.$type, el);
                 node.childProcess = this.loadProcess(definition, el, process);
                 if (el.triggeredByEvent)
                     eventSubProcesses.push(node.childProcess);
@@ -49,6 +60,27 @@ class Definition {
             this.nodes.set(el.id, node);
             children.push(node);
         });
+        // handle compensate association
+        // associationDirection="One" 
+        if (processElement.artifacts) {
+            processElement.artifacts.forEach(art => {
+                if (art.associationDirection == "One") {
+                    let from = art.sourceRef;
+                    let to = art.targetRef;
+                    if (from && to) {
+                        let src = definition.elementsById[from.id];
+                        let target = definition.elementsById[to.id];
+                        const fromNode = this.getNodeById(from.id);
+                        const toNode = this.getNodeById(to.id);
+                        const flow = new _1.Flow(art.id, art.type, fromNode, toNode, definition.elementsById[art.id]);
+                        this.flows.push(flow);
+                        DEBUG("assoc: ", from.id, to.id, fromNode.id, toNode.id);
+                        fromNode.outbounds.push(flow);
+                        toNode.inbounds.push(flow);
+                    }
+                }
+            });
+        }
         process.init(children, eventSubProcesses);
         return process;
     }
@@ -139,7 +171,11 @@ class Definition {
                     }
                 }
                 else if ((ref.element.$type == "bpmn:MessageEventDefinition")
-                    || (ref.element.$type == "bpmn:SignalEventDefinition")) {
+                    || (ref.element.$type == "bpmn:SignalEventDefinition")
+                    || (ref.element.$type == "bpmn:EscalationEventDefinition")
+                    || (ref.element.$type == "bpmn:CancelEventDefinition")
+                    || (ref.element.$type == "bpmn:CompensateEventDefinition")
+                    || (ref.element.$type == "bpmn:ErrorEventDefinition")) {
                     var eventDef;
                     if (ref.element.id) {
                         eventDef = definition.elementsById[ref.element.id];

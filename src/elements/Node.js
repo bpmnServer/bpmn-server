@@ -248,7 +248,8 @@ class Node extends _1.Element {
             // check for attachments - boundary events:
             for (i = 0; i < this.attachments.length; i++) {
                 let event = this.attachments[i];
-                yield Token_1.Token.startNewToken(Token_1.TOKEN_TYPE.BoundaryEvent, item.token.execution, event, null, token, item, null);
+                if (event.subType !== Enums_1.NODE_SUBTYPE.compensate)
+                    yield Token_1.Token.startNewToken(Token_1.TOKEN_TYPE.BoundaryEvent, item.token.execution, event, null, token, item, null);
             }
         });
     }

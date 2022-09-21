@@ -125,7 +125,7 @@ class Token implements IToken {
     static async startNewToken(type: TOKEN_TYPE, execution, startNode, dataPath, parentToken: Token,
         originItem: Item, loop: Loop, data = null, noExecute = false) {
         const token = new Token(type,execution,  startNode ,dataPath, parentToken, originItem);
-        token.log("starting new Token start node:"+startNode.id+" noExecute: "+noExecute);
+        token.log("starting new Token "+token.id+" start node:"+startNode.id);
 
         token.loop = loop;
         execution.tokens.set(token.id, token);
@@ -272,14 +272,14 @@ class Token implements IToken {
     }
     async processError() {
 
-        let errorHandlerToken=null;
+        let errorHandlerToken = null;
         // two types of error handlers
         //  1.  eventSubProcess 
         //  2.  boundaryEvents  
         let contextItem: Item = this.currentItem;
         let contextToken: Token = this;
 
-        while (contextToken && errorHandlerToken==null) {
+        while (contextToken && errorHandlerToken == null) {
             contextToken.childrenTokens.forEach(ct => {
                 if ((ct.type == TOKEN_TYPE.EventSubProcess || ct.type == TOKEN_TYPE.BoundaryEvent)
                     && ct.currentNode.subType == NODE_SUBTYPE.error) {
@@ -297,6 +297,29 @@ class Token implements IToken {
             this.log("Aborting due to error")
             this.execution.terminate();
             return;
+        }
+
+    }
+    async processEscalation () {
+
+        let errorHandlerToken = null;
+        // two types of error handlers
+        //  1.  eventSubProcess 
+        //  2.  boundaryEvents  
+        let contextItem: Item = this.currentItem;
+        let contextToken: Token = this;
+
+        while (contextToken && errorHandlerToken == null) {
+            contextToken.childrenTokens.forEach(ct => {
+                if ((ct.type == TOKEN_TYPE.EventSubProcess || ct.type == TOKEN_TYPE.BoundaryEvent)
+                    && ct.currentNode.subType == NODE_SUBTYPE.escalation) {
+                    errorHandlerToken = ct;
+                }
+            });
+            contextToken = contextToken.parentToken;
+        }
+        if (errorHandlerToken) {
+            await errorHandlerToken.signal(null);
         }
 
     }
@@ -322,7 +345,7 @@ class Token implements IToken {
      *  
      * */
     async continue() {
-        await this.currentNode.end(this.currentItem);
+        await this.currentNode.end (this.currentItem);
         await this.goNext();
 
     }
@@ -379,7 +402,7 @@ class Token implements IToken {
      */ 
     async goNext() {
 
-        this.log(`..token.goNext ${this.currentNode.id} ${this.currentNode.type}`);
+        this.log(`..token.goNext from ${this.currentNode.id} ${this.currentNode.type}`);
         if (!await this.preNext())
             return;
 
@@ -403,7 +426,7 @@ class Token implements IToken {
             flowItem.status = ITEM_STATUS.end;
             self.path.push(flowItem);
             let nextNode = flowItem.element['to'];
-            self.log('...processing flow' + flowItem.element.id + " to " +nextNode.id);
+            self.log('... goNext: processing flow' + flowItem.element.id + " to " +nextNode.id);
             if (nextNode) {
                 if (outbounds.length == 1) {
                     self.currentNode = nextNode;
@@ -417,7 +440,7 @@ class Token implements IToken {
         if (outbounds.length > 1) {
             this.end();
         }
-        this.log(`... waiting for ${promises.length}`);
+        this.log(`... goNext: waiting for ${promises.length}`);
         await Promise.all(promises);
         this.log(`..token.goNext is done ${this.currentNode.id} ${this.currentNode.type}`);
     }

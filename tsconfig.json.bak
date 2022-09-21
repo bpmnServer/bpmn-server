@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "lib": [ "es6" ],
+    "sourceMap": true,
+    "declaration": false
+  },
+  "include": [
+    "**/*.ts", "test/handler.js"
+  ],
+  "exclude": [
+    "node_modules" , "./dist" , "./webApp"
+  ]
+}
