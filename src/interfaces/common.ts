@@ -14,7 +14,8 @@ interface IConfiguration
         {
             db_url: string,
             db: string,
-        }
+        },
+        loopbackRepositories?:any
     },
     apiKey: string,
     logger: ILogger,
