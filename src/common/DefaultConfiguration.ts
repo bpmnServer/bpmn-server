@@ -12,7 +12,10 @@ class Configuration implements IConfiguration {
 	definitionsPath: string;
 	templatesPath: string;
 	timers: { forceTimersDelay: number; precision: number; };
-	database: { MongoDB: { db_url: string; db: string; }; };
+	database: { 
+		MongoDB: { db_url: string; db: string; }; 
+		loopbackRepositories?:any;
+	};
 	logger: ILogger;
 	apiKey: string;
 	sendGridAPIKey: string;

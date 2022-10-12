@@ -38,7 +38,8 @@ class Engine extends ServerComponent implements IEngine{
 		}
 
 		// new dataStore for every execution to be monitored 
-		const newDataStore =new DataStore(this.server);
+		// const newDataStore =new DataStore(this.server);
+		const newDataStore = this.server.configuration.dataStore(this.server);
 		this.server.dataStore = newDataStore;
 
 		newDataStore.monitorExecution(execution);
@@ -92,7 +93,8 @@ class Engine extends ServerComponent implements IEngine{
 
 
 			// new dataStore for every execution to be monitored 
-			const newDataStore = new DataStore(execution.server);
+			//const newDataStore = new DataStore(execution.server);
+			const newDataStore = this.server.configuration.dataStore(execution.server);
 			execution.server.dataStore = newDataStore;
 
 			newDataStore.monitorExecution(execution);

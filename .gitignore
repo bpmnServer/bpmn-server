@@ -17,3 +17,8 @@
 *.njsproj.user
 *.txt
 /bin
+# Output of 'npm pack'
+*.tgz
+# Transpiled JavaScript files from Typescript
+/dist
+
