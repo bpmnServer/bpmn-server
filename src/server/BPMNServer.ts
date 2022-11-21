@@ -80,7 +80,7 @@ class BPMNServer implements IBPMNServer {
 
 	static getVersion() {
 
-		const configPath = __dirname+'/../../../package.json';
+		const configPath = __dirname+'/../../package.json';
 
 		if (fs.existsSync(configPath)) {
 
