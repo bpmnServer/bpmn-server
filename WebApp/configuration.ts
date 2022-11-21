@@ -6,12 +6,10 @@ import { IAM, ACL } from './';
 const dotenv = require('dotenv');
 const res = dotenv.config();
 
-
-const definitionsPath = __dirname + '/processes/';
 const templatesPath = __dirname + '/emailTemplates/';
 var configuration = new Configuration(
 	{
-		definitionsPath: definitionsPath,
+		definitionsPath: process.env.DEFINITIONS_PATH,
 		templatesPath: templatesPath,
 		timers: {
 			//forceTimersDelay: 1000, 

@@ -55,7 +55,7 @@ class CompensateEventBehaviour extends _1.Behaviour {
                     t.path.forEach(i => {
                         if (i.node.id == this.TransactionId) {
                             transItem = i;
-                            console.log(" transItem", transItem);
+                            //console.log(" transItem", transItem);
                         }
                     });
                 });

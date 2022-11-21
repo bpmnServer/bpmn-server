@@ -6,7 +6,7 @@ enum BPMN_TYPE {
     SendTask = 'bpmn:SendTask',
     ReceiveTask = 'bpmn:ReceiveTask',
     BusinessRuleTask = 'bpmn:BusinessRuleTask',
-    SubProcess = 'bpmn:SubProces',
+    SubProcess = 'bpmn:SubProcess',
     ParallelGateway = 'bpmn:ParallelGateway',
     EventBasedGateway = 'bpmn:EventBasedGateway',
     InclusiveGateway = 'bpmn:InclusiveGateway',
@@ -28,6 +28,7 @@ enum NODE_SUBTYPE {
     error = 'error',
     escalation = 'escalation',
     cancel = 'cancel',
+
     compensate = 'compensate'
 }
 /*
@@ -51,7 +52,16 @@ enum EXECUTION_EVENT {
 //   must be same as above
 enum NODE_ACTION { continue = 1, wait,  end , stop , error , abort  };
 
-enum ITEM_STATUS {  enter = 'enter', start = 'start', wait = 'wait', end = 'end', terminated = 'terminated' , discard= 'discard'}
+enum ITEM_STATUS {
+    enter = 'enter',
+    start = 'start',
+    wait = 'wait',
+    end = 'end',
+    terminated = 'terminated',
+    cancelled = 'cancelled',
+    discard = 'discard'
+
+}
 
 //type ITEMSTATUS = 'enter' | 'start' | 'wait' | 'end' | 'terminated' | 'discard';
 
@@ -64,7 +74,6 @@ enum TOKEN_STATUS { running = 'running', wait = 'wait', end = 'end', terminated 
 //   must be same as above
 
 enum FLOW_ACTION { take = 'take', discard = 'discard' }
-
 
 export {
     BPMN_TYPE ,

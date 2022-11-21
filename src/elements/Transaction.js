@@ -17,8 +17,12 @@ const _1 = require(".");
 class Transaction extends _1.SubProcess {
     get requiresWait() { return true; }
     end(item) {
+        const _super = Object.create(null, {
+            end: { get: () => super.end }
+        });
         return __awaiter(this, void 0, void 0, function* () {
             console.log('trans ending');
+            _super.end.call(this, item);
         });
     }
     /**

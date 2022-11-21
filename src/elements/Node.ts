@@ -38,9 +38,10 @@ class Node extends Element {
 
     }
     async doEvent(item: Item, event: EXECUTION_EVENT, newStatus: ITEM_STATUS) {
+        item.token.log('Node('+this.name+'|'+this.id+').doEvent: executing script for event:' + event);
         if (newStatus)
             item.status = newStatus;
-        item.token.log('..>' + event + ' ' + this.id);
+        ///item.token.log('..>' + event + ' ' + this.id);
         const scripts = this.scripts.get(event);
         if (scripts) {
             for (var s = 0; s < scripts.length; s++) {
@@ -61,9 +62,9 @@ class Node extends Element {
      * @param item
      */
     async setInput(item: Item, input) {
-
+        item.token.log('Node('+this.name+'|'+this.id+').setInput: input' + JSON.stringify(input));
         //
-        item.token.log('--setting input ' + JSON.stringify(input));
+        //item.token.log('--setting input ' + JSON.stringify(input));
 
         const data = await this.getInput(item, input);
 
@@ -71,6 +72,7 @@ class Node extends Element {
 
     }
     async getInput(item: Item, input) {
+        item.token.log('Node('+this.name+'|'+this.id+').getInput: input' + JSON.stringify(input));
 
         item.context.input = input;
 
@@ -95,6 +97,7 @@ class Node extends Element {
 
     }
     enter(item: Item) {
+        item.token.log('Node('+this.name+'|'+this.id+').enter: item=' + item.id);
         item.startedAt = new Date().toISOString();;
 
     }
@@ -120,9 +123,11 @@ class Node extends Element {
      *              run method will fire the subprocess invoking a new token and will go into wait
      */
     async execute(item: Item) {
+        item.token.log('Node('+this.name+'|'+this.id+').execute: item=' + item.id);
 
         //  2  enter
         //  --------
+        item.token.log('Node('+this.name+'|'+this.id+').execute: execute enter ...');
         await this.doEvent(item, EXECUTION_EVENT.node_enter, ITEM_STATUS.enter);
 
         this.enter(item);   // no choice
@@ -138,6 +143,7 @@ class Node extends Element {
 
         //  3   start
         //  --------
+        item.token.log('Node('+this.name+'|'+this.id+').execute: execute start ...');
 
         await this.doEvent(item, EXECUTION_EVENT.node_start, ITEM_STATUS.start);
 
@@ -159,7 +165,8 @@ class Node extends Element {
         //  4   run  perform the work
         //  --------
 
-        item.token.log('..>run ' + this.id);
+        item.token.log('Node('+this.name+'|'+this.id+').execute: execute run ...');
+        //item.token.log('..>run ' + this.id);
 
         ret = await this.run(item);
         switch (ret) {
@@ -174,6 +181,8 @@ class Node extends Element {
         //  --------
         //          end
 
+        item.token.log('Node('+this.name+'|'+this.id+').execute: execute continue...');
+
         return await this.continue(item);
 
     }
@@ -181,11 +190,12 @@ class Node extends Element {
      *  called by execute or by token.invoke to continue work already started
      */
     async continue(item: Item) {
-
+        item.token.log('Node('+this.name+'|'+this.id+').continue: item=' + item.id);
         await this.end(item);
         return;
     }
     async start(item: Item): Promise<NODE_ACTION> {
+        item.token.log('Node('+this.name+'|'+this.id+').start: item=' + item.id);
 
         await this.startBoundaryEvents(item, item.token);
         if (this.requiresWait) {
@@ -195,11 +205,11 @@ class Node extends Element {
     }
 
     async run(item: Item): Promise<NODE_ACTION> {
-
+        item.token.log('Node('+this.name+'|'+this.id+').run: item=' + item.id);
         return NODE_ACTION.end;
     }
     async end(item: Item) {
-
+        item.token.log('Node('+this.name+'|'+this.id+').end: item=' + item.id);
         /**
          * Rule:    boundary events are canceled when owner task status is 'end'
          * */
@@ -229,9 +239,9 @@ class Node extends Element {
         item.endedAt = new Date().toISOString();;
         this.behaviours.forEach(async function (b) { await b.end(item); });
         await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end);
-        item.log('setting item status to end' + item.id + 'status' + item.status);
+        item.token.log('Node('+this.name+'|'+this.id+').end: setting item status to end itemId=' + item.id + ' itemStatus=' + item.status);
         this.behaviours.forEach(async function (b) { await b.exit(item); });
-
+        item.token.log('Node('+this.name+'|'+this.id+').end: finished');
     }
     /**
      * is called by the token after an execution resume for every active (in wait) item
@@ -247,6 +257,7 @@ class Node extends Element {
     /* to be overwritten by XOR gateway */
 
     getOutbounds(item: Item): Item[] {
+        item.token.log('Node('+this.name+'|'+this.id+').getOutbounds: itemId='+item.id);
         const outbounds = [];
         this.outbounds.forEach(flow => {
             if (flow.type == BPMN_TYPE.MessageFlow) {
@@ -258,10 +269,12 @@ class Node extends Element {
                     outbounds.push(flowItem);
             }
         });
-        item.token.log('..return outbounds' + outbounds.length);
+        //item.token.log('..return outbounds' + outbounds.length);
+        item.token.log('Node('+this.name+'|'+this.id+').getOutbounds: return outbounds'+outbounds.length);
         return outbounds;
     }
     async startBoundaryEvents(item,token) {
+        item.token.log('Node('+this.name+'|'+this.id+').startBoundaryEvents: itemId='+item.id);
         let i;
         // check for attachments - boundary events:
         for (i = 0; i < this.attachments.length; i++) {

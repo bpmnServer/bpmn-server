@@ -23,60 +23,16 @@ class DataStore extends ServerComponent_1.ServerComponent {
         this.isRunning = false;
         this.inSaving = false;
         this.promises = [];
-        this.saveCounter = 0;
         this.dbConfiguration = this.configuration.database.MongoDB;
         this.db = new MongoDB(this.dbConfiguration, this.logger);
     }
-    monitorExecution(execution) {
+    /*monitorExecution(execution: Execution) {
         this.execution = execution;
         const listener = execution.listener;
-    }
-    save() {
+    } */
+    save(instance) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (this.inSaving) {
-                // come back please
-                this.saveCounter++; /// will do it after I am done
-                this.logger.log(" in saving take a number #" + this.saveCounter);
-                return;
-                //			await Promise.all(this.promises);
-                //			this.inSaving = false;
-            }
-            let currentCounter = this.saveCounter;
-            this.inSaving = true;
-            if (this.isModified) {
-                //			this.logger.log('DataStore: saving ');
-                let state = yield this.execution.getState();
-                if (state.saved !== this.execution.instance.saved) {
-                    console.log("********* ERROR OLD State****");
-                }
-                yield this.saveInstance(state, this.execution.getItems());
-                this.execution.instance.saved = new Date().toISOString();
-                ;
-                //			this.logger.log('DataStore: saved ' + this.execution.instance.saved);
-                while (this.saveCounter > currentCounter) { // will do it again
-                    this.logger.log('DataStore:while i was busy other changes happended' + this.saveCounter);
-                    currentCounter = this.saveCounter;
-                    state = yield this.execution.getState();
-                    yield this.saveInstance(state, this.execution.getItems());
-                    this.execution.instance.saved = new Date().toISOString();
-                    ;
-                    this.logger.log('DataStore: saved again ' + this.execution.instance.saved);
-                }
-                this.isModified = false;
-                //			this.logger.log('DataStore: save is now done ');
-            }
-            this.inSaving = false;
-        });
-    }
-    check(event, item) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (item)
-                this.logger.log('DataStore: instance modified...event:' + event + 'item:' + item.elementId);
-            else
-                this.logger.log('DataStore: instance modified...event:' + event);
-            this.isModified = true;
-            //setTimeout(this.save.bind(this), 500);
-            return this.execution.promises.push(this.save());
+            return this.saveInstance(instance);
         });
     }
     loadInstance(instanceId) {
@@ -113,7 +69,7 @@ class DataStore extends ServerComponent_1.ServerComponent {
         });
         return items.sort(function (a, b) { return (a.seq - b.seq); });
     }
-    saveInstance(instance, items) {
+    saveInstance(instance) {
         return __awaiter(this, void 0, void 0, function* () {
             //		this.logger.log("Saving...");
             //var json = JSON.stringify(instance.state, null, 2);

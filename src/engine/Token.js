@@ -116,7 +116,7 @@ class Token {
     static startNewToken(type, execution, startNode, dataPath, parentToken, originItem, loop, data = null, noExecute = false) {
         return __awaiter(this, void 0, void 0, function* () {
             const token = new Token(type, execution, startNode, dataPath, parentToken, originItem);
-            token.log("starting new Token " + token.id + " start node:" + startNode.id);
+            token.log('Token(*).startNewToken:  starting new Token with id=' + token.id + ' start node=' + startNode.id);
             token.loop = loop;
             execution.tokens.set(token.id, token);
             token.appendData(data);
@@ -210,14 +210,20 @@ class Token {
      */
     execute(input) {
         return __awaiter(this, void 0, void 0, function* () {
+            this.log('Token(' + this.id + ').execute: input' + JSON.stringify(input));
+            if (this.status == __1.TOKEN_STATUS.end) {
+                this.log('Token(' + this.id + ').execute: token status is end: return from execute!');
+                return;
+            }
             if (!(yield this.preExecute()))
                 return; // loop logic will take care of it
             let ret;
             const item = new Item_1.Item(this.currentNode, this);
             this.path.push(item);
-            this.log('.executing item:' + this.currentNode.id + " " + item.id);
+            this.log('Token(' + this.id + ').execute: new Item created itemId=' + item.id);
             if (input)
                 yield this.currentNode.setInput(item, input);
+            this.log('Token(' + this.id + ').execute: executing currentNodeId=' + this.currentNode.id);
             ret = yield this.currentNode.execute(item);
             /*
                     // check for subprocess
@@ -231,7 +237,7 @@ class Token {
             
                     }
             */
-            this.log('..executing item:' + this.currentNode.id + " " + item.id + " is done");
+            this.log('Token(' + this.id + ').execute: executing currentNodeId=' + this.currentNode.id + " itemId=" + item.id + " is done!");
             if (ret == __1.NODE_ACTION.wait) {
                 this.status = __1.TOKEN_STATUS.wait;
                 return; // goto sleep for now will call you by signal
@@ -312,8 +318,10 @@ class Token {
      * */
     terminate() {
         return __awaiter(this, void 0, void 0, function* () {
+            this.log('Token(' + this.id + ').terminate: terminating ....');
             yield this.currentNode.end(this.currentItem);
             yield this.end();
+            this.log('Token(' + this.id + ').terminate: terminating is done!');
         });
     }
     /**
@@ -335,7 +343,8 @@ class Token {
             // check if valid node and valid status
             // find the item
             const item = this.currentItem;
-            this.log(`..token.signal ${this.currentNode.id} ${this.currentNode.type}`);
+            //this.log(`..token.signal ${this.currentNode.id} ${this.currentNode.type}`);
+            this.log('Token(' + this.id + ').signal: invoking ' + this.currentNode.id + ' ' + this.currentNode.type + ' with data=' + JSON.stringify(data));
             yield this.currentNode.setInput(item, data);
             if (item.status == __1.ITEM_STATUS.wait) { // || item.type=='bpmn:SubProcess') {
                 const ret = yield this.currentNode.run(item);
@@ -344,7 +353,7 @@ class Token {
             }
             else
                 this.log(`*** ERROR===== invoking a type of  ${this.currentNode.type} with status of ${item.status}`);
-            this.log(`..token.invoke ended ${this.currentNode.id} ${this.currentNode.type}`);
+            this.log('Token(' + this.id + ').signal: invoke ' + this.currentNode.id + ' ' + this.currentNode.type + ' finished!');
         });
     }
     /*
@@ -352,6 +361,7 @@ class Token {
      */
     end() {
         return __awaiter(this, void 0, void 0, function* () {
+            this.log('Token(' + this.id + ').end: currentNode=' + this.currentNode.id + ' status=' + this.status + ' currentItem.status=' + this.currentItem.status);
             if (this.currentItem.status != __1.ITEM_STATUS.end)
                 this.log('..**token ended but item is still ' + this.currentItem.status);
             this.status = __1.TOKEN_STATUS.end;
@@ -369,7 +379,12 @@ class Token {
                     yield child.terminate();
                 }
             }
+            this.log('Token(' + this.id + ').end(): finished!');
         });
+    }
+    setCurrentNode(newCurrentNode) {
+        this.log('Token(' + this.id + ').goNext():  newCurrentNode.id=' + newCurrentNode.id + ' currentNode=' + this.currentNode);
+        this.currentNode = newCurrentNode;
     }
     /*
      *  once node is completed the token will move to next action
@@ -377,12 +392,13 @@ class Token {
      */
     goNext() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.log(`..token.goNext from ${this.currentNode.id} ${this.currentNode.type}`);
+            this.log('Token(' + this.id + ').goNext(): currentNodeId=' + this.currentNode.id + ' type=' + this.currentNode.type + ' currentItem.status=' + this.currentItem.status);
+            //this.log(`..token.goNext from ${this.currentNode.id} ${this.currentNode.type}`);
             if (!(yield this.preNext()))
                 return;
             const outbounds = this.currentNode.getOutbounds(this.currentItem);
             if (outbounds.length == 0) {
-                this.log('...no more outbounds - ending token ' + this.id);
+                this.log('Token(' + this.id + ').goNext(): no more outbounds - ending this token ' + this.id);
                 return yield this.end();
             }
             let thisNode = this.currentNode;
@@ -392,13 +408,15 @@ class Token {
             //        if (outbounds.length > 1) {
             //            this.end();
             //        }
+            this.log('Token(' + this.id + ').goNext(): verify outbonds....');
             outbounds.forEach(function (flowItem) {
                 return __awaiter(this, void 0, void 0, function* () {
+                    self.log('Token(' + self.id + ').goNext(): ... outbonds flowItemId=' + flowItem.id);
                     /// need to check if next node is converging; therefore no new item``
                     flowItem.status = __1.ITEM_STATUS.end;
                     self.path.push(flowItem);
                     let nextNode = flowItem.element['to'];
-                    self.log('... goNext: processing flow' + flowItem.element.id + " to " + nextNode.id);
+                    self.log('Token(' + self.id + ').goNext(): ... currentNodeId(' + self.currentNode.name + '|' + self.currentNode.id + ') processing  Flow(' + flowItem.element.id + ") to " + nextNode.id);
                     if (nextNode) {
                         if (outbounds.length == 1) {
                             self.currentNode = nextNode;
@@ -413,9 +431,9 @@ class Token {
             if (outbounds.length > 1) {
                 this.end();
             }
-            this.log(`... goNext: waiting for ${promises.length}`);
+            this.log('Token(' + this.id + ').goNext(): waiting for num promises ' + promises.length);
             yield Promise.all(promises);
-            this.log(`..token.goNext is done ${this.currentNode.id} ${this.currentNode.type}`);
+            this.log('Token(' + this.id + ').goNext(): is done currentNodeId=' + this.currentNode.id);
         });
     }
     log(msg) {

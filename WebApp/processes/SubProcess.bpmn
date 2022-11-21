@@ -45,7 +45,7 @@ console.log('sub data',data);</camunda:script>
       </bpmn2:userTask>
       <bpmn2:sequenceFlow id="SequenceFlow_1e6hdeg" sourceRef="sub_StartEvent" targetRef="sub_task_1" />
     </bpmn2:subProcess>
-    <bpmn2:userTask id="Task_1acrm1f" name="Design Campaign">
+    <bpmn2:userTask id="Task_design" name="Design Campaign">
       <bpmn2:extensionElements>
         <camunda:executionListener event="start">
           <camunda:script scriptFormat="JavaScript">console.log('data',this.data);</camunda:script>
@@ -54,8 +54,8 @@ console.log('sub data',data);</camunda:script>
       <bpmn2:incoming>SequenceFlow_129vlnl</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0664zm3</bpmn2:outgoing>
     </bpmn2:userTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_129vlnl" sourceRef="StartEvent_0wntki2" targetRef="Task_1acrm1f" />
-    <bpmn2:sequenceFlow id="SequenceFlow_0664zm3" sourceRef="Task_1acrm1f" targetRef="task_subProcess" />
+    <bpmn2:sequenceFlow id="SequenceFlow_129vlnl" sourceRef="StartEvent_0wntki2" targetRef="Task_design" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0664zm3" sourceRef="Task_design" targetRef="task_subProcess" />
     <bpmn2:sequenceFlow id="Flow_1dt9jvl" sourceRef="task_subProcess" targetRef="Activity_0hrqkhp" />
     <bpmn2:sequenceFlow id="Flow_1qkp3z8" sourceRef="Activity_0hrqkhp" targetRef="EndEvent_08zhy2j" />
     <bpmn2:endEvent id="EndEvent_08zhy2j">
@@ -76,17 +76,18 @@ console.log('sub data',data);</camunda:script>
     </bpmn2:task>
     <bpmn2:boundaryEvent id="Event_1m4letg" attachedToRef="task_subProcess">
       <bpmn2:outgoing>Flow_1x5xedf</bpmn2:outgoing>
-      <bpmn2:messageEventDefinition id="MessageEventDefinition_0lhso7t" />
+      <bpmn2:messageEventDefinition id="MessageEventDefinition_0lhso7t" messageRef="Message_1ljoet1" />
     </bpmn2:boundaryEvent>
   </bpmn2:process>
+  <bpmn2:message id="Message_1ljoet1" name="Cancel_Campaign" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1vzc4e2">
       <bpmndi:BPMNShape id="Participant_1g6enp2_di" bpmnElement="Participant_1g6enp2" isHorizontal="true">
         <dc:Bounds x="140" y="14" width="900" height="336" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1x5xedf_di" bpmnElement="Flow_1x5xedf">
-        <di:waypoint x="747" y="282" />
-        <di:waypoint x="747" y="290" />
+        <di:waypoint x="730" y="282" />
+        <di:waypoint x="730" y="290" />
         <di:waypoint x="840" y="290" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1qkp3z8_di" bpmnElement="Flow_1qkp3z8">
@@ -159,7 +160,7 @@ console.log('sub data',data);</camunda:script>
       <bpmndi:BPMNShape id="UserTask_1rwwtjj_di" bpmnElement="sub_usertask_2">
         <dc:Bounds x="594" y="140" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_121jsnk_di" bpmnElement="Task_1acrm1f">
+      <bpmndi:BPMNShape id="UserTask_121jsnk_di" bpmnElement="Task_design">
         <dc:Bounds x="244" y="130" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_08zhy2j_di" bpmnElement="EndEvent_08zhy2j">
@@ -175,7 +176,7 @@ console.log('sub data',data);</camunda:script>
         <dc:Bounds x="840" y="250" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1ydqp59_di" bpmnElement="Event_1m4letg">
-        <dc:Bounds x="729" y="246" width="36" height="36" />
+        <dc:Bounds x="712" y="246" width="36" height="36" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

@@ -75,16 +75,8 @@ class BoundaryEvent extends Event {
         if (item.token.parentToken.currentItem.status == ITEM_STATUS.end)   // in cancelling mode
             return;
         if (this.isCancelling) {
-            // cancel the parent item
-            /* option 1:
-            await item.token.parentToken.continue();
-            */
-            /* option 2:
-             * or Terminate the parent task, this will kill the flow as well
-             * */
             item.token.parentToken.currentItem.status = ITEM_STATUS.end; //force status so it would not run
             await item.token.parentToken.terminate();
-            
         }
         return super.run(item);
     }

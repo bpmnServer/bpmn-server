@@ -12,10 +12,11 @@ import { SubProcess } from '.';
 //NO_import { DecisionTable } from 'dmn-engine';
 
 class Transaction extends SubProcess {
-    get requiresWait() { return true; }
+    get requiresWait() { return true; }       
 
     async end(item) {
         console.log('trans ending');
+        super.end(item);
 
     }
     /**

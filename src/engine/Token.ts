@@ -125,7 +125,7 @@ class Token implements IToken {
     static async startNewToken(type: TOKEN_TYPE, execution, startNode, dataPath, parentToken: Token,
         originItem: Item, loop: Loop, data = null, noExecute = false) {
         const token = new Token(type,execution,  startNode ,dataPath, parentToken, originItem);
-        token.log("starting new Token "+token.id+" start node:"+startNode.id);
+        token.log('Token(*).startNewToken:  starting new Token with id='+token.id+' start node='+startNode.id);
 
         token.loop = loop;
         execution.tokens.set(token.id, token);
@@ -223,18 +223,24 @@ class Token implements IToken {
      * this is the primary exectuion method for a token
      */
     async execute(input) {
-
+        this.log('Token('+this.id +').execute: input'+JSON.stringify(input));
+        if (this.status==TOKEN_STATUS.end) {
+            this.log('Token('+this.id +').execute: token status is end: return from execute!');
+            return;
+        }
         if (!await this.preExecute())  
             return; // loop logic will take care of it
 
         let ret;
         const item = new Item(this.currentNode,this);
         this.path.push(item);
-        this.log('.executing item:' + this.currentNode.id + " "+ item.id);
+        this.log('Token('+this.id +').execute: new Item created itemId='+item.id);
 
         if (input)
             await this.currentNode.setInput(item,input);
             
+
+        this.log('Token('+this.id +').execute: executing currentNodeId='+ this.currentNode.id);
 
         ret = await this.currentNode.execute(item);
 /*
@@ -249,7 +255,7 @@ class Token implements IToken {
 
         }
 */
-        this.log('..executing item:' + this.currentNode.id+ " " +item.id + " is done");
+        this.log('Token('+this.id +').execute: executing currentNodeId=' + this.currentNode.id+ " itemId=" +item.id + " is done!");
 
         if (ret == NODE_ACTION.wait) {
             this.status = TOKEN_STATUS.wait;
@@ -336,9 +342,10 @@ class Token implements IToken {
      *  
      * */
     async terminate() {
+        this.log('Token('+this.id +').terminate: terminating ....');
         await this.currentNode.end(this.currentItem);
         await this.end();
-
+        this.log('Token('+this.id +').terminate: terminating is done!');
     }
     /**
      *  is called by events to cancel current token
@@ -357,7 +364,8 @@ class Token implements IToken {
         // check if valid node and valid status
         // find the item
         const item = this.currentItem;
-        this.log(`..token.signal ${this.currentNode.id} ${this.currentNode.type}`);
+        //this.log(`..token.signal ${this.currentNode.id} ${this.currentNode.type}`);
+        this.log('Token('+this.id +').signal: invoking '+this.currentNode.id+' '+this.currentNode.type+' with data='+JSON.stringify(data));
 
         await this.currentNode.setInput(item, data);
         if (item.status == ITEM_STATUS.wait) {// || item.type=='bpmn:SubProcess') {
@@ -370,7 +378,7 @@ class Token implements IToken {
         else
             this.log(`*** ERROR===== invoking a type of  ${this.currentNode.type} with status of ${item.status}`);
 
-        this.log(`..token.invoke ended ${this.currentNode.id} ${this.currentNode.type}`);
+        this.log('Token('+this.id +').signal: invoke '+this.currentNode.id+' '+this.currentNode.type+' finished!');
 
     }
     /*
@@ -378,6 +386,7 @@ class Token implements IToken {
      */
 
     async end() {
+        this.log('Token('+this.id +').end: currentNode=' + this.currentNode.id +' status='+this.status+' currentItem.status='+this.currentItem.status);
         if (this.currentItem.status != ITEM_STATUS.end)
             this.log('..**token ended but item is still '+this.currentItem.status);
         this.status = TOKEN_STATUS.end;
@@ -395,21 +404,30 @@ class Token implements IToken {
                 await child.terminate();
             }
         }
+        this.log('Token('+this.id +').end(): finished!');
     }
+
+    setCurrentNode(newCurrentNode:Node){
+        this.log('Token('+this.id +').goNext():  newCurrentNode.id=' + newCurrentNode.id+' currentNode='+this.currentNode);
+        this.currentNode = newCurrentNode;
+    
+      }
+      
     /*
      *  once node is completed the token will move to next action
      *  
      */ 
     async goNext() {
+        this.log('Token('+this.id +').goNext(): currentNodeId=' + this.currentNode.id +' type='+this.currentNode.type+' currentItem.status='+this.currentItem.status);
+        //this.log(`..token.goNext from ${this.currentNode.id} ${this.currentNode.type}`);
 
-        this.log(`..token.goNext from ${this.currentNode.id} ${this.currentNode.type}`);
         if (!await this.preNext())
             return;
 
         const outbounds = this.currentNode.getOutbounds(this.currentItem);
 
         if (outbounds.length == 0) {
-            this.log('...no more outbounds - ending token '+this.id);
+            this.log('Token('+this.id +').goNext(): no more outbounds - ending this token '+this.id);
             return await this.end();
         }
 
@@ -420,13 +438,14 @@ class Token implements IToken {
 //        if (outbounds.length > 1) {
 //            this.end();
 //        }
+        this.log('Token('+this.id +').goNext(): verify outbonds....');
         outbounds.forEach(async function (flowItem) {
-
+            self.log('Token('+self.id +').goNext(): ... outbonds flowItemId='+flowItem.id);
             /// need to check if next node is converging; therefore no new item``
             flowItem.status = ITEM_STATUS.end;
             self.path.push(flowItem);
             let nextNode = flowItem.element['to'];
-            self.log('... goNext: processing flow' + flowItem.element.id + " to " +nextNode.id);
+            self.log('Token('+self.id +').goNext(): ... currentNodeId(' + self.currentNode.name +'|'+ self.currentNode.id +') processing  Flow(' + flowItem.element.id + ") to " +nextNode.id);
             if (nextNode) {
                 if (outbounds.length == 1) {
                     self.currentNode = nextNode;
@@ -440,9 +459,9 @@ class Token implements IToken {
         if (outbounds.length > 1) {
             this.end();
         }
-        this.log(`... goNext: waiting for ${promises.length}`);
+        this.log('Token('+this.id +').goNext(): waiting for num promises '+promises.length);
         await Promise.all(promises);
-        this.log(`..token.goNext is done ${this.currentNode.id} ${this.currentNode.type}`);
+        this.log('Token('+this.id +').goNext(): is done currentNodeId='+this.currentNode.id);
     }
     log(msg) {
         this.execution.log(msg);

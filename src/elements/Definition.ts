@@ -17,7 +17,7 @@ const fs = require('fs');
 
 //DEBUG(moddleOptions);
 function DEBUG(...args) {
-    console.log('Definition.ts',...args);
+//    console.log('Definition.ts',...args);
 }
 
 class Definition implements IDefinition{

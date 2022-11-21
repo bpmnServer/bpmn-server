@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Engine = void 0;
 const __1 = require("../..");
 const ServerComponent_1 = require("../server/ServerComponent");
-const datastore_1 = require("../datastore");
 class Engine extends ServerComponent_1.ServerComponent {
     constructor(server) {
         super(server);
@@ -34,9 +33,10 @@ class Engine extends ServerComponent_1.ServerComponent {
                 execution.currentUser = this.iam.getCurrentUser(userKey);
             }
             // new dataStore for every execution to be monitored 
-            const newDataStore = new datastore_1.DataStore(this.server);
+            /* const newDataStore =new DataStore(this.server);
             this.server.dataStore = newDataStore;
-            newDataStore.monitorExecution(execution);
+    
+            newDataStore.monitorExecution(execution); */
             this.cache.add(execution);
             execution.worker = execution.execute(startNodeId, data, options);
             if (options['noWait'] == true) {
@@ -78,10 +78,11 @@ class Engine extends ServerComponent_1.ServerComponent {
             }
             else {
                 execution = yield __1.Execution.restore(this.server, instance);
-                // new dataStore for every execution to be monitored 
-                const newDataStore = new datastore_1.DataStore(execution.server);
+                /* new dataStore for every execution to be monitored
+                const newDataStore = new DataStore(execution.server);
                 execution.server.dataStore = newDataStore;
-                newDataStore.monitorExecution(execution);
+    
+                newDataStore.monitorExecution(execution); */
                 this.cache.add(execution);
                 this.logger.log("restore completed");
             }
@@ -130,7 +131,6 @@ class Engine extends ServerComponent_1.ServerComponent {
                 else {
                     const waiter = yield execution.worker;
                     this.logger.log(`..engine.continue execution ended saving.. `);
-                    // not needed await this.server.dataStore.save();
                     this.logger.log(`.engine.continue ended`);
                     return execution;
                 }
@@ -162,7 +162,7 @@ class Engine extends ServerComponent_1.ServerComponent {
             try {
                 const execution = yield this.restore({ "id": instanceId });
                 yield execution.signal(elementId, data);
-                yield this.server.dataStore.save();
+                yield this.server.dataStore.save(execution.instance);
                 this.logger.log("invoke completed");
                 return execution;
             }

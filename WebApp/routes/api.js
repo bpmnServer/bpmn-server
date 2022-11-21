@@ -48,6 +48,7 @@ class API extends common_1.Common {
     get bpmnServer() { return this.webApp.bpmnServer; }
     config() {
         var router = express.Router();
+        var bpmnServer = this.bpmnServer;
         router.get('/datastore/findItems', loggedIn, awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             console.log(request.body);
             let query;
@@ -234,9 +235,78 @@ class API extends common_1.Common {
                 response.json({ error: exc.toString() });
             }
         })));
+        ////
+        var fsx = require('fs-extra'); //File System - for file manipulation
+        router.post('/definitions/import/:name?', loggedIn, awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
+            let name = request.params.name;
+            if (!name)
+                name = request.body.name;
+            console.log(' importing: ' + name);
+            console.log('request.body', request.body);
+            var fstream;
+            try {
+                if (request.busboy) {
+                    request.pipe(request.busboy);
+                    request.busboy.on('file', function (fileUploaded, file, filename) {
+                        console.log("Uploading: ", filename);
+                        //Path where image will be uploaded
+                        const filepath = __dirname + '/../tmp/' + filename.filename;
+                        fstream = fsx.createWriteStream(filepath);
+                        file.pipe(fstream);
+                        fstream.on('close', function () {
+                            return __awaiter(this, void 0, void 0, function* () {
+                                console.log("Upload Finished of " + filename.filename);
+                                //const name = filename.filename;
+                                const source = fsx.readFileSync(filepath, { encoding: 'utf8', flag: 'r' });
+                                yield bpmnServer.definitions.save(name, source, null);
+                                response.json("OK");
+                            });
+                        });
+                    });
+                }
+                else {
+                    response.json("No file to import");
+                }
+            }
+            catch (exc) {
+                console.log('request.pipe error:', exc);
+                response.json(exc);
+            }
+        })));
+        router.post('/definitions/rename', loggedIn, function (req, response) {
+            return __awaiter(this, void 0, void 0, function* () {
+                let name = req.body.name;
+                let newName = req.body.newName;
+                console.log('renaming ', name, newName);
+                try {
+                    var ret = yield bpmnServer.definitions.renameModel(name, newName);
+                    console.log('ret:', ret);
+                    response.json(ret);
+                }
+                catch (exc) {
+                    console.log('error:', exc);
+                    response.json({ errors: exc });
+                }
+            });
+        });
+        router.post('/definitions/delete', loggedIn, function (req, response) {
+            return __awaiter(this, void 0, void 0, function* () {
+                let name = req.body.name;
+                console.log('deleting ', name);
+                try {
+                    var ret = yield bpmnServer.definitions.deleteModel(name);
+                    console.log('ret: ', ret);
+                    response.json(ret);
+                }
+                catch (exc) {
+                    console.log('error:', exc);
+                    response.json({ errors: exc.toString() });
+                }
+            });
+        });
         router.get('/definitions/list', loggedIn, function (req, response) {
             return __awaiter(this, void 0, void 0, function* () {
-                let list = yield this.bpmnServer.definitions.getList();
+                let list = yield bpmnServer.definitions.getList();
                 console.log(list);
                 response.json(list);
             });
@@ -245,7 +315,7 @@ class API extends common_1.Common {
             return __awaiter(this, void 0, void 0, function* () {
                 console.log(request.params);
                 let name = request.params.name;
-                let definition = yield this.bpmnServer.definitions.load(name);
+                let definition = yield bpmnServer.definitions.load(name);
                 response.json(JSON.parse(definition.getJson()));
             });
         });
@@ -317,17 +387,17 @@ function display(res, title, output, logs = [], items = []) {
         var instances = yield this.bpmnServer.dataStore.findInstances({}, 'full');
         let waiting = yield this.bpmnServer.dataStore.findItems({ items: { status: 'wait' } });
         waiting.forEach(item => {
-            item.fromNow = (0, __1.dateDiff)(item.startedAt);
+            item.fromNow = __1.dateDiff(item.startedAt);
         });
         let engines = this.bpmnServer.cache.list();
         engines.forEach(engine => {
-            engine.fromNow = (0, __1.dateDiff)(engine.startedAt);
-            engine.fromLast = (0, __1.dateDiff)(engine.lastAt);
+            engine.fromNow = __1.dateDiff(engine.startedAt);
+            engine.fromLast = __1.dateDiff(engine.lastAt);
         });
         instances.forEach(item => {
-            item.fromNow = (0, __1.dateDiff)(item.startedAt);
+            item.fromNow = __1.dateDiff(item.startedAt);
             if (item.endedAt)
-                item.endFromNow = (0, __1.dateDiff)(item.endedAt);
+                item.endFromNow = __1.dateDiff(item.endedAt);
             else
                 item.endFromNow = '';
         });

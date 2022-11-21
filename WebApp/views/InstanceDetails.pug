@@ -85,13 +85,14 @@ block content
 			td Status
 			td Type
 			td User
-			td
+			td Action
 				
 		- let seq=0;
 		each item in items
 			- var ref = "/invokeItem?id="+item.id+"&processName="+instance.name+"&elementId="+item.elementId;
 			- var label='';
-			- if (item.status=='wait') label= 'Execute';
+			- if (item.status=='wait' && item.type=='bpmn:UserTask') label= 'Execute';
+			- if (item.status=='wait' && item.type.includes('Event')) label= 'Force';
 			- seq++;
 				tr
 					td #{seq}

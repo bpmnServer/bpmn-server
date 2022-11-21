@@ -93,14 +93,20 @@ class TimerBehaviour extends _1.Behaviour {
             else if (this.timeCycle) {
                 //seconds = toSeconds((parse(this.timeCycle)));
                 seconds = Cron_1.Cron.timeDue(this.timeCycle, null);
-                // hard code repeat for now
-                if (this.timeCycle.startsWith('R'))
-                    this.repeat = 3;
+                this.repeat = this.getRepeat(this.timeCycle);
             }
         }
         let timeDue = new Date().getTime() / 1000;
         timeDue += seconds;
         return timeDue;
+    }
+    getRepeat(input) {
+        if (input.startsWith('R')) {
+            var l = input.indexOf('/');
+            if (l > 0)
+                return input.substring(1, l);
+        }
+        return 1;
     }
     start(item) {
         if (item.node.type == "bpmn:StartEvent")
@@ -135,11 +141,10 @@ class TimerBehaviour extends _1.Behaviour {
                 yield item.token.execution.signal(item.id, {});
             }
             // check for repeat
-            console.log('-------- timer repeat check -----------', timer.repeat, item.timerCount);
             if (timer.repeat > item.timerCount) {
                 let newToken = yield engine_1.Token.startNewToken(engine_1.TOKEN_TYPE.BoundaryEvent, item.token.execution, item.node, null, item.token, item, null);
                 let newItem = newToken.currentItem;
-                console.log('new token', newItem.elementId);
+                item.token.log('new token for timer repeat ' + item.timerCount + '  ' + newItem.elementId);
                 newItem.timerCount = item.timerCount;
                 //await timer.startTimer(new);
             }

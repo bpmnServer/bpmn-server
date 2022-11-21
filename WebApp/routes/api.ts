@@ -49,6 +49,7 @@ export class API extends Common {
     config() {
 
         var router = express.Router();
+        var bpmnServer = this.bpmnServer;
 
         router.get('/datastore/findItems', loggedIn, awaitAppDelegateFactory(async (request, response) => {
 
@@ -273,11 +274,89 @@ export class API extends Common {
                 response.json({ error: exc.toString() });
             }
         }));
+        ////
+        var fsx = require('fs-extra');       //File System - for file manipulation
 
+        router.post('/definitions/import/:name?', loggedIn, awaitAppDelegateFactory(async (request, response) => {
+
+            let name = request.params.name;
+            if (!name)
+                name = request.body.name;
+            console.log(' importing: ' + name);
+            console.log('request.body',request.body);
+
+            var fstream;
+
+            try {
+                if (request.busboy) {
+                    request.pipe(request.busboy);
+                    request.busboy.on('file', function (fileUploaded, file, filename) {
+                        console.log("Uploading: ", filename);
+
+                        //Path where image will be uploaded
+                        const filepath = __dirname + '/../tmp/' + filename.filename;
+                        fstream = fsx.createWriteStream(filepath);
+                        file.pipe(fstream);
+                        fstream.on('close', async function () {
+                            console.log("Upload Finished of " + filename.filename);
+                            //const name = filename.filename;
+                            const source = fsx.readFileSync(filepath,
+                                { encoding: 'utf8', flag: 'r' });
+                            await bpmnServer.definitions.save(name, source, null);
+
+                            response.json("OK");
+
+                        });
+                    });
+                }
+                else {
+                   response.json("No file to import");
+                }
+
+            }
+            catch (exc) {
+
+                    console.log('request.pipe error:', exc);
+                    response.json(exc);
+                }
+
+        }));
+
+
+        router.post('/definitions/rename', loggedIn, async function (req, response) {
+
+            let name = req.body.name;
+            let newName = req.body.newName;
+            console.log('renaming ', name, newName);
+            try {
+                var ret = await bpmnServer.definitions.renameModel(name, newName);
+                console.log('ret:',ret);
+                response.json(ret);
+            }
+            catch (exc) {
+                console.log('error:',exc);
+                response.json({ errors: exc });
+            }
+        });
+
+        router.post('/definitions/delete', loggedIn, async function (req, response) {
+
+            let name = req.body.name;
+            console.log('deleting ', name);
+            try {
+                var ret = await bpmnServer.definitions.deleteModel(name);
+                console.log('ret: ',ret);
+                response.json(ret);
+            }
+            catch (exc) {
+                console.log('error:', exc);
+                response.json({ errors: exc.toString()});
+            }
+        });
 
         router.get('/definitions/list', loggedIn, async function (req, response) {
 
-            let list = await this.bpmnServer.definitions.getList();
+            let list = await bpmnServer.definitions.getList();
             console.log(list);
             response.json(list);
         });
@@ -286,7 +365,7 @@ export class API extends Common {
             console.log(request.params);
             let name = request.params.name;
 
-            let definition = await this.bpmnServer.definitions.load(name);
+            let definition = await bpmnServer.definitions.load(name);
             response.json(JSON.parse(definition.getJson()));
         });
 

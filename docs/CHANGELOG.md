@@ -12,6 +12,17 @@ and here
 
 ### Changed
 -->
+## Release 1.3.15 -- 2022-11-20
+
+- Added to .env
+    definitions_path
+- Timer now supports Repeat format R3PT15M
+- Fixed bug with gateway converge
+- Added the following to API
+  - definitions/import
+  - definitions/delete
+  - definitions/rename
+
 
 ## Release 1.3.10 -- 2022-09-20
 - SendTask is working same as Service Task - Issue #58

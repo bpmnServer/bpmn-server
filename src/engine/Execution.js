@@ -177,7 +177,7 @@ class Execution extends server_1.ServerComponent {
      */
     signal(executionId, inputData) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.log('Action:signal ' + executionId + ' startedAt ');
+            this.log('Execution(' + this.name + ').signal: executionId=' + executionId + ' startedAt ');
             let token = null;
             this.appDelegate.executionStarted(this);
             yield this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_invoke);
@@ -192,9 +192,9 @@ class Execution extends server_1.ServerComponent {
                 });
             }
             if (token) {
-                this.log('..launching a token signal');
+                this.log('Execution(' + this.name + ').signal: .. launching a token signal');
                 let result = yield token.signal(inputData);
-                this.log('..signal token is done');
+                this.log('Execution(' + this.name + ').signal: .. signal token is done');
             }
             else { // check for startEvent of a secondary process
                 let node = null;
@@ -220,17 +220,19 @@ class Execution extends server_1.ServerComponent {
                     this.logger.error("*** ERROR *** task id not valid" + executionId);
                 }
             }
-            this.log('.signal returning .. waiting for promises status:' + this.instance.status + " id: " + executionId);
+            this.log('Execution(' + this.name + ').signal: returning .. waiting for promises status:' + this.instance.status + " id: " + executionId);
             yield Promise.all(this.promises);
             yield this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_invoked);
-            this.log('.signal returned process  status:' + this.instance.status + " id: " + executionId);
+            this.log('Execution(' + this.name + ').signal: returned process  status:' + this.instance.status + " id: " + executionId);
             this.report();
             yield this.save();
+            this.log('Execution(' + this.name + ').signal: finished!');
         });
     }
     save() {
         return __awaiter(this, void 0, void 0, function* () {
             // save here :
+            this.log("..Saving instance " + this.instance.id);
             const state = this.getState();
             yield this.server.dataStore.saveInstance(state, this.getItems());
         });

@@ -38,10 +38,10 @@ class Engine extends ServerComponent implements IEngine{
 		}
 
 		// new dataStore for every execution to be monitored 
-		const newDataStore =new DataStore(this.server);
+		/* const newDataStore =new DataStore(this.server);
 		this.server.dataStore = newDataStore;
 
-		newDataStore.monitorExecution(execution);
+		newDataStore.monitorExecution(execution); */
 		this.cache.add(execution);
 
 		execution.worker = execution.execute(startNodeId, data, options);
@@ -91,11 +91,11 @@ class Engine extends ServerComponent implements IEngine{
 			execution = await Execution.restore(this.server,instance);
 
 
-			// new dataStore for every execution to be monitored 
+			/* new dataStore for every execution to be monitored 
 			const newDataStore = new DataStore(execution.server);
 			execution.server.dataStore = newDataStore;
 
-			newDataStore.monitorExecution(execution);
+			newDataStore.monitorExecution(execution); */
 
 
 			this.cache.add(execution);
@@ -153,8 +153,6 @@ class Engine extends ServerComponent implements IEngine{
 				const waiter = await execution.worker;
 				this.logger.log(`..engine.continue execution ended saving.. `);
 
-				// not needed await this.server.dataStore.save();
-
 				this.logger.log(`.engine.continue ended`);
 
 				return execution;
@@ -193,7 +191,7 @@ class Engine extends ServerComponent implements IEngine{
 
 			await execution.signal(elementId, data);
 
-			await this.server.dataStore.save();
+			await this.server.dataStore.save(execution.instance);
 
 			this.logger.log("invoke completed");
 

@@ -7,9 +7,9 @@ interface IDataStore {
     dbConfiguration: any;
     db: any;
     logger: any;
-    execution: IExecution;
-    monitorExecution(execution: IExecution): void;
-    save(): Promise<void>;
+    // execution: IExecution;
+    // monitorExecution(execution: IExecution): void;
+    save(instance:any): Promise<void>;
     loadInstance(instanceId: any): Promise<{
         instance: any;
         items: any[];

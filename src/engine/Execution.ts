@@ -205,7 +205,7 @@ class Execution extends ServerComponent implements IExecution {
      */
     public async signal(executionId, inputData:any) {
 
-        this.log('Action:signal ' + executionId + ' startedAt ');
+        this.log('Execution('+this.name+').signal: executionId=' + executionId + ' startedAt ');
         let token = null;
 
         this.appDelegate.executionStarted(this);
@@ -225,9 +225,9 @@ class Execution extends ServerComponent implements IExecution {
 
 
         if (token) {
-            this.log('..launching a token signal');
+            this.log('Execution('+this.name+').signal: .. launching a token signal');
             let result=await token.signal(inputData);
-            this.log('..signal token is done');
+            this.log('Execution('+this.name+').signal: .. signal token is done');
         }
         else
             {  // check for startEvent of a secondary process
@@ -258,22 +258,24 @@ class Execution extends ServerComponent implements IExecution {
         }
 
 
-        this.log('.signal returning .. waiting for promises status:' + this.instance.status + " id: " + executionId);
+        this.log('Execution('+this.name+').signal: returning .. waiting for promises status:' + this.instance.status + " id: " + executionId);
         await Promise.all(this.promises);
 
 
         await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoked);
 
-        this.log('.signal returned process  status:' + this.instance.status + " id: " + executionId);
+        this.log('Execution('+this.name+').signal: returned process  status:' + this.instance.status + " id: " + executionId);
 
         this.report();
 
+
         await this.save();
+        this.log('Execution('+this.name+').signal: finished!');
     }
 
     private async save() {
         // save here :
-
+        this.log("..Saving instance "+this.instance.id);
         const state = this.getState();
         await this.server.dataStore.saveInstance(state, this.getItems());
 

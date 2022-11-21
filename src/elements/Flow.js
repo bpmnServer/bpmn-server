@@ -42,6 +42,7 @@ class Flow extends _1.Element {
      * @param item
      */
     run(item) {
+        item.token.log('Flow(' + this.name + '|' + this.id + ').run: from=' + this.from.name + ' to=' + this.to.name + " find action... ");
         let action = __1.FLOW_ACTION.take;
         if (this.def.conditionExpression) {
             // conditionExpression:{"$type":"bpmn:Expression","body":"true"}
@@ -54,7 +55,7 @@ class Flow extends _1.Element {
                 action = __1.FLOW_ACTION.discard;
             }
         }
-        item.token.log('..Flow -' + this.id + ' going to ' + this.to.id + " action : " + action);
+        item.token.log('Flow(' + this.name + '|' + this.id + ').run: going to ' + this.to.id + " action : " + action);
         return action;
     }
     execute(item) {
