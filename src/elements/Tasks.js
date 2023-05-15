@@ -54,18 +54,19 @@ class ServiceTask extends Node_1.Node {
     run(item) {
         return __awaiter(this, void 0, void 0, function* () {
             item.context.action = null;
+            item.context.item = item;
             // calling appDelegate by service name
             const appDelegate = item.token.execution.appDelegate;
             // let output = await item.node.getOutput(item);
             let ret;
-            item.log("invoking service:" + this.serviceName);
+            item.log("invoking service:" + this.serviceName + " input:" + JSON.stringify(item.input));
             if (this.serviceName && appDelegate.servicesProvider[this.serviceName])
-                ret = yield appDelegate.servicesProvider[this.serviceName](item.context.input, item.context);
+                ret = yield appDelegate.servicesProvider[this.serviceName](item.input, item.context);
             else
-                ret = yield appDelegate['serviceCalled'](item.context.input, item.context);
+                ret = yield appDelegate['serviceCalled'](item.input, item.context);
             item.log("service returned " + ret);
-            item.context.output = ret;
-            console.log('service ', this.serviceName, 'completed-output', ret, item.context.output);
+            item.output = ret;
+            item.log('service ', this.serviceName, 'completed-output', ret, item.output);
             // await item.node.setInput(item,ret);
             if (item.context.action && item.context.action == Enums_1.NODE_ACTION.wait) {
                 return item.context.action;

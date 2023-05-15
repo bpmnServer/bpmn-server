@@ -182,8 +182,10 @@ class Engine extends ServerComponent_1.ServerComponent {
             this.logger.log('..findEvents ' + events.length);
             if (events.length > 0) {
                 const event = events[0];
-                this.logger.log('..Action:engine.throwMessage found target event ', event.modelName, data, event.elementId, event.elementId);
-                return yield this.start(event.modelName, data, event.elementId, event.elementId);
+                this.logger.log('..Action:engine.throwMessage found target event ', event.modelName, JSON.stringify(data), event.elementId, event.elementId);
+                let ret = yield this.start(event.modelName, data, event.elementId, event.elementId);
+                this.logger.log('..Action:engine.throwMessage ended', event.modelName, JSON.stringify(data), event.elementId, event.elementId);
+                return ret;
             }
             let itemsQuery = {};
             if (matchingQuery)
@@ -191,12 +193,15 @@ class Engine extends ServerComponent_1.ServerComponent {
             itemsQuery["items.messageId"] = messageId;
             itemsQuery["items.status"] = 'wait';
             const items = yield this.dataStore.findItems(itemsQuery);
-            console.log('throw message itemsQuery:', itemsQuery, items.length);
             if (items.length > 0) {
                 const item = items[0];
-                console.log(`Throw Signal ${messageId} found target: ${item.processName} ${item.id}`);
+                this.logger.log(`Throw Signal ${messageId} found target: ${item.processName} ${item.id}`);
                 this.logger.log('..Action:engine.throwMessage found target ', item.processName, item.id);
                 return yield this.invoke({ "items.id": item.id }, data);
+            }
+            else {
+                this.logger.log('** engine.throwMessage failed to find a target for ', JSON.stringify(itemsQuery));
+                console.log('** engine.throwMessage failed to find a target for ', JSON.stringify(itemsQuery));
             }
             return null;
         });
@@ -228,6 +233,7 @@ class Engine extends ServerComponent_1.ServerComponent {
                     let event = events[i];
                     this.logger.log('..Action:engine.Throw Signal found target', event.modelName, data, event.elementId);
                     var res = yield this.start(event.modelName, data, event.elementId, null);
+                    this.logger.log('Signal end data', res.instance.data);
                     instances.push(res.instance.id);
                 }
             }

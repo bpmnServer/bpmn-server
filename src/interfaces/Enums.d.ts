@@ -5,7 +5,7 @@ declare enum BPMN_TYPE {
     SendTask = "bpmn:SendTask",
     ReceiveTask = "bpmn:ReceiveTask",
     BusinessRuleTask = "bpmn:BusinessRuleTask",
-    SubProcess = "bpmn:SubProces",
+    SubProcess = "bpmn:SubProcess",
     ParallelGateway = "bpmn:ParallelGateway",
     EventBasedGateway = "bpmn:EventBasedGateway",
     InclusiveGateway = "bpmn:InclusiveGateway",
@@ -24,7 +24,9 @@ declare enum NODE_SUBTYPE {
     message = "message",
     signal = "signal",
     error = "error",
-    escalation = "escalation"
+    escalation = "escalation",
+    cancel = "cancel",
+    compensate = "compensate"
 }
 declare enum EXECUTION_EVENT {
     node_enter = "enter",
@@ -65,6 +67,7 @@ declare enum ITEM_STATUS {
     wait = "wait",
     end = "end",
     terminated = "terminated",
+    cancelled = "cancelled",
     discard = "discard"
 }
 declare enum EXECUTION_STATUS {

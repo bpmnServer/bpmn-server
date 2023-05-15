@@ -54,9 +54,16 @@ class MyServices {
     }
     async service1(input, context) {
         let item = context.item;
+
         seq++;
-        await delay(3000 - (seq * 100), 'test');
-        item.token.log("SERVICE 1" + item.token.currentNode.id);
+        let vName = item.elementId+'_input';
+        let v = {};
+        v[vName] = input;
+        //item.setData(v);
+        await delay(50, 'test');
+        item.token.log("SERVICE 1: input: " + JSON.stringify(input) + item.token.currentNode.id + " current seq: " + seq);
+        console.log('appDelegate item:', item.elementId,item.seq,item.input,item.data);
+        console.log('appDelegate service1 is now complete input:', input, 'output:', seq, 'item.data', item.id, item.data);
         return { seq, text: 'test' };
 
     }

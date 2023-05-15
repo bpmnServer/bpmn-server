@@ -17,6 +17,8 @@ class Item implements IItem {
     assignments=[];
     authorizations=[];
     notifications=[];
+    input = {};
+    output = {};
 
 
     get endedAt() {         // dateTime ended
@@ -36,8 +38,7 @@ class Item implements IItem {
         if (this._dbAction == null)
             this._dbAction = 'update';
     }
-    get input() { return this.context.input; }
-    get output() { return this.context.output; }
+
     log(msg) { return this.token.log(msg); }
     get data() { return this.token.data; }
     set data(val) { this.token.appendData(val); }
@@ -81,7 +82,7 @@ class Item implements IItem {
         return {
             id: this.id, seq: this.seq, itemKey: this.itemKey, tokenId: this.token.id, elementId: this.elementId, name: this.name,
             status: this.status, userId: this.userId, startedAt: this.startedAt, endedAt: this.endedAt, type: this.type, timeDue: this.timeDue,
-            data: undefined, messageId: this.messageId, signalId: this.signalId,
+            data: undefined , messageId: this.messageId, signalId: this.signalId,
                 assignments: this.assignments,authorizations: this.authorizations, notifications: this.notifications
         };
 

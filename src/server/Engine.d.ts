@@ -69,6 +69,6 @@ declare class Engine extends ServerComponent implements IEngine {
      * @param matchingQuery	should match the itemKey (if specified)
      * @param data			message data
      */
-    throwSignal(signalId: any, data?: {}, matchingQuery?: {}): Promise<Execution>;
+    throwSignal(signalId: any, data?: {}, matchingQuery?: {}): Promise<any[]>;
 }
 export { Engine };

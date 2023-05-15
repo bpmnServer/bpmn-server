@@ -41,7 +41,7 @@ class Definition implements IDefinition{
 
         this.moddle = new BpmnModdle({ moddleOptions });
     }
-    private loadProcess(definition, processElement ,parentProcess) {
+    loadProcess(definition, processElement ,parentProcess) {
 
         const children = [];
         const process=new Process(processElement,parentProcess);

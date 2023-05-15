@@ -8,13 +8,13 @@ const _1 = require(".");
  *
  */
 class IOParameter {
+    isInput() { return (this.type == 'camunda:inputParameter'); }
+    isOutput() { return (this.type == 'camunda:outputParameter'); }
     constructor(type, name, value) {
         this.type = type;
         this.name = name;
         this.value = value;
     }
-    isInput() { return (this.type == 'camunda:inputParameter'); }
-    isOutput() { return (this.type == 'camunda:outputParameter'); }
 }
 class IOBehaviour extends _1.Behaviour {
     init() {
@@ -28,12 +28,12 @@ class IOBehaviour extends _1.Behaviour {
     /*
      * process input parameters here
      *
-     * generate item.context.input
+     * generate item.input
      *
      */
     enter(item) {
-        if (!item.context.input)
-            item.context.input = {};
+        if (!item.input)
+            item.input = {};
         var hasInput = false;
         this.parameters.forEach(param => {
             if (param.isInput()) {
@@ -42,7 +42,7 @@ class IOBehaviour extends _1.Behaviour {
                  * */
                 hasInput = true;
                 var val = item.token.execution.appDelegate.scopeEval(item, param.value);
-                item.context.input[param.name] = val;
+                item.input[param.name] = val;
                 item.log('...set at enter data input : input.' + param.name + ' = ' + val);
             }
         });
@@ -53,7 +53,7 @@ class IOBehaviour extends _1.Behaviour {
             this.parameters.forEach(param => {
                 if (param.isOutput()) {
                     var val = item.token.execution.appDelegate.scopeEval(item, param.value);
-                    item.context.output[param.name] = val;
+                    item.output[param.name] = val;
                     item.log('...set at enter data output : output.' + param.name + ' = ' + val);
                 }
             });
@@ -80,8 +80,10 @@ class IOBehaviour extends _1.Behaviour {
                     item.log('...set at exit data output : data.' + param.name + ' = ' + val);
                     item.token.data[param.name] = val;
                 }
-                else
-                    item.token.data[param.name] = item.context.output;
+                else {
+                    item.token.data[param.name] = item.output;
+                    item.log('...set at exit data output : data.' + param.name + ' = ' + item.output);
+                }
             }
         });
     }

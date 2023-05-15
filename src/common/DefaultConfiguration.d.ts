@@ -12,6 +12,7 @@ declare class Configuration implements IConfiguration {
             db_url: string;
             db: string;
         };
+        loopbackRepositories?: any;
     };
     logger: ILogger;
     apiKey: string;

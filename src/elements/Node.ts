@@ -74,11 +74,11 @@ class Node extends Element {
     async getInput(item: Item, input) {
         item.token.log('Node('+this.name+'|'+this.id+').getInput: input' + JSON.stringify(input));
 
-        item.context.input = input;
+        item.input = input;
 
         await this.doEvent(item, EXECUTION_EVENT.transform_input, null);
 
-        return item.context.input;
+        return item.input;
     }
     /**
      * transform data using output rules
@@ -86,14 +86,7 @@ class Node extends Element {
      * @param item
      */
     async getOutput(item: Item) {
-        return item.context.output;
-        console.log(item.context.output);
-        if (item.context.output)
-            {}
-        if (Object.keys(item.context.output).length  == 0 )
-            item.context.output = item.data;
-
-        return item.context.output;
+        return item.output;
 
     }
     enter(item: Item) {
@@ -221,7 +214,9 @@ class Node extends Element {
             for (t = 0; t < childrenTokens.length; t++) {
                 let token = childrenTokens[t];
                 if (token.startNodeId == boundaryEvent.id) {
-                    await token.terminate();
+                    //   don't terminate if boundary events are active
+                    if (token.currentItem.status != ITEM_STATUS.end)
+                        await token.terminate();
                 }
             }
         }
@@ -241,7 +236,7 @@ class Node extends Element {
         await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end);
         item.token.log('Node('+this.name+'|'+this.id+').end: setting item status to end itemId=' + item.id + ' itemStatus=' + item.status);
         this.behaviours.forEach(async function (b) { await b.exit(item); });
-        item.token.log('Node('+this.name+'|'+this.id+').end: finished');
+        item.token.log('Node(' + this.name + '|' + this.id + ').end: finished');
     }
     /**
      * is called by the token after an execution resume for every active (in wait) item

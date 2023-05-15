@@ -64,21 +64,6 @@ var TOKEN_TYPE;
 exports.TOKEN_TYPE = TOKEN_TYPE;
 // ---------------------------------------------
 class Token {
-    constructor(type, execution, startNode, dataPath, parentToken, originItem) {
-        this.execution = execution;
-        this.type = type;
-        if (dataPath)
-            this.dataPath = dataPath;
-        else
-            this.dataPath = '';
-        this.startNodeId = startNode.id;
-        this.currentNode = startNode;
-        this.parentToken = parentToken;
-        this.originItem = originItem;
-        this.id = execution.getNewId('token');
-        this.processId = startNode.processId;
-        this.path = [];
-    }
     get data() {
         return this.execution.getData(this.dataPath);
     }
@@ -102,6 +87,21 @@ class Token {
         this.execution.tokens.forEach(t => { if (t.parentToken && t.parentToken.id == this.id)
             list.push(t); });
         return list;
+    }
+    constructor(type, execution, startNode, dataPath, parentToken, originItem) {
+        this.execution = execution;
+        this.type = type;
+        if (dataPath)
+            this.dataPath = dataPath;
+        else
+            this.dataPath = '';
+        this.startNodeId = startNode.id;
+        this.currentNode = startNode;
+        this.parentToken = parentToken;
+        this.originItem = originItem;
+        this.id = execution.getNewId('token');
+        this.processId = startNode.processId;
+        this.path = [];
     }
     /**
      *
@@ -212,13 +212,15 @@ class Token {
         return __awaiter(this, void 0, void 0, function* () {
             this.log('Token(' + this.id + ').execute: input' + JSON.stringify(input));
             if (this.status == __1.TOKEN_STATUS.end) {
-                this.log('Token(' + this.id + ').execute: token status is end: return from execute!');
+                this.log('Token(' + this.id + ').execute: token status is end: return from execute!!');
                 return;
             }
             if (!(yield this.preExecute()))
                 return; // loop logic will take care of it
             let ret;
             const item = new Item_1.Item(this.currentNode, this);
+            if (input)
+                item.input = input;
             this.path.push(item);
             this.log('Token(' + this.id + ').execute: new Item created itemId=' + item.id);
             if (input)
@@ -405,31 +407,45 @@ class Token {
             let thisItem = this.currentItem;
             const self = this;
             const promises = [];
-            //        if (outbounds.length > 1) {
-            //            this.end();
-            //        }
-            this.log('Token(' + this.id + ').goNext(): verify outbonds....');
-            outbounds.forEach(function (flowItem) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    self.log('Token(' + self.id + ').goNext(): ... outbonds flowItemId=' + flowItem.id);
-                    /// need to check if next node is converging; therefore no new item``
-                    flowItem.status = __1.ITEM_STATUS.end;
-                    self.path.push(flowItem);
-                    let nextNode = flowItem.element['to'];
-                    self.log('Token(' + self.id + ').goNext(): ... currentNodeId(' + self.currentNode.name + '|' + self.currentNode.id + ') processing  Flow(' + flowItem.element.id + ") to " + nextNode.id);
-                    if (nextNode) {
-                        if (outbounds.length == 1) {
+            // check diverging
+            var diverging = false;
+            if (outbounds.length > 1 || this.currentNode.outbounds.length > 1)
+                diverging = true;
+            if (diverging) // multiple nodes; create separate tokens
+             {
+                this.log('Token(' + this.id + ').goNext(): verify outbonds....');
+                outbounds.forEach(function (flowItem) {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        self.log('Token(' + self.id + ').goNext(): ... outbonds flowItemId=' + flowItem.id);
+                        /// need to check if next node is converging; therefore no new item``
+                        flowItem.status = __1.ITEM_STATUS.end;
+                        self.path.push(flowItem);
+                        let nextNode = flowItem.element['to'];
+                        self.log('Token(' + self.id + ').goNext(): ... currentNodeId(' + self.currentNode.name + '|' + self.currentNode.id + ') processing  Flow(' + flowItem.element.id + ") to " + nextNode.id);
+                        if (nextNode) {
+                            promises.push(Token.startNewToken(TOKEN_TYPE.Diverge, self.execution, nextNode, null, self, thisItem, null));
+                        }
+                    });
+                });
+                this.end();
+            }
+            else // single node 
+             {
+                this.log('Token(' + this.id + ').goNext(): verify outbonds....');
+                outbounds.forEach(function (flowItem) {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        self.log('Token(' + self.id + ').goNext(): ... outbonds flowItemId=' + flowItem.id);
+                        /// need to check if next node is converging; therefore no new item``
+                        flowItem.status = __1.ITEM_STATUS.end;
+                        self.path.push(flowItem);
+                        let nextNode = flowItem.element['to'];
+                        self.log('Token(' + self.id + ').goNext(): ... currentNodeId(' + self.currentNode.name + '|' + self.currentNode.id + ') processing  Flow(' + flowItem.element.id + ") to " + nextNode.id);
+                        if (nextNode) {
                             self.currentNode = nextNode;
                             promises.push(self.execute(null));
                         }
-                        else {
-                            promises.push(Token.startNewToken(TOKEN_TYPE.Diverge, self.execution, nextNode, null, self, thisItem, null));
-                        }
-                    }
+                    });
                 });
-            });
-            if (outbounds.length > 1) {
-                this.end();
             }
             this.log('Token(' + this.id + ').goNext(): waiting for num promises ' + promises.length);
             yield Promise.all(promises);

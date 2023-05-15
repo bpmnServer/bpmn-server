@@ -1,3 +1,4 @@
+import { Process } from '.';
 import { IDefinition } from '../interfaces/elements';
 import { BPMNServer } from '../server/BPMNServer';
 declare class Definition implements IDefinition {
@@ -12,7 +13,7 @@ declare class Definition implements IDefinition {
     moddle: any;
     accessRules: any[];
     constructor(name: string, source: string, server: BPMNServer);
-    private loadProcess;
+    loadProcess(definition: any, processElement: any, parentProcess: any): Process;
     /**
      *
      * */

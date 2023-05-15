@@ -51,7 +51,7 @@ interface IToken {
     end(): Promise<void>;
     goNext(): Promise<void>;
     getSubProcessToken(): IToken;
-    log(msg: any): void;
+    log(...msg: any): void;
     error(msg: any): void;
 }
 interface IExecution extends IServerComponent {
@@ -106,7 +106,7 @@ interface IExecution extends IServerComponent {
     getUUID(): any;
     doExecutionEvent(process: any, event: any): Promise<any>;
     doItemEvent(item: any, event: any): Promise<any>;
-    log(msg: any): void;
+    log(...msg: any): void;
     error(msg: any): void;
     appendData(inputData: any, dataPath?: any): void;
     getData(dataPath: any): any;

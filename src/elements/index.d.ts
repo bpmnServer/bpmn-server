@@ -8,3 +8,4 @@ export * from './Events';
 export * from './behaviours/.';
 export * from './Gateway';
 export * from './Process';
+export * from './Transaction';

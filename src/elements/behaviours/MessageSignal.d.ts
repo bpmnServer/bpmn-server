@@ -18,7 +18,7 @@ declare class MessageEventBehaviour extends Behaviour {
 }
 declare class SignalEventBehaviour extends Behaviour {
     init(): void;
-    start(item: Item): void;
+    start(item: Item): Promise<void>;
     end(item: Item): void;
     describe(): string[];
     get signalId(): any;

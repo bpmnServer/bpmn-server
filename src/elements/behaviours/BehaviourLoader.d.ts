@@ -1,5 +1,5 @@
-import { TerminateBehaviour } from ".";
-import { Node } from "..";
+import { IOBehaviour, TerminateBehaviour } from ".";
+import { Node } from "../Node";
 import { ScriptBehaviour } from "./Script";
 declare const Behaviour_names: {
     TimerEventDefinition: string;
@@ -9,6 +9,9 @@ declare const Behaviour_names: {
     MessageEventDefinition: string;
     SignalEventDefinition: string;
     ErrorEventDefinition: string;
+    EscalationEventDefinition: string;
+    CancelEventDefinition: string;
+    CompensateEventDefinition: string;
     CamundaFormData: string;
     CamundaScript: string;
     CamundaScript2: string;
@@ -16,6 +19,9 @@ declare const Behaviour_names: {
 };
 declare class BehaviourLoader {
     static behaviours: ({
+        name: string;
+        funct: (node: any, def: any) => IOBehaviour;
+    } | {
         name: string;
         funct: (node: any, def: any) => ScriptBehaviour;
     } | {

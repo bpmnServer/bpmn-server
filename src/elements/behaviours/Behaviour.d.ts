@@ -1,5 +1,5 @@
-import { Node } from "..";
-import { Item } from "../../engine/Item";
+import type { Node } from "..";
+import type { Item } from "../../engine/Item";
 import { IItem } from "../../..";
 /** Behaviour
  *      ioSpecification
@@ -31,9 +31,11 @@ declare class Behaviour implements IBehaviour {
     restored(item: any): void;
     describe(): any[];
     init(): void;
+    enter(item: Item): void;
     start(item: Item): void;
     run(item: Item): void;
     end(item: Item): void;
+    exit(item: Item): void;
     resume(item: Item): void;
     getNodeAttributes(attributes: any[]): void;
     getItemAttributes(item: Item, attributes: any[]): void;

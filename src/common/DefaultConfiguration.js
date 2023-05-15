@@ -8,6 +8,15 @@ const _1 = require("./");
 const ACL_1 = require("../server/ACL");
 let definitionsPath = __dirname + '/processes/';
 class Configuration {
+    definitions(server) {
+        return new ModelsDatastore_1.ModelsDatastoreDB(server);
+    }
+    appDelegate(server) {
+        return new DefaultAppDelegate_1.DefaultAppDelegate(server);
+    }
+    dataStore(server) {
+        return new __1.DataStore(server);
+    }
     constructor({ definitionsPath, templatesPath, timers, database, apiKey, logger, definitions, appDelegate, dataStore, IAM, ACL }) {
         this.definitionsPath = definitionsPath;
         this.templatesPath = templatesPath;
@@ -18,15 +27,6 @@ class Configuration {
         this.definitions = definitions;
         this.appDelegate = appDelegate;
         this.dataStore = dataStore;
-    }
-    definitions(server) {
-        return new ModelsDatastore_1.ModelsDatastoreDB(server);
-    }
-    appDelegate(server) {
-        return new DefaultAppDelegate_1.DefaultAppDelegate(server);
-    }
-    dataStore(server) {
-        return new __1.DataStore(server);
     }
 }
 exports.Configuration = Configuration;

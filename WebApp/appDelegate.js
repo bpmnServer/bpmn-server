@@ -117,10 +117,11 @@ class MyServices {
     service1(input, context) {
         return __awaiter(this, void 0, void 0, function* () {
             let item = context.item;
+            item.data = input;
             seq++;
             yield delay(5000, 'test');
-            item.token.log("SERVICE 1: input: " + input + item.token.currentNode.id + " current seq: " + seq);
-            console.log('appDelegate service1 is now complete input:', input, 'output:', seq);
+            item.token.log("SERVICE 1: input: " + JSON.stringify(input) + item.token.currentNode.id + " current seq: " + seq);
+            console.log('appDelegate service1 is now complete input:', input, 'output:', seq, 'item.data', item.data);
             return { seq, text: 'test' };
         });
     }

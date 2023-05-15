@@ -173,17 +173,17 @@ Input and output is used in the following scenarios:
             result  ->  output.result
 
   on-entry:
-        context.input.var1= 51;
+        item.input.var1= 51;
 
   on-run:
-        context.output=call fun(context.input)
+        item.output=call fun(item.input)
   
   on-exit:
 
         scenario 1:
-        data.result  = context.output;
+        data.result  = item.output;
         scenario 2:
-        data.result  = context.output.result;
+        data.result  = item.output.result;
 
 * Throw
 
@@ -195,11 +195,11 @@ Input and output is used in the following scenarios:
     
     on-entry:
        
-         context.output.caseId= data.caseId;
+         item.output.caseId= data.caseId;
 
     on-call:
 
-        throw (signal,context.output)
+        throw (signal,item.output)
 
 * Catch
 

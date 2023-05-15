@@ -95,7 +95,7 @@ class Gateway extends Node {
         }
         else { // do I have a child branching from a gateway
             let childrenTokens = token.getChildrenTokens();
-            console.log('Gateway(' + token.currentItem.element.name + '|'+token.currentItem.element.id+ ').findActiveFlows: childrenTokens.length=', childrenTokens.length);
+            token.log('Gateway(' + token.currentItem.element.name + '|'+token.currentItem.element.id+ ').findActiveFlows: childrenTokens.length='+ childrenTokens.length);
             childrenTokens.forEach(t => {
                 if (t.originItem.node.type == 'bpmn:InclusiveGateway' ||
                     t.originItem.node.type == 'bpmn:ParallelGateway' ||
@@ -172,14 +172,14 @@ class Gateway extends Node {
                     // Find children tokens
                     const siblingChildrenTokens = t.getChildrenTokens();
                     let siblingHasActiveChildToken=false;
-                    console.log('Gateway(' +item.element.name+'|'+item.element.id + ').convergeFlows: siblingChildrenTokens.length=', siblingChildrenTokens.length);
+                    token.log('Gateway(' +item.element.name+'|'+item.element.id + ').convergeFlows: siblingChildrenTokens.length='+ siblingChildrenTokens.length);
                     siblingChildrenTokens.forEach(siblingChildToken => {
                         if (siblingChildToken.originItem.node.type == 'bpmn:InclusiveGateway' ||
                         siblingChildToken.originItem.node.type == 'bpmn:ParallelGateway' ||
                         siblingChildToken.originItem.node.type == 'bpmn:ExclusiveGateway') {
                             if (siblingChildToken.status!= TOKEN_STATUS.end && siblingChildToken.status != TOKEN_STATUS.terminated) {
                                 siblingHasActiveChildToken = true;
-                                console.log('Gateway(' +item.element.name+'|'+item.element.id + ').convergeFlows: ... siblingChildToken status=', siblingChildToken.status);
+                                token.log('Gateway(' +item.element.name+'|'+item.element.id + ').convergeFlows: ... siblingChildToken status='+ siblingChildToken.status);
                             }
                         }
                     });
@@ -292,7 +292,7 @@ class Gateway extends Node {
                 //await convergingGatewayCurrentNode.end(item);
                 //await oldCurrentToken.end();
 
-                if (oldCurrentToken.type==TOKEN_TYPE.Diverge)
+                //if (oldCurrentToken.type==TOKEN_TYPE.Diverge)
                     await oldCurrentToken.terminate();
                 
 

@@ -216,8 +216,10 @@ class Engine extends ServerComponent implements IEngine{
 		if (events.length > 0) {
 
 			const event = events[0];
-			this.logger.log('..Action:engine.throwMessage found target event ', event.modelName, data, event.elementId, event.elementId);
-			return await this.start(event.modelName, data, event.elementId, event.elementId);
+			this.logger.log('..Action:engine.throwMessage found target event ', event.modelName, JSON.stringify(data), event.elementId, event.elementId);
+			let ret = await this.start(event.modelName, data, event.elementId, event.elementId);
+			this.logger.log('..Action:engine.throwMessage ended', event.modelName, JSON.stringify(data), event.elementId, event.elementId);
+			return ret;
 		}
 		let itemsQuery = {};
 		if (matchingQuery)
@@ -229,15 +231,19 @@ class Engine extends ServerComponent implements IEngine{
 
 		const items = await this.dataStore.findItems(itemsQuery);
 
-		console.log('throw message itemsQuery:', itemsQuery, items.length);
 		if (items.length > 0) {
 
 			const item = items[0];
-			console.log(`Throw Signal ${messageId} found target: ${item.processName} ${item.id}`);
+			this.logger.log(`Throw Signal ${messageId} found target: ${item.processName} ${item.id}`);
 
 			this.logger.log('..Action:engine.throwMessage found target ', item.processName, item.id);
 			return await this.invoke({ "items.id": item.id }, data);
 		}
+		else {
+			this.logger.log('** engine.throwMessage failed to find a target for ',JSON.stringify(itemsQuery));
+			console.log('** engine.throwMessage failed to find a target for ', JSON.stringify(itemsQuery));
+
+        }
 		return null;
 
 	}
@@ -270,7 +276,8 @@ class Engine extends ServerComponent implements IEngine{
 				let event = events[i];
 				this.logger.log('..Action:engine.Throw Signal found target', event.modelName, data, event.elementId);
 				
-				var res=await this.start(event.modelName, data, event.elementId, null);
+				var res = await this.start(event.modelName, data, event.elementId, null);
+				this.logger.log('Signal end data',res.instance.data)
 				instances.push(res.instance.id);
 			}
         }

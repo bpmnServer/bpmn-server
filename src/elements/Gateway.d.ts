@@ -12,7 +12,10 @@ declare class Gateway extends Node {
         pendingTokens: any[];
         waitingTokens: any[];
     };
-    convergeFlows(item: Item): void;
+    convergeFlows(item: Item): {
+        pendingTokens: Token[];
+        waitingTokens: Token[];
+    };
     start(item: Item): Promise<NODE_ACTION>;
 }
 /**

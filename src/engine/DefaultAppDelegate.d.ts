@@ -1,9 +1,9 @@
 import { IExecution, Item, IAppDelegate } from "../..";
 declare class DefaultAppDelegate implements IAppDelegate {
     server: any;
-    sendEmail(to: any, msg: any, body: any): void;
     servicesProvider: any;
     constructor(server: any);
+    sendEmail(to: any, msg: any, body: any): void;
     get moddleOptions(): {
         name: string;
         uri: string;

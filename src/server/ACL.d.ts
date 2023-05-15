@@ -7,15 +7,25 @@ declare class IAM implements IIAM {
     server: any;
     static currentUsers: Map<any, any>;
     constructor(server: any);
+    /**
+     * Registering a new user
+     * @param userId
+     * @param name
+     * @param email
+     * @param userGroups
+     * @param password
+     */
     addUser(userId: any, name: any, email: any, userGroups: any, password: any): Promise<User>;
     /**
-     * Returns a key
+     * Returns a userKey for a given user
+     * Temporary bypass to authentication
+     * Bypassing authentication, assuming the an API Key was already provided
      * @param userId
      */
     getRemoteUser(userId: any): any;
     login(userId: any, password: any): Promise<any>;
     /**
-     *
+     * Returns a UserProfile for an already authenticated user
      *
      * @param key
      */

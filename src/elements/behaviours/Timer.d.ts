@@ -3,6 +3,7 @@ import { Item } from '../../engine/Item';
 import { Behaviour } from './';
 declare class TimerBehaviour extends Behaviour {
     duration: any;
+    repeat: number;
     timeCycle: any;
     init(): void;
     describe(): string[];
@@ -12,9 +13,10 @@ declare class TimerBehaviour extends Behaviour {
      * @param timerModifier - for testing purposes configuration can alter the timer
      */
     timeDue(timerModifier?: any): number;
+    getRepeat(input: any): any;
     start(item: Item): NODE_ACTION;
     startTimer(item: any): void;
-    expires(): void;
+    expires(): Promise<void>;
     end(item: Item): void;
     resume(): void;
 }

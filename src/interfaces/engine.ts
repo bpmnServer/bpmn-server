@@ -74,8 +74,6 @@ interface IExecution extends IServerComponent {
 
     errors;
     item;
-    input;
-    output;
     messageMatchingKey;
     worker;
     currentUser;
@@ -88,6 +86,7 @@ interface IExecution extends IServerComponent {
     getToken(id: number): IToken;
     tokenEnded(token: IToken): void;
     getItemsData(): IItemData[];
+    save(): Promise<void>;
     end(): Promise<void>;
     /**
      *

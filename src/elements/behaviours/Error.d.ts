@@ -1,5 +1,5 @@
 import { Behaviour } from '.';
-import { Item } from "../../engine/Item";
+import type { Item } from "../../engine/Item";
 import { NODE_ACTION } from "../../interfaces";
 declare class ErrorEventBehaviour extends Behaviour {
     init(): void;

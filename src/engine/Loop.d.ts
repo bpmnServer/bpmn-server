@@ -10,6 +10,7 @@ declare class Loop {
     items: any[];
     completed: any;
     isSequential(): any;
+    isStandard(): boolean;
     constructor(node: Node, token: Token, dataObject?: any);
     save(): {
         id: any;

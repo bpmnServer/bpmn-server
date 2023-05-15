@@ -74,11 +74,17 @@ class BoundaryEvent extends Event {
 
         if (item.token.parentToken.currentItem.status == ITEM_STATUS.end)   // in cancelling mode
             return;
+        var ret=super.run(item);
         if (this.isCancelling) {
+            item.token.log('BoundaryEvent(' + this.id + ').run: isCancelling .. parentToken: '+item.token.parentToken.id);
             item.token.parentToken.currentItem.status = ITEM_STATUS.end; //force status so it would not run
+            /* fix bug #86
+             */
+            item.status = ITEM_STATUS.end;
+
             await item.token.parentToken.terminate();
         }
-        return super.run(item);
+        return ret;
     }
 }
 class ThrowEvent extends Event {

@@ -81,7 +81,7 @@ Feature('CarAccess.js - Checking for Access Rules', () => {
                 });
                 console.log(" Items", response.instance.items.length, " auth ", auths, "assign", assigns, "notes", notes);
 
-                expect(response.instance.items.length).equals(17);
+                expect(response.instance.items.length).equals(18);
                 expect(assigns).equals(2);
                 expect(notes).equals(2);
                 expect(auths).equals(1);

@@ -63,7 +63,7 @@ declare class Execution extends ServerComponent implements IExecution {
      */
     signal(executionId: any, inputData: any): Promise<void>;
     private save;
-    getItems(query?: any): Item[];
+    getItems(): Item[];
     getItemsData(): any[];
     getState(): IInstanceData;
     /**
@@ -80,7 +80,7 @@ declare class Execution extends ServerComponent implements IExecution {
     getUUID(): any;
     doExecutionEvent(process: any, event: any): Promise<void>;
     doItemEvent(item: any, event: any): Promise<void>;
-    log(msg: any): void;
+    log(...msg: any[]): void;
     error(msg: any): void;
     appendData(inputData: any, dataPath?: any): void;
     getData(dataPath: any): any;

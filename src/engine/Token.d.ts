@@ -69,6 +69,7 @@ declare class Token implements IToken {
      */
     execute(input: any): Promise<void>;
     processError(): Promise<void>;
+    processEscalation(): Promise<void>;
     /**
      *
      *  renamed from applyInput to appendData
@@ -80,8 +81,14 @@ declare class Token implements IToken {
      *
      * */
     terminate(): Promise<void>;
+    /**
+     *  is called by events to cancel current token
+     *
+     * */
+    continue(): Promise<void>;
     signal(data: any): Promise<void>;
     end(): Promise<void>;
+    setCurrentNode(newCurrentNode: Node): void;
     goNext(): Promise<void>;
     log(msg: any): void;
     error(msg: any): void;

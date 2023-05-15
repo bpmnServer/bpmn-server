@@ -50,8 +50,6 @@ class Execution extends ServerComponent implements IExecution {
     // moved from Execution Context
     errors;
     item;
-    input = {};
-    output = {} ;
     messageMatchingKey;
     worker;
     currentUser;
@@ -142,9 +140,6 @@ class Execution extends ServerComponent implements IExecution {
         this.log('ACTION:execute:');
         await this.definition.load();
 
-        this.input= Object.assign({}, inputData);
-        this.output = {};
-
         this.instance.status = EXECUTION_STATUS.running;
         this.appDelegate.executionStarted(this);
 
@@ -174,13 +169,13 @@ class Execution extends ServerComponent implements IExecution {
         await this.doExecutionEvent(this.process, EXECUTION_EVENT.process_start);
 
         this.log('..starting at :' + startNode.id);
-        let token = await Token.startNewToken(TOKEN_TYPE.Primary,this, startNode, null, null, null, null,null,true);
+        let token = await Token.startNewToken(TOKEN_TYPE.Primary,this, startNode, null, null, null, null,inputData,true);
 
         // start all event sub processes for the process
 
         const proc = startNode.process;
         await proc.start(this, token);
-        await token.execute(null);
+        await token.execute(inputData);
 
         await Promise.all(this.promises);
         this.log('.execute returned');
@@ -205,7 +200,7 @@ class Execution extends ServerComponent implements IExecution {
      */
     public async signal(executionId, inputData:any) {
 
-        this.log('Execution('+this.name+').signal: executionId=' + executionId + ' startedAt ');
+        this.log('Execution('+this.name+').signal: executionId=' + executionId + ' data '+JSON.stringify(inputData));
         let token = null;
 
         this.appDelegate.executionStarted(this);
@@ -273,7 +268,7 @@ class Execution extends ServerComponent implements IExecution {
         this.log('Execution('+this.name+').signal: finished!');
     }
 
-    private async save() {
+    async save() {
         // save here :
         this.log("..Saving instance "+this.instance.id);
         const state = this.getState();

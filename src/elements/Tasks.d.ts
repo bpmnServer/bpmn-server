@@ -4,6 +4,7 @@ import { Process } from './Process';
 import { IExecution } from '../interfaces/engine';
 declare class ScriptTask extends Node {
     run(item: any): Promise<NODE_ACTION>;
+    describe(): string[][];
 }
 /**
  *
@@ -16,14 +17,15 @@ declare class ScriptTask extends Node {
  *              output= service (input,context)
  */
 declare class ServiceTask extends Node {
+    get serviceName(): any;
     run(item: any): Promise<NODE_ACTION>;
+    describe(): string[][];
 }
 declare class BusinessRuleTask extends ServiceTask {
     run(item: any): Promise<NODE_ACTION>;
 }
 declare class SendTask extends ServiceTask {
     get isCatching(): boolean;
-    run(item: any): Promise<NODE_ACTION>;
 }
 declare class UserTask extends Node {
     get requiresWait(): boolean;

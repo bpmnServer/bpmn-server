@@ -3,22 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Item = void 0;
 const __1 = require("../../");
 class Item {
-    constructor(element, token, status = __1.ITEM_STATUS.start) {
-        this._endedAt = null;
-        this.assignments = [];
-        this.authorizations = [];
-        this.notifications = [];
-        this._dbAction = null;
-        this.id = token.execution.getUUID();
-        this.seq = token.execution.getNewId('item');
-        this.element = element;
-        this._dbAction = 'add';
-        this.token = token;
-        this.status = status;
-        const user = token.execution.currentUser;
-        if (user)
-            this.userId = user.userId;
-    }
     get endedAt() {
         return this._endedAt;
     }
@@ -35,8 +19,6 @@ class Item {
         if (this._dbAction == null)
             this._dbAction = 'update';
     }
-    get input() { return this.context.input; }
-    get output() { return this.context.output; }
     log(msg) { return this.token.log(msg); }
     get data() { return this.token.data; }
     set data(val) { this.token.appendData(val); }
@@ -54,6 +36,24 @@ class Item {
     }
     get node() {
         return this.element;
+    }
+    constructor(element, token, status = __1.ITEM_STATUS.start) {
+        this._endedAt = null;
+        this.assignments = [];
+        this.authorizations = [];
+        this.notifications = [];
+        this.input = {};
+        this.output = {};
+        this._dbAction = null;
+        this.id = token.execution.getUUID();
+        this.seq = token.execution.getNewId('item');
+        this.element = element;
+        this._dbAction = 'add';
+        this.token = token;
+        this.status = status;
+        const user = token.execution.currentUser;
+        if (user)
+            this.userId = user.userId;
     }
     save() {
         return {

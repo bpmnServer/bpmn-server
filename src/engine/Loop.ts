@@ -91,7 +91,7 @@ class Loop {
 
             }
             else if (loopDefinition.isStandard()) {
-                console.log("standard loop");
+                token.log("standard loop");
                 // are we starting a new loop or continueing in an exiting one?
                 if (token.loop) // already assigned a loop
                     return true; // go ahead and execute

@@ -36,13 +36,13 @@ class IOBehaviour extends Behaviour {
     /*
      * process input parameters here 
      * 
-     * generate item.context.input
+     * generate item.input
      * 
      */
     enter(item: Item) {
 
-        if (!item.context.input)
-            item.context.input = {};
+        if (!item.input)
+            item.input = {};
         var hasInput = false;
         this.parameters.forEach(param => {
             if (param.isInput()) {
@@ -51,7 +51,7 @@ class IOBehaviour extends Behaviour {
                  * */
                 hasInput = true;
                 var val = item.token.execution.appDelegate.scopeEval(item, param.value);
-                item.context.input[param.name] = val;
+                item.input[param.name] = val;
                 item.log('...set at enter data input : input.' + param.name + ' = ' + val);
             }
         });
@@ -62,7 +62,7 @@ class IOBehaviour extends Behaviour {
             this.parameters.forEach(param => {
                 if (param.isOutput()) {
                     var val = item.token.execution.appDelegate.scopeEval(item, param.value);
-                    item.context.output[param.name] = val;
+                    item.output[param.name] = val;
                     item.log('...set at enter data output : output.' + param.name + ' = ' + val);
                 }
             });
@@ -92,7 +92,10 @@ class IOBehaviour extends Behaviour {
                     item.token.data[param.name] = val;
                 }
                 else
-                    item.token.data[param.name] = item.context.output;
+                {
+                    item.token.data[param.name] = item.output;
+                    item.log('...set at exit data output : data.' + param.name + ' = ' + item.output);
+                }
             }
         });
 

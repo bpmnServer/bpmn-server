@@ -26,6 +26,20 @@ const { v4: uuidv4 } = require('uuid');
  * */
 // ---------------------------------------------
 class Execution extends server_1.ServerComponent {
+    get id() { return this.instance.id; }
+    get name() { return this.instance.name; }
+    get status() { return this.instance.status; }
+    get execution() { return this; } // backward compatible
+    tillDone() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const res = yield this.worker;
+            return this;
+        });
+    }
+    // end move from ExecutionContext;
+    get listener() {
+        return this.server.listener;
+    }
     /**
      *
      * @param name          process name
@@ -53,8 +67,6 @@ class Execution extends server_1.ServerComponent {
     
          */
         this.tokens = new Map();
-        this.input = {};
-        this.output = {};
         this.promises = [];
         this.uids = {};
         if (state == null) {
@@ -66,20 +78,6 @@ class Execution extends server_1.ServerComponent {
         else
             this.instance = state;
         this.definition = new elements_1.Definition(name, source, this.server);
-    }
-    get id() { return this.instance.id; }
-    get name() { return this.instance.name; }
-    get status() { return this.instance.status; }
-    get execution() { return this; } // backward compatible
-    tillDone() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const res = yield this.worker;
-            return this;
-        });
-    }
-    // end move from ExecutionContext;
-    get listener() {
-        return this.server.listener;
     }
     getNodeById(id) {
         return this.definition.getNodeById(id);
@@ -129,8 +127,6 @@ class Execution extends server_1.ServerComponent {
         return __awaiter(this, void 0, void 0, function* () {
             this.log('ACTION:execute:');
             yield this.definition.load();
-            this.input = Object.assign({}, inputData);
-            this.output = {};
             this.instance.status = __1.EXECUTION_STATUS.running;
             this.appDelegate.executionStarted(this);
             if (inputData)
@@ -152,11 +148,11 @@ class Execution extends server_1.ServerComponent {
             //await this.doExecutionEvent(this, EXECUTION_EVENT.process_loaded);
             yield this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_start);
             this.log('..starting at :' + startNode.id);
-            let token = yield Token_1.Token.startNewToken(Token_1.TOKEN_TYPE.Primary, this, startNode, null, null, null, null, null, true);
+            let token = yield Token_1.Token.startNewToken(Token_1.TOKEN_TYPE.Primary, this, startNode, null, null, null, null, inputData, true);
             // start all event sub processes for the process
             const proc = startNode.process;
             yield proc.start(this, token);
-            yield token.execute(null);
+            yield token.execute(inputData);
             yield Promise.all(this.promises);
             this.log('.execute returned');
             yield this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_wait);
@@ -177,7 +173,7 @@ class Execution extends server_1.ServerComponent {
      */
     signal(executionId, inputData) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.log('Execution(' + this.name + ').signal: executionId=' + executionId + ' startedAt ');
+            this.log('Execution(' + this.name + ').signal: executionId=' + executionId + ' data ' + JSON.stringify(inputData));
             let token = null;
             this.appDelegate.executionStarted(this);
             yield this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_invoke);

@@ -12,6 +12,10 @@ and here
 
 ### Changed
 -->
+## Release 1.3.16 -- 2023-05-07
+- Fixed Issue # 84 https://github.com/ralphhanna/bpmn-server/issues/84
+  
+- item.data is now saved to the DB
 ## Release 1.3.15 -- 2022-11-20
 
 - Added to .env

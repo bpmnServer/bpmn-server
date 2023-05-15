@@ -283,6 +283,7 @@ export class API extends Common {
             if (!name)
                 name = request.body.name;
             console.log(' importing: ' + name);
+            console.log('request', request);
             console.log('request.body',request.body);
 
             var fstream;

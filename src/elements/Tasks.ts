@@ -49,6 +49,7 @@ class ServiceTask extends Node {
     async run(item): Promise<NODE_ACTION> {
 
         item.context.action = null;
+        item.context.item = item;
         // calling appDelegate by service name
         const appDelegate = item.token.execution.appDelegate;
 
@@ -56,16 +57,16 @@ class ServiceTask extends Node {
 
         let ret;
 
-        item.log("invoking service:" +this.serviceName);
+        item.log("invoking service:" + this.serviceName + " input:" + JSON.stringify(item.input));
 
         if (this.serviceName && appDelegate.servicesProvider[this.serviceName])
-            ret = await appDelegate.servicesProvider[this.serviceName](item.context.input,item.context);
+            ret = await appDelegate.servicesProvider[this.serviceName](item.input,item.context);
         else
-            ret = await appDelegate['serviceCalled'](item.context.input,item.context);
+            ret = await appDelegate['serviceCalled'](item.input,item.context);
 
         item.log("service returned " + ret);
-        item.context.output = ret;
-        console.log('service ', this.serviceName,'completed-output', ret, item.context.output);
+        item.output = ret;
+        item.log('service ', this.serviceName,'completed-output', ret, item.output);
         // await item.node.setInput(item,ret);
 
         if (item.context.action && item.context.action == NODE_ACTION.wait) {

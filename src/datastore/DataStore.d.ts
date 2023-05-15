@@ -10,11 +10,7 @@ declare class DataStore extends ServerComponent implements IDataStore {
     inSaving: boolean;
     promises: any[];
     constructor(server: IBPMNServer);
-    monitorExecution(execution: Execution): void;
-    private setListener;
-    saveCounter: number;
-    save(): Promise<void>;
-    check(event: any, item: any): Promise<number>;
+    save(instance: any): Promise<void>;
     loadInstance(instanceId: any): Promise<{
         instance: any;
         items: any[];

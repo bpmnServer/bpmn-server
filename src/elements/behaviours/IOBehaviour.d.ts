@@ -1,5 +1,5 @@
 import { Behaviour } from '.';
-import { Item } from "../../engine/Item";
+import type { Item } from "../../engine/Item";
 declare class IOParameter {
     type: any;
     name: any;
@@ -11,8 +11,9 @@ declare class IOParameter {
 declare class IOBehaviour extends Behaviour {
     parameters: IOParameter[];
     init(): void;
-    start(item: Item): void;
-    end(item: Item): void;
-    describe(): string[];
+    enter(item: Item): void;
+    process(item: Item): void;
+    exit(item: Item): void;
+    describe(): string[][];
 }
 export { IOBehaviour };

@@ -23,9 +23,12 @@ declare class CatchEvent extends Event {
 }
 declare class BoundaryEvent extends Event {
     get isCatching(): boolean;
+    isCancelling: boolean;
+    constructor(id: any, process: any, type: any, def: any);
     get requiresWait(): boolean;
     get canBeInvoked(): boolean;
     start(item: Item): Promise<NODE_ACTION>;
+    run(item: Item): Promise<NODE_ACTION>;
 }
 declare class ThrowEvent extends Event {
     /**

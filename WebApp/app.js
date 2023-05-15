@@ -10,7 +10,6 @@ const compression = require('compression');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
-const chalk = require('chalk');
 const errorHandler = require('errorhandler');
 const lusca = require('lusca');
 const dotenv = require('dotenv');
@@ -86,10 +85,11 @@ class WebApp {
         mongoose.set('useNewUrlParser', true);
         mongoose.set('useUnifiedTopology', true); */
         console.log("MongoDB URL", process.env.MONGO_DB_URL);
+        mongoose.set('strictQuery', true);
         mongoose.connect(process.env.MONGO_DB_URL);
         mongoose.connection.on('error', (err) => {
             console.error(err);
-            console.log('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('?'));
+            console.log('%s MongoDB connection error. Please make sure MongoDB is running.');
             process.exit();
         });
         mongoose.connection.on('open', function () {
@@ -155,7 +155,7 @@ class WebApp {
          * Start Express server.
          */
         app.listen(app.get('port'), () => {
-            //			console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('?'), app.get('port'), app.get('env'));
+            console.log('App is running at http://localhost:%s in %s mode', app.get('port'), app.get('env'));
             console.log('  Press CTRL-C to stop\n');
         });
         return app;

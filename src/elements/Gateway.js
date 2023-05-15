@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventBasedGateway = exports.XORGateway = exports.Gateway = void 0;
-const Token_1 = require("../engine/Token");
 const __1 = require("../../");
 const _1 = require(".");
 const Item_1 = require("../engine/Item");
@@ -91,7 +90,7 @@ class Gateway extends _1.Node {
         }
         else { // do I have a child branching from a gateway
             let childrenTokens = token.getChildrenTokens();
-            console.log('Gateway(' + token.currentItem.element.name + '|' + token.currentItem.element.id + ').findActiveFlows: childrenTokens.length=', childrenTokens.length);
+            token.log('Gateway(' + token.currentItem.element.name + '|' + token.currentItem.element.id + ').findActiveFlows: childrenTokens.length=' + childrenTokens.length);
             childrenTokens.forEach(t => {
                 if (t.originItem.node.type == 'bpmn:InclusiveGateway' ||
                     t.originItem.node.type == 'bpmn:ParallelGateway' ||
@@ -161,14 +160,14 @@ class Gateway extends _1.Node {
                     // Find children tokens
                     const siblingChildrenTokens = t.getChildrenTokens();
                     let siblingHasActiveChildToken = false;
-                    console.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: siblingChildrenTokens.length=', siblingChildrenTokens.length);
+                    token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: siblingChildrenTokens.length=' + siblingChildrenTokens.length);
                     siblingChildrenTokens.forEach(siblingChildToken => {
                         if (siblingChildToken.originItem.node.type == 'bpmn:InclusiveGateway' ||
                             siblingChildToken.originItem.node.type == 'bpmn:ParallelGateway' ||
                             siblingChildToken.originItem.node.type == 'bpmn:ExclusiveGateway') {
                             if (siblingChildToken.status != __1.TOKEN_STATUS.end && siblingChildToken.status != __1.TOKEN_STATUS.terminated) {
                                 siblingHasActiveChildToken = true;
-                                console.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: ... siblingChildToken status=', siblingChildToken.status);
+                                token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: ... siblingChildToken status=' + siblingChildToken.status);
                             }
                         }
                     });
@@ -268,8 +267,8 @@ class Gateway extends _1.Node {
                     oldCurrentToken.currentItem.status = __1.ITEM_STATUS.end;
                     //await convergingGatewayCurrentNode.end(item);
                     //await oldCurrentToken.end();
-                    if (oldCurrentToken.type == Token_1.TOKEN_TYPE.Diverge)
-                        yield oldCurrentToken.terminate();
+                    //if (oldCurrentToken.type==TOKEN_TYPE.Diverge)
+                    yield oldCurrentToken.terminate();
                     //item.token.log('Gateway(' + item.element.id + ').start: converged! divergingGateway=' + result.divergingGateway);
                     //console.log('Gateway(' + item.element.id + ').start: converged! divergingGateway=', result.divergingGateway);
                     item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: all token terminate return NODE_ACTION.end');

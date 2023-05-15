@@ -13,6 +13,8 @@ exports.Loop = void 0;
 const Token_1 = require("./Token");
 const elements_1 = require("../elements/");
 class Loop {
+    isSequential() { return (this.definition.isSequential()); }
+    isStandard() { return (this.definition.isStandard()); }
     constructor(node, token, dataObject) {
         this.node = node;
         this.ownerToken = token;
@@ -37,8 +39,6 @@ class Loop {
                 this.items = [];
         }
     }
-    isSequential() { return (this.definition.isSequential()); }
-    isStandard() { return (this.definition.isStandard()); }
     save() {
         return {
             id: this.id, nodeId: this.node.id, ownerTokenId: this.ownerToken.id, dataPath: this.dataPath,
@@ -83,7 +83,7 @@ class Loop {
                     return false; // launching new token; stop this one
                 }
                 else if (loopDefinition.isStandard()) {
-                    console.log("standard loop");
+                    token.log("standard loop");
                     // are we starting a new loop or continueing in an exiting one?
                     if (token.loop) // already assigned a loop
                         return true; // go ahead and execute

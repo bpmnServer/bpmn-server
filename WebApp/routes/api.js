@@ -242,6 +242,7 @@ class API extends common_1.Common {
             if (!name)
                 name = request.body.name;
             console.log(' importing: ' + name);
+            console.log('request', request);
             console.log('request.body', request.body);
             var fstream;
             try {
@@ -387,17 +388,17 @@ function display(res, title, output, logs = [], items = []) {
         var instances = yield this.bpmnServer.dataStore.findInstances({}, 'full');
         let waiting = yield this.bpmnServer.dataStore.findItems({ items: { status: 'wait' } });
         waiting.forEach(item => {
-            item.fromNow = __1.dateDiff(item.startedAt);
+            item.fromNow = (0, __1.dateDiff)(item.startedAt);
         });
         let engines = this.bpmnServer.cache.list();
         engines.forEach(engine => {
-            engine.fromNow = __1.dateDiff(engine.startedAt);
-            engine.fromLast = __1.dateDiff(engine.lastAt);
+            engine.fromNow = (0, __1.dateDiff)(engine.startedAt);
+            engine.fromLast = (0, __1.dateDiff)(engine.lastAt);
         });
         instances.forEach(item => {
-            item.fromNow = __1.dateDiff(item.startedAt);
+            item.fromNow = (0, __1.dateDiff)(item.startedAt);
             if (item.endedAt)
-                item.endFromNow = __1.dateDiff(item.endedAt);
+                item.endFromNow = (0, __1.dateDiff)(item.endedAt);
             else
                 item.endFromNow = '';
         });

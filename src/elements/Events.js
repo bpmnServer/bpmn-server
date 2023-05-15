@@ -63,13 +63,13 @@ class CatchEvent extends Event {
 }
 exports.CatchEvent = CatchEvent;
 class BoundaryEvent extends Event {
+    get isCatching() { return true; }
     constructor(id, process, type, def) {
         super(id, process, type, def);
         this.isCancelling = true;
         if ((typeof this.def['cancelActivity'] !== 'undefined') && (this.def['cancelActivity'] === false))
             this.isCancelling = false;
     }
-    get isCatching() { return true; }
     get requiresWait() {
         return true;
     }
@@ -91,11 +91,16 @@ class BoundaryEvent extends Event {
         return __awaiter(this, void 0, void 0, function* () {
             if (item.token.parentToken.currentItem.status == interfaces_1.ITEM_STATUS.end) // in cancelling mode
                 return;
+            var ret = _super.run.call(this, item);
             if (this.isCancelling) {
+                item.token.log('BoundaryEvent(' + this.id + ').run: isCancelling .. parentToken: ' + item.token.parentToken.id);
                 item.token.parentToken.currentItem.status = interfaces_1.ITEM_STATUS.end; //force status so it would not run
+                /* fix bug #86
+                 */
+                item.status = interfaces_1.ITEM_STATUS.end;
                 yield item.token.parentToken.terminate();
             }
-            return _super.run.call(this, item);
+            return ret;
         });
     }
 }

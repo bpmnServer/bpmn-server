@@ -18,6 +18,9 @@ const Enums_2 = require("../interfaces/Enums");
 const BehaviourLoader_1 = require("./behaviours/BehaviourLoader");
 // ---------------------------------------------
 class Node extends _1.Element {
+    get processId() {
+        return this.process.id;
+    }
     constructor(id, process, type, def) {
         super();
         this.scripts = new Map();
@@ -30,9 +33,6 @@ class Node extends _1.Element {
         this.name = def.name;
         this.attachments = [];
         BehaviourLoader_1.BehaviourLoader.load(this);
-    }
-    get processId() {
-        return this.process.id;
     }
     doEvent(item, event, newStatus) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -69,9 +69,9 @@ class Node extends _1.Element {
     getInput(item, input) {
         return __awaiter(this, void 0, void 0, function* () {
             item.token.log('Node(' + this.name + '|' + this.id + ').getInput: input' + JSON.stringify(input));
-            item.context.input = input;
+            item.input = input;
             yield this.doEvent(item, Enums_1.EXECUTION_EVENT.transform_input, null);
-            return item.context.input;
+            return item.input;
         });
     }
     /**
@@ -81,12 +81,7 @@ class Node extends _1.Element {
      */
     getOutput(item) {
         return __awaiter(this, void 0, void 0, function* () {
-            return item.context.output;
-            console.log(item.context.output);
-            if (item.context.output) { }
-            if (Object.keys(item.context.output).length == 0)
-                item.context.output = item.data;
-            return item.context.output;
+            return item.output;
         });
     }
     enter(item) {
@@ -206,7 +201,9 @@ class Node extends _1.Element {
                 for (t = 0; t < childrenTokens.length; t++) {
                     let token = childrenTokens[t];
                     if (token.startNodeId == boundaryEvent.id) {
-                        yield token.terminate();
+                        //   don't terminate if boundary events are active
+                        if (token.currentItem.status != Enums_1.ITEM_STATUS.end)
+                            yield token.terminate();
                     }
                 }
             }

@@ -33,6 +33,7 @@ declare class Item implements IItem {
     get type(): any;
     get node(): Node;
     timeDue: Date;
+    timerCount: any;
     messageId: any;
     signalId: any;
     _dbAction: 'add' | 'update' | null;
