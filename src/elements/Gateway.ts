@@ -3,7 +3,7 @@ import { Execution } from '../engine/Execution';
 import { Token, TOKEN_TYPE } from '../engine/Token';
 import { IBehaviour, Behaviour } from "./behaviours";
 import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../../';
-import { Node } from '.';
+import { BPMN_TYPE, Node } from '.';
 import { Item } from '../engine/Item';
 
 
@@ -237,9 +237,21 @@ class Gateway extends Node {
             //let result = this.findActiveFlows(item.token);
             let result = this.convergeFlows(item);
             // wait for pending tokens
-            if (result.pendingTokens.length > 0){
-                item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: result.pendingTokens.length = '+result.pendingTokens.length+' > 0 return NODE_ACTION.wait');
-                return NODE_ACTION.wait;
+            if (result.pendingTokens.length > 0) {
+                if (this.type == BPMN_TYPE.ExclusiveGateway) {
+
+                    item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: cancel other pendingTokens.length=' + result.pendingTokens.length);
+                    result.pendingTokens.forEach(async t => {
+                        item.token.log("..cancel ending token #" + t.id);
+                        t.currentItem.status = ITEM_STATUS.end;
+                        await t.end();
+                    });
+
+                }
+                else {
+                    item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: result.pendingTokens.length = ' + result.pendingTokens.length + ' > 0 return NODE_ACTION.wait');
+                    return NODE_ACTION.wait;
+                }
             }
             else {
                 // No pending tokens
@@ -247,10 +259,10 @@ class Gateway extends Node {
                 let convergingGatewayCurrentNode = item.token.currentNode;
 
                 item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: let us converge now waitingTokens.length=' + result.waitingTokens.length);
-                //item.token.log('..let us converge now ');
+                item.token.log('..let us converge now ');
                 result.waitingTokens.forEach(async t => {
                     item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: ..converging ending token ' + t.id);
-                    //item.token.log("..converging ending token #" + t.id);
+                    item.token.log("..converging ending token #" + t.id);
                     t.currentItem.status = ITEM_STATUS.end;
                     await t.end();
                     //await t.terminate();

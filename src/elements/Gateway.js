@@ -222,18 +222,28 @@ class Gateway extends _1.Node {
                 let result = this.convergeFlows(item);
                 // wait for pending tokens
                 if (result.pendingTokens.length > 0) {
-                    item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: result.pendingTokens.length = ' + result.pendingTokens.length + ' > 0 return NODE_ACTION.wait');
-                    return __1.NODE_ACTION.wait;
+                    if (this.type == _1.BPMN_TYPE.ExclusiveGateway) {
+                        item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: cancel other pendingTokens.length=' + result.pendingTokens.length);
+                        result.pendingTokens.forEach((t) => __awaiter(this, void 0, void 0, function* () {
+                            item.token.log("..cancel ending token #" + t.id);
+                            t.currentItem.status = __1.ITEM_STATUS.end;
+                            yield t.end();
+                        }));
+                    }
+                    else {
+                        item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: result.pendingTokens.length = ' + result.pendingTokens.length + ' > 0 return NODE_ACTION.wait');
+                        return __1.NODE_ACTION.wait;
+                    }
                 }
                 else {
                     // No pending tokens
                     let parentToken = item.token.parentToken;
                     let convergingGatewayCurrentNode = item.token.currentNode;
                     item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: let us converge now waitingTokens.length=' + result.waitingTokens.length);
-                    //item.token.log('..let us converge now ');
+                    item.token.log('..let us converge now ');
                     result.waitingTokens.forEach((t) => __awaiter(this, void 0, void 0, function* () {
                         item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: ..converging ending token ' + t.id);
-                        //item.token.log("..converging ending token #" + t.id);
+                        item.token.log("..converging ending token #" + t.id);
                         t.currentItem.status = __1.ITEM_STATUS.end;
                         yield t.end();
                         //await t.terminate();
