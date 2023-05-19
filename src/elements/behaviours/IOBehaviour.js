@@ -8,13 +8,13 @@ const _1 = require(".");
  *
  */
 class IOParameter {
-    isInput() { return (this.type == 'camunda:inputParameter'); }
-    isOutput() { return (this.type == 'camunda:outputParameter'); }
     constructor(type, name, value) {
         this.type = type;
         this.name = name;
         this.value = value;
     }
+    isInput() { return (this.type == 'camunda:inputParameter'); }
+    isOutput() { return (this.type == 'camunda:outputParameter'); }
 }
 class IOBehaviour extends _1.Behaviour {
     init() {

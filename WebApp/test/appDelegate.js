@@ -86,7 +86,7 @@ class MyServices {
             let vName = item.elementId + '_input';
             let v = {};
             v[vName] = input;
-            //item.setData(v);
+            item.vars = input;
             yield delay(50, 'test');
             item.token.log("SERVICE 1: input: " + JSON.stringify(input) + item.token.currentNode.id + " current seq: " + seq);
             console.log('appDelegate item:', item.elementId, item.seq, item.input, item.data);

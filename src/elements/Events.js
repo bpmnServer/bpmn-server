@@ -63,13 +63,13 @@ class CatchEvent extends Event {
 }
 exports.CatchEvent = CatchEvent;
 class BoundaryEvent extends Event {
-    get isCatching() { return true; }
     constructor(id, process, type, def) {
         super(id, process, type, def);
         this.isCancelling = true;
         if ((typeof this.def['cancelActivity'] !== 'undefined') && (this.def['cancelActivity'] === false))
             this.isCancelling = false;
     }
+    get isCatching() { return true; }
     get requiresWait() {
         return true;
     }

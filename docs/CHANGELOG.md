@@ -12,6 +12,9 @@ and here
 
 ### Changed
 -->
+## Release 1.3.22 -- 2023-05-18
+-Fixed Issue with DataObject interface 
+-Added item.vars to storage
 ## Release 1.3.21 -- 2023-05-16
 -Fixed Issue Exclusive Gateway Convergence #87
 ## Release 1.3.18 -- 2023-05-07

@@ -6,11 +6,13 @@ const { configuration } = require('../testConfiguration');
 const logger = new Logger({ toConsole: false });
 
 const server = new BPMNServer(configuration, logger);
-var caseId = Math.floor(Math.random() * 10000);
+//var caseId = Math.floor(Math.random() * 10000);
 
 let name = 'test-service-input';
 let response;
+let caseId = 6001;
 let instanceId;
+let fileName = __dirname + '/../logs/' + name + '.log';
 
 Feature('Service Input', () => {
     ///```
@@ -18,9 +20,9 @@ Feature('Service Input', () => {
     ///```javascript
     Scenario('Start Process', () => {
         Given('Start ' + name + ' Process', async () => {
-            response = await server.engine.start(name, { caseId: 1001 });
+            response = await server.engine.start(name, { caseId: caseId });
         });
-        Then('check for output', () => {
+        Then('check for status', () => {
             expect(response).to.have.property('execution');
             instanceId = response.execution.id;
             displayItems();
@@ -30,13 +32,19 @@ Feature('Service Input', () => {
             //                expect(getItem('Expired-Timer').status).equals('wait');
             //                expect(getItem('Cancel-Message').status).equals('wait');
 
-            let fileName = __dirname + '/../logs/' + name + '.log';
-
-            and('write log file to ' + fileName, async () => {
-                logger.save(fileName);
-            });
 
         });
+        Then('check for query', async () => {
+
+            query = { "data.caseId": caseId, "items.vars.param1": 'value1' };
+            items = await server.dataStore.findItems(query);
+            console.log('items count',items);
+        });
+
+        and('write log file to ' + fileName, async () => {
+            logger.save(fileName);
+        });
+
     });
 });
 

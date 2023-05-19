@@ -64,6 +64,21 @@ var TOKEN_TYPE;
 exports.TOKEN_TYPE = TOKEN_TYPE;
 // ---------------------------------------------
 class Token {
+    constructor(type, execution, startNode, dataPath, parentToken, originItem) {
+        this.execution = execution;
+        this.type = type;
+        if (dataPath)
+            this.dataPath = dataPath;
+        else
+            this.dataPath = '';
+        this.startNodeId = startNode.id;
+        this.currentNode = startNode;
+        this.parentToken = parentToken;
+        this.originItem = originItem;
+        this.id = execution.getNewId('token');
+        this.processId = startNode.processId;
+        this.path = [];
+    }
     get data() {
         return this.execution.getData(this.dataPath);
     }
@@ -87,21 +102,6 @@ class Token {
         this.execution.tokens.forEach(t => { if (t.parentToken && t.parentToken.id == this.id)
             list.push(t); });
         return list;
-    }
-    constructor(type, execution, startNode, dataPath, parentToken, originItem) {
-        this.execution = execution;
-        this.type = type;
-        if (dataPath)
-            this.dataPath = dataPath;
-        else
-            this.dataPath = '';
-        this.startNodeId = startNode.id;
-        this.currentNode = startNode;
-        this.parentToken = parentToken;
-        this.originItem = originItem;
-        this.id = execution.getNewId('token');
-        this.processId = startNode.processId;
-        this.path = [];
     }
     /**
      *

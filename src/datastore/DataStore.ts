@@ -61,11 +61,22 @@ class DataStore extends ServerComponent  implements IDataStore {
 		instances.forEach(instance => {
 			instance.items.forEach(i => {
 				let pass = true;
-
+				//console.log(i);
 				if (condition) {
 					const keys = Object.keys(condition);
 					keys.forEach(key => {
-						if (i[key] != condition[key])
+						//console.log('key', key, condition[key], i[key]);
+						let val = i;
+						if (key.includes('.')) {
+							let ks = key.split('.');
+							ks.forEach(k => {
+								val = val[k];
+							});
+							//console.log('keys ', k1, k2,val);
+							if (val !== condition[key])
+								pass = false;
+                        }
+						else if (i[key] != condition[key])
 							pass = false;
 					});
 				}
@@ -211,7 +222,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		const result = this.translateCriteria(query);
 
 		var records = await this.db.find(this.dbConfiguration.db, Instance_collection, result.query, result.projection);
-
+		console.log('...find items for query:', query, " translated to :", JSON.stringify(result),  " recs:" , records.length)
 		this.logger.log('...find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result)+" recs:"+records.length);
 
 		return this.getItemsFromInstances(records, result.match);

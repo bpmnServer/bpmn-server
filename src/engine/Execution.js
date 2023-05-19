@@ -26,20 +26,6 @@ const { v4: uuidv4 } = require('uuid');
  * */
 // ---------------------------------------------
 class Execution extends server_1.ServerComponent {
-    get id() { return this.instance.id; }
-    get name() { return this.instance.name; }
-    get status() { return this.instance.status; }
-    get execution() { return this; } // backward compatible
-    tillDone() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const res = yield this.worker;
-            return this;
-        });
-    }
-    // end move from ExecutionContext;
-    get listener() {
-        return this.server.listener;
-    }
     /**
      *
      * @param name          process name
@@ -78,6 +64,20 @@ class Execution extends server_1.ServerComponent {
         else
             this.instance = state;
         this.definition = new elements_1.Definition(name, source, this.server);
+    }
+    get id() { return this.instance.id; }
+    get name() { return this.instance.name; }
+    get status() { return this.instance.status; }
+    get execution() { return this; } // backward compatible
+    tillDone() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const res = yield this.worker;
+            return this;
+        });
+    }
+    // end move from ExecutionContext;
+    get listener() {
+        return this.server.listener;
     }
     getNodeById(id) {
         return this.definition.getNodeById(id);

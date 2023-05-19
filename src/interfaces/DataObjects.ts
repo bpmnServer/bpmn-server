@@ -6,6 +6,7 @@ interface IItemData {
     elementId: string;   // bpmn element
     name: string;       // name of bpmn element
     type: string;       // bpmn element type
+    instanceId: string;   // Instance Id of the item
     tokenId: any;         // execution Token
     userId: any;
     startedAt: any;
@@ -19,6 +20,7 @@ interface IItemData {
     assignments;
     authorizations;
     notifications;
+    vars;
 }
 interface IInstanceData {
     id;

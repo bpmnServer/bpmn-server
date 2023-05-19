@@ -14,11 +14,13 @@ class Item implements IItem {
     userId;
     startedAt;              // dateTime Started
     _endedAt = null;
+    instanceId;
     assignments=[];
     authorizations=[];
     notifications=[];
     input = {};
     output = {};
+    vars = {};
 
 
     get endedAt() {         // dateTime ended
@@ -82,7 +84,8 @@ class Item implements IItem {
         return {
             id: this.id, seq: this.seq, itemKey: this.itemKey, tokenId: this.token.id, elementId: this.elementId, name: this.name,
             status: this.status, userId: this.userId, startedAt: this.startedAt, endedAt: this.endedAt, type: this.type, timeDue: this.timeDue,
-            data: undefined , messageId: this.messageId, signalId: this.signalId,
+            data: null, vars: this.vars, instanceId: this.instanceId,
+            messageId: this.messageId, signalId: this.signalId,
                 assignments: this.assignments,authorizations: this.authorizations, notifications: this.notifications
         };
 
@@ -99,7 +102,8 @@ class Item implements IItem {
 
         item.authorizations=dataObject.authorizations;
         item.assignments=dataObject.assignments;
-        item.notifications=dataObject.notifications;
+        item.notifications = dataObject.notifications;
+        item.vars = dataObject.vars;
         return item;
     }
 }

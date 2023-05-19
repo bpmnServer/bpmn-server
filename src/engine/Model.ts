@@ -46,6 +46,7 @@ class ItemObject implements IItemData {
     processName;
     timeDue: Date;
     data;
+    vars;
     messageId;
     signalId;
     assignments;
