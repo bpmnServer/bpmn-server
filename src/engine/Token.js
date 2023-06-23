@@ -64,21 +64,6 @@ var TOKEN_TYPE;
 exports.TOKEN_TYPE = TOKEN_TYPE;
 // ---------------------------------------------
 class Token {
-    constructor(type, execution, startNode, dataPath, parentToken, originItem) {
-        this.execution = execution;
-        this.type = type;
-        if (dataPath)
-            this.dataPath = dataPath;
-        else
-            this.dataPath = '';
-        this.startNodeId = startNode.id;
-        this.currentNode = startNode;
-        this.parentToken = parentToken;
-        this.originItem = originItem;
-        this.id = execution.getNewId('token');
-        this.processId = startNode.processId;
-        this.path = [];
-    }
     get data() {
         return this.execution.getData(this.dataPath);
     }
@@ -87,6 +72,14 @@ class Token {
     }
     get firstItem() {
         return this.path[0];
+    }
+    hasNode(nodeId) {
+        let match = false;
+        this.path.forEach(i => {
+            if (i.node.id == nodeId)
+                match = true;
+        });
+        return match;
     }
     get lastItem() {
         let nodes = this.path.filter(function (value) {
@@ -102,6 +95,27 @@ class Token {
         this.execution.tokens.forEach(t => { if (t.parentToken && t.parentToken.id == this.id)
             list.push(t); });
         return list;
+    }
+    getFullPath(path = []) {
+        if (this.parentToken)
+            path = this.parentToken.getFullPath(path);
+        this.path.forEach(i => { path.push(i); });
+        return path;
+    }
+    constructor(type, execution, startNode, dataPath, parentToken, originItem) {
+        this.execution = execution;
+        this.type = type;
+        if (dataPath)
+            this.dataPath = dataPath;
+        else
+            this.dataPath = '';
+        this.startNodeId = startNode.id;
+        this.currentNode = startNode;
+        this.parentToken = parentToken;
+        this.originItem = originItem;
+        this.id = execution.getNewId('token');
+        this.processId = startNode.processId;
+        this.path = [];
     }
     /**
      *
@@ -239,7 +253,7 @@ class Token {
             
                     }
             */
-            this.log('Token(' + this.id + ').execute: executing currentNodeId=' + this.currentNode.id + " itemId=" + item.id + " is done!");
+            this.log('Token(' + this.id + ').execute: executing currentNodeId=' + this.currentNode.id + " item.seq=" + item.seq + " is done!");
             if (ret == __1.NODE_ACTION.wait) {
                 this.status = __1.TOKEN_STATUS.wait;
                 return; // goto sleep for now will call you by signal
@@ -367,6 +381,7 @@ class Token {
             if (this.currentItem.status != __1.ITEM_STATUS.end)
                 this.log('..**token ended but item is still ' + this.currentItem.status);
             this.status = __1.TOKEN_STATUS.end;
+            yield this.currentNode.end(this.currentItem);
             this.execution.tokenEnded(this);
             // check if subprocess then continue parent
             if (this.type == TOKEN_TYPE.SubProcess) {

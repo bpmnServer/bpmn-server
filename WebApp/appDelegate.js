@@ -18,6 +18,21 @@ class MyAppDelegate extends index_1.DefaultAppDelegate {
         super(server);
         this.servicesProvider = new MyServices();
     }
+    start() {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('myserver started.. checking for incomplete processes');
+            this.server.dataStore.findInstances();
+            var query = { "items.status": "start" };
+            var list = yield this.server.dataStore.findItems(query);
+            if (list.length > 0) {
+                this.server.logger.log("...items query returend " + list.length);
+                for (var i = 0; i < list.length; i++) {
+                    let item = list[i];
+                    console.log(item);
+                }
+            }
+        });
+    }
     sendEmail(to, msg, body) {
         console.log(`Sending email to ${to}`);
         const key = process.env.SENDGRID_API_KEY;
@@ -98,7 +113,24 @@ function delay(time, result) {
         });
     });
 }
+const readline = require("readline");
+const cl = readline.createInterface(process.stdin, process.stdout);
+const question = function (q) {
+    return new Promise((res, rej) => {
+        cl.question(q, answer => {
+            res(answer);
+        });
+    });
+};
 class MyServices {
+    promptUser(input, context) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('executing prompt user');
+            var result = yield question("continue?");
+            console.log('result:', result);
+            return null;
+        });
+    }
     serviceTask(input, context) {
         return __awaiter(this, void 0, void 0, function* () {
             let item = context.item;

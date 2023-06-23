@@ -248,7 +248,7 @@ class Execution extends ServerComponent implements IExecution {
                 this.getItems().forEach(i => {
                     this.logger.log(`Item: ${i.id} - ${i.elementId} - ${i.status} - ${i.timeDue}`);
                 });
-                this.logger.error("*** ERROR *** task id not valid" + executionId);
+                this.logger.error("*** ERROR *** task id not valid:" + executionId);
             }
         }
 
@@ -403,7 +403,10 @@ class Execution extends ServerComponent implements IExecution {
         this.tokens.forEach(token => {
             const branch = token.originItem ? token.originItem.elementId : 'root';
             const parent = token.parentToken ? token.parentToken.id : '-';
-            this.log(`..token: ${token.id} - ${token.status} - ${token.type} current: ${token.currentNode.id} from ${branch} child of ${parent} `+JSON.stringify(token.data));
+            let p='';
+            for(var i=0;i<token.path.length;i++)
+                {p+=''+token.path[i].node.id+'->'; }
+            this.log(`..token: ${token.id} - ${token.status} - ${token.type} current: ${token.currentNode.id} from ${branch} child of ${parent} path: ${p} `+JSON.stringify(token.data) );
         });
 
         let indx = 0;

@@ -44,6 +44,7 @@ class WebApp {
         //NOPASSPORT 		this.initPassport();
         const wflogger = new _1.Logger({ toConsole: false });
         this.bpmnServer = new _1.BPMNServer(configuration_1.configuration, wflogger);
+        this.bpmnServer.appDelegate.winSocket = null;
         this.setupExpress();
     }
     /**

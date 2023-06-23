@@ -78,12 +78,20 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
     async save(name, source, svg): Promise<any> {
         let bpmnModelData: BpmnModelData = new BpmnModelData(name, source, svg, null, null);
         let definition = new Definition(bpmnModelData.name, bpmnModelData.source, this.server);
-        await definition.load();
+        try {
+            await definition.load();
 
-        bpmnModelData.parse(definition);
-        await this.saveModel(bpmnModelData);
+            bpmnModelData.parse(definition);
+            await this.saveModel(bpmnModelData);
 
-        return bpmnModelData;
+            return bpmnModelData;
+        }
+        catch(exc)
+        {
+            console.log('error in save',exc);
+            throw exc;
+            return null;
+        }
 
     }
     async findEvents(query): Promise<IEventData[]> {
@@ -357,6 +365,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
      * */
     async rebuild(model=null) {
 
+        try {
         if (model)
             return this.rebuildModel(model);
         let filesList = await this.getList();
@@ -388,6 +397,12 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
         for (const entry of models.entries()) {
             const name = entry[0];
             await this.rebuildModel(name);
+        }
+        }
+        catch(exc)
+        {
+            console.log('rebuild error');
+            throw exc;
         }
     }
     private async rebuildModel(name) {

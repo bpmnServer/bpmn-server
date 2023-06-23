@@ -31,8 +31,10 @@ declare class Token implements IToken {
     get data(): any;
     get currentItem(): Item;
     get firstItem(): Item;
+    hasNode(nodeId: any): Boolean;
     get lastItem(): Item;
     get childrenTokens(): Token[];
+    getFullPath(path?: any[]): Item[];
     constructor(type: TOKEN_TYPE, execution: Execution, startNode: Node, dataPath?: any, parentToken?: Token, originItem?: Item);
     /**
      *

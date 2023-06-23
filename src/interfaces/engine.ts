@@ -25,6 +25,7 @@ interface IToken {
     lastItem: IItem;
     firstItem: Item;
     childrenTokens: Token[];
+
     save(): {
         id: any;
         type;
@@ -54,6 +55,7 @@ interface IToken {
      * */
     terminate(): void;
     signal(data: any): Promise<any>;
+    getFullPath(fullPath?: any): Item[];
     end(): Promise<void>;
     goNext(): Promise<void>;
     getSubProcessToken(): IToken;

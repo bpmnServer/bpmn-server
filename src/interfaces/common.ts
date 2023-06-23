@@ -68,6 +68,7 @@ interface IAppDelegate {
     servicesProvider;       // to respond to all named services
     sendEmail(to, msg, body);
     executionStarted(execution);
+    startUp(); // start of server
     messageThrown(signalId, data, messageMatchingKey: any, item: IItem);
     signalThrown(signalId, data, messageMatchingKey: any, item: IItem);
     /**

@@ -5,6 +5,7 @@ interface IItemData {
     elementId: string;
     name: string;
     type: string;
+    instanceId: string;
     tokenId: any;
     userId: any;
     startedAt: any;
@@ -18,6 +19,7 @@ interface IItemData {
     assignments: any;
     authorizations: any;
     notifications: any;
+    vars: any;
 }
 interface IInstanceData {
     id: any;

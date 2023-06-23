@@ -7,6 +7,11 @@ const CacheManager_1 = require("./CacheManager");
 const Cron_1 = require("./Cron");
 const events_1 = require("events");
 const ACL_1 = require("./ACL");
+process.on('uncaughtException', function (err) {
+    console.log('***************BPMNServer UNCAUGHT ERROR***********', err);
+    BPMNServer.getInstance().error = err;
+    return;
+});
 const fs = require('fs');
 /**
  *	The main class of Server Layer
@@ -49,7 +54,10 @@ class BPMNServer {
         if (options['cron'] == false) {
             return;
         }
-        this.cron.start();
+        else {
+            this.cron.start();
+        }
+        this.appDelegate.startUp();
     }
     static getVersion() {
         const configPath = __dirname + '/../../package.json';

@@ -21,6 +21,9 @@ class DefaultAppDelegate {
             });
         });
     }
+    startUp() {
+        console.log('server started..');
+    }
     sendEmail(to, msg, body) {
         throw Error("sendEmail must be implemented by AppDelegate");
     }

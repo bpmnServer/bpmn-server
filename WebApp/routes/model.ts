@@ -117,7 +117,14 @@ export class Model extends Common {
                     const name = filename.filename;
                     const source = fsx.readFileSync(filepath,
                         { encoding: 'utf8', flag: 'r' });
+
+                    try {
                     await definitions.save(name, source, null);
+                    }
+                    catch(exc)
+                    {
+                        console.log('save error:',exc);
+                    }
 
                     res.redirect('/');
 

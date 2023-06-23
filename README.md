@@ -4,11 +4,17 @@ bpmn-server
 [![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 
 ## Introduction
-bpmn-server provides BPMN 2.0 Modeling, Execution and Persistence, as an open source Workflow Server for Node.js 
+**bpmn-server** is an integrated environment that provides BPMN 2.0 Modeling, Execution and Persistence, as an open source Workflow Server for Node.js 
 
 This package is designed specifically for Node.js and developed entirely in TypeScript 
 
-A WebApp provides a UI from modeling and developing your workflow
+**BPMN-Server** Workbench is a sample WebApp providing access you to:
+- Create and Edit your own models using bpmn.io modeler
+- Define own logic using extensions
+- Execute and Test the models 
+- Monitor Process Execution, View process history and tasks
+
+You can try it out at https://bpmn.omniworkflow.com 
 
 ## Table of Contents
 - [Process modeller](#process-modeller)
@@ -23,7 +29,7 @@ A WebApp provides a UI from modeling and developing your workflow
 - [API](./docs/api-summary.md)
 - [BPMNClient /WebAPI](./docs/client-api.md)
 
-# Process modeller
+# BPMN-Server Benchmark
 
 A web based modeler is included based on http://bpmn.io , models definitions are saved at your server
 ![Modeller](./docs/model-demo.gif)
@@ -83,6 +89,9 @@ or:
 node app
 ```
 ## Installing Client (for remote access)
+
+This requires a Server to be installed or using cloud server on https://bpmn.omniworkflow.com
+
 ```javascript
 $ mkdir myClient
 

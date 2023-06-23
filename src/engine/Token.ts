@@ -81,6 +81,15 @@ class Token implements IToken {
     get firstItem(): Item {
         return this.path[0];
     }
+
+    hasNode(nodeId): Boolean {
+        let match=false;
+        this.path.forEach(i => {
+            if(i.node.id == nodeId)
+                match=true;
+            });
+        return match;
+    }
     get lastItem() : Item {
         let nodes = this.path.filter(function (value) {
             return (value.element.type == 'bpmn:SequenceFlow') ? false : true;
@@ -96,6 +105,12 @@ class Token implements IToken {
         const list = [];
         this.execution.tokens.forEach(t => { if (t.parentToken && t.parentToken.id == this.id) list.push(t); });
         return list;
+    }
+    getFullPath(path=[]) : Item[] {
+        if (this.parentToken)
+            path=this.parentToken.getFullPath(path);
+        this.path.forEach(i => { path.push(i); });
+        return path;       
     }
     constructor(type: TOKEN_TYPE, execution: Execution, startNode: Node, dataPath? ,parentToken?: Token, originItem?: Item) {
         this.execution = execution;
@@ -260,7 +275,7 @@ class Token implements IToken {
 
         }
 */
-        this.log('Token('+this.id +').execute: executing currentNodeId=' + this.currentNode.id+ " itemId=" +item.id + " is done!");
+        this.log('Token('+this.id +').execute: executing currentNodeId=' + this.currentNode.id+ " item.seq=" +item.seq + " is done!");
 
         if (ret == NODE_ACTION.wait) {
             this.status = TOKEN_STATUS.wait;
@@ -395,6 +410,7 @@ class Token implements IToken {
         if (this.currentItem.status != ITEM_STATUS.end)
             this.log('..**token ended but item is still '+this.currentItem.status);
         this.status = TOKEN_STATUS.end;
+        await this.currentNode.end(this.currentItem);
         this.execution.tokenEnded(this);
         // check if subprocess then continue parent
         if (this.type==TOKEN_TYPE.SubProcess) {

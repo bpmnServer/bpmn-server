@@ -283,7 +283,7 @@ export class API extends Common {
             if (!name)
                 name = request.body.name;
             console.log(' importing: ' + name);
-            console.log('request', request);
+            //console.log('request', request);
             console.log('request.body',request.body);
 
             var fstream;
@@ -292,18 +292,22 @@ export class API extends Common {
                 if (request.busboy) {
                     request.pipe(request.busboy);
                     request.busboy.on('file', function (fileUploaded, file, filename) {
-                        console.log("Uploading: ", filename);
-
                         //Path where image will be uploaded
                         const filepath = __dirname + '/../tmp/' + filename.filename;
                         fstream = fsx.createWriteStream(filepath);
                         file.pipe(fstream);
                         fstream.on('close', async function () {
-                            console.log("Upload Finished of " + filename.filename);
-                            //const name = filename.filename;
                             const source = fsx.readFileSync(filepath,
                                 { encoding: 'utf8', flag: 'r' });
-                            await bpmnServer.definitions.save(name, source, null);
+                            try {
+                                await bpmnServer.definitions.save(name, source, null);
+                                }
+                            catch(exc)
+                                {
+console.log('error in api.ts import ',exc.message);
+                                response.json({errors:  exc.message});
+                                return;
+                                }
 
                             response.json("OK");
 

@@ -13,6 +13,8 @@ exports.Loop = void 0;
 const Token_1 = require("./Token");
 const elements_1 = require("../elements/");
 class Loop {
+    isSequential() { return (this.definition.isSequential()); }
+    isStandard() { return (this.definition.isStandard()); }
     constructor(node, token, dataObject) {
         this.node = node;
         this.ownerToken = token;
@@ -37,8 +39,6 @@ class Loop {
                 this.items = [];
         }
     }
-    isSequential() { return (this.definition.isSequential()); }
-    isStandard() { return (this.definition.isStandard()); }
     save() {
         return {
             id: this.id, nodeId: this.node.id, ownerTokenId: this.ownerToken.id, dataPath: this.dataPath,

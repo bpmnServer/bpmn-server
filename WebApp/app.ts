@@ -67,6 +67,7 @@ export class WebApp {
 
 
 		this.bpmnServer = new BPMNServer(config,wflogger);
+		this.bpmnServer.appDelegate.winSocket = null;
 
 		this.setupExpress();
 	}

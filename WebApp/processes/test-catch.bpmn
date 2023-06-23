@@ -30,6 +30,15 @@
     </bpmn2:endEvent>
     <bpmn2:sequenceFlow id="Flow_07tjqvd" sourceRef="Event_1d1ctka" targetRef="Event_0m0xe67" />
     <bpmn2:intermediateCatchEvent id="Event_0m0xe67" name="msg2">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">console.log('msg2 end event');
+
+item.vars=item.message;
+console.log('start script- item.vars',
+item.vars);</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
       <bpmn2:incoming>Flow_07tjqvd</bpmn2:incoming>
       <bpmn2:outgoing>Flow_0d04skv</bpmn2:outgoing>
       <bpmn2:messageEventDefinition id="MessageEventDefinition_1s6c3tp" messageRef="Message_06069yb" />

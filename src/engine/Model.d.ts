@@ -43,6 +43,7 @@ declare class ItemObject implements IItemData {
     processName: any;
     timeDue: Date;
     data: any;
+    vars: any;
     messageId: any;
     signalId: any;
     assignments: any;

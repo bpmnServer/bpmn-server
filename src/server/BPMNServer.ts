@@ -9,6 +9,12 @@ import { Cron } from './Cron';
 import { EventEmitter } from 'events';
 import { ACL, IAM } from './ACL';
 
+process.on('uncaughtException', function (err) {
+console.log('***************BPMNServer UNCAUGHT ERROR***********',err);
+	BPMNServer.getInstance().error=err;
+	return;
+}); 
+
 
 const fs = require('fs');
 /**
@@ -39,6 +45,7 @@ class BPMNServer implements IBPMNServer {
 	cron: Cron;
 	acl: IACL;
 	iam: IIAM;
+	error:any;
 
 	private static instance: BPMNServer;
 
@@ -70,12 +77,13 @@ class BPMNServer implements IBPMNServer {
 
 		BPMNServer.instance=this;
 
-		if (options['cron'] == false)
-		{
+		if (options['cron'] == false) {
 			return;
-        }
-
-		this.cron.start();
+		}
+		else {
+			this.cron.start();
+		}
+		this.appDelegate.startUp();
 	}
 
 	static getVersion() {

@@ -3,25 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Item = void 0;
 const __1 = require("../../");
 class Item {
-    constructor(element, token, status = __1.ITEM_STATUS.start) {
-        this._endedAt = null;
-        this.assignments = [];
-        this.authorizations = [];
-        this.notifications = [];
-        this.input = {};
-        this.output = {};
-        this.vars = {};
-        this._dbAction = null;
-        this.id = token.execution.getUUID();
-        this.seq = token.execution.getNewId('item');
-        this.element = element;
-        this._dbAction = 'add';
-        this.token = token;
-        this.status = status;
-        const user = token.execution.currentUser;
-        if (user)
-            this.userId = user.userId;
-    }
     get endedAt() {
         return this._endedAt;
     }
@@ -55,6 +36,25 @@ class Item {
     }
     get node() {
         return this.element;
+    }
+    constructor(element, token, status = __1.ITEM_STATUS.start) {
+        this._endedAt = null;
+        this.assignments = [];
+        this.authorizations = [];
+        this.notifications = [];
+        this.input = {};
+        this.output = {};
+        this.vars = {};
+        this._dbAction = null;
+        this.id = token.execution.getUUID();
+        this.seq = token.execution.getNewId('item');
+        this.element = element;
+        this._dbAction = 'add';
+        this.token = token;
+        this.status = status;
+        const user = token.execution.currentUser;
+        if (user)
+            this.userId = user.userId;
     }
     save() {
         return {

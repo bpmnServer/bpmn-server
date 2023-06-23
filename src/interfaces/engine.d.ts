@@ -48,6 +48,7 @@ interface IToken {
      * */
     terminate(): void;
     signal(data: any): Promise<any>;
+    getFullPath(fullPath?: any): Item[];
     end(): Promise<void>;
     goNext(): Promise<void>;
     getSubProcessToken(): IToken;
@@ -65,8 +66,6 @@ interface IExecution extends IServerComponent {
     listener: any;
     errors: any;
     item: any;
-    input: any;
-    output: any;
     messageMatchingKey: any;
     worker: any;
     currentUser: any;
@@ -77,6 +76,7 @@ interface IExecution extends IServerComponent {
     getToken(id: number): IToken;
     tokenEnded(token: IToken): void;
     getItemsData(): IItemData[];
+    save(): Promise<void>;
     end(): Promise<void>;
     /**
      *

@@ -35,11 +35,15 @@
       <bpmn2:incoming>Flow_0sbm14h</bpmn2:incoming>
       <bpmn2:outgoing>Flow_0rf2jum</bpmn2:outgoing>
     </bpmn2:serviceTask>
-    <bpmn2:serviceTask id="service2" name="service2" camunda:delegateExpression="service1">
+    <bpmn2:serviceTask id="service2" name="service2" camunda:delegateExpression="service2">
       <bpmn2:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="param1">"value2"</camunda:inputParameter>
         </camunda:inputOutput>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">item.vars=item.input;
+console.log('vars',item.vars);</camunda:script>
+        </camunda:executionListener>
       </bpmn2:extensionElements>
       <bpmn2:incoming>Flow_07ak0nf</bpmn2:incoming>
       <bpmn2:outgoing>Flow_0o5hffr</bpmn2:outgoing>

@@ -89,11 +89,14 @@ class Definition {
      * */
     load() {
         return __awaiter(this, void 0, void 0, function* () {
-            let definition = yield this.getDefinition(this.source, this.logger);
-            yield fs.writeFile('definition.txt', JSON.stringify(definition), function (err) {
-                if (err)
-                    throw err;
-            });
+            let definition;
+            try {
+                definition = yield this.getDefinition(this.source, this.logger);
+            }
+            catch (exc) {
+                throw exc;
+                return null;
+            }
             definition.rootElement.rootElements.forEach(e => {
                 switch (e.$type) {
                     case 'bpmn:Process':
@@ -234,8 +237,15 @@ class Definition {
     }
     getDefinition(source, logger) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.moddle.fromXML(source);
-            return result;
+            try {
+                const result = yield this.moddle.fromXML(source);
+                return result;
+            }
+            catch (exc) {
+                console.log('getDefinition:error', exc);
+                throw new Error('Error Reading XML');
+                //return this.logger.error(exc);
+            }
         });
     }
     getFields(elementId) {

@@ -91,7 +91,12 @@ class Model extends common_1.Common {
                         console.log("Upload Finished of " + filename.filename);
                         const name = filename.filename;
                         const source = fsx.readFileSync(filepath, { encoding: 'utf8', flag: 'r' });
-                        yield definitions.save(name, source, null);
+                        try {
+                            yield definitions.save(name, source, null);
+                        }
+                        catch (exc) {
+                            console.log('save error:', exc);
+                        }
                         res.redirect('/');
                     });
                 });

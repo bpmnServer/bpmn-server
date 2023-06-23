@@ -17,8 +17,6 @@ declare class Execution extends ServerComponent implements IExecution {
     process: Process;
     errors: any;
     item: any;
-    input: {};
-    output: {};
     messageMatchingKey: any;
     worker: any;
     currentUser: any;
@@ -62,7 +60,7 @@ declare class Execution extends ServerComponent implements IExecution {
      *
      */
     signal(executionId: any, inputData: any): Promise<void>;
-    private save;
+    save(): Promise<void>;
     getItems(): Item[];
     getItemsData(): any[];
     getState(): IInstanceData;

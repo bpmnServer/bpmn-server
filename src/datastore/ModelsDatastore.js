@@ -74,10 +74,17 @@ class ModelsDatastoreDB extends ServerComponent_1.ServerComponent {
         return __awaiter(this, void 0, void 0, function* () {
             let bpmnModelData = new ModelsData_1.BpmnModelData(name, source, svg, null, null);
             let definition = new elements_1.Definition(bpmnModelData.name, bpmnModelData.source, this.server);
-            yield definition.load();
-            bpmnModelData.parse(definition);
-            yield this.saveModel(bpmnModelData);
-            return bpmnModelData;
+            try {
+                yield definition.load();
+                bpmnModelData.parse(definition);
+                yield this.saveModel(bpmnModelData);
+                return bpmnModelData;
+            }
+            catch (exc) {
+                console.log('error in save', exc);
+                throw exc;
+                return null;
+            }
         });
     }
     findEvents(query) {
@@ -332,34 +339,40 @@ class ModelsDatastore extends ModelsDatastoreDB {
             deleteModel: { get: () => super.deleteModel }
         });
         return __awaiter(this, void 0, void 0, function* () {
-            if (model)
-                return this.rebuildModel(model);
-            let filesList = yield this.getList();
-            const models = new Map();
-            filesList.forEach(f => {
-                const path = this.definitionsPath + f + '.bpmn';
-                var stats = fs.statSync(path);
-                var mtime = stats.mtime;
-                models.set(f, mtime);
-            });
-            const dbList = yield _super.getList.call(this);
-            dbList.forEach(model => {
-                const name = model['name'];
-                const saved = new Date(model['saved']);
-                const entry = models.get(name);
-                if (entry) {
-                    if (saved.getTime() > entry.getTime()) {
-                        models.delete(name);
+            try {
+                if (model)
+                    return this.rebuildModel(model);
+                let filesList = yield this.getList();
+                const models = new Map();
+                filesList.forEach(f => {
+                    const path = this.definitionsPath + f + '.bpmn';
+                    var stats = fs.statSync(path);
+                    var mtime = stats.mtime;
+                    models.set(f, mtime);
+                });
+                const dbList = yield _super.getList.call(this);
+                dbList.forEach(model => {
+                    const name = model['name'];
+                    const saved = new Date(model['saved']);
+                    const entry = models.get(name);
+                    if (entry) {
+                        if (saved.getTime() > entry.getTime()) {
+                            models.delete(name);
+                        }
                     }
+                    else {
+                        _super.deleteModel.call(this, name);
+                    }
+                });
+                let i;
+                for (const entry of models.entries()) {
+                    const name = entry[0];
+                    yield this.rebuildModel(name);
                 }
-                else {
-                    _super.deleteModel.call(this, name);
-                }
-            });
-            let i;
-            for (const entry of models.entries()) {
-                const name = entry[0];
-                yield this.rebuildModel(name);
+            }
+            catch (exc) {
+                console.log('rebuild error');
+                throw exc;
             }
         });
     }

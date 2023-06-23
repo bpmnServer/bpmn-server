@@ -16,7 +16,7 @@ var bodyParser = require('body-parser');
 const FS = require('fs');
 const __1 = require("..");
 const common_1 = require("./common");
-console.log(__1.docsFolder);
+console.log('docsFolder', __1.docsFolder);
 /* GET users listing. */
 const url = 'https://raw.githubusercontent.com/ralphhanna/bpmn-server/master/';
 const https = require('https');

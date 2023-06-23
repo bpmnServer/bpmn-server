@@ -157,7 +157,8 @@ class Node extends Element {
         }
         //  4   run  perform the work
         //  --------
-
+        //  Save before performing the work
+        await item.token.execution.save();
         item.token.log('Node('+this.name+'|'+this.id+').execute: execute run ...');
         //item.token.log('..>run ' + this.id);
 

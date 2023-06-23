@@ -105,12 +105,17 @@ class Definition implements IDefinition{
      * 
      * */
     async load() {
-
-        let definition = await this.getDefinition(this.source, this.logger);
-
-        await fs.writeFile('definition.txt', JSON.stringify(definition), function (err) {
-            if (err) throw err;
-        });
+        let definition;
+        try 
+        {
+            definition = await this.getDefinition(this.source, this.logger);
+        }
+        catch(exc)
+        {
+            throw exc;
+            return null;
+        }
+        
 
         definition.rootElement.rootElements.forEach(e => {
             switch (e.$type) {
@@ -260,10 +265,16 @@ references:
     }
     async getDefinition(source, logger) {
 
-        const result = await this.moddle.fromXML(source);
+        try {
+            const result = await this.moddle.fromXML(source);
+            return result;
+            }
+   		catch (exc) {
+            console.log('getDefinition:error',exc);
+            throw new Error('Error Reading XML');
+			//return this.logger.error(exc);
+            }
 
-
-        return result;
     }
     async getFields(elementId) {
 

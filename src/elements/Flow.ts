@@ -43,19 +43,25 @@ class Flow extends Element implements IFlow {
     run(item: Item) {
         item.token.log('Flow(' + this.name +'|'+ this.id + ').run: from='+this.from.name+' to=' + this.to.name + " find action... " );
         let action = FLOW_ACTION.take;
+        let result = this.evaluateCondition(item);
+        if (result == false) {
+            action = FLOW_ACTION.discard;
+        }
+        item.token.log('Flow(' + this.name +'|'+ this.id + ').run: going to ' + this.to.id + " action : " + action);
+        return action;
+    }
+    evaluateCondition(item) {
+        // conditionExpression:{"$type":"bpmn:Expression","body":"true"}
         if (this.def.conditionExpression) {
-            // conditionExpression:{"$type":"bpmn:Expression","body":"true"}
+            console.log('flow definition ',this.def);
             let expression = this.def.conditionExpression.body;
             item.token.log('..conditionExpression:' + JSON.stringify(expression));
             item.token.log(JSON.stringify(item.token.data));
             let result = item.token.execution.appDelegate.scopeEval(item, expression);
             item.token.log('..conditionExpression:' + expression + " result: " + result);
-            if (result == false) {
-                action = FLOW_ACTION.discard;
-            }
+            return result;
         }
-        item.token.log('Flow(' + this.name +'|'+ this.id + ').run: going to ' + this.to.id + " action : " + action);
-        return action;
+        return true;
     }
     async execute(item) {
 

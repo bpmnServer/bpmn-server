@@ -16,6 +16,7 @@ declare class Flow extends Element implements IFlow {
      * @param item
      */
     run(item: Item): FLOW_ACTION;
+    evaluateCondition(item: any): any;
     execute(item: any): Promise<void>;
 }
 /**

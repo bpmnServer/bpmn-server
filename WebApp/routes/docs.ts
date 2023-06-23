@@ -8,7 +8,7 @@ import { BPMNServer   } from '..';
 import { configuration as config} from '../configuration';
 import { docsFolder } from '..';
 import { Common } from './common';
-console.log(docsFolder);
+console.log('docsFolder',docsFolder);
 
 /* GET users listing. */
 

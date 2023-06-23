@@ -17,7 +17,9 @@ class DefaultAppDelegate implements IAppDelegate {
             await self.executionEvent(context, event);
         });
     }
-
+    startUp() {
+        console.log('server started..');
+    }
     sendEmail(to, msg, body) {
         throw Error("sendEmail must be implemented by AppDelegate");
     }

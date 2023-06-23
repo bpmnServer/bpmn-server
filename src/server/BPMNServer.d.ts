@@ -30,6 +30,7 @@ declare class BPMNServer implements IBPMNServer {
     cron: Cron;
     acl: IACL;
     iam: IIAM;
+    error: any;
     private static instance;
     /**
      * Server Constructor

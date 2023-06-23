@@ -22,13 +22,13 @@ declare class Node extends Element {
      * @param item
      */
     setInput(item: Item, input: any): Promise<void>;
-    getInput(item: Item, input: any): Promise<any>;
+    getInput(item: Item, input: any): Promise<{}>;
     /**
      * transform data using output rules
      * todo
      * @param item
      */
-    getOutput(item: Item): Promise<any>;
+    getOutput(item: Item): Promise<{}>;
     enter(item: Item): void;
     get requiresWait(): boolean;
     get canBeInvoked(): boolean;

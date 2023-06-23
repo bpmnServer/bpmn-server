@@ -18,6 +18,9 @@ const Enums_2 = require("../interfaces/Enums");
 const BehaviourLoader_1 = require("./behaviours/BehaviourLoader");
 // ---------------------------------------------
 class Node extends _1.Element {
+    get processId() {
+        return this.process.id;
+    }
     constructor(id, process, type, def) {
         super();
         this.scripts = new Map();
@@ -30,9 +33,6 @@ class Node extends _1.Element {
         this.name = def.name;
         this.attachments = [];
         BehaviourLoader_1.BehaviourLoader.load(this);
-    }
-    get processId() {
-        return this.process.id;
     }
     doEvent(item, event, newStatus) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -143,6 +143,8 @@ class Node extends _1.Element {
             }
             //  4   run  perform the work
             //  --------
+            //  Save before performing the work
+            yield item.token.execution.save();
             item.token.log('Node(' + this.name + '|' + this.id + ').execute: execute run ...');
             //item.token.log('..>run ' + this.id);
             ret = yield this.run(item);

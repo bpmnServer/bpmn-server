@@ -242,24 +242,28 @@ class API extends common_1.Common {
             if (!name)
                 name = request.body.name;
             console.log(' importing: ' + name);
-            console.log('request', request);
+            //console.log('request', request);
             console.log('request.body', request.body);
             var fstream;
             try {
                 if (request.busboy) {
                     request.pipe(request.busboy);
                     request.busboy.on('file', function (fileUploaded, file, filename) {
-                        console.log("Uploading: ", filename);
                         //Path where image will be uploaded
                         const filepath = __dirname + '/../tmp/' + filename.filename;
                         fstream = fsx.createWriteStream(filepath);
                         file.pipe(fstream);
                         fstream.on('close', function () {
                             return __awaiter(this, void 0, void 0, function* () {
-                                console.log("Upload Finished of " + filename.filename);
-                                //const name = filename.filename;
                                 const source = fsx.readFileSync(filepath, { encoding: 'utf8', flag: 'r' });
-                                yield bpmnServer.definitions.save(name, source, null);
+                                try {
+                                    yield bpmnServer.definitions.save(name, source, null);
+                                }
+                                catch (exc) {
+                                    console.log('error in api.ts import ', exc.message);
+                                    response.json({ errors: exc.message });
+                                    return;
+                                }
                                 response.json("OK");
                             });
                         });
@@ -388,17 +392,17 @@ function display(res, title, output, logs = [], items = []) {
         var instances = yield this.bpmnServer.dataStore.findInstances({}, 'full');
         let waiting = yield this.bpmnServer.dataStore.findItems({ items: { status: 'wait' } });
         waiting.forEach(item => {
-            item.fromNow = __1.dateDiff(item.startedAt);
+            item.fromNow = (0, __1.dateDiff)(item.startedAt);
         });
         let engines = this.bpmnServer.cache.list();
         engines.forEach(engine => {
-            engine.fromNow = __1.dateDiff(engine.startedAt);
-            engine.fromLast = __1.dateDiff(engine.lastAt);
+            engine.fromNow = (0, __1.dateDiff)(engine.startedAt);
+            engine.fromLast = (0, __1.dateDiff)(engine.lastAt);
         });
         instances.forEach(item => {
-            item.fromNow = __1.dateDiff(item.startedAt);
+            item.fromNow = (0, __1.dateDiff)(item.startedAt);
             if (item.endedAt)
-                item.endFromNow = __1.dateDiff(item.endedAt);
+                item.endFromNow = (0, __1.dateDiff)(item.endedAt);
             else
                 item.endFromNow = '';
         });

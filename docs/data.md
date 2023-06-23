@@ -1,5 +1,6 @@
 # Table of Contents
-- [instance Data](#instance-data) 
+- [Instance Data](#instance-data) 
+- [Item Data](#item-data)
 - [Data Scope](#data-scope) 
 - [Query on Data](#query-on-data) 
 - [input/Output Data](#input-output-data) 
@@ -75,6 +76,33 @@ In this example we are adding a script to bpmn:startEvent
       <bpmn:outgoing>Flow_18xinq3</bpmn:outgoing>
     </bpmn:startEvent>
     
+```
+# Item Data
+In Release 1.3.22 added **item.vars** to store any variables related to the item as follows
+
+## Setting item.vars
+You can set item.vars Inside your service logic :
+```js
+  async service1(input, context) {
+  ...
+  item.vars= input;
+ ...
+}
+```
+or by having an event-listener such as:
+
+![Item Vars Script](item-vars-script.png)
+
+## MongoDB:
+As a result MongoDB stores item.vars
+![image](https://github.com/ralphhanna/bpmn-server/assets/11893416/320e2e2f-e6e3-46a9-964b-f10e91ce8a32)
+
+## Using findItems:
+```js
+            query = { "data.caseId": caseId, "items.vars.param1": 'value1' };
+            items = await server.dataStore.findItems(query);
+            console.log('items count',items);
+
 ```
 # Data Scope
 

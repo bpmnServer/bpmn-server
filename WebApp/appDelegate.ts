@@ -7,10 +7,29 @@ const fs = require('fs');
 var seq = 1;
 
 class MyAppDelegate extends DefaultAppDelegate{
+    winSocket;
     constructor(server) {
         super(server);
         this.servicesProvider = new MyServices();
     }
+    async start() {
+        console.log('myserver started.. checking for incomplete processes');
+
+        this.server.dataStore.findInstances();
+        var query = { "items.status": "start" };
+
+        var list = await this.server.dataStore.findItems(query);
+        if (list.length > 0) {
+
+            this.server.logger.log("...items query returend " + list.length);
+            for (var i = 0; i < list.length; i++) {
+                let item = list[i];
+                console.log(item);
+            }
+        }
+
+    }
+
     sendEmail(to, msg, body) {
 
         console.log(`Sending email to ${to}`);
@@ -84,8 +103,24 @@ async function delay(time, result) {
         }, time);
     });
 }
+import * as readline from 'readline';
+const cl = readline.createInterface(process.stdin, process.stdout);
+const question = function (q) {
+    return new Promise((res, rej) => {
+        cl.question(q, answer => {
+            res(answer);
+        })
+    });
+};
 class MyServices {
+    async promptUser(input, context) {
+        console.log('executing prompt user');
 
+        var result = await question("continue?");
+        console.log('result:', result);
+        return null;
+
+    }
     async serviceTask(input, context) {
         let item = context.item;
         console.log(" Hi this is the serviceTask from appDelegate");
