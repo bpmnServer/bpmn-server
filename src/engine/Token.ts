@@ -159,16 +159,10 @@ class Token implements IToken {
         if (this.loop)
             loopId = this.loop.id;
 
-        const items = [];
-
-        this.path.forEach(i => {
-            items.push(i.save());
-        });
-
         return {
             id: this.id, type: this.type, status: this.status, dataPath: this.dataPath, loopId,
             parentToken, originItem, startNodeId: this.startNodeId,
-            currentNode: this.currentNode.id 
+            currentNode: this.currentNode.id
         };
     }
     static load(execution: Execution , da :any ) : Token {
@@ -289,6 +283,10 @@ class Token implements IToken {
             this.execution.terminate();
             return;     
 
+        }
+        else if (ret==NODE_ACTION.end) {
+            this.status = TOKEN_STATUS.end;
+            return;     
         }
 
 
@@ -429,7 +427,7 @@ class Token implements IToken {
     }
 
     setCurrentNode(newCurrentNode:Node){
-        this.log('Token('+this.id +').goNext():  newCurrentNode.id=' + newCurrentNode.id+' currentNode='+this.currentNode);
+        this.log('Token('+this.id +').setCurrentNode():  newCurrentNode.id=' + newCurrentNode.id+' currentNode='+this.currentNode);
         this.currentNode = newCurrentNode;
     
       }

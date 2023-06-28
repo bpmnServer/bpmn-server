@@ -53,7 +53,7 @@ class Flow extends Element implements IFlow {
     evaluateCondition(item) {
         // conditionExpression:{"$type":"bpmn:Expression","body":"true"}
         if (this.def.conditionExpression) {
-            console.log('flow definition ',this.def);
+            //console.log('flow definition ',this.def);
             let expression = this.def.conditionExpression.body;
             item.token.log('..conditionExpression:' + JSON.stringify(expression));
             item.token.log(JSON.stringify(item.token.data));

@@ -147,10 +147,6 @@ class Token {
             originItem = this.originItem.id;
         if (this.loop)
             loopId = this.loop.id;
-        const items = [];
-        this.path.forEach(i => {
-            items.push(i.save());
-        });
         return {
             id: this.id, type: this.type, status: this.status, dataPath: this.dataPath, loopId,
             parentToken, originItem, startNodeId: this.startNodeId,
@@ -263,6 +259,10 @@ class Token {
             }
             else if (ret == __1.NODE_ACTION.abort) {
                 this.execution.terminate();
+                return;
+            }
+            else if (ret == __1.NODE_ACTION.end) {
+                this.status = __1.TOKEN_STATUS.end;
                 return;
             }
             const result = yield this.goNext();
@@ -400,7 +400,7 @@ class Token {
         });
     }
     setCurrentNode(newCurrentNode) {
-        this.log('Token(' + this.id + ').goNext():  newCurrentNode.id=' + newCurrentNode.id + ' currentNode=' + this.currentNode);
+        this.log('Token(' + this.id + ').setCurrentNode():  newCurrentNode.id=' + newCurrentNode.id + ' currentNode=' + this.currentNode);
         this.currentNode = newCurrentNode;
     }
     /*

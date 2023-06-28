@@ -13,11 +13,10 @@ declare class Gateway extends Node {
         waitingTokens: any[];
     };
     getPotentialPath(node: any, path?: any): any;
+    canReach(node: any, target: any): any;
     analyzeConvergeFlows(item: Item): {
-        pendingTokens: Token[];
+        pendingTokens: any[];
         waitingTokens: Token[];
-        activeFlows: any[];
-        pendingFlows: any[];
     };
     start(item: Item): Promise<NODE_ACTION>;
     converge(item: any, waitingTokens: any): Promise<NODE_ACTION>;

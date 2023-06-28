@@ -111,7 +111,7 @@ class Node extends _1.Element {
      */
     execute(item) {
         return __awaiter(this, void 0, void 0, function* () {
-            item.token.log('Node(' + this.name + '|' + this.id + ').execute: item=' + item.id);
+            item.token.log('Node(' + this.name + '|' + this.id + ').execute: item=' + item.id + ' token:' + item.token.id);
             //  2  enter
             //  --------
             item.token.log('Node(' + this.name + '|' + this.id + ').execute: execute enter ...');
@@ -128,6 +128,7 @@ class Node extends _1.Element {
             item.token.log('Node(' + this.name + '|' + this.id + ').execute: execute start ...');
             yield this.doEvent(item, Enums_1.EXECUTION_EVENT.node_start, Enums_1.ITEM_STATUS.start);
             let ret = yield this.start(item);
+            item.token.log('Node(' + this.name + '|' + this.id + ').execute: start complete ...token:' + item.token.id + ' ret:' + ret);
             for (var i = 0; i < behaviourlist.length; i++) {
                 const b = behaviourlist[i];
                 const bRet = yield b.start(item);
@@ -141,11 +142,15 @@ class Node extends _1.Element {
                 yield this.doEvent(item, Enums_1.EXECUTION_EVENT.node_wait, Enums_1.ITEM_STATUS.wait);
                 return ret;
             }
+            else if (ret == Enums_1.NODE_ACTION.end) {
+                yield this.doEvent(item, Enums_1.EXECUTION_EVENT.node_end, Enums_1.ITEM_STATUS.end);
+                return ret;
+            }
             //  4   run  perform the work
             //  --------
             //  Save before performing the work
             yield item.token.execution.save();
-            item.token.log('Node(' + this.name + '|' + this.id + ').execute: execute run ...');
+            item.token.log('Node(' + this.name + '|' + this.id + ').execute: execute run ...token:' + item.token.id);
             //item.token.log('..>run ' + this.id);
             ret = yield this.run(item);
             switch (ret) {
@@ -251,6 +256,8 @@ class Node extends _1.Element {
                 let flowItem = new Item_1.Item(flow, item.token);
                 if (flow.run(flowItem) == Enums_1.FLOW_ACTION.take)
                     outbounds.push(flowItem);
+                else
+                    flowItem.token = null;
             }
         });
         //item.token.log('..return outbounds' + outbounds.length);

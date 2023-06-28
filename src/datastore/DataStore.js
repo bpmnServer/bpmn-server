@@ -194,7 +194,7 @@ class DataStore extends ServerComponent_1.ServerComponent {
             // let us rebuild the query form {status: value} to >  "tokens.items.status": "wait" 
             const result = this.translateCriteria(query);
             var records = yield this.db.find(this.dbConfiguration.db, Instance_collection, result.query, result.projection);
-            console.log('...find items for query:', query, " translated to :", JSON.stringify(result), " recs:", records.length);
+            //console.log('...find items for query:', query, " translated to :", JSON.stringify(result),  " recs:" , records.length)
             this.logger.log('...find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result) + " recs:" + records.length);
             return this.getItemsFromInstances(records, result.match);
         });

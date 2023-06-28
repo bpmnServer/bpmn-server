@@ -116,7 +116,7 @@ class Node extends Element {
      *              run method will fire the subprocess invoking a new token and will go into wait
      */
     async execute(item: Item) {
-        item.token.log('Node('+this.name+'|'+this.id+').execute: item=' + item.id);
+        item.token.log('Node('+this.name+'|'+this.id+').execute: item=' + item.id+' token:'+item.token.id);
 
         //  2  enter
         //  --------
@@ -142,6 +142,8 @@ class Node extends Element {
 
         let ret =await this.start(item);
 
+        item.token.log('Node('+this.name+'|'+this.id+').execute: start complete ...token:'+item.token.id+' ret:'+ret);
+
         for (var i = 0; i < behaviourlist.length; i++) {
             const b = behaviourlist[i];
             const bRet = await b.start(item);
@@ -155,11 +157,15 @@ class Node extends Element {
             await this.doEvent(item, EXECUTION_EVENT.node_wait, ITEM_STATUS.wait);
             return ret;
         }
+        else if (ret ==NODE_ACTION.end) {
+            await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end);
+            return ret;
+        }
         //  4   run  perform the work
         //  --------
         //  Save before performing the work
         await item.token.execution.save();
-        item.token.log('Node('+this.name+'|'+this.id+').execute: execute run ...');
+        item.token.log('Node('+this.name+'|'+this.id+').execute: execute run ...token:'+item.token.id);
         //item.token.log('..>run ' + this.id);
 
         ret = await this.run(item);
@@ -263,6 +269,8 @@ class Node extends Element {
                 let flowItem = new Item(flow, item.token);
                 if (flow.run(flowItem) == FLOW_ACTION.take)
                     outbounds.push(flowItem);
+                else 
+                    flowItem.token=null;
             }
         });
         //item.token.log('..return outbounds' + outbounds.length);

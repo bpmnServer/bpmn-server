@@ -270,7 +270,7 @@ function displayError(res, error) {
 function display(req, res, title, output, logs = [], items = []) {
     return __awaiter(this, void 0, void 0, function* () {
         var instances = yield bpmnServer.dataStore.findInstances({}, 'summary');
-        let waiting = yield bpmnServer.dataStore.findItems({ "items.status": 'wait' });
+        let waiting = yield bpmnServer.dataStore.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask' });
         waiting.forEach(item => {
             item.fromNow = (0, __1.dateDiff)(item.startedAt);
         });

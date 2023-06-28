@@ -1,6 +1,7 @@
 import { Item, IExecution } from './';
 import { DefaultAppDelegate } from './index';
 declare class MyAppDelegate extends DefaultAppDelegate {
+    winSocket: any;
     constructor(server: any);
     start(): Promise<void>;
     sendEmail(to: any, msg: any, body: any): void;

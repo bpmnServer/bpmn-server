@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventBasedGateway = exports.XORGateway = exports.Gateway = void 0;
-const Token_1 = require("../engine/Token");
 const __1 = require("../../");
 const _1 = require(".");
 const Item_1 = require("../engine/Item");
@@ -59,87 +58,6 @@ class Gateway extends _1.Node {
         else
             return super.getOutbounds(item);
     }
-    /*
-     * we are looking for:
-     *      tokens are still active (pending)
-     *  and tokens that are being held by the gateway to be converged.
-     */
-    findActiveFlows(token) {
-        let divergingGateway = null;
-        let parentToken = null;
-        let pendingTokens = [];
-        let waitingTokens = [];
-        token.log('Gateway(' + token.currentItem.element.name + '|' + token.currentItem.element.id + ').findActiveFlows: tokenId:' + token.id + ' startNode:' + token.startNodeId);
-        if (token.parentToken) {
-            token.log('Gateway(' + token.currentItem.element.name + '|' + token.currentItem.element.id + ').findActiveFlows: parentTokenId:' + token.parentToken.id);
-        }
-        if (token.originItem) {
-            token.log('Gateway(' + token.currentItem.element.name + '|' + token.currentItem.element.id + ').findActiveFlows: originItem:' + token.originItem.element.id);
-        }
-        token.log('Gateway(' + token.currentItem.element.name + '|' + token.currentItem.element.id + ').findActiveFlows: converging  my token ' + token.id);
-        if (token.parentToken) { // is a child did i branch from a gatewy
-            token.log('Gateway(' + token.currentItem.element.name + '|' + token.currentItem.element.id + ').findActiveFlows: there is a parentToken tokenId=' + token.parentToken.id);
-            const siblings = token.parentToken.getChildrenTokens();
-            token.log('Gateway(' + token.currentItem.element.name + '|' + token.currentItem.element.id + ').findActiveFlows: siblings tokens=' + token.parentToken.id);
-            if (token.originItem.node.type == 'bpmn:InclusiveGateway' ||
-                token.originItem.node.type == 'bpmn:ExclusiveGateway' ||
-                token.originItem.node.type == 'bpmn:ParallelGateway') {
-                divergingGateway = token.originItem.node;
-                parentToken = token.parentToken;
-                token.log('Gateway(' + token.currentItem.element.name + '|' + token.currentItem.element.id + ').findActiveFlows:     token.originItem.node.type=' + token.originItem.node.type + ' divergingGateway=' + divergingGateway.id);
-            }
-        }
-        else { // do I have a child branching from a gateway
-            let childrenTokens = token.getChildrenTokens();
-            token.log('Gateway(' + token.currentItem.element.name + '|' + token.currentItem.element.id + ').findActiveFlows: childrenTokens.length=' + childrenTokens.length);
-            childrenTokens.forEach(t => {
-                if (t.originItem.node.type == 'bpmn:InclusiveGateway' ||
-                    t.originItem.node.type == 'bpmn:ParallelGateway' ||
-                    token.originItem.node.type == 'bpmn:ExclusiveGateway') {
-                    divergingGateway = t.originItem.node;
-                    parentToken = token;
-                    token.log('Gateway(' + token.currentItem.element.name + '|' + token.currentItem.element.id + ').findActiveFlows:     parentToken=' + parentToken.id);
-                    token.log('Gateway(' + token.currentItem.element.name + '|' + token.currentItem.element.id + ').findActiveFlows:     divergingGateway=' + divergingGateway.id);
-                }
-            });
-        }
-        if (divergingGateway) {
-            token.log('Gateway(' + token.currentItem.element.name + '|' + token.currentItem.element.id + ').findActiveFlows: divergingGateway gateway ' + divergingGateway.id);
-            //token.log('..converging gateway was : ' + divergingGateway.id);
-            // that all branches that are active that passed through this gateway or branch from it
-            token.execution.tokens.forEach(t => {
-                token.log('Gateway(' + token.currentItem.element.name + '|' + token.currentItem.element.id + ').findActiveFlows:   .. processing token id=' + t.id + ' status=' + t.status);
-                /*
-                if ((t.status != TOKEN_STATUS.end)
-                    && (t.status != TOKEN_STATUS.terminated)
-                    && (t.id != token.id)) {*/
-                if ((t.status != __1.TOKEN_STATUS.end) && (t.status != __1.TOKEN_STATUS.terminated)) {
-                    if (t.currentNode.id == this.id) { // waiting for me
-                        waitingTokens.push(t);
-                    }
-                    else {
-                        if (t.originItem && (t.originItem.node.id == divergingGateway.id))
-                            pendingTokens.push(t);
-                        else {
-                            t.path.forEach(i => {
-                                if (i.element.id == divergingGateway.id)
-                                    pendingTokens.push(t);
-                            });
-                        }
-                    }
-                }
-            });
-        }
-        token.log('Gateway(' + token.currentItem.element.name + '|' + token.currentItem.element.id + ').findActiveFlows: number of active tokens pending = ' + pendingTokens.length);
-        pendingTokens.forEach(t => {
-            token.log('Gateway(' + token.currentItem.element.name + '|' + token.currentItem.element.id + ').findActiveFlows: ..pending token id: ' + t.id + " currentNode.id:" + t.currentNode.id);
-        });
-        token.log('Gateway(' + token.currentItem.element.name + '|' + token.currentItem.element.id + ').findActiveFlows: number of active tokens waiting = ' + waitingTokens.length);
-        waitingTokens.forEach(t => {
-            token.log('Gateway(' + token.currentItem.element.name + '|' + token.currentItem.element.id + ').findActiveFlows: ..waitingTokens token id:' + t.id + ' currentNode.id:' + t.currentNode.id);
-        });
-        return { pendingTokens, waitingTokens };
-    }
     /// Returns a list of node_ids of all potential (future) path for a given node
     getPotentialPath(node, path = null) {
         if (path == null)
@@ -156,87 +74,52 @@ class Gateway extends _1.Node {
     }
     // checks to see if a node can reach - has a potential path to - another node
     canReach(node, target) {
+        if (node.id == target.id)
+            return true;
         let path = this.getPotentialPath(node);
         return path.has(target.id);
     }
-    analyzeConvergeFlows(item) {
+    getRelatedTokens(item) {
+        let related = [];
+        var ex = item.token.execution;
+        ex.log(`Gateway.getRelatedTokens: for ${item.token.id}`);
+        ex.tokens.forEach(token => {
+            const branch = token.originItem ? token.originItem.elementId : 'root';
+            const parent = token.parentToken ? token.parentToken.id : '-';
+            let p = '';
+            for (var i = 0; i < token.path.length; i++) {
+                p += '' + token.path[i].node.id + '->';
+            }
+            ex.log(`        ..token: ${token.id} - ${token.status} - ${token.type} current: ${token.currentNode.id} from ${branch} child of ${parent} path: ${p} `);
+            if ((token.id != item.token.id) &&
+                (token.currentItem.status != __1.ITEM_STATUS.end && token.currentItem.status != __1.ITEM_STATUS.terminated)) {
+                let canReach = this.canReach(token.currentNode, this);
+                ex.log(`            ..canReach: ${canReach} - token status: ${token.status} - item status ${token.currentItem.status}`);
+                if (canReach)
+                    related.push(token);
+            }
+        });
+        related.forEach(t => {
+            ex.log(`    .. related token: ${t.id} `);
+        });
+        return related;
+    }
+    analyzeConvergingTokens(item) {
         const waitingTokens = [];
         const pendingTokens = [];
-        let token = item.token;
-        let siblings;
-        token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: token ' + token.id
-            + ' origin.Item ' + token.originItem.node.id + ' type ' + token.originItem.node.type);
-        token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: inbounds.length=' + this.inbounds.length);
-        if (this.inbounds.length > 1
-            && token.originItem
-        //            && (token.originItem.node.type == 'bpmn:InclusiveGateway' ||
-        //                token.originItem.node.type == 'bpmn:ExclusiveGateway' ||
-        //              token.originItem.node.type == 'bpmn:ParallelGateway')
-        ) {
-            token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: checking siblings for token:' + token.id + ' type:' + token.type);
-            if (token.type == Token_1.TOKEN_TYPE.BoundaryEvent)
-                token = token.parentToken;
-            token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: checking siblings for token:' + token.id);
-            siblings = token.parentToken ? token.parentToken.getChildrenTokens() : [];
-            if (siblings) {
-                siblings.forEach(t => {
-                    token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: ... sibling token:' + t.id + ' current node:' + t.currentNode.id);
-                    // Find children tokens
-                    const siblingChildrenTokens = t.getChildrenTokens();
-                    let siblingHasActiveChildToken = false;
-                    token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: siblingChildrenTokens.length=' + siblingChildrenTokens.length);
-                    siblingChildrenTokens.forEach(siblingChildToken => {
-                        token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: ... siblingChildToken:' + siblingChildToken.id + " status: " + siblingChildToken.status);
-                        if (siblingChildToken.originItem.node.type == 'bpmn:InclusiveGateway' ||
-                            siblingChildToken.originItem.node.type == 'bpmn:ParallelGateway' ||
-                            siblingChildToken.originItem.node.type == 'bpmn:ExclusiveGateway') {
-                            if (siblingChildToken.status != __1.TOKEN_STATUS.end && siblingChildToken.status != __1.TOKEN_STATUS.terminated) {
-                                siblingHasActiveChildToken = true;
-                                token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: ... siblingChildToken status=' + siblingChildToken.status);
-                            }
-                        }
-                    });
-                    //if ((t.id != token.id) && (t.currentNode.id == this.id)) {// waiting for me
-                    if ((t.id != token.id)) { // exclude current token
-                        if (t.status != __1.TOKEN_STATUS.end && t.status != __1.TOKEN_STATUS.terminated) {
-                            if ((t.currentNode.id == this.id)) {
-                                //
-                                token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: ... child token ' + t.id + ' in current gateway => add to waitingTokens currentNode=' + t.currentNode.id);
-                                waitingTokens.push(t);
-                            }
-                            else {
-                                let canReach = this.canReach(t.currentNode, this);
-                                token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: ... adding to pendingTokens ' + t.id + ' node' + t.currentNode.id + ' can reach ' + canReach + ' target ' + this.id);
-                                //                                if (canReach)
-                                pendingTokens.push(t);
-                            }
-                        }
-                        if (siblingHasActiveChildToken) {
-                            // add token to pending because has children active in another gateway branch
-                            let canReach = this.canReach(t.currentNode, this);
-                            token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: ... child token ' + t.id + ' has active children token in a child gateway => add to pendingTokens currentNode=' + t.currentNode.id);
-                            token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: ... adding to pendingTokens ' + t.id + ' node' + t.currentNode.id + ' can reach ' + canReach + ' target ' + this.id);
-                            //                            if (canReach)
-                            pendingTokens.push(t);
-                        }
-                        /*
-                        else{
-                            token.log('Gateway(' + item.element.id + ').convergeFlows: child token aad to pendingTokens currentNode='+t.currentNode.id);
-                            pendingTokens.push(t);
-                        }
-                        */
-                    }
-                    //token.log(`Gateway.convergeFlows: .token waiting for gatewy ${t.id} nod: ${t.currentNode.id}`);
-                });
+        const token = item.token;
+        const related = this.getRelatedTokens(item);
+        related.forEach(t => {
+            if (t.status != __1.TOKEN_STATUS.end && t.status != __1.TOKEN_STATUS.terminated) {
+                if ((t.currentNode.id == this.id)) {
+                    token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: ... child token ' + t.id + ' in current gateway => add to waitingTokens currentNode=' + t.currentNode.id);
+                    waitingTokens.push(t);
+                }
+                else {
+                    token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: ... adding to pendingTokens ' + t.id + ' node' + t.currentNode.id + ' target ' + this.id);
+                    pendingTokens.push(t);
+                }
             }
-            //token.log('Gateway(' + item.element.id + ').convergeFlows:  # of active tokens pending ' + waitingTokens.length);
-        }
-        let pending = [];
-        pendingTokens.forEach(t => {
-            let canReach = this.canReach(t.currentNode, this);
-            token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: ... pending token id: ' + t.id + " currentNode.id:" + t.currentNode.id + ' canReach:' + canReach);
-            if (canReach)
-                pending.push(t);
         });
         waitingTokens.forEach(t => {
             token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: ... waitingTokens token id:' + t.id + ' currentNode.id:' + t.currentNode.id);
@@ -244,17 +127,14 @@ class Gateway extends _1.Node {
         token.log('Gateway(' + item.element.name + '|' + item.element.id + ').convergeFlows: '
             + '  pendingTokens:' + pendingTokens.length
             + '  waitingTokens:' + waitingTokens.length);
-        return { pendingTokens: pending, waitingTokens };
+        return { pendingTokens, waitingTokens };
     }
     start(item) {
         return __awaiter(this, void 0, void 0, function* () {
             item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: node.type=' + item.node.type);
             if (this.inbounds.length > 1) { // converging .....
                 item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: Starting a converging gateway this.inbounds.length=' + this.inbounds.length);
-                //item.token.log("..Starting a converging gateway");
-                // what is my token
-                //let result = this.findActiveFlows(item.token);
-                let result = this.analyzeConvergeFlows(item);
+                let result = this.analyzeConvergingTokens(item);
                 // wait for pending tokens
                 if (result.pendingTokens.length > 0) {
                     if (this.type == _1.BPMN_TYPE.ExclusiveGateway) {
@@ -322,56 +202,6 @@ class Gateway extends _1.Node {
             }
             else
                 return __1.NODE_ACTION.continue;
-        });
-    }
-    converge(item, waitingTokens) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let parentToken = item.token.parentToken;
-            let convergingGatewayCurrentNode = item.token.currentNode;
-            item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: let us converge now waitingTokens.length=' + waitingTokens.length);
-            item.token.log('..let us converge now ');
-            waitingTokens.forEach((t) => __awaiter(this, void 0, void 0, function* () {
-                item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: ..converging ending token ' + t.id);
-                item.token.log("..converging ending token #" + t.id);
-                t.currentItem.status = __1.ITEM_STATUS.end;
-                yield t.end();
-                //await t.terminate();
-            }));
-            // -------------------------------------------------------------------------------------------------
-            // Create a new Token at converging  gateway
-            // -------------------------------------------------------------------------------------------------
-            //item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: Creating a new Token at converging  gateway ..... ');
-            //await Token.startNewToken(TOKEN_TYPE.Primary,item.token.execution, item.token.currentNode, null, item.token, item, null);
-            //item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: new Token created ');
-            item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: converged! all waiting tokens ended');
-            const oldCurrentToken = item.token;
-            // -------------------------------------------------------------------------------------------------
-            // Move the waiting token at diverging gateway
-            // -------------------------------------------------------------------------------------------------
-            if (parentToken) {
-                item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: converged! restart the parent token from this item! parentToken=' + parentToken.id);
-                //item.token.moveToCurrentNode()
-                parentToken.status = __1.TOKEN_STATUS.running;
-                parentToken.setCurrentNode(convergingGatewayCurrentNode);
-                item.token = parentToken;
-                //await item.token.signal(null);
-                const ret = yield parentToken.currentNode.run(item);
-                let result = yield parentToken.currentNode.continue(item);
-                result = yield parentToken.goNext();
-            }
-            // -------------------------------------------------------------------------------------------------
-            // end current token
-            // -------------------------------------------------------------------------------------------------
-            oldCurrentToken.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: ending current child token ' + oldCurrentToken.id);
-            oldCurrentToken.currentItem.status = __1.ITEM_STATUS.end;
-            //await convergingGatewayCurrentNode.end(item);
-            //await oldCurrentToken.end();
-            //if (oldCurrentToken.type==TOKEN_TYPE.Diverge)
-            yield oldCurrentToken.terminate();
-            //item.token.log('Gateway(' + item.element.id + ').start: converged! divergingGateway=' + result.divergingGateway);
-            //console.log('Gateway(' + item.element.id + ').start: converged! divergingGateway=', result.divergingGateway);
-            item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: all token terminate return NODE_ACTION.end');
-            return __1.NODE_ACTION.end;
         });
     }
 }

@@ -55,6 +55,7 @@ class Item {
         const user = token.execution.currentUser;
         if (user)
             this.userId = user.userId;
+        token.log(`Item:new Item ${element.id} for token ${token.id} `);
     }
     save() {
         return {

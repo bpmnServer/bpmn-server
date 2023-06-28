@@ -335,7 +335,7 @@ async function displayError(res, error) {
 async function display(req,res, title, output, logs = [], items = []) {
 
     var instances = await bpmnServer.dataStore.findInstances({},'summary');
-    let waiting = await bpmnServer.dataStore.findItems({"items.status": 'wait' }); 
+    let waiting = await bpmnServer.dataStore.findItems({"items.status": 'wait',"items.type": 'bpmn:UserTask' }); 
 
     waiting.forEach(item => {
         item.fromNow = dateDiff(item.startedAt);

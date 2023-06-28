@@ -244,9 +244,12 @@ class Execution extends ServerComponent implements IExecution {
             if (node) {
                 let token = await Token.startNewToken(TOKEN_TYPE.Primary,this, node, null, null, null, inputData);
             }
-            else {
+            else { //Error 
                 this.getItems().forEach(i => {
-                    this.logger.log(`Item: ${i.id} - ${i.elementId} - ${i.status} - ${i.timeDue}`);
+                    if (i.id==executionId)
+                    {
+                    console.log(`** trying to execute item ${i.id} - ${i.node.id} token ${i.token.id} currentItem ${i.token.currentItem.id}- token current ${i.token.currentNode.id} - token status ${i.token.status}`);
+                    }
                 });
                 this.logger.error("*** ERROR *** task id not valid:" + executionId);
             }
