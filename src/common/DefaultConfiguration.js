@@ -9,7 +9,7 @@ const ACL_1 = require("../server/ACL");
 let definitionsPath = __dirname + '/processes/';
 class Configuration {
     definitions(server) {
-        return new ModelsDatastore_1.ModelsDatastoreDB(server);
+        return new ModelsDatastore_1.ModelsDatastore(server);
     }
     appDelegate(server) {
         return new DefaultAppDelegate_1.DefaultAppDelegate(server);

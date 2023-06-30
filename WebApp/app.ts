@@ -63,7 +63,7 @@ export class WebApp {
 		this.initExpress();
 		this.initMongo();
 //NOPASSPORT 		this.initPassport();
-		const wflogger = new Logger({ toConsole: false });
+		const wflogger = new Logger({ toConsole: true });
 
 
 		this.bpmnServer = new BPMNServer(config,wflogger);

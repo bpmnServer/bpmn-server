@@ -108,7 +108,7 @@ class Workflow extends common_1.Common {
             let startNodeId = request.body.startNodeId;
             data['caseId'] = caseId++;
             let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
-            let context = yield bpmnServer.engine.start(process, data, null, startNodeId, userKey);
+            let context = yield bpmnServer.engine.start(process, data, startNodeId, userKey);
             if (context.errors) {
                 displayError(response, context.errors);
             }

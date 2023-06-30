@@ -194,8 +194,6 @@ class Gateway extends _1.Node {
                     //await oldCurrentToken.end();
                     //if (oldCurrentToken.type==TOKEN_TYPE.Diverge)
                     yield oldCurrentToken.terminate();
-                    //item.token.log('Gateway(' + item.element.id + ').start: converged! divergingGateway=' + result.divergingGateway);
-                    //console.log('Gateway(' + item.element.id + ').start: converged! divergingGateway=', result.divergingGateway);
                     item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: all token terminate return NODE_ACTION.end');
                     return __1.NODE_ACTION.end;
                 }

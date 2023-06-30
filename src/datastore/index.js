@@ -16,6 +16,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("../datastore/DataStore"), exports);
 __exportStar(require("../datastore/ModelsDatastore"), exports);
+__exportStar(require("../datastore/ModelsDatastoreDB"), exports);
 __exportStar(require("../datastore/ModelsData"), exports);
 __exportStar(require("../datastore/MongoDB"), exports);
 //# sourceMappingURL=index.js.map

@@ -10,8 +10,6 @@ const parse = duration.parse;
 const end = duration.end;
 const toSeconds = duration.toSeconds;
 
-
-
 class Cron  extends ServerComponent implements ICron {
 
 	private static timersStarted = false;

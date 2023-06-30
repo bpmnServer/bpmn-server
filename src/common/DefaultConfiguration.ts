@@ -1,5 +1,5 @@
 
-import { ModelsDatastoreDB, ModelsDatastore } from '../datastore/ModelsDatastore';
+import { ModelsDatastore } from '../datastore/ModelsDatastore';
 import { DefaultAppDelegate } from '../engine/DefaultAppDelegate';
 
 import { IConfiguration, DataStore, ILogger, IModelsDatastore, IAppDelegate, IDataStore } from '../..';
@@ -20,7 +20,7 @@ class Configuration implements IConfiguration {
 	apiKey: string;
 	sendGridAPIKey: string;
 	definitions(server) {
-		return new ModelsDatastoreDB(server); 
+		return new ModelsDatastore(server); 
 	}
 	appDelegate(server) :IAppDelegate {
 		return new DefaultAppDelegate(server);

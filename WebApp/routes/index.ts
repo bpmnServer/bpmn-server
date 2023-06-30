@@ -141,7 +141,8 @@ export class Workflow extends Common {
             data['caseId'] = caseId++;
 
             let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
-            let context = await bpmnServer.engine.start(process, data, null, startNodeId, userKey);
+	
+            let context = await bpmnServer.engine.start(process, data, startNodeId, userKey);
             if (context.errors) {
                 displayError(response, context.errors);
             }

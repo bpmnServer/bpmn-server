@@ -475,7 +475,8 @@ class Token implements IToken {
                    promises.push(Token.startNewToken(TOKEN_TYPE.Diverge, self.execution, nextNode, null, self, thisItem, null));
                 }
             });
-            this.end();
+            if (this.type!=TOKEN_TYPE.SubProcess)
+                 this.end();// causes problem for sub-process, ends subprocess prematurally
         }
         else // single node 
         {
