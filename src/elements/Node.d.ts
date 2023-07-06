@@ -42,7 +42,7 @@ declare class Node extends Element {
      *      3.  Subprocess the parent node is fired as normal
      *              run method will fire the subprocess invoking a new token and will go into wait
      */
-    execute(item: Item): Promise<void | NODE_ACTION.wait | NODE_ACTION.error | NODE_ACTION.abort>;
+    execute(item: Item): Promise<void | NODE_ACTION.wait | NODE_ACTION.end | NODE_ACTION.error | NODE_ACTION.abort>;
     continue(item: Item): Promise<void>;
     start(item: Item): Promise<NODE_ACTION>;
     run(item: Item): Promise<NODE_ACTION>;

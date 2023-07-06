@@ -88,7 +88,7 @@ declare class Token implements IToken {
      *
      * */
     continue(): Promise<void>;
-    signal(data: any): Promise<void>;
+    signal(data: any, options?: {}): Promise<void>;
     end(): Promise<void>;
     setCurrentNode(newCurrentNode: Node): void;
     goNext(): Promise<void>;

@@ -36,7 +36,7 @@ class Node extends _1.Element {
     }
     doEvent(item, event, newStatus) {
         return __awaiter(this, void 0, void 0, function* () {
-            item.token.log('Node(' + this.name + '|' + this.id + ').doEvent: executing script for event:' + event);
+            item.token.log('Node(' + this.name + '|' + this.id + ').doEvent: executing script for event:' + event + ' newStatus:' + newStatus);
             if (newStatus)
                 item.status = newStatus;
             ///item.token.log('..>' + event + ' ' + this.id);

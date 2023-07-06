@@ -60,7 +60,8 @@ var TOKEN_TYPE;
     TOKEN_TYPE["Diverge"] = "Diverge";
     TOKEN_TYPE["EventSubProcess"] = "EventSubProces";
     TOKEN_TYPE["BoundaryEvent"] = "BoundaryEvent";
-})(TOKEN_TYPE || (exports.TOKEN_TYPE = TOKEN_TYPE = {}));
+})(TOKEN_TYPE || (TOKEN_TYPE = {}));
+exports.TOKEN_TYPE = TOKEN_TYPE;
 // ---------------------------------------------
 class Token {
     get data() {
@@ -216,6 +217,9 @@ class Token {
     }
     /**
      * this is the primary exectuion method for a token
+     * Pre-Conditions:
+     *      currentNode is set
+     *      status!= end
      */
     execute(input) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -264,6 +268,7 @@ class Token {
                 this.status = __1.TOKEN_STATUS.end;
                 return;
             }
+            // current Node is now completed 
             const result = yield this.goNext();
             return result;
         });
@@ -353,15 +358,18 @@ class Token {
      *  is called to invoke an element like userTask, or trigger an envent or signal
      *
      */
-    signal(data) {
+    signal(data, options = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             // check if valid node and valid status
             // find the item
+            let recover = false;
+            if (options['recover'])
+                recover = options['recover'];
             const item = this.currentItem;
             //this.log(`..token.signal ${this.currentNode.id} ${this.currentNode.type}`);
             this.log('Token(' + this.id + ').signal: invoking ' + this.currentNode.id + ' ' + this.currentNode.type + ' with data=' + JSON.stringify(data));
             yield this.currentNode.setInput(item, data);
-            if (item.status == __1.ITEM_STATUS.wait) { // || item.type=='bpmn:SubProcess') {
+            if (item.status == __1.ITEM_STATUS.wait || recover) { // || item.type=='bpmn:SubProcess') {
                 const ret = yield this.currentNode.run(item);
                 let result = yield this.currentNode.continue(item);
                 result = yield this.goNext();

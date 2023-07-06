@@ -15,9 +15,15 @@
       <bpmn2:extensionElements>
         <camunda:inputOutput>
           <camunda:inputParameter name="repeat">100</camunda:inputParameter>
+          <camunda:inputParameter name="inputVar2">
+            <camunda:script scriptFormat="JavaScript">data.result</camunda:script>
+          </camunda:inputParameter>
           <camunda:outputParameter name="sequence">output.seq</camunda:outputParameter>
           <camunda:outputParameter name="returnText">'out text:'+output.text</camunda:outputParameter>
         </camunda:inputOutput>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">console.log(' service1 end:', data);</camunda:script>
+        </camunda:executionListener>
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_1q1veva</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0lo0xqi</bpmn2:outgoing>
@@ -42,6 +48,9 @@
           <camunda:inputParameter name="v2">3</camunda:inputParameter>
           <camunda:outputParameter name="result" />
         </camunda:inputOutput>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">console.log(' add service start:', data);</camunda:script>
+        </camunda:executionListener>
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0cr3d6e</bpmn2:incoming>
       <bpmn2:outgoing>Flow_0xs04ww</bpmn2:outgoing>

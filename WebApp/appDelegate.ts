@@ -12,10 +12,12 @@ class MyAppDelegate extends DefaultAppDelegate{
         super(server);
         this.servicesProvider = new MyServices();
     }
-    async start() {
+    /**
+    * is fired on application startup
+    **/
+    async startUp() {
         console.log('myserver started.. checking for incomplete processes');
 
-        this.server.dataStore.findInstances();
         var query = { "items.status": "start" };
 
         var list = await this.server.dataStore.findItems(query);
@@ -24,7 +26,12 @@ class MyAppDelegate extends DefaultAppDelegate{
             this.server.logger.log("...items query returend " + list.length);
             for (var i = 0; i < list.length; i++) {
                 let item = list[i];
-                console.log(item);
+                console.log('-->',item.processName,item.elementId,item.type,item.startedAt,item.status);
+                if (item.type=='bpmn:ScriptTask' || item.type=='bpmn:ServiceTask' )
+                {
+                    console.log('recovering:',item.elementId);
+//                    let response =await this.server.engine.invoke({"items.id":item.id}, {},null, {recover:true});
+                }
             }
         }
 
@@ -124,9 +131,22 @@ class MyServices {
     async serviceTask(input, context) {
         let item = context.item;
         console.log(" Hi this is the serviceTask from appDelegate");
-        console.log(item);
+        console.log(item.elementId);
         await delay(5000, 'test');
         console.log(" Hi this is the serviceTask from appDelegate says bye");
+    }
+    async simulateCrash(input, context) {
+        let item = context.item;
+        let data = item.token.data;
+        if (data['crash']=='Yes')
+        {
+         data['crash']='No';
+         await item.token.execution.save();
+         console.log('Will Crash now',item.token.data);
+         process.exit(100);
+        }
+        else
+            console.log('no crash');
     }
     async add({ v1, v2 }) {
         console.log("Add Service", v1, v2);

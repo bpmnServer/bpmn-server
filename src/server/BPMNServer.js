@@ -51,13 +51,13 @@ class BPMNServer {
         this.iam = new ACL_1.IAM(this);
         console.log("bpmn-server version " + BPMNServer.getVersion());
         BPMNServer.instance = this;
+        this.appDelegate.startUp();
         if (options['cron'] == false) {
             return;
         }
         else {
             this.cron.start();
         }
-        this.appDelegate.startUp();
     }
     static getVersion() {
         const configPath = __dirname + '/../../package.json';

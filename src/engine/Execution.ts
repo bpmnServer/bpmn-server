@@ -198,10 +198,11 @@ class Execution extends ServerComponent implements IExecution {
      * @param inputData
      * 
      */
-    public async signal(executionId, inputData:any) {
+    public async signal(executionId, inputData:any,options={}) {
 
         this.log('Execution('+this.name+').signal: executionId=' + executionId + ' data '+JSON.stringify(inputData));
         let token = null;
+
 
         this.appDelegate.executionStarted(this);
         await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoke);
@@ -221,7 +222,7 @@ class Execution extends ServerComponent implements IExecution {
 
         if (token) {
             this.log('Execution('+this.name+').signal: .. launching a token signal');
-            let result=await token.signal(inputData);
+            let result=await token.signal(inputData,options);
             this.log('Execution('+this.name+').signal: .. signal token is done');
         }
         else
@@ -273,7 +274,8 @@ class Execution extends ServerComponent implements IExecution {
 
     async save() {
         // save here :
-        this.log("..Saving instance "+this.instance.id);
+        this.log(`..Saving instance ${this.instance.id}`+JSON.stringify(this.instance.data));
+        
         const state = this.getState();
         await this.server.dataStore.saveInstance(state, this.getItems());
 

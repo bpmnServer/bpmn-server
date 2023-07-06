@@ -59,7 +59,7 @@ declare class Execution extends ServerComponent implements IExecution {
      * @param inputData
      *
      */
-    signal(executionId: any, inputData: any): Promise<void>;
+    signal(executionId: any, inputData: any, options?: {}): Promise<void>;
     save(): Promise<void>;
     getItems(): Item[];
     getItemsData(): any[];

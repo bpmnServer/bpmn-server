@@ -144,7 +144,7 @@ class Engine extends ServerComponent implements IEngine{
 			}
 			execution.log("Action:engineInvoke " + JSON.stringify(itemQuery));
 
-			execution.worker = execution.signal(item.id, data);
+			execution.worker = execution.signal(item.id, data,options);
 
 			if (options['noWait'] == true) {
 				return execution;

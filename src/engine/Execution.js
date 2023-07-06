@@ -171,7 +171,7 @@ class Execution extends server_1.ServerComponent {
      * @param inputData
      *
      */
-    signal(executionId, inputData) {
+    signal(executionId, inputData, options = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             this.log('Execution(' + this.name + ').signal: executionId=' + executionId + ' data ' + JSON.stringify(inputData));
             let token = null;
@@ -189,7 +189,7 @@ class Execution extends server_1.ServerComponent {
             }
             if (token) {
                 this.log('Execution(' + this.name + ').signal: .. launching a token signal');
-                let result = yield token.signal(inputData);
+                let result = yield token.signal(inputData, options);
                 this.log('Execution(' + this.name + ').signal: .. signal token is done');
             }
             else { // check for startEvent of a secondary process
@@ -230,7 +230,7 @@ class Execution extends server_1.ServerComponent {
     save() {
         return __awaiter(this, void 0, void 0, function* () {
             // save here :
-            this.log("..Saving instance " + this.instance.id);
+            this.log(`..Saving instance ${this.instance.id}` + JSON.stringify(this.instance.data));
             const state = this.getState();
             yield this.server.dataStore.saveInstance(state, this.getItems());
         });

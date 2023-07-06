@@ -49,8 +49,8 @@ enum EXECUTION_EVENT {
 /*
  *  possible actions by node
  */
-//   must be same as above
-enum NODE_ACTION { continue = 1, wait,  end , stop , error , abort  };
+
+enum NODE_ACTION { continue = 1, wait,  end , cancel, stop , error , abort  };
 
 enum ITEM_STATUS {
     enter = 'enter',

@@ -304,10 +304,16 @@ async function restart(req, res) {
     let output = ['Complete ' + instanceId];
     display(req,res, 'Show', output);
 }
+async function getProcs() {
+    let list=[];
+    let procs=await bpmnServer.definitions.getList();
+    procs.forEach(p=>{list.push(p.name);});
+    return list;
+}
 async function manage(req, res) {
     res.render('manageProcesses',
         {
-            procs: await bpmnServer.definitions.getList(),
+            procs: await getProcs()
         });
 
 }
@@ -362,7 +368,7 @@ async function display(req,res, title, output, logs = [], items = []) {
             title: title, output: output,
             engines,
             userId: req.session.userId,
-            procs: await bpmnServer.definitions.getList(),
+            procs: await getProcs(),
             debugMsgs: [], // Logger.get(),
             waiting: waiting,
             instances,

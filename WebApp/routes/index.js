@@ -240,10 +240,18 @@ function restart(req, res) {
         display(req, res, 'Show', output);
     });
 }
+function getProcs() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let list = [];
+        let procs = yield bpmnServer.definitions.getList();
+        procs.forEach(p => { list.push(p.name); });
+        return list;
+    });
+}
 function manage(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         res.render('manageProcesses', {
-            procs: yield bpmnServer.definitions.getList(),
+            procs: yield getProcs()
         });
     });
 }
@@ -290,7 +298,7 @@ function display(req, res, title, output, logs = [], items = []) {
             title: title, output: output,
             engines,
             userId: req.session.userId,
-            procs: yield bpmnServer.definitions.getList(),
+            procs: yield getProcs(),
             debugMsgs: [],
             waiting: waiting,
             instances,

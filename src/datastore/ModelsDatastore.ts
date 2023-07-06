@@ -35,7 +35,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
             if (Path.extname(file) == '.bpmn') {
                 let name = Path.basename(file);
                 name = name.substring(0, name.length - 5);;
-                files.push(name);
+                files.push({name,saved:null});
             }
         });
   
@@ -135,11 +135,11 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
         const models = new Map();
 
         filesList.forEach(f => {
-            const path=this.definitionsPath + f + '.bpmn';
+            const path=this.definitionsPath + f['name'] + '.bpmn';
 
             var stats = fs.statSync(path);
             var mtime = stats.mtime;
-            models.set(f, mtime);
+            models.set(f['name'], mtime);
         });
         const dbList = await super.getList();
         dbList.forEach(model => {

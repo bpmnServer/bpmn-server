@@ -250,9 +250,6 @@
       <bpmndi:BPMNShape id="SubProcess_1mrpeu8_di" bpmnElement="SubProcess_A" isExpanded="true">
         <dc:Bounds x="495" y="44" width="407" height="391" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0gagg2p_di" bpmnElement="TextAnnotation_0gagg2p">
-        <dc:Bounds x="770" y="205" width="100" height="30" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1xci4ji_di" bpmnElement="Flow_1xci4ji">
         <di:waypoint x="626" y="180" />
         <di:waypoint x="626" y="212" />
@@ -303,14 +300,14 @@
           <dc:Bounds x="759" y="162" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_0x4azqh_di" bpmnElement="UserTask1">
-        <dc:Bounds x="576" y="100" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0e3d6g3_di" bpmnElement="EndEvent_error2">
         <dc:Bounds x="710" y="202" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="531" y="303" width="66" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0x4azqh_di" bpmnElement="UserTask1">
+        <dc:Bounds x="576" y="100" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="SubProcess_1ywmhkb_di" bpmnElement="SubProcess_event2" isExpanded="true">
         <dc:Bounds x="519" y="283" width="272" height="120" />
@@ -346,6 +343,9 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_04c6efy_di" bpmnElement="Event_0ce8dnc">
         <dc:Bounds x="608" y="212" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0gagg2p_di" bpmnElement="TextAnnotation_0gagg2p">
+        <dc:Bounds x="770" y="205" width="100" height="30" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_07wwuod_di" bpmnElement="Association_07wwuod">
         <di:waypoint x="746" y="220" />

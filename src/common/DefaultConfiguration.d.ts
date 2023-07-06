@@ -1,4 +1,4 @@
-import { ModelsDatastoreDB } from '../datastore/ModelsDatastore';
+import { ModelsDatastore } from '../datastore/ModelsDatastore';
 import { IConfiguration, DataStore, ILogger, IAppDelegate } from '../..';
 declare class Configuration implements IConfiguration {
     definitionsPath: string;
@@ -17,7 +17,7 @@ declare class Configuration implements IConfiguration {
     logger: ILogger;
     apiKey: string;
     sendGridAPIKey: string;
-    definitions(server: any): ModelsDatastoreDB;
+    definitions(server: any): ModelsDatastore;
     appDelegate(server: any): IAppDelegate;
     dataStore(server: any): DataStore;
     constructor({ definitionsPath, templatesPath, timers, database, apiKey, logger, definitions, appDelegate, dataStore, IAM, ACL }: {

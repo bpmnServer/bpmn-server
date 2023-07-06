@@ -38,7 +38,7 @@ class Node extends Element {
 
     }
     async doEvent(item: Item, event: EXECUTION_EVENT, newStatus: ITEM_STATUS) {
-        item.token.log('Node('+this.name+'|'+this.id+').doEvent: executing script for event:' + event);
+        item.token.log('Node('+this.name+'|'+this.id+').doEvent: executing script for event:' + event + ' newStatus:'+newStatus);
         if (newStatus)
             item.status = newStatus;
         ///item.token.log('..>' + event + ' ' + this.id);

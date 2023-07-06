@@ -36,7 +36,7 @@ class ModelsDatastore extends ModelsDatastoreDB_1.ModelsDatastoreDB {
                     let name = Path.basename(file);
                     name = name.substring(0, name.length - 5);
                     ;
-                    files.push(name);
+                    files.push({ name, saved: null });
                 }
             });
             return files;
@@ -144,10 +144,10 @@ class ModelsDatastore extends ModelsDatastoreDB_1.ModelsDatastoreDB {
                 let filesList = yield this.getList();
                 const models = new Map();
                 filesList.forEach(f => {
-                    const path = this.definitionsPath + f + '.bpmn';
+                    const path = this.definitionsPath + f['name'] + '.bpmn';
                     var stats = fs.statSync(path);
                     var mtime = stats.mtime;
-                    models.set(f, mtime);
+                    models.set(f['name'], mtime);
                 });
                 const dbList = yield _super.getList.call(this);
                 dbList.forEach(model => {

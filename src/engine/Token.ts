@@ -231,6 +231,9 @@ class Token implements IToken {
     }
     /**
      * this is the primary exectuion method for a token
+     * Pre-Conditions:
+     *      currentNode is set 
+     *      status!= end
      */
     async execute(input) {
 
@@ -289,7 +292,7 @@ class Token implements IToken {
             return;     
         }
 
-
+        // current Node is now completed 
         const result = await this.goNext();
         return result;
 
@@ -378,15 +381,19 @@ class Token implements IToken {
      *  is called to invoke an element like userTask, or trigger an envent or signal
      *  
      */ 
-    async signal(data) {
+    async signal(data,options={}) {
         // check if valid node and valid status
         // find the item
+        let recover=false;
+        if (options['recover'])
+            recover=options['recover'];
+
         const item = this.currentItem;
         //this.log(`..token.signal ${this.currentNode.id} ${this.currentNode.type}`);
         this.log('Token('+this.id +').signal: invoking '+this.currentNode.id+' '+this.currentNode.type+' with data='+JSON.stringify(data));
 
         await this.currentNode.setInput(item, data);
-        if (item.status == ITEM_STATUS.wait) {// || item.type=='bpmn:SubProcess') {
+        if (item.status == ITEM_STATUS.wait || recover) {// || item.type=='bpmn:SubProcess') {
             const ret = await this.currentNode.run(item);
 
 

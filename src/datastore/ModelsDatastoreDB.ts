@@ -36,7 +36,7 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
 
         this.logger.log('find events for ' + " recs:" + records.length);
         const list = [];
-        records.forEach(r => { list.push(r.name); });
+        records.forEach(r => { list.push({ name: r.name, saved: r.saved }); });
         return list;
     }
     /*

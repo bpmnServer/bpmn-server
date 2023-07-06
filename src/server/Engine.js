@@ -124,7 +124,7 @@ class Engine extends ServerComponent_1.ServerComponent {
                     execution.currentUser = this.iam.getCurrentUser(userKey);
                 }
                 execution.log("Action:engineInvoke " + JSON.stringify(itemQuery));
-                execution.worker = execution.signal(item.id, data);
+                execution.worker = execution.signal(item.id, data, options);
                 if (options['noWait'] == true) {
                     return execution;
                 }

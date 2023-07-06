@@ -3,7 +3,7 @@ import { DefaultAppDelegate } from './index';
 declare class MyAppDelegate extends DefaultAppDelegate {
     winSocket: any;
     constructor(server: any);
-    start(): Promise<void>;
+    startUp(): Promise<void>;
     sendEmail(to: any, msg: any, body: any): void;
     executionStarted(execution: IExecution): Promise<void>;
     executionEvent(context: any, event: any): Promise<void>;

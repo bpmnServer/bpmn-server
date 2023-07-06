@@ -8,18 +8,14 @@ declare class Gateway extends Node {
       * @param item
       */
     getOutbounds(item: Item): Item[];
-    findActiveFlows(token: Token): {
-        pendingTokens: any[];
-        waitingTokens: any[];
-    };
     getPotentialPath(node: any, path?: any): any;
     canReach(node: any, target: any): any;
-    analyzeConvergeFlows(item: Item): {
-        pendingTokens: any[];
+    getRelatedTokens(item: Item): any[];
+    analyzeConvergingTokens(item: Item): {
+        pendingTokens: Token[];
         waitingTokens: Token[];
     };
     start(item: Item): Promise<NODE_ACTION>;
-    converge(item: any, waitingTokens: any): Promise<NODE_ACTION>;
 }
 /**
  *  ExclusiveGatway:

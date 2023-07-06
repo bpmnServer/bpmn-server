@@ -245,27 +245,32 @@ class API extends common_1.Common {
             //console.log('request', request);
             console.log('request.body', request.body);
             var fstream;
+            var files = [];
             try {
                 if (request.busboy) {
                     request.pipe(request.busboy);
                     request.busboy.on('file', function (fileUploaded, file, filename) {
                         //Path where image will be uploaded
                         const filepath = __dirname + '/../tmp/' + filename.filename;
-                        fstream = fsx.createWriteStream(filepath);
-                        file.pipe(fstream);
-                        fstream.on('close', function () {
-                            return __awaiter(this, void 0, void 0, function* () {
-                                const source = fsx.readFileSync(filepath, { encoding: 'utf8', flag: 'r' });
-                                try {
-                                    yield bpmnServer.definitions.save(name, source, null);
-                                }
-                                catch (exc) {
-                                    console.log('error in api.ts import ', exc.message);
-                                    response.json({ errors: exc.message });
-                                    return;
-                                }
-                                response.json("OK");
-                            });
+                        file.pipe(fsx.createWriteStream(filepath));
+                        const fileC = fsx.readFileSync(filepath, { encoding: 'utf8', flag: 'r' });
+                        files.push(fileC);
+                    });
+                    request.busboy.on('finish', function () {
+                        return __awaiter(this, void 0, void 0, function* () {
+                            var bpmnFile, svgFile = null;
+                            bpmnFile = files[0];
+                            if (files.length > 1)
+                                svgFile = files[1];
+                            try {
+                                yield bpmnServer.definitions.save(name, bpmnFile, svgFile);
+                            }
+                            catch (exc) {
+                                console.log('error in api.ts import ', exc.message, exc);
+                                response.json({ errors: exc.message });
+                                return;
+                            }
+                            response.json("OK");
                         });
                     });
                 }

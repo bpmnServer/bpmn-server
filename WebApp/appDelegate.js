@@ -18,17 +18,23 @@ class MyAppDelegate extends index_1.DefaultAppDelegate {
         super(server);
         this.servicesProvider = new MyServices();
     }
-    start() {
+    /**
+    * is fired on application startup
+    **/
+    startUp() {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('myserver started.. checking for incomplete processes');
-            this.server.dataStore.findInstances();
             var query = { "items.status": "start" };
             var list = yield this.server.dataStore.findItems(query);
             if (list.length > 0) {
                 this.server.logger.log("...items query returend " + list.length);
                 for (var i = 0; i < list.length; i++) {
                     let item = list[i];
-                    console.log(item);
+                    console.log('-->', item.processName, item.elementId, item.type, item.startedAt, item.status);
+                    if (item.type == 'bpmn:ScriptTask' || item.type == 'bpmn:ServiceTask') {
+                        console.log('recovering:', item.elementId);
+                        //                    let response =await this.server.engine.invoke({"items.id":item.id}, {},null, {recover:true});
+                    }
                 }
             }
         });
@@ -135,9 +141,23 @@ class MyServices {
         return __awaiter(this, void 0, void 0, function* () {
             let item = context.item;
             console.log(" Hi this is the serviceTask from appDelegate");
-            console.log(item);
+            console.log(item.elementId);
             yield delay(5000, 'test');
             console.log(" Hi this is the serviceTask from appDelegate says bye");
+        });
+    }
+    simulateCrash(input, context) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let item = context.item;
+            let data = item.token.data;
+            if (data['crash'] == 'Yes') {
+                data['crash'] = 'No';
+                yield item.token.execution.save();
+                console.log('Will Crash now', item.token.data);
+                process.exit(100);
+            }
+            else
+                console.log('no crash');
         });
     }
     add({ v1, v2 }) {

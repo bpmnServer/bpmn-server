@@ -77,13 +77,14 @@ class BPMNServer implements IBPMNServer {
 
 		BPMNServer.instance=this;
 
+		this.appDelegate.startUp();
+
 		if (options['cron'] == false) {
 			return;
 		}
 		else {
 			this.cron.start();
 		}
-		this.appDelegate.startUp();
 	}
 
 	static getVersion() {
