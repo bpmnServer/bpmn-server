@@ -250,11 +250,20 @@ class API extends common_1.Common {
                 if (request.busboy) {
                     request.pipe(request.busboy);
                     request.busboy.on('file', function (fileUploaded, file, filename) {
+                        // no longer writing to tmp
                         //Path where image will be uploaded
-                        const filepath = __dirname + '/../tmp/' + filename.filename;
-                        file.pipe(fsx.createWriteStream(filepath));
-                        const fileC = fsx.readFileSync(filepath, { encoding: 'utf8', flag: 'r' });
-                        files.push(fileC);
+                        //const filepath = __dirname + '/../tmp/' + filename.filename;
+                        var contents = '';
+                        file.on('data', (data) => {
+                            contents += data;
+                            console.log(`File [${filename.filename}] got ${data.length} bytes`);
+                        }).on('close', () => {
+                            console.log(`File [${filename.filename}] done`);
+                            files.push(contents);
+                        });
+                        //                        file.pipe(fsx.createWriteStream(filepath));
+                        //                        const fileC= fsx.readFileSync(filepath,{ encoding: 'utf8', flag: 'r' });
+                        //                        files.push(fileC);
                     });
                     request.busboy.on('finish', function () {
                         return __awaiter(this, void 0, void 0, function* () {
