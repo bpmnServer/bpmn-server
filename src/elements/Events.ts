@@ -24,9 +24,9 @@ class Event extends Node {
         return super.start(item);
     }
 
-    end(item: Item) {
+    end(item: Item,cancel: Boolean=false) {
 
-        return super.end(item);
+        return super.end(item,cancel);
     }
     get canBeInvoked() { return true; }
 

@@ -27,7 +27,7 @@
     <bpmn:boundaryEvent id="Expired-Timer" attachedToRef="user_task">
       <bpmn:outgoing>Flow_1lmzbc9</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_1i495uj">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT15S</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT35S</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
     <bpmn:boundaryEvent id="Cancel-Message" name="Cancel Message&#10;&#10;" attachedToRef="user_task">
@@ -51,7 +51,7 @@
       <bpmn:incoming>Flow_0a5dhlj</bpmn:incoming>
     </bpmn:sendTask>
     <bpmn:textAnnotation id="TextAnnotation_0l7nnax">
-      <bpmn:text>Interrupting Timer After 15 Seconds  (PT15S)</bpmn:text>
+      <bpmn:text>Interrupting Timer After 35 Seconds  (PT35S)</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_16lfo0m" sourceRef="Expired-Timer" targetRef="TextAnnotation_0l7nnax" />
     <bpmn:textAnnotation id="TextAnnotation_02qdm13">

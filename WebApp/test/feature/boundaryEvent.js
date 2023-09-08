@@ -60,8 +60,11 @@ Feature('Boundary Event', () => {
 
                 expect(getItem('user_task').status).equals('end');
                 expect(getItem('Reminder-Timer').status).equals('end');
+                expect(getItem('Reminder-Timer').endedAt).equals(null);
                 expect(getItem('Expired-Timer').status).equals('end');
+                expect(getItem('Expired-Timer').endedAt).equals(null);
                 expect(getItem('Cancel-Message').status).equals('end');
+                expect(getItem('Cancel-Message').endedAt).equals(null);
                 expect(getItem('process_request').status).equals('end');
                 expect(getItem('event_end').status).equals('end');
 

@@ -194,9 +194,9 @@ class Node extends _1.Element {
             return Enums_1.NODE_ACTION.end;
         });
     }
-    end(item) {
+    end(item, cancel = false) {
         return __awaiter(this, void 0, void 0, function* () {
-            item.token.log('Node(' + this.name + '|' + this.id + ').end: item=' + item.id);
+            item.token.log('Node(' + this.name + '|' + this.id + ').end: item=' + item.id + ' cancel:' + cancel);
             /**
              * Rule:    boundary events are canceled when owner task status is 'end'
              * */
@@ -221,15 +221,17 @@ class Node extends _1.Element {
                     yield flow.execute(flowItem);
                 }
             }
+            if (cancel)
+                item.endedAt = null;
+            else
+                item.endedAt = new Date().toISOString();
             if (item.status == Enums_1.ITEM_STATUS.end)
                 return;
-            item.endedAt = new Date().toISOString();
-            ;
             this.behaviours.forEach(function (b) {
                 return __awaiter(this, void 0, void 0, function* () { yield b.end(item); });
             });
             yield this.doEvent(item, Enums_1.EXECUTION_EVENT.node_end, Enums_1.ITEM_STATUS.end);
-            item.token.log('Node(' + this.name + '|' + this.id + ').end: setting item status to end itemId=' + item.id + ' itemStatus=' + item.status);
+            item.token.log('Node(' + this.name + '|' + this.id + ').end: setting item status to end itemId=' + item.id + ' itemStatus=' + item.status + ' cancel: ' + cancel + ' endedat ' + item.endedAt);
             this.behaviours.forEach(function (b) {
                 return __awaiter(this, void 0, void 0, function* () { yield b.exit(item); });
             });

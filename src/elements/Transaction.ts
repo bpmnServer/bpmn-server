@@ -14,9 +14,9 @@ import { SubProcess } from '.';
 class Transaction extends SubProcess {
     get requiresWait() { return true; }       
 
-    async end(item) {
+    async end(item,cancel:Boolean=false) {
         console.log('trans ending');
-        super.end(item);
+        super.end(item,cancel);
 
     }
     /**

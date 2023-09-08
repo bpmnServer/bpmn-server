@@ -38,8 +38,8 @@ class Event extends _1.Node {
             return _super.start.call(this, item);
         });
     }
-    end(item) {
-        return super.end(item);
+    end(item, cancel = false) {
+        return super.end(item, cancel);
     }
     get canBeInvoked() { return true; }
 }

@@ -60,8 +60,7 @@ var TOKEN_TYPE;
     TOKEN_TYPE["Diverge"] = "Diverge";
     TOKEN_TYPE["EventSubProcess"] = "EventSubProces";
     TOKEN_TYPE["BoundaryEvent"] = "BoundaryEvent";
-})(TOKEN_TYPE || (TOKEN_TYPE = {}));
-exports.TOKEN_TYPE = TOKEN_TYPE;
+})(TOKEN_TYPE || (exports.TOKEN_TYPE = TOKEN_TYPE = {}));
 // ---------------------------------------------
 class Token {
     get data() {
@@ -339,8 +338,8 @@ class Token {
     terminate() {
         return __awaiter(this, void 0, void 0, function* () {
             this.log('Token(' + this.id + ').terminate: terminating ....');
-            yield this.currentNode.end(this.currentItem);
-            yield this.end();
+            //await this.currentNode.end(this.currentItem,true);
+            yield this.end(true);
             this.log('Token(' + this.id + ').terminate: terminating is done!');
         });
     }
@@ -382,13 +381,14 @@ class Token {
     /*
      *  is called to mark this token end
      */
-    end() {
+    end(cancel = false) {
         return __awaiter(this, void 0, void 0, function* () {
             this.log('Token(' + this.id + ').end: currentNode=' + this.currentNode.id + ' status=' + this.status + ' currentItem.status=' + this.currentItem.status);
-            if (this.currentItem.status != __1.ITEM_STATUS.end)
+            if (this.currentItem.status != __1.ITEM_STATUS.end) {
                 this.log('..**token ended but item is still ' + this.currentItem.status);
+            }
             this.status = __1.TOKEN_STATUS.end;
-            yield this.currentNode.end(this.currentItem);
+            yield this.currentNode.end(this.currentItem, cancel);
             this.execution.tokenEnded(this);
             // check if subprocess then continue parent
             if (this.type == TOKEN_TYPE.SubProcess) {

@@ -364,8 +364,8 @@ class Token implements IToken {
      * */
     async terminate() {
         this.log('Token('+this.id +').terminate: terminating ....');
-        await this.currentNode.end(this.currentItem);
-        await this.end();
+        //await this.currentNode.end(this.currentItem,true);
+        await this.end(true);
         this.log('Token('+this.id +').terminate: terminating is done!');
     }
     /**
@@ -410,12 +410,14 @@ class Token implements IToken {
      *  is called to mark this token end
      */
 
-    async end() {
+    async end(cancel:Boolean=false) {
         this.log('Token('+this.id +').end: currentNode=' + this.currentNode.id +' status='+this.status+' currentItem.status='+this.currentItem.status);
         if (this.currentItem.status != ITEM_STATUS.end)
+            {
             this.log('..**token ended but item is still '+this.currentItem.status);
+            }
         this.status = TOKEN_STATUS.end;
-        await this.currentNode.end(this.currentItem);
+        await this.currentNode.end(this.currentItem,cancel);
         this.execution.tokenEnded(this);
         // check if subprocess then continue parent
         if (this.type==TOKEN_TYPE.SubProcess) {

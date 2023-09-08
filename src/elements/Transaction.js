@@ -16,13 +16,13 @@ const _1 = require(".");
 //NO_import { DecisionTable } from 'dmn-engine';
 class Transaction extends _1.SubProcess {
     get requiresWait() { return true; }
-    end(item) {
+    end(item, cancel = false) {
         const _super = Object.create(null, {
             end: { get: () => super.end }
         });
         return __awaiter(this, void 0, void 0, function* () {
             console.log('trans ending');
-            _super.end.call(this, item);
+            _super.end.call(this, item, cancel);
         });
     }
     /**

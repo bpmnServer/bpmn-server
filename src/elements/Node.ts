@@ -208,8 +208,8 @@ class Node extends Element {
         item.token.log('Node('+this.name+'|'+this.id+').run: item=' + item.id);
         return NODE_ACTION.end;
     }
-    async end(item: Item) {
-        item.token.log('Node('+this.name+'|'+this.id+').end: item=' + item.id);
+    async end(item: Item,cancel:Boolean=false) {
+        item.token.log('Node('+this.name+'|'+this.id+').end: item=' + item.id+ ' cancel:'+cancel);
         /**
          * Rule:    boundary events are canceled when owner task status is 'end'
          * */
@@ -236,12 +236,16 @@ class Node extends Element {
                 }
         }
 
+        if (cancel)
+            item.endedAt = null;
+        else
+            item.endedAt = new Date().toISOString();
+
         if (item.status == ITEM_STATUS.end)
             return;
-        item.endedAt = new Date().toISOString();;
         this.behaviours.forEach(async function (b) { await b.end(item); });
         await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end);
-        item.token.log('Node('+this.name+'|'+this.id+').end: setting item status to end itemId=' + item.id + ' itemStatus=' + item.status);
+        item.token.log('Node('+this.name+'|'+this.id+').end: setting item status to end itemId=' + item.id + ' itemStatus=' + item.status + ' cancel: '+cancel+' endedat '+item.endedAt);
         this.behaviours.forEach(async function (b) { await b.exit(item); });
         item.token.log('Node(' + this.name + '|' + this.id + ').end: finished');
     }
