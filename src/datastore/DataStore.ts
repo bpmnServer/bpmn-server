@@ -46,7 +46,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		const recs = await this.findInstances({ id: instanceId }, 'full');
 		if (recs.length == 0) {
 
-			this.logger.error("Instance is not found for this item");
+			// this.logger.error("Instance is not found for this item");
 			return null;
 		}
 		const instanceData = recs[0];
@@ -95,7 +95,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 	private async saveInstance(instance) {
 //		this.logger.log("Saving...");
 
-
+		// console.log("save item:",instance)
 		//var json = JSON.stringify(instance.state, null, 2);
 		const tokensCount = instance.tokens.length;
 		let itemsCount = instance.items.length;
@@ -134,7 +134,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		});*/
 
 		await Promise.all(this.promises);
-		this.logger.log('..DataStore:saving Complete');
+		// this.logger.log('..DataStore:saving Complete');
 
 	}
 
@@ -222,8 +222,8 @@ class DataStore extends ServerComponent  implements IDataStore {
 		const result = this.translateCriteria(query);
 
 		var records = await this.db.find(this.dbConfiguration.db, Instance_collection, result.query, result.projection);
-		//console.log('...find items for query:', query, " translated to :", JSON.stringify(result),  " recs:" , records.length)
-		this.logger.log('...find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result)+" recs:"+records.length);
+		// console.log('...find items for query:', query, " translated to :", JSON.stringify(result),  " recs:" , records.length)
+		// this.logger.log('...find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result)+" recs:"+records.length);
 
 		return this.getItemsFromInstances(records, result.match);
 

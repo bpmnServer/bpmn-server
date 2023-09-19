@@ -19,6 +19,8 @@ class Configuration implements IConfiguration {
 	logger: ILogger;
 	apiKey: string;
 	sendGridAPIKey: string;
+	IAM:Function;
+	ACL:Function;
 	definitions(server) {
 		return new ModelsDatastore(server); 
 	}
@@ -46,6 +48,8 @@ class Configuration implements IConfiguration {
 		this.definitions = definitions;
 		this.appDelegate = appDelegate;
 		this.dataStore = dataStore;
+		this.IAM = IAM
+		this.ACL = ACL
 	}
 }
 var defaultConfiguration = new Configuration(

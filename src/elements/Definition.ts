@@ -109,6 +109,9 @@ class Definition implements IDefinition{
         try 
         {
             definition = await this.getDefinition(this.source, this.logger);
+            // console.log("************************************")
+            // console.log(definition)
+            // console.log("************************************")
         }
         catch(exc)
         {
@@ -254,6 +257,7 @@ references:
             let behaviours = [];
             node.behaviours.forEach(behav => {
                 behaviours.push(behav.describe());});
+            
             elements.push({ id: node.id, name: node.name, type: node.type, process: node.processId , def: node.def, description: node.describe() , behaviours });
         });
 

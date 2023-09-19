@@ -21,6 +21,7 @@ interface IItemData {
     authorizations;
     notifications;
     vars;
+    // def;
 }
 interface IInstanceData {
     id;

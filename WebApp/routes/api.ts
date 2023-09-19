@@ -16,7 +16,7 @@ var caseId = Math.floor(Math.random() * 10000);
 
 /* GET users listing. */
 
-console.log("api.ts");
+// console.log("api.ts");
 
 const awaitAppDelegateFactory = (middleware) => {
     return async (req, res, next) => {
@@ -134,7 +134,9 @@ export class API extends Common {
                     options = request.body.options;
                 }
 
-                if (request.body.userId) {
+                if(options['userId'] !== undefined){
+                    userId = options['userId']
+                }else if (request.body.userId) {
                     userId = request.body.userId;
                 }
 
@@ -321,7 +323,7 @@ export class API extends Common {
                             }
                         catch(exc)
                             {
-                            console.log('error in api.ts import ',exc.message,exc);
+                            // console.log('error in api.ts import ',exc.message,exc);
                             response.json({errors:  exc.message});
                             return;
                             }
