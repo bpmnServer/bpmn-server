@@ -106,7 +106,7 @@ class Execution extends ServerComponent implements IExecution {
         }
     }
     async end() {
-        this.log(".execution ended.");
+        // this.log(".execution ended.");
         this.instance.endedAt = new Date().toISOString();;
         this.instance.status = EXECUTION_STATUS.end;
         if (this.instance.parentItemId) {
@@ -136,13 +136,10 @@ class Execution extends ServerComponent implements IExecution {
 
     }
     public async execute(startNodeId = null, inputData = {}, options = {}) {
-
-        this.log('ACTION:execute:');
-        await this.definition.load();
-
+        await this.definition.load();        
         this.instance.status = EXECUTION_STATUS.running;
         this.appDelegate.executionStarted(this);
-
+        
         
         if (inputData)
             this.instance.data = Object.assign({}, inputData);
@@ -168,7 +165,7 @@ class Execution extends ServerComponent implements IExecution {
 
         await this.doExecutionEvent(this.process, EXECUTION_EVENT.process_start);
 
-        this.log('..starting at :' + startNode.id);
+        // this.log('..starting at :' + startNode.id);
         let token = await Token.startNewToken(TOKEN_TYPE.Primary,this, startNode, null, null, null, null,inputData,true);
 
         // start all event sub processes for the process
@@ -178,7 +175,7 @@ class Execution extends ServerComponent implements IExecution {
         await token.execute(inputData);
 
         await Promise.all(this.promises);
-        this.log('.execute returned');
+        // this.log('.execute returned');
         await this.doExecutionEvent(this.process, EXECUTION_EVENT.process_wait);
 
         this.report();
@@ -200,7 +197,7 @@ class Execution extends ServerComponent implements IExecution {
      */
     public async signal(executionId, inputData:any,options={}) {
 
-        this.log('Execution('+this.name+').signal: executionId=' + executionId + ' data '+JSON.stringify(inputData));
+        // this.log('Execution('+this.name+').signal: executionId=' + executionId + ' data '+JSON.stringify(inputData));
         let token = null;
 
 
@@ -221,9 +218,9 @@ class Execution extends ServerComponent implements IExecution {
 
 
         if (token) {
-            this.log('Execution('+this.name+').signal: .. launching a token signal');
+            // this.log('Execution('+this.name+').signal: .. launching a token signal');
             let result=await token.signal(inputData,options);
-            this.log('Execution('+this.name+').signal: .. signal token is done');
+            // this.log('Execution('+this.name+').signal: .. signal token is done');
         }
         else
             {  // check for startEvent of a secondary process
@@ -232,11 +229,11 @@ class Execution extends ServerComponent implements IExecution {
             this.definition.processes.forEach(proc => {
                 let startNodeId = proc.getStartNode().id;
                 if (startNodeId !== startedNodeId) {
-                    this.log(`checking for valid other start node: ${startNodeId} is possible`);
+                    // this.log(`checking for valid other start node: ${startNodeId} is possible`);
                     if (startNodeId == executionId) {
                         // ok we will start new token for this
                         node = this.getNodeById(executionId);
-                        this.log('..starting at :' + executionId);
+                        // this.log('..starting at :' + executionId);
                     }
                 }
             });
@@ -249,32 +246,32 @@ class Execution extends ServerComponent implements IExecution {
                 this.getItems().forEach(i => {
                     if (i.id==executionId)
                     {
-                    console.log(`** trying to execute item ${i.id} - ${i.node.id} token ${i.token.id} currentItem ${i.token.currentItem.id}- token current ${i.token.currentNode.id} - token status ${i.token.status}`);
+                    // console.log(`** trying to execute item ${i.id} - ${i.node.id} token ${i.token.id} currentItem ${i.token.currentItem.id}- token current ${i.token.currentNode.id} - token status ${i.token.status}`);
                     }
                 });
-                this.logger.error("*** ERROR *** task id not valid:" + executionId);
+                // this.logger.error("*** ERROR *** task id not valid:" + executionId);
             }
         }
 
 
-        this.log('Execution('+this.name+').signal: returning .. waiting for promises status:' + this.instance.status + " id: " + executionId);
+        // this.log('Execution('+this.name+').signal: returning .. waiting for promises status:' + this.instance.status + " id: " + executionId);
         await Promise.all(this.promises);
 
 
         await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoked);
 
-        this.log('Execution('+this.name+').signal: returned process  status:' + this.instance.status + " id: " + executionId);
+        // this.log('Execution('+this.name+').signal: returned process  status:' + this.instance.status + " id: " + executionId);
 
         this.report();
 
 
         await this.save();
-        this.log('Execution('+this.name+').signal: finished!');
+        // this.log('Execution('+this.name+').signal: finished!');
     }
 
     async save() {
         // save here :
-        this.log(`..Saving instance ${this.instance.id}`+JSON.stringify(this.instance.data));
+        // this.log(`..Saving instance ${this.instance.id}`+JSON.stringify(this.instance.data));
         
         const state = this.getState();
         await this.server.dataStore.saveInstance(state, this.getItems());
@@ -380,7 +377,7 @@ class Execution extends ServerComponent implements IExecution {
         //execution.doExecutionEvent(this, EXECUTION_EVENT.process_loaded);
 
 
-        execution.log('.restore completed');
+        // execution.log('.restore completed');
         execution.report();
 
         const proc = execution.definition.getStartNode().process;
@@ -403,15 +400,15 @@ class Execution extends ServerComponent implements IExecution {
 
     report() {
 
-        this.log('.Execution Report ----');
-        this.log('..Status:' + this.instance.status);
+        // this.log('.Execution Report ----');
+        // this.log('..Status:' + this.instance.status);
         this.tokens.forEach(token => {
             const branch = token.originItem ? token.originItem.elementId : 'root';
             const parent = token.parentToken ? token.parentToken.id : '-';
             let p='';
             for(var i=0;i<token.path.length;i++)
                 {p+=''+token.path[i].node.id+'->'; }
-            this.log(`..token: ${token.id} - ${token.status} - ${token.type} current: ${token.currentNode.id} from ${branch} child of ${parent} path: ${p} `+JSON.stringify(token.data) );
+            // this.log(`..token: ${token.id} - ${token.status} - ${token.type} current: ${token.currentNode.id} from ${branch} child of ${parent} path: ${p} `+JSON.stringify(token.data) );
         });
 
         let indx = 0;
@@ -420,13 +417,15 @@ class Execution extends ServerComponent implements IExecution {
             const item = items[indx];
             const endedAt = (item.endedAt) ? item.endedAt : '-';
 
-            if (item.element.type == 'bpmn:SequenceFlow')
-                this.log(`..Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status}`);
-            else
-                this.log(`..Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status}  from ${item.startedAt} to ${endedAt} id: ${item.id}`);
+            if (item.element.type == 'bpmn:SequenceFlow'){
+                // this.log(`..Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status}`);
+            }else{
+                // this.log(`..Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status}  from ${item.startedAt} to ${endedAt} id: ${item.id}`);
+            }
         }
-        this.log('.data:');
-        this.log(JSON.stringify(this.instance.data));
+
+        // this.log('.data:');
+        // this.log(JSON.stringify(this.instance.data));
     }
 
     uids= {};
@@ -457,7 +456,7 @@ class Execution extends ServerComponent implements IExecution {
         await this.listener.emit('all', { event, context: this });
     }
     log(...msg) {
-        this.instance.logs.push(this.logger.log(...msg));
+        // this.instance.logs.push(this.logger.log(...msg));
     }
     error(msg) {
         this.instance.logs.push(msg);

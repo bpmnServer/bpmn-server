@@ -1,8 +1,8 @@
 const moddleOptions =
 {
   "name": "Node bpmn-engine",
-  "uri": "http://paed01.github.io/bpmn-engine/schema/2017/08/bpmn",
-  "prefix": "js",
+  "uri": "http://camunda.org/schema/1.0/bpmn",
+  "prefix": "camunda",
   "xml": {
     "tagAlias": "lowerCase"
   },
@@ -80,7 +80,152 @@ const moddleOptions =
                     "type": "String"
                 }
             ]
+        },
+        {
+          "name": "Assignable",
+          "extends": [ "bpmn:UserTask" ],
+          "properties": [
+            {
+              "name": "assignee",
+              "isAttr": true,
+              "type": "String"
+            },
+            {
+              "name": "candidateUsers",
+              "isAttr": true,
+              "type": "String"
+            },
+            {
+              "name": "candidateGroups",
+              "isAttr": true,
+              "type": "String"
+            },
+            {
+              "name": "dueDate",
+              "isAttr": true,
+              "type": "String"
+            },
+            {
+              "name": "followUpDate",
+              "isAttr": true,
+              "type": "String"
+            },
+            {
+              "name": "priority",
+              "isAttr": true,
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "FormData",
+          "superClass": [ "Element" ],
+          "meta": {
+            "allowedIn": [
+              "bpmn:StartEvent",
+              "bpmn:UserTask"
+            ]
+          },
+          "properties": [
+            {
+              "name": "fields",
+              "type": "FormField",
+              "isMany": true
+            },
+            {
+              "name": "businessKey",
+              "type": "String",
+              "isAttr": true
+            }
+          ]
+        },{
+          "name": "FormField",
+          "superClass": [ "Element" ],
+          "properties": [
+            {
+              "name": "id",
+              "type": "String",
+              "isAttr": true
+            },
+            {
+              "name": "label",
+              "type": "String",
+              "isAttr": true
+            },
+            {
+              "name": "type",
+              "type": "String",
+              "isAttr": true
+            },
+            {
+              "name": "datePattern",
+              "type": "String",
+              "isAttr": true
+            },
+            {
+              "name": "defaultValue",
+              "type": "String",
+              "isAttr": true
+            },
+            {
+              "name": "properties",
+              "type": "Properties"
+            },
+            {
+              "name": "validation",
+              "type": "Validation"
+            },
+            {
+              "name": "values",
+              "type": "Value",
+              "isMany": true
+            }
+          ]
+        },
+        {
+      "name": "FormField",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "id",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "label",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "type",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "datePattern",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "defaultValue",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "properties",
+          "type": "Properties"
+        },
+        {
+          "name": "validation",
+          "type": "Validation"
+        },
+        {
+          "name": "values",
+          "type": "Value",
+          "isMany": true
         }
+      ]
+    },
     ]
 };
 

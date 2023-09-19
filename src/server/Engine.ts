@@ -26,7 +26,7 @@ class Engine extends ServerComponent implements IEngine{
 		userKey: string=null,
 		options = {}): Promise<Execution> {
 
-		this.logger.log(`Action:engine.start ${name}`);
+		// this.logger.log(`Action:engine.start ${name}`);
 
 
 		const definitions = this.definitions;
@@ -51,7 +51,7 @@ class Engine extends ServerComponent implements IEngine{
 		}
 		else {
 			const waiter = await execution.worker;
-			this.logger.log(`.engine.start ended for ${name}`);
+			// this.logger.log(`.engine.start ended for ${name}`);
 			return execution;
 		}
 
