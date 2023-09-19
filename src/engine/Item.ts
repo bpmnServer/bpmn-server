@@ -84,9 +84,9 @@ class Item implements IItem {
     save() : IItemData {
         let myassignment:any = {}
         if(this.element.type=='bpmn:UserTask'){           
-            const assignees = this.element['def']['assignee'] ? this.element['def']['assignee'].split :[]
-            const candidateUsers = this.element['def']['candidateUsers'] ? this.element['def']['candidateUsers'].split :[]
-            const candidateGroups = this.element['def']['candidateGroups'] ? this.element['def']['candidateGroups'].split :[]
+            const assignees = this.element['def']['assignee'] ? this.element['def']['assignee'] : undefined
+            const candidateUsers = this.element['def']['candidateUsers'] ? this.element['def']['candidateUsers'].split : undefined
+            const candidateGroups = this.element['def']['candidateGroups'] ? this.element['def']['candidateGroups'].split : undefined
             myassignment = {                              
                 assignee: assignees,
                 candidateUsers: candidateUsers,
