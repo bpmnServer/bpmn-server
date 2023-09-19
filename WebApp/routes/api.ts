@@ -134,7 +134,9 @@ export class API extends Common {
                     options = request.body.options;
                 }
 
-                if (request.body.userId) {
+                if(options['userId'] !== undefined){
+                    userId = options['userId']
+                }else if (request.body.userId) {
                     userId = request.body.userId;
                 }
 
