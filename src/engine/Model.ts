@@ -52,6 +52,7 @@ class ItemObject implements IItemData {
     assignments;
     authorizations;
     notifications;
+    // def;
 
 }
 class TokenObject {

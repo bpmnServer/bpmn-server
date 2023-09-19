@@ -16,7 +16,7 @@ class MyAppDelegate extends DefaultAppDelegate{
     * is fired on application startup
     **/
     async startUp() {
-        console.log('myserver started.. checking for incomplete processes');
+        // console.log('myserver started.. checking for incomplete processes');
 
         var query = { "items.status": "start" };
 

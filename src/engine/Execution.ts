@@ -167,17 +167,18 @@ class Execution extends ServerComponent implements IExecution {
 
         // this.log('..starting at :' + startNode.id);
         let token = await Token.startNewToken(TOKEN_TYPE.Primary,this, startNode, null, null, null, null,inputData,true);
-
+        
         // start all event sub processes for the process
 
         const proc = startNode.process;
         await proc.start(this, token);
         await token.execute(inputData);
-
         await Promise.all(this.promises);
+
         // this.log('.execute returned');
         await this.doExecutionEvent(this.process, EXECUTION_EVENT.process_wait);
-
+        // console.log("Execute token",token.execution.definition.nodes)
+        // console.log("=============================")
         this.report();
 
 
@@ -274,6 +275,7 @@ class Execution extends ServerComponent implements IExecution {
         // this.log(`..Saving instance ${this.instance.id}`+JSON.stringify(this.instance.data));
         
         const state = this.getState();
+        // console.log("1. Save this.getItems",this.getItems())
         await this.server.dataStore.saveInstance(state, this.getItems());
 
     }

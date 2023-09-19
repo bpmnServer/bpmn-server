@@ -222,7 +222,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		const result = this.translateCriteria(query);
 
 		var records = await this.db.find(this.dbConfiguration.db, Instance_collection, result.query, result.projection);
-		//console.log('...find items for query:', query, " translated to :", JSON.stringify(result),  " recs:" , records.length)
+		// console.log('...find items for query:', query, " translated to :", JSON.stringify(result),  " recs:" , records.length)
 		// this.logger.log('...find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result)+" recs:"+records.length);
 
 		return this.getItemsFromInstances(records, result.match);

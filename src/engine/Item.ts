@@ -12,6 +12,7 @@ class Item implements IItem {
     token : Token;      
     seq;
     userId;
+    def;
     startedAt;              // dateTime Started
     _endedAt = null;
     instanceId;
@@ -81,13 +82,25 @@ class Item implements IItem {
         //token.log(`Item:new Item ${element.id} for token ${token.id} `);
     }
     save() : IItemData {
-
+        let myassignment:any = {}
+        if(this.element.type=='bpmn:UserTask'){           
+            const assignees = this.element['def']['assignee'] ? this.element['def']['assignee'].split :[]
+            const candidateUsers = this.element['def']['candidateUsers'] ? this.element['def']['candidateUsers'].split :[]
+            const candidateGroups = this.element['def']['candidateGroups'] ? this.element['def']['candidateGroups'].split :[]
+            myassignment = {                              
+                assignee: assignees,
+                candidateUsers: candidateUsers,
+                candidateGroups: candidateGroups
+            }             
+        }
+        
         return {
             id: this.id, seq: this.seq, itemKey: this.itemKey, tokenId: this.token.id, elementId: this.elementId, name: this.name,
             status: this.status, userId: this.userId, startedAt: this.startedAt, endedAt: this.endedAt, type: this.type, timeDue: this.timeDue,
             data: null, vars: this.vars, instanceId: this.instanceId,
             messageId: this.messageId, signalId: this.signalId,
-                assignments: this.assignments,authorizations: this.authorizations, notifications: this.notifications
+                assignments: myassignment,authorizations: this.authorizations, notifications: this.notifications,
+                // def:this.element['def']
         };
 
     }

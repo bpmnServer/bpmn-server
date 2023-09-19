@@ -16,7 +16,7 @@ var caseId = Math.floor(Math.random() * 10000);
 
 /* GET users listing. */
 
-console.log("api.ts");
+// console.log("api.ts");
 
 const awaitAppDelegateFactory = (middleware) => {
     return async (req, res, next) => {
@@ -323,7 +323,7 @@ export class API extends Common {
                             }
                         catch(exc)
                             {
-                            console.log('error in api.ts import ',exc.message,exc);
+                            // console.log('error in api.ts import ',exc.message,exc);
                             response.json({errors:  exc.message});
                             return;
                             }

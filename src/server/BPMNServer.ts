@@ -75,7 +75,7 @@ class BPMNServer implements IBPMNServer {
 		this.iam = configuration.IAM? configuration.IAM(this):new IAM(this);
 		
 		// new IAM(this);
-		console.log("bpmn-server version " + BPMNServer.getVersion());
+		// console.log("bpmn-server version " + BPMNServer.getVersion());
 
 		BPMNServer.instance=this;
 
