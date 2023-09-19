@@ -71,8 +71,10 @@ class BPMNServer implements IBPMNServer {
 		this.definitions = configuration.definitions(this);
 		this.appDelegate = configuration.appDelegate(this);
 
-		this.acl = new ACL(this);
-		this.iam = new IAM(this);
+		this.acl = configuration.ACL? configuration.ACL(this):new ACL(this);
+		this.iam = configuration.IAM? configuration.IAM(this):new IAM(this);
+		
+		// new IAM(this);
 		console.log("bpmn-server version " + BPMNServer.getVersion());
 
 		BPMNServer.instance=this;

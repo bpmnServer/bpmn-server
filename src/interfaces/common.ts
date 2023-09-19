@@ -21,7 +21,9 @@ interface IConfiguration
     logger: ILogger,
     definitions(server): IModelsDatastore,
     appDelegate(server): IAppDelegate,
-    dataStore(server): IDataStore
+    dataStore(server): IDataStore,
+    IAM: Function,
+    ACL: Function
 }
 
 /**
