@@ -14,9 +14,6 @@ interface IBPMNServer {
     dataStore: IDataStore;
     cache: ICacheManager;
     cron: ICron;
-    acl: IACL;
-    iam: IIAM;
-
 }
 
 interface IServerComponent {
@@ -39,7 +36,7 @@ interface IEngine extends IServerComponent {
      * @param data		input data
      * @param startNodeId	in process has multiple start node; you need to specify which one
      */
-    start(name: any, data?: any, startNodeId?: string, userKey?: string, options?: any): Promise<IExecution>;
+    start(name: any, data?: any, startNodeId?: string, userId?: string, options?: any): Promise<IExecution>;
     /**
      * restores an instance into memeory or provides you access to a running instance
      *
@@ -49,8 +46,8 @@ interface IEngine extends IServerComponent {
      *
      * query example:	{ id: instanceId}
      *					{ data: {caseId: 1005}}
-     *					{ items.item.id : 'abcc111322'}
-     *					{ items.item.itemKey : 'businesskey here'}
+     *					{ items.id : 'abcc111322'}
+     *					{ items.itemKey : 'businesskey here'}
      *
      */
     get(instanceQuery: any): Promise<IExecution>;
@@ -67,7 +64,7 @@ interface IEngine extends IServerComponent {
      * @param itemQuery		criteria to retrieve the item
      * @param data
      */
-    invoke(itemQuery: any, data?: {}, userKey?: string, options?: {}): Promise<IExecution>;
+    invoke(itemQuery: any, data?: {}, userId?: string, options?: {}): Promise<IExecution>;
     /**
      *
      * Invoking an event (usually start event of a secondary process) against an existing instance
@@ -98,28 +95,7 @@ interface IEngine extends IServerComponent {
      */
     //signal(messageId: any, matchingKey: any, data?: {}): Promise<IExecution>;
 
-}interface IUser {
-    userId;
-    name;
-    email;
-    userGroups;
-    password;
 }
-interface IIAM {
-    login(userId, password);
-    getRemoteUser(userId); 
-    getCurrentUser(key): IUser;
-    getUser(userId): Promise<IUser>;
-    getUsersForGroup(userGroup): Promise<IUser[]>;
-    addUser(userId, name, email, userGroups, password): Promise<IUser>;
-
-}
-
-interface IACL {
-    listener: EventEmitter;
-    canPerform(operation, object);
-}
-
 
 interface ICron {
 
@@ -139,4 +115,4 @@ interface ICacheManager {
 }
 
 
-export { IBPMNServer , IEngine , IACL, IUser , IIAM, ICron ,ICacheManager , IServerComponent }
+export { IBPMNServer , IEngine ,  ICron ,ICacheManager , IServerComponent }

@@ -93,6 +93,11 @@ block content
 			- var label='';
 			- if (item.status=='wait' && item.type=='bpmn:UserTask') label= 'Execute';
 			- if (item.status=='wait' && item.type.includes('Event')) label= 'Force';
+			- var assign='';
+			- if (item.candidateUsers) assign+='>Assigned to users:'+item.candidateUsers;
+			- if (item.candidateGroups) assign+=' groups:'+item.candidateGroups;
+			- if (item.assignee) assign+=' Assigned by:'+item.assignee;
+			- if (item.dueDate) assign+=' Due on:'+item.dueDate;
 			- seq++;
 				tr
 					td #{seq}
@@ -105,37 +110,10 @@ block content
 					td #{item.userId}
 					td
 						a(href=`${ref}`) #{label}
-			each assign in item.assignments
+			if (!assign=='')
 				tr
-					td 
-					td #{assign.describe()}
-
-			each note in item.notifications
-				tr
-					td 
-					td #{note.describe()}
-			each auth in item.authorizations
-				tr
-					td 
-					td #{auth.describe()}
-
-	if (instance.authorizations.length>0)
-		h4 Process Level Auhtorizations
-		ul
-			each auth in instance.authorizations
-						li #{auth.describe()}
-	if (instance.involvements.length>0)
-		h4 Process Involvements
-		ul
-
-			each auth in instance.involvements
-						li #{auth.describe()}
-
-	if (accessRules.length>0)
-		h4 Process Access Rules
-		ul
-			each rule in accessRules
-				li #{rule.describe()}
+					td
+					td(colspan=3) #{assign}
 
 	h4 Instance Logs <button id="showHide" onclick="showLogs()">&darr;</button>
 	div(id="logs" style="display:none;") 

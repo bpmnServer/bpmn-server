@@ -3,7 +3,7 @@ import { NODE_ACTION } from '../interfaces/Enums';
 import { SubProcess } from '.';
 declare class Transaction extends SubProcess {
     get requiresWait(): boolean;
-    end(item: any): Promise<void>;
+    end(item: any, cancel?: Boolean): Promise<void>;
     /**
      * Cancel Transaction
      *  is called by Throw Cancel Event

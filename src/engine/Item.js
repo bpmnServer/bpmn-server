@@ -39,9 +39,6 @@ class Item {
     }
     constructor(element, token, status = __1.ITEM_STATUS.start) {
         this._endedAt = null;
-        this.assignments = [];
-        this.authorizations = [];
-        this.notifications = [];
         this.input = {};
         this.output = {};
         this.vars = {};
@@ -52,9 +49,7 @@ class Item {
         this._dbAction = 'add';
         this.token = token;
         this.status = status;
-        const user = token.execution.currentUser;
-        if (user)
-            this.userId = user.userId;
+        this.userId = token.execution.userId;
         token.log(`Item:new Item ${element.id} for token ${token.id} `);
     }
     save() {
@@ -63,7 +58,13 @@ class Item {
             status: this.status, userId: this.userId, startedAt: this.startedAt, endedAt: this.endedAt, type: this.type, timeDue: this.timeDue,
             data: null, vars: this.vars, instanceId: this.instanceId,
             messageId: this.messageId, signalId: this.signalId,
-            assignments: this.assignments, authorizations: this.authorizations, notifications: this.notifications
+            assignee: this.assignee,
+            candidateGroups: this.candidateGroups,
+            candidateUsers: this.candidateUsers,
+            dueDate: this.dueDate,
+            followUpDate: this.followUpDate,
+            priority: this.priority
+            //                assignments: this.assignments,authorizations: this.authorizations, notifications: this.notifications
         };
     }
     static load(execution, dataObject, token) {
@@ -75,9 +76,15 @@ class Item {
         item.startedAt = dataObject.startedAt;
         item.endedAt = dataObject.endedAt;
         item.timeDue = dataObject.timeDue;
-        item.authorizations = dataObject.authorizations;
-        item.assignments = dataObject.assignments;
-        item.notifications = dataObject.notifications;
+        item.assignee = dataObject.assignee;
+        item.candidateGroups = dataObject.candidateGroups;
+        item.candidateUsers = dataObject.candidateUsers;
+        item.dueDate = dataObject.dueDate;
+        item.followUpDate = dataObject.followUpDate;
+        item.priority = dataObject.priority;
+        /*      item.authorizations=dataObject.authorizations;
+              item.assignments=dataObject.assignments;
+              item.notifications = dataObject.notifications; */
         item.vars = dataObject.vars;
         return item;
     }

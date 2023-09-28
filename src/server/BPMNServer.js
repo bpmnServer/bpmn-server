@@ -6,7 +6,6 @@ const Engine_1 = require("./Engine");
 const CacheManager_1 = require("./CacheManager");
 const Cron_1 = require("./Cron");
 const events_1 = require("events");
-const ACL_1 = require("./ACL");
 process.on('uncaughtException', function (err) {
     console.log('***************BPMNServer UNCAUGHT ERROR***********', err);
     BPMNServer.getInstance().error = err;
@@ -47,9 +46,6 @@ class BPMNServer {
         this.dataStore = configuration.dataStore(this);
         this.definitions = configuration.definitions(this);
         this.appDelegate = configuration.appDelegate(this);
-        this.acl = new ACL_1.ACL(this);
-        this.iam = new ACL_1.IAM(this);
-        console.log("bpmn-server version " + BPMNServer.getVersion());
         BPMNServer.instance = this;
         this.appDelegate.startUp();
         if (options['cron'] == false) {

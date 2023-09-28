@@ -134,6 +134,18 @@ class EndEvent extends Event {
 }
 exports.EndEvent = EndEvent;
 class StartEvent extends Event {
+    start(item) {
+        const _super = Object.create(null, {
+            start: { get: () => super.start }
+        });
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.def.$attrs && this.def.$attrs["camunda:initiator"]) {
+                const initiator = this.def.$attrs["camunda:initiator"];
+                item.token.data[initiator] = item.userId;
+            }
+            return yield _super.start.call(this, item);
+        });
+    }
     get isCatching() { return true; }
 }
 exports.StartEvent = StartEvent;

@@ -3,7 +3,7 @@ import { ModelsDatastore, Configuration} from '../';
 import { MyAppDelegate } from './appDelegate';
 import { IConfiguration, DataStore, ILogger } from '../';
 import { Logger } from '../'
-import { IAM, ACL } from '../';
+
 
 const dotenv = require('dotenv');
 const res = dotenv.config();
@@ -36,12 +36,6 @@ var configuration = new Configuration(
 		},		
 		dataStore: function (server) {
 			return new DataStore(server);
-		},
-		IAM: function (server) {
-			return new IAM(server);
-		},
-		ACL: function (server) {
-			return new ACL(server);
 		}
 	});
 

@@ -4,7 +4,6 @@ import { DefaultAppDelegate } from '../engine/DefaultAppDelegate';
 
 import { IConfiguration, DataStore, ILogger, IModelsDatastore, IAppDelegate, IDataStore } from '../..';
 import { Logger } from './'
-import { ACL, IAM } from '../server/ACL';
 
 let definitionsPath = __dirname + '/processes/';
 
@@ -19,8 +18,6 @@ class Configuration implements IConfiguration {
 	logger: ILogger;
 	apiKey: string;
 	sendGridAPIKey: string;
-	IAM:Function;
-	ACL:Function;
 	definitions(server) {
 		return new ModelsDatastore(server); 
 	}
@@ -31,14 +28,13 @@ class Configuration implements IConfiguration {
 		return new DataStore(server);
 	}
 
+
 	constructor({
 		definitionsPath, templatesPath, timers, database, apiKey,
 		logger,
 		definitions,
 		appDelegate,
-		dataStore,
-		IAM,
-		ACL}) {
+		dataStore}) {
 		this.definitionsPath = definitionsPath;
 		this.templatesPath = templatesPath;
 		this.timers = timers;
@@ -48,8 +44,6 @@ class Configuration implements IConfiguration {
 		this.definitions = definitions;
 		this.appDelegate = appDelegate;
 		this.dataStore = dataStore;
-		this.IAM = IAM
-		this.ACL = ACL
 	}
 }
 var defaultConfiguration = new Configuration(
@@ -79,12 +73,6 @@ var defaultConfiguration = new Configuration(
 		},
 		dataStore: function (server) {
 			return new DataStore(server);
-		},
-		IAM: function (server) {
-			return new IAM(server);
-		},
-		ACL: function (server) {
-			return new ACL(server);
 		}
 	});
 

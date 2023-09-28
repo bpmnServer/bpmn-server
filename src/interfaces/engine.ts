@@ -78,7 +78,7 @@ interface IExecution extends IServerComponent {
     item;
     messageMatchingKey;
     worker;
-    currentUser;
+    userId;
 
     id;
     status;

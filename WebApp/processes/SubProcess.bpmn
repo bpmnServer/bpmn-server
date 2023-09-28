@@ -65,19 +65,22 @@ console.log('sub data',data);</camunda:script>
         </camunda:executionListener>
       </bpmn2:extensionElements>
       <bpmn2:incoming>Flow_1qkp3z8</bpmn2:incoming>
+      <bpmn2:incoming>Flow_1phzjsc</bpmn2:incoming>
     </bpmn2:endEvent>
-    <bpmn2:task id="Activity_0hrqkhp">
-      <bpmn2:incoming>Flow_1dt9jvl</bpmn2:incoming>
-      <bpmn2:outgoing>Flow_1qkp3z8</bpmn2:outgoing>
-    </bpmn2:task>
-    <bpmn2:sequenceFlow id="Flow_1x5xedf" sourceRef="Event_1m4letg" targetRef="Activity_1nwviii" />
-    <bpmn2:task id="Activity_1nwviii">
-      <bpmn2:incoming>Flow_1x5xedf</bpmn2:incoming>
-    </bpmn2:task>
+    <bpmn2:sequenceFlow id="Flow_1x5xedf" name="Stop" sourceRef="Event_1m4letg" targetRef="Activity_1nwviii" />
     <bpmn2:boundaryEvent id="Event_1m4letg" attachedToRef="task_subProcess">
       <bpmn2:outgoing>Flow_1x5xedf</bpmn2:outgoing>
       <bpmn2:messageEventDefinition id="MessageEventDefinition_0lhso7t" messageRef="Message_1ljoet1" />
     </bpmn2:boundaryEvent>
+    <bpmn2:sequenceFlow id="Flow_1phzjsc" sourceRef="Activity_1nwviii" targetRef="EndEvent_08zhy2j" />
+    <bpmn2:scriptTask id="Activity_0hrqkhp" name="Finalize">
+      <bpmn2:incoming>Flow_1dt9jvl</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1qkp3z8</bpmn2:outgoing>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask id="Activity_1nwviii" name="Wrap-up">
+      <bpmn2:incoming>Flow_1x5xedf</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1phzjsc</bpmn2:outgoing>
+    </bpmn2:scriptTask>
   </bpmn2:process>
   <bpmn2:message id="Message_1ljoet1" name="Cancel_Campaign" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -89,6 +92,9 @@ console.log('sub data',data);</camunda:script>
         <di:waypoint x="730" y="282" />
         <di:waypoint x="730" y="290" />
         <di:waypoint x="840" y="290" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="788" y="273" width="23" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1qkp3z8_di" bpmnElement="Flow_1qkp3z8">
         <di:waypoint x="910" y="190" />
@@ -112,11 +118,22 @@ console.log('sub data',data);</camunda:script>
           <dc:Bounds x="184" y="149" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1phzjsc_di" bpmnElement="Flow_1phzjsc">
+        <di:waypoint x="940" y="290" />
+        <di:waypoint x="970" y="290" />
+        <di:waypoint x="970" y="208" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="StartEvent_0wntki2_di" bpmnElement="StartEvent_0wntki2">
         <dc:Bounds x="178" y="152" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="151" y="192" width="90" height="12" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1bsd6nr_di" bpmnElement="Activity_0hrqkhp">
+        <dc:Bounds x="810" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1us56p3_di" bpmnElement="Activity_1nwviii">
+        <dc:Bounds x="840" y="250" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="SubProcess_1n2k7z1_di" bpmnElement="task_subProcess" isExpanded="true">
         <dc:Bounds x="367" y="75" width="418" height="189" />
@@ -168,12 +185,6 @@ console.log('sub data',data);</camunda:script>
         <bpmndi:BPMNLabel>
           <dc:Bounds x="790" y="192" width="90" height="12" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0hrqkhp_di" bpmnElement="Activity_0hrqkhp">
-        <dc:Bounds x="810" y="150" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1nwviii_di" bpmnElement="Activity_1nwviii">
-        <dc:Bounds x="840" y="250" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1ydqp59_di" bpmnElement="Event_1m4letg">
         <dc:Bounds x="712" y="246" width="36" height="36" />

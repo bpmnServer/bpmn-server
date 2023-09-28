@@ -3,19 +3,67 @@ Access Control Layer
 
 # Purpose
 
-# Architecture
+ACL provides additional features to BPMN including:
+- User Authentication, ensuring the identity of the users
+- Access Control, restricting access to authorized users 
+- Task Assignment, assigning User Tasks to specific users or groups
+- Notification, notifying users or group of specific events
 
 # Initialization
-## User Login
 
-    const userKey = await server.iam.login("user1", 'password');
+BPMNServer provides a simple user identification and authentication tool not inteded for production purposes but only for demonstration purposes only.
+You can add your own library implementing two interfaces:
+```
+interface IIAM {
+    login(userId, password);
+    getRemoteUser(userId); 
+    getCurrentUser(key): IUser;
+    getUser(userId): Promise<IUser>;
+    getUsersForGroup(userGroup): Promise<IUser[]>;
+    addUser(userId, name, email, userGroups, password): Promise<IUser>;
 
-    let user = server.iam.getCurrentUser(userKey);
+}
 
-## CLI
+interface IACL {
+    listener: EventEmitter;
+    canPerform(operation, object);
+}
+
+```
+You need to change configuration.ts to implement your own library
+```
+var configuration = new Configuration(
+	{
+        // ... other parameters here
+		IAM: function (server) {
+			return new MyIAM(server);
+		},
+		ACL: function (server) {
+			return new MyACL(server);
+        }
+
+```
+
+## User Identification and Authentication
+
+BPMNServer provides a simple user identification and authentication tool not inteded for production purposes but only for demonstration purposes only.
+
+### Adding Users
+
+```
+    const server = new BPMNServer(configuration, logger, { cron: false });
+
+    await server.iam.addUser('user1','user1','user1@hotmail.com',['admin'],'password');
+```
+### User DataStore
+
+    const userRepo = User.Repository(server);
+    await userRepo.delete({});
+    let cUsers = await userRepo.find({});
+
+## User Authentication
 
 ```javascript
-
     const server = new BPMNServer(configuration, logger, { cron: false });
 
     const userKey = await server.acl.login("user1", 'password');
@@ -52,51 +100,37 @@ Access Control Layer
     await server.engine.start(startNodeId,data,{},{userId:'user1'});  
 
 ``` 
-## BPMN as a service
+## Using BPMNClient as a service
 
 ```javascript
 
     const client= new BPMNClient(url,apiKey);
-    await client.engine.start(startNodeId,data);  
-```
-## User Identification and Authentication
-
-BPMNServer provides a simple user identification and authentication tool not inteded for production purposes but only for demonstration purposes only.
-
-## User DataStore
-
-To add a User
-```javascript
-    const server = new BPMNServer(configuration, logger, { cron: false });
-    const userInfo = { user: 'system', apiKey: '123' };
-
-        const user = new User();
-
-        user.userId = 'jsmith';
-        user.name = 'John Smith';
-        user.email = 'JohnSmith@sample.com';
-        user.userGroups = ['admin','manager'];
-        user.password = 'password';
-
-        await User.Repository().insert([user]);
-    
-```
-## User Authentication
-
-```javascript
-
-    const server = new BPMNServer(configuration, logger, { cron: false });
-
-    const userKey = await server.acl.login("user1", 'password');
-
-
-    let response: Execution =await server.engine.start(
-        'Buy Used Car', // Process Name
-        { caseId: 1050 } // data
-        , null           // startNode: null is default
-        ,userKey);
+    // userId is passed here bypassing authentication, assuming user is already authenticated
+    await client.engine.start(startNodeId,data,userId);  
 ```
 
+# Task Assignee (Camunda Extension)
+
+
+### Defining Process Initiator
+You can define the variable name for the instance initiator 
+
+![BPMN Editor Initiator](initiator.png)
+
+This will assign the userId of that started the process
+```
+    console.log(data.starterUserId)
+```
+
+## BPMN Editor
+
+![BPMN Editor Assignee](assignee1.png)
+
+Date can be one of the following:
+      - an instance variable $(data.Task1_dueDate)
+      - $(fromStart('5d'))
+      - $(fromStartOf('task1','10h'))
+      - $(fromEndOf('task1','10h'))
 # Access Rules
 
 ```json

@@ -13,6 +13,7 @@ This package is designed specifically for Node.js and developed entirely in Type
 - Define own logic using extensions
 - Execute and Test the models 
 - Monitor Process Execution, View process history and tasks
+- provide a sample UI based on expressJS for demo purposes
 
 You can try it out at https://bpmn.omniworkflow.com 
 
@@ -29,7 +30,7 @@ You can try it out at https://bpmn.omniworkflow.com
 - [API](./docs/api-summary.md)
 - [BPMNClient /WebAPI](./docs/client-api.md)
 
-# BPMN-Server Benchmark
+# Process Modeler
 
 A web based modeler is included based on http://bpmn.io , models definitions are saved at your server
 ![Modeller](./docs/model-demo.gif)
@@ -44,9 +45,11 @@ bpmn-server provides an bpmnEngine to execute your workflow definition supportin
 
 # Process Server
 
-provides an environment to presist execution Instances while running and communicate with your application.
+Provides an environment to presist execution Instances while running and communicate with your application.
 
 Applications can monitor and communicate to Instances whether they are running or offline, allowing user interface to query and process Workflow steps
+
+Client application can invoke the bpmn-server using REST API or through bpmn-client
 
 # Data Queries 
 
@@ -88,7 +91,7 @@ or:
 ```javascript
 node app
 ```
-## Installing Client (for remote access)
+## BPMN-Client (for remote access)
 
 This requires a Server to be installed or using cloud server on https://bpmn.omniworkflow.com
 

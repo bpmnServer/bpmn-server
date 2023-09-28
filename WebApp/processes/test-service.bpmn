@@ -18,7 +18,7 @@
       <bpmn2:incoming>Flow_132y35p</bpmn2:incoming>
     </bpmn2:endEvent>
     <bpmn2:sequenceFlow id="Flow_132y35p" sourceRef="Activity_1xeb3js" targetRef="Event_0w6ppgs" />
-    <bpmn2:serviceTask id="Activity_1xeb3js" name="Service Task" camunda:delegateExpression="service1">
+    <bpmn2:serviceTask id="Activity_1xeb3js" name="Service Task" camunda:delegateExpression="service99">
       <bpmn2:incoming>Flow_0155hg3</bpmn2:incoming>
       <bpmn2:outgoing>Flow_132y35p</bpmn2:outgoing>
     </bpmn2:serviceTask>

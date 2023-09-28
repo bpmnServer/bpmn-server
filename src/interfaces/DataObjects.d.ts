@@ -16,10 +16,13 @@ interface IItemData {
     data: any;
     messageId: any;
     signalId: any;
-    assignments: any;
-    authorizations: any;
-    notifications: any;
     vars: any;
+    assignee: any;
+    candidateGroups: any;
+    candidateUsers: any;
+    dueDate: any;
+    followUpDate: any;
+    priority: any;
 }
 interface IInstanceData {
     id: any;
@@ -35,8 +38,6 @@ interface IInstanceData {
     tokens: any;
     loops: any;
     parentItemId: any;
-    involvements: any;
-    authorizations: any;
 }
 interface IDefinitionData {
     name: any;

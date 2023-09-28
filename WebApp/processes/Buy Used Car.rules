@@ -43,7 +43,7 @@
       "type": "AssignRule",
       "event": "start",
       "userGroup": "cleaner",
-      "element": "task_Clean"
+      "element": "task_clean"
     } ,
     {
       "type": "AssignRule",

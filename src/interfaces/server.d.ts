@@ -11,8 +11,6 @@ interface IBPMNServer {
     dataStore: IDataStore;
     cache: ICacheManager;
     cron: ICron;
-    acl: IACL;
-    iam: IIAM;
 }
 interface IServerComponent {
     server: IBPMNServer;
@@ -33,7 +31,7 @@ interface IEngine extends IServerComponent {
      * @param data		input data
      * @param startNodeId	in process has multiple start node; you need to specify which one
      */
-    start(name: any, data?: any, startNodeId?: string, userKey?: string, options?: any): Promise<IExecution>;
+    start(name: any, data?: any, startNodeId?: string, userId?: string, options?: any): Promise<IExecution>;
     /**
      * restores an instance into memeory or provides you access to a running instance
      *
@@ -61,7 +59,7 @@ interface IEngine extends IServerComponent {
      * @param itemQuery		criteria to retrieve the item
      * @param data
      */
-    invoke(itemQuery: any, data?: {}, userKey?: string, options?: {}): Promise<IExecution>;
+    invoke(itemQuery: any, data?: {}, userId?: string, options?: {}): Promise<IExecution>;
     /**
      *
      * Invoking an event (usually start event of a secondary process) against an existing instance
@@ -94,10 +92,6 @@ interface IIAM {
     getUsersForGroup(userGroup: any): Promise<IUser[]>;
     addUser(userId: any, name: any, email: any, userGroups: any, password: any): Promise<IUser>;
 }
-interface IACL {
-    listener: EventEmitter;
-    canPerform(operation: any, object: any): any;
-}
 interface ICron {
     checkTimers(duration: any): any;
     start(): any;
@@ -110,4 +104,4 @@ interface ICacheManager {
     shutdown(): any;
     restart(): any;
 }
-export { IBPMNServer, IEngine, IACL, IUser, IIAM, ICron, ICacheManager, IServerComponent };
+export { IBPMNServer, IEngine, IUser, IIAM, ICron, ICacheManager, IServerComponent };

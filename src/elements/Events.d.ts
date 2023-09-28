@@ -12,7 +12,7 @@ declare class Event extends Node {
      * @param item
      */
     start(item: Item): Promise<NODE_ACTION>;
-    end(item: Item): Promise<void>;
+    end(item: Item, cancel?: Boolean): Promise<void>;
     get canBeInvoked(): boolean;
 }
 declare class CatchEvent extends Event {
@@ -44,6 +44,7 @@ declare class EndEvent extends Event {
     end(item: Item): Promise<void>;
 }
 declare class StartEvent extends Event {
+    start(item: Item): Promise<NODE_ACTION>;
     get isCatching(): boolean;
 }
 export { Event, StartEvent, EndEvent, CatchEvent, ThrowEvent, BoundaryEvent };

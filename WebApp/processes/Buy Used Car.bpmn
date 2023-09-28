@@ -4,19 +4,6 @@
     <bpmn:participant id="Participant_1c0lpx5" processRef="Process_1hf9394" />
   </bpmn:collaboration>
   <bpmn:process id="Process_1hf9394" isExecutable="true">
-    <bpmn:startEvent id="StartEvent_158yep3">
-      <bpmn:outgoing>flow_start_buy</bpmn:outgoing>
-    </bpmn:startEvent>
-    <bpmn:userTask id="task_Buy" name="Buy">
-      <bpmn:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="needsRepairs" label="Repairs Required?" type="boolean" />
-          <camunda:formField id="needsCleaning" label="Cleaning Required?" type="boolean" />
-        </camunda:formData>
-      </bpmn:extensionElements>
-      <bpmn:incoming>flow_start_buy</bpmn:incoming>
-      <bpmn:outgoing>flow_buy_gw</bpmn:outgoing>
-    </bpmn:userTask>
     <bpmn:userTask id="task_clean" name="Clean">
       <bpmn:incoming>flow_gw1_clean</bpmn:incoming>
       <bpmn:outgoing>flow_clean_gw2</bpmn:outgoing>
@@ -31,7 +18,7 @@
       <bpmn:incoming>flow_gw1_repair</bpmn:incoming>
       <bpmn:outgoing>flow_repair_gw2</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="task_Drive" name="Drive">
+    <bpmn:userTask id="task_Drive" name="Drive" camunda:candidateUsers="$data.starterUserId" camunda:dueDate="P10D" camunda:followUpDate="P5D">
       <bpmn:incoming>flow_gw2_drive</bpmn:incoming>
       <bpmn:outgoing>flow_drive_end</bpmn:outgoing>
     </bpmn:userTask>
@@ -57,6 +44,29 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">(item.data.needsRepairs=="Yes")</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="flow_drive_end" sourceRef="task_Drive" targetRef="Event_19ebav7" />
+    <bpmn:userTask id="task_Buy" name="Buy" camunda:assignee="$(this.userId)" camunda:candidateUsers="User1,User2" camunda:candidateGroups="Employee,Manager" camunda:dueDate="$this.dueDate" camunda:followUpDate="2023-10-31" camunda:priority="5">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="needsRepairs" label="Repairs Required?" type="boolean" />
+          <camunda:formField id="needsCleaning" label="Cleaning Required?" type="boolean" />
+        </camunda:formData>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">var date=new Date();
+date.setDate(date.getDate()+5);
+this.dueDate=date.toISOString();</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>flow_start_buy</bpmn:incoming>
+      <bpmn:outgoing>flow_buy_gw</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:startEvent id="StartEvent_158yep3" camunda:initiator="starterUserId">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">data.startDate=this.endedAt;</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>flow_start_buy</bpmn:outgoing>
+    </bpmn:startEvent>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0memx95">
@@ -117,28 +127,21 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="flow_buy_gw_di" bpmnElement="flow_buy_gw">
-        <di:waypoint x="346" y="166" />
+        <di:waypoint x="350" y="170" />
+        <di:waypoint x="361" y="170" />
+        <di:waypoint x="361" y="166" />
         <di:waypoint x="371" y="166" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="314" y="141" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="flow_start_buy_di" bpmnElement="flow_start_buy">
-        <di:waypoint x="224" y="166" />
-        <di:waypoint x="246" y="166" />
+        <di:waypoint x="224" y="170" />
+        <di:waypoint x="250" y="170" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="190" y="141" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_158yep3">
-        <dc:Bounds x="188" y="148" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="161" y="184" width="90" height="20" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1bp4iyj_di" bpmnElement="task_Buy">
-        <dc:Bounds x="246" y="126" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1kzuj3t_di" bpmnElement="task_clean">
         <dc:Bounds x="456" y="186" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -164,6 +167,15 @@
         <dc:Bounds x="800" y="148" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="771" y="184" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1bp4iyj_di" bpmnElement="task_Buy">
+        <dc:Bounds x="250" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_158yep3">
+        <dc:Bounds x="188" y="152" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="161" y="184" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>

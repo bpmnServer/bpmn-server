@@ -11,6 +11,8 @@ declare class Node extends Element {
     attachedTo: Node;
     messageId: any;
     signalId: any;
+    initiator: any;
+    assignee: any;
     scripts: Map<any, any>;
     get processId(): any;
     constructor(id: any, process: any, type: any, def: any);
@@ -46,7 +48,7 @@ declare class Node extends Element {
     continue(item: Item): Promise<void>;
     start(item: Item): Promise<NODE_ACTION>;
     run(item: Item): Promise<NODE_ACTION>;
-    end(item: Item): Promise<void>;
+    end(item: Item, cancel?: Boolean): Promise<void>;
     /**
      * is called by the token after an execution resume for every active (in wait) item
      * different than init, which is called for all items

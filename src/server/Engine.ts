@@ -23,20 +23,18 @@ class Engine extends ServerComponent implements IEngine{
 	async start(name: any,
 		data: any = {}, 
 		startNodeId: string = null,
-		userKey: string=null,
+		userId: string=null,
 		options = {}): Promise<Execution> {
 
-		// this.logger.log(`Action:engine.start ${name}`);
+		this.logger.log(`Action:engine.start ${name}`);
 
 
 		const definitions = this.definitions;
 		const source = await definitions.getSource(name);
 
 		const execution = new Execution(this.server,name, source);
-		if (userKey) {
-			execution.currentUser = this.iam.getCurrentUser(userKey);
-		}
-
+		execution.userId = userId;
+	
 		// new dataStore for every execution to be monitored 
 		/* const newDataStore =new DataStore(this.server);
 		this.server.dataStore = newDataStore;
@@ -51,7 +49,7 @@ class Engine extends ServerComponent implements IEngine{
 		}
 		else {
 			const waiter = await execution.worker;
-			// this.logger.log(`.engine.start ended for ${name}`);
+			this.logger.log(`.engine.start ended for ${name}`);
 			return execution;
 		}
 
@@ -110,6 +108,42 @@ class Engine extends ServerComponent implements IEngine{
 		return await this.invoke(itemQuery, data);
 	}
 	/**
+	 * update an existing item that is in a wait state with an assignment
+	 * can modify data or assignment or both
+	 * 
+	 * -------------------------------------------------
+	 *		
+	 * @param itemQuery		criteria to retrieve the item
+	 * @param data
+	 */
+	async assign(itemQuery, data = {}, userId: string = null, assignment = {}): Promise<Execution> {
+		
+		this.logger.log(`Action:engine.assign`);
+		this.logger.log(itemQuery);
+
+		try {
+
+			const items = await this.server.dataStore.findItems(itemQuery);
+			if (items.length > 1) {
+				this.logger.error(`query produced more than ${items.length} items expecting only one`);
+			}
+			const item = items[0];
+			if (!item) {
+				this.logger.error("query produced no items for "+JSON.stringify(itemQuery));
+			}
+
+			const execution = await this.restore({ "id": item.instanceId });
+
+			execution.worker = execution.assign(item.id, data,userId,assignment);
+
+			return execution;
+		}
+		catch (exc) {
+			return this.logger.error(exc);
+
+		}
+	}
+	/**
 	 * Continue an existing item that is in a wait state
 	 * 
 	 * -------------------------------------------------
@@ -121,7 +155,7 @@ class Engine extends ServerComponent implements IEngine{
 	 * @param itemQuery		criteria to retrieve the item
 	 * @param data
 	 */
-	async invoke(itemQuery, data = {}, userKey: string = null, options = {}): Promise<Execution> {
+	async invoke(itemQuery, data = {}, userId: string = null, options = {}): Promise<Execution> {
 
 		this.logger.log(`Action:engine.invoke`);
 		this.logger.log(itemQuery);
@@ -134,15 +168,11 @@ class Engine extends ServerComponent implements IEngine{
 			}
 			const item = items[0];
 			if (!item) {
-				this.logger.error(`query produced no items for ${itemQuery}`);
+				this.logger.error("query produced no items for "+JSON.stringify(itemQuery));
 			}
 
 			const execution = await this.restore({ "id": item.instanceId });
-
-			if (userKey) {
-				execution.currentUser = this.iam.getCurrentUser(userKey);
-			}
-			execution.log("Action:engineInvoke " + JSON.stringify(itemQuery));
+			execution.userId=userId;
 
 			execution.worker = execution.signal(item.id, data,options);
 

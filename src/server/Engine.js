@@ -23,15 +23,13 @@ class Engine extends ServerComponent_1.ServerComponent {
      * @param data		input data
      * @param startNodeId	in process has multiple start node; you need to specify which one
      */
-    start(name, data = {}, startNodeId = null, userKey = null, options = {}) {
+    start(name, data = {}, startNodeId = null, userId = null, options = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             this.logger.log(`Action:engine.start ${name}`);
             const definitions = this.definitions;
             const source = yield definitions.getSource(name);
             const execution = new __1.Execution(this.server, name, source);
-            if (userKey) {
-                execution.currentUser = this.iam.getCurrentUser(userKey);
-            }
+            execution.userId = userId;
             // new dataStore for every execution to be monitored 
             /* const newDataStore =new DataStore(this.server);
             this.server.dataStore = newDataStore;
@@ -95,6 +93,37 @@ class Engine extends ServerComponent_1.ServerComponent {
         });
     }
     /**
+     * update an existing item that is in a wait state with an assignment
+     * can modify data or assignment or both
+     *
+     * -------------------------------------------------
+     *
+     * @param itemQuery		criteria to retrieve the item
+     * @param data
+     */
+    assign(itemQuery, data = {}, userId = null, assignment = {}) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.logger.log(`Action:engine.assign`);
+            this.logger.log(itemQuery);
+            try {
+                const items = yield this.server.dataStore.findItems(itemQuery);
+                if (items.length > 1) {
+                    this.logger.error(`query produced more than ${items.length} items expecting only one`);
+                }
+                const item = items[0];
+                if (!item) {
+                    this.logger.error("query produced no items for " + JSON.stringify(itemQuery));
+                }
+                const execution = yield this.restore({ "id": item.instanceId });
+                execution.worker = execution.assign(item.id, data, userId, assignment);
+                return execution;
+            }
+            catch (exc) {
+                return this.logger.error(exc);
+            }
+        });
+    }
+    /**
      * Continue an existing item that is in a wait state
      *
      * -------------------------------------------------
@@ -106,7 +135,7 @@ class Engine extends ServerComponent_1.ServerComponent {
      * @param itemQuery		criteria to retrieve the item
      * @param data
      */
-    invoke(itemQuery, data = {}, userKey = null, options = {}) {
+    invoke(itemQuery, data = {}, userId = null, options = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             this.logger.log(`Action:engine.invoke`);
             this.logger.log(itemQuery);
@@ -117,13 +146,10 @@ class Engine extends ServerComponent_1.ServerComponent {
                 }
                 const item = items[0];
                 if (!item) {
-                    this.logger.error(`query produced no items for ${itemQuery}`);
+                    this.logger.error("query produced no items for " + JSON.stringify(itemQuery));
                 }
                 const execution = yield this.restore({ "id": item.instanceId });
-                if (userKey) {
-                    execution.currentUser = this.iam.getCurrentUser(userKey);
-                }
-                execution.log("Action:engineInvoke " + JSON.stringify(itemQuery));
+                execution.userId = userId;
                 execution.worker = execution.signal(item.id, data, options);
                 if (options['noWait'] == true) {
                     return execution;

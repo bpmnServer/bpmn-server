@@ -110,10 +110,9 @@ export class Workflow extends Common {
 
             let processName = request.params.processName;
             request.session.processName = processName;
-            let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
 
             let context = await bpmnServer.engine.start(processName, { caseId: caseId++ },
-                null, userKey);
+                null, userId);
 
             if (context.errors) {
                 displayError(response, context.errors);
@@ -140,9 +139,7 @@ export class Workflow extends Common {
 
             data['caseId'] = caseId++;
 
-            let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
-	
-            let context = await bpmnServer.engine.start(process, data, startNodeId, userKey);
+            let context = await bpmnServer.engine.start(process, data, startNodeId, userId);
             if (context.errors) {
                 displayError(response, context.errors);
             }
@@ -193,8 +190,7 @@ export class Workflow extends Common {
                 return;
             }
             try {
-                let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
-                let result = await bpmnServer.engine.invoke({ "items.id": id }, {}, userKey);
+                let result = await bpmnServer.engine.invoke({ "items.id": id }, {}, userId);
 
                 console.log("redirecting");
                 response.redirect('/instanceDetails?id=' + result.execution.id);
@@ -216,8 +212,7 @@ export class Workflow extends Common {
 
             try {
 
-                let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
-                let result = await bpmnServer.engine.invoke({ "items.id": id }, data, userKey);
+                let result = await bpmnServer.engine.invoke({ "items.id": id }, data, userId);
 
                 response.redirect('/instanceDetails?id=' + result.execution.id);
             }
@@ -235,8 +230,7 @@ export class Workflow extends Common {
 
         router.get('/run/:process', awaitAppDelegateFactory(async (request, response) => {
             let process = request.params.process;
-            let userKey = bpmnServer.iam.getRemoteUser(request.session.userId);
-            let exec = await bpmnServer.engine.start(process, { caseId: caseId++ }, null, userKey);
+            let exec = await bpmnServer.engine.start(process, { caseId: caseId++ }, null, userId);
             if (exec.errors) {
                 displayError(response, exec.errors);
             }
@@ -455,7 +449,12 @@ function calculateDecorations(items) {
     items.forEach(item => {
         let color = 'red';
         if (item.status == 'end')
-            color = 'black';
+            {
+            if (item.endedAt == null && item.type !='bpmn:SequenceFlow')
+                color ='gray';
+            else 
+                color = 'black';
+            }
         let decor = { id: item.elementId, color, seq };
         decors.push(decor);
         seq++;

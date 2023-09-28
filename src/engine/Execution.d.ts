@@ -19,7 +19,7 @@ declare class Execution extends ServerComponent implements IExecution {
     item: any;
     messageMatchingKey: any;
     worker: any;
-    currentUser: any;
+    userId: any;
     promises: any[];
     get id(): any;
     get name(): any;
@@ -48,6 +48,12 @@ declare class Execution extends ServerComponent implements IExecution {
      * */
     stop(): void;
     execute(startNodeId?: any, inputData?: {}, options?: {}): Promise<void>;
+    /**
+     * @param executionId
+     * @param inputData
+     *
+     */
+    assign(executionId: any, inputData: any, userId?: string, assignment?: {}): Promise<void>;
     /**
      *
      * invoke scenarios:

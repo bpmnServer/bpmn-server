@@ -2,6 +2,7 @@ import { Node } from './Node';
 import { NODE_ACTION } from '../interfaces/Enums';
 import { Process } from './Process';
 import { IExecution } from '../interfaces/engine';
+import { Item } from '../engine/Item';
 declare class ScriptTask extends Node {
     run(item: any): Promise<NODE_ACTION>;
     describe(): string[][];
@@ -28,6 +29,9 @@ declare class SendTask extends ServiceTask {
     get isCatching(): boolean;
 }
 declare class UserTask extends Node {
+    start(item: Item): Promise<NODE_ACTION>;
+    setAssignVal(item: any, attr: any, dateFormat?: boolean): void;
+    evaluateExpr(item: any, attr: any): any;
     get requiresWait(): boolean;
     get canBeInvoked(): boolean;
 }

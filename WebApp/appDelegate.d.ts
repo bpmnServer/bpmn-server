@@ -3,6 +3,9 @@ import { DefaultAppDelegate } from './index';
 declare class MyAppDelegate extends DefaultAppDelegate {
     winSocket: any;
     constructor(server: any);
+    /**
+    * is fired on application startup
+    **/
     startUp(): Promise<void>;
     sendEmail(to: any, msg: any, body: any): void;
     executionStarted(execution: IExecution): Promise<void>;

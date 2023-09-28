@@ -196,7 +196,7 @@ class Node extends _1.Element {
     }
     end(item, cancel = false) {
         return __awaiter(this, void 0, void 0, function* () {
-            item.token.log('Node(' + this.name + '|' + this.id + ').end: item=' + item.id + ' cancel:' + cancel);
+            item.token.log('Node(' + this.name + '|' + this.id + ').end: item=' + item.id + ' cancel:' + cancel + ' attachments:' + this.attachments.length);
             /**
              * Rule:    boundary events are canceled when owner task status is 'end'
              * */
@@ -204,11 +204,25 @@ class Node extends _1.Element {
             let i, t;
             for (i = 0; i < this.attachments.length; i++) {
                 let boundaryEvent = this.attachments[i];
-                let childrenTokens = item.token.getChildrenTokens();
+                item.token.log('        boundaryEvent:' + boundaryEvent.id);
+                let childrenTokens;
+                if (this.type == Enums_2.BPMN_TYPE.SubProcess) // subprocess
+                 {
+                    //find the subprocess token
+                    item.token.execution.tokens.forEach(tok => {
+                        if (tok.originItem) {
+                            //item.token.log('--check token :'+tok.id+' ' +tok.originItem.id+' '+item.id);
+                            if (tok.originItem.id == item.id && tok.type == Token_1.TOKEN_TYPE.SubProcess)
+                                childrenTokens = tok.getChildrenTokens();
+                        }
+                    });
+                }
+                else
+                    childrenTokens = item.token.getChildrenTokens();
                 for (t = 0; t < childrenTokens.length; t++) {
                     let token = childrenTokens[t];
+                    item.token.log('     childToken:' + token.id + ' startnode:' + token.startNodeId + ' status:' + token.currentItem.status);
                     if (token.startNodeId == boundaryEvent.id) {
-                        //   don't terminate if boundary events are active
                         if (token.currentItem.status != Enums_1.ITEM_STATUS.end)
                             yield token.terminate();
                     }

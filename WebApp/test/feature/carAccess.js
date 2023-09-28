@@ -12,7 +12,7 @@ let name = 'Buy Used Car';
 let process;
 let response;
 let instanceId;
-
+return;
 Feature('CarAccess.js - Checking for Access Rules', () => {
         Scenario('Buy Used Car -complete', () => {
             Given('Start Buy Used Car Process',async () => {

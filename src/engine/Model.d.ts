@@ -18,8 +18,6 @@ declare class InstanceObject implements IInstanceData {
     tokens: any[];
     loops: any[];
     parentItemId: any;
-    involvements: any[];
-    authorizations: any[];
 }
 /**
  *  as stroed in MongoDB
@@ -46,9 +44,12 @@ declare class ItemObject implements IItemData {
     vars: any;
     messageId: any;
     signalId: any;
-    assignments: any;
-    authorizations: any;
-    notifications: any;
+    assignee: any;
+    candidateGroups: any;
+    candidateUsers: any;
+    dueDate: any;
+    followUpDate: any;
+    priority: any;
 }
 declare class TokenObject {
     id: any;

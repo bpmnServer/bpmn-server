@@ -3,7 +3,6 @@ import { ITEM_STATUS, IItem, } from "../../";
 import { IItemData } from "../../";
 import { Element , Node } from '../elements';
 import { Token } from "./Token";
-import { Authorization, Assignment, Notification } from "../acl/";
 
 class Item implements IItem {
     id;                 
@@ -12,17 +11,19 @@ class Item implements IItem {
     token : Token;      
     seq;
     userId;
-    def;
     startedAt;              // dateTime Started
     _endedAt = null;
     instanceId;
-    assignments=[];
-    authorizations=[];
-    notifications=[];
     input = {};
     output = {};
     vars = {};
-
+    assignee;
+    candidateGroups;
+    candidateUsers;
+    dueDate;
+    followUpDate;
+    priority;
+    
 
     get endedAt() {         // dateTime ended
         return this._endedAt;
@@ -76,31 +77,24 @@ class Item implements IItem {
         this._dbAction = 'add';
         this.token = token;
         this.status = status;
-        const user = token.execution.currentUser;
-        if (user)
-            this.userId = user.userId;
-        //token.log(`Item:new Item ${element.id} for token ${token.id} `);
+        this.userId = token.execution.userId;
+
+        token.log(`Item:new Item ${element.id} for token ${token.id} `);
     }
     save() : IItemData {
-        let myassignment:any = {}
-        if(this.element.type=='bpmn:UserTask'){           
-            const assignees = this.element['def']['assignee'] ? this.element['def']['assignee'] : undefined
-            const candidateUsers = this.element['def']['candidateUsers'] ? this.element['def']['candidateUsers'].split : undefined
-            const candidateGroups = this.element['def']['candidateGroups'] ? this.element['def']['candidateGroups'].split : undefined
-            myassignment = {                              
-                assignee: assignees,
-                candidateUsers: candidateUsers,
-                candidateGroups: candidateGroups
-            }             
-        }
-        
+
         return {
             id: this.id, seq: this.seq, itemKey: this.itemKey, tokenId: this.token.id, elementId: this.elementId, name: this.name,
             status: this.status, userId: this.userId, startedAt: this.startedAt, endedAt: this.endedAt, type: this.type, timeDue: this.timeDue,
             data: null, vars: this.vars, instanceId: this.instanceId,
             messageId: this.messageId, signalId: this.signalId,
-                assignments: myassignment,authorizations: this.authorizations, notifications: this.notifications,
-                // def:this.element['def']
+            assignee:this.assignee,
+            candidateGroups:this.candidateGroups,
+            candidateUsers:this.candidateUsers,
+            dueDate:this.dueDate,
+            followUpDate:this.followUpDate,
+            priority:this.priority
+//                assignments: this.assignments,authorizations: this.authorizations, notifications: this.notifications
         };
 
     }
@@ -113,10 +107,16 @@ class Item implements IItem {
         item.startedAt = dataObject.startedAt;
         item.endedAt = dataObject.endedAt;
         item.timeDue = dataObject.timeDue;
-
-        item.authorizations=dataObject.authorizations;
+        
+        item.assignee= dataObject.assignee;
+        item.candidateGroups=dataObject.candidateGroups;
+        item.candidateUsers=dataObject.candidateUsers;
+        item.dueDate=dataObject.dueDate;
+        item.followUpDate=dataObject.followUpDate;
+        item.priority=dataObject.priority;
+  /*      item.authorizations=dataObject.authorizations;
         item.assignments=dataObject.assignments;
-        item.notifications = dataObject.notifications;
+        item.notifications = dataObject.notifications; */
         item.vars = dataObject.vars;
         return item;
     }

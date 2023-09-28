@@ -13,12 +13,15 @@ declare class Item implements IItem {
     startedAt: any;
     _endedAt: any;
     instanceId: any;
-    assignments: any[];
-    authorizations: any[];
-    notifications: any[];
     input: {};
     output: {};
     vars: {};
+    assignee: any;
+    candidateGroups: any;
+    candidateUsers: any;
+    dueDate: any;
+    followUpDate: any;
+    priority: any;
     get endedAt(): any;
     set endedAt(val: any);
     _status: ITEM_STATUS;

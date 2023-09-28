@@ -113,6 +113,17 @@ class EndEvent extends Event {
     }
 }
 class StartEvent extends Event {
+
+    async start(item: Item): Promise<NODE_ACTION> {
+
+        if (this.def.$attrs && this.def.$attrs["camunda:initiator"])
+            {
+            const initiator=this.def.$attrs["camunda:initiator"];
+            item.token.data[initiator]=item.userId;
+            }
+        return await super.start(item);
+    }
+
     get isCatching(): boolean { return true; }
 }
 

@@ -30,7 +30,7 @@ class MyAppDelegate extends index_1.DefaultAppDelegate {
                 this.server.logger.log("...items query returend " + list.length);
                 for (var i = 0; i < list.length; i++) {
                     let item = list[i];
-                    console.log('-->', item.processName, item.elementId, item.type, item.startedAt, item.status);
+                    //console.log('-->',item.processName,item.elementId,item.type,item.startedAt,item.status);
                     if (item.type == 'bpmn:ScriptTask' || item.type == 'bpmn:ServiceTask') {
                         console.log('recovering:', item.elementId);
                         //                    let response =await this.server.engine.invoke({"items.id":item.id}, {},null, {recover:true});
@@ -78,8 +78,8 @@ class MyAppDelegate extends index_1.DefaultAppDelegate {
         return __awaiter(this, void 0, void 0, function* () {
             if (context.item) {
                 //            console.log(`----->Event: '${event}' for ${context.item.element.type} '${context.item.element.id}' id: ${context.item.id}`);
-                if (event == 'wait' && context.item.element.type == 'bpmn:UserTask')
-                    console.log(`----->Waiting for User Input for '${context.item.element.id}' id: ${context.item.id}`);
+                //            if (event == 'wait' && context.item.element.type == 'bpmn:UserTask')
+                //                console.log(`----->Waiting for User Input for '${context.item.element.id}' id: ${context.item.id}`);
             }
             //       else
             //           console.log('----->All:' + event, context.definition.name);
@@ -164,6 +164,16 @@ class MyServices {
         return __awaiter(this, void 0, void 0, function* () {
             console.log("Add Service", v1, v2);
             return Number(v1) + Number(v2);
+        });
+    }
+    service99() {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('>>>>>>>>>>appDelegate service99');
+        });
+    }
+    notifyhead() {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('>>>>>>>>>>appDelegate notifyhead');
         });
     }
     service1(input, context) {

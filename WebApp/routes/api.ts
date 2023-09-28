@@ -16,7 +16,7 @@ var caseId = Math.floor(Math.random() * 10000);
 
 /* GET users listing. */
 
-// console.log("api.ts");
+console.log("api.ts");
 
 const awaitAppDelegateFactory = (middleware) => {
     return async (req, res, next) => {
@@ -124,9 +124,8 @@ export class API extends Common {
                 console.log(' starting ' + name);
                 console.log(request.body);
                 let data = request.body.data;
-                let userId;
 
-                let startNodeId, options = {}, userKey;
+                let startNodeId, options = {}, userId;
                 if (request.body.startNodeId) {
                     startNodeId = request.body.startNodeId;
                 }
@@ -140,22 +139,58 @@ export class API extends Common {
                     userId = request.body.userId;
                 }
 
-                userKey = this.bpmnServer.iam.getRemoteUser(userId);
-
                 let context;
-                console.log(data);
-                context = await this.bpmnServer.engine.start(name, data, startNodeId, userKey, options);
+                console.log(data,userId);
+                context = await this.bpmnServer.engine.start(name, data, startNodeId, userId, options);
                 response.json(context.instance);
             }
             catch (exc) {
                 response.json({ error: exc.toString() });
             }
         }));
+///
+        router.put('/engine/assign', loggedIn, awaitAppDelegateFactory(async (request, response) => {
 
+            console.log(request.body);
+            let query, data,userId,assignment;
+            if (request.body.query) {
+                query = request.body.query;
+            }
+            if (request.body.data) {
+                data = request.body.data;
+            }
+            if (request.body.assignment) {
+                assignment = request.body.assignment;
+            }
+
+            if (request.body.userId) {
+                userId= request.body.userId;
+            }
+
+            console.log(query);
+            let context;
+            let instance;
+            let errors;
+            try {
+
+                context = await this.bpmnServer.engine.assign(query, data,userId,assignment);
+                instance = context.instance;
+                if (context && context.errors)
+                    errors = context.errors.toString();
+            }
+            catch (exc) {
+                errors = exc.toString();
+                console.log(errors);
+            }
+            response.json({ errors: errors, instance });
+
+        }));
+
+///
         router.put('/engine/invoke', loggedIn, awaitAppDelegateFactory(async (request, response) => {
 
             console.log(request.body);
-            let query, data,userId,options,userKey;
+            let query, data,userId,options;
             if (request.body.query) {
                 query = request.body.query;
             }
@@ -175,9 +210,8 @@ export class API extends Common {
             let instance;
             let errors;
             try {
-                userKey = this.bpmnServer.iam.getRemoteUser(userId);
 
-                context = await this.bpmnServer.engine.invoke(query, data,userKey,options );
+                context = await this.bpmnServer.engine.invoke(query, data,userId,options );
                 instance = context.instance;
                 if (context && context.errors)
                     errors = context.errors.toString();
@@ -323,7 +357,7 @@ export class API extends Common {
                             }
                         catch(exc)
                             {
-                            // console.log('error in api.ts import ',exc.message,exc);
+                            console.log('error in api.ts import ',exc.message,exc);
                             response.json({errors:  exc.message});
                             return;
                             }

@@ -2,8 +2,6 @@ import { Execution } from '../engine/Execution';
 import { IDataStore, IBPMNServer, IInstanceData } from '../interfaces';
 
 import { ServerComponent } from '../server/ServerComponent';
-import { Authorization, Involvement, Assignment, Notification } from '../acl/';
-import { ACL } from '../server/ACL';
 
 
 const fs = require('fs');
@@ -46,7 +44,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		const recs = await this.findInstances({ id: instanceId }, 'full');
 		if (recs.length == 0) {
 
-			// this.logger.error("Instance is not found for this item");
+			this.logger.error("Instance is not found for this item");
 			return null;
 		}
 		const instanceData = recs[0];
@@ -65,6 +63,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 				if (condition) {
 					const keys = Object.keys(condition);
 					keys.forEach(key => {
+						let cond=condition[key];
 						//console.log('key', key, condition[key], i[key]);
 						let val = i;
 						if (key.includes('.')) {
@@ -73,10 +72,20 @@ class DataStore extends ServerComponent  implements IDataStore {
 								val = val[k];
 							});
 							//console.log('keys ', k1, k2,val);
-							if (val !== condition[key])
+							if (val !== cond)
 								pass = false;
                         }
-						else if (i[key] != condition[key])
+						else if (Array.isArray(i[key])) {
+							if (!i[key].includes(cond))
+								pass = false;
+						}
+						else if (typeof cond === 'object' &&
+								!Array.isArray(cond) &&
+								cond!== null)
+							{
+								pass=this.parseComplexCondition(cond,i[key]);
+							}
+						else if (i[key] != cond)
 							pass = false;
 					});
 				}
@@ -90,12 +99,44 @@ class DataStore extends ServerComponent  implements IDataStore {
 		});
 		return items.sort(function (a, b) { return (a.seq - b.seq); });
 	}
+	private parseComplexCondition(condition,val) : boolean
+	{
+		let ret=false;
+		if (!val)
+			return false;
+		Object.keys(condition).forEach(cond=>{
+			let term=condition[cond];
+			switch(cond) {
+				case '$gte':
+					ret=(val>term)||(val===term);
+					break;
+				case '$gt':
+					ret=(val>term);
+					break;
+				case '$eq':
+					ret=(val===term);
+					break;
+				case '$lte':
+					ret=(val<term)||(val===term);
+					break;
+				case '$lt':
+					ret=(val<term);
+					break;
+				default:
+					ret=false;
+					break;
+				}
+			if (ret==false)
+				return false;
+		});
+		return ret;
+	}
 	// save instance to DB
 	static seq = 0;
 	private async saveInstance(instance) {
 //		this.logger.log("Saving...");
 
-		// console.log("save item:",instance)
+
 		//var json = JSON.stringify(instance.state, null, 2);
 		const tokensCount = instance.tokens.length;
 		let itemsCount = instance.items.length;
@@ -119,10 +160,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 					{
 						tokens: instance.tokens, items: instance.items, loops: instance.loops,
 						endedAt: instance.endedAt, status: instance.status, saved: instance.saved,
-						logs: instance.logs, data: instance.data,
-						involvements: instance.involvements,
-						authorizations: instance.authorizations
-
+						logs: instance.logs, data: instance.data					
 					}
 				}));
 
@@ -134,7 +172,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		});*/
 
 		await Promise.all(this.promises);
-		// this.logger.log('..DataStore:saving Complete');
+		this.logger.log('..DataStore:saving Complete');
 
 	}
 
@@ -158,14 +196,6 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 		const rec = results[0];
 
-		this.convertColl(rec.authorizations, Authorization);
-		this.convertColl(rec.involvements, Involvement);
-		rec.items.forEach(item => {
-			this.convertColl(item.authorizations, Authorization);
-			this.convertColl(item.assignments, Assignment);
-			this.convertColl(item.notifications, Notification);
-
-		});
 		return rec;
 
 	}
@@ -223,7 +253,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 		var records = await this.db.find(this.dbConfiguration.db, Instance_collection, result.query, result.projection);
 		// console.log('...find items for query:', query, " translated to :", JSON.stringify(result),  " recs:" , records.length)
-		// this.logger.log('...find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result)+" recs:"+records.length);
+		this.logger.log('...find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result)+" recs:"+records.length);
 
 		return this.getItemsFromInstances(records, result.match);
 

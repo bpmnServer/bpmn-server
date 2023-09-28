@@ -20,8 +20,6 @@ class ServerComponent {
     get dataStore() { return this.server.dataStore; }
     get definitions() { return this.server.definitions; }
     get listener() { return this.server.listener; }
-    get acl() { return this.server.acl; }
-    get iam() { return this.server.iam; }
 }
 exports.ServerComponent = ServerComponent;
 //# sourceMappingURL=ServerComponent.js.map

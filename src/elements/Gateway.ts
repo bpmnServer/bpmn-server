@@ -157,7 +157,7 @@ class Gateway extends Node {
                     result.pendingTokens.forEach(async t => {
                         item.token.log("..cancel ending token #" + t.id);
                         t.currentItem.status = ITEM_STATUS.end;
-                        await t.end();
+                        await t.terminate();
                     });
 
                 }

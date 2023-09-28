@@ -92,6 +92,9 @@ class Definition {
             let definition;
             try {
                 definition = yield this.getDefinition(this.source, this.logger);
+                // console.log("************************************")
+                // console.log(definition)
+                // console.log("************************************")
             }
             catch (exc) {
                 throw exc;

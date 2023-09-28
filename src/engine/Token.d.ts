@@ -68,6 +68,9 @@ declare class Token implements IToken {
     preNext(): Promise<boolean>;
     /**
      * this is the primary exectuion method for a token
+     * Pre-Conditions:
+     *      currentNode is set
+     *      status!= end
      */
     execute(input: any): Promise<void>;
     processError(): Promise<void>;
@@ -89,7 +92,7 @@ declare class Token implements IToken {
      * */
     continue(): Promise<void>;
     signal(data: any, options?: {}): Promise<void>;
-    end(): Promise<void>;
+    end(cancel?: Boolean): Promise<void>;
     setCurrentNode(newCurrentNode: Node): void;
     goNext(): Promise<void>;
     log(msg: any): void;

@@ -5,7 +5,6 @@ const ModelsDatastore_1 = require("../datastore/ModelsDatastore");
 const DefaultAppDelegate_1 = require("../engine/DefaultAppDelegate");
 const __1 = require("../..");
 const _1 = require("./");
-const ACL_1 = require("../server/ACL");
 let definitionsPath = __dirname + '/processes/';
 class Configuration {
     definitions(server) {
@@ -17,7 +16,7 @@ class Configuration {
     dataStore(server) {
         return new __1.DataStore(server);
     }
-    constructor({ definitionsPath, templatesPath, timers, database, apiKey, logger, definitions, appDelegate, dataStore, IAM, ACL }) {
+    constructor({ definitionsPath, templatesPath, timers, database, apiKey, logger, definitions, appDelegate, dataStore }) {
         this.definitionsPath = definitionsPath;
         this.templatesPath = templatesPath;
         this.timers = timers;
@@ -55,12 +54,6 @@ var defaultConfiguration = new Configuration({
     },
     dataStore: function (server) {
         return new __1.DataStore(server);
-    },
-    IAM: function (server) {
-        return new ACL_1.IAM(server);
-    },
-    ACL: function (server) {
-        return new ACL_1.ACL(server);
     }
 });
 exports.defaultConfiguration = defaultConfiguration;

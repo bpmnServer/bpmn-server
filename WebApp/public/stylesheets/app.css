@@ -10,6 +10,15 @@
     stroke: green !important;
 }
 
+.Cancelled > .djs-visual > rect, .Cancelled > .djs-visual > circle, .Cancelled > .djs-visual > polygon {
+    stroke: gray !important;
+    fill: #e4e0e0 !important;
+}
+
+.Cancelled > .djs-visual > path {
+    stroke: gray !important;
+}
+
 .Pending > .djs-visual > rect, .Pending > .djs-visual > circle, .Pending > .djs-visual > polygon {
     stroke: orange !important;
     fill: #dbd9a8 !important; /* #8bc286 !important; */

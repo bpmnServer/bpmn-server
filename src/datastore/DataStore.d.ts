@@ -16,6 +16,7 @@ declare class DataStore extends ServerComponent implements IDataStore {
         items: any[];
     }>;
     private getItemsFromInstances;
+    private parseComplexCondition;
     static seq: number;
     private saveInstance;
     findItem(query: any): Promise<any>;

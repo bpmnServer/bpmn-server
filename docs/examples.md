@@ -25,6 +25,7 @@
   - [Gateway](./examples/gateway.md)
   - [Event Based Gateway ](./examples/gateway.md)
   - [Boundary Events](./examples/boundary-events.md)
+  - [UserTask Assignment](./userAssignment.md)
 
 <!-- tocstop -->
 

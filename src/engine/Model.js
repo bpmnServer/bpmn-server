@@ -10,8 +10,6 @@ class InstanceObject {
         this.logs = [];
         this.tokens = [];
         this.loops = [];
-        this.involvements = [];
-        this.authorizations = [];
     }
 }
 exports.InstanceObject = InstanceObject;

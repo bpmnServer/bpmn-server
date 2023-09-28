@@ -57,9 +57,10 @@ declare enum NODE_ACTION {
     continue = 1,
     wait = 2,
     end = 3,
-    stop = 4,
-    error = 5,
-    abort = 6
+    cancel = 4,
+    stop = 5,
+    error = 6,
+    abort = 7
 }
 declare enum ITEM_STATUS {
     enter = "enter",

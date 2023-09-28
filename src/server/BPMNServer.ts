@@ -2,12 +2,11 @@
 import { Logger } from '../common/Logger';
 
 
-import { IConfiguration, ILogger, DataStore , IAppDelegate, IBPMNServer, IDataStore, IIAM, IACL} from '../..';
+import { IConfiguration, ILogger, DataStore , IAppDelegate, IBPMNServer, IDataStore} from '../..';
 import { Engine } from './Engine';
 import { CacheManager } from './CacheManager';
 import { Cron } from './Cron';
 import { EventEmitter } from 'events';
-import { ACL, IAM } from './ACL';
 
 process.on('uncaughtException', function (err) {
 console.log('***************BPMNServer UNCAUGHT ERROR***********',err);
@@ -43,8 +42,6 @@ class BPMNServer implements IBPMNServer {
 	dataStore: IDataStore;
 	cache: CacheManager;
 	cron: Cron;
-	acl: IACL;
-	iam: IIAM;
 	error:any;
 
 	private static instance: BPMNServer;
@@ -70,12 +67,6 @@ class BPMNServer implements IBPMNServer {
 		this.dataStore = configuration.dataStore(this);
 		this.definitions = configuration.definitions(this);
 		this.appDelegate = configuration.appDelegate(this);
-
-		this.acl = configuration.ACL? configuration.ACL(this):new ACL(this);
-		this.iam = configuration.IAM? configuration.IAM(this):new IAM(this);
-		
-		// new IAM(this);
-		// console.log("bpmn-server version " + BPMNServer.getVersion());
 
 		BPMNServer.instance=this;
 

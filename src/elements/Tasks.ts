@@ -126,8 +126,64 @@ class SendTask extends ServiceTask {
         return NODE_ACTION.end;
     } */
 }
+
 class UserTask extends Node {
 
+    async start(item: Item): Promise<NODE_ACTION> {
+
+        if (this.def.$attrs)
+            {
+            this.setAssignVal(item,"assignee");
+            this.setAssignVal(item,"candidateGroups");
+            this.setAssignVal(item,"candidateUsers");
+            this.setAssignVal(item,"dueDate",true);
+            this.setAssignVal(item,"followUpDate",true);
+            this.setAssignVal(item,"priority");
+            }
+        return await super.start(item);
+    }
+    setAssignVal(item,attr,dateFormat=false) {
+        const exp=this.def.$attrs["camunda:"+attr];
+
+        if (!exp)
+            return;
+        var val;
+        if (exp.startsWith('$'))
+        {
+            val=item.token.execution.appDelegate.scopeEval(item, exp.substring(1));
+        }
+        else if (exp.includes(","))
+        {
+            const arr=exp.split(",");
+            val=arr;
+        }
+        else
+            val=exp;
+
+        if (dateFormat)
+            val=new Date(val);
+
+        item[attr]=val;
+     }
+    evaluateExpr(item,attr) {
+        if (!this.def.$attrs[attr])
+            return null;
+        const exp=this.def.$attrs[attr];
+
+        if (!exp)
+            return null;
+        if (exp.startsWith('$'))
+        {
+            return item.token.execution.appDelegate.scopeEval(item, exp.substring(1));
+        }
+        else if (exp.includes(","))
+        {
+            const arr=exp.split(",");
+            return arr;
+        }
+        else
+            return exp;
+     }
     get requiresWait() { return true; }
     get canBeInvoked() { return true; }
 }

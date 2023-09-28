@@ -161,6 +161,28 @@ class Execution extends server_1.ServerComponent {
         });
     }
     /**
+     * @param executionId
+     * @param inputData
+     *
+     */
+    assign(executionId, inputData, userId = null, assignment = {}) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.log('Execution(' + this.name + ').assign: executionId=' + executionId + ' data ' + JSON.stringify(inputData));
+            let item;
+            this.getItems().forEach(i => {
+                if (i.id == executionId) {
+                    item = i;
+                }
+            });
+            Object.keys(assignment).forEach(key => {
+                item[key] = assignment[key];
+            });
+            item.token.appendData(inputData);
+            yield this.save();
+            this.log('Execution(' + this.name + ').signal: finished!');
+        });
+    }
+    /**
      *
      * invoke scenarios:
      *      itemId

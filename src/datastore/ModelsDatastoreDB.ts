@@ -34,7 +34,7 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
 
         var records = await this.db.find(this.dbConfiguration.db, Definition_collection, {}, {});
 
-        // this.logger.log('find events for ' + " recs:" + records.length);
+        this.logger.log('find events for ' + " recs:" + records.length);
         const list = [];
         records.forEach(r => { list.push({ name: r.name, saved: r.saved }); });
         return list;
@@ -98,7 +98,7 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
         let projection = {}; // this.getProjection(query);
         var records = await this.db.find(this.dbConfiguration.db, Definition_collection, query, projection);
 
-        // this.logger.log('...find events for ' + JSON.stringify(query) + " recs:" + records.length);
+        this.logger.log('...find events for ' + JSON.stringify(query) + " recs:" + records.length);
 
         const events = [];
 

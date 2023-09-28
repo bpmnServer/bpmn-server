@@ -20,7 +20,7 @@ declare class Configuration implements IConfiguration {
     definitions(server: any): ModelsDatastore;
     appDelegate(server: any): IAppDelegate;
     dataStore(server: any): DataStore;
-    constructor({ definitionsPath, templatesPath, timers, database, apiKey, logger, definitions, appDelegate, dataStore, IAM, ACL }: {
+    constructor({ definitionsPath, templatesPath, timers, database, apiKey, logger, definitions, appDelegate, dataStore }: {
         definitionsPath: any;
         templatesPath: any;
         timers: any;
@@ -30,8 +30,6 @@ declare class Configuration implements IConfiguration {
         definitions: any;
         appDelegate: any;
         dataStore: any;
-        IAM: any;
-        ACL: any;
     });
 }
 declare var defaultConfiguration: Configuration;

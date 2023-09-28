@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { IConfiguration, ILogger, IAppDelegate, IBPMNServer, IDataStore, IIAM, IACL } from '../..';
+import { IConfiguration, ILogger, IAppDelegate, IBPMNServer, IDataStore } from '../..';
 import { Engine } from './Engine';
 import { CacheManager } from './CacheManager';
 import { Cron } from './Cron';
@@ -28,8 +28,6 @@ declare class BPMNServer implements IBPMNServer {
     dataStore: IDataStore;
     cache: CacheManager;
     cron: Cron;
-    acl: IACL;
-    iam: IIAM;
     error: any;
     private static instance;
     /**

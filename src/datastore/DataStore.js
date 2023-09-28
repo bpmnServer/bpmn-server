@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DataStore = void 0;
 const ServerComponent_1 = require("../server/ServerComponent");
-const acl_1 = require("../acl/");
 const fs = require('fs');
 const MongoDB = require('./MongoDB').MongoDB;
 const Instance_collection = 'wf_instances';
@@ -56,6 +55,7 @@ class DataStore extends ServerComponent_1.ServerComponent {
                 if (condition) {
                     const keys = Object.keys(condition);
                     keys.forEach(key => {
+                        let cond = condition[key];
                         //console.log('key', key, condition[key], i[key]);
                         let val = i;
                         if (key.includes('.')) {
@@ -64,10 +64,19 @@ class DataStore extends ServerComponent_1.ServerComponent {
                                 val = val[k];
                             });
                             //console.log('keys ', k1, k2,val);
-                            if (val !== condition[key])
+                            if (val !== cond)
                                 pass = false;
                         }
-                        else if (i[key] != condition[key])
+                        else if (Array.isArray(i[key])) {
+                            if (!i[key].includes(cond))
+                                pass = false;
+                        }
+                        else if (typeof cond === 'object' &&
+                            !Array.isArray(cond) &&
+                            cond !== null) {
+                            pass = this.parseComplexCondition(cond, i[key]);
+                        }
+                        else if (i[key] != cond)
                             pass = false;
                     });
                 }
@@ -80,6 +89,37 @@ class DataStore extends ServerComponent_1.ServerComponent {
             });
         });
         return items.sort(function (a, b) { return (a.seq - b.seq); });
+    }
+    parseComplexCondition(condition, val) {
+        let ret = false;
+        if (!val)
+            return false;
+        Object.keys(condition).forEach(cond => {
+            let term = condition[cond];
+            switch (cond) {
+                case '$gte':
+                    ret = (val > term) || (val === term);
+                    break;
+                case '$gt':
+                    ret = (val > term);
+                    break;
+                case '$eq':
+                    ret = (val === term);
+                    break;
+                case '$lte':
+                    ret = (val < term) || (val === term);
+                    break;
+                case '$lt':
+                    ret = (val < term);
+                    break;
+                default:
+                    ret = false;
+                    break;
+            }
+            if (ret == false)
+                return false;
+        });
+        return ret;
     }
     saveInstance(instance) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -101,9 +141,7 @@ class DataStore extends ServerComponent_1.ServerComponent {
                     $set: {
                         tokens: instance.tokens, items: instance.items, loops: instance.loops,
                         endedAt: instance.endedAt, status: instance.status, saved: instance.saved,
-                        logs: instance.logs, data: instance.data,
-                        involvements: instance.involvements,
-                        authorizations: instance.authorizations
+                        logs: instance.logs, data: instance.data
                     }
                 }));
                 //			this.logger.log("updating instance");
@@ -135,13 +173,6 @@ class DataStore extends ServerComponent_1.ServerComponent {
             else if (results.length > 1)
                 throw Error(" More than one record found " + results.length + JSON.stringify(query));
             const rec = results[0];
-            this.convertColl(rec.authorizations, acl_1.Authorization);
-            this.convertColl(rec.involvements, acl_1.Involvement);
-            rec.items.forEach(item => {
-                this.convertColl(item.authorizations, acl_1.Authorization);
-                this.convertColl(item.assignments, acl_1.Assignment);
-                this.convertColl(item.notifications, acl_1.Notification);
-            });
             return rec;
         });
     }
@@ -194,7 +225,7 @@ class DataStore extends ServerComponent_1.ServerComponent {
             // let us rebuild the query form {status: value} to >  "tokens.items.status": "wait" 
             const result = this.translateCriteria(query);
             var records = yield this.db.find(this.dbConfiguration.db, Instance_collection, result.query, result.projection);
-            //console.log('...find items for query:', query, " translated to :", JSON.stringify(result),  " recs:" , records.length)
+            // console.log('...find items for query:', query, " translated to :", JSON.stringify(result),  " recs:" , records.length)
             this.logger.log('...find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result) + " recs:" + records.length);
             return this.getItemsFromInstances(records, result.match);
         });

@@ -109,6 +109,8 @@ function setElementDecor(svg, g, decorSet) {
  
     if (decorSet[0].color == 'black')
         $(g)[0].classList.add("Completed");
+    else if (decorSet[0].color == 'gray')
+        $(g)[0].classList.add("Cancelled");
     else
         $(g)[0].classList.add("Pending");
 

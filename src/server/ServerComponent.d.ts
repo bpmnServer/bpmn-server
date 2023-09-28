@@ -15,7 +15,5 @@ declare class ServerComponent {
     get dataStore(): any;
     get definitions(): any;
     get listener(): any;
-    get acl(): any;
-    get iam(): any;
 }
 export { ServerComponent };

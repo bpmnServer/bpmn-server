@@ -16,7 +16,7 @@ class MyAppDelegate extends DefaultAppDelegate{
     * is fired on application startup
     **/
     async startUp() {
-        // console.log('myserver started.. checking for incomplete processes');
+        console.log('myserver started.. checking for incomplete processes');
 
         var query = { "items.status": "start" };
 
@@ -26,7 +26,7 @@ class MyAppDelegate extends DefaultAppDelegate{
             this.server.logger.log("...items query returend " + list.length);
             for (var i = 0; i < list.length; i++) {
                 let item = list[i];
-                console.log('-->',item.processName,item.elementId,item.type,item.startedAt,item.status);
+                //console.log('-->',item.processName,item.elementId,item.type,item.startedAt,item.status);
                 if (item.type=='bpmn:ScriptTask' || item.type=='bpmn:ServiceTask' )
                 {
                     console.log('recovering:',item.elementId);
@@ -81,8 +81,8 @@ class MyAppDelegate extends DefaultAppDelegate{
         if (context.item) {
 
 //            console.log(`----->Event: '${event}' for ${context.item.element.type} '${context.item.element.id}' id: ${context.item.id}`);
-            if (event == 'wait' && context.item.element.type == 'bpmn:UserTask')
-                console.log(`----->Waiting for User Input for '${context.item.element.id}' id: ${context.item.id}`);
+//            if (event == 'wait' && context.item.element.type == 'bpmn:UserTask')
+//                console.log(`----->Waiting for User Input for '${context.item.element.id}' id: ${context.item.id}`);
         }
  //       else
  //           console.log('----->All:' + event, context.definition.name);
@@ -152,6 +152,12 @@ class MyServices {
         console.log("Add Service", v1, v2);
 
         return Number(v1) + Number(v2);
+    }
+    async service99() {
+        console.log('>>>>>>>>>>appDelegate service99');
+    }
+    async notifyhead() {
+        console.log('>>>>>>>>>>appDelegate notifyhead');
     }
     async service1(input, context) {
         let item = context.item;

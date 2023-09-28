@@ -10,7 +10,7 @@ declare class Engine extends ServerComponent implements IEngine {
      * @param data		input data
      * @param startNodeId	in process has multiple start node; you need to specify which one
      */
-    start(name: any, data?: any, startNodeId?: string, userKey?: string, options?: {}): Promise<Execution>;
+    start(name: any, data?: any, startNodeId?: string, userId?: string, options?: {}): Promise<Execution>;
     /**
      * restores an instance into memeory or provides you access to a running instance
      *
@@ -28,6 +28,16 @@ declare class Engine extends ServerComponent implements IEngine {
     restore(instanceQuery: any): Promise<Execution>;
     invokeItem(itemQuery: any, data?: {}): Promise<Execution>;
     /**
+     * update an existing item that is in a wait state with an assignment
+     * can modify data or assignment or both
+     *
+     * -------------------------------------------------
+     *
+     * @param itemQuery		criteria to retrieve the item
+     * @param data
+     */
+    assign(itemQuery: any, data?: {}, userId?: string, assignment?: {}): Promise<Execution>;
+    /**
      * Continue an existing item that is in a wait state
      *
      * -------------------------------------------------
@@ -39,7 +49,7 @@ declare class Engine extends ServerComponent implements IEngine {
      * @param itemQuery		criteria to retrieve the item
      * @param data
      */
-    invoke(itemQuery: any, data?: {}, userKey?: string, options?: {}): Promise<Execution>;
+    invoke(itemQuery: any, data?: {}, userId?: string, options?: {}): Promise<Execution>;
     /**
      *
      * Invoking an event (usually start event of a secondary process) against an existing instance

@@ -142,7 +142,7 @@ class Gateway extends _1.Node {
                         result.pendingTokens.forEach((t) => __awaiter(this, void 0, void 0, function* () {
                             item.token.log("..cancel ending token #" + t.id);
                             t.currentItem.status = __1.ITEM_STATUS.end;
-                            yield t.end();
+                            yield t.terminate();
                         }));
                     }
                     else {

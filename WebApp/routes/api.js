@@ -112,30 +112,64 @@ class API extends common_1.Common {
                 console.log(' starting ' + name);
                 console.log(request.body);
                 let data = request.body.data;
-                let userId;
-                let startNodeId, options = {}, userKey;
+                let startNodeId, options = {}, userId;
                 if (request.body.startNodeId) {
                     startNodeId = request.body.startNodeId;
                 }
                 if (request.body.options) {
                     options = request.body.options;
                 }
-                if (request.body.userId) {
+                if (options['userId'] !== undefined) {
+                    userId = options['userId'];
+                }
+                else if (request.body.userId) {
                     userId = request.body.userId;
                 }
-                userKey = this.bpmnServer.iam.getRemoteUser(userId);
                 let context;
-                console.log(data);
-                context = yield this.bpmnServer.engine.start(name, data, startNodeId, userKey, options);
+                console.log(data, userId);
+                context = yield this.bpmnServer.engine.start(name, data, startNodeId, userId, options);
                 response.json(context.instance);
             }
             catch (exc) {
                 response.json({ error: exc.toString() });
             }
         })));
+        ///
+        router.put('/engine/assign', loggedIn, awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
+            console.log(request.body);
+            let query, data, userId, assignment;
+            if (request.body.query) {
+                query = request.body.query;
+            }
+            if (request.body.data) {
+                data = request.body.data;
+            }
+            if (request.body.assignment) {
+                assignment = request.body.assignment;
+            }
+            if (request.body.userId) {
+                userId = request.body.userId;
+            }
+            console.log(query);
+            let context;
+            let instance;
+            let errors;
+            try {
+                context = yield this.bpmnServer.engine.assign(query, data, userId, assignment);
+                instance = context.instance;
+                if (context && context.errors)
+                    errors = context.errors.toString();
+            }
+            catch (exc) {
+                errors = exc.toString();
+                console.log(errors);
+            }
+            response.json({ errors: errors, instance });
+        })));
+        ///
         router.put('/engine/invoke', loggedIn, awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             console.log(request.body);
-            let query, data, userId, options, userKey;
+            let query, data, userId, options;
             if (request.body.query) {
                 query = request.body.query;
             }
@@ -153,8 +187,7 @@ class API extends common_1.Common {
             let instance;
             let errors;
             try {
-                userKey = this.bpmnServer.iam.getRemoteUser(userId);
-                context = yield this.bpmnServer.engine.invoke(query, data, userKey, options);
+                context = yield this.bpmnServer.engine.invoke(query, data, userId, options);
                 instance = context.instance;
                 if (context && context.errors)
                     errors = context.errors.toString();
