@@ -16,7 +16,7 @@
     "name": ""
   },
   "dependencies": {
-    "bpmn-server": "^1.3.18",
+    "bpmn-server": "^1.3.28",
     "@sendgrid/mail": "^7.4.2",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
