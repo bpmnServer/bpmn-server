@@ -46,7 +46,7 @@ Remote calls rely on apiKey to be passed along with the userId
 ### Defining Process Initiator
 You can define the variable name for the instance initiator 
 
-![BPMN Editor Initiator](initiator.png)
+![BPMN Editor Initiator](initiator.PNG)
 
 This will assign the userId of that started the process
 ```
@@ -55,15 +55,10 @@ This will assign the userId of that started the process
 
 ## BPMN Editor
 
-![BPMN Editor Assignee](assignee1.png)
+![BPMN Editor Assignee](Assignee1.PNG)
 
 At the start of the userTask the designer values are evaluated into the instance item.
 
-Date can be one of the following:
-      - an instance variable $(data.Task1_dueDate)
-      - $(fromStart('5d'))
-      - $(fromStartOf('task1','10h'))
-      - $(fromEndOf('task1','10h'))
 
 ## Manual Assignment
 
@@ -84,11 +79,10 @@ An application can prove a UI to allow users to assign tasks to others, this can
 
     var res = await server.dataStore.findItems(
         {
-            "data.caseId" : 1050 ,
             "items.status": "wait", "items.elementId": "task_Buy",
             "items.candidateUsers":"user5"
         }
     );
 ```
 
-The above will return all items assigned to 'user5'
+The above will return all items Buy Tasks in wait state assigned to 'user5'
