@@ -58,7 +58,12 @@ This will assign the userId of that started the process
 ![BPMN Editor Assignee](Assignee1.PNG)
 
 At the start of the userTask the designer values are evaluated into the instance item.
+These fields can be a string or Javascript expression preceeded by '$'
 
+
+![image](https://github.com/ralphhanna/bpmn-server/assets/11893416/88299e86-dd9d-4fb0-9324-9209904ef881)
+
+For example: variable data.dueDate is copied into item.dueDate 
 
 ## Manual Assignment
 
