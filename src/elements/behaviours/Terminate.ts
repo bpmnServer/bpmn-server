@@ -10,9 +10,10 @@ import { Item } from "../../engine/Item";
 class TerminateBehaviour extends Behaviour {
     start(item: Item) { }
     end(item: Item) {
-        item.token.execution.getItems().forEach(item => {
-            item.token.log("..Terminating item:" + item.element.id);
-        });
+
+        item.token.execution.tokens.forEach(tok => {
+            tok.terminate();
+            });
     }
     describe() {
         return ['','Terminates all active nodes'];

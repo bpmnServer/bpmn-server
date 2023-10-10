@@ -8,6 +8,24 @@ import { EXECUTION_EVENT, ICacheManager, IExecution } from '../interfaces';
 
 const fs = require('fs');
 
+class NoCacheManager extends ServerComponent implements ICacheManager {
+
+	constructor(server)  {
+		console.log('------ no cache manager ------');
+		super(server);
+    }
+
+	list() {return  [];	}
+	/**
+	**/
+	getInstance(instanceId) {	return null; }
+
+	add(execution:IExecution) { return null; }
+	remove(instanceId) {return null;	}
+	//	shutsdown all instances that are still live
+	shutdown() {	}
+	restart() {		}
+}
 
 class CacheManager extends ServerComponent implements ICacheManager {
 	static liveInstances = new Map();
@@ -33,6 +51,7 @@ class CacheManager extends ServerComponent implements ICacheManager {
 	/**
 	**/
 	getInstance(instanceId) {
+
 		const instance = CacheManager.liveInstances.get(instanceId);
 		return instance;
 	}
@@ -60,21 +79,5 @@ class CacheManager extends ServerComponent implements ICacheManager {
 			instances.delete(list[i].execution.id);
 		}
 	}
-	//	is called to start all instances that were shutdown
-	async restart() {
-		this.logger.log("Restarting..");
-		const list = await this.dataStore.findInstances({ endAt: null });
-		const self = this;
-
-		const engine = new Engine(this.server);
-		let i;
-		for (i = 0; i < list.length; i++) {
-			const instance = list[i];
-			self.logger.log("..restoring instance " + instance.id);
-			await engine.restore({ "id": instance.id });
-			self.logger.log("..count :" + this.cache.list().length);
-		}
-
-	}
 }
-export { CacheManager};
+export { CacheManager , NoCacheManager};

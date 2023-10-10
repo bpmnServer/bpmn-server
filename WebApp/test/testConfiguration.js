@@ -33,6 +33,9 @@ var configuration = new __1.Configuration({
     },
     dataStore: function (server) {
         return new __2.DataStore(server);
+    },
+    cacheManager: function (server) {
+        return new __2.NoCacheManager(server);
     }
 });
 exports.configuration = configuration;

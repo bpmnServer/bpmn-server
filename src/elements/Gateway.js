@@ -91,12 +91,14 @@ class Gateway extends _1.Node {
                 p += '' + token.path[i].node.id + '->';
             }
             ex.log(`        ..token: ${token.id} - ${token.status} - ${token.type} current: ${token.currentNode.id} from ${branch} child of ${parent} path: ${p} `);
-            if ((token.id != item.token.id) &&
-                (token.currentItem.status != __1.ITEM_STATUS.end && token.currentItem.status != __1.ITEM_STATUS.terminated)) {
-                let canReach = this.canReach(token.currentNode, this);
-                ex.log(`            ..canReach: ${canReach} - token status: ${token.status} - item status ${token.currentItem.status}`);
-                if (canReach)
-                    related.push(token);
+            if (token.currentItem) {
+                if ((token.id != item.token.id) &&
+                    (token.currentItem.status != __1.ITEM_STATUS.end && token.currentItem.status != __1.ITEM_STATUS.terminated)) {
+                    let canReach = this.canReach(token.currentNode, this);
+                    ex.log(`            ..canReach: ${canReach} - token status: ${token.status} - item status ${token.currentItem.status}`);
+                    if (canReach)
+                        related.push(token);
+                }
             }
         });
         related.forEach(t => {

@@ -1,4 +1,4 @@
-import { IExecution, IItem, NODE_ACTION, FLOW_ACTION, IModelsDatastore, IDataStore} from '../..';
+import { IExecution, IItem, NODE_ACTION, FLOW_ACTION, IModelsDatastore, IDataStore,ICacheManager} from '../..';
 
 
 interface IConfiguration 
@@ -21,7 +21,8 @@ interface IConfiguration
     logger: ILogger,
     definitions(server): IModelsDatastore,
     appDelegate(server): IAppDelegate,
-    dataStore(server): IDataStore
+    dataStore(server): IDataStore,
+    cacheManager(server): ICacheManager
 }
 
 /**
@@ -68,7 +69,7 @@ interface IAppDelegate {
     servicesProvider;       // to respond to all named services
     sendEmail(to, msg, body);
     executionStarted(execution);
-    startUp(); // start of server
+    startUp(options); // start of server
     messageThrown(signalId, data, messageMatchingKey: any, item: IItem);
     signalThrown(signalId, data, messageMatchingKey: any, item: IItem);
     /**

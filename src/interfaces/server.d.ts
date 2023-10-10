@@ -41,8 +41,8 @@ interface IEngine extends IServerComponent {
      *
      * query example:	{ id: instanceId}
      *					{ data: {caseId: 1005}}
-     *					{ items.item.id : 'abcc111322'}
-     *					{ items.item.itemKey : 'businesskey here'}
+     *					{ items.id : 'abcc111322'}
+     *					{ items.itemKey : 'businesskey here'}
      *
      */
     get(instanceQuery: any): Promise<IExecution>;
@@ -77,21 +77,6 @@ interface IEngine extends IServerComponent {
      */
     startEvent(instanceId: any, elementId: any, data?: {}): Promise<IExecution>;
 }
-interface IUser {
-    userId: any;
-    name: any;
-    email: any;
-    userGroups: any;
-    password: any;
-}
-interface IIAM {
-    login(userId: any, password: any): any;
-    getRemoteUser(userId: any): any;
-    getCurrentUser(key: any): IUser;
-    getUser(userId: any): Promise<IUser>;
-    getUsersForGroup(userGroup: any): Promise<IUser[]>;
-    addUser(userId: any, name: any, email: any, userGroups: any, password: any): Promise<IUser>;
-}
 interface ICron {
     checkTimers(duration: any): any;
     start(): any;
@@ -104,4 +89,4 @@ interface ICacheManager {
     shutdown(): any;
     restart(): any;
 }
-export { IBPMNServer, IEngine, IUser, IIAM, ICron, ICacheManager, IServerComponent };
+export { IBPMNServer, IEngine, ICron, ICacheManager, IServerComponent };

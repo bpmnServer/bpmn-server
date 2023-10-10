@@ -9,8 +9,8 @@ const _1 = require(".");
 class TerminateBehaviour extends _1.Behaviour {
     start(item) { }
     end(item) {
-        item.token.execution.getItems().forEach(item => {
-            item.token.log("..Terminating item:" + item.element.id);
+        item.token.execution.tokens.forEach(tok => {
+            tok.terminate();
         });
     }
     describe() {

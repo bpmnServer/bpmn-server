@@ -179,7 +179,7 @@ class Execution extends server_1.ServerComponent {
             });
             item.token.appendData(inputData);
             yield this.save();
-            this.log('Execution(' + this.name + ').signal: finished!');
+            this.log('Execution(' + this.name + ').assign: finished!');
         });
     }
     /**
@@ -254,7 +254,9 @@ class Execution extends server_1.ServerComponent {
             // save here :
             this.log(`..Saving instance ${this.instance.id}` + JSON.stringify(this.instance.data));
             const state = this.getState();
-            yield this.server.dataStore.saveInstance(state, this.getItems());
+            this['state'] = state;
+            yield this.doExecutionEvent(this, __1.EXECUTION_EVENT.process_saving);
+            yield this.server.dataStore.saveInstance(state);
         });
     }
     getItems() {

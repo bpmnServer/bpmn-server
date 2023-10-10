@@ -38,6 +38,7 @@ interface IInstanceData {
     tokens: any;
     loops: any;
     parentItemId: any;
+    vars: any;
 }
 interface IDefinitionData {
     name: any;

@@ -4,58 +4,38 @@ bpmn-server
 [![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 
 ## Introduction
-**bpmn-server** is an integrated environment that provides BPMN 2.0 Modeling, Execution and Persistence, as an open source Workflow Server for Node.js 
+BPMN 2.0 Modeling, Execution and Presistence, an open source Workflow Server for Node.js 
 
-This package is designed specifically for Node.js and developed entirely in TypeScript 
+This package is designed specifically for Node.js and TypeScript
 
-**BPMN-Server** Workbench is a sample WebApp providing access you to:
-- Create and Edit your own models using bpmn.io modeler
-- Define own logic using extensions
-- Execute and Test the models 
-- Monitor Process Execution, View process history and tasks
-- provide a sample UI based on expressJS for demo purposes
-
-You can try it out at https://bpmn.omniworkflow.com 
-
-## Table of Contents
-- [Process modeller](#process-modeller)
-- [Execution](#process-execution)
-- [Installation](#installation)
-- [Demo](#demo)
-- [Acknowledgments](#acknowledgments)
 
 ### Documentation
-- [Features](./docs/features.md)
+- [Featuers](./docs/features)
 - [Examples](./docs/examples.md)
-- [API](./docs/api-summary.md)
-- [BPMNClient /WebAPI](./docs/client-api.md)
 
-# Process Modeler
+## Features
+### Web based Process modeller
 
 A web based modeler is included based on http://bpmn.io , models definitions are saved at your server
 ![Modeller](./docs/model-demo.gif)
 
-Also included is BPMN-Properties-Panel to define the entire BPMN definition on-line, without the need to edit bpmn files.
+### Full BPMN Process Engine
 
-![Modeller](./docs/bb-1.PNG)
+bpmn-server provides an bpmnEngine to execute your workflow definition supporting all of BPMN 2.0 elements with advanced extensions
 
-# Process Execution
+bpmn-server is highly scalable solution, allow you to run multiple nodeJS either in same machine or in a distributed mode against same MongoDB 
 
-bpmn-server provides an bpmnEngine to execute your workflow definition supporting BPMN 2.0
+### Presistent Processes
 
-# Process Server
-
-Provides an environment to presist execution Instances while running and communicate with your application.
+provides an environment to presist execution Instances while running and communicate with your application.
 
 Applications can monitor and communicate to Instances whether they are running or offline, allowing user interface to query and process Workflow steps
 
-Client application can invoke the bpmn-server using REST API or through bpmn-client
-
-# Data Queries 
+### Data Queries 
 
 Since instances are saved in MongoDB you can easily query your instances (running or completed)
 
-# Sample Web App
+### Sample Web App
 
 Included is a sample web application (running Node.js and Express.js) to allow you to visualize your workflow 
 
@@ -64,73 +44,65 @@ Included is a sample web application (running Node.js and Express.js) to allow y
 This package requires Node.js and an access to MongoDB ()
 if you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas)
 
-## Installing Server and Web UI
 ```javascript
 $ mkdir myBPMN
 
 $ cd myBPMN
 
 $ npm install bpmn-server
-
+```
+Copy demo app into local folder
+```
 $ cp node_modules/bpmn-server/WebApp/. ./  -r
 
 Windows: 
 xcopy /e /i /s /y node_modules\bpmn-server\WebApp\*.* .
-
-npm install
-
 ```
-Edit .env file to point to MongoDB and set api-key
-
-the change would look like this:
-
-    MONGO_DB_URL=//localhost:27017?retryWrites=true&w=majority
-or:
-    MONGO_DB_URL=mongodb://<userName>:<password>@ip?retryWrites=true&w=majority
-
+Edit .env file to have MongoDB point to your server or free cloud account
 ```javascript
-node app
-```
-## BPMN-Client (for remote access)
-
-This requires a Server to be installed or using cloud server on https://bpmn.omniworkflow.com
-
-```javascript
-$ mkdir myClient
-
-$ cd myClient
-
-$ npm install bpmn-client
-
-$ cp node_modules/bpmn-client/Sample/. ./  -r
-
-Windows: 
-xcopy /e /i /s /y node_modules\bpmn-client\Sample\*.* .
-
-npm update
-
+API_KEY=12345
+MONGO_DB_URL=mongodb://0.0.0.0:27017/bpmn <---- point to your MONGODB
+MONGO_DB_NAME=bpmn
+DEFINITIONS_PATH="./processes/"
+SESSION_SECRET=omni-secret
+SERVER_ID=PRIMARY
 ```
 
-Edit .env file to point to the server and set api-key 
+Run database setup
+```
+node setup.js
+```
+## To start server
+```
+npm run start
+```
+Console will display:
+```text 
+bpmn-server WebApp.ts version 1.4.0
+MongoDB URL mongodb://0.0.0.0:27017/bpmn
+db connection open
 
-Add your own code in this directory
-
-```javascript
-node test
+App is running at http://localhost:3000 in development mode
+  Press CTRL-C to stop
 
 ```
+Use your browser to view the bpmn-server running
 
+## to update to latest release
 
-# Demo
+```
+$ npm update bpmn-server
+```
+# Full Demo
 
 a full demo site is available @ http://bpmn.omniworkflow.com
 
-# Example
+# Example Script
 
 ```javascript
     const server = new BPMNServer(configuration, logger);
 
-    let response = await server.engine.start('Buy Used Car');
+    let response = await server.execute('Buy Used Car');
 
     // let us get the items
     const items = response.items.filter(item => {
@@ -143,23 +115,21 @@ a full demo site is available @ http://bpmn.omniworkflow.com
 
     console.log('Invoking Buy');
 
-    response = await server.engine.invoke({ id: response.execution.id, "items.elementId": 'task_Buy' },
+    response = await server.invoke({instanceId: response.execution.id, elementId: 'task_Buy' },
         { model: 'Thunderbird', needsRepairs: false, needsCleaning: false });
 
     console.log("Ready to drive");
 
-    response = await server.engine.invoke({ id: response.execution.id, "items.elementId": 'task_Drive' });
-
+    response = await server.invoke({ instanceId: response.execution.id, elementId: 'task_Drive' });
 
     console.log(`that is it!, process is now complete status=<${response.execution.status}>`)
 
 ```
 for more complete examples see [Examples](./docs/examples.md)
-# RoadMap and Project status
-see [RoadMap](https://github.com/ralphhanna/bpmn-server/projects/1)
-# Change Log
 
-see [CHANGELOG](./docs/CHANGELOG.md)
+# License 
+
+This project is licensed under the terms of the MIT license.
 
 # Acknowledgments
 

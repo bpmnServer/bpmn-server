@@ -99,6 +99,19 @@ class Definition implements IDefinition{
         }
 
         process.init(children, eventSubProcesses)
+        if (processElement.laneSets)
+        {
+
+        processElement.laneSets.forEach(ls=>{
+            ls.lanes.forEach(lane=>{
+                lane.flowNodeRef.forEach(fnr=>{
+                        let target = this.getNodeById(fnr.id);
+                        target.lane=lane.name;
+                    });
+                });
+            });
+        }
+
         return process;
     }
     /**

@@ -208,7 +208,7 @@ class Execution extends ServerComponent implements IExecution {
         item.token.appendData(inputData);
 
         await this.save();
-        this.log('Execution('+this.name+').signal: finished!');
+        this.log('Execution('+this.name+').assign: finished!');
     }
     /**
      * 
@@ -300,7 +300,12 @@ class Execution extends ServerComponent implements IExecution {
         this.log(`..Saving instance ${this.instance.id}`+JSON.stringify(this.instance.data));
         
         const state = this.getState();
-        await this.server.dataStore.saveInstance(state, this.getItems());
+    
+        this['state']=state;
+
+        await this.doExecutionEvent(this,EXECUTION_EVENT.process_saving);
+
+        await this.server.dataStore.saveInstance(state);
 
     }
     getItems(): Item[] {

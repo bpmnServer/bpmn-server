@@ -1,5 +1,7 @@
 import { BPMNServer } from '.';
 
+console.log('This routine will setup bpmn-server database');
+
 const fs = require('fs');
 const cwd = process.cwd();
 
@@ -26,8 +28,7 @@ async function install() {
     console.log('current directory is ' + process.cwd());
     console.log('Installing a new Database based on configuration in current directory');
     console.log('current directory is ' + process.cwd());
-    console.log(configuration);
-    console.log(configuration.database);
+    console.log('database configuration:',configuration.database);
 
     const server = new BPMNServer(configuration, null, { cron: false });
 

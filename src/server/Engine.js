@@ -36,12 +36,18 @@ class Engine extends ServerComponent_1.ServerComponent {
     
             newDataStore.monitorExecution(execution); */
             this.cache.add(execution);
+            yield this.lock(execution.instance.id);
             execution.worker = execution.execute(startNodeId, data, options);
             if (options['noWait'] == true) {
+                execution.worker.then(obj => {
+                    this.logger.log('after worker is done releasing ..' + execution.instance.id);
+                    this.release(execution.instance.id);
+                });
                 return execution;
             }
             else {
                 const waiter = yield execution.worker;
+                yield this.release(execution.instance.id);
                 this.logger.log(`.engine.start ended for ${name}`);
                 return execution;
             }
@@ -62,14 +68,40 @@ class Engine extends ServerComponent_1.ServerComponent {
      */
     get(instanceQuery) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.restore(instanceQuery);
+            const instance = yield this.restore(instanceQuery);
+            yield this.release(instance.id);
+            return instance;
         });
     }
+    /**
+        lock instance
+    */
+    lock(instanceId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.logger.log('===============locking ..' + instanceId);
+            yield this.server.dataStore.locker.lock(instanceId);
+        });
+    }
+    /**
+        release instance lock
+    */
+    release(instanceId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.logger.log('---------------releasing ..' + instanceId);
+            yield this.server.dataStore.locker.release(instanceId);
+        });
+    }
+    /***
+        Loads instance into memory for purpose of execution
+        Locks instance first if required
+        check if in cache
+    */
     restore(instanceQuery) {
         return __awaiter(this, void 0, void 0, function* () {
             // need to load instance first
             let execution;
             const instance = yield this.dataStore.findInstance(instanceQuery, 'Full');
+            yield this.lock(instance.id); // if fails throws exception
             const live = this.cache.getInstance(instance.id);
             if (live) {
                 execution = live;
@@ -116,6 +148,7 @@ class Engine extends ServerComponent_1.ServerComponent {
                 }
                 const execution = yield this.restore({ "id": item.instanceId });
                 execution.worker = execution.assign(item.id, data, userId, assignment);
+                yield this.release(item.instanceId);
                 return execution;
             }
             catch (exc) {
@@ -151,14 +184,25 @@ class Engine extends ServerComponent_1.ServerComponent {
                 const execution = yield this.restore({ "id": item.instanceId });
                 execution.userId = userId;
                 execution.worker = execution.signal(item.id, data, options);
-                if (options['noWait'] == true) {
-                    return execution;
+                try {
+                    if (options['noWait'] == true) {
+                        this.logger.log(`.noWait`);
+                        execution.worker.then(obj => {
+                            this.logger.log('after worker is done releasing ..' + item.instanceId);
+                            this.release(item.instanceId);
+                        });
+                        return execution;
+                    }
+                    else {
+                        const waiter = yield execution.worker;
+                        this.logger.log(`.engine.continue ended`);
+                        yield this.release(item.instanceId);
+                        return execution;
+                    }
                 }
-                else {
-                    const waiter = yield execution.worker;
-                    this.logger.log(`..engine.continue execution ended saving.. `);
-                    this.logger.log(`.engine.continue ended`);
-                    return execution;
+                catch (exc) {
+                    yield this.release(item.instanceId);
+                    throw exc;
                 }
             }
             catch (exc) {
@@ -189,6 +233,7 @@ class Engine extends ServerComponent_1.ServerComponent {
                 const execution = yield this.restore({ "id": instanceId });
                 yield execution.signal(elementId, data);
                 yield this.server.dataStore.save(execution.instance);
+                yield this.release(instanceId);
                 this.logger.log("invoke completed");
                 return execution;
             }

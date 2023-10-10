@@ -98,13 +98,16 @@ class Gateway extends Node {
                 {p+=''+token.path[i].node.id+'->'; }
             ex.log(`        ..token: ${token.id} - ${token.status} - ${token.type} current: ${token.currentNode.id} from ${branch} child of ${parent} path: ${p} ` );
 
-            if ( (token.id != item.token.id) &&
-                (token.currentItem.status != ITEM_STATUS.end && token.currentItem.status != ITEM_STATUS.terminated)) {
+            if (token.currentItem) 
+            {
+                if ( (token.id != item.token.id) &&
+                    (token.currentItem.status != ITEM_STATUS.end && token.currentItem.status != ITEM_STATUS.terminated)) {
 
-                let canReach=this.canReach(token.currentNode,this);
-                ex.log(`            ..canReach: ${canReach} - token status: ${token.status} - item status ${token.currentItem.status}` );
-                if (canReach)
-                    related.push(token);
+                    let canReach=this.canReach(token.currentNode,this);
+                    ex.log(`            ..canReach: ${canReach} - token status: ${token.status} - item status ${token.currentItem.status}` );
+                    if (canReach)
+                        related.push(token);
+                }
             }
         });
 

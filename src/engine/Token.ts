@@ -414,8 +414,11 @@ class Token implements IToken {
         this.log('Token('+this.id +').end: currentNode=' + this.currentNode.id +' status='+this.status+' currentItem.status='+this.currentItem.status);
         if (this.currentItem.status != ITEM_STATUS.end)
             {
-            this.log('..**token ended but item is still '+this.currentItem.status);
+            // this.log('..**token ended but item is still '+this.currentItem.status);
             }
+        if (this.status ==TOKEN_STATUS.end)
+            return;
+
         this.status = TOKEN_STATUS.end;
         await this.currentNode.end(this.currentItem,cancel);
         this.execution.tokenEnded(this);

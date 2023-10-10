@@ -140,6 +140,14 @@ class UserTask extends Node {
             this.setAssignVal(item,"followUpDate",true);
             this.setAssignVal(item,"priority");
             }
+        if (this.lane && this.lane !=='')
+            {
+            if (item.candidateGroups==null)
+                item.candidateGroups=new Array();
+
+            item.candidateGroups.push(this.lane);
+            }
+            
         return await super.start(item);
     }
     setAssignVal(item,attr,dateFormat=false) {

@@ -16,8 +16,7 @@ class Element implements IElement {
     name;
     behaviours = new Map();
     isFlow=false;
-/* is called after the execution is restarted */
-
+    lane;
     continue(item: Item) { }
     describe():string[][] { return [];}
     restored(item: Item) {

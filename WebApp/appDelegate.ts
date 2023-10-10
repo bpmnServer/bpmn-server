@@ -6,6 +6,24 @@ const fs = require('fs');
 
 var seq = 1;
 
+class TenantIdManager {
+    server;
+    constructor(server) {
+        this.server=server;
+        const listener = server.listener;
+        this.listen(listener);
+    }
+    listen(listener) {
+
+        listener.on('all', function ({ context, event, }) {
+            if (event==='process.saving')
+                {
+                    //console.log('extension process.saving ..');//context['state']);
+                }
+        });
+    }
+}
+
 class MyAppDelegate extends DefaultAppDelegate{
     winSocket;
     constructor(server) {
@@ -15,10 +33,18 @@ class MyAppDelegate extends DefaultAppDelegate{
     /**
     * is fired on application startup
     **/
-    async startUp() {
+    async startUp(options) {
+
+        await super.startUp(options);
+		if (options['cron'] == false) {
+			return;
+		}
+
         console.log('myserver started.. checking for incomplete processes');
 
         var query = { "items.status": "start" };
+
+        new TenantIdManager(this.server);
 
         var list = await this.server.dataStore.findItems(query);
         if (list.length > 0) {
@@ -29,8 +55,8 @@ class MyAppDelegate extends DefaultAppDelegate{
                 //console.log('-->',item.processName,item.elementId,item.type,item.startedAt,item.status);
                 if (item.type=='bpmn:ScriptTask' || item.type=='bpmn:ServiceTask' )
                 {
-                    console.log('recovering:',item.elementId);
-//                    let response =await this.server.engine.invoke({"items.id":item.id}, {},null, {recover:true});
+                    console.log('recovering:',item.elementId,item.name,item.processName,item.startedAt);
+                    let response =await this.server.engine.invoke({"items.id":item.id}, {},null, {recover:true});
                 }
             }
         }
@@ -161,9 +187,12 @@ class MyServices {
     }
     async service1(input, context) {
         let item = context.item;
+        let wait=5000;
+        if (input.wait)
+            wait=input.wait;
         item.vars = input;
         seq++;
-        await delay(5000, 'test');
+        await delay(wait, 'test');
         item.token.log("SERVICE 1: input: " + JSON.stringify(input)+ item.token.currentNode.id + " current seq: " + seq);
 
         console.log('appDelegate service1 is now complete input:',input, 'output:',seq,'item.data',item.data);

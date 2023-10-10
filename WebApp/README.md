@@ -61,16 +61,40 @@ $ cp node_modules/bpmn-server/WebApp/. ./  -r
 Windows: 
 xcopy /e /i /s /y node_modules\bpmn-server\WebApp\*.* .
 ```
-Edit configuration file to have MongoDB point to your server or free cloud account
+Edit .env file to have MongoDB point to your server or free cloud account
 ```javascript
-node app
+API_KEY=12345
+MONGO_DB_URL=mongodb://0.0.0.0:27017/bpmn <---- point to your MONGODB
+MONGO_DB_NAME=bpmn
+DEFINITIONS_PATH="./processes/"
+SESSION_SECRET=omni-secret
 ```
+## To start server
+```
+npm run start
+```
+Console will display:
+```text 
+bpmn-server WebApp.ts version 1.4.0
+MongoDB URL mongodb://0.0.0.0:27017/bpmn
+db connection open
 
-# Demo
+App is running at http://localhost:3000 in development mode
+  Press CTRL-C to stop
+
+```
+Use your browser to view the bpmn-server running
+
+## to update to latest release
+
+```
+$ npm update bpmn-server
+```
+# Full Demo
 
 a full demo site is available @ http://bpmn.omniworkflow.com
 
-# Example
+# Example Script
 
 ```javascript
     const server = new BPMNServer(configuration, logger);

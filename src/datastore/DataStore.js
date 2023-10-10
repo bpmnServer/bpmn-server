@@ -11,9 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DataStore = void 0;
 const ServerComponent_1 = require("../server/ServerComponent");
+const _1 = require("./");
 const fs = require('fs');
 const MongoDB = require('./MongoDB').MongoDB;
 const Instance_collection = 'wf_instances';
+const Locks_collection = 'wf_locks';
 const Events_collection = 'wf_events';
 class DataStore extends ServerComponent_1.ServerComponent {
     constructor(server) {
@@ -24,6 +26,7 @@ class DataStore extends ServerComponent_1.ServerComponent {
         this.promises = [];
         this.dbConfiguration = this.configuration.database.MongoDB;
         this.db = new MongoDB(this.dbConfiguration, this.logger);
+        this.locker = new _1.InstanceLocker(this);
     }
     /*monitorExecution(execution: Execution) {
         this.execution = execution;
@@ -141,7 +144,7 @@ class DataStore extends ServerComponent_1.ServerComponent {
                     $set: {
                         tokens: instance.tokens, items: instance.items, loops: instance.loops,
                         endedAt: instance.endedAt, status: instance.status, saved: instance.saved,
-                        logs: instance.logs, data: instance.data
+                        logs: instance.logs, data: instance.data, vars: instance.vars
                     }
                 }));
                 //			this.logger.log("updating instance");
@@ -343,7 +346,9 @@ class DataStore extends ServerComponent_1.ServerComponent {
      * */
     install() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.db.createIndex(this.dbConfiguration.db, Instance_collection, { id: 1 }, { unique: true });
+            yield this.db.createIndex(this.dbConfiguration.db, Instance_collection, { id: 1 }, { unique: true });
+            yield this.db.createIndex(this.dbConfiguration.db, Instance_collection, { "items.id": 1 });
+            yield this.db.createIndex(this.dbConfiguration.db, Locks_collection, { id: 1 }, { unique: true });
         });
     }
 }

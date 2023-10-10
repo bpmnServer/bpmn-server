@@ -21,7 +21,7 @@ class DefaultAppDelegate {
             });
         });
     }
-    startUp() {
+    startUp(options) {
         console.log('server started..');
     }
     sendEmail(to, msg, body) {

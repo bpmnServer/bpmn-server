@@ -9,11 +9,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CacheManager = void 0;
+exports.NoCacheManager = exports.CacheManager = void 0;
 const ServerComponent_1 = require("./ServerComponent");
-const _1 = require(".");
 const interfaces_1 = require("../interfaces");
 const fs = require('fs');
+class NoCacheManager extends ServerComponent_1.ServerComponent {
+    constructor(server) {
+        console.log('------ no cache manager ------');
+        super(server);
+    }
+    list() { return []; }
+    /**
+    **/
+    getInstance(instanceId) { return null; }
+    add(execution) { return null; }
+    remove(instanceId) { return null; }
+    //	shutsdown all instances that are still live
+    shutdown() { }
+    restart() { }
+}
+exports.NoCacheManager = NoCacheManager;
 class CacheManager extends ServerComponent_1.ServerComponent {
     constructor(server) {
         super(server);
@@ -53,22 +68,6 @@ class CacheManager extends ServerComponent_1.ServerComponent {
                 //await engine.stop();
                 this.logger.log("shutdown engine " + engine.execution.name + " status : " + engine.execution.state);
                 instances.delete(list[i].execution.id);
-            }
-        });
-    }
-    //	is called to start all instances that were shutdown
-    restart() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.logger.log("Restarting..");
-            const list = yield this.dataStore.findInstances({ endAt: null });
-            const self = this;
-            const engine = new _1.Engine(this.server);
-            let i;
-            for (i = 0; i < list.length; i++) {
-                const instance = list[i];
-                self.logger.log("..restoring instance " + instance.id);
-                yield engine.restore({ "id": instance.id });
-                self.logger.log("..count :" + this.cache.list().length);
             }
         });
     }

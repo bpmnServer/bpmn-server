@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BPMNServer = void 0;
 const Logger_1 = require("../common/Logger");
 const Engine_1 = require("./Engine");
-const CacheManager_1 = require("./CacheManager");
 const Cron_1 = require("./Cron");
 const events_1 = require("events");
 process.on('uncaughtException', function (err) {
@@ -41,13 +40,13 @@ class BPMNServer {
         this.logger = logger;
         this.configuration = configuration;
         this.cron = new Cron_1.Cron(this);
-        this.cache = new CacheManager_1.CacheManager(this);
         this.engine = new Engine_1.Engine(this);
+        this.cache = configuration.cacheManager(this);
         this.dataStore = configuration.dataStore(this);
         this.definitions = configuration.definitions(this);
         this.appDelegate = configuration.appDelegate(this);
         BPMNServer.instance = this;
-        this.appDelegate.startUp();
+        this.appDelegate.startUp(options);
         if (options['cron'] == false) {
             return;
         }

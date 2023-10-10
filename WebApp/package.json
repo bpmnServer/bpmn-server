@@ -1,11 +1,13 @@
 {
   "name": "bpmn-server.webapp",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "private": true,
   "scripts": {
+    "setup": "node setup.js",
     "build": "tsc --build",
     "compileRun": "tsc --build && node app.js",
     "dev": "nodemon -e ts  --exec \"npm run compileRun\"",
+    "install": "node install.js",
     "clean": "tsc --build --clean",
     "start:watch": "tsc-watch --project . --onSuccess \"nodemon ./app.ts\"",
     "start": "node app",
@@ -16,7 +18,7 @@
     "name": ""
   },
   "dependencies": {
-    "bpmn-server": "^1.3.18",
+    "bpmn-server": "^1.4.0",
     "@sendgrid/mail": "^7.4.2",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",

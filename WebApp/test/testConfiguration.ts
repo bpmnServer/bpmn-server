@@ -1,7 +1,7 @@
 
 import { ModelsDatastore, Configuration} from '../';
 import { MyAppDelegate } from './appDelegate';
-import { IConfiguration, DataStore, ILogger } from '../';
+import { IConfiguration, DataStore, ILogger , NoCacheManager} from '../';
 import { Logger } from '../'
 
 
@@ -36,7 +36,11 @@ var configuration = new Configuration(
 		},		
 		dataStore: function (server) {
 			return new DataStore(server);
+		},
+		cacheManager: function (server) {
+			return new NoCacheManager(server);
 		}
+
 	});
 
 

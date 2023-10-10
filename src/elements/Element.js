@@ -6,7 +6,6 @@ class Element {
         this.behaviours = new Map();
         this.isFlow = false;
     }
-    /* is called after the execution is restarted */
     continue(item) { }
     describe() { return []; }
     restored(item) {

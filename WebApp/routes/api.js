@@ -20,7 +20,6 @@ const __1 = require("..");
 //const definitions = bpmnServer.definitions;
 var caseId = Math.floor(Math.random() * 10000);
 /* GET users listing. */
-console.log("api.ts");
 const awaitAppDelegateFactory = (middleware) => {
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
@@ -168,7 +167,7 @@ class API extends common_1.Common {
         })));
         ///
         router.put('/engine/invoke', loggedIn, awaitAppDelegateFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
-            console.log(request.body);
+            console.log('---------invoke', request.body);
             let query, data, userId, options;
             if (request.body.query) {
                 query = request.body.query;
@@ -182,7 +181,6 @@ class API extends common_1.Common {
             if (request.body.userId) {
                 userId = request.body.userId;
             }
-            console.log(query);
             let context;
             let instance;
             let errors;

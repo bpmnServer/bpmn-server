@@ -28,7 +28,7 @@ interface IServerComponent {
     definitions;
 }
 
-interface IEngine extends IServerComponent {
+interface IEngine {
     /**
      *	loads a definitions  and start execution
      *
@@ -51,7 +51,6 @@ interface IEngine extends IServerComponent {
      *
      */
     get(instanceQuery: any): Promise<IExecution>;
-    restore(instanceQuery: any): Promise<IExecution>;
     /**
      * Continue an existing item that is in a wait state
      *
@@ -111,7 +110,6 @@ interface ICacheManager {
     add(execution: IExecution);
     remove(instanceId);
     shutdown();
-    restart();
 }
 
 

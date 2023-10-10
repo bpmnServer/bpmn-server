@@ -1,11 +1,13 @@
 {
   "name": "bpmn-server",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "BPMN 2.0 Server including Modeling, Execution and Presistence, an open source for Node.js",
   "module": "index.js",
   "license": "MIT",
   "types": "index.d.ts",
   "scripts": {
+    "preinstall": "echo ---- installing bpmn-server ----",
+    "postinstall": "node install.js",
     "build": "tsc --build",
     "clean": "tsc --build --clean",
     "wintest": "node_modules/.bin/mocha",

@@ -16,7 +16,10 @@ class Configuration {
     dataStore(server) {
         return new __1.DataStore(server);
     }
-    constructor({ definitionsPath, templatesPath, timers, database, apiKey, logger, definitions, appDelegate, dataStore }) {
+    cacheManager(server) {
+        return new __1.CacheManager(server);
+    }
+    constructor({ definitionsPath, templatesPath, timers, database, apiKey, logger, definitions, appDelegate, dataStore, cacheManager }) {
         this.definitionsPath = definitionsPath;
         this.templatesPath = templatesPath;
         this.timers = timers;
@@ -26,6 +29,7 @@ class Configuration {
         this.definitions = definitions;
         this.appDelegate = appDelegate;
         this.dataStore = dataStore;
+        this.cacheManager = cacheManager;
     }
 }
 exports.Configuration = Configuration;
@@ -54,6 +58,9 @@ var defaultConfiguration = new Configuration({
     },
     dataStore: function (server) {
         return new __1.DataStore(server);
+    },
+    cacheManager: function (server) {
+        return new __1.CacheManager(server);
     }
 });
 exports.defaultConfiguration = defaultConfiguration;

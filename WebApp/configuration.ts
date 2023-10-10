@@ -1,5 +1,6 @@
 
-import { Configuration, ModelsDatastore, DataStore , Logger } from './';
+import { Configuration, ModelsDatastore, ModelsDatastoreDB, DataStore , Logger 
+	, NoCacheManager,CacheManager} from './';
 import { MyAppDelegate } from './appDelegate';
 
 const dotenv = require('dotenv');
@@ -27,14 +28,18 @@ var configuration = new Configuration(
 			new Logger(server);
 		},							
 		definitions: function (server) {
-			return new ModelsDatastore(server);
+			return new ModelsDatastoreDB(server);
 		},			
 		appDelegate: function (server) {
 			return new MyAppDelegate(server);
 		},		
 		dataStore: function (server) {
 			return new DataStore(server);
+		},
+		cacheManager: function (server) {
+			return new NoCacheManager(server);
 		}
+		
 	});
 
 

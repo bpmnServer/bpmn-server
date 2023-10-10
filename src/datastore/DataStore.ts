@@ -3,6 +3,7 @@ import { IDataStore, IBPMNServer, IInstanceData } from '../interfaces';
 
 import { ServerComponent } from '../server/ServerComponent';
 
+import {InstanceLocker } from './';
 
 const fs = require('fs');
 
@@ -10,6 +11,7 @@ const MongoDB = require('./MongoDB').MongoDB;
 
 
 const Instance_collection = 'wf_instances';
+const Locks_collection = 'wf_locks';
 const Events_collection = 'wf_events';
 
 
@@ -23,12 +25,14 @@ class DataStore extends ServerComponent  implements IDataStore {
 	isRunning = false;
 	inSaving = false;
 	promises = [];
+	locker;
 
 	constructor(server: IBPMNServer) {
 		super(server);
 
 		this.dbConfiguration = this.configuration.database.MongoDB;
 		this.db = new MongoDB(this.dbConfiguration, this.logger);
+		this.locker=new InstanceLocker(this);
 
 	}
 	/*monitorExecution(execution: Execution) {
@@ -160,7 +164,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 					{
 						tokens: instance.tokens, items: instance.items, loops: instance.loops,
 						endedAt: instance.endedAt, status: instance.status, saved: instance.saved,
-						logs: instance.logs, data: instance.data					
+						logs: instance.logs, data: instance.data , vars: instance.vars
 					}
 				}));
 
@@ -381,8 +385,10 @@ private translateCriteria2(criteria) {
      * 
      * */
 	async install() {
-		return await this.db.createIndex(this.dbConfiguration.db, Instance_collection, { id: 1 }, { unique: true });
+		await this.db.createIndex(this.dbConfiguration.db, Instance_collection, { id: 1 }, { unique: true });
+		await this.db.createIndex(this.dbConfiguration.db, Instance_collection, { "items.id": 1 });
+		await this.db.createIndex(this.dbConfiguration.db, Locks_collection, { id: 1 }, { unique: true });
 	}
-
+	// LOCKS
 }
 export { DataStore };

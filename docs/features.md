@@ -65,16 +65,17 @@ The following elements are tested and supported.
 - SubProcess
 - Call Task
 - Lane
-- Pool
+- [Pool](userAssignment#Pool-as-a-role)
 - ErrorEventDefinition
 ## Special
 - [Script Events](./examples#ScriptExtensions) 
 
-## Pending 
+## Advamced 
 - BpmnError
-- compensate by outbound Association
-- Error
+- compensate
+- Transaction
 - EscalationEventDefinition
+- [User Assignment](userAssignment.md)
 
 		
 

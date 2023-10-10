@@ -62,18 +62,20 @@ class MongoDB {
         const db = client.db(dbName);
         const collection = db.collection(collName);
 
-        let self = this;
-
         return new Promise(function (resolve, reject) {
-
 
             collection.createIndex(index, unique , function (err, result) {
                 if (err) {
-                    reject(err);
-                } else {
+                    if (err.code==85)
+                        console.log('index for '+JSON.stringify(index)+' already exists for collection "'+collName+'"' );
+                    else
+                        console.log('error',err);
+                    resolve(null);
+                } else 
+                    {
                     //  self.logger.log(" inserted " + result.result);
-                    //                console.log(result);
-                    resolve(result.result);
+                    console.log('index named "'+result+'" was created for collection "'+collName+'"');
+                    resolve(result);
                 }
             });
         });

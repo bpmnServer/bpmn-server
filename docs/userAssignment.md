@@ -65,6 +65,10 @@ Date can be one of the following:
       - $(fromStartOf('task1','10h'))
       - $(fromEndOf('task1','10h'))
 
+## Pool as a role
+
+BPMNServer allows you to define pools and using the pool name as userGroup
+
 ## Manual Assignment
 
 An application can prove a UI to allow users to assign tasks to others, this can be done throught the 'assign' method:

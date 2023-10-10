@@ -25,13 +25,16 @@ var configuration = new _1.Configuration({
         new _1.Logger(server);
     },
     definitions: function (server) {
-        return new _1.ModelsDatastore(server);
+        return new _1.ModelsDatastoreDB(server);
     },
     appDelegate: function (server) {
         return new appDelegate_1.MyAppDelegate(server);
     },
     dataStore: function (server) {
         return new _1.DataStore(server);
+    },
+    cacheManager: function (server) {
+        return new _1.NoCacheManager(server);
     }
 });
 exports.configuration = configuration;

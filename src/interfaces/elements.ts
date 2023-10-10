@@ -21,6 +21,7 @@ interface IElement {
     id: any;
     type: any;
     name: any;
+    lane: any;
     behaviours: Map<any, any>;
     continue(item: IItem): void;
     describe(): string[][];

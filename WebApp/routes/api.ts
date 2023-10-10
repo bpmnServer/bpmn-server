@@ -16,7 +16,6 @@ var caseId = Math.floor(Math.random() * 10000);
 
 /* GET users listing. */
 
-console.log("api.ts");
 
 const awaitAppDelegateFactory = (middleware) => {
     return async (req, res, next) => {
@@ -189,7 +188,7 @@ export class API extends Common {
 ///
         router.put('/engine/invoke', loggedIn, awaitAppDelegateFactory(async (request, response) => {
 
-            console.log(request.body);
+            console.log('---------invoke',request.body);
             let query, data,userId,options;
             if (request.body.query) {
                 query = request.body.query;
@@ -205,7 +204,6 @@ export class API extends Common {
                 userId= request.body.userId;
             }
 
-            console.log(query);
             let context;
             let instance;
             let errors;

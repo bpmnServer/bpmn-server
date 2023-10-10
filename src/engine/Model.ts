@@ -19,6 +19,7 @@ class InstanceObject implements IInstanceData {
     tokens=[];
     loops=[];
     parentItemId;
+    vars;
 
 }
 /**

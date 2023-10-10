@@ -37,7 +37,7 @@ Feature('Event Based Gateway', () => {
                 await server.cron.checkTimers();
                 // we restore to get latest status; since the timer did some work in the background!
 
-                response = await server.engine.restore({ "id": instanceId });
+                //response = await server.engine.restore({ "id": instanceId });
                 console.log(response.instance.items.length);
                 let item = getItem('timerEvent');
                 log('timerEvent:' + item.id + " status: "+ item.status);

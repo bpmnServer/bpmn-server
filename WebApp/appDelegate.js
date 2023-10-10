@@ -13,6 +13,20 @@ exports.MyAppDelegate = void 0;
 const index_1 = require("./index");
 const fs = require('fs');
 var seq = 1;
+class TenantIdManager {
+    constructor(server) {
+        this.server = server;
+        const listener = server.listener;
+        this.listen(listener);
+    }
+    listen(listener) {
+        listener.on('all', function ({ context, event, }) {
+            if (event === 'process.saving') {
+                //console.log('extension process.saving ..');//context['state']);
+            }
+        });
+    }
+}
 class MyAppDelegate extends index_1.DefaultAppDelegate {
     constructor(server) {
         super(server);
@@ -21,10 +35,18 @@ class MyAppDelegate extends index_1.DefaultAppDelegate {
     /**
     * is fired on application startup
     **/
-    startUp() {
+    startUp(options) {
+        const _super = Object.create(null, {
+            startUp: { get: () => super.startUp }
+        });
         return __awaiter(this, void 0, void 0, function* () {
+            yield _super.startUp.call(this, options);
+            if (options['cron'] == false) {
+                return;
+            }
             console.log('myserver started.. checking for incomplete processes');
             var query = { "items.status": "start" };
+            new TenantIdManager(this.server);
             var list = yield this.server.dataStore.findItems(query);
             if (list.length > 0) {
                 this.server.logger.log("...items query returend " + list.length);
@@ -32,8 +54,8 @@ class MyAppDelegate extends index_1.DefaultAppDelegate {
                     let item = list[i];
                     //console.log('-->',item.processName,item.elementId,item.type,item.startedAt,item.status);
                     if (item.type == 'bpmn:ScriptTask' || item.type == 'bpmn:ServiceTask') {
-                        console.log('recovering:', item.elementId);
-                        //                    let response =await this.server.engine.invoke({"items.id":item.id}, {},null, {recover:true});
+                        console.log('recovering:', item.elementId, item.name, item.processName, item.startedAt);
+                        let response = yield this.server.engine.invoke({ "items.id": item.id }, {}, null, { recover: true });
                     }
                 }
             }
@@ -179,9 +201,12 @@ class MyServices {
     service1(input, context) {
         return __awaiter(this, void 0, void 0, function* () {
             let item = context.item;
+            let wait = 5000;
+            if (input.wait)
+                wait = input.wait;
             item.vars = input;
             seq++;
-            yield delay(5000, 'test');
+            yield delay(wait, 'test');
             item.token.log("SERVICE 1: input: " + JSON.stringify(input) + item.token.currentNode.id + " current seq: " + seq);
             console.log('appDelegate service1 is now complete input:', input, 'output:', seq, 'item.data', item.data);
             return { seq, text: 'test' };

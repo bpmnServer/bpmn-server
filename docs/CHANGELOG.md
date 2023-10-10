@@ -12,12 +12,18 @@ and here
 
 ### Changed
 -->
+
+## Release 1.4.1 -- 2023-10-2
+- Added Instance Locking, supporting multiple nodeJS servers running against same MongoDB
+- Support lanes as role see [userAssignment](userAssignment.md#Pool-as-a-role) 
+- Improve documentation
+
 ## Release 1.4.0 -- 2023-09-20
 
 - Removes ACL/IAM and relies on the front-end to provide user authentication
 - Uses UserTask assignment fields to capture assignment information
 -- Add assignment fields to Item class
--- see [userAssignment.md] for details
+-- see [userAssignment](userAssignment.md) for details
 
 
 ## Release 1.3.22 -- 2023-05-18
