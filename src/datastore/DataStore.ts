@@ -41,7 +41,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 	} */
 
 	async save(instance) {
-		return this.saveInstance(instance);
+		return await this.saveInstance(instance);
 	}
 	async loadInstance(instanceId) {
 
@@ -157,6 +157,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 //			this.logger.log("inserting instance");
 		}
 		else {
+			instance.saved = new Date().toISOString();
 			this.promises.push(this.db.update(this.dbConfiguration.db, Instance_collection,
 				{ id: instance.id },
 				{
@@ -176,7 +177,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		});*/
 
 		await Promise.all(this.promises);
-		this.logger.log('..DataStore:saving Complete');
+		this.logger.log('..DataStore:saving Complete'+ instance.saved);
 
 	}
 

@@ -140,7 +140,7 @@ class TimerBehaviour extends Behaviour {
      
         item.timerCount++;
         const exec=item.token.execution;
-        item.token.log("Action:---timer Expired --- lock:"+exec.isLocked);
+        item.token.log("Action:---timer Expired --- lock:"+exec.isLocked+" seq:"+exec.seq);
         if (item.status == ITEM_STATUS.wait)    // just in case it was cancelled
         {
             //item.token.signal(null);

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.USER_ROLE = exports.Request = void 0;
+exports.USER_ROLE = exports.API = void 0;
 const __1 = require("../..");
 var USER_ROLE;
 (function (USER_ROLE) {
@@ -18,35 +18,76 @@ var USER_ROLE;
     USER_ROLE["USER"] = "USER";
 })(USER_ROLE || (exports.USER_ROLE = USER_ROLE = {}));
 class AccessManager {
-    constructor(request) {
-        this.request = request;
+    constructor(api) {
+        this.api = api;
     }
+    /**
+     * alters the query adding conditions based on security rules
+     * @param query
+     * @returns query
+     */
     qualifyInstances(query) {
-        if (this.request.tenantId)
-            query['tenantId'] = this.request.tenantId;
-        if (this.request.role == USER_ROLE.USER)
-            query['items.candidate_users'] = this.request.userId;
+        if (this.api.tenantId)
+            query['tenantId'] = this.api.tenantId;
+        if (this.api.userRole == USER_ROLE.USER)
+            query['items.candidate_users'] = this.api.userId;
         return query;
     }
+    /**
+     * alters the query adding conditions based on security rules
+     * @param query
+     * @returns query
+     */
     qualifyItems(query) {
-        if (this.request.tenantId)
-            query['tenantId'] = this.request.tenantId;
-        if (this.request.role == USER_ROLE.USER)
-            query['items.candidate_users'] = this.request.userId;
+        if (this.api.tenantId)
+            query['tenantId'] = this.api.tenantId;
+        if (this.api.userRole == USER_ROLE.USER)
+            query['items.candidate_users'] = this.api.userId;
         return query;
     }
-    canDeleteInstances(query) {
-        if (this.request.role == USER_ROLE.ADMIN)
+    /**
+     * alters the query adding conditions based on security rules
+     * @param query
+     * @returns query
+     */
+    qualifyDeleteInstances(query) {
+        if (this.api.userRole == USER_ROLE.ADMIN)
             return this.qualifyInstances(query);
         else
             return false;
     }
+    /**
+     * alters the query adding conditions based on security rules
+     * @param query
+     * @returns query
+     */
     qualifyModels(query) {
-        if (this.request.modelsOwner)
-            query['owner'] = this.request.ModelsOwner;
+        if (this.api.modelsOwner)
+            query['owner'] = this.api.ModelsOwner;
         return query;
     }
-    canView(query) {
+    /**
+     */
+    canModifyModel(name) {
+        if (this.api.userRole == USER_ROLE.ADMIN)
+            return true;
+        else
+            return false;
+    }
+    /**
+     */
+    canDeleteModel(name) {
+        if (this.api.userRole == USER_ROLE.ADMIN)
+            return true;
+        else
+            return false;
+    }
+    /**
+     * alters the query adding conditions based on security rules
+     * @param query
+     * @returns query
+     */
+    qualifyViewItems(query) {
         return __awaiter(this, void 0, void 0, function* () { });
     }
     canInvoke(item) {
@@ -58,29 +99,46 @@ class AccessManager {
     canStart(name, startNodeId) {
         return __awaiter(this, void 0, void 0, function* () { });
     }
-    canDelete(query) {
-        return __awaiter(this, void 0, void 0, function* () { });
-    }
-    canModifyModel(name) {
-        return __awaiter(this, void 0, void 0, function* () { });
-    }
-    canDeleteModel(name) {
-        return __awaiter(this, void 0, void 0, function* () { });
-    }
 }
-class Request {
-    constructor(server, userId, role, tenantId = null, modelsOwner = null) {
+class API {
+    constructor(server, { userId, userRole, userGroup, tenantId = null, modelsOwner = null }) {
         this.server = server;
         this.userId = userId;
-        this.role = role;
+        this.userRole = userRole;
         this.tenantId = tenantId;
         this.modelsOwner = modelsOwner;
         this.accessManager = new AccessManager(this);
+        this.engine = new Engine(this);
+        this.data = new Data(this);
+        this.model = new Model(this);
         const listener = this.server.listener;
         listener.on(__1.EXECUTION_EVENT.process_start, function ({ context, event }) {
             context.instance.tenantId = tenantId;
         });
     }
+}
+exports.API = API;
+class APIComponent {
+    constructor(api) {
+        this.api = api;
+    }
+    get server() {
+        return this.api.server;
+    }
+    get accessManager() {
+        return this.api.accessManager;
+    }
+    get userId() {
+        return this.api.userId;
+    }
+    get tenantId() {
+        return this.api.tenantId;
+    }
+    get modelsOwner() {
+        return this.api.modelsOwner;
+    }
+}
+class Engine extends APIComponent {
     start(name, data = {}, startNodeId = null, userId = null, options = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.server.engine.start(name, data, startNodeId, this.userId, options);
@@ -113,6 +171,8 @@ class Request {
             return yield this.server.engine.startEvent(query, elementId, data);
         });
     }
+}
+class Data extends APIComponent {
     findItems(query) {
         return __awaiter(this, void 0, void 0, function* () {
             query = this.accessManager.qualifyInstances(query);
@@ -127,10 +187,12 @@ class Request {
     }
     deleteInstances(query) {
         return __awaiter(this, void 0, void 0, function* () {
-            query = this.accessManager.canDeleteInstances(query);
+            query = this.accessManager.qualifyDeleteInstances(query);
             return yield this.server.dataStore.deleteInstances(query);
         });
     }
+}
+class Model extends APIComponent {
     saveModel(name, source, svg) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.server.definitions.save(name, source, svg, this.modelsOwner);
@@ -168,5 +230,4 @@ class Request {
         });
     }
 }
-exports.Request = Request;
-//# sourceMappingURL=Request.js.map
+//# sourceMappingURL=API.js.map

@@ -34,7 +34,7 @@ class DataStore extends ServerComponent_1.ServerComponent {
     } */
     save(instance) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.saveInstance(instance);
+            return yield this.saveInstance(instance);
         });
     }
     loadInstance(instanceId) {
@@ -140,6 +140,7 @@ class DataStore extends ServerComponent_1.ServerComponent {
                 //			this.logger.log("inserting instance");
             }
             else {
+                instance.saved = new Date().toISOString();
                 this.promises.push(this.db.update(this.dbConfiguration.db, Instance_collection, { id: instance.id }, {
                     $set: {
                         tokens: instance.tokens, items: instance.items, loops: instance.loops,
@@ -154,7 +155,7 @@ class DataStore extends ServerComponent_1.ServerComponent {
                 if (err) throw err;
             });*/
             yield Promise.all(this.promises);
-            this.logger.log('..DataStore:saving Complete');
+            this.logger.log('..DataStore:saving Complete' + instance.saved);
         });
     }
     findItem(query) {

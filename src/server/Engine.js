@@ -36,7 +36,8 @@ class Engine extends ServerComponent_1.ServerComponent {
     
             newDataStore.monitorExecution(execution); */
             this.cache.add(execution);
-            yield this.lock(execution);
+            yield this.lock(execution.id);
+            execution.isLocked = true;
             execution.worker = execution.execute(startNodeId, data, options);
             if (options['noWait'] == true) {
                 execution.worker.then(obj => {
@@ -76,11 +77,11 @@ class Engine extends ServerComponent_1.ServerComponent {
     /**
         lock instance
     */
-    lock(execution) {
+    lock(executionId) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.logger.log('===============locking ..' + execution.id);
-            yield this.server.dataStore.locker.lock(execution.id);
-            execution.isLocked = true;
+            this.logger.log('===============locking ..' + executionId);
+            yield this.server.dataStore.locker.lock(executionId);
+            this.logger.log('		locking complete ..' + executionId);
         });
     }
     /**
@@ -88,35 +89,41 @@ class Engine extends ServerComponent_1.ServerComponent {
     */
     release(execution) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.logger.log('---------------releasing ..' + execution.id);
+            this.logger.log('---------------unlocking ..' + execution.id + ' seq ' + execution.seq);
             yield this.server.dataStore.locker.release(execution.id);
             execution.isLocked = false;
         });
     }
-    /***
-        Loads instance into memory for purpose of execution
-        Locks instance first if required
-        check if in cache
-    */
     restore(instanceQuery) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (Engine.restorePromise)
+                yield Engine.restorePromise;
+            Engine.restorePromise = this.doRestore(instanceQuery);
+            let ret = yield Engine.restorePromise;
+            Engine.restorePromise = null;
+            return ret;
+        });
+    }
+    doRestore(instanceQuery) {
         return __awaiter(this, void 0, void 0, function* () {
             // need to load instance first
             let execution;
             const instance = yield this.dataStore.findInstance(instanceQuery, 'Full');
+            yield this.lock(instance.id); // if fails throws exception
             const live = this.cache.getInstance(instance.id);
             if (live) {
                 execution = live;
             }
             else {
                 execution = yield __1.Execution.restore(this.server, instance);
-                yield this.lock(execution); // if fails throws exception
+                execution.isLocked = true;
                 /* new dataStore for every execution to be monitored
                 const newDataStore = new DataStore(execution.server);
                 execution.server.dataStore = newDataStore;
     
                 newDataStore.monitorExecution(execution); */
                 this.cache.add(execution);
-                this.logger.log("restore completed");
+                this.logger.log("restore completed:" + instance.saved);
             }
             return execution;
         });
@@ -335,4 +342,10 @@ class Engine extends ServerComponent_1.ServerComponent {
     }
 }
 exports.Engine = Engine;
+/***
+    Loads instance into memory for purpose of execution
+    Locks instance first if required
+    check if in cache
+*/
+Engine.restorePromise = null;
 //# sourceMappingURL=Engine.js.map

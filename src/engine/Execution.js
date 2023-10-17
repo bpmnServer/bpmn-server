@@ -19,6 +19,7 @@ const __1 = require("../../");
 const server_1 = require("../server");
 const Model_1 = require("./Model");
 const { v4: uuidv4 } = require('uuid');
+var execution_seq = 0;
 /**
  *  is accessed two ways:
  *      execute - start process
@@ -51,6 +52,7 @@ class Execution extends server_1.ServerComponent {
         this.promises = [];
         this.isLocked = false;
         this.uids = {};
+        this.seq = execution_seq++;
         if (state == null) {
             this.instance = new Model_1.InstanceObject();
             this.instance.id = this.getUUID();

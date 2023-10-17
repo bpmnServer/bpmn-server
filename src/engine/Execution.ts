@@ -14,7 +14,7 @@ import { InstanceObject } from './Model';
 
 const { v4: uuidv4 } = require('uuid');
 
-
+var execution_seq = 0;
 /**
  *  is accessed two ways:
  *      execute - start process
@@ -33,7 +33,8 @@ class Execution extends ServerComponent implements IExecution {
     worker;
     userId;
     promises = [];
-    isLocked:boolean = false;
+    isLocked: boolean = false;
+    seq;
 
     get id() { return this.instance.id; }
     get name() { return this.instance.name; }
@@ -56,8 +57,10 @@ class Execution extends ServerComponent implements IExecution {
      * @param name          process name
      * @param source        bpmn source
      */
-    constructor(server,name:string, source , state=null ) {
+    constructor(server, name: string, source, state = null) {
+
         super(server);
+        this.seq = execution_seq++;
         if (state == null) {
             this.instance = new InstanceObject();
             this.instance.id = this.getUUID();

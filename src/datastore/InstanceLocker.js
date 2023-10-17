@@ -44,7 +44,7 @@ class InstanceLocker {
                 //console.log(records);
             }
             catch (err) {
-                console.log('error', err.code);
+                //console.log('lock error',err.code);
                 return false;
             }
             return true;

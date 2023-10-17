@@ -42,7 +42,8 @@ class Engine extends ServerComponent implements IEngine{
 		newDataStore.monitorExecution(execution); */
 		this.cache.add(execution);
 
-		await this.lock(execution);
+		await this.lock(execution.id);
+		execution.isLocked = true;
 
 		execution.worker = execution.execute(startNodeId, data, options);
 
@@ -84,16 +85,17 @@ class Engine extends ServerComponent implements IEngine{
 	/**
 		lock instance 
 	*/
-	private async lock(execution: Execution) {
-			this.logger.log('===============locking ..'+execution.id);
-			await this.server.dataStore.locker.lock(execution.id);
-			execution.isLocked=true;
+	private async lock(executionId) {
+			this.logger.log('===============locking ..'+executionId);
+			await this.server.dataStore.locker.lock(executionId);
+			
+			this.logger.log('		locking complete ..' + executionId);
 	}
 	/**
 		release instance lock
 	*/
 	private async release(execution: Execution) {
-			this.logger.log('---------------releasing ..'+execution.id);
+		this.logger.log('---------------unlocking ..' + execution.id + ' seq ' + execution.seq);
 			await this.server.dataStore.locker.release(execution.id);
 			execution.isLocked=false;
 	}
@@ -102,12 +104,26 @@ class Engine extends ServerComponent implements IEngine{
 		Locks instance first if required
 		check if in cache
 	*/
+	static restorePromise = null;
 	private async restore(instanceQuery): Promise<Execution> {
+
+		if (Engine.restorePromise)
+			await Engine.restorePromise;
+
+		Engine.restorePromise = this.doRestore(instanceQuery);
+
+		let ret=await Engine.restorePromise;
+
+		Engine.restorePromise = null;
+		return ret;
+	}
+	private async doRestore(instanceQuery): Promise<Execution> {
 
 		// need to load instance first
 		let execution;
 		const instance = await this.dataStore.findInstance(instanceQuery, 'Full');
 
+		await this.lock(instance.id);	// if fails throws exception
 
 		const live = this.cache.getInstance(instance.id);
 		if (live) {
@@ -117,17 +133,15 @@ class Engine extends ServerComponent implements IEngine{
 		else {
 			execution = await Execution.restore(this.server,instance);
 
-		await this.lock(execution);	// if fails throws exception
-
+			execution.isLocked = true;
 			/* new dataStore for every execution to be monitored 
 			const newDataStore = new DataStore(execution.server);
 			execution.server.dataStore = newDataStore;
 
 			newDataStore.monitorExecution(execution); */
 
-
 			this.cache.add(execution);
-			this.logger.log("restore completed");
+			this.logger.log("restore completed:"+instance.saved);
 
 		}
 

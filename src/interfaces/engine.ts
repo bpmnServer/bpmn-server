@@ -84,6 +84,7 @@ interface IExecution extends IServerComponent {
     id;
     status;
     name;
+    seq;
 
     getNodeById(id: any): Node;
     getToken(id: number): IToken;
