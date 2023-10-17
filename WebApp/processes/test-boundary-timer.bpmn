@@ -28,7 +28,7 @@
     <bpmn2:boundaryEvent id="Event_wait1" name="Wait1" attachedToRef="Activity_1pah88b">
       <bpmn2:outgoing>Flow_4</bpmn2:outgoing>
       <bpmn2:timerEventDefinition id="TimerEventDefinition_0ojsb2r">
-        <bpmn2:timeDuration xsi:type="bpmn2:tFormalExpression">PT45S</bpmn2:timeDuration>
+        <bpmn2:timeDuration xsi:type="bpmn2:tFormalExpression">PT15S</bpmn2:timeDuration>
       </bpmn2:timerEventDefinition>
     </bpmn2:boundaryEvent>
     <bpmn2:sequenceFlow id="Flow_4" sourceRef="Event_wait1" targetRef="UT2" />

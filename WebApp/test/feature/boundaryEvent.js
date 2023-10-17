@@ -21,12 +21,11 @@ let response;
 let instanceId;
 
 Feature('Boundary Event', () => {
-///```
-///## Do the task right-away
-///```javascript
+
         Scenario('1. do the task right-away- events will end', () => {
             Given('Start '+ name + ' Process',async () => {
                 response = await server.engine.start(name, {caseId:1001});
+                instanceId=response.instance.id;
             });
             Then('check for output', () => {
                 expect(response).to.have.property('execution');
@@ -36,11 +35,6 @@ Feature('Boundary Event', () => {
                 expect(getItem('Expired-Timer').status).equals('wait');
                 expect(getItem('Cancel-Message').status).equals('wait');
             });
-///```
-///![BPMN Diagram](boundary-event2.png)
-///
-///boundary events have started in a wait state
-///```javascript
 
             When('I invoke user_task', async () => {
 
@@ -50,11 +44,7 @@ Feature('Boundary Event', () => {
                     "items.elementId" : 'user_task' };
                 response= await server.engine.invoke(query ,data );
             });
-///```
-///![BPMN Diagram](boundary-event-nowait.png)
-///
-///Events are terminated.
-///```javascript
+
 
             Then('All events are complete', async () => {
 
@@ -76,52 +66,51 @@ Feature('Boundary Event', () => {
               logger.save(fileName);
             });
         });
-///```
-///## Don't do the task right-away , wait for timer to fire
-///```javascript
+
             Scenario('2. Dont do the task right - away, wait for timer to fire', () => {
                 Given('Start ' + name + ' Process', async () => {
                     response = await server.engine.start(name, {caseId:1002, scenario: 'wait for timers' });
+                    instanceId=response.instance.id;
+                    console.log('---------',instanceId);
                 });
-///```
-///![BPMN Diagram](boundary-event2.png)
-///
-///boundary events have started in a wait state
-///```javascript
+
                 When('wait for the reminder timers to fire', async () => {
 
-                    await delay(2500);
-                   // displayItems();
+                    await delay(16000);
+                    response = await server.engine.get({id: instanceId});
+                   
                 });
-/*  
-                Then('      user task', () => {
+  
+                Then('      user task : wait', () => {
                     expect(getItem('user_task').status).equals('wait');
                 });
-                Then('      reminder timer', () => {
+                Then('      reminder timer :end', () => {
                     expect(getItem('Reminder-Timer').status).equals('end');
                 });
-                Then('      expired timer', () => {
+                Then('      expired timer : wait', () => {
                     expect(getItem('Expired-Timer').status).equals('wait');
                 });
-                Then('      cancel message', () => {
+                Then('      cancel message : wait', () => {
                     expect(getItem('Cancel-Message').status).equals('wait');
                 });
-                */
+                
                 When('wait for the expired timer to fire', async () => {
 
-                    await delay(15000);
+                    await delay(25000);
+                    response = await server.engine.get({id: instanceId});
+                    displayItems();
                 });
 
-                    Then('      user task', () => {
+                    Then('      user task : end', () => {
                         expect(getItem('user_task').status).equals('end');
                     });
-                    Then('      reminder timer', () => {
+                    Then('      reminder timer : end', () => {
                         expect(getItem('Reminder-Timer').status).equals('end');
                     });
-                    Then('      expired timer', () => {
+                    Then('      expired timer : end', () => {
                         expect(getItem('Expired-Timer').status).equals('end');
                     });
-                    Then('      cancel message', () => {
+                    Then('      cancel message : end', () => {
                         expect(getItem('Cancel-Message').status).equals('end');
                     });
 
@@ -140,7 +129,7 @@ Feature('Boundary Event', () => {
 
             }); */
 
-            let fileName = __dirname + '/../logs/' + name + '2.log';
+            let fileName = __dirname + '/../logs/' + name + '.log';
 
             and('write log file to ' + fileName, async () => {
                 logger.save(fileName);
@@ -167,7 +156,6 @@ function log(msg) {
 function displayItems() {
     console.log('instance data:', response.instance.data);
     response.instance.items.forEach(item => {
-
         console.log(`${item.elementId} -  ${item.status} - Item ${item.id}`);   
     });
 

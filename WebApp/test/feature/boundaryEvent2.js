@@ -13,7 +13,6 @@ const { configuration } = require('../testConfiguration');
 const logger = new Logger({ toConsole: false });
 
 const server = new BPMNServer(configuration, logger);
-var caseId = Math.floor(Math.random() * 10000);
 
 */
 const { BPMNServer, DefaultHandler, Logger , logger,server,caseId, delay } = require('../helpers/BPMNTester');
@@ -22,22 +21,20 @@ let name = 'test-boundary-timer';
 let response;
 let instanceId;
 
+
 Feature('Boundary Event', () => {
 ///```
 ///## Do the task right-away
 ///```javascript
         Scenario('1. do the task right-away- events will end', () => {
             Given('Start '+ name + ' Process',async () => {
-                response = await server.engine.start(name, {caseId:1001});
+                response = await server.engine.start(name, {caseId:caseId});
             });
             Then('check for output', () => {
                 expect(response).to.have.property('execution');
                 instanceId = response.execution.id;
                 displayItems();
                 expect(getItem('UT1').status).equals('wait');
-//                expect(getItem('Reminder-Timer').status).equals('wait');
-//                expect(getItem('Expired-Timer').status).equals('wait');
-//                expect(getItem('Cancel-Message').status).equals('wait');
             });
 ///```
 ///![BPMN Diagram](boundary-event2.png)
@@ -59,16 +56,20 @@ Feature('Boundary Event', () => {
 ///Events are terminated.
 ///```javascript
 
-            Then('After 5 seconds, All timer event is complete', async () => {
-                await delay(6000);
+            Then('After 20 seconds, All timer event is complete', async () => {
+                await delay(20000);
+                response=await server.engine.get({id:instanceId});
+                log('after wait '+response.id+' '+response.instance.items.length);
+//                displayItems();
 
                 expect(getItem('UT1').status).equals('end');
 
             });
 
             Then('UT2 is now waiting', async () => {
-                expect(getItem('UT2').status).equals('wait');
                 displayItems();
+                 expect(getItem('UT2').status).equals('wait');
+   
 
             });
 
@@ -83,12 +84,13 @@ Feature('Boundary Event', () => {
 
 function log(msg) {
     logger.log(msg);
+    console.log(msg);
 }
 function displayItems() {
-    console.log('instance data:', response.instance.data);
+    log('instance data:'+ response.instance.data);
     response.instance.items.forEach(item => {
 
-        console.log(`${item.elementId} -  ${item.status} - Item ${item.id}`);   
+        log(`${item.elementId} -  ${item.status} - Item ${item.id}`);   
     });
 
 }

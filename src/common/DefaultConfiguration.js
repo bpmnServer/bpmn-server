@@ -17,7 +17,7 @@ class Configuration {
         return new __1.DataStore(server);
     }
     cacheManager(server) {
-        return new __1.CacheManager(server);
+        return new __1.NoCacheManager(server);
     }
     constructor({ definitionsPath, templatesPath, timers, database, apiKey, logger, definitions, appDelegate, dataStore, cacheManager }) {
         this.definitionsPath = definitionsPath;
@@ -60,7 +60,7 @@ var defaultConfiguration = new Configuration({
         return new __1.DataStore(server);
     },
     cacheManager: function (server) {
-        return new __1.CacheManager(server);
+        return new __1.NoCacheManager(server);
     }
 });
 exports.defaultConfiguration = defaultConfiguration;

@@ -6,7 +6,7 @@ declare class MyAppDelegate extends DefaultAppDelegate {
     /**
     * is fired on application startup
     **/
-    startUp(): Promise<void>;
+    startUp(options: any): Promise<void>;
     sendEmail(to: any, msg: any, body: any): void;
     executionStarted(execution: IExecution): Promise<void>;
     executionEvent(context: any, event: any): Promise<void>;

@@ -10,12 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ModelerNoProp = void 0;
-const __1 = require("../");
-const config = require('../configuration.js').configuration;
-const bpmnServer = new __1.BPMNServer(config);
-const definitions = bpmnServer.definitions;
 let xml, base_url, title, processName;
 class ModelerNoProp {
+    constructor(bpmnServer) {
+        this.bpmnServer = bpmnServer;
+    }
     displayNew(name, request, response) {
         return __awaiter(this, void 0, void 0, function* () {
             processName = name;
@@ -28,7 +27,7 @@ class ModelerNoProp {
     display(process, request, response) {
         return __awaiter(this, void 0, void 0, function* () {
             processName = process;
-            xml = yield definitions.getSource(processName);
+            xml = yield this.bpmnServer.definitions.getSource(processName);
             title = processName;
             response.write(getText());
             response.end();

@@ -1,19 +1,15 @@
 
 import { BPMNServer, dateDiff, Behaviour_names } from '../';
 
-const config = require('../configuration.js').configuration;
-
-
-
-const bpmnServer = new BPMNServer(config);
-
-const definitions = bpmnServer.definitions;
 
 let xml, base_url, title, processName;
 
 
 export class ModelerNoProp {
-
+    bpmnServer;
+    constructor(bpmnServer) {
+        this.bpmnServer=bpmnServer;
+    }
     async displayNew(name, request, response) {
         processName = name;
         title = processName;
@@ -24,7 +20,7 @@ export class ModelerNoProp {
 
     async display(process, request, response) {
         processName = process;
-        xml = await definitions.getSource(processName);
+        xml = await this.bpmnServer.definitions.getSource(processName);
         title = processName;
         response.write(getText());
         response.end();

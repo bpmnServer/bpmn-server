@@ -60,7 +60,8 @@ var TOKEN_TYPE;
     TOKEN_TYPE["Diverge"] = "Diverge";
     TOKEN_TYPE["EventSubProcess"] = "EventSubProces";
     TOKEN_TYPE["BoundaryEvent"] = "BoundaryEvent";
-})(TOKEN_TYPE || (exports.TOKEN_TYPE = TOKEN_TYPE = {}));
+})(TOKEN_TYPE || (TOKEN_TYPE = {}));
+exports.TOKEN_TYPE = TOKEN_TYPE;
 // ---------------------------------------------
 class Token {
     get data() {
@@ -418,6 +419,10 @@ class Token {
      */
     goNext() {
         return __awaiter(this, void 0, void 0, function* () {
+            if (this.currentItem.status == 'wait') {
+                this.log('Token(' + this.id + ').goNext(): currentNodeId=' + this.currentNode.id + ' type=' + this.currentNode.type + ' currentItem.status=' + this.currentItem.status);
+                return;
+            }
             this.log('Token(' + this.id + ').goNext(): currentNodeId=' + this.currentNode.id + ' type=' + this.currentNode.type + ' currentItem.status=' + this.currentItem.status);
             //this.log(`..token.goNext from ${this.currentNode.id} ${this.currentNode.type}`);
             if (!(yield this.preNext()))

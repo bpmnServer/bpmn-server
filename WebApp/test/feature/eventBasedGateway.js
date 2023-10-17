@@ -33,11 +33,11 @@ Feature('Event Based Gateway', () => {
             });
 
             When('we wait a bit for timer to complete', async () => {
-                await delay(3000, 'test');
+                await delay(6000, 'test');
                 await server.cron.checkTimers();
                 // we restore to get latest status; since the timer did some work in the background!
 
-                //response = await server.engine.restore({ "id": instanceId });
+                response = await server.engine.get({ "id": instanceId });
                 console.log(response.instance.items.length);
                 let item = getItem('timerEvent');
                 log('timerEvent:' + item.id + " status: "+ item.status);

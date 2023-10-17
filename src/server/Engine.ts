@@ -42,20 +42,20 @@ class Engine extends ServerComponent implements IEngine{
 		newDataStore.monitorExecution(execution); */
 		this.cache.add(execution);
 
-		await this.lock(execution.instance.id);
+		await this.lock(execution);
 
 		execution.worker = execution.execute(startNodeId, data, options);
 
 		if (options['noWait'] == true) {
 				execution.worker.then(obj=>{ 
 					this.logger.log('after worker is done releasing ..'+execution.instance.id);
-					this.release(execution.instance.id);
+					this.release(execution);
 					});
 			return execution;
 		}
 		else {
 			const waiter = await execution.worker;
-			await this.release(execution.instance.id);
+			await this.release(execution);
 			this.logger.log(`.engine.start ended for ${name}`);
 			return execution;
 		}
@@ -77,23 +77,25 @@ class Engine extends ServerComponent implements IEngine{
 	 */
 	async get(instanceQuery): Promise<Execution> {
 
-		const instance=await this.restore(instanceQuery);
-		await this.release(instance.id);
-		return instance;
+		const execution=await this.restore(instanceQuery);
+		await this.release(execution);
+		return execution;
 	}
 	/**
 		lock instance 
 	*/
-	private async lock(instanceId) {
-			this.logger.log('===============locking ..'+instanceId);
-			await this.server.dataStore.locker.lock(instanceId);
+	private async lock(execution: Execution) {
+			this.logger.log('===============locking ..'+execution.id);
+			await this.server.dataStore.locker.lock(execution.id);
+			execution.isLocked=true;
 	}
 	/**
 		release instance lock
 	*/
-	private async release(instanceId) {
-			this.logger.log('---------------releasing ..'+instanceId);
-			await this.server.dataStore.locker.release(instanceId);
+	private async release(execution: Execution) {
+			this.logger.log('---------------releasing ..'+execution.id);
+			await this.server.dataStore.locker.release(execution.id);
+			execution.isLocked=false;
 	}
 	/***
 		Loads instance into memory for purpose of execution
@@ -106,7 +108,6 @@ class Engine extends ServerComponent implements IEngine{
 		let execution;
 		const instance = await this.dataStore.findInstance(instanceQuery, 'Full');
 
-		await this.lock(instance.id);	// if fails throws exception
 
 		const live = this.cache.getInstance(instance.id);
 		if (live) {
@@ -116,6 +117,7 @@ class Engine extends ServerComponent implements IEngine{
 		else {
 			execution = await Execution.restore(this.server,instance);
 
+		await this.lock(execution);	// if fails throws exception
 
 			/* new dataStore for every execution to be monitored 
 			const newDataStore = new DataStore(execution.server);
@@ -164,7 +166,7 @@ class Engine extends ServerComponent implements IEngine{
 
 			execution.worker = execution.assign(item.id, data,userId,assignment);
 
-			await this.release(item.instanceId);
+			await this.release(execution);
 
 			return execution;
 		}
@@ -211,7 +213,7 @@ class Engine extends ServerComponent implements IEngine{
 					this.logger.log(`.noWait`);
 					execution.worker.then(obj=>{ 
 						this.logger.log('after worker is done releasing ..'+item.instanceId);
-						this.release(item.instanceId);
+						this.release(execution);
 						});
 					return execution;
 				}
@@ -219,13 +221,13 @@ class Engine extends ServerComponent implements IEngine{
 					const waiter = await execution.worker;
 					this.logger.log(`.engine.continue ended`);
 
-					await this.release(item.instanceId);
+					await this.release(execution);
 					return execution;
 				}
 			}
 			catch(exc)
 			{
-					await this.release(item.instanceId);
+					await this.release(execution);
 					throw exc;
 			}
 
@@ -264,7 +266,7 @@ class Engine extends ServerComponent implements IEngine{
 
 			await this.server.dataStore.save(execution.instance);
 
-			await this.release(instanceId);
+			await this.release(execution);
 
 			this.logger.log("invoke completed");
 

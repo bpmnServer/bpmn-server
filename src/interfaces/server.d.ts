@@ -1,12 +1,12 @@
 /// <reference types="node" />
-import { IExecution, ILogger, IDefinition, IConfiguration, IAppDelegate, IDataStore } from '../..';
+import { IExecution, ILogger, IConfiguration, IAppDelegate, IDataStore, IModelsDatastore } from '../..';
 import { EventEmitter } from 'events';
 interface IBPMNServer {
     engine: IEngine;
     listener: EventEmitter;
     configuration: IConfiguration;
     logger: ILogger;
-    definitions: IDefinition;
+    definitions: IModelsDatastore;
     appDelegate: IAppDelegate;
     dataStore: IDataStore;
     cache: ICacheManager;
@@ -23,7 +23,7 @@ interface IServerComponent {
     dataStore: IDataStore;
     definitions: any;
 }
-interface IEngine extends IServerComponent {
+interface IEngine {
     /**
      *	loads a definitions  and start execution
      *
@@ -46,7 +46,6 @@ interface IEngine extends IServerComponent {
      *
      */
     get(instanceQuery: any): Promise<IExecution>;
-    restore(instanceQuery: any): Promise<IExecution>;
     /**
      * Continue an existing item that is in a wait state
      *
@@ -60,6 +59,7 @@ interface IEngine extends IServerComponent {
      * @param data
      */
     invoke(itemQuery: any, data?: {}, userId?: string, options?: {}): Promise<IExecution>;
+    assign(itemQuery: any, data?: {}, userId?: string, assignment?: {}): Promise<IExecution>;
     /**
      *
      * Invoking an event (usually start event of a secondary process) against an existing instance
@@ -76,6 +76,20 @@ interface IEngine extends IServerComponent {
      * @param data
      */
     startEvent(instanceId: any, elementId: any, data?: {}): Promise<IExecution>;
+    /**
+     *
+     * signal/message raise a signal or throw a message
+     *
+     * will seach for a matching event/task given the signalId/messageId
+     *
+     * that can be againt a running instance or it may start a new instance
+     * ----------------------------------------------------------------------------
+     * @param messageId		the id of the message or signal as per bpmn definition
+     * @param matchingKey	should match the itemKey (if specified)
+     * @param data			message data
+     */
+    throwMessage(messageId: any, data: {}, matchingQuery: {}): Promise<IExecution>;
+    throwSignal(signalId: any, data: {}, matchingQuery: {}): any;
 }
 interface ICron {
     checkTimers(duration: any): any;
@@ -87,6 +101,5 @@ interface ICacheManager {
     add(execution: IExecution): any;
     remove(instanceId: any): any;
     shutdown(): any;
-    restart(): any;
 }
 export { IBPMNServer, IEngine, ICron, ICacheManager, IServerComponent };

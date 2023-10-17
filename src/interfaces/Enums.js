@@ -22,7 +22,8 @@ var BPMN_TYPE;
     BPMN_TYPE["SequenceFlow"] = "bpmn:SequenceFlow";
     BPMN_TYPE["MessageFlow"] = "bpmn:MessageFlow";
     BPMN_TYPE["CallActivity"] = "bpmn:CallActivity";
-})(BPMN_TYPE || (exports.BPMN_TYPE = BPMN_TYPE = {}));
+})(BPMN_TYPE || (BPMN_TYPE = {}));
+exports.BPMN_TYPE = BPMN_TYPE;
 var NODE_SUBTYPE;
 (function (NODE_SUBTYPE) {
     NODE_SUBTYPE["timer"] = "timer";
@@ -32,7 +33,8 @@ var NODE_SUBTYPE;
     NODE_SUBTYPE["escalation"] = "escalation";
     NODE_SUBTYPE["cancel"] = "cancel";
     NODE_SUBTYPE["compensate"] = "compensate";
-})(NODE_SUBTYPE || (exports.NODE_SUBTYPE = NODE_SUBTYPE = {}));
+})(NODE_SUBTYPE || (NODE_SUBTYPE = {}));
+exports.NODE_SUBTYPE = NODE_SUBTYPE;
 /*
  * ALL events
  */
@@ -62,7 +64,8 @@ var EXECUTION_EVENT;
     EXECUTION_EVENT["token_wait"] = "token.wait";
     EXECUTION_EVENT["token_end"] = "token.end";
     EXECUTION_EVENT["token_terminated"] = "token.terminated";
-})(EXECUTION_EVENT || (exports.EXECUTION_EVENT = EXECUTION_EVENT = {}));
+})(EXECUTION_EVENT || (EXECUTION_EVENT = {}));
+exports.EXECUTION_EVENT = EXECUTION_EVENT;
 /*
  *  possible actions by node
  */
@@ -75,7 +78,8 @@ var NODE_ACTION;
     NODE_ACTION[NODE_ACTION["stop"] = 5] = "stop";
     NODE_ACTION[NODE_ACTION["error"] = 6] = "error";
     NODE_ACTION[NODE_ACTION["abort"] = 7] = "abort";
-})(NODE_ACTION || (exports.NODE_ACTION = NODE_ACTION = {}));
+})(NODE_ACTION || (NODE_ACTION = {}));
+exports.NODE_ACTION = NODE_ACTION;
 ;
 var ITEM_STATUS;
 (function (ITEM_STATUS) {
@@ -86,7 +90,8 @@ var ITEM_STATUS;
     ITEM_STATUS["terminated"] = "terminated";
     ITEM_STATUS["cancelled"] = "cancelled";
     ITEM_STATUS["discard"] = "discard";
-})(ITEM_STATUS || (exports.ITEM_STATUS = ITEM_STATUS = {}));
+})(ITEM_STATUS || (ITEM_STATUS = {}));
+exports.ITEM_STATUS = ITEM_STATUS;
 //type ITEMSTATUS = 'enter' | 'start' | 'wait' | 'end' | 'terminated' | 'discard';
 var EXECUTION_STATUS;
 (function (EXECUTION_STATUS) {
@@ -94,14 +99,16 @@ var EXECUTION_STATUS;
     EXECUTION_STATUS["wait"] = "wait";
     EXECUTION_STATUS["end"] = "end";
     EXECUTION_STATUS["terminated"] = "terminated";
-})(EXECUTION_STATUS || (exports.EXECUTION_STATUS = EXECUTION_STATUS = {}));
+})(EXECUTION_STATUS || (EXECUTION_STATUS = {}));
+exports.EXECUTION_STATUS = EXECUTION_STATUS;
 var TOKEN_STATUS;
 (function (TOKEN_STATUS) {
     TOKEN_STATUS["running"] = "running";
     TOKEN_STATUS["wait"] = "wait";
     TOKEN_STATUS["end"] = "end";
     TOKEN_STATUS["terminated"] = "terminated";
-})(TOKEN_STATUS || (exports.TOKEN_STATUS = TOKEN_STATUS = {}));
+})(TOKEN_STATUS || (TOKEN_STATUS = {}));
+exports.TOKEN_STATUS = TOKEN_STATUS;
 /*
  * possible actions by flow
  */
@@ -110,5 +117,6 @@ var FLOW_ACTION;
 (function (FLOW_ACTION) {
     FLOW_ACTION["take"] = "take";
     FLOW_ACTION["discard"] = "discard";
-})(FLOW_ACTION || (exports.FLOW_ACTION = FLOW_ACTION = {}));
+})(FLOW_ACTION || (FLOW_ACTION = {}));
+exports.FLOW_ACTION = FLOW_ACTION;
 //# sourceMappingURL=Enums.js.map

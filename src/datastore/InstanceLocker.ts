@@ -2,7 +2,7 @@ import  { DataStore }   from './';;
 
 
 const COLLECTION='wf_locks';
-const WAIT=1000;
+const WAIT=1500;
 const MAX_TRIES=20;
 
 class InstanceLocker {
@@ -15,7 +15,7 @@ class InstanceLocker {
 
         var counter=0;
         var failed=true;
-        while(counter++<10 && failed) {
+        while(counter++<MAX_TRIES && failed) {
             failed=! await this.try(id);
             if (failed)
                 await this.delay(WAIT,{});

@@ -24,35 +24,16 @@ const { v4: uuidv4 } = require('uuid');
 
 class Execution extends ServerComponent implements IExecution {
     instance: InstanceObject;
-    /* instance 
-    id;
-    name;
-    status : EXECUTION_STATUS;
-    startedAt;
-    endedAt;
-    saved;
-    data;
-    items;
-    source;
-    logs;
-    tokens;
-    loops;
-    parentItemId;
-    accessRules;
-    involvements;
-    authorizations;
-
-     */
     tokens = new Map();
     definition: IDefinition;
     process : Process;
-    // moved from Execution Context
     errors;
     item;
     messageMatchingKey;
     worker;
     userId;
     promises = [];
+    isLocked:boolean = false;
 
     get id() { return this.instance.id; }
     get name() { return this.instance.name; }
@@ -165,7 +146,7 @@ class Execution extends ServerComponent implements IExecution {
         this.process = startNode.process;
         //await this.doExecutionEvent(this, EXECUTION_EVENT.process_loaded);
 
-        await this.doExecutionEvent(this.process, EXECUTION_EVENT.process_start);
+        await this.doExecutionEvent(this, EXECUTION_EVENT.process_start);
 
         this.log('..starting at :' + startNode.id);
         let token = await Token.startNewToken(TOKEN_TYPE.Primary,this, startNode, null, null, null, null,inputData,true);

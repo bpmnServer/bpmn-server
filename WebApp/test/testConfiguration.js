@@ -12,7 +12,7 @@ var configuration = new __1.Configuration({
     definitionsPath: definitionsPath,
     templatesPath: __dirname + '/../emailTemplates',
     timers: {
-        forceTimersDelay: 1000,
+        //forceTimersDelay: 1000,
         precision: 3000,
     },
     database: {

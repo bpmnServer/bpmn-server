@@ -1,5 +1,5 @@
 import { ModelsDatastore } from '../datastore/ModelsDatastore';
-import { IConfiguration, DataStore, ILogger, IAppDelegate } from '../..';
+import { IConfiguration, DataStore, CacheManager, ILogger, IAppDelegate } from '../..';
 declare class Configuration implements IConfiguration {
     definitionsPath: string;
     templatesPath: string;
@@ -20,7 +20,8 @@ declare class Configuration implements IConfiguration {
     definitions(server: any): ModelsDatastore;
     appDelegate(server: any): IAppDelegate;
     dataStore(server: any): DataStore;
-    constructor({ definitionsPath, templatesPath, timers, database, apiKey, logger, definitions, appDelegate, dataStore }: {
+    cacheManager(server: any): CacheManager;
+    constructor({ definitionsPath, templatesPath, timers, database, apiKey, logger, definitions, appDelegate, dataStore, cacheManager }: {
         definitionsPath: any;
         templatesPath: any;
         timers: any;
@@ -30,6 +31,7 @@ declare class Configuration implements IConfiguration {
         definitions: any;
         appDelegate: any;
         dataStore: any;
+        cacheManager: any;
     });
 }
 declare var defaultConfiguration: Configuration;

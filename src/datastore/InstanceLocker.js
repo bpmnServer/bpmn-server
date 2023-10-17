@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.InstanceLocker = void 0;
 ;
 const COLLECTION = 'wf_locks';
-const WAIT = 1000;
+const WAIT = 1500;
 const MAX_TRIES = 20;
 class InstanceLocker {
     constructor(dataStore) {
@@ -22,7 +22,7 @@ class InstanceLocker {
         return __awaiter(this, void 0, void 0, function* () {
             var counter = 0;
             var failed = true;
-            while (counter++ < 10 && failed) {
+            while (counter++ < MAX_TRIES && failed) {
                 failed = !(yield this.try(id));
                 if (failed)
                     yield this.delay(WAIT, {});

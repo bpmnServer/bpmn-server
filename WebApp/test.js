@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const configuration_1 = require("./configuration");
 const _1 = require("./");
-const logger = new _1.Logger({ toConsole: true });
+const logger = new _1.Logger({ toConsole: false });
 let name = 'ds';
 let process;
 let needsRepairs = true;

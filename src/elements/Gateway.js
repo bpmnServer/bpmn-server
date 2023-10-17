@@ -234,12 +234,10 @@ class EventBasedGateway extends Gateway {
         this.working = false;
     }
     restored(item) {
-        this.startMonitor(item);
         super.resume(item);
     }
     run(item) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.startMonitor(item);
             return __1.NODE_ACTION.end;
         });
     }
@@ -260,23 +258,6 @@ class EventBasedGateway extends Gateway {
                 });
             });
             this.working = false;
-        });
-    }
-    startMonitor(item) {
-        if (this.listener)
-            return;
-        item.token.log("..EventBasedGateway is running" + this.id);
-        this.listener = item.token.execution.listener;
-        const self = this;
-        this.listener.on(__1.EXECUTION_EVENT.node_end, function ({ context }) {
-            return __awaiter(this, void 0, void 0, function* () {
-                const endingItem = context.item;
-                const token = endingItem.token;
-                const lastItem = token.lastItem;
-                if (token.originItem && token.originItem.node.id == self.id) {
-                    yield self.cancelAllBranched(endingItem);
-                }
-            });
         });
     }
 }

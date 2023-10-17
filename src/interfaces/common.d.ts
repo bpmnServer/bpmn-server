@@ -1,4 +1,4 @@
-import { IItem, IModelsDatastore, IDataStore } from '../..';
+import { IItem, IModelsDatastore, IDataStore, ICacheManager } from '../..';
 interface IConfiguration {
     definitionsPath: string;
     templatesPath: string;
@@ -18,6 +18,7 @@ interface IConfiguration {
     definitions(server: any): IModelsDatastore;
     appDelegate(server: any): IAppDelegate;
     dataStore(server: any): IDataStore;
+    cacheManager(server: any): ICacheManager;
 }
 /**
  * A logging tool to take various message for monitoring and debugging
@@ -62,7 +63,7 @@ interface IAppDelegate {
     servicesProvider: any;
     sendEmail(to: any, msg: any, body: any): any;
     executionStarted(execution: any): any;
-    startUp(): any;
+    startUp(options: any): any;
     messageThrown(signalId: any, data: any, messageMatchingKey: any, item: IItem): any;
     signalThrown(signalId: any, data: any, messageMatchingKey: any, item: IItem): any;
     /**

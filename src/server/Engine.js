@@ -36,18 +36,18 @@ class Engine extends ServerComponent_1.ServerComponent {
     
             newDataStore.monitorExecution(execution); */
             this.cache.add(execution);
-            yield this.lock(execution.instance.id);
+            yield this.lock(execution);
             execution.worker = execution.execute(startNodeId, data, options);
             if (options['noWait'] == true) {
                 execution.worker.then(obj => {
                     this.logger.log('after worker is done releasing ..' + execution.instance.id);
-                    this.release(execution.instance.id);
+                    this.release(execution);
                 });
                 return execution;
             }
             else {
                 const waiter = yield execution.worker;
-                yield this.release(execution.instance.id);
+                yield this.release(execution);
                 this.logger.log(`.engine.start ended for ${name}`);
                 return execution;
             }
@@ -68,27 +68,29 @@ class Engine extends ServerComponent_1.ServerComponent {
      */
     get(instanceQuery) {
         return __awaiter(this, void 0, void 0, function* () {
-            const instance = yield this.restore(instanceQuery);
-            yield this.release(instance.id);
-            return instance;
+            const execution = yield this.restore(instanceQuery);
+            yield this.release(execution);
+            return execution;
         });
     }
     /**
         lock instance
     */
-    lock(instanceId) {
+    lock(execution) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.logger.log('===============locking ..' + instanceId);
-            yield this.server.dataStore.locker.lock(instanceId);
+            this.logger.log('===============locking ..' + execution.id);
+            yield this.server.dataStore.locker.lock(execution.id);
+            execution.isLocked = true;
         });
     }
     /**
         release instance lock
     */
-    release(instanceId) {
+    release(execution) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.logger.log('---------------releasing ..' + instanceId);
-            yield this.server.dataStore.locker.release(instanceId);
+            this.logger.log('---------------releasing ..' + execution.id);
+            yield this.server.dataStore.locker.release(execution.id);
+            execution.isLocked = false;
         });
     }
     /***
@@ -101,13 +103,13 @@ class Engine extends ServerComponent_1.ServerComponent {
             // need to load instance first
             let execution;
             const instance = yield this.dataStore.findInstance(instanceQuery, 'Full');
-            yield this.lock(instance.id); // if fails throws exception
             const live = this.cache.getInstance(instance.id);
             if (live) {
                 execution = live;
             }
             else {
                 execution = yield __1.Execution.restore(this.server, instance);
+                yield this.lock(execution); // if fails throws exception
                 /* new dataStore for every execution to be monitored
                 const newDataStore = new DataStore(execution.server);
                 execution.server.dataStore = newDataStore;
@@ -148,7 +150,7 @@ class Engine extends ServerComponent_1.ServerComponent {
                 }
                 const execution = yield this.restore({ "id": item.instanceId });
                 execution.worker = execution.assign(item.id, data, userId, assignment);
-                yield this.release(item.instanceId);
+                yield this.release(execution);
                 return execution;
             }
             catch (exc) {
@@ -189,19 +191,19 @@ class Engine extends ServerComponent_1.ServerComponent {
                         this.logger.log(`.noWait`);
                         execution.worker.then(obj => {
                             this.logger.log('after worker is done releasing ..' + item.instanceId);
-                            this.release(item.instanceId);
+                            this.release(execution);
                         });
                         return execution;
                     }
                     else {
                         const waiter = yield execution.worker;
                         this.logger.log(`.engine.continue ended`);
-                        yield this.release(item.instanceId);
+                        yield this.release(execution);
                         return execution;
                     }
                 }
                 catch (exc) {
-                    yield this.release(item.instanceId);
+                    yield this.release(execution);
                     throw exc;
                 }
             }
@@ -233,7 +235,7 @@ class Engine extends ServerComponent_1.ServerComponent {
                 const execution = yield this.restore({ "id": instanceId });
                 yield execution.signal(elementId, data);
                 yield this.server.dataStore.save(execution.instance);
-                yield this.release(instanceId);
+                yield this.release(execution);
                 this.logger.log("invoke completed");
                 return execution;
             }

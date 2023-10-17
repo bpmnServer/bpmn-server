@@ -3,6 +3,7 @@ import { Behaviour_names } from "./behaviours";
 import { NODE_ACTION } from "../../";
 import { Item } from "../engine/Item";
 import { ITEM_STATUS } from "../interfaces";
+
 class Event extends Node {
 
     hasMessage() {
@@ -24,9 +25,9 @@ class Event extends Node {
         return super.start(item);
     }
 
-    end(item: Item,cancel: Boolean=false) {
+    async end(item: Item,cancel: Boolean=false) {
 
-        return super.end(item,cancel);
+        return await super.end(item,cancel);
     }
     get canBeInvoked() { return true; }
 

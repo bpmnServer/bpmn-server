@@ -2,7 +2,8 @@
 import { ModelsDatastore } from '../datastore/ModelsDatastore';
 import { DefaultAppDelegate } from '../engine/DefaultAppDelegate';
 
-import { IConfiguration, DataStore, CacheManager,ILogger, IModelsDatastore, IAppDelegate, IDataStore } from '../..';
+import { IConfiguration, DataStore, NoCacheManager,ILogger, IModelsDatastore, 
+		IAppDelegate, IDataStore } from '../..';
 import { Logger } from './'
 
 let definitionsPath = __dirname + '/processes/';
@@ -28,7 +29,7 @@ class Configuration implements IConfiguration {
 		return new DataStore(server);
 	}
 	cacheManager(server) {
-		return new CacheManager(server);
+		return new NoCacheManager(server);
 	}
 
 
@@ -79,7 +80,7 @@ var defaultConfiguration = new Configuration(
 			return new DataStore(server);
 		},
 		cacheManager: function (server) {
-			return new CacheManager(server);
+			return new NoCacheManager(server);
 		}
 	});
 

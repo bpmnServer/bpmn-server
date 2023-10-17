@@ -3,7 +3,7 @@ declare class DefaultAppDelegate implements IAppDelegate {
     server: any;
     servicesProvider: any;
     constructor(server: any);
-    startUp(): void;
+    startUp(options: any): void;
     sendEmail(to: any, msg: any, body: any): void;
     get moddleOptions(): {
         name: string;

@@ -267,11 +267,9 @@ class EventBasedGateway extends Gateway {
     listener;
 
     restored(item: Item) {
-        this.startMonitor(item);
         super.resume(item);
     }
     async run(item: Item): Promise<NODE_ACTION> {
-        this.startMonitor(item);
         return NODE_ACTION.end;
     }
     async cancelAllBranched(endingItem: Item) {
@@ -294,27 +292,6 @@ class EventBasedGateway extends Gateway {
         });
         this.working = false;
     }
-    startMonitor(item) {
-        if (this.listener)
-            return;
-        item.token.log("..EventBasedGateway is running" + this.id);
-        this.listener = item.token.execution.listener;
-
-        const self = this;
-        this.listener.on(EXECUTION_EVENT.node_end, async function ({ context}) {
-            const endingItem = context.item;
-            const token = endingItem.token;
-
-            const lastItem = token.lastItem;
-            if (token.originItem && token.originItem.node.id == self.id) {
-
-                await self.cancelAllBranched(endingItem);
-            }
-
-        });
-
-    }
-
 }
 
 export {Gateway,XORGateway , EventBasedGateway }

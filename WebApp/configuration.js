@@ -25,7 +25,7 @@ var configuration = new _1.Configuration({
         new _1.Logger(server);
     },
     definitions: function (server) {
-        return new _1.ModelsDatastoreDB(server);
+        return new _1.ModelsDatastore(server);
     },
     appDelegate: function (server) {
         return new appDelegate_1.MyAppDelegate(server);

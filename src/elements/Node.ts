@@ -1,4 +1,4 @@
-import { Element, Flow } from '.';
+import { Element, Flow , EventBasedGateway} from '.';
 
 import { Token, TOKEN_TYPE } from '../engine/Token';
 import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, NODE_SUBTYPE} from '../interfaces/Enums';
@@ -209,11 +209,15 @@ class Node extends Element {
         item.token.log('Node('+this.name+'|'+this.id+').run: item=' + item.id);
         return NODE_ACTION.end;
     }
-    async end(item: Item,cancel:Boolean=false) {
-        item.token.log('Node('+this.name+'|'+this.id+').end: item=' + item.id+ ' cancel:'+cancel + ' attachments:'+this.attachments.length);
-        /**
-         * Rule:    boundary events are canceled when owner task status is 'end'
-         * */
+    async cancelEBG(item) {
+        const ebgItem=item.token.originItem;
+        if (ebgItem && ebgItem.node.type===BPMN_TYPE.EventBasedGateway)
+        {   // we need to cancel all other events 
+            const ebg=(ebgItem.node) as EventBasedGateway;
+            await ebg.cancelAllBranched(item);
+        }
+    }
+    async cancelBoundaryEvents(item) {
         // cancel boundary events
         let i,t;
         for (i = 0; i < this.attachments.length; i++) {
@@ -245,7 +249,16 @@ class Node extends Element {
                 }
             }
         }
-
+    }
+    async end(item: Item,cancel:Boolean=false) {
+        item.token.log('Node('+this.name+'|'+this.id+').end: item=' + item.id+ ' cancel:'+cancel + ' attachments:'+this.attachments.length);
+        /**
+         * Rule:    boundary events are canceled when owner task status is 'end'
+         * */
+        await this.cancelBoundaryEvents(item);
+        if (cancel===false)
+            await this.cancelEBG(item);
+        let i;
         for (i = 0; i < this.outbounds.length; i++) {
             let flow = this.outbounds[i];
                 if (flow.type == BPMN_TYPE.MessageFlow) {

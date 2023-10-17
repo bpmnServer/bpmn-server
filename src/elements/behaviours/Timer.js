@@ -134,11 +134,15 @@ class TimerBehaviour extends _1.Behaviour {
             let item = this['item'];
             let timer = this['timer'];
             item.timerCount++;
-            item.token.log("Action:---timer Expired --- ");
+            const exec = item.token.execution;
+            item.token.log("Action:---timer Expired --- lock:" + exec.isLocked);
             if (item.status == __1.ITEM_STATUS.wait) // just in case it was cancelled
              {
                 //item.token.signal(null);
-                yield item.token.execution.signal(item.id, {});
+                if (exec.isLocked === true)
+                    yield exec.signal(item.id, {});
+                else
+                    yield exec.server.engine.invoke({ "items.id": item.id }, null);
             }
             // check for repeat
             if (timer.repeat > item.timerCount) {

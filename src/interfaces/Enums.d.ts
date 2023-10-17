@@ -43,6 +43,7 @@ declare enum EXECUTION_EVENT {
     process_started = "process.started",
     process_invoke = "process.invoke",
     process_invoked = "process.invoked",
+    process_saving = "process.saving",
     process_restored = "process.restored",
     process_resumed = "process_resumed",
     process_wait = "process.wait",

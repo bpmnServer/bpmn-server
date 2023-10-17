@@ -25,7 +25,20 @@ declare class Engine extends ServerComponent implements IEngine {
      *
      */
     get(instanceQuery: any): Promise<Execution>;
-    restore(instanceQuery: any): Promise<Execution>;
+    /**
+        lock instance
+    */
+    private lock;
+    /**
+        release instance lock
+    */
+    private release;
+    /***
+        Loads instance into memory for purpose of execution
+        Locks instance first if required
+        check if in cache
+    */
+    private restore;
     invokeItem(itemQuery: any, data?: {}): Promise<Execution>;
     /**
      * update an existing item that is in a wait state with an assignment

@@ -15,7 +15,6 @@ const interfaces_1 = require("../interfaces");
 const fs = require('fs');
 class NoCacheManager extends ServerComponent_1.ServerComponent {
     constructor(server) {
-        console.log('------ no cache manager ------');
         super(server);
     }
     list() { return []; }

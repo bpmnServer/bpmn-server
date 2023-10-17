@@ -1,4 +1,4 @@
-import { IExecution , ILogger , IItemData , IDefinition, IConfiguration, IAppDelegate, IDataStore } from '../..';
+import { IExecution , ILogger , IItemData , IDefinition, IConfiguration, IAppDelegate, IDataStore,IModelsDatastore } from '../..';
 import { EventEmitter } from 'events';
 import { BPMNServer } from '../server';
 
@@ -9,7 +9,7 @@ interface IBPMNServer {
     listener: EventEmitter;
     configuration: IConfiguration;
     logger: ILogger;
-    definitions: IDefinition;
+    definitions: IModelsDatastore;
     appDelegate: IAppDelegate;
     dataStore: IDataStore;
     cache: ICacheManager;
@@ -64,6 +64,11 @@ interface IEngine {
      * @param data
      */
     invoke(itemQuery: any, data?: {}, userId?: string, options?: {}): Promise<IExecution>;
+
+    assign(itemQuery: any, data?: {}, userId?: string, assignment?:{}): Promise<IExecution>;
+
+
+
     /**
      *
      * Invoking an event (usually start event of a secondary process) against an existing instance
@@ -93,6 +98,9 @@ interface IEngine {
      * @param data			message data
      */
     //signal(messageId: any, matchingKey: any, data?: {}): Promise<IExecution>;
+	throwMessage(messageId, data : {}, matchingQuery :{}): Promise<IExecution>;
+
+	throwSignal(signalId, data :{}, matchingQuery :{} );
 
 }
 

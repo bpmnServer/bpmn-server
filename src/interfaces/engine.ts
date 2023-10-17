@@ -73,6 +73,7 @@ interface IExecution extends IServerComponent {
     process: any;
     promises;
     listener;
+    isLocked:boolean;
 
     errors;
     item;

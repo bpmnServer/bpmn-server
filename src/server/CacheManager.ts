@@ -11,7 +11,6 @@ const fs = require('fs');
 class NoCacheManager extends ServerComponent implements ICacheManager {
 
 	constructor(server)  {
-		console.log('------ no cache manager ------');
 		super(server);
     }
 

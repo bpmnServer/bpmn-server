@@ -194,12 +194,17 @@ class Node extends _1.Element {
             return Enums_1.NODE_ACTION.end;
         });
     }
-    end(item, cancel = false) {
+    cancelEBG(item) {
         return __awaiter(this, void 0, void 0, function* () {
-            item.token.log('Node(' + this.name + '|' + this.id + ').end: item=' + item.id + ' cancel:' + cancel + ' attachments:' + this.attachments.length);
-            /**
-             * Rule:    boundary events are canceled when owner task status is 'end'
-             * */
+            const ebgItem = item.token.originItem;
+            if (ebgItem && ebgItem.node.type === Enums_2.BPMN_TYPE.EventBasedGateway) { // we need to cancel all other events 
+                const ebg = (ebgItem.node);
+                yield ebg.cancelAllBranched(item);
+            }
+        });
+    }
+    cancelBoundaryEvents(item) {
+        return __awaiter(this, void 0, void 0, function* () {
             // cancel boundary events
             let i, t;
             for (i = 0; i < this.attachments.length; i++) {
@@ -228,6 +233,18 @@ class Node extends _1.Element {
                     }
                 }
             }
+        });
+    }
+    end(item, cancel = false) {
+        return __awaiter(this, void 0, void 0, function* () {
+            item.token.log('Node(' + this.name + '|' + this.id + ').end: item=' + item.id + ' cancel:' + cancel + ' attachments:' + this.attachments.length);
+            /**
+             * Rule:    boundary events are canceled when owner task status is 'end'
+             * */
+            yield this.cancelBoundaryEvents(item);
+            if (cancel === false)
+                yield this.cancelEBG(item);
+            let i;
             for (i = 0; i < this.outbounds.length; i++) {
                 let flow = this.outbounds[i];
                 if (flow.type == Enums_2.BPMN_TYPE.MessageFlow) {

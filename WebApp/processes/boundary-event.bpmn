@@ -21,7 +21,7 @@
     <bpmn:boundaryEvent id="Reminder-Timer" cancelActivity="false" attachedToRef="user_task">
       <bpmn:outgoing>Flow_0a5dhlj</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_0a19ndy">
-        <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">PT5S</bpmn:timeCycle>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT15S</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
     <bpmn:boundaryEvent id="Expired-Timer" attachedToRef="user_task">

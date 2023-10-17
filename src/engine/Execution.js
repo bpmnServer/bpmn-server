@@ -47,27 +47,9 @@ class Execution extends server_1.ServerComponent {
      */
     constructor(server, name, source, state = null) {
         super(server);
-        /* instance
-        id;
-        name;
-        status : EXECUTION_STATUS;
-        startedAt;
-        endedAt;
-        saved;
-        data;
-        items;
-        source;
-        logs;
-        tokens;
-        loops;
-        parentItemId;
-        accessRules;
-        involvements;
-        authorizations;
-    
-         */
         this.tokens = new Map();
         this.promises = [];
+        this.isLocked = false;
         this.uids = {};
         if (state == null) {
             this.instance = new Model_1.InstanceObject();
@@ -146,7 +128,7 @@ class Execution extends server_1.ServerComponent {
             }
             this.process = startNode.process;
             //await this.doExecutionEvent(this, EXECUTION_EVENT.process_loaded);
-            yield this.doExecutionEvent(this.process, __1.EXECUTION_EVENT.process_start);
+            yield this.doExecutionEvent(this, __1.EXECUTION_EVENT.process_start);
             this.log('..starting at :' + startNode.id);
             let token = yield Token_1.Token.startNewToken(Token_1.TOKEN_TYPE.Primary, this, startNode, null, null, null, null, inputData, true);
             // start all event sub processes for the process

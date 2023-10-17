@@ -46,7 +46,7 @@ class Model extends common_1.Common {
         router.get('/addNoProp/:process', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
             let processName = request.params.process;
             console.log('adding ' + processName);
-            let view = new Modeler_noProp_1.ModelerNoProp();
+            let view = new Modeler_noProp_1.ModelerNoProp(bpmnServer);
             view.displayNew(processName, request, response);
         })));
         router.get('/add/:process', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {
@@ -129,7 +129,7 @@ class Model extends common_1.Common {
             processName = request.params.process;
             xml = yield definitions.getSource(processName);
             title = processName;
-            let view = new Modeler_noProp_1.ModelerNoProp();
+            let view = new Modeler_noProp_1.ModelerNoProp(bpmnServer);
             view.display(processName, request, response);
         })));
         router.get('/edit/:process', awaitHandlerFactory((request, response) => __awaiter(this, void 0, void 0, function* () {

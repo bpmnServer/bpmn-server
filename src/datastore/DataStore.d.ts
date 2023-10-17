@@ -9,6 +9,7 @@ declare class DataStore extends ServerComponent implements IDataStore {
     isRunning: boolean;
     inSaving: boolean;
     promises: any[];
+    locker: any;
     constructor(server: IBPMNServer);
     save(instance: any): Promise<void>;
     loadInstance(instanceId: any): Promise<{
@@ -56,6 +57,6 @@ declare class DataStore extends ServerComponent implements IDataStore {
      * creates a new collection and add an index
      *
      * */
-    install(): Promise<any>;
+    install(): Promise<void>;
 }
 export { DataStore };

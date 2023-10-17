@@ -28,7 +28,7 @@ var configuration = new Configuration(
 			new Logger(server);
 		},							
 		definitions: function (server) {
-			return new ModelsDatastoreDB(server);
+			return new ModelsDatastore(server);
 		},			
 		appDelegate: function (server) {
 			return new MyAppDelegate(server);

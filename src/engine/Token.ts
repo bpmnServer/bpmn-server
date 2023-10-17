@@ -449,6 +449,12 @@ class Token implements IToken {
      *  
      */ 
     async goNext() {
+
+        if (this.currentItem.status=='wait')
+        {
+            this.log('Token('+this.id +').goNext(): currentNodeId=' + this.currentNode.id +' type='+this.currentNode.type+' currentItem.status='+this.currentItem.status);
+            return;
+        }
         this.log('Token('+this.id +').goNext(): currentNodeId=' + this.currentNode.id +' type='+this.currentNode.type+' currentItem.status='+this.currentItem.status);
         //this.log(`..token.goNext from ${this.currentNode.id} ${this.currentNode.type}`);
 

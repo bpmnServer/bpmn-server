@@ -18,6 +18,7 @@ declare class InstanceObject implements IInstanceData {
     tokens: any[];
     loops: any[];
     parentItemId: any;
+    vars: any;
 }
 /**
  *  as stroed in MongoDB

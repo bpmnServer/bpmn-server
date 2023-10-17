@@ -52,7 +52,7 @@ export class Model extends Common {
 
             console.log('adding ' + processName);
 
-            let view = new ModelerNoProp();
+            let view = new ModelerNoProp(bpmnServer);
 
             view.displayNew(processName, request, response);
 
@@ -172,7 +172,7 @@ export class Model extends Common {
             xml = await definitions.getSource(processName);
             title = processName;
 
-            let view = new ModelerNoProp();
+            let view = new ModelerNoProp(bpmnServer);
 
             view.display(processName, request, response);
 

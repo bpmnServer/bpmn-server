@@ -39,7 +39,12 @@ class Event extends _1.Node {
         });
     }
     end(item, cancel = false) {
-        return super.end(item, cancel);
+        const _super = Object.create(null, {
+            end: { get: () => super.end }
+        });
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield _super.end.call(this, item, cancel);
+        });
     }
     get canBeInvoked() { return true; }
 }

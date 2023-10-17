@@ -1,28 +1,9 @@
-
 import {  Item, FLOW_ACTION , NODE_ACTION, IExecution  } from './';
 import { DefaultAppDelegate } from './index';
 
 const fs = require('fs');
 
 var seq = 1;
-
-class TenantIdManager {
-    server;
-    constructor(server) {
-        this.server=server;
-        const listener = server.listener;
-        this.listen(listener);
-    }
-    listen(listener) {
-
-        listener.on('all', function ({ context, event, }) {
-            if (event==='process.saving')
-                {
-                    //console.log('extension process.saving ..');//context['state']);
-                }
-        });
-    }
-}
 
 class MyAppDelegate extends DefaultAppDelegate{
     winSocket;
@@ -44,8 +25,6 @@ class MyAppDelegate extends DefaultAppDelegate{
 
         var query = { "items.status": "start" };
 
-        new TenantIdManager(this.server);
-
         var list = await this.server.dataStore.findItems(query);
         if (list.length > 0) {
 
@@ -55,8 +34,8 @@ class MyAppDelegate extends DefaultAppDelegate{
                 //console.log('-->',item.processName,item.elementId,item.type,item.startedAt,item.status);
                 if (item.type=='bpmn:ScriptTask' || item.type=='bpmn:ServiceTask' )
                 {
-                    console.log('recovering:',item.elementId,item.name,item.processName,item.startedAt);
-                    let response =await this.server.engine.invoke({"items.id":item.id}, {},null, {recover:true});
+                    console.log('item needs recovering:',item.elementId,item.name,item.processName,item.startedAt);
+                    //let response =await this.server.engine.invoke({"items.id":item.id}, {},null, {recover:true});
                 }
             }
         }
@@ -197,6 +176,14 @@ class MyServices {
 
         console.log('appDelegate service1 is now complete input:',input, 'output:',seq,'item.data',item.data);
         return { seq , text: 'test' };
+    }
+    async DummyService1(input, context) {
+        context.item.data.service1Result = 'Service1Exec';
+    }
+
+    async DummyService2(input, context) {
+        await delay(126000, '2.1mins'); // Wait for 2.1 mins
+        context.item.data.service2Result = 'Service2Exec';
     }
 }
 export {MyAppDelegate}
