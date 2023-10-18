@@ -69,7 +69,8 @@ class Engine extends ServerComponent_1.ServerComponent {
      */
     get(instanceQuery) {
         return __awaiter(this, void 0, void 0, function* () {
-            const execution = yield this.restore(instanceQuery);
+            let instance = yield this.dataStore.findInstance(instanceQuery);
+            const execution = yield this.restore(instance.id);
             yield this.release(execution);
             return execution;
         });
@@ -94,22 +95,31 @@ class Engine extends ServerComponent_1.ServerComponent {
             execution.isLocked = false;
         });
     }
-    restore(instanceQuery) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (Engine.restorePromise)
-                yield Engine.restorePromise;
-            Engine.restorePromise = this.doRestore(instanceQuery);
-            let ret = yield Engine.restorePromise;
-            Engine.restorePromise = null;
-            return ret;
-        });
+    /***
+        Loads instance into memory for purpose of execution
+        Locks instance first if required
+        check if in cache
+    */
+    /*static restorePromise = null;
+    private async restore(instanceId): Promise<Execution> {
+
+        if (Engine.restorePromise)
+            await Engine.restorePromise;
+
+        Engine.restorePromise = this.doRestore(instanceId);
+
+        let ret=await Engine.restorePromise;
+
+        Engine.restorePromise = null;
+        return ret;
     }
-    doRestore(instanceQuery) {
+     */
+    restore(instanceId) {
         return __awaiter(this, void 0, void 0, function* () {
             // need to load instance first
             let execution;
-            const instance = yield this.dataStore.findInstance(instanceQuery, 'Full');
-            yield this.lock(instance.id); // if fails throws exception
+            yield this.lock(instanceId); // if fails throws exception
+            let instance = yield this.dataStore.findInstance({ id: instanceId }, 'Full');
             const live = this.cache.getInstance(instance.id);
             if (live) {
                 execution = live;
@@ -123,7 +133,7 @@ class Engine extends ServerComponent_1.ServerComponent {
     
                 newDataStore.monitorExecution(execution); */
                 this.cache.add(execution);
-                this.logger.log("restore completed:" + instance.saved);
+                this.logger.log("restore completed: " + instance.saved);
             }
             return execution;
         });
@@ -155,7 +165,7 @@ class Engine extends ServerComponent_1.ServerComponent {
                 if (!item) {
                     this.logger.error("query produced no items for " + JSON.stringify(itemQuery));
                 }
-                const execution = yield this.restore({ "id": item.instanceId });
+                const execution = yield this.restore(item.instanceId);
                 execution.worker = execution.assign(item.id, data, userId, assignment);
                 yield this.release(execution);
                 return execution;
@@ -190,7 +200,7 @@ class Engine extends ServerComponent_1.ServerComponent {
                 if (!item) {
                     this.logger.error("query produced no items for " + JSON.stringify(itemQuery));
                 }
-                const execution = yield this.restore({ "id": item.instanceId });
+                const execution = yield this.restore(item.instanceId);
                 execution.userId = userId;
                 execution.worker = execution.signal(item.id, data, options);
                 try {
@@ -239,7 +249,7 @@ class Engine extends ServerComponent_1.ServerComponent {
             // need to load instance first
             this.logger.log('serverinvokeSignal');
             try {
-                const execution = yield this.restore({ "id": instanceId });
+                const execution = yield this.restore(instanceId);
                 yield execution.signal(elementId, data);
                 yield this.server.dataStore.save(execution.instance);
                 yield this.release(execution);
@@ -342,10 +352,4 @@ class Engine extends ServerComponent_1.ServerComponent {
     }
 }
 exports.Engine = Engine;
-/***
-    Loads instance into memory for purpose of execution
-    Locks instance first if required
-    check if in cache
-*/
-Engine.restorePromise = null;
 //# sourceMappingURL=Engine.js.map

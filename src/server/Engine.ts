@@ -78,7 +78,8 @@ class Engine extends ServerComponent implements IEngine{
 	 */
 	async get(instanceQuery): Promise<Execution> {
 
-		const execution=await this.restore(instanceQuery);
+		let instance = await this.dataStore.findInstance(instanceQuery);
+		const execution = await this.restore(instance.id);
 		await this.release(execution);
 		return execution;
 	}
@@ -104,26 +105,28 @@ class Engine extends ServerComponent implements IEngine{
 		Locks instance first if required
 		check if in cache
 	*/
-	static restorePromise = null;
-	private async restore(instanceQuery): Promise<Execution> {
+	/*static restorePromise = null;
+	private async restore(instanceId): Promise<Execution> {
 
 		if (Engine.restorePromise)
 			await Engine.restorePromise;
 
-		Engine.restorePromise = this.doRestore(instanceQuery);
+		Engine.restorePromise = this.doRestore(instanceId);
 
 		let ret=await Engine.restorePromise;
 
 		Engine.restorePromise = null;
 		return ret;
 	}
-	private async doRestore(instanceQuery): Promise<Execution> {
+	 */
+	private async restore(instanceId): Promise<Execution> {
 
 		// need to load instance first
 		let execution;
-		const instance = await this.dataStore.findInstance(instanceQuery, 'Full');
 
-		await this.lock(instance.id);	// if fails throws exception
+		await this.lock(instanceId);	// if fails throws exception
+
+		let instance = await this.dataStore.findInstance({ id: instanceId }, 'Full');
 
 		const live = this.cache.getInstance(instance.id);
 		if (live) {
@@ -141,7 +144,7 @@ class Engine extends ServerComponent implements IEngine{
 			newDataStore.monitorExecution(execution); */
 
 			this.cache.add(execution);
-			this.logger.log("restore completed:"+instance.saved);
+			this.logger.log("restore completed: "+instance.saved);
 
 		}
 
@@ -176,7 +179,7 @@ class Engine extends ServerComponent implements IEngine{
 				this.logger.error("query produced no items for "+JSON.stringify(itemQuery));
 			}
 
-			const execution = await this.restore({ "id": item.instanceId });
+			const execution = await this.restore(item.instanceId);
 
 			execution.worker = execution.assign(item.id, data,userId,assignment);
 
@@ -217,7 +220,7 @@ class Engine extends ServerComponent implements IEngine{
 				this.logger.error("query produced no items for "+JSON.stringify(itemQuery));
 			}
 
-			const execution = await this.restore({ "id": item.instanceId });
+			const execution = await this.restore(item.instanceId);
 			execution.userId=userId;
 
 			execution.worker = execution.signal(item.id, data,options);
@@ -274,7 +277,7 @@ class Engine extends ServerComponent implements IEngine{
 
 		try {
 
-			const execution= await this.restore({ "id": instanceId });
+			const execution= await this.restore(instanceId);
 
 			await execution.signal(elementId, data);
 

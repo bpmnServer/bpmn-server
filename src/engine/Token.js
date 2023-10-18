@@ -60,8 +60,7 @@ var TOKEN_TYPE;
     TOKEN_TYPE["Diverge"] = "Diverge";
     TOKEN_TYPE["EventSubProcess"] = "EventSubProces";
     TOKEN_TYPE["BoundaryEvent"] = "BoundaryEvent";
-})(TOKEN_TYPE || (TOKEN_TYPE = {}));
-exports.TOKEN_TYPE = TOKEN_TYPE;
+})(TOKEN_TYPE || (exports.TOKEN_TYPE = TOKEN_TYPE = {}));
 // ---------------------------------------------
 class Token {
     get data() {
