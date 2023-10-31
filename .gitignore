@@ -21,4 +21,6 @@
 *.tgz
 # Transpiled JavaScript files from Typescript
 /dist
-
+*.d.ts
+*.js
+*.js.map

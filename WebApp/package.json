@@ -3,14 +3,14 @@
   "version": "1.4.5",
   "private": true,
   "scripts": {
-    "setup": "node setup.js",
+    "setup": "ts-node setup.ts",
     "build": "tsc --build",
     "compileRun": "tsc --build && node app.js",
     "dev": "nodemon -e ts  --exec \"npm run compileRun\"",
-    "install": "node install.js",
+    "install": "ts-node install.ts",
     "clean": "tsc --build --clean",
     "start:watch": "tsc-watch --project . --onSuccess \"nodemon ./app.ts\"",
-    "start": "node app",
+    "start": "ts-node app",
     "test": "mocha -exit --config=test/.mocharc.json"
   },
   "description": "bpmn-server.webApp",
