@@ -186,22 +186,22 @@ class Gateway extends _1.Node {
                         const ret = yield parentToken.currentNode.run(item);
                         let result = yield parentToken.currentNode.continue(item);
                         result = yield parentToken.goNext();
+                        // -------------------------------------------------------------------------------------------------
+                        // end current token
+                        // -------------------------------------------------------------------------------------------------
+                        oldCurrentToken.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: ending current child token ' + oldCurrentToken.id);
+                        oldCurrentToken.currentItem.status = __1.ITEM_STATUS.end;
+                        //await convergingGatewayCurrentNode.end(item);
+                        //await oldCurrentToken.end();
+                        //if (oldCurrentToken.type==TOKEN_TYPE.Diverge)
+                        yield oldCurrentToken.terminate();
+                        item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: all token terminate return NODE_ACTION.end');
+                        return __1.NODE_ACTION.end;
                     }
-                    // -------------------------------------------------------------------------------------------------
-                    // end current token
-                    // -------------------------------------------------------------------------------------------------
-                    oldCurrentToken.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: ending current child token ' + oldCurrentToken.id);
-                    oldCurrentToken.currentItem.status = __1.ITEM_STATUS.end;
-                    //await convergingGatewayCurrentNode.end(item);
-                    //await oldCurrentToken.end();
-                    //if (oldCurrentToken.type==TOKEN_TYPE.Diverge)
-                    yield oldCurrentToken.terminate();
-                    item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: all token terminate return NODE_ACTION.end');
-                    return __1.NODE_ACTION.end;
                 }
             }
-            else
-                return __1.NODE_ACTION.continue;
+            //else
+            return __1.NODE_ACTION.continue;
         });
     }
 }
