@@ -10,7 +10,7 @@ This package is designed specifically for Node.js and TypeScript
 
 
 ### Documentation
-- [Featuers](./docs/features)
+- [Features](./docs/features)
 - [Examples](./docs/examples.md)
 
 ## Features
