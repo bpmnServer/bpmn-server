@@ -59,10 +59,24 @@ class ServiceTask extends Node {
 
         item.log("invoking service:" + this.serviceName + " input:" + JSON.stringify(item.input));
 
-        if (this.serviceName && appDelegate.servicesProvider[this.serviceName])
-            ret = await appDelegate.servicesProvider[this.serviceName](item.input,item.context);
-        else
+        const provider = appDelegate.servicesProvider
+        if(this.serviceName){
+            const serviceNameArr=this.serviceName.split('.')    
+            let fn = provider
+            for(let i=0;i<serviceNameArr.length; i++){
+                const funcname = serviceNameArr[i]
+                fn=fn[funcname]                
+            }
+            
+            ret = await fn(item.input, item.context)
+        }else{
             ret = await appDelegate['serviceCalled'](item.input,item.context);
+        }
+        
+        // if (this.serviceName && appDelegate.servicesProvider[this.serviceName])
+        //     ret = await appDelegate.servicesProvider[this.serviceName](item.input,item.context);
+        // else
+            // ret = await appDelegate['serviceCalled'](item.input,item.context);
 
         item.log("service returned " + ret);
         item.output = ret;
