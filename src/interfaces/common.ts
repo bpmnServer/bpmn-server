@@ -9,14 +9,7 @@ interface IConfiguration
         forceTimersDelay: number,
         precision: number,
     },
-    database: {
-        MongoDB:
-        {
-            db_url: string,
-            db: string,
-        },
-        loopbackRepositories?:any
-    },
+    database: IMongoDBDatabaseConfiguration | ISQLiteDatabaseConfiguration,
     apiKey: string,
     logger: ILogger,
     definitions(server): IModelsDatastore,
@@ -24,6 +17,22 @@ interface IConfiguration
     dataStore(server): IDataStore,
     cacheManager(server): ICacheManager
 }
+
+interface IDatabaseConfigurationBase {
+    loopbackRepositories?:any
+}
+interface IMongoDBDatabaseConfiguration extends IDatabaseConfigurationBase {
+    MongoDB: {
+        db_url: string,
+        db: string,
+    },
+}
+interface ISQLiteDatabaseConfiguration extends IDatabaseConfigurationBase {
+    SQLite: {
+        db_connection: string,
+    },
+}
+
 
 /**
  * A logging tool to take various message for monitoring and debugging
