@@ -1,4 +1,4 @@
-import { IItem, ILogger, NODE_ACTION, EXECUTION_EVENT, ITEM_STATUS, Node } from "../.."
+import { IItem, ILogger, NODE_ACTION, EXECUTION_EVENT, ITEM_STATUS, Node } from ".."
 
 interface IDefinition {
     name: any;

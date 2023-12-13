@@ -1,6 +1,6 @@
 'use strict';
 
-import { ILogger } from "../../";
+import { ILogger } from "..";
 
 const FS = require('fs');
 

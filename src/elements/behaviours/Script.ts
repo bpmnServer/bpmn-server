@@ -1,5 +1,5 @@
 import { Behaviour } from '.';
-import { Item } from "../../..";
+import { Item } from "../..";
 
 class ScriptBehaviour extends Behaviour {
     /*    

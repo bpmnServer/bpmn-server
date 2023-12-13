@@ -1,4 +1,4 @@
-import { IExecution, IItem, NODE_ACTION, FLOW_ACTION, IModelsDatastore, IDataStore,ICacheManager} from '../..';
+import { IExecution, IItem, NODE_ACTION, FLOW_ACTION, IModelsDatastore, IDataStore,ICacheManager} from '..';
 
 
 interface IConfiguration 

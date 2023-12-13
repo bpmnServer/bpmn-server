@@ -2,9 +2,9 @@
   "name": "bpmn-server",
   "version": "1.4.6",
   "description": "BPMN 2.0 Server including Modeling, Execution and Presistence, an open source for Node.js",
-  "module": "index.js",
+  "module": "dist/index.js",
   "license": "MIT",
-  "types": "index.d.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "preinstall": "echo ---- installing bpmn-server ----",
     "postinstall": "node install.js",
@@ -18,6 +18,12 @@
     "type": "git",
     "url": "git+https:github.com/ralphhanna/bpmn-server.git"
   },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.js.map",
+    "dist/**/*.d.ts",
+    "README.md"
+  ],
   "keywords": [
     "BPMN",
     "BPMN 2.0",

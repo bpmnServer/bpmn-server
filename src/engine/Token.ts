@@ -4,7 +4,7 @@ const fs = require('fs');
 
 import { Execution } from './Execution';
 import { SubProcess ,  LoopBehaviour , Element, Node, Flow } from '../elements/'
-import { EXECUTION_EVENT , NODE_ACTION , FLOW_ACTION, TOKEN_STATUS, EXECUTION_STATUS,  ITEM_STATUS, INode, NODE_SUBTYPE} from '../../';
+import { EXECUTION_EVENT , NODE_ACTION , FLOW_ACTION, TOKEN_STATUS, EXECUTION_STATUS,  ITEM_STATUS, INode, NODE_SUBTYPE} from '..';
 import { EventEmitter } from 'events';
 import { Loop } from './Loop';
 import { Item } from './Item';

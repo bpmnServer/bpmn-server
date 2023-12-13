@@ -1,7 +1,7 @@
 
 import { Behaviour } from '.';
 import { Item } from "../../engine/Item";
-import { NODE_SUBTYPE } from "../../..";
+import { NODE_SUBTYPE } from "../..";
 import { NODE_ACTION } from "../../interfaces";
 import { Node } from "../Node";
 import { Transaction } from "../";

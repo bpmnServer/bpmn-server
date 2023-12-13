@@ -1,5 +1,5 @@
-import { IItemData, IInstanceData} from  '../../'
-import { ITEM_STATUS , EXECUTION_STATUS } from '../../';
+import { IItemData, IInstanceData} from  '..'
+import { ITEM_STATUS , EXECUTION_STATUS } from '..';
 import { BPMN_TYPE } from '../elements';
 
 /**

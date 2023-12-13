@@ -1,4 +1,4 @@
-import { IExecution, Item, NODE_ACTION, FLOW_ACTION, IAppDelegate , IDefinition} from "../..";
+import { IExecution, Item, NODE_ACTION, FLOW_ACTION, IAppDelegate , IDefinition} from "..";
 
 import { moddleOptions} from '../elements/js-bpmn-moddle';
 

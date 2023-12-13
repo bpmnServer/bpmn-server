@@ -3,7 +3,7 @@ import { Logger } from '../common/Logger';
 
 import { ServerComponent } from './ServerComponent';
 
-import { IEventData, ICron } from '../..';
+import { IEventData, ICron } from '..';
 
 const duration = require('iso8601-duration');
 const parse = duration.parse;

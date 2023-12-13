@@ -1,4 +1,4 @@
-import { IExecution , ILogger , IItemData , IDefinition, IConfiguration, IAppDelegate, IDataStore,IModelsDatastore } from '../..';
+import { IExecution , ILogger , IItemData , IDefinition, IConfiguration, IAppDelegate, IDataStore,IModelsDatastore } from '..';
 import { EventEmitter } from 'events';
 import { BPMNServer } from '../server';
 

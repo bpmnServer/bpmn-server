@@ -1,6 +1,6 @@
 import { Execution } from "./Execution";
-import { ITEM_STATUS, IItem, } from "../../";
-import { IItemData } from "../../";
+import { ITEM_STATUS, IItem, } from "..";
+import { IItemData } from "..";
 import { Element , Node } from '../elements';
 import { Token } from "./Token";
 

@@ -1,7 +1,7 @@
 
 import { Token, Execution, TOKEN_TYPE  } from '../../engine';
 import { Node } from '..';
-import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../../..';
+import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../..';
 import { Item } from '../../engine/Item';
 import { BPMNServer } from '../../server';
 import { Behaviour } from './';

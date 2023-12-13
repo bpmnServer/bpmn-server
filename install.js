@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const _1 = require(".");
+const _1 = require("./src");
 const fs = require('fs');
 const cwd = process.cwd();
 const fse = require('fs-extra');

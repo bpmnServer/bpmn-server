@@ -1,5 +1,5 @@
-import { Definition, IModelsDatastore } from "../..";
-import { ServerComponent , BPMNServer } from "../..";
+import { Definition, IModelsDatastore } from "..";
+import { ServerComponent , BPMNServer } from "..";
 import { IProcessData, IBpmnModelData, IEventData } from "../interfaces/";
 
 
