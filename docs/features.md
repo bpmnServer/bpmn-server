@@ -70,7 +70,7 @@ The following elements are tested and supported.
 ## Special
 - [Script Events](./examples#ScriptExtensions) 
 
-## Advamced 
+## Advanced 
 - BpmnError
 - compensate
 - Transaction

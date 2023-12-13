@@ -36,6 +36,10 @@ class BpmnModelData implements IBpmnModelData {
                 event.elementId = n.id;
                 event.name = n.name;
                 event.type = n.type;
+                event.lane = n.lane;
+                event.subType = n.subType;
+                event.candidateGroups=n.candidateGroups;
+                event.candidateUsers=n.candidateUsers;
                 event.processId = n.processId;
 
                 let timer = n.hasTimer();
@@ -44,20 +48,17 @@ class BpmnModelData implements IBpmnModelData {
                     event.subType = 'Timer';
                     event.expression = timer.timeCycle;
                     event.referenceDateTime = new Date().getTime();
-                    console.log('reference Time:' + event.referenceDateTime);
                 }
                 let msg = n.hasMessage();
                 if (msg) {
                     event.messageId = msg.messageId;
                     event.subType = 'Message';
-                    console.log('message:' + msg.messageId);
                     //console.log('timer:' + timer.timeDueInSeconds());
                 }
                 let signal = n.hasSignal();
                 if (signal) {
                     event.signalId = signal.signalId;
                     event.subType = 'Signal';
-                    console.log('signal:' + signal.signalId);
                 }
                 this.events.push(event);
             }
@@ -93,6 +94,9 @@ class EventData implements IEventData  {
     maxRepeat;
     repeatCount;
     timeDue;
+    lane;
+    candidateGroups;
+    candidateUsers;
 }
 
 

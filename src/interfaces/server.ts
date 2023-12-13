@@ -1,6 +1,6 @@
-import { IExecution , ILogger , IItemData , IDefinition, IConfiguration, IAppDelegate, IDataStore,IModelsDatastore } from '../..';
+import { IExecution , ILogger , IItem, IItemData , IDefinition, IConfiguration, IAppDelegate, IDataStore,IModelsDatastore } from '../..';
 import { EventEmitter } from 'events';
-import { BPMNServer } from '../server';
+import { IUserService } from './User';
 
 
 interface IBPMNServer {
@@ -14,6 +14,7 @@ interface IBPMNServer {
     dataStore: IDataStore;
     cache: ICacheManager;
     cron: ICron;
+    userService: IUserService;
 }
 
 interface IServerComponent {
@@ -36,7 +37,7 @@ interface IEngine {
      * @param data		input data
      * @param startNodeId	in process has multiple start node; you need to specify which one
      */
-    start(name: any, data?: any, startNodeId?: string, userId?: string, options?: any): Promise<IExecution>;
+    start(name: any, data?: any, startNodeId?: string, userName?: string, options?: any): Promise<IExecution>;
     /**
      * restores an instance into memeory or provides you access to a running instance
      *
@@ -63,11 +64,12 @@ interface IEngine {
      * @param itemQuery		criteria to retrieve the item
      * @param data
      */
-    invoke(itemQuery: any, data?: {}, userId?: string, options?: {}): Promise<IExecution>;
+    invoke(itemQuery: any, data: {}, userName?: string, options?: {}): Promise<IExecution>;
 
-    assign(itemQuery: any, data?: {}, userId?: string, assignment?:{}): Promise<IExecution>;
+    assign(itemQuery: any, data: {}, assignment: {}, userName: string,options?:{}): Promise<IExecution>;
 
 
+	startRepeatTimerEvent(instanceId, prevItem: IItem, data: {},options?:{}) : Promise<IExecution>;
 
     /**
      *
@@ -79,6 +81,7 @@ interface IEngine {
      *```
      *	{instanceId: instanceId, elementId: value }
      *```
+
      *
      * @param instanceId
      * @param elementId
@@ -98,9 +101,8 @@ interface IEngine {
      * @param data			message data
      */
     //signal(messageId: any, matchingKey: any, data?: {}): Promise<IExecution>;
-	throwMessage(messageId, data : {}, matchingQuery :{}): Promise<IExecution>;
-
-	throwSignal(signalId, data :{}, matchingQuery :{} );
+    throwMessage(messageId, data: {}, matchingQuery: {}): Promise<IExecution>;
+    throwSignal(signalId, data: {}, matchingQuery: {});
 
 }
 
@@ -121,4 +123,4 @@ interface ICacheManager {
 }
 
 
-export { IBPMNServer , IEngine ,  ICron ,ICacheManager , IServerComponent }
+export { IBPMNServer , IEngine , ICron ,ICacheManager , IServerComponent }

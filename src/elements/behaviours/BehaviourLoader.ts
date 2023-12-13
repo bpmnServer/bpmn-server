@@ -27,6 +27,7 @@ const Behaviour_names = {
     CamundaFormData: 'camunda:formData',
     CamundaScript: 'camunda:script',
     CamundaScript2: 'camunda:executionListener',
+    CamundaScript3: 'camunda:taskListener',
     CamundaIO: 'camunda:inputOutput'
 
 }
@@ -96,6 +97,11 @@ class BehaviourLoader {
         },
         {
             name: Behaviour_names.CamundaScript, funct: function (node, def) {
+                return new ScriptBehaviour(node, def);
+            }
+        },
+        {
+            name: Behaviour_names.CamundaScript3, funct: function (node, def) {
                 return new ScriptBehaviour(node, def);
             }
         },

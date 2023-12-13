@@ -46,6 +46,20 @@ class Definition implements IDefinition{
         const children = [];
         const process=new Process(processElement,parentProcess);
 
+        if (processElement.extensionElements) {
+            processElement.extensionElements.values.forEach(ext=>{
+                let scripts = [];
+                var scrs = ext['$children'];
+                if (scrs) {
+                    for (var i = 0; i < scrs.length; i++) {
+                        var scr = scrs[i];
+                        scripts.push(scr.$body);
+                    }
+                    process.scripts.set(ext.event, scripts);
+                }
+           });
+        }
+        
         const eventSubProcesses = [];
         // process flowElements i.e. nodes 
         processElement.flowElements.forEach(child => {

@@ -36,7 +36,6 @@ class ScriptBehaviour extends Behaviour {
             this.scripts.push(scr.$body);
             this.node.scripts.set(this.definition.event, this.scripts);
         }
-
     }
     /*
     start(item: Item) {

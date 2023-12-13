@@ -41,7 +41,9 @@ To Invoke a process from your code:
 
     const server = new BPMNServer(configuration, logger);
 
-    let response = await server.engine.start('Buy Used Car');
+    const api = new BPMNAPI(server));
+
+    let response=await api.engine.start('Leave Request',{type:'Vacation'},SystemUser);
 
     const items = response.items.filter(item => {
         return (item.status == 'wait');
@@ -50,37 +52,39 @@ To Invoke a process from your code:
     items.forEach(item => {
         console.log(`  waiting for <${item.name}> -<${item.elementId}> id: <${item.id}> `);
     });
-    const itemId = items[0].id;
 
-    console.log(`Invoking Buy id: <${itemId}>`);
+    console.log('Invoking Buy');
 
-    const input={ model: 'Thunderbird', needsRepairs: false, needsCleaning: false };
-    response = await engine.invoke({items: { id: itemId } }, input );
+    response = await api.engine.invoke({instanceId: response.execution.id, elementId: 'task_Buy' },
+        { model: 'Thunderbird', needsRepairs: false, needsCleaning: false },SystemUser);
 
     console.log("Ready to drive");
 
+    response = await api.engine.invoke({ instanceId: response.execution.id, elementId: 'task_Drive' },{},SsytemUser);
+
+    console.log(`that is it!, process is now complete status=<${response.execution.status}>`)
 ```
 ### Async Execution
 ```js
-    const logger = new Logger({ toConsole: false });
+    const api = new BPMNAPI(new BPMNServer(configuration,new Logger({ toConsole: false}),{cron:false}));
 
-    const listener = new EventEmitter();
+    console.log('starting serviceTask');
+    let response=await api.engine.start('serviceTask', { v1: 1, v2: 2 }, SystemUser, {noWait:true});
 
-    listener.on('all', function ({ context, event, }) {
-        let msg = '';
-        if (context.instance.id)
-            msg = ' instanceId: ' + context.instance.id;
-        if (context.item)
-            msg += ' Item: ' + context.item.elementId + " itemId: "+ context.item.id;
-        console.log('---Event: -->' + event + msg );
-    });
-
-    const server = new BPMNServer(configuration, logger, { cron: false });
-
-    // notice no await for next line
-    server.engine.start('serviceTask', { v1: 1, v2: 2 }, listener);
+    console.log('immediate response id',response.instance.id);
 ```
-In the above example; engine.start return immediatly, but a listener keep track of all event 
+In the above example; engine.start return immediatly, but other nodes will continue to execute 
+```js
+starting serviceTask
+immediate response id d7df99ab-f0b5-4fdf-8ac3-2701d0bf9b79
+ add service start: { v1: 1, v2: 2 }
+Add Service 5 3
+Add Service 33 25
+delaying ... 5000
+delayed is done.
+appDelegate service1 is now complete input: { repeat: '100', inputVar2: undefined } output: 1 item.data { v1: 1, v2: 2, result: 8, result2: 158 }
+ service1 end: { v1: 1, v2: 2, result: 8, result2: 158 }
+```
 
 ## Process Definitions Examples
 
@@ -95,7 +99,7 @@ In Process definition (.bpmn file), use `implementation` attribute to define nam
 ```
 
 ```js 
-class MyAppDelegate extends DefaultAppDelegate{
+class AppServices {
 
     // for services that are not defined
     async serviceCalled(item) {
@@ -131,7 +135,7 @@ class MyAppDelegate extends DefaultAppDelegate{
   <bpmn:sequenceFlow>    
 
    <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">
-      (data.needsCleaning=="Yes")
+      $(data.needsCleaning=="Yes")
    </bpmn:conditionExpression>
   ..
 
@@ -164,8 +168,8 @@ From the Web UI:
 From API:
 ```js
     
-    response = await server.engine.start('invoice', 
-        { reminderCounter: 0, caseId: caseId}, null, 'StartEvent_AP');
+    response = await api.engine.start('invoice', 
+        { reminderCounter: 0, caseId: caseId}, user, {startNodeId:'StartEvent_AP'});
 ```
 ### Business Rule Task
 
@@ -235,7 +239,8 @@ More on [timers](./timers.md)
     <bpmn:scriptTask id="scriptTask" name="Script Task">
       <bpmn:incoming>Flow_159xzcz</bpmn:incoming>
       <bpmn:outgoing>Flow_0t7z2os</bpmn:outgoing>
-      <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="(data.records)" />
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true" 
+        camunda:collection="$(data.records)" />
       <bpmn:script><![CDATA[this.log('testing from the inside: '+data.loopKey);]]></bpmn:script>
     </bpmn:scriptTask>
 ```

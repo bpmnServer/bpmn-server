@@ -145,7 +145,7 @@ class Token implements IToken {
 
         token.loop = loop;
         execution.tokens.set(token.id, token);
-        token.appendData(data);
+        token.appendData(data, originItem);
         if (noExecute==false)
             await token.execute(data);
         return token;
@@ -355,8 +355,8 @@ class Token implements IToken {
      *  renamed from applyInput to appendData
      * @param inputData
      */
-    appendData(inputData) {
-        this.execution.appendData(inputData, this.dataPath);
+    appendData(inputData,item) {
+        this.execution.appendData(inputData, item, this.dataPath);
     }
     /**
      *  is called by Gateways to cancel current token

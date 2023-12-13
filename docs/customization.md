@@ -88,7 +88,7 @@ class MyAppDelegate extends DefaultAppDelegate{
 ```
 # Putting it Togother
 
-## Use Case 1: Starging a Process
+## Use Case 1: Staging a Process
 In this use case a User invokes some business logic that requires a process start ...
 When a process reaches a User Task it issues a notification to user(s).
 

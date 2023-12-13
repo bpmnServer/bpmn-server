@@ -12,6 +12,12 @@ and here
 
 ### Changed
 -->
+## Release 1.5.0 -- 2023-11
+- New API
+- Added User Authentication for WebApp
+- Added User Management; Signup and Admin
+- Added Assign function, users can Assign other users to the task
+- Improved Users Interface to support above changes 
 
 ## Release 1.4.1 -- 2023-10-2
 - Added Instance Locking, supporting multiple nodeJS servers running against same MongoDB

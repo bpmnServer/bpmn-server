@@ -12,14 +12,14 @@ class CancelEventBehaviour extends Behaviour {
 
     }
     async start(item: Item) {
-        item.context.logger.log("staring an Error Events " + this.node.isCatching);
+        item.log("staring an Error Events " + this.node.isCatching);
         if (this.node.isCatching) {
             return NODE_ACTION.wait;
         }
         else {  // throw a message
             await Transaction.Cancel(item.token.parentToken.currentItem);
 
-            item.context.logger.log("Error Event is throwing an error");
+            item.log("Error Event is throwing an error");
 
             return NODE_ACTION.error;
         }
@@ -36,12 +36,12 @@ class CompensateEventBehaviour extends Behaviour {
 
     }
     async start(item: Item) {
-        item.context.logger.log("staring an Error Events " + this.node.isCatching);
+        item.log("staring an Error Events " + this.node.isCatching);
         if (this.node.isCatching) {
             return NODE_ACTION.continue;
         }
         else {  // throw a message
-            item.context.logger.log("Compensate Event");
+            item.log("Compensate Event");
             var nodeId = this.TransactionId;
             // challenge: find the item for a node, assuming there is only one item
             var transItem;
@@ -54,9 +54,9 @@ class CompensateEventBehaviour extends Behaviour {
 
                 });
             });
-            console.log("--- calling Compensate");
+            //console.log("--- calling Compensate");
             await Transaction.Compensate(transItem);
-            console.log("---- called Compensate");
+            //console.log("---- called Compensate");
 
             return NODE_ACTION.continue;
         }

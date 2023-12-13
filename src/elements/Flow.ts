@@ -2,7 +2,7 @@
 import { Execution } from '../engine/Execution';
 import { Token, TOKEN_TYPE } from '../engine/Token';
 import { IBehaviour, Behaviour} from "./behaviours";
-import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, IFlow } from '../../';
+import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, IFlow, ScriptHandler } from '../../';
 
 import { Item } from '../engine/Item';
 import { Node, Element } from '.';
@@ -57,7 +57,7 @@ class Flow extends Element implements IFlow {
             let expression = this.def.conditionExpression.body;
             item.token.log('..conditionExpression:' + JSON.stringify(expression));
             item.token.log(JSON.stringify(item.token.data));
-            let result = item.token.execution.appDelegate.scopeEval(item, expression);
+            let result = ScriptHandler.evaluateExpression(item, expression);
             item.token.log('..conditionExpression:' + expression + " result: " + result);
             return result;
         }

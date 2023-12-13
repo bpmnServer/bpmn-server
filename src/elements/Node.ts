@@ -5,6 +5,7 @@ import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, N
 import { Item } from '../engine/Item';
 import { BPMN_TYPE } from '../interfaces/Enums';
 import { BehaviourLoader } from './behaviours/BehaviourLoader';
+import { ScriptHandler } from '../..';
 
 // ---------------------------------------------
 class Node extends Element {
@@ -49,7 +50,7 @@ class Node extends Element {
                 var script = scripts[s];
                 item.token.log('--executing script for event:' + event);
 
-                await item.token.execution.appDelegate.scopeJS(item, script);
+                await ScriptHandler.executeScript(item, script);
 
             }
         }
@@ -69,7 +70,7 @@ class Node extends Element {
 
         const data = await this.getInput(item, input);
 
-        item.token.appendData(data);
+        item.token.appendData(data,item);
 
     }
     async getInput(item: Item, input) {
@@ -92,7 +93,7 @@ class Node extends Element {
     }
     enter(item: Item) {
         item.token.log('Node('+this.name+'|'+this.id+').enter: item=' + item.id);
-        item.startedAt = new Date().toISOString();;
+        item.startedAt = new Date();
 
     }
     /*
@@ -270,7 +271,7 @@ class Node extends Element {
         if (cancel)
             item.endedAt = null;
         else
-            item.endedAt = new Date().toISOString();
+            item.endedAt = new Date();
 
         if (item.status == ITEM_STATUS.end)
             return;

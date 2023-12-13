@@ -1,4 +1,4 @@
-import { IExecution, ILogger,  IDefinition, IConfiguration } from './';
+import { IExecution, ILogger,  IDefinition, IConfiguration, IInstanceData } from './';
 import { IBpmnModelData, IItemData, IEventData } from './';
 import { EventEmitter } from 'events';
 import { BPMNServer } from '../server';
@@ -7,40 +7,36 @@ interface IDataStore {
     dbConfiguration: any;
     db: any;
     logger: any;
-    // execution: IExecution;
-    // monitorExecution(execution: IExecution): void;
-    save(instance:any): Promise<void>;
-    loadInstance(instanceId: any): Promise<{
+    locker: any;
+    save(instance:any,options:any): Promise<void>;
+    loadInstance(instanceId: any,options:any): Promise<{
         instance: any;
         items: any[];
     }>;
-    findItem(query: any): Promise<any>;
-    findInstance(query: any, options: any): Promise<any>;
-    findInstances(query: any, option: 'summary' | 'full'): Promise<any>;
-    /**
-     * @param query
-     */
-    findItems(query: any): Promise<any[]>;
+    findItem(query: any): Promise<IItemData>;
+    findInstance(query: any, options: any): Promise<IInstanceData>;
+    findInstances(query: any, option: 'summary' | 'full'): Promise<IInstanceData[]>;
+    findItems(query: any): Promise<IItemData[]>;
     deleteInstances(query?: any): Promise<void>;
     install(); 
 }
 
 interface IModelsDatastore {
-    getList(): Promise<string[]>;
-    getSource(name: any): Promise<string>;
-    getSVG(name: any): Promise<string>;
-    save(name: any, bpmn: any, svg?: any): Promise<boolean>;
+    getList(query): Promise<string[]>;
+    getSource(name: any,owner): Promise<string>;
+    getSVG(name: any,owner): Promise<string>;
+    save(name: any, bpmn: any, svg?: any,owner?): Promise<boolean>;
 
-    load(name: any): Promise<IDefinition>;
-    loadModel(name: any): Promise<IBpmnModelData>;
-    findEvents(query: any): Promise<any[]>;
+    load(name: any,owner): Promise<IDefinition>;
+    loadModel(name: any,owner): Promise<IBpmnModelData>;
+    findEvents(query: any,owner): Promise<any[]>;
 
     install(); 
     import(data);
 
     saveModel(model: IBpmnModelData): Promise<boolean>;
-    deleteModel(name: any): Promise<void>;
-    renameModel(name: any, newName: any): Promise<boolean>;
+    deleteModel(name: any,owner): Promise<void>;
+    renameModel(name: any,newName: any,owner): Promise<boolean>;
 }
 
 

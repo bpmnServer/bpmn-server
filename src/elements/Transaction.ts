@@ -15,7 +15,7 @@ class Transaction extends SubProcess {
     get requiresWait() { return true; }       
 
     async end(item,cancel:Boolean=false) {
-        console.log('trans ending');
+        //console.log('trans ending');
         super.end(item,cancel);
 
     }
@@ -47,24 +47,24 @@ class Transaction extends SubProcess {
         console.log("--- Compensating ...",transItem.elementId," found trans items",items.length);
         for (let i = 0; i < items.length; i++) {
             let item: Item = items[i];
-            console.log(" checking item ", item.elementId, item.status);
+            //console.log(" checking item ", item.elementId, item.status);
             if (item.status == ITEM_STATUS.end) {
 
                 let evnts = item.node.attachments;
                 let toFire = [];
                 if (evnts) {
                     evnts.forEach((event, key) => {
-                        console.log(item.elementId, 'event', event.subType);
+                        //console.log(item.elementId, 'event', event.subType);
                         if (event.subType == NODE_SUBTYPE.compensate) {
-                            console.log("--- firing event", event.id);
+                            //console.log("--- firing event", event.id);
                             toFire.push(event);
                         }
                     });
                     for (let ev = 0; ev < toFire.length; ev++) {
-                        console.log(ev);
+                        //console.log(ev);
                         let newToken=await Token.startNewToken(TOKEN_TYPE.BoundaryEvent, item.token.execution, toFire[ev], null, item.token, item, null);
-                        console.log('New Token', newToken.status, newToken.currentItem.id, newToken.currentItem.status);
-                        await newToken.execution.signal(newToken.currentItem.id,null);
+                        //console.log('New Token', newToken.status, newToken.currentItem.id, newToken.currentItem.status);
+                        await newToken.execution.signalItem(newToken.currentItem.id,null);
                     }
 
                 }

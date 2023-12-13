@@ -20,7 +20,7 @@ class MessageEventBehaviour extends Behaviour {
 
     }
     async start(item: Item) {
-        item.context.logger.log("message event behaviour start");
+        item.log("message event behaviour start");
         if (this.node.isCatching) {
             item.messageId = this.messageId;
         }

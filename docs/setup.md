@@ -1,3 +1,27 @@
+# Installation
+## installation of bpmn-server along with bpmn-web
+git clone .../bpmn-web 
+npm install
+copy sample.env .env
+edit .env file
+
+npm run setup
+npm start
+### To Update
+git pull
+npm update
+
+## installation of bpmn-client
+create a folder or use an existing project
+
+git clone .../bpmn-client-sample 
+copy sample.env .env
+edit .env file
+
+npm install
+To Update
+git pull
+npm update
 # Setup bpmn Application with bpmn-server
 
 

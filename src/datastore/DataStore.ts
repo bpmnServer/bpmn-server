@@ -1,9 +1,12 @@
 import { Execution } from '../engine/Execution';
-import { IDataStore, IBPMNServer, IInstanceData } from '../interfaces';
+import { IDataStore, IBPMNServer, IInstanceData, IItemData } from '../interfaces';
 
 import { ServerComponent } from '../server/ServerComponent';
 
-import {InstanceLocker } from './';
+
+import { InstanceLocker } from './';
+
+import { QueryTranslator } from './QueryTranslator';
 
 const fs = require('fs');
 
@@ -40,10 +43,10 @@ class DataStore extends ServerComponent  implements IDataStore {
 		const listener = execution.listener;
 	} */
 
-	async save(instance) {
+	async save(instance,options={}) {
 		return await this.saveInstance(instance);
 	}
-	async loadInstance(instanceId) {
+	async loadInstance(instanceId,options={}) {
 
 		const recs = await this.findInstances({ id: instanceId }, 'full');
 		if (recs.length == 0) {
@@ -57,98 +60,45 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 		return { instance: instanceData, items: this.getItemsFromInstances([instanceData]) };
 	}
-
-	private getItemsFromInstances(instances, condition = null) {
+	/*
+	Since MongoDB returns the wholde doc (all items), we have to filter only what user asked for 
+	and transform the data 
+*/
+	private getItemsFromInstances(instances, condition = null,trans=null) {
 		const items = [];
 		instances.forEach(instance => {
 			instance.items.forEach(i => {
 				let pass = true;
-				//console.log(i);
-				if (condition) {
-					const keys = Object.keys(condition);
-					keys.forEach(key => {
-						let cond=condition[key];
-						//console.log('key', key, condition[key], i[key]);
-						let val = i;
-						if (key.includes('.')) {
-							let ks = key.split('.');
-							ks.forEach(k => {
-								val = val[k];
-							});
-							//console.log('keys ', k1, k2,val);
-							if (val !== cond)
-								pass = false;
-                        }
-						else if (Array.isArray(i[key])) {
-							if (!i[key].includes(cond))
-								pass = false;
-						}
-						else if (typeof cond === 'object' &&
-								!Array.isArray(cond) &&
-								cond!== null)
-							{
-								pass=this.parseComplexCondition(cond,i[key]);
-							}
-						else if (i[key] != cond)
-							pass = false;
-					});
-				}
+				if (trans)
+					pass = trans.filterItem(i, condition);
+
 				if (pass) {
 					i['processName'] = instance.name;
 					i['data'] = instance.data;
 					i['instanceId'] = instance.id;
+					i['instanceVersion'] = instance.version;
 					items.push(i);
 				}
 			});
 		});
 		return items.sort(function (a, b) { return (a.seq - b.seq); });
 	}
-	private parseComplexCondition(condition,val) : boolean
-	{
-		let ret=false;
-		if (!val)
-			return false;
-		Object.keys(condition).forEach(cond=>{
-			let term=condition[cond];
-			switch(cond) {
-				case '$gte':
-					ret=(val>term)||(val===term);
-					break;
-				case '$gt':
-					ret=(val>term);
-					break;
-				case '$eq':
-					ret=(val===term);
-					break;
-				case '$lte':
-					ret=(val<term)||(val===term);
-					break;
-				case '$lt':
-					ret=(val<term);
-					break;
-				default:
-					ret=false;
-					break;
-				}
-			if (ret==false)
-				return false;
-		});
-		return ret;
-	}
+
+
 	// save instance to DB
 	static seq = 0;
-	private async saveInstance(instance) {
+	private async saveInstance(instance,options={}) {
 //		this.logger.log("Saving...");
 
 
 		//var json = JSON.stringify(instance.state, null, 2);
 		const tokensCount = instance.tokens.length;
 		let itemsCount = instance.items.length;
-//		this.logger.log('saving instance ' + tokensCount + " tokens and items: " + itemsCount);
 
 		var recs;
 		if (!instance.saved) {
-			instance.saved = new Date().toISOString();
+			instance.saved = new Date();
+			instance.version =0;
 
 			//this.promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]));
 			//this.promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]));
@@ -157,15 +107,13 @@ class DataStore extends ServerComponent  implements IDataStore {
 //			this.logger.log("inserting instance");
 		}
 		else {
-			instance.saved = new Date().toISOString();
 			this.promises.push(this.db.update(this.dbConfiguration.db, Instance_collection,
 				{ id: instance.id },
 				{
 					$set:
-					{
+					{	version: instance.version,endedAt: instance.endedAt, status: instance.status, saved: instance.saved,
 						tokens: instance.tokens, items: instance.items, loops: instance.loops,
-						endedAt: instance.endedAt, status: instance.status, saved: instance.saved,
-						logs: instance.logs, data: instance.data , vars: instance.vars
+						logs: instance.logs, data: instance.data
 					}
 				}));
 
@@ -177,11 +125,11 @@ class DataStore extends ServerComponent  implements IDataStore {
 		});*/
 
 		await Promise.all(this.promises);
-		this.logger.log('..DataStore:saving Complete'+ instance.saved);
+		this.logger.log('..DataStore:saving Complete');
 
 	}
 
-	async findItem(query) {
+	async findItem(query): Promise <IItemData> {
 		let results = await this.findItems(query);
 		if (results.length == 0)
 			throw Error(" No items found for " + JSON.stringify(query));
@@ -201,6 +149,14 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 		const rec = results[0];
 
+		/*this.convertColl(rec.authorizations, Authorization);
+		this.convertColl(rec.involvements, Involvement);
+		rec.items.forEach(item => {
+			this.convertColl(item.authorizations, Authorization);
+			this.convertColl(item.assignments, Assignment);
+			this.convertColl(item.notifications, Notification);
+
+		}); */
 		return rec;
 
 	}
@@ -218,7 +174,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		}
 
     }
-	async findInstances(query, option: 'summary' | 'full' | any ='summary') {
+	async findInstances(query, option: 'summary' | 'full' | any = 'summary'): Promise<IInstanceData[]>{
 
 		let projection;
 
@@ -252,125 +208,19 @@ class DataStore extends ServerComponent  implements IDataStore {
 	 *
 	 * @param query
 	 */
-	async findItems(query) {
+	async findItems(query) : Promise<IItemData[]> {
 		// let us rebuild the query form {status: value} to >  "tokens.items.status": "wait" 
-		const result = this.translateCriteria(query);
-
-		var records = await this.db.find(this.dbConfiguration.db, Instance_collection, result.query, result.projection);
+		const trans = new QueryTranslator('items');
+		const result = trans.translateCriteria(query);
+		const projection = { id: 1, data: 1, name: 1, "items": 1 };
+		var records = await this.db.find(this.dbConfiguration.db, Instance_collection, result, projection);
 		// console.log('...find items for query:', query, " translated to :", JSON.stringify(result),  " recs:" , records.length)
-		this.logger.log('...find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result)+" recs:"+records.length);
 
-		return this.getItemsFromInstances(records, result.match);
-
-	}
-	private translateCriteria(query) {
-
-		let match = {};
-		let hasMatch = false;
-		let projection = {};
-		{
-			let newQuery = {};
-			Object.keys(query).forEach(key => {
-				let val = query[key];
-				if (key.startsWith('items.')) {
-					key = key.replace('items.', '');
-					match[key] = val;
-					hasMatch = true;
-				}
-				else
-					newQuery[key] = val;
-			});
-
-			if (hasMatch) {
-				newQuery['items'] = { $elemMatch: match };
-				projection = { id: 1, data: 1, name: 1, "items": 1 }; // { $elemMatch: match } };
-				query = newQuery;
-			}
-			else
-				projection = { id: 1, data: 1, name: 1, "items": 1 };
-		}
-		return { query: query, projection: projection , match };
+		const items=this.getItemsFromInstances(records, result,trans);
+		this.logger.log('...find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result) + " instances:" + records.length+ " items: "+items.length);
+		return items;
 	}
 
-private translateCriteria2(criteria) {
-
-		let match = {};
-		let query = {};
-		let projection = {};
-		if (criteria.query) {
-			let query = criteria.query;
-			let projection;
-			if (!criteria.projection) {
-
-				Object.keys(query).forEach(key => {
-					if (key.startsWith('items.')) {
-						let val = query[key];
-						key = key.replace('items.', '');
-						match[key] = val;
-					}
-				});
-				if (Object.keys(match).length == 0)
-					projection = { id: 1, data: 1, name: 1 };
-				else
-					projection = { id: 1, data: 1, name: 1, "items": { $elemMatch: match } };
-			}
-			else
-				projection = criteria.projection;
-			return { query: criteria.query, projection: projection };
-		}
-		const instance = criteria.instance;
-		const items = criteria.items;
-		if (instance) {
-			Object.keys(instance).forEach(key => {
-				query[key] = instance[key];
-			});
-		}
-		if (items && Object.keys(items).length > 0) {
-			Object.keys(items).forEach(key => {
-				match[key] = items[key];
-				query["items." + key] = items[key];
-			});
-			projection = { id: 1, data: 1, name: 1, "items": { $elemMatch: match } };
-		}
-		return { query, projection };
-
-
-
-		// { "items": { $elemMatch: { type: 'bpmn:StartEvent' } } }
-		Object.keys(criteria).forEach(key => {
-			query[key] = criteria[key];
-			if (key.startsWith("items.")) {
-				match[key] = criteria[key];
-			}
-
-		});
-		projection = { id: 1, data: 1, name: 1, "items": { $elemMatch: match } };
-		return { query, projection };
-
-		if (criteria.itemId) {
-			query = { "items.id": criteria.itemId };
-			projection = { id: 1, data: 1, name: 1, "items": { $elemMatch: { id: criteria.itemId } } };
-		}
-		else if (criteria.status) {
-			query = { "items.status": criteria.status };
-			projection = { id: 1, data: 1, name: 1, "items": { $elemMatch: { status: criteria.status } } };
-		}
-		else if (criteria.itemKey) {
-			query = { "items.itemKey": criteria.itemKey };
-			projection = { id: 1, data: 1, name: 1, "items": { $elemMatch: { itemKey: criteria.itemKey } } };
-		}
-		else if (criteria.data) {
-			query = { "data": criteria.data };
-			projection = { id: 1, data: 1, name: 1, "items": { $elemMatch: { itemKey: criteria.itemKey } } };
-		}
-		else if (criteria.instanceId) {
-			query = { "id": criteria.instanceId };
-			projection = { id: 1, data: 1, name: 1, "items": { $elemMatch: { "elementId": criteria.elementId } } };
-		}
-		else
-			return { query: null, projection: null };
-		return { query, projection };
-	}
 
 	async deleteInstances(query) {
 
@@ -392,4 +242,5 @@ private translateCriteria2(criteria) {
 	}
 	// LOCKS
 }
+
 export { DataStore };

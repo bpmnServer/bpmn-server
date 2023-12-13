@@ -1,139 +1,64 @@
-Concepts
-=========
+Release 2.0 Design Changes
+Release 2.0 contains major changes that require some design attention, this document will list those changes.
+## Overal Architecture
 
+### New API
+The New AP supports Security as described below
+### Changes to Front-end
+- Move configuration.ts and appDelegate.ts to WorkflowApp sub-folder
+- New AppUtils class; to provide common functions to all process
+- Moved application Services to AppServices.ts - to contain Services called by ServiceTasks
+- Added Sample UserAccess folder (for demo purposes only) to perform user management
+## Data Handling
+## User Management and Security
 
-## Components
+1. `bpmnServer` (npm package) is a backend only, is passed user information in the API
+2. bpmn model will define assignee, candidateUsers, candidateUserGroups, they can be string or JS expressions
+3. The Application front-end is concerned with managing users authentication and user info (UserName,Groups,Tenant)
+```js
+       let user1 =new SecureUser({ userName: 'user1', userGroups: ['Owner', 'Others']});
+       let response = await api.engine.start('Vacation Request', {reason:'I like it',type:'Vacation'}, user1);
+``` 
+4. `bpmnServer` will enforce security rules based on the current user (passed by 3)
+5. Application fron-end need to pass the implementation of `userService' 
+   - `userService` is used for user notification and product installation
+6. Demo Application(Express or NestJS) , provides a complete implementation of users management using Passport and MongoDB
+7. Please See Tutorial of how it is all put togother
 
-1. Server
-2. Web UI
-3. Client to invoke server calls as webServices
- 
-### Server Core
+## Handling Access Control
 
+Here is a typical flow of a Process:
 
-
-| Class | Role  | Life Cycle| holds |
-| ------------- |:-------------:| -----| ----------|
-| **Server**	| Represent BPMN2 definition | Entire | Server Components |
-| **ExecutionContext**| holds the request context| one per request | UserInfo, Execution,Process,Item Response|
-| **Engine**		| API to execution | per XContext | only XContext |
-| **Execution**		| process the execution and State | per Instance lifecycle ,cached, saved and restored thru Instance |execution State, tokens.. |
-| **Instance**		| Instance of Process | statefull (in MongoDB) | source, items , tokens, state |
-| **Definition**	| Represent BPMN2 definition | transient | |
-| **Process**		| Primary Process running | transient | |
-
-## Presistence 
-
-## Extensions
-
-
-
-## Workflow
-
-
-Workflow is a state machine. You can imagine it as a flow chart running inside in your application, and when it reach a decision point, you can invoke a method to provide an answer that chooses the right path of execution from there. 
-
-So workflow is a graph of control flow, and activities are its nodes. They can be as simple like an if..then..else branch, or as complex like getting data from a database and do something complicated depending on the results.
-
-A workflow is an application running inside in your application, have its state and variables, and correlated across Node.js cluster and process instances. So if your Node.js application consists of many instances inside a cluster and many clusters across a server farm, a workflow instance will work like a single instance application within those. A workflow application could outlive Node.js applications, they have out-of-the-box persistence support to make them ideal platform to do long running business processes, durable services or scheduled backgound tasks.
-
-Workflow is modeled using BPMN2 tools and is defined in as an XML string or stream. Each element in the model is called a <b>Node</b>, nodes are connected by <b>Flow</b>.
-
-## Definition
-
-## Engine
-
-<b>Execution</b> is the processing engine of the workflow, taking in an BPMN source and executes it.
-
-<b>Server</b> provides a complete environment through the following services:
-- ModelDatastore: a mechanism to retrieve and save BPMN definitions
-- DataStore to save Workflow Instances and related data
-  - Execution monitor: to monitor changes to execution and save data
-  - Instance loader
-  - Find instances and items
-- InstanceCache: to keep current instances in memory
-- EventsRegistry: to handle events outside of the scope of processes
-  - Timers 
-  - Message and Signals calls from outside of the process
-
-This is accomplished by providing a <b>ServerContext</b> that acts as a Service Container
-
-
-```javascript
-		const execution = new Execution(source,customizer, logger);
-
-		execution.start(data,startNode);
+1. User1 will `Start` Process `Request Vacation`
+2. System will store the initiator as `item.data.requester='User1'` 
+3. Since Task Request has `assignee=item.data.requester` only `User1` can invoke this task
+4. Once Task Request is completed by User1 , Task Approve will be created.
+5. `Task Approve` Need to be assigned to the requester supervisor
+    A Javascript event trigger on `start' will determine the supervisor userName and assign it the task
+```js
+    item.assignee=appServices.getSupervisor(item.data.requester);
 ```
-Execution handles the entire definition, that can contain one or more processes.
+    Assuming appServices class contain such an async method that my call MongoDB
+    Alternatively; in the model editor 
+        `assignee` field `$(appServices.getSupervisor(this.data.requester))`
 
-Execution object will walk through BPMN definition starting for the startEvent and take various paths accoridng to the logic.
+7. To `Notify` the supervisor user, a JS trigger will invoke `notify` function
 
-Execution uses tokens to walk the path, a <b>Token</b> represent a branch of the path.
-
-Everytime a Node is executed an <b>Item</b> is created for the Node.
-
-Therefore, you can query the execution of various items it performed:
-
-```javascript
-
-		let items =execution.getItems();
-		items.forEach(item=>{
-			console.log(`item id: ${item.id} - status: ${item.status});
-		});
+### Filtering data for Security:
+```js
+    let pending = await bpmnAPI.data.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask' }, user); 
 ```
-
-To continue with processing our example, The will invoke the Node 'Buy'
-
-```javascript
-		execution.signal({taskId:'Buy'},{
-			model:'BMW' , needsCleaning: true ,needsRepairs: false);
-```
-Let us examine what is happening under the hood:
-
-```javascript
-    execution.getItems.forEach(i => {
-        console.log(`item: ${i.id} - task Id - ${i.element.id} Type: ${i.element.type} status: ${i.status}`  );
-    });
+or
+```js
+    let pending = await bpmnAPI.data.getPendingTasks({}, user); 
 
 ```
-# Data Scope (during exectution)
-The entire execution will have one data scope object, shared among all nodes except SubProcess and Loops (Multi-instances), 
-each will have own item part of the data object
-
-Example: Process input: CaseId
-		  Task1 input: amountOwed
-			subprocess1:	interest
-		  loop instance1:	callDate
-			
-```javascript
-    data: {
-		caseId: 3421, amountOwed: 5201 ,
-		subprocess1: { interest: 200 } ,
-		loop { [{callDate: '01/01/2020' }
-			]}
-}
+will return all pending tasks that the user is **AUTHORIZED TO SEE** 
+To See only Tasks Assigned to User
+```js
+    let pending = await bpmnAPI.data.getPendingTasks({'items.assignee':user.userName},user); 
 ```
+or you can use filter for the items to check `item.assignee`
 
 
-# Data Store
 
-
-# Decisions
-
-WF engine makes several decisions based on BPMN rules and definitions, the challenge is there an easy way to communicate those decisions back to the developer/support?
-
-
-Everytime the engine makes a decision it attaches the appropriate decision object to item impacted
-
-For example; If a gateway decides to select one flow over the other, you should see a record of that in the gateway item
-
-
-# Process
-
-Process is the a definition of a Workflow
-
-# Activity
-
-# Instance 
-
-# Instance Item (Item)

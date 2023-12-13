@@ -17,6 +17,7 @@ class Process {
     childrenNodes: Node[];
     eventSubProcesses: any[];
     subProcessEvents: any[];
+    scripts = new Map();
 
     constructor(definition,parent=null) {
         this.id = definition.id;

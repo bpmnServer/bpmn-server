@@ -14,7 +14,7 @@ import { InstanceObject } from './Model';
 
 const { v4: uuidv4 } = require('uuid');
 
-var execution_seq = 0;
+
 /**
  *  is accessed two ways:
  *      execute - start process
@@ -31,14 +31,16 @@ class Execution extends ServerComponent implements IExecution {
     item;
     messageMatchingKey;
     worker;
-    userId;
+    userName;
     promises = [];
+    servicesProvider;
     isLocked: boolean = false;
-    seq;
+    options;
+    operation;
 
     get id() { return this.instance.id; }
     get name() { return this.instance.name; }
-    get status() { return this.instance.status;}
+    get status():EXECUTION_STATUS { return this.instance.status;}
     get execution() { return this;} // backward compatible
 
     async tillDone() {
@@ -57,10 +59,8 @@ class Execution extends ServerComponent implements IExecution {
      * @param name          process name
      * @param source        bpmn source
      */
-    constructor(server, name: string, source, state = null) {
-
+    constructor(server,name:string, source , state=null ) {
         super(server);
-        this.seq = execution_seq++;
         if (state == null) {
             this.instance = new InstanceObject();
             this.instance.id = this.getUUID();
@@ -70,7 +70,6 @@ class Execution extends ServerComponent implements IExecution {
         else
             this.instance = state;
 
-        
         this.definition = new Definition(name, source, this.server);
 
     }
@@ -90,7 +89,7 @@ class Execution extends ServerComponent implements IExecution {
     }
     async end() {
         this.log(".execution ended.");
-        this.instance.endedAt = new Date().toISOString();;
+        this.instance.endedAt = new Date();
         this.instance.status = EXECUTION_STATUS.end;
         if (this.instance.parentItemId) {
             CallActivity.executionEnded(this);
@@ -121,7 +120,10 @@ class Execution extends ServerComponent implements IExecution {
     public async execute(startNodeId = null, inputData = {}, options = {}) {
 
         this.log('ACTION:execute:');
+        this.operation='execute';
+        this.options=options;
         await this.definition.load();
+        this.servicesProvider = await this.appDelegate.getServicesProvider();        
 
         this.instance.status = EXECUTION_STATUS.running;
         this.appDelegate.executionStarted(this);
@@ -132,7 +134,7 @@ class Execution extends ServerComponent implements IExecution {
         else
             this.instance.data = {};
 
-        this.instance.startedAt = new Date().toISOString();;
+        this.instance.startedAt = new Date();
 
         let startNode;
         if (!startNodeId)
@@ -165,8 +167,7 @@ class Execution extends ServerComponent implements IExecution {
         await this.doExecutionEvent(this.process, EXECUTION_EVENT.process_wait);
 
         this.report();
-
-
+        await Promise.all(this.promises);
         await this.save();
 
     }
@@ -175,21 +176,26 @@ class Execution extends ServerComponent implements IExecution {
      * @param inputData
      * 
      */
-    public async assign(executionId, inputData:any,userId: string = null, assignment = {}) {
+    public async assign(executionId, inputData: any, assignment = {}, userName,options={}) {
 
-        this.log('Execution('+this.name+').assign: executionId=' + executionId + ' data '+JSON.stringify(inputData));
-        let item;
+        this.log('Execution(' + this.name + ').assign: executionId=' + executionId + ' data ' + JSON.stringify(inputData));
+        this.userName = userName;
+        this.operation = 'assign';
+        this.options=options;
+        this.servicesProvider = await this.appDelegate.getServicesProvider();        
         this.getItems().forEach(i => {
             if (i.id==executionId)
             {
-                item=i;
+                this.item=i;
             }
         });
         Object.keys(assignment).forEach(key => {
-            item[key]=assignment[key];
+            this.item[key]=assignment[key];
         });
 
-        item.token.appendData(inputData);
+        this.appendData(inputData, this.item, null, assignment);
+
+        await this.item.node.doEvent(this.item, 'assignment');
 
         await this.save();
         this.log('Execution('+this.name+').assign: finished!');
@@ -205,49 +211,89 @@ class Execution extends ServerComponent implements IExecution {
      * @param inputData
      * 
      */
-    public async signal(executionId, inputData:any,options={}) {
-
-        this.log('Execution('+this.name+').signal: executionId=' + executionId + ' data '+JSON.stringify(inputData));
+    public async signalItem(itemId, inputData:any,userName, options={}) :Promise<IExecution>  {
+        this.log('Execution('+this.name+').signalItem: executionId=' + itemId + ' data '+JSON.stringify(inputData));
+        this.operation = 'signal';
+        this.options=options;
+        this.userName=userName;
         let token = null;
 
+        this.servicesProvider = await this.appDelegate.getServicesProvider();        
 
         this.appDelegate.executionStarted(this);
         await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoke);
 
         this.tokens.forEach(t => {
-            if (t.currentItem && t.currentItem.id == executionId)
+            if (t.currentItem && t.currentItem.id == itemId /*&& t.status=='wait' */) {
+                this.item = t.currentItem;
                 token = t;
+            }
         });
+
+        if (token) {
+            this.log('Execution('+this.name+').signal: .. launching a token signal');
+            let result=await token.signal(inputData,options);
+            this.log('Execution('+this.name+').signalItem: .. signal token is done');
+        }   
+             
+        this.log('Execution('+this.name+').signalItem: returning .. waiting for promises status:' + this.instance.status + " id: " + itemId);
+        await Promise.all(this.promises);
+
+
+        await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoked);
+
+        this.log('Execution('+this.name+').signalItem: returned process  status:' + this.instance.status + " id: " + itemId);
+
+        this.report();
+
+        await Promise.all(this.promises);
+        await this.save();
+        this.log('Execution('+this.name+').signalItem: finished!');
+
+        return this;
+    }
+
+    public async signalEvent(executionId, inputData:any,options={}) :Promise<IExecution> {
+        this.log('Execution('+this.name+').signal: executionId=' + executionId + ' data '+JSON.stringify(inputData));
+        this.operation = 'signal';
+        this.options=options;
+        let token = null;
+
+        this.servicesProvider = await this.appDelegate.getServicesProvider();        
+
+        this.appDelegate.executionStarted(this);
+        await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoke);
+
 
         if (!token) {
             this.tokens.forEach(t => {
-                if (t.currentNode && t.currentNode.id == executionId)
+                if (t.currentNode && t.currentNode.id == executionId /*&& t.status=='wait' */)
                     token = t;
             });
         }
-
 
         if (token) {
             this.log('Execution('+this.name+').signal: .. launching a token signal');
             let result=await token.signal(inputData,options);
             this.log('Execution('+this.name+').signal: .. signal token is done');
-        }
-        else
-            {  // check for startEvent of a secondary process
-            let node = null;
-            const startedNodeId = this.tokens.get(0).path[0].elementId;
-            this.definition.processes.forEach(proc => {
-                let startNodeId = proc.getStartNode().id;
-                if (startNodeId !== startedNodeId) {
-                    this.log(`checking for valid other start node: ${startNodeId} is possible`);
-                    if (startNodeId == executionId) {
-                        // ok we will start new token for this
-                        node = this.getNodeById(executionId);
-                        this.log('..starting at :' + executionId);
+        }   
+             
+        else 
+            {
+            let node;
+                 // check for startEvent of a secondary process
+                const startedNodeId = this.tokens.get(0).path[0].elementId;
+                this.definition.processes.forEach(proc => {
+                    let startNodeId = proc.getStartNode().id;
+                    if (startNodeId !== startedNodeId) {
+                        this.log(`checking for valid other start node: ${startNodeId} is possible`);
+                        if (startNodeId == executionId) {
+                            // ok we will start new token for this
+                            node = this.getNodeById(executionId);
+                            this.log('..starting at :' + executionId);
+                        }
                     }
-                }
-            });
-
+                });
 
             if (node) {
                 let token = await Token.startNewToken(TOKEN_TYPE.Primary,this, node, null, null, null, inputData);
@@ -277,6 +323,39 @@ class Execution extends ServerComponent implements IExecution {
 
         await this.save();
         this.log('Execution('+this.name+').signal: finished!');
+
+        return this;
+    }
+
+
+    public async signalRepeatTimerEvent(executionId,prevItem, inputData:any,options={}): Promise<IExecution> {
+        this.log('Execution('+this.name+').signalRepeatTimer: executionId=' + executionId + ' data '+JSON.stringify(inputData));
+        this.operation = 'signalRepeatTime';
+        this.options=options;
+        let token = null;
+
+        this.servicesProvider = await this.appDelegate.getServicesProvider();        
+
+        this.appDelegate.executionStarted(this);
+        await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoke);
+
+
+        let newToken=await Token.startNewToken(TOKEN_TYPE.BoundaryEvent, this, 
+				prevItem.node, null, prevItem.token, prevItem, null);
+           
+		let newItem = newToken.currentItem;
+
+         newItem.timerCount = prevItem.timerCount+1;     // it increments at start
+
+        this.log('Execution('+this.name+').signal: returning .. waiting for promises status:' + this.instance.status + " id: " + executionId);
+        await Promise.all(this.promises);
+
+        this.log('Execution('+this.name+').signal: returned process  status:' + this.instance.status + " id: " + executionId);
+
+        await this.save();
+        this.log('Execution('+this.name+').signal: finished!');
+
+        return this;
     }
 
     async save() {
@@ -289,7 +368,7 @@ class Execution extends ServerComponent implements IExecution {
 
         await this.doExecutionEvent(this,EXECUTION_EVENT.process_saving);
 
-        await this.server.dataStore.saveInstance(state);
+        await this.server.dataStore.saveInstance(state,this.options);
 
     }
     getItems(): Item[] {
@@ -393,7 +472,6 @@ class Execution extends ServerComponent implements IExecution {
 
 
         execution.log('.restore completed');
-        execution.report();
 
         const proc = execution.definition.getStartNode().process;
 
@@ -479,7 +557,7 @@ class Execution extends ServerComponent implements IExecution {
     /*
      * renamed from applyInput to appendData
      */
-    appendData(inputData, dataPath = null) {
+    appendData(inputData,item, dataPath = null,assignment=null) {
         let asArray = false;
 
         if (Array.isArray(inputData))
@@ -497,16 +575,42 @@ class Execution extends ServerComponent implements IExecution {
         }
 
         if (inputData) {
+            this.addHistory(inputData,assignment,item);
+
             if (asArray) {
                 target.push(inputData);
             }
             else {
                 Object.keys(inputData).forEach(key => {
                     const val = inputData[key];
-                    target[key] = val;
+                    if (key.startsWith('vars.')) {
+                        delete inputData[key];
+                        if (item)
+                            item.vars[key.substring(5)] = val;
+                    }
+                    else
+                        target[key] = val;
                 });
             }
         }
+    }
+    addHistory(inputData, assignment,item) {
+        return; // disabled
+        if (!this.instance.data['_history'])
+            this.instance.data['_history'] = [];
+        const history = this.instance.data['_history'];
+        const historyRecord = {
+            date: new Date(), user: this.userName,
+            operation: this.operation,
+            data: inputData
+        };
+        if (assignment) {
+            historyRecord['assignment'] = assignment;
+            historyRecord['itemId'] = item.id;
+
+        }
+        history.push(historyRecord);
+
     }
     getData(dataPath) {
         let target = this.instance.data;

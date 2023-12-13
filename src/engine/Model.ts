@@ -9,6 +9,7 @@ class InstanceObject implements IInstanceData {
     id;
     name;
     status : EXECUTION_STATUS;
+    version;
     startedAt;
     endedAt;
     saved;
@@ -20,6 +21,8 @@ class InstanceObject implements IInstanceData {
     loops=[];
     parentItemId;
     vars;
+    involvements;
+    authorizations;
 
 }
 /**
@@ -32,7 +35,7 @@ class ItemObject implements IItemData {
     name;
     type : BPMN_TYPE;
     status: ITEM_STATUS;
-    userId;
+    userName;
     startedAt;
     endedAt;
     //   derived
@@ -54,6 +57,9 @@ class ItemObject implements IItemData {
     dueDate;
     followUpDate;
     priority;
+    assignments;
+    authorizations;
+    notifications;
 
 }
 class TokenObject {

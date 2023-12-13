@@ -8,7 +8,10 @@ Remote calls rely on apiKey to be passed along with the userId
 ### Web
 ```javascript
 
-    await server.engine.start(startNodeId,data,{},request.session.userId);  
+    const user1 =new SecureUser({ userName: 'user1', userGroups: ['Owner', 'Others']});
+
+
+    await api.engine.start(modelName,data,{},user1,options);  
 
 ``` 
 
@@ -21,7 +24,7 @@ Remote calls rely on apiKey to be passed along with the userId
     // get api-key from header
     // url/engine/start
 
-    await server.engine.start(processName,data,startNode,options,userId);  
+    await api.engine.start(processName,data,user,options);  
 
 ``` 
 ## Using BPMNClient as a service
@@ -58,8 +61,20 @@ This will assign the userId of that started the process
 ![BPMN Editor Assignee](Assignee1.PNG)
 
 At the start of the userTask the designer values are evaluated into the instance item.
-These fields can be a string or Javascript expression preceeded by '$'
 
+These fields can accept the following:
+- A string value
+- JavaScript expression `$(this.data.requester)`
+- JavaScript Async function call `#(services.getSupervisorUser(this.data.requester))`
+
+The last calls a services function:
+```js
+class MyServices {
+    
+    async getSupervisorUser(input, context) {
+        return input+'Supervisor';
+    }
+```
 
 ![image](https://github.com/ralphhanna/bpmn-server/assets/11893416/88299e86-dd9d-4fb0-9324-9209904ef881)
 
@@ -84,14 +99,23 @@ An application can prove a UI to allow users to assign tasks to others, this can
 
 ## Searching for Assignment Data
 
+To search for specific items for a particular user or group:
+
 ```
 
     var res = await server.dataStore.findItems(
         {
             "items.status": "wait", "items.elementId": "task_Buy",
-            "items.candidateUsers":"user5"
+            "$or": [
+                {"items.candidateUsers":"user5"},
+                {"items.candidateGroups":"group1"},
+                {"items.candidateGroups":"group2"},
+                ]
+
         }
     );
 ```
 
-The above will return all items Buy Tasks in wait state assigned to 'user5'
+The above will return all items Buy Tasks in wait state assigned to 'user5' or 'group1' or 'group2'
+
+If you have selected to enforce Security Rules, the above will by automatically done for you.

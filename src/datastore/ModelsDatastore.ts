@@ -22,12 +22,12 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
         
     }
 
-    async import(data) {
+    async import(data,owner=null) {
         return await super.import(data);
 
     }
 
-    async getList(): Promise<string[]> {
+    async getList(query=null): Promise<string[]> {
 
         let files = [];
 
@@ -46,7 +46,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
 	 *	loads a definition
 	 *	
 	 */
-    async load(name) : Promise<Definition> {
+    async load(name,owner=null) : Promise<Definition> {
 
         const source = await this.getSource(name);
         //const rules = this.getFile(name, 'rules');
@@ -56,37 +56,36 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
         return definition;
     }
 
-    private getPath(name, type) {
+    private getPath(name, type,owner=null) {
 
         return this.definitionsPath + name + '.' + type;
     }
 
-    private getFile(name, type) {
+    private getFile(name, type,owner=null) {
 
         let file = fs.readFileSync(this.getPath(name,type),
             { encoding: 'utf8', flag: 'r' });
         return file;
 
     }
-    private saveFile(name, type , data) {
+    private saveFile(name, type , data,owner=null) {
         let fullpath = this.getPath(name, type);
 
         fs.writeFile(fullpath, data, function (err) {
             if (err) throw err;
-            console.log(`Saved ${type} to ${fullpath}`);
         });
 
     }
-    async getSource(name): Promise<string> {
+    async getSource(name,owner=null): Promise<string> {
 
         return this.getFile(name, 'bpmn');
 
     }
-    async getSVG(name): Promise<string> {
+    async getSVG(name,owner=null): Promise<string> {
         return this.getFile(name, 'svg');
     }
 
-    async save(name, bpmn, svg?): Promise<boolean> {
+    async save(name, bpmn, svg?,owner=null): Promise<boolean> {
 
         this.saveFile(name, 'bpmn', bpmn);
         if (svg)
@@ -98,7 +97,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
 
     }
 
-    async deleteModel(name: any): Promise<void> {
+    async deleteModel(name: any,owner=null): Promise<void> {
 
         await super.deleteModel(name);
         await fs.unlink(this.definitionsPath + name + '.bpmn',  function (err) {
@@ -108,7 +107,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
             if (err) console.log('ERROR: ' + err);
         });
     }
-    async renameModel(name: any, newName: any): Promise<boolean> {
+    async renameModel(name: any, newName: any,owner=null): Promise<boolean> {
 
         await super.renameModel(name, newName);
         await fs.rename(this.definitionsPath + name + '.bpmn', this.definitionsPath + newName + '.bpmn', function (err) {

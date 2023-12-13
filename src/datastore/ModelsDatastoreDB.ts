@@ -11,6 +11,7 @@ const BpmnModdle = require('bpmn-moddle');
 import { ServerComponent } from "../server/ServerComponent";
 import { IBpmnModelData, IModelsDatastore, IEventData } from "../interfaces/";
 import { BpmnModelData } from "./ModelsData";
+import { QueryTranslator } from "./QueryTranslator";
 
 
 const MongoDB = require('./MongoDB').MongoDB;
@@ -30,9 +31,9 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
         this.db = new MongoDB(this.dbConfiguration, this.logger);
 
     }
-    async getList(): Promise<string[]> {
+    async getList(query={}): Promise<string[]> {
 
-        var records = await this.db.find(this.dbConfiguration.db, Definition_collection, {}, {});
+        var records = await this.db.find(this.dbConfiguration.db, Definition_collection,query, {});
 
         this.logger.log('find events for ' + " recs:" + records.length);
         const list = [];
@@ -43,19 +44,19 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
      *	loads a definition 
      *	
      */
-    async load(name): Promise<Definition> {
-
+    async load(name,owner=null): Promise<Definition> {
+        console.log('loading ', name, 'from db');
         let data = await this.loadModel(name);
         const definition = new Definition(name, data.source, this.server);
         await definition.load();
         return definition;
     }
-    async getSource(name) {
+    async getSource(name,owner=null) {
         let model = await this.loadModel(name);
         return model.source;
 
     }
-    async getSVG(name) {
+    async getSVG(name,owner=null) {
         let model = await this.loadModel(name);
         return model.svg;
 
@@ -64,7 +65,7 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
      *	loads a definition data record from DB
      *	
      */
-    async loadModel(name): Promise<BpmnModelData> {
+    async loadModel(name,owner=null): Promise<BpmnModelData> {
 
         var records = await this.db.find(this.dbConfiguration.db, Definition_collection, { name: name }, {});
 
@@ -74,14 +75,14 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
 
     }
 
-    async save(name, source, svg): Promise<any> {
+    async save(name, source, svg,owner=null): Promise<any> {
         let bpmnModelData: BpmnModelData = new BpmnModelData(name, source, svg, null, null);
         let definition = new Definition(bpmnModelData.name, bpmnModelData.source, this.server);
         try {
             await definition.load();
 
             bpmnModelData.parse(definition);
-            await this.saveModel(bpmnModelData);
+            await this.saveModel(bpmnModelData,owner);
 
             return bpmnModelData;
         }
@@ -93,26 +94,28 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
         }
 
     }
-    async findEvents(query): Promise<IEventData[]> {
+    async findEvents(query,owner=null): Promise<IEventData[]> {
 
         let projection = {}; // this.getProjection(query);
-        var records = await this.db.find(this.dbConfiguration.db, Definition_collection, query, projection);
-
-        this.logger.log('...find events for ' + JSON.stringify(query) + " recs:" + records.length);
 
         const events = [];
+        let trans;
+        let newQuery=query;
+        if (query) {
+            trans = new QueryTranslator('events');
+            newQuery = trans.translateCriteria(query);
+        }
+
+        var records = await this.db.find(this.dbConfiguration.db, Definition_collection, newQuery, projection);
+
+        this.logger.log('...find events for ' + JSON.stringify(query) + "=>" + JSON.stringify(newQuery) + " recs:" + records.length);
 
         records.forEach(rec => {
             rec.events.forEach(ev => {
                 let pass = true;
-
                 if (query) {
-                    const keys = Object.keys(query);
-                    keys.forEach(key => {
-                        let prop=key.replace('events.', '');
-                        if (ev[prop] !== query[key])
-                            pass = false;
-                    });
+                    pass = trans.filterItem(ev, newQuery);
+
                 }
                 if (pass) {
                     ev.modelName = rec.name;
@@ -152,16 +155,15 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
      * 
      * */
     async install() {
-        return await this.db.createIndex(this.dbConfiguration.db, Definition_collection, { name: 1 }, { unique: true });
+        return await this.db.createIndex(this.dbConfiguration.db, Definition_collection, { name: 1 , owner: 1 }, { unique: true });
     }
-    async import(data) {
-        console.log('inserting');
+    async import(data,owner=null) {
         return await this.db.insert(this.dbConfiguration.db, Definition_collection, data);
 
     }
-    async updateTimer(name): Promise<boolean> {
+    async updateTimer(name,owner=null): Promise<boolean> {
 
-        const source = await this.getSource(name);
+        const source = await this.getSource(name,owner);
         let model: BpmnModelData = new BpmnModelData(name, source, null, null, null);
         let definition = new Definition(model.name, model.source, this.server);
         await definition.load();
@@ -185,19 +187,19 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
         return true;
 
     }
-    async saveModel(model: IBpmnModelData): Promise<boolean> {
+    async saveModel(model: IBpmnModelData,owner=null): Promise<boolean> {
 
         this.logger.log("Saving Model " + model.name);
 
         var recs;
-        model.saved = new Date().toISOString();
+        model.saved = new Date();
 
         await this.db.update(this.dbConfiguration.db, Definition_collection,
-            { name: model.name },
+            { name: model.name , owner:owner},
             {
                 $set:
                 {
-                    name: model.name, saved: model.saved, source: model.source, svg: model.svg, processes: model.processes, events: model.events
+                    name: model.name, owner:owner, saved: model.saved, source: model.source, svg: model.svg, processes: model.processes, events: model.events
                 }
             }, { upsert: true });
 
@@ -205,12 +207,12 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
         return true;
 
     }
-    async deleteModel(name) {
+    async deleteModel(name,owner=null) {
 
         await this.db.remove(this.dbConfiguration.db, Definition_collection, { name: name });
 
     }
-    async renameModel(name, newName) {
+    async renameModel(name, newName,owner=null) {
 
         await this.db.update(this.dbConfiguration.db, Definition_collection,
             { name: name },
@@ -228,9 +230,9 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
 
         return true;
     }
-    async export(name, folderPath) {
+    async export(name, folderPath,owner=null) {
 
-        let model = await this.loadModel(name);
+        let model = await this.loadModel(name,owner);
 
         let fullpath = folderPath + "/" + name + ".bpmn";
 

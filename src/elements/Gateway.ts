@@ -209,26 +209,26 @@ class Gateway extends Node {
                     const ret = await parentToken.currentNode.run(item);
                     let result = await parentToken.currentNode.continue(item);
                     result = await parentToken.goNext();
-                }
                 
                             
-                // -------------------------------------------------------------------------------------------------
-                // end current token
-                // -------------------------------------------------------------------------------------------------
-                oldCurrentToken.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: ending current child token ' + oldCurrentToken.id);
-                oldCurrentToken.currentItem.status = ITEM_STATUS.end;
-                //await convergingGatewayCurrentNode.end(item);
-                //await oldCurrentToken.end();
+                    // -------------------------------------------------------------------------------------------------
+                    // end current token
+                    // -------------------------------------------------------------------------------------------------
+                    oldCurrentToken.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: ending current child token ' + oldCurrentToken.id);
+                    oldCurrentToken.currentItem.status = ITEM_STATUS.end;
+                    //await convergingGatewayCurrentNode.end(item);
+                    //await oldCurrentToken.end();
 
-                //if (oldCurrentToken.type==TOKEN_TYPE.Diverge)
-                    await oldCurrentToken.terminate();
+                    //if (oldCurrentToken.type==TOKEN_TYPE.Diverge)
+                        await oldCurrentToken.terminate();
                 
 
-                item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: all token terminate return NODE_ACTION.end');
-                return NODE_ACTION.end;
+                    item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: all token terminate return NODE_ACTION.end');
+                    return NODE_ACTION.end;
+                }
             }
         }
-        else
+        //else
             return NODE_ACTION.continue;
     }
 
