@@ -1,6 +1,6 @@
 
 import { IBPMNServer, IEngine, IDefinition, IConfiguration, IDataStore , EXECUTION_EVENT
-        , IExecution, IInstanceData,IItemData ,ISecureUser} from '../..';
+        , IExecution, IInstanceData,IItemData ,ISecureUser} from '../';
 
 
 class BPMNAPI {

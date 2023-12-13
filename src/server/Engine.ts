@@ -1,5 +1,5 @@
 
-import { Execution } from '../..';
+import { Execution } from '../';
 import { ServerComponent } from '../server/ServerComponent';
 import { IEngine} from "../interfaces";
 

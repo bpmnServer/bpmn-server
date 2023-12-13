@@ -1,7 +1,7 @@
 import {
     IExecution, IItem, NODE_ACTION, FLOW_ACTION, IModelsDatastore,
     IDataStore, ICacheManager,IUserService
-} from '../..';
+} from '../';
 
 
 interface IConfiguration 

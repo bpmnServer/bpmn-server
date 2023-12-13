@@ -2,7 +2,7 @@ import type { TimerBehaviour } from ".";
 import type { Node } from "..";
 import { Behaviour } from '.';
 import type { Item } from "../../engine/Item";
-import { NODE_SUBTYPE } from "../../..";
+import { NODE_SUBTYPE } from "../../";
 import { NODE_ACTION } from "../../interfaces";
 
 

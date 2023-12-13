@@ -1,6 +1,6 @@
 import { Node } from ".";
 import { Behaviour_names } from "./behaviours";
-import { NODE_ACTION } from "../../";
+import { NODE_ACTION } from "../";
 import { Item } from "../engine/Item";
 import { ITEM_STATUS } from "../interfaces";
 

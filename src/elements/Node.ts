@@ -5,7 +5,7 @@ import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, N
 import { Item } from '../engine/Item';
 import { BPMN_TYPE } from '../interfaces/Enums';
 import { BehaviourLoader } from './behaviours/BehaviourLoader';
-import { ScriptHandler } from '../..';
+import { ScriptHandler } from '../';
 
 // ---------------------------------------------
 class Node extends Element {

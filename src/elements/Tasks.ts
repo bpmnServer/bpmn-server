@@ -8,7 +8,7 @@ import { Process } from './Process';
 import { IExecution } from '../interfaces/engine';
 import { EXECUTION_STATUS } from '../interfaces/Enums';
 import { Item } from '../engine/Item';
-import { ScriptHandler } from '../..';
+import { ScriptHandler } from '../';
 //NO_import { DecisionTable } from 'dmn-engine';
 
 // ---------------------------------------------

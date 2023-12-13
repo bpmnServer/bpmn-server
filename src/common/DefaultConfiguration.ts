@@ -3,7 +3,7 @@ import { ModelsDatastore } from '../datastore/ModelsDatastore';
 import { DefaultAppDelegate } from '../engine/DefaultAppDelegate';
 
 import { IConfiguration, DataStore, NoCacheManager,ILogger, IModelsDatastore, 
-		IAppDelegate, IDataStore} from '../..';
+		IAppDelegate, IDataStore} from '../';
 import { Logger } from './'
 
 let definitionsPath = __dirname + '/processes/';

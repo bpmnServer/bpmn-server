@@ -1,7 +1,7 @@
 import { TimerBehaviour, CamundaFormData, IOBehaviour, MessageEventBehaviour, SignalEventBehaviour, TerminateBehaviour, LoopBehaviour } from ".";
 import { Node } from "../Node";
 import { Item } from "../../engine/Item";
-import { IItem } from "../../..";
+import { IItem } from "../../";
 import { ScriptBehaviour } from "./Script";
 import { CancelEventBehaviour, CompensateEventBehaviour } from "./TransEvents";
 import { EscalationEventBehaviour } from "./Escalation";

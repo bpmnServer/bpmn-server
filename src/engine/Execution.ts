@@ -5,8 +5,8 @@ import { Item } from './Item';
 import { Token, TOKEN_TYPE  } from './Token';
 import { Loop} from './Loop';
 import { Element, Node, Flow , Definition, CallActivity, Process } from '../elements/'
-import { EXECUTION_EVENT, NODE_ACTION, FLOW_ACTION, TOKEN_STATUS, EXECUTION_STATUS, ITEM_STATUS, IDefinition } from '../../';
-import { IInstanceData, IBPMNServer, IExecution, IAppDelegate , DefaultAppDelegate } from '../../';
+import { EXECUTION_EVENT, NODE_ACTION, FLOW_ACTION, TOKEN_STATUS, EXECUTION_STATUS, ITEM_STATUS, IDefinition } from '../';
+import { IInstanceData, IBPMNServer, IExecution, IAppDelegate , DefaultAppDelegate } from '../';
 import { EventEmitter } from 'events';
 import { BPMNServer, ServerComponent } from '../server';
 import { InstanceObject } from './Model';
