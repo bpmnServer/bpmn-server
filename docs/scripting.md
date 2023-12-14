@@ -92,6 +92,31 @@ Both Expressions and Listeners above have the following variables
 |appServices| reference to appServices object	|
 |appUtils|	   reference to appUtils object|
 
+- Common Item properties:
+```
+    id;                 
+    options;
+    context;    //execution options
+    elementId;  // Model Node Id
+```
+- Item methods 
+```
+    log(msg) 
+```
+- Execution (context) properties
+```
+    instance: InstanceObject;
+    tokens = new Map();
+    definition: IDefinition;
+    process : Process;
+    errors;
+    item;
+    messageMatchingKey;
+    userName;
+    servicesProvider;
+    options;
+    operation;
+```
 
 ### Workflow Listener
 

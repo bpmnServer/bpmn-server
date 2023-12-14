@@ -5,13 +5,13 @@
     "lib": [ "es6" ],
     "sourceMap": true,
     "declaration": true ,
-/*    "rootDir": "./src", */
-/*    "outDir": "./dist" */
+/*    "rootDir": "./src",*/
+    "outDir": "./dist" 
   },
   "include": [
     "**/*.ts", "test/handler.js"
   ],
   "exclude": [
-    "node_modules" , "./dist" , "./webApp" ,"./rules"
+    "node_modules" , "./dist" , "./webApp"
   ]
 }
