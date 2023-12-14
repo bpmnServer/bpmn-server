@@ -195,7 +195,9 @@ class Execution extends ServerComponent implements IExecution {
 
         this.appendData(inputData, this.item, null, assignment);
 
-        await this.item.node.doEvent(this.item, 'assignment');
+        await this.item.node.doEvent(this.item, EXECUTION_EVENT.node_assign);
+
+        await this.item.node.validate(this.item);
 
         await this.save();
         this.log('Execution('+this.name+').assign: finished!');

@@ -39,22 +39,37 @@ class Node extends Element {
 
         BehaviourLoader.load(this);
     }
+    async validate(item: Item) {
+
+        let validate = await item.node.doEvent(item, EXECUTION_EVENT.node_validate,item.status);
+        console.log('validate:', validate,item.options);
+        validate.forEach(retVal => {
+            if (retVal == false)
+                item.token.execution.logger.error('Validation failed');
+
+        });
+
+    }
     async doEvent(item: Item, event: EXECUTION_EVENT, newStatus: ITEM_STATUS) {
         item.token.log('Node('+this.name+'|'+this.id+').doEvent: executing script for event:' + event + ' newStatus:'+newStatus);
         if (newStatus)
             item.status = newStatus;
         ///item.token.log('..>' + event + ' ' + this.id);
         const scripts = this.scripts.get(event);
+        const rets = [];
         if (scripts) {
             for (var s = 0; s < scripts.length; s++) {
                 var script = scripts[s];
                 item.token.log('--executing script for event:' + event);
 
-                await ScriptHandler.executeScript(item, script);
+                const ret = await ScriptHandler.executeScript(item, script);
+                rets.push(ret);
 
             }
         }
-        return await item.token.execution.doItemEvent(item, event);
+        const ret1 = await item.token.execution.doItemEvent(item, event);
+        rets.push(ret1);
+        return rets;
 
     }
     /**
@@ -134,7 +149,6 @@ class Node extends Element {
             const b = behaviourlist[i];
             const bRet = await b.enter(item);
         }
-
 
         //  3   start
         //  --------

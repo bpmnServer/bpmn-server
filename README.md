@@ -8,11 +8,6 @@ BPMN 2.0 Modeling, Execution and Presistence, an open source Workflow Server for
 
 This package is designed specifically for Node.js and TypeScript
 
-
-### Documentation
-- [Features](./docs/features)
-- [Examples](./docs/examples.md)
-
 ## Features
 ### Web based Process modeller
 
@@ -150,24 +145,53 @@ Enter Command, q to quit, or ? to list commands
 $ npm update bpmn-server
 ```
 
-# Deployment Modes
+# Documentation
+- [Features](./docs/features.md)
+- [Examples](./docs/examples.md)
+
+## Executing Workflow
+
+`bpmn-server` provide full API for your application to execute, monitor and query the Workflow.
+Typicall this is done through your business application or through a web Application 
+see [API](./docs/API.md) for details
+
+
+## Adding Logic to your Workflow 
+Beyond BPMN Models, you can add scripts and logic to the working through the followings:
+### Model Expressions 
+Many of the model properties accept `JavaScript Expressions` for example:
+- conditional flow
+- timers
+- assignment properties
+see [Model Expressions](./docs/scripting.md#expressions) for details
+
+### Execution/Task Listeners
+Inside your model, you can attach Listeners to various nodes as `JavaScript Listeners`
+see [Listeners](./docs/scripting.md#listeners) for details
+
+### Workflow Application Delegate
+You can place a listener in your application delegate class to listen to all events
+
+see [Application Listener](./docs/scripting.md#Applistener) for details
+
+## Deployment Modes
 
 BPMNServer is a backend server aimed to execute BPMN Models
 You can deploy in several scenarios:
-## Web Application 
+### Web Application 
 We Provide a full demo @ http://bpmn.omniworkflow.com
 
 Or installation above to install on your environemnt
 
-## as a MicroService 
+### as a MicroService 
 
 By running the WebApplication described above and access only the API
 
-## Remote Access to WebServer
+### Remote Access to WebServer
 
 Using bpmnClient app
 
-## Stand-alone
+### Stand-alone
 
 You can deploy a stand alone app using NodeJs scripts
 for example:

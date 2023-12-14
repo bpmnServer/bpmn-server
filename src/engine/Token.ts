@@ -394,6 +394,9 @@ class Token implements IToken {
 
         await this.currentNode.setInput(item, data);
         if (item.status == ITEM_STATUS.wait || recover) {// || item.type=='bpmn:SubProcess') {
+
+            await item.node.validate(item);
+
             const ret = await this.currentNode.run(item);
 
 

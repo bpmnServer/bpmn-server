@@ -35,9 +35,17 @@ enum NODE_SUBTYPE {
  * ALL events 
  */
 enum EXECUTION_EVENT {
-    node_enter = 'enter', node_start = 'start', node_wait = 'wait', node_end = 'end', node_terminated = 'terminated',
-    transform_input = 'transformInput', transform_output ='transformOutput',
-    flow_take = 'take', flow_discard = 'discard',
+    node_enter = 'enter',
+    node_assign = 'assign',
+    node_validate = 'validate',
+    node_start = 'start',
+    node_wait = 'wait',
+    node_end = 'end',
+    node_terminated = 'terminated',
+    transform_input = 'transformInput',
+    transform_output = 'transformOutput',
+    flow_take = 'take',
+    flow_discard = 'discard',
     process_loaded ='process.loaded',
     process_start = 'process.start',   
     process_started = 'process.started',
