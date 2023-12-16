@@ -1,236 +1,238 @@
-[bpmn-server](../README.md) › [IAppDelegate](iappdelegate.md)
+[bpmn-server](../README.md) / IAppDelegate
 
 # Interface: IAppDelegate
 
 Application Delegate Object to respond to various events and services:
-
+ 
  1.  receive all events from workflow
  2.  receive service calls
- 3.  receive message and signal calls
+ 3.  receive message and signal calls 
  4.  execute scripts
-
-## Hierarchy
-
-* **IAppDelegate**
 
 ## Implemented by
 
-* [DefaultAppDelegate](../classes/defaultappdelegate.md)
+- [`DefaultAppDelegate`](../classes/DefaultAppDelegate.md)
 
-## Index
+## Table of contents
 
 ### Properties
 
-* [moddleOptions](iappdelegate.md#moddleoptions)
-* [servicesProvider](iappdelegate.md#servicesprovider)
+- [moddleOptions](IAppDelegate.md#moddleoptions)
 
 ### Methods
 
-* [executionEvent](iappdelegate.md#executionevent)
-* [executionStarted](iappdelegate.md#executionstarted)
-* [issueMessage](iappdelegate.md#issuemessage)
-* [issueSignal](iappdelegate.md#issuesignal)
-* [messageThrown](iappdelegate.md#messagethrown)
-* [scopeEval](iappdelegate.md#scopeeval)
-* [scopeJS](iappdelegate.md#scopejs)
-* [sendEmail](iappdelegate.md#sendemail)
-* [serviceCalled](iappdelegate.md#servicecalled)
-* [signalThrown](iappdelegate.md#signalthrown)
+- [executionStarted](IAppDelegate.md#executionstarted)
+- [getServicesProvider](IAppDelegate.md#getservicesprovider)
+- [issueMessage](IAppDelegate.md#issuemessage)
+- [issueSignal](IAppDelegate.md#issuesignal)
+- [messageThrown](IAppDelegate.md#messagethrown)
+- [sendEmail](IAppDelegate.md#sendemail)
+- [serviceCalled](IAppDelegate.md#servicecalled)
+- [signalThrown](IAppDelegate.md#signalthrown)
+- [startUp](IAppDelegate.md#startup)
 
 ## Properties
 
-###  moddleOptions
+### moddleOptions
 
-• **moddleOptions**: *any*
+• **moddleOptions**: `any`
 
-Defined in bpmnServer/src/interfaces/common.ts:66
+#### Defined in
 
-___
-
-###  servicesProvider
-
-• **servicesProvider**: *any*
-
-Defined in bpmnServer/src/interfaces/common.ts:67
+[interfaces/common.ts:73](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L73)
 
 ## Methods
 
-###  executionEvent
+### executionStarted
 
-▸ **executionEvent**(`__namedParameters`: object): *any*
+▸ **executionStarted**(`execution`): `any`
 
-Defined in bpmnServer/src/interfaces/common.ts:70
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `execution` | `any` |
 
-▪ **__namedParameters**: *object*
+#### Returns
 
-Name | Type |
------- | ------ |
-`event` | any |
-`execution` | any |
-`item` | any |
+`any`
 
-**Returns:** *any*
+#### Defined in
 
-___
-
-###  executionStarted
-
-▸ **executionStarted**(`execution`: any): *any*
-
-Defined in bpmnServer/src/interfaces/common.ts:69
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`execution` | any |
-
-**Returns:** *any*
+[interfaces/common.ts:76](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L76)
 
 ___
 
-###  issueMessage
+### getServicesProvider
 
-▸ **issueMessage**(`messageId`: any, `data`: any): *any*
+▸ **getServicesProvider**(`IExecution`): `any`
 
-Defined in bpmnServer/src/interfaces/common.ts:80
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `IExecution` | `any` |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[interfaces/common.ts:74](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L74)
+
+___
+
+### issueMessage
+
+▸ **issueMessage**(`messageId`, `data`): `any`
 
 is called when an event throws a message that can not be answered by another process
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Description |
------- | ------ | ------ |
-`messageId` | any | - |
-`data` | any |   |
+| Name | Type |
+| :------ | :------ |
+| `messageId` | `any` |
+| `data` | `any` |
 
-**Returns:** *any*
+#### Returns
 
-___
+`any`
 
-###  issueSignal
+#### Defined in
 
-▸ **issueSignal**(`messageId`: any, `data`: any): *any*
-
-Defined in bpmnServer/src/interfaces/common.ts:81
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`messageId` | any |
-`data` | any |
-
-**Returns:** *any*
+[interfaces/common.ts:87](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L87)
 
 ___
 
-###  messageThrown
+### issueSignal
 
-▸ **messageThrown**(`signalId`: any, `data`: any, `messageMatchingKey`: any, `item`: [IItem](iitem.md)): *any*
+▸ **issueSignal**(`messageId`, `data`): `any`
 
-Defined in bpmnServer/src/interfaces/common.ts:71
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `messageId` | `any` |
+| `data` | `any` |
 
-Name | Type |
------- | ------ |
-`signalId` | any |
-`data` | any |
-`messageMatchingKey` | any |
-`item` | [IItem](iitem.md) |
+#### Returns
 
-**Returns:** *any*
+`any`
 
-___
+#### Defined in
 
-###  scopeEval
-
-▸ **scopeEval**(`scope`: any, `script`: any): *any*
-
-Defined in bpmnServer/src/interfaces/common.ts:89
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`scope` | any |
-`script` | any |
-
-**Returns:** *any*
+[interfaces/common.ts:88](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L88)
 
 ___
 
-###  scopeJS
+### messageThrown
 
-▸ **scopeJS**(`scope`: any, `script`: any): *any*
+▸ **messageThrown**(`signalId`, `data`, `messageMatchingKey`, `item`): `any`
 
-Defined in bpmnServer/src/interfaces/common.ts:90
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `signalId` | `any` |
+| `data` | `any` |
+| `messageMatchingKey` | `any` |
+| `item` | [`IItem`](IItem.md) |
 
-Name | Type |
------- | ------ |
-`scope` | any |
-`script` | any |
+#### Returns
 
-**Returns:** *any*
+`any`
 
-___
+#### Defined in
 
-###  sendEmail
-
-▸ **sendEmail**(`to`: any, `msg`: any, `body`: any): *any*
-
-Defined in bpmnServer/src/interfaces/common.ts:68
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`to` | any |
-`msg` | any |
-`body` | any |
-
-**Returns:** *any*
+[interfaces/common.ts:78](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L78)
 
 ___
 
-###  serviceCalled
+### sendEmail
 
-▸ **serviceCalled**(`serviceName`: any, `data`: any, `item`: [IItem](iitem.md)): *any*
+▸ **sendEmail**(`to`, `msg`, `body`): `any`
 
-Defined in bpmnServer/src/interfaces/common.ts:87
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `to` | `any` |
+| `msg` | `any` |
+| `body` | `any` |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[interfaces/common.ts:75](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L75)
+
+___
+
+### serviceCalled
+
+▸ **serviceCalled**(`serviceName`, `data`, `item`): `any`
 
 is called only if the serviceTask has no implementation; otherwise the specified implementation will be called.
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Description |
------- | ------ | ------ |
-`serviceName` | any | - |
-`data` | any | - |
-`item` | [IItem](iitem.md) |   |
+| Name | Type |
+| :------ | :------ |
+| `serviceName` | `any` |
+| `data` | `any` |
+| `item` | [`IItem`](IItem.md) |
 
-**Returns:** *any*
+#### Returns
+
+`any`
+
+#### Defined in
+
+[interfaces/common.ts:94](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L94)
 
 ___
 
-###  signalThrown
+### signalThrown
 
-▸ **signalThrown**(`signalId`: any, `data`: any, `messageMatchingKey`: any, `item`: [IItem](iitem.md)): *any*
+▸ **signalThrown**(`signalId`, `data`, `messageMatchingKey`, `item`): `any`
 
-Defined in bpmnServer/src/interfaces/common.ts:72
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `signalId` | `any` |
+| `data` | `any` |
+| `messageMatchingKey` | `any` |
+| `item` | [`IItem`](IItem.md) |
 
-Name | Type |
------- | ------ |
-`signalId` | any |
-`data` | any |
-`messageMatchingKey` | any |
-`item` | [IItem](iitem.md) |
+#### Returns
 
-**Returns:** *any*
+`any`
+
+#### Defined in
+
+[interfaces/common.ts:79](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L79)
+
+___
+
+### startUp
+
+▸ **startUp**(`options`): `any`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `any` |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[interfaces/common.ts:77](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L77)

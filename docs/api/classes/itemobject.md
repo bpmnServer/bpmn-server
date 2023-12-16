@@ -1,236 +1,419 @@
-[bpmn-server](../README.md) › [ItemObject](itemobject.md)
+[bpmn-server](../README.md) / ItemObject
 
 # Class: ItemObject
 
 as stroed in MongoDB
 
-## Hierarchy
-
-* **ItemObject**
-
 ## Implements
 
-* [IItemData](../interfaces/iitemdata.md)
+- [`IItemData`](../interfaces/IItemData.md)
 
-## Index
+## Table of contents
+
+### Constructors
+
+- [constructor](ItemObject.md#constructor)
 
 ### Properties
 
-* [assignments](itemobject.md#assignments)
-* [authorizations](itemobject.md#authorizations)
-* [data](itemobject.md#data)
-* [elementId](itemobject.md#elementid)
-* [endedAt](itemobject.md#endedat)
-* [id](itemobject.md#id)
-* [instanceId](itemobject.md#instanceid)
-* [itemKey](itemobject.md#itemkey)
-* [messageId](itemobject.md#messageid)
-* [name](itemobject.md#name)
-* [notifications](itemobject.md#notifications)
-* [processName](itemobject.md#processname)
-* [seq](itemobject.md#seq)
-* [signalId](itemobject.md#signalid)
-* [startedAt](itemobject.md#startedat)
-* [status](itemobject.md#status)
-* [timeDue](itemobject.md#timedue)
-* [tokenId](itemobject.md#tokenid)
-* [type](itemobject.md#type)
-* [userId](itemobject.md#userid)
+- [assignee](ItemObject.md#assignee)
+- [assignments](ItemObject.md#assignments)
+- [authorizations](ItemObject.md#authorizations)
+- [candidateGroups](ItemObject.md#candidategroups)
+- [candidateUsers](ItemObject.md#candidateusers)
+- [data](ItemObject.md#data)
+- [dueDate](ItemObject.md#duedate)
+- [elementId](ItemObject.md#elementid)
+- [endedAt](ItemObject.md#endedat)
+- [followUpDate](ItemObject.md#followupdate)
+- [id](ItemObject.md#id)
+- [instanceId](ItemObject.md#instanceid)
+- [itemKey](ItemObject.md#itemkey)
+- [messageId](ItemObject.md#messageid)
+- [name](ItemObject.md#name)
+- [notifications](ItemObject.md#notifications)
+- [priority](ItemObject.md#priority)
+- [processName](ItemObject.md#processname)
+- [seq](ItemObject.md#seq)
+- [signalId](ItemObject.md#signalid)
+- [startedAt](ItemObject.md#startedat)
+- [status](ItemObject.md#status)
+- [timeDue](ItemObject.md#timedue)
+- [tokenId](ItemObject.md#tokenid)
+- [type](ItemObject.md#type)
+- [userName](ItemObject.md#username)
+- [vars](ItemObject.md#vars)
+
+## Constructors
+
+### constructor
+
+• **new ItemObject**(): [`ItemObject`](ItemObject.md)
+
+#### Returns
+
+[`ItemObject`](ItemObject.md)
 
 ## Properties
 
-###  assignments
+### assignee
 
-• **assignments**: *any*
+• **assignee**: `any`
 
-*Implementation of [IItemData](../interfaces/iitemdata.md).[assignments](../interfaces/iitemdata.md#assignments)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Model.ts:51
+[IItemData](../interfaces/IItemData.md).[assignee](../interfaces/IItemData.md#assignee)
 
-___
+#### Defined in
 
-###  authorizations
-
-• **authorizations**: *any*
-
-*Implementation of [IItemData](../interfaces/iitemdata.md).[authorizations](../interfaces/iitemdata.md#authorizations)*
-
-Defined in bpmnServer/src/engine/Model.ts:52
+[engine/Model.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L54)
 
 ___
 
-###  data
+### assignments
 
-• **data**: *any*
+• **assignments**: `any`
 
-*Implementation of [IItemData](../interfaces/iitemdata.md).[data](../interfaces/iitemdata.md#data)*
+#### Defined in
 
-Defined in bpmnServer/src/engine/Model.ts:48
-
-___
-
-###  elementId
-
-• **elementId**: *any*
-
-*Implementation of [IItemData](../interfaces/iitemdata.md).[elementId](../interfaces/iitemdata.md#elementid)*
-
-Defined in bpmnServer/src/engine/Model.ts:41
+[engine/Model.ts:60](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L60)
 
 ___
 
-###  endedAt
+### authorizations
 
-• **endedAt**: *any*
+• **authorizations**: `any`
 
-*Implementation of [IItemData](../interfaces/iitemdata.md).[endedAt](../interfaces/iitemdata.md#endedat)*
+#### Defined in
 
-Defined in bpmnServer/src/engine/Model.ts:38
-
-___
-
-###  id
-
-• **id**: *any*
-
-*Implementation of [IItemData](../interfaces/iitemdata.md).[id](../interfaces/iitemdata.md#id)*
-
-Defined in bpmnServer/src/engine/Model.ts:30
+[engine/Model.ts:61](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L61)
 
 ___
 
-###  instanceId
+### candidateGroups
 
-• **instanceId**: *any*
+• **candidateGroups**: `any`
 
-Defined in bpmnServer/src/engine/Model.ts:45
+#### Implementation of
 
- retrieved from findObjects
+[IItemData](../interfaces/IItemData.md).[candidateGroups](../interfaces/IItemData.md#candidategroups)
 
-___
+#### Defined in
 
-###  itemKey
-
-• **itemKey**: *any*
-
-*Implementation of [IItemData](../interfaces/iitemdata.md).[itemKey](../interfaces/iitemdata.md#itemkey)*
-
-Defined in bpmnServer/src/engine/Model.ts:32
+[engine/Model.ts:55](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L55)
 
 ___
 
-###  messageId
+### candidateUsers
 
-• **messageId**: *any*
+• **candidateUsers**: `any`
 
-*Implementation of [IItemData](../interfaces/iitemdata.md).[messageId](../interfaces/iitemdata.md#messageid)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Model.ts:49
+[IItemData](../interfaces/IItemData.md).[candidateUsers](../interfaces/IItemData.md#candidateusers)
 
-___
+#### Defined in
 
-###  name
-
-• **name**: *any*
-
-*Implementation of [IItemData](../interfaces/iitemdata.md).[name](../interfaces/iitemdata.md#name)*
-
-Defined in bpmnServer/src/engine/Model.ts:33
+[engine/Model.ts:56](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L56)
 
 ___
 
-###  notifications
+### data
 
-• **notifications**: *any*
+• **data**: `any`
 
-*Implementation of [IItemData](../interfaces/iitemdata.md).[notifications](../interfaces/iitemdata.md#notifications)*
+#### Defined in
 
-Defined in bpmnServer/src/engine/Model.ts:53
-
-___
-
-###  processName
-
-• **processName**: *any*
-
-Defined in bpmnServer/src/engine/Model.ts:46
+[engine/Model.ts:50](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L50)
 
 ___
 
-###  seq
+### dueDate
 
-• **seq**: *any*
+• **dueDate**: `any`
 
-*Implementation of [IItemData](../interfaces/iitemdata.md).[seq](../interfaces/iitemdata.md#seq)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Model.ts:31
+[IItemData](../interfaces/IItemData.md).[dueDate](../interfaces/IItemData.md#duedate)
 
-___
+#### Defined in
 
-###  signalId
-
-• **signalId**: *any*
-
-*Implementation of [IItemData](../interfaces/iitemdata.md).[signalId](../interfaces/iitemdata.md#signalid)*
-
-Defined in bpmnServer/src/engine/Model.ts:50
+[engine/Model.ts:57](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L57)
 
 ___
 
-###  startedAt
+### elementId
 
-• **startedAt**: *any*
+• **elementId**: `any`
 
-*Implementation of [IItemData](../interfaces/iitemdata.md).[startedAt](../interfaces/iitemdata.md#startedat)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Model.ts:37
+[IItemData](../interfaces/IItemData.md).[elementId](../interfaces/IItemData.md#elementid)
 
-___
+#### Defined in
 
-###  status
-
-• **status**: *[ITEM_STATUS](../enums/item_status.md)*
-
-*Implementation of [IItemData](../interfaces/iitemdata.md).[status](../interfaces/iitemdata.md#status)*
-
-Defined in bpmnServer/src/engine/Model.ts:35
+[engine/Model.ts:43](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L43)
 
 ___
 
-###  timeDue
+### endedAt
 
-• **timeDue**: *Date*
+• **endedAt**: `any`
 
-*Implementation of [IItemData](../interfaces/iitemdata.md).[timeDue](../interfaces/iitemdata.md#timedue)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Model.ts:47
+[IItemData](../interfaces/IItemData.md).[endedAt](../interfaces/IItemData.md#endedat)
 
-___
+#### Defined in
 
-###  tokenId
-
-• **tokenId**: *any*
-
-*Implementation of [IItemData](../interfaces/iitemdata.md).[tokenId](../interfaces/iitemdata.md#tokenid)*
-
-Defined in bpmnServer/src/engine/Model.ts:40
+[engine/Model.ts:40](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L40)
 
 ___
 
-###  type
+### followUpDate
 
-• **type**: *[BPMN_TYPE](../enums/bpmn_type.md)*
+• **followUpDate**: `any`
 
-*Implementation of [IItemData](../interfaces/iitemdata.md).[type](../interfaces/iitemdata.md#type)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Model.ts:34
+[IItemData](../interfaces/IItemData.md).[followUpDate](../interfaces/IItemData.md#followupdate)
+
+#### Defined in
+
+[engine/Model.ts:58](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L58)
 
 ___
 
-###  userId
+### id
 
-• **userId**: *any*
+• **id**: `any`
 
-*Implementation of [IItemData](../interfaces/iitemdata.md).[userId](../interfaces/iitemdata.md#userid)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Model.ts:36
+[IItemData](../interfaces/IItemData.md).[id](../interfaces/IItemData.md#id)
+
+#### Defined in
+
+[engine/Model.ts:32](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L32)
+
+___
+
+### instanceId
+
+• **instanceId**: `any`
+
+retrieved from findObjects
+
+#### Implementation of
+
+[IItemData](../interfaces/IItemData.md).[instanceId](../interfaces/IItemData.md#instanceid)
+
+#### Defined in
+
+[engine/Model.ts:47](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L47)
+
+___
+
+### itemKey
+
+• **itemKey**: `any`
+
+#### Implementation of
+
+[IItemData](../interfaces/IItemData.md).[itemKey](../interfaces/IItemData.md#itemkey)
+
+#### Defined in
+
+[engine/Model.ts:34](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L34)
+
+___
+
+### messageId
+
+• **messageId**: `any`
+
+#### Implementation of
+
+[IItemData](../interfaces/IItemData.md).[messageId](../interfaces/IItemData.md#messageid)
+
+#### Defined in
+
+[engine/Model.ts:52](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L52)
+
+___
+
+### name
+
+• **name**: `any`
+
+#### Implementation of
+
+[IItemData](../interfaces/IItemData.md).[name](../interfaces/IItemData.md#name)
+
+#### Defined in
+
+[engine/Model.ts:35](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L35)
+
+___
+
+### notifications
+
+• **notifications**: `any`
+
+#### Defined in
+
+[engine/Model.ts:62](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L62)
+
+___
+
+### priority
+
+• **priority**: `any`
+
+#### Implementation of
+
+[IItemData](../interfaces/IItemData.md).[priority](../interfaces/IItemData.md#priority)
+
+#### Defined in
+
+[engine/Model.ts:59](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L59)
+
+___
+
+### processName
+
+• **processName**: `any`
+
+#### Implementation of
+
+[IItemData](../interfaces/IItemData.md).[processName](../interfaces/IItemData.md#processname)
+
+#### Defined in
+
+[engine/Model.ts:48](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L48)
+
+___
+
+### seq
+
+• **seq**: `any`
+
+#### Implementation of
+
+[IItemData](../interfaces/IItemData.md).[seq](../interfaces/IItemData.md#seq)
+
+#### Defined in
+
+[engine/Model.ts:33](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L33)
+
+___
+
+### signalId
+
+• **signalId**: `any`
+
+#### Implementation of
+
+[IItemData](../interfaces/IItemData.md).[signalId](../interfaces/IItemData.md#signalid)
+
+#### Defined in
+
+[engine/Model.ts:53](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L53)
+
+___
+
+### startedAt
+
+• **startedAt**: `any`
+
+#### Implementation of
+
+[IItemData](../interfaces/IItemData.md).[startedAt](../interfaces/IItemData.md#startedat)
+
+#### Defined in
+
+[engine/Model.ts:39](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L39)
+
+___
+
+### status
+
+• **status**: [`ITEM_STATUS`](../enums/ITEM_STATUS.md)
+
+#### Implementation of
+
+[IItemData](../interfaces/IItemData.md).[status](../interfaces/IItemData.md#status)
+
+#### Defined in
+
+[engine/Model.ts:37](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L37)
+
+___
+
+### timeDue
+
+• **timeDue**: `Date`
+
+#### Implementation of
+
+[IItemData](../interfaces/IItemData.md).[timeDue](../interfaces/IItemData.md#timedue)
+
+#### Defined in
+
+[engine/Model.ts:49](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L49)
+
+___
+
+### tokenId
+
+• **tokenId**: `any`
+
+#### Implementation of
+
+[IItemData](../interfaces/IItemData.md).[tokenId](../interfaces/IItemData.md#tokenid)
+
+#### Defined in
+
+[engine/Model.ts:42](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L42)
+
+___
+
+### type
+
+• **type**: [`BPMN_TYPE`](../enums/BPMN_TYPE.md)
+
+#### Implementation of
+
+[IItemData](../interfaces/IItemData.md).[type](../interfaces/IItemData.md#type)
+
+#### Defined in
+
+[engine/Model.ts:36](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L36)
+
+___
+
+### userName
+
+• **userName**: `any`
+
+#### Implementation of
+
+[IItemData](../interfaces/IItemData.md).[userName](../interfaces/IItemData.md#username)
+
+#### Defined in
+
+[engine/Model.ts:38](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L38)
+
+___
+
+### vars
+
+• **vars**: `any`
+
+#### Implementation of
+
+[IItemData](../interfaces/IItemData.md).[vars](../interfaces/IItemData.md#vars)
+
+#### Defined in
+
+[engine/Model.ts:51](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L51)

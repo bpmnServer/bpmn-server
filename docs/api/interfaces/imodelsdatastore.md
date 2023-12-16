@@ -1,213 +1,270 @@
-[bpmn-server](../README.md) › [IModelsDatastore](imodelsdatastore.md)
+[bpmn-server](../README.md) / IModelsDatastore
 
 # Interface: IModelsDatastore
 
-## Hierarchy
-
-* **IModelsDatastore**
-
 ## Implemented by
 
-* [ModelsDatastore](../classes/modelsdatastore.md)
-* [ModelsDatastore](../classes/modelsdatastore.md)
-* [ModelsDatastoreDB](../classes/modelsdatastoredb.md)
+- [`ModelsDatastore`](../classes/ModelsDatastore.md)
+- [`ModelsDatastoreDB`](../classes/ModelsDatastoreDB.md)
 
-## Index
+## Table of contents
 
 ### Methods
 
-* [deleteModel](imodelsdatastore.md#deletemodel)
-* [findEvents](imodelsdatastore.md#findevents)
-* [getList](imodelsdatastore.md#getlist)
-* [getSVG](imodelsdatastore.md#getsvg)
-* [getSource](imodelsdatastore.md#getsource)
-* [import](imodelsdatastore.md#import)
-* [install](imodelsdatastore.md#install)
-* [load](imodelsdatastore.md#load)
-* [loadModel](imodelsdatastore.md#loadmodel)
-* [renameModel](imodelsdatastore.md#renamemodel)
-* [save](imodelsdatastore.md#save)
-* [saveModel](imodelsdatastore.md#savemodel)
+- [deleteModel](IModelsDatastore.md#deletemodel)
+- [findEvents](IModelsDatastore.md#findevents)
+- [getList](IModelsDatastore.md#getlist)
+- [getSVG](IModelsDatastore.md#getsvg)
+- [getSource](IModelsDatastore.md#getsource)
+- [import](IModelsDatastore.md#import)
+- [install](IModelsDatastore.md#install)
+- [load](IModelsDatastore.md#load)
+- [loadModel](IModelsDatastore.md#loadmodel)
+- [renameModel](IModelsDatastore.md#renamemodel)
+- [save](IModelsDatastore.md#save)
+- [saveModel](IModelsDatastore.md#savemodel)
 
 ## Methods
 
-###  deleteModel
+### deleteModel
 
-▸ **deleteModel**(`name`: any): *Promise‹void›*
+▸ **deleteModel**(`name`, `owner`): `Promise`\<`void`\>
 
-Defined in bpmnServer/src/interfaces/datastore.ts:41
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+| `owner` | `any` |
 
-Name | Type |
------- | ------ |
-`name` | any |
+#### Returns
 
-**Returns:** *Promise‹void›*
+`Promise`\<`void`\>
 
-___
+#### Defined in
 
-###  findEvents
-
-▸ **findEvents**(`query`: any): *Promise‹any[]›*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:35
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`query` | any |
-
-**Returns:** *Promise‹any[]›*
+[interfaces/datastore.ts:38](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L38)
 
 ___
 
-###  getList
+### findEvents
 
-▸ **getList**(): *Promise‹string[]›*
+▸ **findEvents**(`query`, `owner`): `Promise`\<`any`[]\>
 
-Defined in bpmnServer/src/interfaces/datastore.ts:28
+#### Parameters
 
-**Returns:** *Promise‹string[]›*
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
+| `owner` | `any` |
 
-___
+#### Returns
 
-###  getSVG
+`Promise`\<`any`[]\>
 
-▸ **getSVG**(`name`: any): *Promise‹string›*
+#### Defined in
 
-Defined in bpmnServer/src/interfaces/datastore.ts:30
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`name` | any |
-
-**Returns:** *Promise‹string›*
+[interfaces/datastore.ts:32](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L32)
 
 ___
 
-###  getSource
+### getList
 
-▸ **getSource**(`name`: any): *Promise‹string›*
+▸ **getList**(`query`): `Promise`\<`string`[]\>
 
-Defined in bpmnServer/src/interfaces/datastore.ts:29
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
 
-Name | Type |
------- | ------ |
-`name` | any |
+#### Returns
 
-**Returns:** *Promise‹string›*
+`Promise`\<`string`[]\>
 
-___
+#### Defined in
 
-###  import
-
-▸ **import**(`data`: any): *any*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:38
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`data` | any |
-
-**Returns:** *any*
+[interfaces/datastore.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L25)
 
 ___
 
-###  install
+### getSVG
 
-▸ **install**(): *any*
+▸ **getSVG**(`name`, `owner`): `Promise`\<`string`\>
 
-Defined in bpmnServer/src/interfaces/datastore.ts:37
+#### Parameters
 
-**Returns:** *any*
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+| `owner` | `any` |
 
-___
+#### Returns
 
-###  load
+`Promise`\<`string`\>
 
-▸ **load**(`name`: any): *Promise‹[IDefinition](idefinition.md)›*
+#### Defined in
 
-Defined in bpmnServer/src/interfaces/datastore.ts:33
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`name` | any |
-
-**Returns:** *Promise‹[IDefinition](idefinition.md)›*
+[interfaces/datastore.ts:27](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L27)
 
 ___
 
-###  loadModel
+### getSource
 
-▸ **loadModel**(`name`: any): *Promise‹[IBpmnModelData](ibpmnmodeldata.md)›*
+▸ **getSource**(`name`, `owner`): `Promise`\<`string`\>
 
-Defined in bpmnServer/src/interfaces/datastore.ts:34
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+| `owner` | `any` |
 
-Name | Type |
------- | ------ |
-`name` | any |
+#### Returns
 
-**Returns:** *Promise‹[IBpmnModelData](ibpmnmodeldata.md)›*
+`Promise`\<`string`\>
 
-___
+#### Defined in
 
-###  renameModel
-
-▸ **renameModel**(`name`: any, `newName`: any): *Promise‹boolean›*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:42
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`name` | any |
-`newName` | any |
-
-**Returns:** *Promise‹boolean›*
+[interfaces/datastore.ts:26](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L26)
 
 ___
 
-###  save
+### import
 
-▸ **save**(`name`: any, `bpmn`: any, `svg?`: any): *Promise‹boolean›*
+▸ **import**(`data`): `any`
 
-Defined in bpmnServer/src/interfaces/datastore.ts:31
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `data` | `any` |
 
-Name | Type |
------- | ------ |
-`name` | any |
-`bpmn` | any |
-`svg?` | any |
+#### Returns
 
-**Returns:** *Promise‹boolean›*
+`any`
+
+#### Defined in
+
+[interfaces/datastore.ts:35](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L35)
 
 ___
 
-###  saveModel
+### install
 
-▸ **saveModel**(`model`: [IBpmnModelData](ibpmnmodeldata.md)): *Promise‹boolean›*
+▸ **install**(): `any`
 
-Defined in bpmnServer/src/interfaces/datastore.ts:40
+#### Returns
 
-**Parameters:**
+`any`
 
-Name | Type |
------- | ------ |
-`model` | [IBpmnModelData](ibpmnmodeldata.md) |
+#### Defined in
 
-**Returns:** *Promise‹boolean›*
+[interfaces/datastore.ts:34](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L34)
+
+___
+
+### load
+
+▸ **load**(`name`, `owner`): `Promise`\<[`IDefinition`](IDefinition.md)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+| `owner` | `any` |
+
+#### Returns
+
+`Promise`\<[`IDefinition`](IDefinition.md)\>
+
+#### Defined in
+
+[interfaces/datastore.ts:30](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L30)
+
+___
+
+### loadModel
+
+▸ **loadModel**(`name`, `owner`): `Promise`\<[`IBpmnModelData`](IBpmnModelData.md)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+| `owner` | `any` |
+
+#### Returns
+
+`Promise`\<[`IBpmnModelData`](IBpmnModelData.md)\>
+
+#### Defined in
+
+[interfaces/datastore.ts:31](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L31)
+
+___
+
+### renameModel
+
+▸ **renameModel**(`name`, `newName`, `owner`): `Promise`\<`boolean`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+| `newName` | `any` |
+| `owner` | `any` |
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+#### Defined in
+
+[interfaces/datastore.ts:39](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L39)
+
+___
+
+### save
+
+▸ **save**(`name`, `bpmn`, `svg?`, `owner?`): `Promise`\<`boolean`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+| `bpmn` | `any` |
+| `svg?` | `any` |
+| `owner?` | `any` |
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+#### Defined in
+
+[interfaces/datastore.ts:28](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L28)
+
+___
+
+### saveModel
+
+▸ **saveModel**(`model`): `Promise`\<`boolean`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `model` | [`IBpmnModelData`](IBpmnModelData.md) |
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+#### Defined in
+
+[interfaces/datastore.ts:37](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L37)

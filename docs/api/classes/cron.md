@@ -1,313 +1,389 @@
-[bpmn-server](../README.md) › [Cron](cron.md)
+[bpmn-server](../README.md) / Cron
 
 # Class: Cron
 
+super class for various objects that are part of the server
+
 ## Hierarchy
 
-* [ServerComponent](servercomponent.md)
+- [`ServerComponent`](ServerComponent.md)
 
-  ↳ **Cron**
+  ↳ **`Cron`**
 
 ## Implements
 
-* [ICron](../interfaces/icron.md)
+- [`ICron`](../interfaces/ICron.md)
 
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](cron.md#constructor)
+- [constructor](Cron.md#constructor)
 
 ### Properties
 
-* [server](cron.md#server)
+- [server](Cron.md#server)
 
 ### Accessors
 
-* [acl](cron.md#acl)
-* [appDelegate](cron.md#appdelegate)
-* [cache](cron.md#cache)
-* [configuration](cron.md#configuration)
-* [cron](cron.md#cron)
-* [dataStore](cron.md#datastore)
-* [definitions](cron.md#definitions)
-* [engine](cron.md#engine)
-* [iam](cron.md#iam)
-* [listener](cron.md#listener)
-* [logger](cron.md#logger)
+- [appDelegate](Cron.md#appdelegate)
+- [cache](Cron.md#cache)
+- [configuration](Cron.md#configuration)
+- [cron](Cron.md#cron)
+- [dataStore](Cron.md#datastore)
+- [definitions](Cron.md#definitions)
+- [engine](Cron.md#engine)
+- [listener](Cron.md#listener)
+- [logger](Cron.md#logger)
 
 ### Methods
 
-* [checkTimers](cron.md#checktimers)
-* [start](cron.md#start)
-* [startTimers](cron.md#starttimers)
-* [checkCron](cron.md#static-checkcron)
-* [timeDue](cron.md#static-timedue)
-* [timerEnded](cron.md#static-timerended)
-* [timerScheduled](cron.md#static-timerscheduled)
+- [checkTimers](Cron.md#checktimers)
+- [start](Cron.md#start)
+- [startTimers](Cron.md#starttimers)
+- [checkCron](Cron.md#checkcron)
+- [timeDue](Cron.md#timedue)
+- [timerEnded](Cron.md#timerended)
+- [timerScheduled](Cron.md#timerscheduled)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new Cron**(`server`: [IBPMNServer](../interfaces/ibpmnserver.md)): *[Cron](cron.md)*
+• **new Cron**(`server`): [`Cron`](Cron.md)
 
-*Inherited from [ServerComponent](servercomponent.md).[constructor](servercomponent.md#constructor)*
+#### Parameters
 
-Defined in bpmnServer/src/server/ServerComponent.ts:9
+| Name | Type |
+| :------ | :------ |
+| `server` | [`IBPMNServer`](../interfaces/IBPMNServer.md) |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`server` | [IBPMNServer](../interfaces/ibpmnserver.md) |
+[`Cron`](Cron.md)
 
-**Returns:** *[Cron](cron.md)*
+#### Inherited from
+
+[ServerComponent](ServerComponent.md).[constructor](ServerComponent.md#constructor)
+
+#### Defined in
+
+[server/ServerComponent.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L10)
 
 ## Properties
 
-###  server
+### server
 
-• **server**: *any*
+• **server**: `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[server](servercomponent.md#server)*
+#### Inherited from
 
-Defined in bpmnServer/src/server/ServerComponent.ts:9
+[ServerComponent](ServerComponent.md).[server](ServerComponent.md#server)
+
+#### Defined in
+
+[server/ServerComponent.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L9)
 
 ## Accessors
 
-###  acl
+### appDelegate
 
-• **get acl**(): *any*
+• `get` **appDelegate**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[acl](servercomponent.md#acl)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:23
+`any`
 
-**Returns:** *any*
+#### Inherited from
 
-___
+ServerComponent.appDelegate
 
-###  appDelegate
+#### Defined in
 
-• **get appDelegate**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[appDelegate](servercomponent.md#appdelegate)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:18
-
-**Returns:** *any*
+[server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L18)
 
 ___
 
-###  cache
+### cache
 
-• **get cache**(): *[CacheManager](cachemanager.md)*
+• `get` **cache**(): [`CacheManager`](CacheManager.md)
 
-*Inherited from [ServerComponent](servercomponent.md).[cache](servercomponent.md#cache)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:17
+[`CacheManager`](CacheManager.md)
 
-**Returns:** *[CacheManager](cachemanager.md)*
+#### Inherited from
 
-___
+ServerComponent.cache
 
-###  configuration
+#### Defined in
 
-• **get configuration**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[configuration](servercomponent.md#configuration)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:14
-
-**Returns:** *any*
+[server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L17)
 
 ___
 
-###  cron
+### configuration
 
-• **get cron**(): *[Cron](cron.md)*
+• `get` **configuration**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[cron](servercomponent.md#cron)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:16
+`any`
 
-**Returns:** *[Cron](cron.md)*
+#### Inherited from
 
-___
+ServerComponent.configuration
 
-###  dataStore
+#### Defined in
 
-• **get dataStore**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[dataStore](servercomponent.md#datastore)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:20
-
-**Returns:** *any*
+[server/ServerComponent.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L14)
 
 ___
 
-###  definitions
+### cron
 
-• **get definitions**(): *any*
+• `get` **cron**(): [`Cron`](Cron.md)
 
-*Inherited from [ServerComponent](servercomponent.md).[definitions](servercomponent.md#definitions)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:21
+[`Cron`](Cron.md)
 
-**Returns:** *any*
+#### Inherited from
 
-___
+ServerComponent.cron
 
-###  engine
+#### Defined in
 
-• **get engine**(): *[IEngine](../interfaces/iengine.md)*
-
-*Inherited from [ServerComponent](servercomponent.md).[engine](servercomponent.md#engine)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:19
-
-**Returns:** *[IEngine](../interfaces/iengine.md)*
+[server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L16)
 
 ___
 
-###  iam
+### dataStore
 
-• **get iam**(): *any*
+• `get` **dataStore**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[iam](servercomponent.md#iam)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:24
+`any`
 
-**Returns:** *any*
+#### Inherited from
 
-___
+ServerComponent.dataStore
 
-###  listener
+#### Defined in
 
-• **get listener**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[listener](servercomponent.md#listener)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:22
-
-**Returns:** *any*
+[server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L20)
 
 ___
 
-###  logger
+### definitions
 
-• **get logger**(): *any*
+• `get` **definitions**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[logger](servercomponent.md#logger)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:15
+`any`
 
-**Returns:** *any*
+#### Inherited from
+
+ServerComponent.definitions
+
+#### Defined in
+
+[server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L21)
+
+___
+
+### engine
+
+• `get` **engine**(): [`IEngine`](../interfaces/IEngine.md)
+
+#### Returns
+
+[`IEngine`](../interfaces/IEngine.md)
+
+#### Inherited from
+
+ServerComponent.engine
+
+#### Defined in
+
+[server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L19)
+
+___
+
+### listener
+
+• `get` **listener**(): `any`
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+ServerComponent.listener
+
+#### Defined in
+
+[server/ServerComponent.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L22)
+
+___
+
+### logger
+
+• `get` **logger**(): `any`
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+ServerComponent.logger
+
+#### Defined in
+
+[server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L15)
 
 ## Methods
 
-###  checkTimers
+### checkTimers
 
-▸ **checkTimers**(`duration`: number): *Promise‹void›*
+▸ **checkTimers**(`duration?`): `Promise`\<`void`\>
 
-Defined in bpmnServer/src/server/Cron.ts:28
+#### Parameters
 
-**Parameters:**
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `duration` | `number` | `0` |
 
-Name | Type | Default |
------- | ------ | ------ |
-`duration` | number | 0 |
+#### Returns
 
-**Returns:** *Promise‹void›*
+`Promise`\<`void`\>
 
-___
+#### Implementation of
 
-###  start
+[ICron](../interfaces/ICron.md).[checkTimers](../interfaces/ICron.md#checktimers)
 
-▸ **start**(): *Promise‹void›*
+#### Defined in
 
-*Implementation of [ICron](../interfaces/icron.md)*
-
-Defined in bpmnServer/src/server/Cron.ts:31
-
-**Returns:** *Promise‹void›*
+[server/Cron.ts:26](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/Cron.ts#L26)
 
 ___
 
-###  startTimers
+### start
 
-▸ **startTimers**(): *Promise‹void›*
+▸ **start**(): `Promise`\<`void`\>
 
-*Implementation of [ICron](../interfaces/icron.md)*
+#### Returns
 
-Defined in bpmnServer/src/server/Cron.ts:34
+`Promise`\<`void`\>
 
-**Returns:** *Promise‹void›*
+#### Implementation of
 
-___
+[ICron](../interfaces/ICron.md).[start](../interfaces/ICron.md#start)
 
-### `Static` checkCron
+#### Defined in
 
-▸ **checkCron**(`expression`: any, `referenceDateTime`: any): *number*
-
-Defined in bpmnServer/src/server/Cron.ts:133
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`expression` | any |
-`referenceDateTime` | any |
-
-**Returns:** *number*
+[server/Cron.ts:29](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/Cron.ts#L29)
 
 ___
 
-### `Static` timeDue
+### startTimers
 
-▸ **timeDue**(`expression`: any, `referenceDateTime`: any): *any*
+▸ **startTimers**(): `Promise`\<`void`\>
 
-Defined in bpmnServer/src/server/Cron.ts:152
+#### Returns
 
-**Parameters:**
+`Promise`\<`void`\>
 
-Name | Type |
------- | ------ |
-`expression` | any |
-`referenceDateTime` | any |
+#### Implementation of
 
-**Returns:** *any*
+[ICron](../interfaces/ICron.md).[startTimers](../interfaces/ICron.md#starttimers)
 
-___
+#### Defined in
 
-### `Static` timerEnded
-
-▸ **timerEnded**(`item`: any): *void*
-
-Defined in bpmnServer/src/server/Cron.ts:24
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | any |
-
-**Returns:** *void*
+[server/Cron.ts:32](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/Cron.ts#L32)
 
 ___
 
-### `Static` timerScheduled
+### checkCron
 
-▸ **timerScheduled**(`timeDue`: any): *void*
+▸ **checkCron**(`expression`, `referenceDateTime`): `number`
 
-Defined in bpmnServer/src/server/Cron.ts:21
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `expression` | `any` |
+| `referenceDateTime` | `any` |
 
-Name | Type |
------- | ------ |
-`timeDue` | any |
+#### Returns
 
-**Returns:** *void*
+`number`
+
+#### Defined in
+
+[server/Cron.ts:128](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/Cron.ts#L128)
+
+___
+
+### timeDue
+
+▸ **timeDue**(`expression`, `referenceDateTime`): `any`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `expression` | `any` |
+| `referenceDateTime` | `any` |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[server/Cron.ts:147](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/Cron.ts#L147)
+
+___
+
+### timerEnded
+
+▸ **timerEnded**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | `any` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[server/Cron.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/Cron.ts#L22)
+
+___
+
+### timerScheduled
+
+▸ **timerScheduled**(`timeDue`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `timeDue` | `any` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[server/Cron.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/Cron.ts#L19)

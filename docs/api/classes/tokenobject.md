@@ -1,84 +1,110 @@
-[bpmn-server](../README.md) › [TokenObject](tokenobject.md)
+[bpmn-server](../README.md) / TokenObject
 
 # Class: TokenObject
 
-## Hierarchy
+## Table of contents
 
-* **TokenObject**
+### Constructors
 
-## Index
+- [constructor](TokenObject.md#constructor)
 
 ### Properties
 
-* [branchNodeId](tokenobject.md#branchnodeid)
-* [currentNodeId](tokenobject.md#currentnodeid)
-* [dataPath](tokenobject.md#datapath)
-* [id](tokenobject.md#id)
-* [loopId](tokenobject.md#loopid)
-* [parentTokenId](tokenobject.md#parenttokenid)
-* [startNodeId](tokenobject.md#startnodeid)
-* [status](tokenobject.md#status)
+- [branchNodeId](TokenObject.md#branchnodeid)
+- [currentNodeId](TokenObject.md#currentnodeid)
+- [dataPath](TokenObject.md#datapath)
+- [id](TokenObject.md#id)
+- [loopId](TokenObject.md#loopid)
+- [parentTokenId](TokenObject.md#parenttokenid)
+- [startNodeId](TokenObject.md#startnodeid)
+- [status](TokenObject.md#status)
+
+## Constructors
+
+### constructor
+
+• **new TokenObject**(): [`TokenObject`](TokenObject.md)
+
+#### Returns
+
+[`TokenObject`](TokenObject.md)
 
 ## Properties
 
-###  branchNodeId
+### branchNodeId
 
-• **branchNodeId**: *any*
+• **branchNodeId**: `any`
 
-Defined in bpmnServer/src/engine/Model.ts:62
+#### Defined in
 
-___
-
-###  currentNodeId
-
-• **currentNodeId**: *any*
-
-Defined in bpmnServer/src/engine/Model.ts:64
+[engine/Model.ts:71](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L71)
 
 ___
 
-###  dataPath
+### currentNodeId
 
-• **dataPath**: *any*
+• **currentNodeId**: `any`
 
-Defined in bpmnServer/src/engine/Model.ts:59
+#### Defined in
 
-___
-
-###  id
-
-• **id**: *any*
-
-Defined in bpmnServer/src/engine/Model.ts:57
+[engine/Model.ts:73](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L73)
 
 ___
 
-###  loopId
+### dataPath
 
-• **loopId**: *any*
+• **dataPath**: `any`
 
-Defined in bpmnServer/src/engine/Model.ts:60
+#### Defined in
 
-___
-
-###  parentTokenId
-
-• **parentTokenId**: *any*
-
-Defined in bpmnServer/src/engine/Model.ts:61
+[engine/Model.ts:68](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L68)
 
 ___
 
-###  startNodeId
+### id
 
-• **startNodeId**: *any*
+• **id**: `any`
 
-Defined in bpmnServer/src/engine/Model.ts:63
+#### Defined in
+
+[engine/Model.ts:66](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L66)
 
 ___
 
-###  status
+### loopId
 
-• **status**: *any*
+• **loopId**: `any`
 
-Defined in bpmnServer/src/engine/Model.ts:58
+#### Defined in
+
+[engine/Model.ts:69](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L69)
+
+___
+
+### parentTokenId
+
+• **parentTokenId**: `any`
+
+#### Defined in
+
+[engine/Model.ts:70](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L70)
+
+___
+
+### startNodeId
+
+• **startNodeId**: `any`
+
+#### Defined in
+
+[engine/Model.ts:72](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L72)
+
+___
+
+### status
+
+• **status**: `any`
+
+#### Defined in
+
+[engine/Model.ts:67](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L67)

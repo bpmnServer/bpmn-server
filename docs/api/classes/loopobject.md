@@ -1,48 +1,66 @@
-[bpmn-server](../README.md) › [LoopObject](loopobject.md)
+[bpmn-server](../README.md) / LoopObject
 
 # Class: LoopObject
 
-## Hierarchy
+## Table of contents
 
-* **LoopObject**
+### Constructors
 
-## Index
+- [constructor](LoopObject.md#constructor)
 
 ### Properties
 
-* [dataPath](loopobject.md#datapath)
-* [nodeId](loopobject.md#nodeid)
-* [ownerTokenId](loopobject.md#ownertokenid)
-* [sequence](loopobject.md#sequence)
+- [dataPath](LoopObject.md#datapath)
+- [nodeId](LoopObject.md#nodeid)
+- [ownerTokenId](LoopObject.md#ownertokenid)
+- [sequence](LoopObject.md#sequence)
+
+## Constructors
+
+### constructor
+
+• **new LoopObject**(): [`LoopObject`](LoopObject.md)
+
+#### Returns
+
+[`LoopObject`](LoopObject.md)
 
 ## Properties
 
-###  dataPath
+### dataPath
 
-• **dataPath**: *any*
+• **dataPath**: `any`
 
-Defined in bpmnServer/src/engine/Model.ts:70
+#### Defined in
 
-___
-
-###  nodeId
-
-• **nodeId**: *any*
-
-Defined in bpmnServer/src/engine/Model.ts:68
+[engine/Model.ts:79](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L79)
 
 ___
 
-###  ownerTokenId
+### nodeId
 
-• **ownerTokenId**: *any*
+• **nodeId**: `any`
 
-Defined in bpmnServer/src/engine/Model.ts:69
+#### Defined in
+
+[engine/Model.ts:77](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L77)
 
 ___
 
-###  sequence
+### ownerTokenId
 
-• **sequence**: *any*
+• **ownerTokenId**: `any`
 
-Defined in bpmnServer/src/engine/Model.ts:71
+#### Defined in
+
+[engine/Model.ts:78](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L78)
+
+___
+
+### sequence
+
+• **sequence**: `any`
+
+#### Defined in
+
+[engine/Model.ts:80](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L80)

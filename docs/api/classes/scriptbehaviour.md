@@ -1,281 +1,360 @@
-[bpmn-server](../README.md) › [ScriptBehaviour](scriptbehaviour.md)
+[bpmn-server](../README.md) / ScriptBehaviour
 
 # Class: ScriptBehaviour
 
+Behaviour
+     ioSpecification
+     timer 
+     message
+     signal
+
+  each behaviour is a class
+     it scans def and insert itself to perform actions as required
+
 ## Hierarchy
 
-* [Behaviour](behaviour.md)
+- [`Behaviour`](Behaviour.md)
 
-  ↳ **ScriptBehaviour**
+  ↳ **`ScriptBehaviour`**
 
-## Implements
-
-* [IBehaviour](../interfaces/ibehaviour.md)
-
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](scriptbehaviour.md#constructor)
+- [constructor](ScriptBehaviour.md#constructor)
 
 ### Properties
 
-* [definition](scriptbehaviour.md#definition)
-* [event](scriptbehaviour.md#event)
-* [node](scriptbehaviour.md#node)
-* [script](scriptbehaviour.md#script)
+- [definition](ScriptBehaviour.md#definition)
+- [node](ScriptBehaviour.md#node)
+- [scripts](ScriptBehaviour.md#scripts)
 
 ### Methods
 
-* [describe](scriptbehaviour.md#describe)
-* [end](scriptbehaviour.md#end)
-* [executeScript](scriptbehaviour.md#executescript)
-* [getItemAttributes](scriptbehaviour.md#getitemattributes)
-* [getNodeAttributes](scriptbehaviour.md#getnodeattributes)
-* [init](scriptbehaviour.md#init)
-* [restored](scriptbehaviour.md#restored)
-* [resume](scriptbehaviour.md#resume)
-* [run](scriptbehaviour.md#run)
-* [start](scriptbehaviour.md#start)
+- [describe](ScriptBehaviour.md#describe)
+- [end](ScriptBehaviour.md#end)
+- [enter](ScriptBehaviour.md#enter)
+- [exit](ScriptBehaviour.md#exit)
+- [getItemAttributes](ScriptBehaviour.md#getitemattributes)
+- [getNodeAttributes](ScriptBehaviour.md#getnodeattributes)
+- [init](ScriptBehaviour.md#init)
+- [restored](ScriptBehaviour.md#restored)
+- [resume](ScriptBehaviour.md#resume)
+- [run](ScriptBehaviour.md#run)
+- [start](ScriptBehaviour.md#start)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new ScriptBehaviour**(`node`: [Node](node.md), `definition`: any): *[ScriptBehaviour](scriptbehaviour.md)*
+• **new ScriptBehaviour**(`node`, `definition`): [`ScriptBehaviour`](ScriptBehaviour.md)
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[constructor](scriptbehaviour.md#constructor)*
+#### Parameters
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:39
+| Name | Type |
+| :------ | :------ |
+| `node` | [`Node`](Node.md) |
+| `definition` | `any` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`node` | [Node](node.md) |
-`definition` | any |
+[`ScriptBehaviour`](ScriptBehaviour.md)
 
-**Returns:** *[ScriptBehaviour](scriptbehaviour.md)*
+#### Inherited from
+
+[Behaviour](Behaviour.md).[constructor](Behaviour.md#constructor)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:40](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L40)
 
 ## Properties
 
-###  definition
+### definition
 
-• **definition**: *any*
+• **definition**: `any`
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md).[definition](../interfaces/ibehaviour.md#definition)*
+#### Inherited from
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[definition](scriptbehaviour.md#definition)*
+[Behaviour](Behaviour.md).[definition](Behaviour.md#definition)
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:39
+#### Defined in
 
-___
-
-###  event
-
-• **event**: *any*
-
-Defined in bpmnServer/src/elements/behaviours/Script.ts:12
+[elements/behaviours/Behaviour.ts:39](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L39)
 
 ___
 
-###  node
+### node
 
-• **node**: *[Node](node.md)*
+• **node**: [`Node`](Node.md)
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md).[node](../interfaces/ibehaviour.md#node)*
+#### Inherited from
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[node](scriptbehaviour.md#node)*
+[Behaviour](Behaviour.md).[node](Behaviour.md#node)
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:38
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:38](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L38)
 
 ___
 
-###  script
+### scripts
 
-• **script**: *any*
+• **scripts**: `string`[]
 
-Defined in bpmnServer/src/elements/behaviours/Script.ts:13
+#### Defined in
+
+[elements/behaviours/Script.ts:30](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Script.ts#L30)
 
 ## Methods
 
-###  describe
+### describe
 
-▸ **describe**(): *any[]*
+▸ **describe**(): `any`[]
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md)*
+#### Returns
 
-*Overrides [Behaviour](behaviour.md).[describe](behaviour.md#describe)*
+`any`[]
 
-Defined in bpmnServer/src/elements/behaviours/Script.ts:42
+#### Overrides
 
-**Returns:** *any[]*
+[Behaviour](Behaviour.md).[describe](Behaviour.md#describe)
 
-___
+#### Defined in
 
-###  end
-
-▸ **end**(`item`: [Item](item.md)): *void*
-
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md)*
-
-*Overrides [Behaviour](behaviour.md).[end](behaviour.md#end)*
-
-Defined in bpmnServer/src/elements/behaviours/Script.ts:30
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-
-**Returns:** *void*
+[elements/behaviours/Script.ts:63](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Script.ts#L63)
 
 ___
 
-###  executeScript
+### end
 
-▸ **executeScript**(`item`: any): *void*
+▸ **end**(`item`): `void`
 
-Defined in bpmnServer/src/elements/behaviours/Script.ts:37
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-Name | Type |
------- | ------ |
-`item` | any |
+#### Returns
 
-**Returns:** *void*
+`void`
 
-___
+#### Inherited from
 
-###  getItemAttributes
+[Behaviour](Behaviour.md).[end](Behaviour.md#end)
 
-▸ **getItemAttributes**(`item`: [Item](item.md), `attributes`: any[]): *void*
+#### Defined in
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md)*
-
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[getItemAttributes](scriptbehaviour.md#getitemattributes)*
-
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:53
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-`attributes` | any[] |
-
-**Returns:** *void*
+[elements/behaviours/Behaviour.ts:51](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L51)
 
 ___
 
-###  getNodeAttributes
+### enter
 
-▸ **getNodeAttributes**(`attributes`: any[]): *void*
+▸ **enter**(`item`): `void`
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md)*
+#### Parameters
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[getNodeAttributes](scriptbehaviour.md#getnodeattributes)*
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:52
+#### Returns
 
-**Parameters:**
+`void`
 
-Name | Type |
------- | ------ |
-`attributes` | any[] |
+#### Inherited from
 
-**Returns:** *void*
+[Behaviour](Behaviour.md).[enter](Behaviour.md#enter)
 
-___
+#### Defined in
 
-###  init
-
-▸ **init**(): *void*
-
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md)*
-
-*Overrides [Behaviour](behaviour.md).[init](behaviour.md#init)*
-
-Defined in bpmnServer/src/elements/behaviours/Script.ts:14
-
-**Returns:** *void*
+[elements/behaviours/Behaviour.ts:48](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L48)
 
 ___
 
-###  restored
+### exit
 
-▸ **restored**(`item`: any): *void*
+▸ **exit**(`item`): `void`
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[restored](scriptbehaviour.md#restored)*
+#### Parameters
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:45
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`item` | any |
+`void`
 
-**Returns:** *void*
+#### Inherited from
 
-___
+[Behaviour](Behaviour.md).[exit](Behaviour.md#exit)
 
-###  resume
+#### Defined in
 
-▸ **resume**(`item`: [Item](item.md)): *void*
-
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md)*
-
-*Overrides [Behaviour](behaviour.md).[resume](behaviour.md#resume)*
-
-Defined in bpmnServer/src/elements/behaviours/Script.ts:35
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-
-**Returns:** *void*
+[elements/behaviours/Behaviour.ts:52](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L52)
 
 ___
 
-###  run
+### getItemAttributes
 
-▸ **run**(`item`: [Item](item.md)): *void*
+▸ **getItemAttributes**(`item`, `attributes`): `void`
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md)*
+#### Parameters
 
-*Overrides [Behaviour](behaviour.md).[run](behaviour.md#run)*
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+| `attributes` | `any`[] |
 
-Defined in bpmnServer/src/elements/behaviours/Script.ts:25
+#### Returns
 
-**Parameters:**
+`void`
 
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
+#### Inherited from
 
-**Returns:** *void*
+[Behaviour](Behaviour.md).[getItemAttributes](Behaviour.md#getitemattributes)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:55](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L55)
 
 ___
 
-###  start
+### getNodeAttributes
 
-▸ **start**(`item`: [Item](item.md)): *void*
+▸ **getNodeAttributes**(`attributes`): `void`
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md)*
+#### Parameters
 
-*Overrides [Behaviour](behaviour.md).[start](behaviour.md#start)*
+| Name | Type |
+| :------ | :------ |
+| `attributes` | `any`[] |
 
-Defined in bpmnServer/src/elements/behaviours/Script.ts:20
+#### Returns
 
-**Parameters:**
+`void`
 
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
+#### Inherited from
 
-**Returns:** *void*
+[Behaviour](Behaviour.md).[getNodeAttributes](Behaviour.md#getnodeattributes)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L54)
+
+___
+
+### init
+
+▸ **init**(): `void`
+
+#### Returns
+
+`void`
+
+#### Overrides
+
+[Behaviour](Behaviour.md).[init](Behaviour.md#init)
+
+#### Defined in
+
+[elements/behaviours/Script.ts:31](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Script.ts#L31)
+
+___
+
+### restored
+
+▸ **restored**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | `any` |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Behaviour](Behaviour.md).[restored](Behaviour.md#restored)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:45](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L45)
+
+___
+
+### resume
+
+▸ **resume**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Behaviour](Behaviour.md).[resume](Behaviour.md#resume)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:53](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L53)
+
+___
+
+### run
+
+▸ **run**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Behaviour](Behaviour.md).[run](Behaviour.md#run)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:50](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L50)
+
+___
+
+### start
+
+▸ **start**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Behaviour](Behaviour.md).[start](Behaviour.md#start)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:49](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L49)

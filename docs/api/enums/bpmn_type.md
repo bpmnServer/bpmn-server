@@ -1,179 +1,217 @@
-[bpmn-server](../README.md) › [BPMN_TYPE](bpmn_type.md)
+[bpmn-server](../README.md) / BPMN\_TYPE
 
-# Enumeration: BPMN_TYPE
+# Enumeration: BPMN\_TYPE
 
-## Index
+## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
-* [BoundaryEvent](bpmn_type.md#boundaryevent)
-* [BusinessRuleTask](bpmn_type.md#businessruletask)
-* [CallActivity](bpmn_type.md#callactivity)
-* [EndEvent](bpmn_type.md#endevent)
-* [EventBasedGateway](bpmn_type.md#eventbasedgateway)
-* [ExclusiveGateway](bpmn_type.md#exclusivegateway)
-* [InclusiveGateway](bpmn_type.md#inclusivegateway)
-* [IntermediateCatchEvent](bpmn_type.md#intermediatecatchevent)
-* [IntermediateThrowEvent](bpmn_type.md#intermediatethrowevent)
-* [MessageFlow](bpmn_type.md#messageflow)
-* [ParallelGateway](bpmn_type.md#parallelgateway)
-* [ReceiveTask](bpmn_type.md#receivetask)
-* [ScriptTask](bpmn_type.md#scripttask)
-* [SendTask](bpmn_type.md#sendtask)
-* [SequenceFlow](bpmn_type.md#sequenceflow)
-* [ServiceTask](bpmn_type.md#servicetask)
-* [StartEvent](bpmn_type.md#startevent)
-* [SubProcess](bpmn_type.md#subprocess)
-* [UserTask](bpmn_type.md#usertask)
+- [BoundaryEvent](BPMN_TYPE.md#boundaryevent)
+- [BusinessRuleTask](BPMN_TYPE.md#businessruletask)
+- [CallActivity](BPMN_TYPE.md#callactivity)
+- [EndEvent](BPMN_TYPE.md#endevent)
+- [EventBasedGateway](BPMN_TYPE.md#eventbasedgateway)
+- [ExclusiveGateway](BPMN_TYPE.md#exclusivegateway)
+- [InclusiveGateway](BPMN_TYPE.md#inclusivegateway)
+- [IntermediateCatchEvent](BPMN_TYPE.md#intermediatecatchevent)
+- [IntermediateThrowEvent](BPMN_TYPE.md#intermediatethrowevent)
+- [MessageFlow](BPMN_TYPE.md#messageflow)
+- [ParallelGateway](BPMN_TYPE.md#parallelgateway)
+- [ReceiveTask](BPMN_TYPE.md#receivetask)
+- [ScriptTask](BPMN_TYPE.md#scripttask)
+- [SendTask](BPMN_TYPE.md#sendtask)
+- [SequenceFlow](BPMN_TYPE.md#sequenceflow)
+- [ServiceTask](BPMN_TYPE.md#servicetask)
+- [StartEvent](BPMN_TYPE.md#startevent)
+- [SubProcess](BPMN_TYPE.md#subprocess)
+- [UserTask](BPMN_TYPE.md#usertask)
 
-## Enumeration members
+## Enumeration Members
 
-###  BoundaryEvent
+### BoundaryEvent
 
-• **BoundaryEvent**: = "bpmn:BoundaryEvent"
+• **BoundaryEvent** = ``"bpmn:BoundaryEvent"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:14
+#### Defined in
 
-___
-
-###  BusinessRuleTask
-
-• **BusinessRuleTask**: = "bpmn:BusinessRuleTask"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:8
+[interfaces/Enums.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L14)
 
 ___
 
-###  CallActivity
+### BusinessRuleTask
 
-• **CallActivity**: = "bpmn:CallActivity"
+• **BusinessRuleTask** = ``"bpmn:BusinessRuleTask"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:21
+#### Defined in
 
-___
-
-###  EndEvent
-
-• **EndEvent**: = "bpmn:EndEvent"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:18
+[interfaces/Enums.ts:8](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L8)
 
 ___
 
-###  EventBasedGateway
+### CallActivity
 
-• **EventBasedGateway**: = "bpmn:EventBasedGateway"
+• **CallActivity** = ``"bpmn:CallActivity"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:11
+#### Defined in
 
-___
-
-###  ExclusiveGateway
-
-• **ExclusiveGateway**: = "bpmn:ExclusiveGateway"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:13
+[interfaces/Enums.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L21)
 
 ___
 
-###  InclusiveGateway
+### EndEvent
 
-• **InclusiveGateway**: = "bpmn:InclusiveGateway"
+• **EndEvent** = ``"bpmn:EndEvent"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:12
+#### Defined in
 
-___
-
-###  IntermediateCatchEvent
-
-• **IntermediateCatchEvent**: = "bpmn:IntermediateCatchEvent"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:16
+[interfaces/Enums.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L18)
 
 ___
 
-###  IntermediateThrowEvent
+### EventBasedGateway
 
-• **IntermediateThrowEvent**: = "bpmn:IntermediateThrowEvent"
+• **EventBasedGateway** = ``"bpmn:EventBasedGateway"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:17
+#### Defined in
 
-___
-
-###  MessageFlow
-
-• **MessageFlow**: = "bpmn:MessageFlow"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:20
+[interfaces/Enums.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L11)
 
 ___
 
-###  ParallelGateway
+### ExclusiveGateway
 
-• **ParallelGateway**: = "bpmn:ParallelGateway"
+• **ExclusiveGateway** = ``"bpmn:ExclusiveGateway"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:10
+#### Defined in
 
-___
-
-###  ReceiveTask
-
-• **ReceiveTask**: = "bpmn:ReceiveTask"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:7
+[interfaces/Enums.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L13)
 
 ___
 
-###  ScriptTask
+### InclusiveGateway
 
-• **ScriptTask**: = "bpmn:ScriptTask"
+• **InclusiveGateway** = ``"bpmn:InclusiveGateway"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:4
+#### Defined in
 
-___
-
-###  SendTask
-
-• **SendTask**: = "bpmn:SendTask"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:6
+[interfaces/Enums.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L12)
 
 ___
 
-###  SequenceFlow
+### IntermediateCatchEvent
 
-• **SequenceFlow**: = "bpmn:SequenceFlow"
+• **IntermediateCatchEvent** = ``"bpmn:IntermediateCatchEvent"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:19
+#### Defined in
 
-___
-
-###  ServiceTask
-
-• **ServiceTask**: = "bpmn:ServiceTask"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:5
+[interfaces/Enums.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L16)
 
 ___
 
-###  StartEvent
+### IntermediateThrowEvent
 
-• **StartEvent**: = "bpmn:StartEvent"
+• **IntermediateThrowEvent** = ``"bpmn:IntermediateThrowEvent"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:15
+#### Defined in
 
-___
-
-###  SubProcess
-
-• **SubProcess**: = "bpmn:SubProces"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:9
+[interfaces/Enums.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L17)
 
 ___
 
-###  UserTask
+### MessageFlow
 
-• **UserTask**: = "bpmn:UserTask"
+• **MessageFlow** = ``"bpmn:MessageFlow"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:3
+#### Defined in
+
+[interfaces/Enums.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L20)
+
+___
+
+### ParallelGateway
+
+• **ParallelGateway** = ``"bpmn:ParallelGateway"``
+
+#### Defined in
+
+[interfaces/Enums.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L10)
+
+___
+
+### ReceiveTask
+
+• **ReceiveTask** = ``"bpmn:ReceiveTask"``
+
+#### Defined in
+
+[interfaces/Enums.ts:7](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L7)
+
+___
+
+### ScriptTask
+
+• **ScriptTask** = ``"bpmn:ScriptTask"``
+
+#### Defined in
+
+[interfaces/Enums.ts:4](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L4)
+
+___
+
+### SendTask
+
+• **SendTask** = ``"bpmn:SendTask"``
+
+#### Defined in
+
+[interfaces/Enums.ts:6](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L6)
+
+___
+
+### SequenceFlow
+
+• **SequenceFlow** = ``"bpmn:SequenceFlow"``
+
+#### Defined in
+
+[interfaces/Enums.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L19)
+
+___
+
+### ServiceTask
+
+• **ServiceTask** = ``"bpmn:ServiceTask"``
+
+#### Defined in
+
+[interfaces/Enums.ts:5](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L5)
+
+___
+
+### StartEvent
+
+• **StartEvent** = ``"bpmn:StartEvent"``
+
+#### Defined in
+
+[interfaces/Enums.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L15)
+
+___
+
+### SubProcess
+
+• **SubProcess** = ``"bpmn:SubProcess"``
+
+#### Defined in
+
+[interfaces/Enums.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L9)
+
+___
+
+### UserTask
+
+• **UserTask** = ``"bpmn:UserTask"``
+
+#### Defined in
+
+[interfaces/Enums.ts:3](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L3)

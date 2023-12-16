@@ -1,62 +1,74 @@
-[bpmn-server](../README.md) › [TOKEN_TYPE](token_type.md)
+[bpmn-server](../README.md) / TOKEN\_TYPE
 
-# Enumeration: TOKEN_TYPE
+# Enumeration: TOKEN\_TYPE
 
-## Index
+## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
-* [BoundaryEvent](token_type.md#boundaryevent)
-* [Diverge](token_type.md#diverge)
-* [EventSubProcess](token_type.md#eventsubprocess)
-* [Instance](token_type.md#instance)
-* [Primary](token_type.md#primary)
-* [SubProcess](token_type.md#subprocess)
+- [BoundaryEvent](TOKEN_TYPE.md#boundaryevent)
+- [Diverge](TOKEN_TYPE.md#diverge)
+- [EventSubProcess](TOKEN_TYPE.md#eventsubprocess)
+- [Instance](TOKEN_TYPE.md#instance)
+- [Primary](TOKEN_TYPE.md#primary)
+- [SubProcess](TOKEN_TYPE.md#subprocess)
 
-## Enumeration members
+## Enumeration Members
 
-###  BoundaryEvent
+### BoundaryEvent
 
-• **BoundaryEvent**: = "BoundaryEvent"
+• **BoundaryEvent** = ``"BoundaryEvent"``
 
-Defined in bpmnServer/src/engine/Token.ts:54
+#### Defined in
 
-___
-
-###  Diverge
-
-• **Diverge**: = "Diverge"
-
-Defined in bpmnServer/src/engine/Token.ts:53
+[engine/Token.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L54)
 
 ___
 
-###  EventSubProcess
+### Diverge
 
-• **EventSubProcess**: = "EventSubProces"
+• **Diverge** = ``"Diverge"``
 
-Defined in bpmnServer/src/engine/Token.ts:54
+#### Defined in
 
-___
-
-###  Instance
-
-• **Instance**: = "Instance"
-
-Defined in bpmnServer/src/engine/Token.ts:53
+[engine/Token.ts:53](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L53)
 
 ___
 
-###  Primary
+### EventSubProcess
 
-• **Primary**: = "Primary"
+• **EventSubProcess** = ``"EventSubProces"``
 
-Defined in bpmnServer/src/engine/Token.ts:53
+#### Defined in
+
+[engine/Token.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L54)
 
 ___
 
-###  SubProcess
+### Instance
 
-• **SubProcess**: = "SubProcess"
+• **Instance** = ``"Instance"``
 
-Defined in bpmnServer/src/engine/Token.ts:53
+#### Defined in
+
+[engine/Token.ts:53](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L53)
+
+___
+
+### Primary
+
+• **Primary** = ``"Primary"``
+
+#### Defined in
+
+[engine/Token.ts:53](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L53)
+
+___
+
+### SubProcess
+
+• **SubProcess** = ``"SubProcess"``
+
+#### Defined in
+
+[engine/Token.ts:53](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L53)

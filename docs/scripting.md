@@ -62,12 +62,14 @@ No syntax required for these scripts
     }
 ```
 ### Execution Listeners
-There are for all node types
+There are for all node types and processes
 
 | event        |       Description        |
 |-------------  |-------------   |
 | start   |   is fired at the start of item execution|
 | end   |	  is fired at the end of item execution|
+
+Also at the process level, start and end are triggered
 
 ### Task Listeners
 
@@ -78,8 +80,8 @@ There are for User Tasks only
 | assign   |   invoked after `assign` command is issued |
 | validate  |invoked after `assign` or `invoke`  command is issued|
 
-## Scripts Scope and variables
-Both Expressions and Listeners above have the following variables
+## Item Scripts Scope and variables
+Items Expressions and Listeners have the following variables
 
 | Variable        |       Description        |
 |-------------  |-------------   |
@@ -117,6 +119,16 @@ Both Expressions and Listeners above have the following variables
     options;
     operation;
 ```
+## Execution Scripts Scope and variables
+Items Expressions and Listeners have the following variables
+
+| Variable        |       Description        |
+|-------------  |-------------   |
+| this   |	refers to execution object |
+|appDelegate| reference to appDelegate object	|
+|appServices| reference to appServices object	|
+|appUtils|	   reference to appUtils object|
+
 
 ### Workflow Listener
 

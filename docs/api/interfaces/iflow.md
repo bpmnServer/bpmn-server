@@ -1,197 +1,269 @@
-[bpmn-server](../README.md) › [IFlow](iflow.md)
+[bpmn-server](../README.md) / IFlow
 
 # Interface: IFlow
 
 ## Hierarchy
 
-* [IElement](ielement.md)
+- [`IElement`](IElement.md)
 
-  ↳ **IFlow**
+  ↳ **`IFlow`**
 
 ## Implemented by
 
-* [Flow](../classes/flow.md)
-* [MessageFlow](../classes/messageflow.md)
+- [`Flow`](../classes/Flow.md)
 
-## Index
+## Table of contents
 
 ### Properties
 
-* [behaviours](iflow.md#behaviours)
-* [id](iflow.md#id)
-* [name](iflow.md#name)
-* [type](iflow.md#type)
+- [behaviours](IFlow.md#behaviours)
+- [id](IFlow.md#id)
+- [lane](IFlow.md#lane)
+- [name](IFlow.md#name)
+- [type](IFlow.md#type)
 
 ### Methods
 
-* [addBehaviour](iflow.md#addbehaviour)
-* [continue](iflow.md#continue)
-* [describe](iflow.md#describe)
-* [getBehaviour](iflow.md#getbehaviour)
-* [hasBehaviour](iflow.md#hasbehaviour)
-* [restored](iflow.md#restored)
-* [resume](iflow.md#resume)
+- [addBehaviour](IFlow.md#addbehaviour)
+- [continue](IFlow.md#continue)
+- [describe](IFlow.md#describe)
+- [getBehaviour](IFlow.md#getbehaviour)
+- [hasBehaviour](IFlow.md#hasbehaviour)
+- [restored](IFlow.md#restored)
+- [resume](IFlow.md#resume)
 
 ## Properties
 
-###  behaviours
+### behaviours
 
-• **behaviours**: *Map‹any, any›*
+• **behaviours**: `Map`\<`any`, `any`\>
 
-*Inherited from [IElement](ielement.md).[behaviours](ielement.md#behaviours)*
+#### Inherited from
 
-Defined in bpmnServer/src/interfaces/elements.ts:24
+[IElement](IElement.md).[behaviours](IElement.md#behaviours)
 
-___
+#### Defined in
 
-###  id
-
-• **id**: *any*
-
-*Inherited from [IElement](ielement.md).[id](ielement.md#id)*
-
-Defined in bpmnServer/src/interfaces/elements.ts:21
+[interfaces/elements.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L25)
 
 ___
 
-###  name
+### id
 
-• **name**: *any*
+• **id**: `any`
 
-*Inherited from [IElement](ielement.md).[name](ielement.md#name)*
+#### Inherited from
 
-Defined in bpmnServer/src/interfaces/elements.ts:23
+[IElement](IElement.md).[id](IElement.md#id)
+
+#### Defined in
+
+[interfaces/elements.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L21)
 
 ___
 
-###  type
+### lane
 
-• **type**: *any*
+• **lane**: `any`
 
-*Inherited from [IElement](ielement.md).[type](ielement.md#type)*
+#### Inherited from
 
-Defined in bpmnServer/src/interfaces/elements.ts:22
+[IElement](IElement.md).[lane](IElement.md#lane)
+
+#### Defined in
+
+[interfaces/elements.ts:24](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L24)
+
+___
+
+### name
+
+• **name**: `any`
+
+#### Inherited from
+
+[IElement](IElement.md).[name](IElement.md#name)
+
+#### Defined in
+
+[interfaces/elements.ts:23](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L23)
+
+___
+
+### type
+
+• **type**: `any`
+
+#### Inherited from
+
+[IElement](IElement.md).[type](IElement.md#type)
+
+#### Defined in
+
+[interfaces/elements.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L22)
 
 ## Methods
 
-###  addBehaviour
+### addBehaviour
 
-▸ **addBehaviour**(`nane`: any, `behavriour`: any): *void*
+▸ **addBehaviour**(`nane`, `behavriour`): `void`
 
-*Inherited from [IElement](ielement.md).[addBehaviour](ielement.md#addbehaviour)*
+#### Parameters
 
-Defined in bpmnServer/src/interfaces/elements.ts:35
+| Name | Type |
+| :------ | :------ |
+| `nane` | `any` |
+| `behavriour` | `any` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`nane` | any |
-`behavriour` | any |
+`void`
 
-**Returns:** *void*
+#### Inherited from
 
-___
+[IElement](IElement.md).[addBehaviour](IElement.md#addbehaviour)
 
-###  continue
+#### Defined in
 
-▸ **continue**(`item`: [IItem](iitem.md)): *void*
-
-*Inherited from [IElement](ielement.md).[continue](ielement.md#continue)*
-
-Defined in bpmnServer/src/interfaces/elements.ts:25
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [IItem](iitem.md) |
-
-**Returns:** *void*
+[interfaces/elements.ts:36](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L36)
 
 ___
 
-###  describe
+### continue
 
-▸ **describe**(): *string[][]*
+▸ **continue**(`item`): `void`
 
-*Inherited from [IElement](ielement.md).[describe](ielement.md#describe)*
+#### Parameters
 
-Defined in bpmnServer/src/interfaces/elements.ts:26
+| Name | Type |
+| :------ | :------ |
+| `item` | [`IItem`](IItem.md) |
 
-**Returns:** *string[][]*
+#### Returns
 
-___
+`void`
 
-###  getBehaviour
+#### Inherited from
 
-▸ **getBehaviour**(`name`: any): *any*
+[IElement](IElement.md).[continue](IElement.md#continue)
 
-*Inherited from [IElement](ielement.md).[getBehaviour](ielement.md#getbehaviour)*
+#### Defined in
 
-Defined in bpmnServer/src/interfaces/elements.ts:34
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`name` | any |
-
-**Returns:** *any*
+[interfaces/elements.ts:26](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L26)
 
 ___
 
-###  hasBehaviour
+### describe
 
-▸ **hasBehaviour**(`name`: any): *boolean*
+▸ **describe**(): `string`[][]
 
-*Inherited from [IElement](ielement.md).[hasBehaviour](ielement.md#hasbehaviour)*
+#### Returns
 
-Defined in bpmnServer/src/interfaces/elements.ts:33
+`string`[][]
+
+#### Inherited from
+
+[IElement](IElement.md).[describe](IElement.md#describe)
+
+#### Defined in
+
+[interfaces/elements.ts:27](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L27)
+
+___
+
+### getBehaviour
+
+▸ **getBehaviour**(`name`): `any`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+[IElement](IElement.md).[getBehaviour](IElement.md#getbehaviour)
+
+#### Defined in
+
+[interfaces/elements.ts:35](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L35)
+
+___
+
+### hasBehaviour
+
+▸ **hasBehaviour**(`name`): `boolean`
 
 respond by providing behaviour attributes beyond item and node information
  ex: timer due , input/outupt , fields
 
-**Parameters:**
+#### Parameters
 
-Name | Type |
------- | ------ |
-`name` | any |
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
 
-**Returns:** *boolean*
+#### Returns
 
-___
+`boolean`
 
-###  restored
+#### Inherited from
 
-▸ **restored**(`item`: [IItem](iitem.md)): *void*
+[IElement](IElement.md).[hasBehaviour](IElement.md#hasbehaviour)
 
-*Inherited from [IElement](ielement.md).[restored](ielement.md#restored)*
+#### Defined in
 
-Defined in bpmnServer/src/interfaces/elements.ts:27
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [IItem](iitem.md) |
-
-**Returns:** *void*
+[interfaces/elements.ts:34](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L34)
 
 ___
 
-###  resume
+### restored
 
-▸ **resume**(`item`: [IItem](iitem.md)): *void*
+▸ **restored**(`item`): `void`
 
-*Inherited from [IElement](ielement.md).[resume](ielement.md#resume)*
+#### Parameters
 
-Defined in bpmnServer/src/interfaces/elements.ts:28
+| Name | Type |
+| :------ | :------ |
+| `item` | [`IItem`](IItem.md) |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`item` | [IItem](iitem.md) |
+`void`
 
-**Returns:** *void*
+#### Inherited from
+
+[IElement](IElement.md).[restored](IElement.md#restored)
+
+#### Defined in
+
+[interfaces/elements.ts:28](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L28)
+
+___
+
+### resume
+
+▸ **resume**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`IItem`](IItem.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[IElement](IElement.md).[resume](IElement.md#resume)
+
+#### Defined in
+
+[interfaces/elements.ts:29](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L29)

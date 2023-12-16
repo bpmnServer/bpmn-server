@@ -1,303 +1,360 @@
-[bpmn-server](../README.md) › [CacheManager](cachemanager.md)
+[bpmn-server](../README.md) / CacheManager
 
 # Class: CacheManager
 
+super class for various objects that are part of the server
+
 ## Hierarchy
 
-* [ServerComponent](servercomponent.md)
+- [`ServerComponent`](ServerComponent.md)
 
-  ↳ **CacheManager**
+  ↳ **`CacheManager`**
 
 ## Implements
 
-* [ICacheManager](../interfaces/icachemanager.md)
+- [`ICacheManager`](../interfaces/ICacheManager.md)
 
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](cachemanager.md#constructor)
+- [constructor](CacheManager.md#constructor)
 
 ### Properties
 
-* [server](cachemanager.md#server)
-* [liveInstances](cachemanager.md#static-liveinstances)
+- [server](CacheManager.md#server)
+- [liveInstances](CacheManager.md#liveinstances)
 
 ### Accessors
 
-* [acl](cachemanager.md#acl)
-* [appDelegate](cachemanager.md#appdelegate)
-* [cache](cachemanager.md#cache)
-* [configuration](cachemanager.md#configuration)
-* [cron](cachemanager.md#cron)
-* [dataStore](cachemanager.md#datastore)
-* [definitions](cachemanager.md#definitions)
-* [engine](cachemanager.md#engine)
-* [iam](cachemanager.md#iam)
-* [listener](cachemanager.md#listener)
-* [logger](cachemanager.md#logger)
+- [appDelegate](CacheManager.md#appdelegate)
+- [cache](CacheManager.md#cache)
+- [configuration](CacheManager.md#configuration)
+- [cron](CacheManager.md#cron)
+- [dataStore](CacheManager.md#datastore)
+- [definitions](CacheManager.md#definitions)
+- [engine](CacheManager.md#engine)
+- [listener](CacheManager.md#listener)
+- [logger](CacheManager.md#logger)
 
 ### Methods
 
-* [add](cachemanager.md#add)
-* [getInstance](cachemanager.md#getinstance)
-* [list](cachemanager.md#list)
-* [remove](cachemanager.md#remove)
-* [restart](cachemanager.md#restart)
-* [shutdown](cachemanager.md#shutdown)
+- [add](CacheManager.md#add)
+- [getInstance](CacheManager.md#getinstance)
+- [list](CacheManager.md#list)
+- [remove](CacheManager.md#remove)
+- [shutdown](CacheManager.md#shutdown)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new CacheManager**(`server`: [IBPMNServer](../interfaces/ibpmnserver.md)): *[CacheManager](cachemanager.md)*
+• **new CacheManager**(`server`): [`CacheManager`](CacheManager.md)
 
-*Inherited from [ServerComponent](servercomponent.md).[constructor](servercomponent.md#constructor)*
+#### Parameters
 
-Defined in bpmnServer/src/server/ServerComponent.ts:9
+| Name | Type |
+| :------ | :------ |
+| `server` | `any` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`server` | [IBPMNServer](../interfaces/ibpmnserver.md) |
+[`CacheManager`](CacheManager.md)
 
-**Returns:** *[CacheManager](cachemanager.md)*
+#### Overrides
+
+[ServerComponent](ServerComponent.md).[constructor](ServerComponent.md#constructor)
+
+#### Defined in
+
+[server/CacheManager.ts:32](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/CacheManager.ts#L32)
 
 ## Properties
 
-###  server
+### server
 
-• **server**: *any*
+• **server**: `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[server](servercomponent.md#server)*
+#### Inherited from
 
-Defined in bpmnServer/src/server/ServerComponent.ts:9
+[ServerComponent](ServerComponent.md).[server](ServerComponent.md#server)
+
+#### Defined in
+
+[server/ServerComponent.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L9)
 
 ___
 
-### `Static` liveInstances
+### liveInstances
 
-▪ **liveInstances**: *Map‹any, any›* = new Map()
+▪ `Static` **liveInstances**: `Map`\<`any`, `any`\>
 
-Defined in bpmnServer/src/server/CacheManager.ts:13
+#### Defined in
+
+[server/CacheManager.ts:30](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/CacheManager.ts#L30)
 
 ## Accessors
 
-###  acl
+### appDelegate
 
-• **get acl**(): *any*
+• `get` **appDelegate**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[acl](servercomponent.md#acl)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:23
+`any`
 
-**Returns:** *any*
+#### Inherited from
 
-___
+ServerComponent.appDelegate
 
-###  appDelegate
+#### Defined in
 
-• **get appDelegate**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[appDelegate](servercomponent.md#appdelegate)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:18
-
-**Returns:** *any*
+[server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L18)
 
 ___
 
-###  cache
+### cache
 
-• **get cache**(): *[CacheManager](cachemanager.md)*
+• `get` **cache**(): [`CacheManager`](CacheManager.md)
 
-*Inherited from [ServerComponent](servercomponent.md).[cache](servercomponent.md#cache)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:17
+[`CacheManager`](CacheManager.md)
 
-**Returns:** *[CacheManager](cachemanager.md)*
+#### Inherited from
 
-___
+ServerComponent.cache
 
-###  configuration
+#### Defined in
 
-• **get configuration**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[configuration](servercomponent.md#configuration)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:14
-
-**Returns:** *any*
+[server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L17)
 
 ___
 
-###  cron
+### configuration
 
-• **get cron**(): *[Cron](cron.md)*
+• `get` **configuration**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[cron](servercomponent.md#cron)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:16
+`any`
 
-**Returns:** *[Cron](cron.md)*
+#### Inherited from
 
-___
+ServerComponent.configuration
 
-###  dataStore
+#### Defined in
 
-• **get dataStore**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[dataStore](servercomponent.md#datastore)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:20
-
-**Returns:** *any*
+[server/ServerComponent.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L14)
 
 ___
 
-###  definitions
+### cron
 
-• **get definitions**(): *any*
+• `get` **cron**(): [`Cron`](Cron.md)
 
-*Inherited from [ServerComponent](servercomponent.md).[definitions](servercomponent.md#definitions)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:21
+[`Cron`](Cron.md)
 
-**Returns:** *any*
+#### Inherited from
 
-___
+ServerComponent.cron
 
-###  engine
+#### Defined in
 
-• **get engine**(): *[IEngine](../interfaces/iengine.md)*
-
-*Inherited from [ServerComponent](servercomponent.md).[engine](servercomponent.md#engine)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:19
-
-**Returns:** *[IEngine](../interfaces/iengine.md)*
+[server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L16)
 
 ___
 
-###  iam
+### dataStore
 
-• **get iam**(): *any*
+• `get` **dataStore**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[iam](servercomponent.md#iam)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:24
+`any`
 
-**Returns:** *any*
+#### Inherited from
 
-___
+ServerComponent.dataStore
 
-###  listener
+#### Defined in
 
-• **get listener**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[listener](servercomponent.md#listener)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:22
-
-**Returns:** *any*
+[server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L20)
 
 ___
 
-###  logger
+### definitions
 
-• **get logger**(): *any*
+• `get` **definitions**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[logger](servercomponent.md#logger)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:15
+`any`
 
-**Returns:** *any*
+#### Inherited from
+
+ServerComponent.definitions
+
+#### Defined in
+
+[server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L21)
+
+___
+
+### engine
+
+• `get` **engine**(): [`IEngine`](../interfaces/IEngine.md)
+
+#### Returns
+
+[`IEngine`](../interfaces/IEngine.md)
+
+#### Inherited from
+
+ServerComponent.engine
+
+#### Defined in
+
+[server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L19)
+
+___
+
+### listener
+
+• `get` **listener**(): `any`
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+ServerComponent.listener
+
+#### Defined in
+
+[server/ServerComponent.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L22)
+
+___
+
+### logger
+
+• `get` **logger**(): `any`
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+ServerComponent.logger
+
+#### Defined in
+
+[server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L15)
 
 ## Methods
 
-###  add
+### add
 
-▸ **add**(`execution`: [IExecution](../interfaces/iexecution.md)): *void*
+▸ **add**(`execution`): `void`
 
-*Implementation of [ICacheManager](../interfaces/icachemanager.md)*
+#### Parameters
 
-Defined in bpmnServer/src/server/CacheManager.ts:28
+| Name | Type |
+| :------ | :------ |
+| `execution` | [`IExecution`](../interfaces/IExecution.md) |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`execution` | [IExecution](../interfaces/iexecution.md) |
+`void`
 
-**Returns:** *void*
+#### Implementation of
 
-___
+[ICacheManager](../interfaces/ICacheManager.md).[add](../interfaces/ICacheManager.md#add)
 
-###  getInstance
+#### Defined in
 
-▸ **getInstance**(`instanceId`: any): *any*
-
-Defined in bpmnServer/src/server/CacheManager.ts:23
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`instanceId` | any |
-
-**Returns:** *any*
+[server/CacheManager.ts:58](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/CacheManager.ts#L58)
 
 ___
 
-###  list
+### getInstance
 
-▸ **list**(): *any[]*
+▸ **getInstance**(`instanceId`): `any`
 
-*Implementation of [ICacheManager](../interfaces/icachemanager.md)*
+#### Parameters
 
-Defined in bpmnServer/src/server/CacheManager.ts:15
+| Name | Type |
+| :------ | :------ |
+| `instanceId` | `any` |
 
-**Returns:** *any[]*
+#### Returns
 
-___
+`any`
 
-###  remove
+#### Defined in
 
-▸ **remove**(`instanceId`: any): *void*
-
-*Implementation of [ICacheManager](../interfaces/icachemanager.md)*
-
-Defined in bpmnServer/src/server/CacheManager.ts:32
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`instanceId` | any |
-
-**Returns:** *void*
+[server/CacheManager.ts:52](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/CacheManager.ts#L52)
 
 ___
 
-###  restart
+### list
 
-▸ **restart**(): *Promise‹void›*
+▸ **list**(): `any`[]
 
-*Implementation of [ICacheManager](../interfaces/icachemanager.md)*
+#### Returns
 
-Defined in bpmnServer/src/server/CacheManager.ts:52
+`any`[]
 
-**Returns:** *Promise‹void›*
+#### Implementation of
+
+[ICacheManager](../interfaces/ICacheManager.md).[list](../interfaces/ICacheManager.md#list)
+
+#### Defined in
+
+[server/CacheManager.ts:44](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/CacheManager.ts#L44)
 
 ___
 
-###  shutdown
+### remove
 
-▸ **shutdown**(): *Promise‹void›*
+▸ **remove**(`instanceId`): `void`
 
-*Implementation of [ICacheManager](../interfaces/icachemanager.md)*
+#### Parameters
 
-Defined in bpmnServer/src/server/CacheManager.ts:36
+| Name | Type |
+| :------ | :------ |
+| `instanceId` | `any` |
 
-**Returns:** *Promise‹void›*
+#### Returns
+
+`void`
+
+#### Implementation of
+
+[ICacheManager](../interfaces/ICacheManager.md).[remove](../interfaces/ICacheManager.md#remove)
+
+#### Defined in
+
+[server/CacheManager.ts:62](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/CacheManager.ts#L62)
+
+___
+
+### shutdown
+
+▸ **shutdown**(): `Promise`\<`void`\>
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+[ICacheManager](../interfaces/ICacheManager.md).[shutdown](../interfaces/ICacheManager.md#shutdown)
+
+#### Defined in
+
+[server/CacheManager.ts:66](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/CacheManager.ts#L66)

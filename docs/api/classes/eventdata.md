@@ -1,186 +1,266 @@
-[bpmn-server](../README.md) › [EventData](eventdata.md)
+[bpmn-server](../README.md) / EventData
 
 # Class: EventData
 
-## Hierarchy
-
-* **EventData**
-
 ## Implements
 
-* [IEventData](../interfaces/ieventdata.md)
-* [IEventData](../interfaces/ieventdata.md)
+- [`IEventData`](../interfaces/IEventData.md)
 
-## Index
+## Table of contents
+
+### Constructors
+
+- [constructor](EventData.md#constructor)
 
 ### Properties
 
-* [elementId](eventdata.md#elementid)
-* [expression](eventdata.md#expression)
-* [expressionFormat](eventdata.md#expressionformat)
-* [maxRepeat](eventdata.md#maxrepeat)
-* [messageId](eventdata.md#messageid)
-* [name](eventdata.md#name)
-* [processId](eventdata.md#processid)
-* [referenceDateTime](eventdata.md#referencedatetime)
-* [repeatCount](eventdata.md#repeatcount)
-* [signalId](eventdata.md#signalid)
-* [subType](eventdata.md#subtype)
-* [timeDue](eventdata.md#optional-timedue)
-* [type](eventdata.md#type)
+- [candidateGroups](EventData.md#candidategroups)
+- [candidateUsers](EventData.md#candidateusers)
+- [elementId](EventData.md#elementid)
+- [expression](EventData.md#expression)
+- [expressionFormat](EventData.md#expressionformat)
+- [lane](EventData.md#lane)
+- [maxRepeat](EventData.md#maxrepeat)
+- [messageId](EventData.md#messageid)
+- [name](EventData.md#name)
+- [processId](EventData.md#processid)
+- [referenceDateTime](EventData.md#referencedatetime)
+- [repeatCount](EventData.md#repeatcount)
+- [signalId](EventData.md#signalid)
+- [subType](EventData.md#subtype)
+- [timeDue](EventData.md#timedue)
+- [type](EventData.md#type)
+
+## Constructors
+
+### constructor
+
+• **new EventData**(): [`EventData`](EventData.md)
+
+#### Returns
+
+[`EventData`](EventData.md)
 
 ## Properties
 
-###  elementId
+### candidateGroups
 
-• **elementId**: *any*
+• **candidateGroups**: `any`
 
-*Implementation of [IEventData](../interfaces/ieventdata.md).[elementId](../interfaces/ieventdata.md#elementid)*
+#### Implementation of
 
-Defined in bpmnServer/src/interfaces/datastore.ts:63
+[IEventData](../interfaces/IEventData.md).[candidateGroups](../interfaces/IEventData.md#candidategroups)
 
-Defined in bpmnServer/src/datastore/ModelsData.ts:82
+#### Defined in
 
-___
-
-###  expression
-
-• **expression**: *any*
-
-*Implementation of [IEventData](../interfaces/ieventdata.md).[expression](../interfaces/ieventdata.md#expression)*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:71
-
-Defined in bpmnServer/src/datastore/ModelsData.ts:90
+[datastore/ModelsData.ts:98](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L98)
 
 ___
 
-###  expressionFormat
+### candidateUsers
 
-• **expressionFormat**: *any*
+• **candidateUsers**: `any`
 
-*Implementation of [IEventData](../interfaces/ieventdata.md).[expressionFormat](../interfaces/ieventdata.md#expressionformat)*
+#### Implementation of
 
-Defined in bpmnServer/src/interfaces/datastore.ts:72
+[IEventData](../interfaces/IEventData.md).[candidateUsers](../interfaces/IEventData.md#candidateusers)
 
-Defined in bpmnServer/src/datastore/ModelsData.ts:91
+#### Defined in
 
-___
-
-###  maxRepeat
-
-• **maxRepeat**: *any*
-
-*Implementation of [IEventData](../interfaces/ieventdata.md).[maxRepeat](../interfaces/ieventdata.md#maxrepeat)*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:74
-
-Defined in bpmnServer/src/datastore/ModelsData.ts:93
+[datastore/ModelsData.ts:99](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L99)
 
 ___
 
-###  messageId
+### elementId
 
-• **messageId**: *any*
+• **elementId**: `any`
 
-*Implementation of [IEventData](../interfaces/ieventdata.md).[messageId](../interfaces/ieventdata.md#optional-messageid)*
+#### Implementation of
 
-Defined in bpmnServer/src/interfaces/datastore.ts:69
+[IEventData](../interfaces/IEventData.md).[elementId](../interfaces/IEventData.md#elementid)
 
-Defined in bpmnServer/src/datastore/ModelsData.ts:88
+#### Defined in
 
-___
-
-###  name
-
-• **name**: *any*
-
-*Implementation of [IEventData](../interfaces/ieventdata.md).[name](../interfaces/ieventdata.md#name)*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:66
-
-Defined in bpmnServer/src/datastore/ModelsData.ts:85
+[datastore/ModelsData.ts:83](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L83)
 
 ___
 
-###  processId
+### expression
 
-• **processId**: *any*
+• **expression**: `any`
 
-*Implementation of [IEventData](../interfaces/ieventdata.md).[processId](../interfaces/ieventdata.md#processid)*
+#### Implementation of
 
-Defined in bpmnServer/src/interfaces/datastore.ts:67
+[IEventData](../interfaces/IEventData.md).[expression](../interfaces/IEventData.md#expression)
 
-Defined in bpmnServer/src/datastore/ModelsData.ts:86
+#### Defined in
 
-___
-
-###  referenceDateTime
-
-• **referenceDateTime**: *any*
-
-*Implementation of [IEventData](../interfaces/ieventdata.md).[referenceDateTime](../interfaces/ieventdata.md#referencedatetime)*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:73
-
-Defined in bpmnServer/src/datastore/ModelsData.ts:92
+[datastore/ModelsData.ts:91](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L91)
 
 ___
 
-###  repeatCount
+### expressionFormat
 
-• **repeatCount**: *any*
+• **expressionFormat**: `any`
 
-*Implementation of [IEventData](../interfaces/ieventdata.md).[repeatCount](../interfaces/ieventdata.md#repeatcount)*
+#### Implementation of
 
-Defined in bpmnServer/src/interfaces/datastore.ts:75
+[IEventData](../interfaces/IEventData.md).[expressionFormat](../interfaces/IEventData.md#expressionformat)
 
-Defined in bpmnServer/src/datastore/ModelsData.ts:94
+#### Defined in
 
-___
-
-###  signalId
-
-• **signalId**: *any*
-
-*Implementation of [IEventData](../interfaces/ieventdata.md).[signalId](../interfaces/ieventdata.md#optional-signalid)*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:68
-
-Defined in bpmnServer/src/datastore/ModelsData.ts:87
+[datastore/ModelsData.ts:92](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L92)
 
 ___
 
-###  subType
+### lane
 
-• **subType**: *any*
+• **lane**: `any`
 
-*Implementation of [IEventData](../interfaces/ieventdata.md).[subType](../interfaces/ieventdata.md#subtype)*
+#### Implementation of
 
-Defined in bpmnServer/src/interfaces/datastore.ts:65
+[IEventData](../interfaces/IEventData.md).[lane](../interfaces/IEventData.md#lane)
 
-Defined in bpmnServer/src/datastore/ModelsData.ts:84
+#### Defined in
 
-___
-
-### `Optional` timeDue
-
-• **timeDue**? : *any*
-
-*Implementation of [IEventData](../interfaces/ieventdata.md).[timeDue](../interfaces/ieventdata.md#optional-timedue)*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:76
-
-Defined in bpmnServer/src/datastore/ModelsData.ts:95
+[datastore/ModelsData.ts:97](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L97)
 
 ___
 
-###  type
+### maxRepeat
 
-• **type**: *any*
+• **maxRepeat**: `any`
 
-*Implementation of [IEventData](../interfaces/ieventdata.md).[type](../interfaces/ieventdata.md#type)*
+#### Implementation of
 
-Defined in bpmnServer/src/interfaces/datastore.ts:64
+[IEventData](../interfaces/IEventData.md).[maxRepeat](../interfaces/IEventData.md#maxrepeat)
 
-Defined in bpmnServer/src/datastore/ModelsData.ts:83
+#### Defined in
+
+[datastore/ModelsData.ts:94](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L94)
+
+___
+
+### messageId
+
+• **messageId**: `any`
+
+#### Implementation of
+
+[IEventData](../interfaces/IEventData.md).[messageId](../interfaces/IEventData.md#messageid)
+
+#### Defined in
+
+[datastore/ModelsData.ts:89](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L89)
+
+___
+
+### name
+
+• **name**: `any`
+
+#### Implementation of
+
+[IEventData](../interfaces/IEventData.md).[name](../interfaces/IEventData.md#name)
+
+#### Defined in
+
+[datastore/ModelsData.ts:86](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L86)
+
+___
+
+### processId
+
+• **processId**: `any`
+
+#### Implementation of
+
+[IEventData](../interfaces/IEventData.md).[processId](../interfaces/IEventData.md#processid)
+
+#### Defined in
+
+[datastore/ModelsData.ts:87](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L87)
+
+___
+
+### referenceDateTime
+
+• **referenceDateTime**: `any`
+
+#### Implementation of
+
+[IEventData](../interfaces/IEventData.md).[referenceDateTime](../interfaces/IEventData.md#referencedatetime)
+
+#### Defined in
+
+[datastore/ModelsData.ts:93](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L93)
+
+___
+
+### repeatCount
+
+• **repeatCount**: `any`
+
+#### Implementation of
+
+[IEventData](../interfaces/IEventData.md).[repeatCount](../interfaces/IEventData.md#repeatcount)
+
+#### Defined in
+
+[datastore/ModelsData.ts:95](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L95)
+
+___
+
+### signalId
+
+• **signalId**: `any`
+
+#### Implementation of
+
+[IEventData](../interfaces/IEventData.md).[signalId](../interfaces/IEventData.md#signalid)
+
+#### Defined in
+
+[datastore/ModelsData.ts:88](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L88)
+
+___
+
+### subType
+
+• **subType**: `any`
+
+#### Implementation of
+
+[IEventData](../interfaces/IEventData.md).[subType](../interfaces/IEventData.md#subtype)
+
+#### Defined in
+
+[datastore/ModelsData.ts:85](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L85)
+
+___
+
+### timeDue
+
+• **timeDue**: `any`
+
+#### Implementation of
+
+[IEventData](../interfaces/IEventData.md).[timeDue](../interfaces/IEventData.md#timedue)
+
+#### Defined in
+
+[datastore/ModelsData.ts:96](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L96)
+
+___
+
+### type
+
+• **type**: `any`
+
+#### Implementation of
+
+[IEventData](../interfaces/IEventData.md).[type](../interfaces/IEventData.md#type)
+
+#### Defined in
+
+[datastore/ModelsData.ts:84](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L84)

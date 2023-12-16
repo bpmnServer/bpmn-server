@@ -1,156 +1,77 @@
-[bpmn-server](../README.md) › [IEngine](iengine.md)
+[bpmn-server](../README.md) / IEngine
 
 # Interface: IEngine
 
-## Hierarchy
-
-* [IServerComponent](iservercomponent.md)
-
-  ↳ **IEngine**
-
 ## Implemented by
 
-* [Engine](../classes/engine.md)
+- [`Engine`](../classes/Engine.md)
 
-## Index
-
-### Properties
-
-* [appDelegate](iengine.md#appdelegate)
-* [cache](iengine.md#cache)
-* [configuration](iengine.md#configuration)
-* [cron](iengine.md#cron)
-* [dataStore](iengine.md#datastore)
-* [definitions](iengine.md#definitions)
-* [engine](iengine.md#engine)
-* [logger](iengine.md#logger)
-* [server](iengine.md#server)
+## Table of contents
 
 ### Methods
 
-* [get](iengine.md#get)
-* [invoke](iengine.md#invoke)
-* [restore](iengine.md#restore)
-* [start](iengine.md#start)
-* [startEvent](iengine.md#startevent)
-
-## Properties
-
-###  appDelegate
-
-• **appDelegate**: *[IAppDelegate](iappdelegate.md)*
-
-*Inherited from [IServerComponent](iservercomponent.md).[appDelegate](iservercomponent.md#appdelegate)*
-
-Defined in bpmnServer/src/interfaces/server.ts:28
-
-___
-
-###  cache
-
-• **cache**: *any*
-
-*Inherited from [IServerComponent](iservercomponent.md).[cache](iservercomponent.md#cache)*
-
-Defined in bpmnServer/src/interfaces/server.ts:27
-
-___
-
-###  configuration
-
-• **configuration**: *[IConfiguration](iconfiguration.md)*
-
-*Inherited from [IServerComponent](iservercomponent.md).[configuration](iservercomponent.md#configuration)*
-
-Defined in bpmnServer/src/interfaces/server.ts:24
-
-___
-
-###  cron
-
-• **cron**: *any*
-
-*Inherited from [IServerComponent](iservercomponent.md).[cron](iservercomponent.md#cron)*
-
-Defined in bpmnServer/src/interfaces/server.ts:26
-
-___
-
-###  dataStore
-
-• **dataStore**: *[IDataStore](idatastore.md)*
-
-*Inherited from [IServerComponent](iservercomponent.md).[dataStore](iservercomponent.md#datastore)*
-
-Defined in bpmnServer/src/interfaces/server.ts:30
-
-___
-
-###  definitions
-
-• **definitions**: *any*
-
-*Inherited from [IServerComponent](iservercomponent.md).[definitions](iservercomponent.md#definitions)*
-
-Defined in bpmnServer/src/interfaces/server.ts:31
-
-___
-
-###  engine
-
-• **engine**: *any*
-
-*Inherited from [IServerComponent](iservercomponent.md).[engine](iservercomponent.md#engine)*
-
-Defined in bpmnServer/src/interfaces/server.ts:29
-
-___
-
-###  logger
-
-• **logger**: *[ILogger](ilogger.md)*
-
-*Inherited from [IServerComponent](iservercomponent.md).[logger](iservercomponent.md#logger)*
-
-Defined in bpmnServer/src/interfaces/server.ts:25
-
-___
-
-###  server
-
-• **server**: *[IBPMNServer](ibpmnserver.md)*
-
-*Inherited from [IServerComponent](iservercomponent.md).[server](iservercomponent.md#server)*
-
-Defined in bpmnServer/src/interfaces/server.ts:23
+- [assign](IEngine.md#assign)
+- [get](IEngine.md#get)
+- [invoke](IEngine.md#invoke)
+- [start](IEngine.md#start)
+- [startEvent](IEngine.md#startevent)
+- [startRepeatTimerEvent](IEngine.md#startrepeattimerevent)
+- [throwMessage](IEngine.md#throwmessage)
+- [throwSignal](IEngine.md#throwsignal)
 
 ## Methods
 
-###  get
+### assign
 
-▸ **get**(`instanceQuery`: any): *Promise‹[IExecution](iexecution.md)›*
+▸ **assign**(`itemQuery`, `data`, `assignment`, `userName`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
 
-Defined in bpmnServer/src/interfaces/server.ts:56
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `itemQuery` | `any` |
+| `data` | `Object` |
+| `assignment` | `Object` |
+| `userName` | `string` |
+| `options?` | `Object` |
+
+#### Returns
+
+`Promise`\<[`IExecution`](IExecution.md)\>
+
+#### Defined in
+
+[interfaces/server.ts:69](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L69)
+
+___
+
+### get
+
+▸ **get**(`instanceQuery`): `Promise`\<[`IExecution`](IExecution.md)\>
 
 restores an instance into memeory or provides you access to a running instance
 
 this will also resume execution
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Description |
------- | ------ | ------ |
-`instanceQuery` | any | criteria to fetch the instance  query example:	{ id: instanceId} 					{ data: {caseId: 1005}} 					{ items.item.id : 'abcc111322'} 					{ items.item.itemKey : 'businesskey here'}   |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `instanceQuery` | `any` | criteria to fetch the instance query example: { id: instanceId} { data: {caseId: 1005}} { items.id : 'abcc111322'} { items.itemKey : 'businesskey here'} |
 
-**Returns:** *Promise‹[IExecution](iexecution.md)›*
+#### Returns
+
+`Promise`\<[`IExecution`](IExecution.md)\>
+
+#### Defined in
+
+[interfaces/server.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L54)
 
 ___
 
-###  invoke
+### invoke
 
-▸ **invoke**(`itemQuery`: any, `data?`: object, `userKey?`: string): *Promise‹[IExecution](iexecution.md)›*
-
-Defined in bpmnServer/src/interfaces/server.ts:70
+▸ **invoke**(`itemQuery`, `data`, `userName?`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
 
 Continue an existing item that is in a wait state
 
@@ -160,61 +81,54 @@ scenario:
 		itemKey			{itemKey: value}
 		instance,task	{instanceId: instanceId, elementId: value }
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Description |
------- | ------ | ------ |
-`itemQuery` | any | criteria to retrieve the item |
-`data?` | object |   |
-`userKey?` | string | - |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `itemQuery` | `any` | criteria to retrieve the item |
+| `data` | `Object` |  |
+| `userName?` | `string` | - |
+| `options?` | `Object` | - |
 
-**Returns:** *Promise‹[IExecution](iexecution.md)›*
+#### Returns
 
-___
+`Promise`\<[`IExecution`](IExecution.md)\>
 
-###  restore
+#### Defined in
 
-▸ **restore**(`instanceQuery`: any): *Promise‹[IExecution](iexecution.md)›*
-
-Defined in bpmnServer/src/interfaces/server.ts:57
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`instanceQuery` | any |
-
-**Returns:** *Promise‹[IExecution](iexecution.md)›*
+[interfaces/server.ts:67](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L67)
 
 ___
 
-###  start
+### start
 
-▸ **start**(`name`: any, `data?`: any, `startNodeId?`: string, `userKey?`: string, `options?`: any): *Promise‹[IExecution](iexecution.md)›*
+▸ **start**(`name`, `data?`, `startNodeId?`, `userName?`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
 
-Defined in bpmnServer/src/interfaces/server.ts:42
+loads a definitions  and start execution
 
-	loads a definitions  and start execution
+#### Parameters
 
-**Parameters:**
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `name` | `any` | name of the process to start |
+| `data?` | `any` | input data |
+| `startNodeId?` | `string` | in process has multiple start node; you need to specify which one |
+| `userName?` | `string` | - |
+| `options?` | `any` | - |
 
-Name | Type | Description |
------- | ------ | ------ |
-`name` | any | name of the process to start |
-`data?` | any | input data |
-`startNodeId?` | string | in process has multiple start node; you need to specify which one  |
-`userKey?` | string | - |
-`options?` | any | - |
+#### Returns
 
-**Returns:** *Promise‹[IExecution](iexecution.md)›*
+`Promise`\<[`IExecution`](IExecution.md)\>
+
+#### Defined in
+
+[interfaces/server.ts:40](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L40)
 
 ___
 
-###  startEvent
+### startEvent
 
-▸ **startEvent**(`instanceId`: any, `elementId`: any, `data?`: object): *Promise‹[IExecution](iexecution.md)›*
-
-Defined in bpmnServer/src/interfaces/server.ts:86
+▸ **startEvent**(`instanceId`, `elementId`, `data?`): `Promise`\<[`IExecution`](IExecution.md)\>
 
 Invoking an event (usually start event of a secondary process) against an existing instance
 or
@@ -225,12 +139,92 @@ Invoking a start event (of a secondary process) against an existing instance
 	{instanceId: instanceId, elementId: value }
 ```
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Description |
------- | ------ | ------ |
-`instanceId` | any | - |
-`elementId` | any | - |
-`data?` | object |   |
+| Name | Type |
+| :------ | :------ |
+| `instanceId` | `any` |
+| `elementId` | `any` |
+| `data?` | `Object` |
 
-**Returns:** *Promise‹[IExecution](iexecution.md)›*
+#### Returns
+
+`Promise`\<[`IExecution`](IExecution.md)\>
+
+#### Defined in
+
+[interfaces/server.ts:90](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L90)
+
+___
+
+### startRepeatTimerEvent
+
+▸ **startRepeatTimerEvent**(`instanceId`, `prevItem`, `data`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `instanceId` | `any` |
+| `prevItem` | [`IItem`](IItem.md) |
+| `data` | `Object` |
+| `options?` | `Object` |
+
+#### Returns
+
+`Promise`\<[`IExecution`](IExecution.md)\>
+
+#### Defined in
+
+[interfaces/server.ts:72](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L72)
+
+___
+
+### throwMessage
+
+▸ **throwMessage**(`messageId`, `data`, `matchingQuery`): `Promise`\<[`IExecution`](IExecution.md)\>
+
+signal/message raise a signal or throw a message
+
+will seach for a matching event/task given the signalId/messageId
+
+that can be againt a running instance or it may start a new instance
+----------------------------------------------------------------------------
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `messageId` | `any` | the id of the message or signal as per bpmn definition |
+| `data` | `Object` | message data |
+| `matchingQuery` | `Object` | - |
+
+#### Returns
+
+`Promise`\<[`IExecution`](IExecution.md)\>
+
+#### Defined in
+
+[interfaces/server.ts:104](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L104)
+
+___
+
+### throwSignal
+
+▸ **throwSignal**(`signalId`, `data`, `matchingQuery`): `any`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `signalId` | `any` |
+| `data` | `Object` |
+| `matchingQuery` | `Object` |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[interfaces/server.ts:105](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L105)

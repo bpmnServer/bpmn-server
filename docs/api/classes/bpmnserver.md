@@ -1,213 +1,265 @@
-[bpmn-server](../README.md) › [BPMNServer](bpmnserver.md)
+[bpmn-server](../README.md) / BPMNServer
 
 # Class: BPMNServer
 
 The main class of Server Layer
 	provides the full functionalities:
-
+	
 		at start of the app:
 			new BPMNServer(configuration,options);
-
+			
 		after that point:
-
+		
 			BPMNServer.engine.start(...)
 			BPMNServer.engine.invoke(...)
 			BPMNServer.dataStore.findInstances(...)
 			BPMNServer.dataStore.findItems(...)
 
-## Hierarchy
-
-* **BPMNServer**
-
 ## Implements
 
-* [IBPMNServer](../interfaces/ibpmnserver.md)
+- [`IBPMNServer`](../interfaces/IBPMNServer.md)
 
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](bpmnserver.md#constructor)
+- [constructor](BPMNServer.md#constructor)
 
 ### Properties
 
-* [acl](bpmnserver.md#acl)
-* [appDelegate](bpmnserver.md#appdelegate)
-* [cache](bpmnserver.md#cache)
-* [configuration](bpmnserver.md#configuration)
-* [cron](bpmnserver.md#cron)
-* [dataStore](bpmnserver.md#datastore)
-* [definitions](bpmnserver.md#definitions)
-* [engine](bpmnserver.md#engine)
-* [iam](bpmnserver.md#iam)
-* [listener](bpmnserver.md#listener)
-* [logger](bpmnserver.md#logger)
+- [appDelegate](BPMNServer.md#appdelegate)
+- [cache](BPMNServer.md#cache)
+- [configuration](BPMNServer.md#configuration)
+- [cron](BPMNServer.md#cron)
+- [dataStore](BPMNServer.md#datastore)
+- [definitions](BPMNServer.md#definitions)
+- [engine](BPMNServer.md#engine)
+- [error](BPMNServer.md#error)
+- [listener](BPMNServer.md#listener)
+- [logger](BPMNServer.md#logger)
+- [userService](BPMNServer.md#userservice)
 
 ### Accessors
 
-* [engine](bpmnserver.md#static-engine)
+- [engine](BPMNServer.md#engine-1)
 
 ### Methods
 
-* [getInstance](bpmnserver.md#static-getinstance)
-* [getVersion](bpmnserver.md#static-getversion)
+- [getInstance](BPMNServer.md#getinstance)
+- [getVersion](BPMNServer.md#getversion)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new BPMNServer**(`configuration`: [IConfiguration](../interfaces/iconfiguration.md), `logger?`: [ILogger](../interfaces/ilogger.md), `options`: object): *[BPMNServer](bpmnserver.md)*
-
-Defined in bpmnServer/src/server/BPMNServer.ts:44
+• **new BPMNServer**(`configuration`, `logger?`, `options?`): [`BPMNServer`](BPMNServer.md)
 
 Server Constructor
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Default | Description |
------- | ------ | ------ | ------ |
-`configuration` | [IConfiguration](../interfaces/iconfiguration.md) | - | see |
-`logger?` | [ILogger](../interfaces/ilogger.md) | - |   |
-`options` | object | {} | - |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `configuration` | [`IConfiguration`](../interfaces/IConfiguration.md) | see |
+| `logger?` | [`ILogger`](../interfaces/ILogger.md) |  |
+| `options` | `Object` | - |
 
-**Returns:** *[BPMNServer](bpmnserver.md)*
+#### Returns
+
+[`BPMNServer`](BPMNServer.md)
+
+#### Defined in
+
+[server/BPMNServer.ts:64](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/BPMNServer.ts#L64)
 
 ## Properties
 
-###  acl
+### appDelegate
 
-• **acl**: *[IACL](../interfaces/iacl.md)*
+• **appDelegate**: [`IAppDelegate`](../interfaces/IAppDelegate.md)
 
-*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[acl](../interfaces/ibpmnserver.md#acl)*
+#### Implementation of
 
-Defined in bpmnServer/src/server/BPMNServer.ts:41
+[IBPMNServer](../interfaces/IBPMNServer.md).[appDelegate](../interfaces/IBPMNServer.md#appdelegate)
 
-___
+#### Defined in
 
-###  appDelegate
-
-• **appDelegate**: *[IAppDelegate](../interfaces/iappdelegate.md)*
-
-*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[appDelegate](../interfaces/ibpmnserver.md#appdelegate)*
-
-Defined in bpmnServer/src/server/BPMNServer.ts:37
+[server/BPMNServer.ts:48](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/BPMNServer.ts#L48)
 
 ___
 
-###  cache
+### cache
 
-• **cache**: *[CacheManager](cachemanager.md)*
+• **cache**: [`ICacheManager`](../interfaces/ICacheManager.md)
 
-*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[cache](../interfaces/ibpmnserver.md#cache)*
+#### Implementation of
 
-Defined in bpmnServer/src/server/BPMNServer.ts:39
+[IBPMNServer](../interfaces/IBPMNServer.md).[cache](../interfaces/IBPMNServer.md#cache)
 
-___
+#### Defined in
 
-###  configuration
-
-• **configuration**: *[IConfiguration](../interfaces/iconfiguration.md)*
-
-*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[configuration](../interfaces/ibpmnserver.md#configuration)*
-
-Defined in bpmnServer/src/server/BPMNServer.ts:34
+[server/BPMNServer.ts:50](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/BPMNServer.ts#L50)
 
 ___
 
-###  cron
+### configuration
 
-• **cron**: *[Cron](cron.md)*
+• **configuration**: [`IConfiguration`](../interfaces/IConfiguration.md)
 
-*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[cron](../interfaces/ibpmnserver.md#cron)*
+#### Implementation of
 
-Defined in bpmnServer/src/server/BPMNServer.ts:40
+[IBPMNServer](../interfaces/IBPMNServer.md).[configuration](../interfaces/IBPMNServer.md#configuration)
 
-___
+#### Defined in
 
-###  dataStore
-
-• **dataStore**: *[IDataStore](../interfaces/idatastore.md)*
-
-*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[dataStore](../interfaces/ibpmnserver.md#datastore)*
-
-Defined in bpmnServer/src/server/BPMNServer.ts:38
+[server/BPMNServer.ts:45](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/BPMNServer.ts#L45)
 
 ___
 
-###  definitions
+### cron
 
-• **definitions**: *any*
+• **cron**: [`Cron`](Cron.md)
 
-*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[definitions](../interfaces/ibpmnserver.md#definitions)*
+#### Implementation of
 
-Defined in bpmnServer/src/server/BPMNServer.ts:36
+[IBPMNServer](../interfaces/IBPMNServer.md).[cron](../interfaces/IBPMNServer.md#cron)
 
-___
+#### Defined in
 
-###  engine
-
-• **engine**: *[Engine](engine.md)*
-
-*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[engine](../interfaces/ibpmnserver.md#engine)*
-
-Defined in bpmnServer/src/server/BPMNServer.ts:32
+[server/BPMNServer.ts:51](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/BPMNServer.ts#L51)
 
 ___
 
-###  iam
+### dataStore
 
-• **iam**: *[IIAM](../interfaces/iiam.md)*
+• **dataStore**: [`IDataStore`](../interfaces/IDataStore.md)
 
-*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[iam](../interfaces/ibpmnserver.md#iam)*
+#### Implementation of
 
-Defined in bpmnServer/src/server/BPMNServer.ts:42
+[IBPMNServer](../interfaces/IBPMNServer.md).[dataStore](../interfaces/IBPMNServer.md#datastore)
 
-___
+#### Defined in
 
-###  listener
-
-• **listener**: *EventEmitter*
-
-*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[listener](../interfaces/ibpmnserver.md#listener)*
-
-Defined in bpmnServer/src/server/BPMNServer.ts:33
+[server/BPMNServer.ts:49](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/BPMNServer.ts#L49)
 
 ___
 
-###  logger
+### definitions
 
-• **logger**: *[ILogger](../interfaces/ilogger.md)*
+• **definitions**: `any`
 
-*Implementation of [IBPMNServer](../interfaces/ibpmnserver.md).[logger](../interfaces/ibpmnserver.md#logger)*
+#### Implementation of
 
-Defined in bpmnServer/src/server/BPMNServer.ts:35
+[IBPMNServer](../interfaces/IBPMNServer.md).[definitions](../interfaces/IBPMNServer.md#definitions)
+
+#### Defined in
+
+[server/BPMNServer.ts:47](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/BPMNServer.ts#L47)
+
+___
+
+### engine
+
+• **engine**: [`Engine`](Engine.md)
+
+#### Implementation of
+
+[IBPMNServer](../interfaces/IBPMNServer.md).[engine](../interfaces/IBPMNServer.md#engine)
+
+#### Defined in
+
+[server/BPMNServer.ts:43](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/BPMNServer.ts#L43)
+
+___
+
+### error
+
+• **error**: `any`
+
+#### Defined in
+
+[server/BPMNServer.ts:53](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/BPMNServer.ts#L53)
+
+___
+
+### listener
+
+• **listener**: `EventEmitter`
+
+#### Implementation of
+
+[IBPMNServer](../interfaces/IBPMNServer.md).[listener](../interfaces/IBPMNServer.md#listener)
+
+#### Defined in
+
+[server/BPMNServer.ts:44](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/BPMNServer.ts#L44)
+
+___
+
+### logger
+
+• **logger**: [`ILogger`](../interfaces/ILogger.md)
+
+#### Implementation of
+
+[IBPMNServer](../interfaces/IBPMNServer.md).[logger](../interfaces/IBPMNServer.md#logger)
+
+#### Defined in
+
+[server/BPMNServer.ts:46](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/BPMNServer.ts#L46)
+
+___
+
+### userService
+
+• **userService**: [`IUserService`](../interfaces/IUserService.md)
+
+#### Implementation of
+
+[IBPMNServer](../interfaces/IBPMNServer.md).[userService](../interfaces/IBPMNServer.md#userservice)
+
+#### Defined in
+
+[server/BPMNServer.ts:52](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/BPMNServer.ts#L52)
 
 ## Accessors
 
-### `Static` engine
+### engine
 
-• **get engine**(): *[Engine](engine.md)‹›*
+• `get` **engine**(): [`Engine`](Engine.md)
 
-Defined in bpmnServer/src/server/BPMNServer.ts:85
+#### Returns
 
-**Returns:** *[Engine](engine.md)‹›*
+[`Engine`](Engine.md)
+
+#### Defined in
+
+[server/BPMNServer.ts:110](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/BPMNServer.ts#L110)
 
 ## Methods
 
-### `Static` getInstance
+### getInstance
 
-▸ **getInstance**(): *[BPMNServer](bpmnserver.md)*
+▸ **getInstance**(): [`BPMNServer`](BPMNServer.md)
 
-Defined in bpmnServer/src/server/BPMNServer.ts:88
+#### Returns
 
-**Returns:** *[BPMNServer](bpmnserver.md)*
+[`BPMNServer`](BPMNServer.md)
+
+#### Defined in
+
+[server/BPMNServer.ts:113](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/BPMNServer.ts#L113)
 
 ___
 
-### `Static` getVersion
+### getVersion
 
-▸ **getVersion**(): *string*
+▸ **getVersion**(): `any`
 
-Defined in bpmnServer/src/server/BPMNServer.ts:82
+#### Returns
 
-**Returns:** *string*
+`any`
+
+#### Defined in
+
+[server/BPMNServer.ts:95](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/BPMNServer.ts#L95)

@@ -1,62 +1,85 @@
-[bpmn-server](../README.md) › [ITEM_STATUS](item_status.md)
+[bpmn-server](../README.md) / ITEM\_STATUS
 
-# Enumeration: ITEM_STATUS
+# Enumeration: ITEM\_STATUS
 
-## Index
+## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
-* [discard](item_status.md#discard)
-* [end](item_status.md#end)
-* [enter](item_status.md#enter)
-* [start](item_status.md#start)
-* [terminated](item_status.md#terminated)
-* [wait](item_status.md#wait)
+- [cancelled](ITEM_STATUS.md#cancelled)
+- [discard](ITEM_STATUS.md#discard)
+- [end](ITEM_STATUS.md#end)
+- [enter](ITEM_STATUS.md#enter)
+- [start](ITEM_STATUS.md#start)
+- [terminated](ITEM_STATUS.md#terminated)
+- [wait](ITEM_STATUS.md#wait)
 
-## Enumeration members
+## Enumeration Members
 
-###  discard
+### cancelled
 
-• **discard**: = "discard"
+• **cancelled** = ``"cancelled"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:52
+#### Defined in
 
-___
-
-###  end
-
-• **end**: = "end"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:52
+[interfaces/Enums.ts:73](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L73)
 
 ___
 
-###  enter
+### discard
 
-• **enter**: = "enter"
+• **discard** = ``"discard"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:52
+#### Defined in
 
-___
-
-###  start
-
-• **start**: = "start"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:52
+[interfaces/Enums.ts:74](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L74)
 
 ___
 
-###  terminated
+### end
 
-• **terminated**: = "terminated"
+• **end** = ``"end"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:52
+#### Defined in
+
+[interfaces/Enums.ts:71](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L71)
 
 ___
 
-###  wait
+### enter
 
-• **wait**: = "wait"
+• **enter** = ``"enter"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:52
+#### Defined in
+
+[interfaces/Enums.ts:68](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L68)
+
+___
+
+### start
+
+• **start** = ``"start"``
+
+#### Defined in
+
+[interfaces/Enums.ts:69](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L69)
+
+___
+
+### terminated
+
+• **terminated** = ``"terminated"``
+
+#### Defined in
+
+[interfaces/Enums.ts:72](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L72)
+
+___
+
+### wait
+
+• **wait** = ``"wait"``
+
+#### Defined in
+
+[interfaces/Enums.ts:70](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L70)

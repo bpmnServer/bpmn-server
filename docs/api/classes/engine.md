@@ -1,243 +1,319 @@
-[bpmn-server](../README.md) › [Engine](engine.md)
+[bpmn-server](../README.md) / Engine
 
 # Class: Engine
 
+super class for various objects that are part of the server
+
 ## Hierarchy
 
-* [ServerComponent](servercomponent.md)
+- [`ServerComponent`](ServerComponent.md)
 
-  ↳ **Engine**
+  ↳ **`Engine`**
 
 ## Implements
 
-* [IEngine](../interfaces/iengine.md)
+- [`IEngine`](../interfaces/IEngine.md)
 
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](engine.md#constructor)
+- [constructor](Engine.md#constructor)
 
 ### Properties
 
-* [server](engine.md#server)
+- [server](Engine.md#server)
 
 ### Accessors
 
-* [acl](engine.md#acl)
-* [appDelegate](engine.md#appdelegate)
-* [cache](engine.md#cache)
-* [configuration](engine.md#configuration)
-* [cron](engine.md#cron)
-* [dataStore](engine.md#datastore)
-* [definitions](engine.md#definitions)
-* [engine](engine.md#engine)
-* [iam](engine.md#iam)
-* [listener](engine.md#listener)
-* [logger](engine.md#logger)
+- [appDelegate](Engine.md#appdelegate)
+- [cache](Engine.md#cache)
+- [configuration](Engine.md#configuration)
+- [cron](Engine.md#cron)
+- [dataStore](Engine.md#datastore)
+- [definitions](Engine.md#definitions)
+- [engine](Engine.md#engine)
+- [listener](Engine.md#listener)
+- [logger](Engine.md#logger)
 
 ### Methods
 
-* [get](engine.md#get)
-* [invoke](engine.md#invoke)
-* [invokeItem](engine.md#invokeitem)
-* [restore](engine.md#restore)
-* [start](engine.md#start)
-* [startEvent](engine.md#startevent)
-* [throwMessage](engine.md#throwmessage)
-* [throwSignal](engine.md#throwsignal)
+- [assign](Engine.md#assign)
+- [get](Engine.md#get)
+- [invoke](Engine.md#invoke)
+- [invokeItem](Engine.md#invokeitem)
+- [start](Engine.md#start)
+- [startEvent](Engine.md#startevent)
+- [startRepeatTimerEvent](Engine.md#startrepeattimerevent)
+- [throwMessage](Engine.md#throwmessage)
+- [throwSignal](Engine.md#throwsignal)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new Engine**(`server`: any): *[Engine](engine.md)*
+• **new Engine**(`server`): [`Engine`](Engine.md)
 
-*Overrides [ServerComponent](servercomponent.md).[constructor](servercomponent.md#constructor)*
+#### Parameters
 
-Defined in bpmnServer/src/server/Engine.ts:9
+| Name | Type |
+| :------ | :------ |
+| `server` | `any` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`server` | any |
+[`Engine`](Engine.md)
 
-**Returns:** *[Engine](engine.md)*
+#### Overrides
+
+[ServerComponent](ServerComponent.md).[constructor](ServerComponent.md#constructor)
+
+#### Defined in
+
+[server/Engine.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/Engine.ts#L12)
 
 ## Properties
 
-###  server
+### server
 
-• **server**: *any*
+• **server**: `any`
 
-*Implementation of [IEngine](../interfaces/iengine.md).[server](../interfaces/iengine.md#server)*
+#### Inherited from
 
-*Inherited from [ServerComponent](servercomponent.md).[server](servercomponent.md#server)*
+[ServerComponent](ServerComponent.md).[server](ServerComponent.md#server)
 
-Defined in bpmnServer/src/server/ServerComponent.ts:9
+#### Defined in
+
+[server/ServerComponent.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L9)
 
 ## Accessors
 
-###  acl
+### appDelegate
 
-• **get acl**(): *any*
+• `get` **appDelegate**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[acl](servercomponent.md#acl)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:23
+`any`
 
-**Returns:** *any*
+#### Inherited from
 
-___
+ServerComponent.appDelegate
 
-###  appDelegate
+#### Defined in
 
-• **get appDelegate**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[appDelegate](servercomponent.md#appdelegate)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:18
-
-**Returns:** *any*
+[server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L18)
 
 ___
 
-###  cache
+### cache
 
-• **get cache**(): *[CacheManager](cachemanager.md)*
+• `get` **cache**(): [`CacheManager`](CacheManager.md)
 
-*Inherited from [ServerComponent](servercomponent.md).[cache](servercomponent.md#cache)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:17
+[`CacheManager`](CacheManager.md)
 
-**Returns:** *[CacheManager](cachemanager.md)*
+#### Inherited from
 
-___
+ServerComponent.cache
 
-###  configuration
+#### Defined in
 
-• **get configuration**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[configuration](servercomponent.md#configuration)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:14
-
-**Returns:** *any*
+[server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L17)
 
 ___
 
-###  cron
+### configuration
 
-• **get cron**(): *[Cron](cron.md)*
+• `get` **configuration**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[cron](servercomponent.md#cron)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:16
+`any`
 
-**Returns:** *[Cron](cron.md)*
+#### Inherited from
 
-___
+ServerComponent.configuration
 
-###  dataStore
+#### Defined in
 
-• **get dataStore**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[dataStore](servercomponent.md#datastore)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:20
-
-**Returns:** *any*
+[server/ServerComponent.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L14)
 
 ___
 
-###  definitions
+### cron
 
-• **get definitions**(): *any*
+• `get` **cron**(): [`Cron`](Cron.md)
 
-*Inherited from [ServerComponent](servercomponent.md).[definitions](servercomponent.md#definitions)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:21
+[`Cron`](Cron.md)
 
-**Returns:** *any*
+#### Inherited from
 
-___
+ServerComponent.cron
 
-###  engine
+#### Defined in
 
-• **get engine**(): *[IEngine](../interfaces/iengine.md)*
-
-*Inherited from [ServerComponent](servercomponent.md).[engine](servercomponent.md#engine)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:19
-
-**Returns:** *[IEngine](../interfaces/iengine.md)*
+[server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L16)
 
 ___
 
-###  iam
+### dataStore
 
-• **get iam**(): *any*
+• `get` **dataStore**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[iam](servercomponent.md#iam)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:24
+`any`
 
-**Returns:** *any*
+#### Inherited from
 
-___
+ServerComponent.dataStore
 
-###  listener
+#### Defined in
 
-• **get listener**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[listener](servercomponent.md#listener)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:22
-
-**Returns:** *any*
+[server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L20)
 
 ___
 
-###  logger
+### definitions
 
-• **get logger**(): *any*
+• `get` **definitions**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[logger](servercomponent.md#logger)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:15
+`any`
 
-**Returns:** *any*
+#### Inherited from
+
+ServerComponent.definitions
+
+#### Defined in
+
+[server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L21)
+
+___
+
+### engine
+
+• `get` **engine**(): [`IEngine`](../interfaces/IEngine.md)
+
+#### Returns
+
+[`IEngine`](../interfaces/IEngine.md)
+
+#### Inherited from
+
+ServerComponent.engine
+
+#### Defined in
+
+[server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L19)
+
+___
+
+### listener
+
+• `get` **listener**(): `any`
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+ServerComponent.listener
+
+#### Defined in
+
+[server/ServerComponent.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L22)
+
+___
+
+### logger
+
+• `get` **logger**(): `any`
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+ServerComponent.logger
+
+#### Defined in
+
+[server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L15)
 
 ## Methods
 
-###  get
+### assign
 
-▸ **get**(`instanceQuery`: any): *Promise‹[Execution](execution.md)›*
+▸ **assign**(`itemQuery`, `data?`, `assignment?`, `userName`, `options?`): `Promise`\<[`Execution`](Execution.md)\>
 
-*Implementation of [IEngine](../interfaces/iengine.md)*
+update an existing item that is in a wait state with an assignment
+can modify data or assignment or both
 
-Defined in bpmnServer/src/server/Engine.ts:73
+-------------------------------------------------
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `itemQuery` | `any` | criteria to retrieve the item |
+| `data` | `Object` |  |
+| `assignment` | `Object` | - |
+| `userName` | `string` | - |
+| `options` | `Object` | - |
+
+#### Returns
+
+`Promise`\<[`Execution`](Execution.md)\>
+
+#### Implementation of
+
+[IEngine](../interfaces/IEngine.md).[assign](../interfaces/IEngine.md#assign)
+
+#### Defined in
+
+[server/Engine.ts:173](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/Engine.ts#L173)
+
+___
+
+### get
+
+▸ **get**(`instanceQuery`): `Promise`\<[`Execution`](Execution.md)\>
 
 restores an instance into memeory or provides you access to a running instance
 
 this will also resume execution
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Description |
------- | ------ | ------ |
-`instanceQuery` | any | criteria to fetch the instance  query example:	{ id: instanceId} 					{ data: {caseId: 1005}} 					{ items.item.id : 'abcc111322'} 					{ items.item.itemKey : 'businesskey here'}   |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `instanceQuery` | `any` | criteria to fetch the instance query example: { id: instanceId} { data: {caseId: 1005}} { items.item.id : 'abcc111322'} { items.item.itemKey : 'businesskey here'} |
 
-**Returns:** *Promise‹[Execution](execution.md)›*
+#### Returns
+
+`Promise`\<[`Execution`](Execution.md)\>
+
+#### Implementation of
+
+[IEngine](../interfaces/IEngine.md).[get](../interfaces/IEngine.md#get)
+
+#### Defined in
+
+[server/Engine.ts:85](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/Engine.ts#L85)
 
 ___
 
-###  invoke
+### invoke
 
-▸ **invoke**(`itemQuery`: any, `data`: object, `userKey`: string): *Promise‹[Execution](execution.md)›*
-
-Defined in bpmnServer/src/server/Engine.ts:124
+▸ **invoke**(`itemQuery`, `data?`, `userName?`, `options?`): `Promise`\<[`Execution`](Execution.md)\>
 
 Continue an existing item that is in a wait state
 
@@ -247,125 +323,147 @@ scenario:
 		itemKey			{itemKey: value}
 		instance,task	{instanceId: instanceId, elementId: value }
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Default | Description |
------- | ------ | ------ | ------ |
-`itemQuery` | any | - | criteria to retrieve the item |
-`data` | object | {} |   |
-`userKey` | string | null | - |
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `itemQuery` | `any` | `undefined` | criteria to retrieve the item |
+| `data` | `Object` | `{}` |  |
+| `userName` | `string` | `null` | - |
+| `options` | `Object` | `{}` | - |
 
-**Returns:** *Promise‹[Execution](execution.md)›*
+#### Returns
 
-___
+`Promise`\<[`Execution`](Execution.md)\>
 
-###  invokeItem
+#### Implementation of
 
-▸ **invokeItem**(`itemQuery`: any, `data`: object): *Promise‹[Execution](execution.md)›*
+[IEngine](../interfaces/IEngine.md).[invoke](../interfaces/IEngine.md#invoke)
 
-Defined in bpmnServer/src/server/Engine.ts:108
+#### Defined in
 
-**Parameters:**
-
-Name | Type | Default |
------- | ------ | ------ |
-`itemQuery` | any | - |
-`data` | object | {} |
-
-**Returns:** *Promise‹[Execution](execution.md)›*
+[server/Engine.ts:214](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/Engine.ts#L214)
 
 ___
 
-###  restore
+### invokeItem
 
-▸ **restore**(`instanceQuery`: any): *Promise‹[Execution](execution.md)›*
+▸ **invokeItem**(`itemQuery`, `data?`): `Promise`\<[`Execution`](Execution.md)\>
 
-*Implementation of [IEngine](../interfaces/iengine.md)*
+#### Parameters
 
-Defined in bpmnServer/src/server/Engine.ts:78
+| Name | Type |
+| :------ | :------ |
+| `itemQuery` | `any` |
+| `data` | `Object` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`instanceQuery` | any |
+`Promise`\<[`Execution`](Execution.md)\>
 
-**Returns:** *Promise‹[Execution](execution.md)›*
+#### Defined in
 
-___
-
-###  start
-
-▸ **start**(`name`: any, `data`: any, `startNodeId`: string, `userKey`: string, `options`: object): *Promise‹[Execution](execution.md)›*
-
-Defined in bpmnServer/src/server/Engine.ts:23
-
-	loads a definitions  and start execution
-
-**Parameters:**
-
-Name | Type | Default | Description |
------- | ------ | ------ | ------ |
-`name` | any | - | name of the process to start |
-`data` | any | {} | input data |
-`startNodeId` | string | null | in process has multiple start node; you need to specify which one  |
-`userKey` | string | null | - |
-`options` | object | {} | - |
-
-**Returns:** *Promise‹[Execution](execution.md)›*
+[server/Engine.ts:160](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/Engine.ts#L160)
 
 ___
 
-###  startEvent
+### start
 
-▸ **startEvent**(`instanceId`: any, `elementId`: any, `data`: object): *Promise‹[Execution](execution.md)›*
+▸ **start**(`name`, `data?`, `startNodeId?`, `userName?`, `options?`): `Promise`\<[`Execution`](Execution.md)\>
 
-Defined in bpmnServer/src/server/Engine.ts:178
+loads a definitions  and start execution
+
+#### Parameters
+
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `name` | `any` | `undefined` | name of the process to start |
+| `data` | `any` | `{}` | input data |
+| `startNodeId` | `string` | `null` | in process has multiple start node; you need to specify which one |
+| `userName` | `string` | `null` | - |
+| `options` | `Object` | `{}` | - |
+
+#### Returns
+
+`Promise`\<[`Execution`](Execution.md)\>
+
+#### Implementation of
+
+[IEngine](../interfaces/IEngine.md).[start](../interfaces/IEngine.md#start)
+
+#### Defined in
+
+[server/Engine.ts:23](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/Engine.ts#L23)
+
+___
+
+### startEvent
+
+▸ **startEvent**(`instanceId`, `elementId`, `data?`): `Promise`\<[`Execution`](Execution.md)\>
 
 Invoking an event (usually start event of a secondary process) against an existing instance
 or
 Invoking a start event (of a secondary process) against an existing instance
 ----------------------------------------------------------------------------
-	 instance,task
+	 instance,task 
 ```
-	{instanceId: instanceId, elementId: value }
+	{instanceId: instanceId, elementId: value } 
 ```
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Default | Description |
------- | ------ | ------ | ------ |
-`instanceId` | any | - | - |
-`elementId` | any | - | - |
-`data` | object | {} |   |
+| Name | Type |
+| :------ | :------ |
+| `instanceId` | `any` |
+| `elementId` | `any` |
+| `data` | `Object` |
 
-**Returns:** *Promise‹[Execution](execution.md)›*
+#### Returns
+
+`Promise`\<[`Execution`](Execution.md)\>
+
+#### Implementation of
+
+[IEngine](../interfaces/IEngine.md).[startEvent](../interfaces/IEngine.md#startevent)
+
+#### Defined in
+
+[server/Engine.ts:312](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/Engine.ts#L312)
 
 ___
 
-###  throwMessage
+### startRepeatTimerEvent
 
-▸ **throwMessage**(`messageId`: any, `data`: object, `matchingQuery`: object): *Promise‹[Execution](execution.md)›*
+▸ **startRepeatTimerEvent**(`instanceId`, `prevItem`, `data?`, `options?`): `Promise`\<[`Execution`](Execution.md)\>
 
-Defined in bpmnServer/src/server/Engine.ts:200
+Repeat Timers need to create new Item
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Default |
------- | ------ | ------ |
-`messageId` | any | - |
-`data` | object | {} |
-`matchingQuery` | object | {} |
+| Name | Type |
+| :------ | :------ |
+| `instanceId` | `any` |
+| `prevItem` | `any` |
+| `data` | `Object` |
+| `options` | `Object` |
 
-**Returns:** *Promise‹[Execution](execution.md)›*
+#### Returns
+
+`Promise`\<[`Execution`](Execution.md)\>
+
+#### Implementation of
+
+[IEngine](../interfaces/IEngine.md).[startRepeatTimerEvent](../interfaces/IEngine.md#startrepeattimerevent)
+
+#### Defined in
+
+[server/Engine.ts:275](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/Engine.ts#L275)
 
 ___
 
-###  throwSignal
+### throwMessage
 
-▸ **throwSignal**(`messageId`: any, `data`: object, `matchingQuery`: object): *Promise‹[Execution](execution.md)›*
-
-Defined in bpmnServer/src/server/Engine.ts:242
+▸ **throwMessage**(`messageId`, `data?`, `matchingQuery?`): `Promise`\<[`Execution`](Execution.md)\>
 
 signal/message raise a signal or throw a message
 
@@ -374,12 +472,55 @@ will seach for a matching event/task given the signalId/messageId
 that can be againt a running instance or it may start a new instance
 ----------------------------------------------------------------------------
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Default | Description |
------- | ------ | ------ | ------ |
-`messageId` | any | - | the id of the message or signal as per bpmn definition |
-`data` | object | {} | message data  |
-`matchingQuery` | object | {} | should match the itemKey (if specified) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `messageId` | `any` | the id of the message or signal as per bpmn definition |
+| `data` | `Object` | message data |
+| `matchingQuery` | `Object` | - |
 
-**Returns:** *Promise‹[Execution](execution.md)›*
+#### Returns
+
+`Promise`\<[`Execution`](Execution.md)\>
+
+#### Implementation of
+
+[IEngine](../interfaces/IEngine.md).[throwMessage](../interfaces/IEngine.md#throwmessage)
+
+#### Defined in
+
+[server/Engine.ts:336](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/Engine.ts#L336)
+
+___
+
+### throwSignal
+
+▸ **throwSignal**(`signalId`, `data?`, `matchingQuery?`): `Promise`\<`any`[]\>
+
+signal/message raise a signal or throw a message 
+
+will seach for a matching event/task given the signalId/messageId
+
+that can be againt a running instance or it may start a new instance 
+----------------------------------------------------------------------------
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `signalId` | `any` | - |
+| `data` | `Object` | message data |
+| `matchingQuery` | `Object` | should match the itemKey (if specified) |
+
+#### Returns
+
+`Promise`\<`any`[]\>
+
+#### Implementation of
+
+[IEngine](../interfaces/IEngine.md).[throwSignal](../interfaces/IEngine.md#throwsignal)
+
+#### Defined in
+
+[server/Engine.ts:393](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/Engine.ts#L393)

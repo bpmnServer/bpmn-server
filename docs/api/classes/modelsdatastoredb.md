@@ -1,478 +1,641 @@
-[bpmn-server](../README.md) › [ModelsDatastoreDB](modelsdatastoredb.md)
+[bpmn-server](../README.md) / ModelsDatastoreDB
 
 # Class: ModelsDatastoreDB
 
+super class for various objects that are part of the server
+
 ## Hierarchy
 
-* [ServerComponent](servercomponent.md)
+- [`ServerComponent`](ServerComponent.md)
 
-  ↳ **ModelsDatastoreDB**
+  ↳ **`ModelsDatastoreDB`**
 
-  ↳ [ModelsDatastore](modelsdatastore.md)
+  ↳↳ [`ModelsDatastore`](ModelsDatastore.md)
 
 ## Implements
 
-* [IModelsDatastore](../interfaces/imodelsdatastore.md)
+- [`IModelsDatastore`](../interfaces/IModelsDatastore.md)
 
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](modelsdatastoredb.md#constructor)
+- [constructor](ModelsDatastoreDB.md#constructor)
 
 ### Properties
 
-* [db](modelsdatastoredb.md#db)
-* [dbConfiguration](modelsdatastoredb.md#dbconfiguration)
-* [server](modelsdatastoredb.md#server)
+- [db](ModelsDatastoreDB.md#db)
+- [dbConfiguration](ModelsDatastoreDB.md#dbconfiguration)
+- [server](ModelsDatastoreDB.md#server)
 
 ### Accessors
 
-* [acl](modelsdatastoredb.md#acl)
-* [appDelegate](modelsdatastoredb.md#appdelegate)
-* [cache](modelsdatastoredb.md#cache)
-* [configuration](modelsdatastoredb.md#configuration)
-* [cron](modelsdatastoredb.md#cron)
-* [dataStore](modelsdatastoredb.md#datastore)
-* [definitions](modelsdatastoredb.md#definitions)
-* [engine](modelsdatastoredb.md#engine)
-* [iam](modelsdatastoredb.md#iam)
-* [listener](modelsdatastoredb.md#listener)
-* [logger](modelsdatastoredb.md#logger)
+- [appDelegate](ModelsDatastoreDB.md#appdelegate)
+- [cache](ModelsDatastoreDB.md#cache)
+- [configuration](ModelsDatastoreDB.md#configuration)
+- [cron](ModelsDatastoreDB.md#cron)
+- [dataStore](ModelsDatastoreDB.md#datastore)
+- [definitions](ModelsDatastoreDB.md#definitions)
+- [engine](ModelsDatastoreDB.md#engine)
+- [listener](ModelsDatastoreDB.md#listener)
+- [logger](ModelsDatastoreDB.md#logger)
 
 ### Methods
 
-* [deleteModel](modelsdatastoredb.md#deletemodel)
-* [export](modelsdatastoredb.md#export)
-* [findEvents](modelsdatastoredb.md#findevents)
-* [getList](modelsdatastoredb.md#getlist)
-* [getSVG](modelsdatastoredb.md#getsvg)
-* [getSource](modelsdatastoredb.md#getsource)
-* [import](modelsdatastoredb.md#import)
-* [install](modelsdatastoredb.md#install)
-* [load](modelsdatastoredb.md#load)
-* [loadModel](modelsdatastoredb.md#loadmodel)
-* [renameModel](modelsdatastoredb.md#renamemodel)
-* [save](modelsdatastoredb.md#save)
-* [saveModel](modelsdatastoredb.md#savemodel)
-* [updateTimer](modelsdatastoredb.md#updatetimer)
+- [deleteModel](ModelsDatastoreDB.md#deletemodel)
+- [export](ModelsDatastoreDB.md#export)
+- [findEvents](ModelsDatastoreDB.md#findevents)
+- [getList](ModelsDatastoreDB.md#getlist)
+- [getSVG](ModelsDatastoreDB.md#getsvg)
+- [getSource](ModelsDatastoreDB.md#getsource)
+- [import](ModelsDatastoreDB.md#import)
+- [install](ModelsDatastoreDB.md#install)
+- [load](ModelsDatastoreDB.md#load)
+- [loadModel](ModelsDatastoreDB.md#loadmodel)
+- [rebuild](ModelsDatastoreDB.md#rebuild)
+- [renameModel](ModelsDatastoreDB.md#renamemodel)
+- [save](ModelsDatastoreDB.md#save)
+- [saveModel](ModelsDatastoreDB.md#savemodel)
+- [updateTimer](ModelsDatastoreDB.md#updatetimer)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new ModelsDatastoreDB**(`server`: [BPMNServer](bpmnserver.md)): *[ModelsDatastoreDB](modelsdatastoredb.md)*
+• **new ModelsDatastoreDB**(`server`): [`ModelsDatastoreDB`](ModelsDatastoreDB.md)
 
-*Overrides [ServerComponent](servercomponent.md).[constructor](servercomponent.md#constructor)*
+#### Parameters
 
-Defined in bpmnServer/src/datastore/ModelsDatastore.ts:25
+| Name | Type |
+| :------ | :------ |
+| `server` | [`BPMNServer`](BPMNServer.md) |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`server` | [BPMNServer](bpmnserver.md) |
+[`ModelsDatastoreDB`](ModelsDatastoreDB.md)
 
-**Returns:** *[ModelsDatastoreDB](modelsdatastoredb.md)*
+#### Overrides
+
+[ServerComponent](ServerComponent.md).[constructor](ServerComponent.md#constructor)
+
+#### Defined in
+
+[datastore/ModelsDatastoreDB.ts:27](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsDatastoreDB.ts#L27)
 
 ## Properties
 
-###  db
+### db
 
-• **db**: *any*
+• **db**: `any`
 
-Defined in bpmnServer/src/datastore/ModelsDatastore.ts:25
+#### Defined in
 
-___
-
-###  dbConfiguration
-
-• **dbConfiguration**: *any*
-
-Defined in bpmnServer/src/datastore/ModelsDatastore.ts:24
+[datastore/ModelsDatastoreDB.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsDatastoreDB.ts#L25)
 
 ___
 
-###  server
+### dbConfiguration
 
-• **server**: *any*
+• **dbConfiguration**: `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[server](servercomponent.md#server)*
+#### Defined in
 
-Defined in bpmnServer/src/server/ServerComponent.ts:9
+[datastore/ModelsDatastoreDB.ts:24](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsDatastoreDB.ts#L24)
+
+___
+
+### server
+
+• **server**: `any`
+
+#### Inherited from
+
+[ServerComponent](ServerComponent.md).[server](ServerComponent.md#server)
+
+#### Defined in
+
+[server/ServerComponent.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L9)
 
 ## Accessors
 
-###  acl
+### appDelegate
 
-• **get acl**(): *any*
+• `get` **appDelegate**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[acl](servercomponent.md#acl)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:23
+`any`
 
-**Returns:** *any*
+#### Inherited from
 
-___
+ServerComponent.appDelegate
 
-###  appDelegate
+#### Defined in
 
-• **get appDelegate**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[appDelegate](servercomponent.md#appdelegate)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:18
-
-**Returns:** *any*
+[server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L18)
 
 ___
 
-###  cache
+### cache
 
-• **get cache**(): *[CacheManager](cachemanager.md)*
+• `get` **cache**(): [`CacheManager`](CacheManager.md)
 
-*Inherited from [ServerComponent](servercomponent.md).[cache](servercomponent.md#cache)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:17
+[`CacheManager`](CacheManager.md)
 
-**Returns:** *[CacheManager](cachemanager.md)*
+#### Inherited from
 
-___
+ServerComponent.cache
 
-###  configuration
+#### Defined in
 
-• **get configuration**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[configuration](servercomponent.md#configuration)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:14
-
-**Returns:** *any*
+[server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L17)
 
 ___
 
-###  cron
+### configuration
 
-• **get cron**(): *[Cron](cron.md)*
+• `get` **configuration**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[cron](servercomponent.md#cron)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:16
+`any`
 
-**Returns:** *[Cron](cron.md)*
+#### Inherited from
 
-___
+ServerComponent.configuration
 
-###  dataStore
+#### Defined in
 
-• **get dataStore**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[dataStore](servercomponent.md#datastore)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:20
-
-**Returns:** *any*
+[server/ServerComponent.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L14)
 
 ___
 
-###  definitions
+### cron
 
-• **get definitions**(): *any*
+• `get` **cron**(): [`Cron`](Cron.md)
 
-*Inherited from [ServerComponent](servercomponent.md).[definitions](servercomponent.md#definitions)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:21
+[`Cron`](Cron.md)
 
-**Returns:** *any*
+#### Inherited from
 
-___
+ServerComponent.cron
 
-###  engine
+#### Defined in
 
-• **get engine**(): *[IEngine](../interfaces/iengine.md)*
-
-*Inherited from [ServerComponent](servercomponent.md).[engine](servercomponent.md#engine)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:19
-
-**Returns:** *[IEngine](../interfaces/iengine.md)*
+[server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L16)
 
 ___
 
-###  iam
+### dataStore
 
-• **get iam**(): *any*
+• `get` **dataStore**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[iam](servercomponent.md#iam)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:24
+`any`
 
-**Returns:** *any*
+#### Inherited from
 
-___
+ServerComponent.dataStore
 
-###  listener
+#### Defined in
 
-• **get listener**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[listener](servercomponent.md#listener)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:22
-
-**Returns:** *any*
+[server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L20)
 
 ___
 
-###  logger
+### definitions
 
-• **get logger**(): *any*
+• `get` **definitions**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[logger](servercomponent.md#logger)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:15
+`any`
 
-**Returns:** *any*
+#### Inherited from
+
+ServerComponent.definitions
+
+#### Defined in
+
+[server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L21)
+
+___
+
+### engine
+
+• `get` **engine**(): [`IEngine`](../interfaces/IEngine.md)
+
+#### Returns
+
+[`IEngine`](../interfaces/IEngine.md)
+
+#### Inherited from
+
+ServerComponent.engine
+
+#### Defined in
+
+[server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L19)
+
+___
+
+### listener
+
+• `get` **listener**(): `any`
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+ServerComponent.listener
+
+#### Defined in
+
+[server/ServerComponent.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L22)
+
+___
+
+### logger
+
+• `get` **logger**(): `any`
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+ServerComponent.logger
+
+#### Defined in
+
+[server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L15)
 
 ## Methods
 
-###  deleteModel
+### deleteModel
 
-▸ **deleteModel**(`name`: any): *Promise‹void›*
+▸ **deleteModel**(`name`, `owner?`): `Promise`\<`void`\>
 
-*Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
+#### Parameters
 
-Defined in bpmnServer/src/datastore/ModelsDatastore.ts:189
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `name` | `any` | `undefined` |
+| `owner` | `any` | `null` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`name` | any |
+`Promise`\<`void`\>
 
-**Returns:** *Promise‹void›*
+#### Implementation of
 
-___
+[IModelsDatastore](../interfaces/IModelsDatastore.md).[deleteModel](../interfaces/IModelsDatastore.md#deletemodel)
 
-###  export
+#### Defined in
 
-▸ **export**(`name`: any, `folderPath`: any): *Promise‹void›*
-
-Defined in bpmnServer/src/datastore/ModelsDatastore.ts:212
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`name` | any |
-`folderPath` | any |
-
-**Returns:** *Promise‹void›*
+[datastore/ModelsDatastoreDB.ts:210](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsDatastoreDB.ts#L210)
 
 ___
 
-###  findEvents
+### export
 
-▸ **findEvents**(`query`: any): *Promise‹[IEventData](../interfaces/ieventdata.md)[]›*
+▸ **export**(`name`, `folderPath`, `owner?`): `Promise`\<`void`\>
 
-*Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
+#### Parameters
 
-Defined in bpmnServer/src/datastore/ModelsDatastore.ts:89
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `name` | `any` | `undefined` |
+| `folderPath` | `any` | `undefined` |
+| `owner` | `any` | `null` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`query` | any |
+`Promise`\<`void`\>
 
-**Returns:** *Promise‹[IEventData](../interfaces/ieventdata.md)[]›*
+#### Defined in
 
-___
-
-###  getList
-
-▸ **getList**(): *Promise‹string[]›*
-
-*Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
-
-Defined in bpmnServer/src/datastore/ModelsDatastore.ts:34
-
-**Returns:** *Promise‹string[]›*
+[datastore/ModelsDatastoreDB.ts:233](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsDatastoreDB.ts#L233)
 
 ___
 
-###  getSVG
+### findEvents
 
-▸ **getSVG**(`name`: any): *Promise‹any›*
+▸ **findEvents**(`query`, `owner?`): `Promise`\<[`IEventData`](../interfaces/IEventData.md)[]\>
 
-*Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
+#### Parameters
 
-Defined in bpmnServer/src/datastore/ModelsDatastore.ts:59
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `query` | `any` | `undefined` |
+| `owner` | `any` | `null` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`name` | any |
+`Promise`\<[`IEventData`](../interfaces/IEventData.md)[]\>
 
-**Returns:** *Promise‹any›*
+#### Implementation of
 
-___
+[IModelsDatastore](../interfaces/IModelsDatastore.md).[findEvents](../interfaces/IModelsDatastore.md#findevents)
 
-###  getSource
+#### Defined in
 
-▸ **getSource**(`name`: any): *Promise‹any›*
-
-*Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
-
-Defined in bpmnServer/src/datastore/ModelsDatastore.ts:54
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`name` | any |
-
-**Returns:** *Promise‹any›*
+[datastore/ModelsDatastoreDB.ts:97](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsDatastoreDB.ts#L97)
 
 ___
 
-###  import
+### getList
 
-▸ **import**(`data`: any): *Promise‹any›*
+▸ **getList**(`query?`): `Promise`\<`string`[]\>
 
-*Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
+#### Parameters
 
-Defined in bpmnServer/src/datastore/ModelsDatastore.ts:137
+| Name | Type |
+| :------ | :------ |
+| `query` | `Object` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`data` | any |
+`Promise`\<`string`[]\>
 
-**Returns:** *Promise‹any›*
+#### Implementation of
+
+[IModelsDatastore](../interfaces/IModelsDatastore.md).[getList](../interfaces/IModelsDatastore.md#getlist)
+
+#### Defined in
+
+[datastore/ModelsDatastoreDB.ts:34](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsDatastoreDB.ts#L34)
 
 ___
 
-###  install
+### getSVG
 
-▸ **install**(): *Promise‹any›*
+▸ **getSVG**(`name`, `owner?`): `Promise`\<`any`\>
 
-*Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
+#### Parameters
 
-Defined in bpmnServer/src/datastore/ModelsDatastore.ts:134
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `name` | `any` | `undefined` |
+| `owner` | `any` | `null` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+#### Implementation of
+
+[IModelsDatastore](../interfaces/IModelsDatastore.md).[getSVG](../interfaces/IModelsDatastore.md#getsvg)
+
+#### Defined in
+
+[datastore/ModelsDatastoreDB.ts:59](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsDatastoreDB.ts#L59)
+
+___
+
+### getSource
+
+▸ **getSource**(`name`, `owner?`): `Promise`\<`any`\>
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `name` | `any` | `undefined` |
+| `owner` | `any` | `null` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+#### Implementation of
+
+[IModelsDatastore](../interfaces/IModelsDatastore.md).[getSource](../interfaces/IModelsDatastore.md#getsource)
+
+#### Defined in
+
+[datastore/ModelsDatastoreDB.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsDatastoreDB.ts#L54)
+
+___
+
+### import
+
+▸ **import**(`data`, `owner?`): `Promise`\<`any`\>
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `data` | `any` | `undefined` |
+| `owner` | `any` | `null` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+#### Implementation of
+
+[IModelsDatastore](../interfaces/IModelsDatastore.md).[import](../interfaces/IModelsDatastore.md#import)
+
+#### Defined in
+
+[datastore/ModelsDatastoreDB.ts:160](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsDatastoreDB.ts#L160)
+
+___
+
+### install
+
+▸ **install**(): `Promise`\<`any`\>
 
 first time installation of DB
 
 creates a new collection and add an index
 
-**Returns:** *Promise‹any›*
+#### Returns
+
+`Promise`\<`any`\>
+
+#### Implementation of
+
+[IModelsDatastore](../interfaces/IModelsDatastore.md).[install](../interfaces/IModelsDatastore.md#install)
+
+#### Defined in
+
+[datastore/ModelsDatastoreDB.ts:157](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsDatastoreDB.ts#L157)
 
 ___
 
-###  load
+### load
 
-▸ **load**(`name`: any): *Promise‹[Definition](definition.md)›*
+▸ **load**(`name`, `owner?`): `Promise`\<[`Definition`](Definition.md)\>
 
-*Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
+#### Parameters
 
-Defined in bpmnServer/src/datastore/ModelsDatastore.ts:47
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `name` | `any` | `undefined` |
+| `owner` | `any` | `null` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`name` | any |
+`Promise`\<[`Definition`](Definition.md)\>
 
-**Returns:** *Promise‹[Definition](definition.md)›*
+#### Implementation of
 
-___
+[IModelsDatastore](../interfaces/IModelsDatastore.md).[load](../interfaces/IModelsDatastore.md#load)
 
-###  loadModel
+#### Defined in
 
-▸ **loadModel**(`name`: any): *Promise‹[BpmnModelData](bpmnmodeldata.md)›*
-
-*Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
-
-Defined in bpmnServer/src/datastore/ModelsDatastore.ts:68
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`name` | any |
-
-**Returns:** *Promise‹[BpmnModelData](bpmnmodeldata.md)›*
+[datastore/ModelsDatastoreDB.ts:47](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsDatastoreDB.ts#L47)
 
 ___
 
-###  renameModel
+### loadModel
 
-▸ **renameModel**(`name`: any, `newName`: any): *Promise‹boolean›*
+▸ **loadModel**(`name`, `owner?`): `Promise`\<[`BpmnModelData`](BpmnModelData.md)\>
 
-*Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
+#### Parameters
 
-Defined in bpmnServer/src/datastore/ModelsDatastore.ts:194
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `name` | `any` | `undefined` |
+| `owner` | `any` | `null` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`name` | any |
-`newName` | any |
+`Promise`\<[`BpmnModelData`](BpmnModelData.md)\>
 
-**Returns:** *Promise‹boolean›*
+#### Implementation of
 
-___
+[IModelsDatastore](../interfaces/IModelsDatastore.md).[loadModel](../interfaces/IModelsDatastore.md#loadmodel)
 
-###  save
+#### Defined in
 
-▸ **save**(`name`: any, `source`: any, `svg`: any): *Promise‹any›*
-
-*Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
-
-Defined in bpmnServer/src/datastore/ModelsDatastore.ts:78
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`name` | any |
-`source` | any |
-`svg` | any |
-
-**Returns:** *Promise‹any›*
+[datastore/ModelsDatastoreDB.ts:68](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsDatastoreDB.ts#L68)
 
 ___
 
-###  saveModel
+### rebuild
 
-▸ **saveModel**(`model`: [IBpmnModelData](../interfaces/ibpmnmodeldata.md)): *Promise‹boolean›*
+▸ **rebuild**(`model?`): `Promise`\<`void`\>
 
-*Implementation of [IModelsDatastore](../interfaces/imodelsdatastore.md)*
+#### Parameters
 
-Defined in bpmnServer/src/datastore/ModelsDatastore.ts:169
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `model` | `any` | `null` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`model` | [IBpmnModelData](../interfaces/ibpmnmodeldata.md) |
+`Promise`\<`void`\>
 
-**Returns:** *Promise‹boolean›*
+#### Defined in
+
+[datastore/ModelsDatastoreDB.ts:251](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsDatastoreDB.ts#L251)
 
 ___
 
-###  updateTimer
+### renameModel
 
-▸ **updateTimer**(`name`: any): *Promise‹boolean›*
+▸ **renameModel**(`name`, `newName`, `owner?`): `Promise`\<`boolean`\>
 
-Defined in bpmnServer/src/datastore/ModelsDatastore.ts:143
+#### Parameters
 
-**Parameters:**
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `name` | `any` | `undefined` |
+| `newName` | `any` | `undefined` |
+| `owner` | `any` | `null` |
 
-Name | Type |
------- | ------ |
-`name` | any |
+#### Returns
 
-**Returns:** *Promise‹boolean›*
+`Promise`\<`boolean`\>
+
+#### Implementation of
+
+[IModelsDatastore](../interfaces/IModelsDatastore.md).[renameModel](../interfaces/IModelsDatastore.md#renamemodel)
+
+#### Defined in
+
+[datastore/ModelsDatastoreDB.ts:215](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsDatastoreDB.ts#L215)
+
+___
+
+### save
+
+▸ **save**(`name`, `source`, `svg`, `owner?`): `Promise`\<`any`\>
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `name` | `any` | `undefined` |
+| `source` | `any` | `undefined` |
+| `svg` | `any` | `undefined` |
+| `owner` | `any` | `null` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+#### Implementation of
+
+[IModelsDatastore](../interfaces/IModelsDatastore.md).[save](../interfaces/IModelsDatastore.md#save)
+
+#### Defined in
+
+[datastore/ModelsDatastoreDB.ts:78](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsDatastoreDB.ts#L78)
+
+___
+
+### saveModel
+
+▸ **saveModel**(`model`, `owner?`): `Promise`\<`boolean`\>
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `model` | [`IBpmnModelData`](../interfaces/IBpmnModelData.md) | `undefined` |
+| `owner` | `any` | `null` |
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+#### Implementation of
+
+[IModelsDatastore](../interfaces/IModelsDatastore.md).[saveModel](../interfaces/IModelsDatastore.md#savemodel)
+
+#### Defined in
+
+[datastore/ModelsDatastoreDB.ts:190](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsDatastoreDB.ts#L190)
+
+___
+
+### updateTimer
+
+▸ **updateTimer**(`name`, `owner?`): `Promise`\<`boolean`\>
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `name` | `any` | `undefined` |
+| `owner` | `any` | `null` |
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+#### Defined in
+
+[datastore/ModelsDatastoreDB.ts:164](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsDatastoreDB.ts#L164)

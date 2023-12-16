@@ -1,714 +1,1030 @@
-[bpmn-server](../README.md) › [ThrowEvent](throwevent.md)
+[bpmn-server](../README.md) / ThrowEvent
 
 # Class: ThrowEvent
 
 ## Hierarchy
 
-  ↳ [Event](event.md)
+- [`Event`](Event.md)
 
-  ↳ **ThrowEvent**
+  ↳ **`ThrowEvent`**
 
-## Implements
-
-* [IElement](../interfaces/ielement.md)
-
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](throwevent.md#constructor)
+- [constructor](ThrowEvent.md#constructor)
 
 ### Properties
 
-* [attachedTo](throwevent.md#attachedto)
-* [attachments](throwevent.md#attachments)
-* [behaviours](throwevent.md#behaviours)
-* [def](throwevent.md#def)
-* [id](throwevent.md#id)
-* [inbounds](throwevent.md#inbounds)
-* [isFlow](throwevent.md#isflow)
-* [messageId](throwevent.md#messageid)
-* [name](throwevent.md#name)
-* [outbounds](throwevent.md#outbounds)
-* [process](throwevent.md#process)
-* [scripts](throwevent.md#scripts)
-* [signalId](throwevent.md#signalid)
-* [subType](throwevent.md#subtype)
-* [type](throwevent.md#type)
+- [assignee](ThrowEvent.md#assignee)
+- [attachedTo](ThrowEvent.md#attachedto)
+- [attachments](ThrowEvent.md#attachments)
+- [behaviours](ThrowEvent.md#behaviours)
+- [def](ThrowEvent.md#def)
+- [id](ThrowEvent.md#id)
+- [inbounds](ThrowEvent.md#inbounds)
+- [initiator](ThrowEvent.md#initiator)
+- [isFlow](ThrowEvent.md#isflow)
+- [lane](ThrowEvent.md#lane)
+- [messageId](ThrowEvent.md#messageid)
+- [name](ThrowEvent.md#name)
+- [outbounds](ThrowEvent.md#outbounds)
+- [process](ThrowEvent.md#process)
+- [scripts](ThrowEvent.md#scripts)
+- [signalId](ThrowEvent.md#signalid)
+- [subType](ThrowEvent.md#subtype)
+- [type](ThrowEvent.md#type)
 
 ### Accessors
 
-* [canBeInvoked](throwevent.md#canbeinvoked)
-* [isCatching](throwevent.md#iscatching)
-* [processId](throwevent.md#processid)
-* [requiresWait](throwevent.md#requireswait)
+- [canBeInvoked](ThrowEvent.md#canbeinvoked)
+- [isCatching](ThrowEvent.md#iscatching)
+- [processId](ThrowEvent.md#processid)
+- [requiresWait](ThrowEvent.md#requireswait)
 
 ### Methods
 
-* [addBehaviour](throwevent.md#addbehaviour)
-* [continue](throwevent.md#continue)
-* [describe](throwevent.md#describe)
-* [doEvent](throwevent.md#doevent)
-* [end](throwevent.md#end)
-* [enter](throwevent.md#enter)
-* [execute](throwevent.md#execute)
-* [getBehaviour](throwevent.md#getbehaviour)
-* [getInput](throwevent.md#getinput)
-* [getOutbounds](throwevent.md#getoutbounds)
-* [getOutput](throwevent.md#getoutput)
-* [hasBehaviour](throwevent.md#hasbehaviour)
-* [hasMessage](throwevent.md#hasmessage)
-* [hasSignal](throwevent.md#hassignal)
-* [hasTimer](throwevent.md#hastimer)
-* [init](throwevent.md#init)
-* [restored](throwevent.md#restored)
-* [resume](throwevent.md#resume)
-* [run](throwevent.md#run)
-* [setInput](throwevent.md#setinput)
-* [start](throwevent.md#start)
-* [startBoundaryEvents](throwevent.md#startboundaryevents)
+- [addBehaviour](ThrowEvent.md#addbehaviour)
+- [cancelBoundaryEvents](ThrowEvent.md#cancelboundaryevents)
+- [cancelEBG](ThrowEvent.md#cancelebg)
+- [continue](ThrowEvent.md#continue)
+- [describe](ThrowEvent.md#describe)
+- [doEvent](ThrowEvent.md#doevent)
+- [end](ThrowEvent.md#end)
+- [enter](ThrowEvent.md#enter)
+- [execute](ThrowEvent.md#execute)
+- [getBehaviour](ThrowEvent.md#getbehaviour)
+- [getInput](ThrowEvent.md#getinput)
+- [getOutbounds](ThrowEvent.md#getoutbounds)
+- [getOutput](ThrowEvent.md#getoutput)
+- [hasBehaviour](ThrowEvent.md#hasbehaviour)
+- [hasMessage](ThrowEvent.md#hasmessage)
+- [hasSignal](ThrowEvent.md#hassignal)
+- [hasTimer](ThrowEvent.md#hastimer)
+- [init](ThrowEvent.md#init)
+- [restored](ThrowEvent.md#restored)
+- [resume](ThrowEvent.md#resume)
+- [run](ThrowEvent.md#run)
+- [setInput](ThrowEvent.md#setinput)
+- [start](ThrowEvent.md#start)
+- [startBoundaryEvents](ThrowEvent.md#startboundaryevents)
+- [validate](ThrowEvent.md#validate)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new ThrowEvent**(`id`: any, `process`: any, `type`: any, `def`: any): *[ThrowEvent](throwevent.md)*
+• **new ThrowEvent**(`id`, `process`, `type`, `def`): [`ThrowEvent`](ThrowEvent.md)
 
-*Inherited from [Node](node.md).[constructor](node.md#constructor)*
+#### Parameters
 
-Defined in bpmnServer/src/elements/Node.ts:24
+| Name | Type |
+| :------ | :------ |
+| `id` | `any` |
+| `process` | `any` |
+| `type` | `any` |
+| `def` | `any` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`id` | any |
-`process` | any |
-`type` | any |
-`def` | any |
+[`ThrowEvent`](ThrowEvent.md)
 
-**Returns:** *[ThrowEvent](throwevent.md)*
+#### Inherited from
+
+[Event](Event.md).[constructor](Event.md#constructor)
+
+#### Defined in
+
+[elements/Node.ts:29](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L29)
 
 ## Properties
 
-###  attachedTo
+### assignee
 
-• **attachedTo**: *[Node](node.md)*
+• **assignee**: `any`
 
-*Inherited from [Node](node.md).[attachedTo](node.md#attachedto)*
+#### Inherited from
 
-Defined in bpmnServer/src/elements/Node.ts:17
+[Event](Event.md).[assignee](Event.md#assignee)
 
-___
+#### Defined in
 
-###  attachments
-
-• **attachments**: *[Node](node.md)[]*
-
-*Inherited from [Node](node.md).[attachments](node.md#attachments)*
-
-Defined in bpmnServer/src/elements/Node.ts:16
+[elements/Node.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L22)
 
 ___
 
-###  behaviours
+### attachedTo
 
-• **behaviours**: *Map‹any, any›* = new Map()
+• **attachedTo**: [`Node`](Node.md)
 
-*Implementation of [IElement](../interfaces/ielement.md).[behaviours](../interfaces/ielement.md#behaviours)*
+#### Inherited from
 
-*Inherited from [Node](node.md).[behaviours](node.md#behaviours)*
+[Event](Event.md).[attachedTo](Event.md#attachedto)
 
-Defined in bpmnServer/src/elements/Element.ts:17
+#### Defined in
 
-___
-
-###  def
-
-• **def**: *any*
-
-*Inherited from [Node](node.md).[def](node.md#def)*
-
-Defined in bpmnServer/src/elements/Node.ts:13
+[elements/Node.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L18)
 
 ___
 
-###  id
+### attachments
 
-• **id**: *any*
+• **attachments**: [`Node`](Node.md)[]
 
-*Implementation of [IElement](../interfaces/ielement.md).[id](../interfaces/ielement.md#id)*
+#### Inherited from
 
-*Inherited from [Node](node.md).[id](node.md#id)*
+[Event](Event.md).[attachments](Event.md#attachments)
 
-Defined in bpmnServer/src/elements/Element.ts:13
+#### Defined in
 
-___
-
-###  inbounds
-
-• **inbounds**: *[Flow](flow.md)[]*
-
-*Inherited from [Node](node.md).[inbounds](node.md#inbounds)*
-
-Defined in bpmnServer/src/elements/Node.ts:15
+[elements/Node.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L17)
 
 ___
 
-###  isFlow
+### behaviours
 
-• **isFlow**: *boolean* = false
+• **behaviours**: `Map`\<`any`, `any`\>
 
-*Inherited from [Node](node.md).[isFlow](node.md#isflow)*
+#### Inherited from
 
-Defined in bpmnServer/src/elements/Element.ts:18
+[Event](Event.md).[behaviours](Event.md#behaviours)
 
-___
+#### Defined in
 
-###  messageId
-
-• **messageId**: *any*
-
-*Inherited from [Node](node.md).[messageId](node.md#messageid)*
-
-Defined in bpmnServer/src/elements/Node.ts:18
+[elements/Element.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L17)
 
 ___
 
-###  name
+### def
 
-• **name**: *any*
+• **def**: `any`
 
-*Implementation of [IElement](../interfaces/ielement.md).[name](../interfaces/ielement.md#name)*
+#### Inherited from
 
-*Inherited from [Node](node.md).[name](node.md#name)*
+[Event](Event.md).[def](Event.md#def)
 
-*Overrides [Element](element.md).[name](element.md#name)*
+#### Defined in
 
-Defined in bpmnServer/src/elements/Node.ts:11
-
-___
-
-###  outbounds
-
-• **outbounds**: *[Flow](flow.md)[]*
-
-*Inherited from [Node](node.md).[outbounds](node.md#outbounds)*
-
-Defined in bpmnServer/src/elements/Node.ts:14
+[elements/Node.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L14)
 
 ___
 
-###  process
+### id
 
-• **process**: *any*
+• **id**: `any`
 
-*Inherited from [Node](node.md).[process](node.md#process)*
+#### Inherited from
 
-Defined in bpmnServer/src/elements/Node.ts:12
+[Event](Event.md).[id](Event.md#id)
 
-___
+#### Defined in
 
-###  scripts
-
-• **scripts**: *Map‹any, any›* = new Map()
-
-*Inherited from [Node](node.md).[scripts](node.md#scripts)*
-
-Defined in bpmnServer/src/elements/Node.ts:20
+[elements/Element.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L13)
 
 ___
 
-###  signalId
+### inbounds
 
-• **signalId**: *any*
+• **inbounds**: [`Flow`](Flow.md)[]
 
-*Inherited from [Node](node.md).[signalId](node.md#signalid)*
+#### Inherited from
 
-Defined in bpmnServer/src/elements/Node.ts:19
+[Event](Event.md).[inbounds](Event.md#inbounds)
 
-___
+#### Defined in
 
-###  subType
-
-• **subType**: *any*
-
-*Inherited from [Node](node.md).[subType](node.md#subtype)*
-
-Defined in bpmnServer/src/elements/Element.ts:15
+[elements/Node.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L16)
 
 ___
 
-###  type
+### initiator
 
-• **type**: *any*
+• **initiator**: `any`
 
-*Implementation of [IElement](../interfaces/ielement.md).[type](../interfaces/ielement.md#type)*
+#### Inherited from
 
-*Inherited from [Node](node.md).[type](node.md#type)*
+[Event](Event.md).[initiator](Event.md#initiator)
 
-Defined in bpmnServer/src/elements/Element.ts:14
+#### Defined in
+
+[elements/Node.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L21)
+
+___
+
+### isFlow
+
+• **isFlow**: `boolean` = `false`
+
+#### Inherited from
+
+[Event](Event.md).[isFlow](Event.md#isflow)
+
+#### Defined in
+
+[elements/Element.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L18)
+
+___
+
+### lane
+
+• **lane**: `any`
+
+#### Inherited from
+
+[Event](Event.md).[lane](Event.md#lane)
+
+#### Defined in
+
+[elements/Element.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L19)
+
+___
+
+### messageId
+
+• **messageId**: `any`
+
+#### Inherited from
+
+[Event](Event.md).[messageId](Event.md#messageid)
+
+#### Defined in
+
+[elements/Node.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L19)
+
+___
+
+### name
+
+• **name**: `any`
+
+#### Inherited from
+
+[Event](Event.md).[name](Event.md#name)
+
+#### Defined in
+
+[elements/Node.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L12)
+
+___
+
+### outbounds
+
+• **outbounds**: [`Flow`](Flow.md)[]
+
+#### Inherited from
+
+[Event](Event.md).[outbounds](Event.md#outbounds)
+
+#### Defined in
+
+[elements/Node.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L15)
+
+___
+
+### process
+
+• **process**: `any`
+
+#### Inherited from
+
+[Event](Event.md).[process](Event.md#process)
+
+#### Defined in
+
+[elements/Node.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L13)
+
+___
+
+### scripts
+
+• **scripts**: `Map`\<`any`, `any`\>
+
+#### Inherited from
+
+[Event](Event.md).[scripts](Event.md#scripts)
+
+#### Defined in
+
+[elements/Node.ts:23](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L23)
+
+___
+
+### signalId
+
+• **signalId**: `any`
+
+#### Inherited from
+
+[Event](Event.md).[signalId](Event.md#signalid)
+
+#### Defined in
+
+[elements/Node.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L20)
+
+___
+
+### subType
+
+• **subType**: `any`
+
+#### Inherited from
+
+[Event](Event.md).[subType](Event.md#subtype)
+
+#### Defined in
+
+[elements/Element.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L15)
+
+___
+
+### type
+
+• **type**: `any`
+
+#### Inherited from
+
+[Event](Event.md).[type](Event.md#type)
+
+#### Defined in
+
+[elements/Element.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L14)
 
 ## Accessors
 
-###  canBeInvoked
+### canBeInvoked
 
-• **get canBeInvoked**(): *boolean*
+• `get` **canBeInvoked**(): `boolean`
 
-*Inherited from [Event](event.md).[canBeInvoked](event.md#canbeinvoked)*
+#### Returns
 
-*Overrides [Node](node.md).[canBeInvoked](node.md#canbeinvoked)*
+`boolean`
 
-Defined in bpmnServer/src/elements/Events.ts:30
+#### Inherited from
 
-**Returns:** *boolean*
+Event.canBeInvoked
 
-___
+#### Defined in
 
-###  isCatching
-
-• **get isCatching**(): *boolean*
-
-*Overrides [Node](node.md).[isCatching](node.md#iscatching)*
-
-Defined in bpmnServer/src/elements/Events.ts:71
-
-	using token: check if fromEventBasedGateway;	if yes cancel all other events
-
-**Returns:** *boolean*
+[elements/Events.ts:32](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Events.ts#L32)
 
 ___
 
-###  processId
+### isCatching
 
-• **get processId**(): *any*
+• `get` **isCatching**(): `boolean`
 
-*Inherited from [Node](node.md).[processId](node.md#processid)*
+using token: check if fromEventBasedGateway;	if yes cancel all other events
 
-Defined in bpmnServer/src/elements/Node.ts:21
+#### Returns
 
-**Returns:** *any*
+`boolean`
+
+#### Overrides
+
+Event.isCatching
+
+#### Defined in
+
+[elements/Events.ts:100](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Events.ts#L100)
 
 ___
 
-###  requiresWait
+### processId
 
-• **get requiresWait**(): *boolean*
+• `get` **processId**(): `any`
 
-*Inherited from [Node](node.md).[requiresWait](node.md#requireswait)*
+#### Returns
 
-Defined in bpmnServer/src/elements/Node.ts:96
+`any`
 
-**Returns:** *boolean*
+#### Inherited from
+
+Event.processId
+
+#### Defined in
+
+[elements/Node.ts:24](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L24)
+
+___
+
+### requiresWait
+
+• `get` **requiresWait**(): `boolean`
+
+#### Returns
+
+`boolean`
+
+#### Inherited from
+
+Event.requiresWait
+
+#### Defined in
+
+[elements/Node.ts:118](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L118)
 
 ## Methods
 
-###  addBehaviour
+### addBehaviour
 
-▸ **addBehaviour**(`nane`: any, `behavriour`: any): *void*
+▸ **addBehaviour**(`nane`, `behavriour`): `void`
 
-*Implementation of [IElement](../interfaces/ielement.md)*
+#### Parameters
 
-*Inherited from [Node](node.md).[addBehaviour](node.md#addbehaviour)*
+| Name | Type |
+| :------ | :------ |
+| `nane` | `any` |
+| `behavriour` | `any` |
 
-Defined in bpmnServer/src/elements/Element.ts:40
+#### Returns
 
-**Parameters:**
+`void`
 
-Name | Type |
------- | ------ |
-`nane` | any |
-`behavriour` | any |
+#### Inherited from
 
-**Returns:** *void*
+[Event](Event.md).[addBehaviour](Event.md#addbehaviour)
 
-___
+#### Defined in
 
-###  continue
-
-▸ **continue**(`item`: [Item](item.md)): *Promise‹void›*
-
-*Inherited from [Node](node.md).[continue](node.md#continue)*
-
-*Overrides [Element](element.md).[continue](element.md#continue)*
-
-Defined in bpmnServer/src/elements/Node.ts:169
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-
-**Returns:** *Promise‹void›*
+[elements/Element.ts:39](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L39)
 
 ___
 
-###  describe
+### cancelBoundaryEvents
 
-▸ **describe**(): *string[][]*
+▸ **cancelBoundaryEvents**(`item`): `Promise`\<`void`\>
 
-*Implementation of [IElement](../interfaces/ielement.md)*
+#### Parameters
 
-*Inherited from [Node](node.md).[describe](node.md#describe)*
+| Name | Type |
+| :------ | :------ |
+| `item` | `any` |
 
-Defined in bpmnServer/src/elements/Element.ts:22
+#### Returns
 
-**Returns:** *string[][]*
+`Promise`\<`void`\>
 
-___
+#### Inherited from
 
-###  doEvent
+[Event](Event.md).[cancelBoundaryEvents](Event.md#cancelboundaryevents)
 
-▸ **doEvent**(`item`: [Item](item.md), `event`: [EXECUTION_EVENT](../enums/execution_event.md), `newStatus`: [ITEM_STATUS](../enums/item_status.md)): *Promise‹any›*
+#### Defined in
 
-*Inherited from [Node](node.md).[doEvent](node.md#doevent)*
-
-Defined in bpmnServer/src/elements/Node.ts:40
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-`event` | [EXECUTION_EVENT](../enums/execution_event.md) |
-`newStatus` | [ITEM_STATUS](../enums/item_status.md) |
-
-**Returns:** *Promise‹any›*
+[elements/Node.ts:235](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L235)
 
 ___
 
-###  end
+### cancelEBG
 
-▸ **end**(`item`: [Item](item.md)): *Promise‹void›*
+▸ **cancelEBG**(`item`): `Promise`\<`void`\>
 
-*Inherited from [Event](event.md).[end](event.md#end)*
+#### Parameters
 
-*Overrides [Node](node.md).[end](node.md#end)*
+| Name | Type |
+| :------ | :------ |
+| `item` | `any` |
 
-Defined in bpmnServer/src/elements/Events.ts:26
+#### Returns
 
-**Parameters:**
+`Promise`\<`void`\>
 
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
+#### Inherited from
 
-**Returns:** *Promise‹void›*
+[Event](Event.md).[cancelEBG](Event.md#cancelebg)
 
-___
+#### Defined in
 
-###  enter
-
-▸ **enter**(`item`: [Item](item.md)): *void*
-
-*Inherited from [Node](node.md).[enter](node.md#enter)*
-
-Defined in bpmnServer/src/elements/Node.ts:88
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-
-**Returns:** *void*
+[elements/Node.ts:227](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L227)
 
 ___
 
-###  execute
+### continue
 
-▸ **execute**(`item`: [Item](item.md)): *Promise‹void | [wait](../enums/node_action.md#wait) | [error](../enums/node_action.md#error) | [abort](../enums/node_action.md#abort)›*
+▸ **continue**(`item`): `Promise`\<`void`\>
 
-*Inherited from [Node](node.md).[execute](node.md#execute)*
+#### Parameters
 
-Defined in bpmnServer/src/elements/Node.ts:113
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Inherited from
+
+[Event](Event.md).[continue](Event.md#continue)
+
+#### Defined in
+
+[elements/Node.ts:208](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L208)
+
+___
+
+### describe
+
+▸ **describe**(): `string`[][]
+
+#### Returns
+
+`string`[][]
+
+#### Inherited from
+
+[Event](Event.md).[describe](Event.md#describe)
+
+#### Defined in
+
+[elements/Element.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L21)
+
+___
+
+### doEvent
+
+▸ **doEvent**(`item`, `event`, `newStatus`): `Promise`\<`any`[]\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+| `event` | [`EXECUTION_EVENT`](../enums/EXECUTION_EVENT.md) |
+| `newStatus` | [`ITEM_STATUS`](../enums/ITEM_STATUS.md) |
+
+#### Returns
+
+`Promise`\<`any`[]\>
+
+#### Inherited from
+
+[Event](Event.md).[doEvent](Event.md#doevent)
+
+#### Defined in
+
+[elements/Node.ts:53](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L53)
+
+___
+
+### end
+
+▸ **end**(`item`, `cancel?`): `Promise`\<`void`\>
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `item` | [`Item`](Item.md) | `undefined` |
+| `cancel` | `Boolean` | `false` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Inherited from
+
+[Event](Event.md).[end](Event.md#end)
+
+#### Defined in
+
+[elements/Events.ts:28](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Events.ts#L28)
+
+___
+
+### enter
+
+▸ **enter**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Event](Event.md).[enter](Event.md#enter)
+
+#### Defined in
+
+[elements/Node.ts:109](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L109)
+
+___
+
+### execute
+
+▸ **execute**(`item`): `Promise`\<`void` \| [`wait`](../enums/NODE_ACTION.md#wait) \| [`end`](../enums/NODE_ACTION.md#end) \| [`error`](../enums/NODE_ACTION.md#error) \| [`abort`](../enums/NODE_ACTION.md#abort)\>
 
 this is the primary exectuion method for a node
 
 considerations: the following are handled by Token
      1.  Loops we are inside a loop already (if any)
-     2.  Gatways
+     2.  Gatways 
      3.  Subprocess the parent node is fired as normal
              run method will fire the subprocess invoking a new token and will go into wait
 
-**Parameters:**
+#### Parameters
 
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-**Returns:** *Promise‹void | [wait](../enums/node_action.md#wait) | [error](../enums/node_action.md#error) | [abort](../enums/node_action.md#abort)›*
+#### Returns
 
-___
+`Promise`\<`void` \| [`wait`](../enums/NODE_ACTION.md#wait) \| [`end`](../enums/NODE_ACTION.md#end) \| [`error`](../enums/NODE_ACTION.md#error) \| [`abort`](../enums/NODE_ACTION.md#abort)\>
 
-###  getBehaviour
+#### Inherited from
 
-▸ **getBehaviour**(`name`: any): *any*
+[Event](Event.md).[execute](Event.md#execute)
 
-*Implementation of [IElement](../interfaces/ielement.md)*
+#### Defined in
 
-*Inherited from [Node](node.md).[getBehaviour](node.md#getbehaviour)*
-
-Defined in bpmnServer/src/elements/Element.ts:37
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`name` | any |
-
-**Returns:** *any*
+[elements/Node.ts:135](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L135)
 
 ___
 
-###  getInput
+### getBehaviour
 
-▸ **getInput**(`item`: [Item](item.md), `input`: any): *Promise‹any›*
+▸ **getBehaviour**(`name`): `any`
 
-*Inherited from [Node](node.md).[getInput](node.md#getinput)*
+#### Parameters
 
-Defined in bpmnServer/src/elements/Node.ts:66
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-`input` | any |
+`any`
 
-**Returns:** *Promise‹any›*
+#### Inherited from
 
-___
+[Event](Event.md).[getBehaviour](Event.md#getbehaviour)
 
-###  getOutbounds
+#### Defined in
 
-▸ **getOutbounds**(`item`: [Item](item.md)): *[Item](item.md)[]*
-
-*Inherited from [Node](node.md).[getOutbounds](node.md#getoutbounds)*
-
-Defined in bpmnServer/src/elements/Node.ts:233
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-
-**Returns:** *[Item](item.md)[]*
+[elements/Element.ts:36](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L36)
 
 ___
 
-###  getOutput
+### getInput
 
-▸ **getOutput**(`item`: [Item](item.md)): *Promise‹any›*
+▸ **getInput**(`item`, `input`): `Promise`\<{}\>
 
-*Inherited from [Node](node.md).[getOutput](node.md#getoutput)*
+#### Parameters
 
-Defined in bpmnServer/src/elements/Node.ts:79
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+| `input` | `any` |
+
+#### Returns
+
+`Promise`\<{}\>
+
+#### Inherited from
+
+[Event](Event.md).[getInput](Event.md#getinput)
+
+#### Defined in
+
+[elements/Node.ts:91](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L91)
+
+___
+
+### getOutbounds
+
+▸ **getOutbounds**(`item`): [`Item`](Item.md)[]
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+[`Item`](Item.md)[]
+
+#### Inherited from
+
+[Event](Event.md).[getOutbounds](Event.md#getoutbounds)
+
+#### Defined in
+
+[elements/Node.ts:311](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L311)
+
+___
+
+### getOutput
+
+▸ **getOutput**(`item`): `Promise`\<{}\>
 
 transform data using output rules
 todo
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Description |
------- | ------ | ------ |
-`item` | [Item](item.md) |   |
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-**Returns:** *Promise‹any›*
+#### Returns
+
+`Promise`\<{}\>
+
+#### Inherited from
+
+[Event](Event.md).[getOutput](Event.md#getoutput)
+
+#### Defined in
+
+[elements/Node.ts:105](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L105)
 
 ___
 
-###  hasBehaviour
+### hasBehaviour
 
-▸ **hasBehaviour**(`name`: any): *boolean*
-
-*Implementation of [IElement](../interfaces/ielement.md)*
-
-*Inherited from [Node](node.md).[hasBehaviour](node.md#hasbehaviour)*
-
-Defined in bpmnServer/src/elements/Element.ts:33
+▸ **hasBehaviour**(`name`): `boolean`
 
 respond by providing behaviour attributes beyond item and node information
  ex: timer due , input/outupt , fields
 
-**Parameters:**
+#### Parameters
 
-Name | Type |
------- | ------ |
-`name` | any |
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
 
-**Returns:** *boolean*
+#### Returns
 
-___
+`boolean`
 
-###  hasMessage
+#### Inherited from
 
-▸ **hasMessage**(): *any*
+[Event](Event.md).[hasBehaviour](Event.md#hasbehaviour)
 
-*Inherited from [Event](event.md).[hasMessage](event.md#hasmessage)*
+#### Defined in
 
-Defined in bpmnServer/src/elements/Events.ts:7
-
-**Returns:** *any*
+[elements/Element.ts:32](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L32)
 
 ___
 
-###  hasSignal
+### hasMessage
 
-▸ **hasSignal**(): *any*
+▸ **hasMessage**(): `any`
 
-*Inherited from [Event](event.md).[hasSignal](event.md#hassignal)*
+#### Returns
 
-Defined in bpmnServer/src/elements/Events.ts:10
+`any`
 
-**Returns:** *any*
+#### Inherited from
 
-___
+[Event](Event.md).[hasMessage](Event.md#hasmessage)
 
-###  hasTimer
+#### Defined in
 
-▸ **hasTimer**(): *any*
-
-*Inherited from [Event](event.md).[hasTimer](event.md#hastimer)*
-
-Defined in bpmnServer/src/elements/Events.ts:13
-
-**Returns:** *any*
+[elements/Events.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Events.ts#L9)
 
 ___
 
-###  init
+### hasSignal
 
-▸ **init**(`item`: [Item](item.md)): *void*
+▸ **hasSignal**(): `any`
 
-*Inherited from [Node](node.md).[init](node.md#init)*
+#### Returns
 
-Defined in bpmnServer/src/elements/Node.ts:228
+`any`
 
-**Parameters:**
+#### Inherited from
 
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
+[Event](Event.md).[hasSignal](Event.md#hassignal)
 
-**Returns:** *void*
+#### Defined in
 
-___
-
-###  restored
-
-▸ **restored**(`item`: [Item](item.md)): *void*
-
-*Inherited from [Node](node.md).[restored](node.md#restored)*
-
-Defined in bpmnServer/src/elements/Element.ts:23
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-
-**Returns:** *void*
+[elements/Events.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Events.ts#L12)
 
 ___
 
-###  resume
+### hasTimer
 
-▸ **resume**(`item`: [Item](item.md)): *void*
+▸ **hasTimer**(): `any`
 
-*Inherited from [Node](node.md).[resume](node.md#resume)*
+#### Returns
 
-*Overrides [Element](element.md).[resume](element.md#resume)*
+`any`
 
-Defined in bpmnServer/src/elements/Node.ts:225
+#### Inherited from
+
+[Event](Event.md).[hasTimer](Event.md#hastimer)
+
+#### Defined in
+
+[elements/Events.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Events.ts#L15)
+
+___
+
+### init
+
+▸ **init**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Event](Event.md).[init](Event.md#init)
+
+#### Defined in
+
+[elements/Node.ts:306](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L306)
+
+___
+
+### restored
+
+▸ **restored**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Event](Event.md).[restored](Event.md#restored)
+
+#### Defined in
+
+[elements/Element.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L22)
+
+___
+
+### resume
+
+▸ **resume**(`item`): `void`
 
 is called by the token after an execution resume for every active (in wait) item
 different than init, which is called for all items
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Description |
------- | ------ | ------ |
-`item` | [Item](item.md) |   |
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-**Returns:** *void*
+#### Returns
 
-___
+`void`
 
-###  run
+#### Inherited from
 
-▸ **run**(`item`: [Item](item.md)): *Promise‹[NODE_ACTION](../enums/node_action.md)›*
+[Event](Event.md).[resume](Event.md#resume)
 
-*Overrides [Node](node.md).[run](node.md#run)*
+#### Defined in
 
-Defined in bpmnServer/src/elements/Events.ts:76
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-
-**Returns:** *Promise‹[NODE_ACTION](../enums/node_action.md)›*
+[elements/Node.ts:303](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L303)
 
 ___
 
-###  setInput
+### run
 
-▸ **setInput**(`item`: [Item](item.md), `input`: any): *Promise‹void›*
+▸ **run**(`item`): `Promise`\<[`NODE_ACTION`](../enums/NODE_ACTION.md)\>
 
-*Inherited from [Node](node.md).[setInput](node.md#setinput)*
+#### Parameters
 
-Defined in bpmnServer/src/elements/Node.ts:56
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
+#### Returns
+
+`Promise`\<[`NODE_ACTION`](../enums/NODE_ACTION.md)\>
+
+#### Overrides
+
+[Event](Event.md).[run](Event.md#run)
+
+#### Defined in
+
+[elements/Events.ts:105](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Events.ts#L105)
+
+___
+
+### setInput
+
+▸ **setInput**(`item`, `input`): `Promise`\<`void`\>
+
+is Called after execution 
 transform data using input rules
 todo
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Description |
------- | ------ | ------ |
-`item` | [Item](item.md) |   |
-`input` | any | - |
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+| `input` | `any` |
 
-**Returns:** *Promise‹void›*
+#### Returns
 
-___
+`Promise`\<`void`\>
 
-###  start
+#### Inherited from
 
-▸ **start**(`item`: [Item](item.md)): *Promise‹[NODE_ACTION](../enums/node_action.md)›*
+[Event](Event.md).[setInput](Event.md#setinput)
 
-*Overrides [Event](event.md).[start](event.md#start)*
+#### Defined in
 
-Defined in bpmnServer/src/elements/Events.ts:73
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-
-**Returns:** *Promise‹[NODE_ACTION](../enums/node_action.md)›*
+[elements/Node.ts:81](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L81)
 
 ___
 
-###  startBoundaryEvents
+### start
 
-▸ **startBoundaryEvents**(`item`: any, `token`: any): *Promise‹void›*
+▸ **start**(`item`): `Promise`\<[`NODE_ACTION`](../enums/NODE_ACTION.md)\>
 
-*Inherited from [Node](node.md).[startBoundaryEvents](node.md#startboundaryevents)*
+using token: check if fromEventBasedGateway;	if yes cancel all other events
 
-Defined in bpmnServer/src/elements/Node.ts:248
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-Name | Type |
------- | ------ |
-`item` | any |
-`token` | any |
+#### Returns
 
-**Returns:** *Promise‹void›*
+`Promise`\<[`NODE_ACTION`](../enums/NODE_ACTION.md)\>
+
+#### Overrides
+
+[Event](Event.md).[start](Event.md#start)
+
+#### Defined in
+
+[elements/Events.ts:102](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Events.ts#L102)
+
+___
+
+### startBoundaryEvents
+
+▸ **startBoundaryEvents**(`item`, `token`): `Promise`\<`void`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | `any` |
+| `token` | `any` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Inherited from
+
+[Event](Event.md).[startBoundaryEvents](Event.md#startboundaryevents)
+
+#### Defined in
+
+[elements/Node.ts:330](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L330)
+
+___
+
+### validate
+
+▸ **validate**(`item`): `Promise`\<`void`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Inherited from
+
+[Event](Event.md).[validate](Event.md#validate)
+
+#### Defined in
+
+[elements/Node.ts:42](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Node.ts#L42)

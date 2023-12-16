@@ -1,151 +1,177 @@
-[bpmn-server](../README.md) › [IInstanceData](iinstancedata.md)
+[bpmn-server](../README.md) / IInstanceData
 
 # Interface: IInstanceData
 
-## Hierarchy
-
-* **IInstanceData**
-
 ## Implemented by
 
-* [InstanceObject](../classes/instanceobject.md)
+- [`InstanceObject`](../classes/InstanceObject.md)
 
-## Index
+## Table of contents
 
 ### Properties
 
-* [authorizations](iinstancedata.md#authorizations)
-* [data](iinstancedata.md#data)
-* [endedAt](iinstancedata.md#endedat)
-* [id](iinstancedata.md#id)
-* [involvements](iinstancedata.md#involvements)
-* [items](iinstancedata.md#items)
-* [logs](iinstancedata.md#logs)
-* [loops](iinstancedata.md#loops)
-* [name](iinstancedata.md#name)
-* [parentItemId](iinstancedata.md#parentitemid)
-* [saved](iinstancedata.md#saved)
-* [source](iinstancedata.md#source)
-* [startedAt](iinstancedata.md#startedat)
-* [status](iinstancedata.md#status)
-* [tokens](iinstancedata.md#tokens)
+- [data](IInstanceData.md#data)
+- [endedAt](IInstanceData.md#endedat)
+- [id](IInstanceData.md#id)
+- [items](IInstanceData.md#items)
+- [logs](IInstanceData.md#logs)
+- [loops](IInstanceData.md#loops)
+- [name](IInstanceData.md#name)
+- [parentItemId](IInstanceData.md#parentitemid)
+- [saved](IInstanceData.md#saved)
+- [source](IInstanceData.md#source)
+- [startedAt](IInstanceData.md#startedat)
+- [status](IInstanceData.md#status)
+- [tokens](IInstanceData.md#tokens)
+- [vars](IInstanceData.md#vars)
+- [version](IInstanceData.md#version)
 
 ## Properties
 
-###  authorizations
+### data
 
-• **authorizations**: *any*
+• **data**: `any`
 
-Defined in bpmnServer/src/interfaces/engine.ts:160
+#### Defined in
 
-___
-
-###  data
-
-• **data**: *any*
-
-Defined in bpmnServer/src/interfaces/engine.ts:152
+[interfaces/DataObjects.ts:38](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L38)
 
 ___
 
-###  endedAt
+### endedAt
 
-• **endedAt**: *any*
+• **endedAt**: `any`
 
-Defined in bpmnServer/src/interfaces/engine.ts:150
+#### Defined in
 
-___
-
-###  id
-
-• **id**: *any*
-
-Defined in bpmnServer/src/interfaces/engine.ts:146
+[interfaces/DataObjects.ts:36](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L36)
 
 ___
 
-###  involvements
+### id
 
-• **involvements**: *any*
+• **id**: `any`
 
-Defined in bpmnServer/src/interfaces/engine.ts:159
+#### Defined in
 
-___
-
-###  items
-
-• **items**: *any*
-
-Defined in bpmnServer/src/interfaces/engine.ts:153
+[interfaces/DataObjects.ts:31](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L31)
 
 ___
 
-###  logs
+### items
 
-• **logs**: *any*
+• **items**: `any`
 
-Defined in bpmnServer/src/interfaces/engine.ts:155
+#### Defined in
 
-___
-
-###  loops
-
-• **loops**: *any*
-
-Defined in bpmnServer/src/interfaces/engine.ts:157
+[interfaces/DataObjects.ts:39](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L39)
 
 ___
 
-###  name
+### logs
 
-• **name**: *any*
+• **logs**: `any`
 
-Defined in bpmnServer/src/interfaces/engine.ts:147
+#### Defined in
 
-___
-
-###  parentItemId
-
-• **parentItemId**: *any*
-
-Defined in bpmnServer/src/interfaces/engine.ts:158
+[interfaces/DataObjects.ts:41](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L41)
 
 ___
 
-###  saved
+### loops
 
-• **saved**: *any*
+• **loops**: `any`
 
-Defined in bpmnServer/src/interfaces/engine.ts:151
+#### Defined in
 
-___
-
-###  source
-
-• **source**: *any*
-
-Defined in bpmnServer/src/interfaces/engine.ts:154
+[interfaces/DataObjects.ts:43](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L43)
 
 ___
 
-###  startedAt
+### name
 
-• **startedAt**: *any*
+• **name**: `any`
 
-Defined in bpmnServer/src/interfaces/engine.ts:149
+#### Defined in
 
-___
-
-###  status
-
-• **status**: *any*
-
-Defined in bpmnServer/src/interfaces/engine.ts:148
+[interfaces/DataObjects.ts:32](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L32)
 
 ___
 
-###  tokens
+### parentItemId
 
-• **tokens**: *any*
+• **parentItemId**: `any`
 
-Defined in bpmnServer/src/interfaces/engine.ts:156
+#### Defined in
+
+[interfaces/DataObjects.ts:44](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L44)
+
+___
+
+### saved
+
+• **saved**: `any`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:37](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L37)
+
+___
+
+### source
+
+• **source**: `any`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:40](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L40)
+
+___
+
+### startedAt
+
+• **startedAt**: `any`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:35](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L35)
+
+___
+
+### status
+
+• **status**: `any`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:33](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L33)
+
+___
+
+### tokens
+
+• **tokens**: `any`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:42](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L42)
+
+___
+
+### vars
+
+• **vars**: `any`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:45](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L45)
+
+___
+
+### version
+
+• **version**: `any`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:34](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L34)

@@ -1,4 +1,4 @@
-[bpmn-server](../README.md) › [ServerComponent](servercomponent.md)
+[bpmn-server](../README.md) / ServerComponent
 
 # Class: ServerComponent
 
@@ -6,174 +6,196 @@ super class for various objects that are part of the server
 
 ## Hierarchy
 
-* **ServerComponent**
+- **`ServerComponent`**
 
-  ↳ [DataStore](datastore.md)
+  ↳ [`Execution`](Execution.md)
 
-  ↳ [Engine](engine.md)
+  ↳ [`Cron`](Cron.md)
 
-  ↳ [CacheManager](cachemanager.md)
+  ↳ [`CacheManager`](CacheManager.md)
 
-  ↳ [Cron](cron.md)
+  ↳ [`NoCacheManager`](NoCacheManager.md)
 
-  ↳ [Execution](execution.md)
+  ↳ [`Engine`](Engine.md)
 
-  ↳ [ModelsDatastoreDB](modelsdatastoredb.md)
+  ↳ [`DataStore`](DataStore.md)
 
-## Index
+  ↳ [`ModelsDatastoreDB`](ModelsDatastoreDB.md)
+
+## Table of contents
 
 ### Constructors
 
-* [constructor](servercomponent.md#constructor)
+- [constructor](ServerComponent.md#constructor)
 
 ### Properties
 
-* [server](servercomponent.md#server)
+- [server](ServerComponent.md#server)
 
 ### Accessors
 
-* [acl](servercomponent.md#acl)
-* [appDelegate](servercomponent.md#appdelegate)
-* [cache](servercomponent.md#cache)
-* [configuration](servercomponent.md#configuration)
-* [cron](servercomponent.md#cron)
-* [dataStore](servercomponent.md#datastore)
-* [definitions](servercomponent.md#definitions)
-* [engine](servercomponent.md#engine)
-* [iam](servercomponent.md#iam)
-* [listener](servercomponent.md#listener)
-* [logger](servercomponent.md#logger)
+- [appDelegate](ServerComponent.md#appdelegate)
+- [cache](ServerComponent.md#cache)
+- [configuration](ServerComponent.md#configuration)
+- [cron](ServerComponent.md#cron)
+- [dataStore](ServerComponent.md#datastore)
+- [definitions](ServerComponent.md#definitions)
+- [engine](ServerComponent.md#engine)
+- [listener](ServerComponent.md#listener)
+- [logger](ServerComponent.md#logger)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new ServerComponent**(`server`: [IBPMNServer](../interfaces/ibpmnserver.md)): *[ServerComponent](servercomponent.md)*
+• **new ServerComponent**(`server`): [`ServerComponent`](ServerComponent.md)
 
-Defined in bpmnServer/src/server/ServerComponent.ts:9
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `server` | [`IBPMNServer`](../interfaces/IBPMNServer.md) |
 
-Name | Type |
------- | ------ |
-`server` | [IBPMNServer](../interfaces/ibpmnserver.md) |
+#### Returns
 
-**Returns:** *[ServerComponent](servercomponent.md)*
+[`ServerComponent`](ServerComponent.md)
+
+#### Defined in
+
+[server/ServerComponent.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L10)
 
 ## Properties
 
-###  server
+### server
 
-• **server**: *any*
+• **server**: `any`
 
-Defined in bpmnServer/src/server/ServerComponent.ts:9
+#### Defined in
+
+[server/ServerComponent.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L9)
 
 ## Accessors
 
-###  acl
+### appDelegate
 
-• **get acl**(): *any*
+• `get` **appDelegate**(): `any`
 
-Defined in bpmnServer/src/server/ServerComponent.ts:23
+#### Returns
 
-**Returns:** *any*
+`any`
 
-___
+#### Defined in
 
-###  appDelegate
-
-• **get appDelegate**(): *any*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:18
-
-**Returns:** *any*
+[server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L18)
 
 ___
 
-###  cache
+### cache
 
-• **get cache**(): *[CacheManager](cachemanager.md)*
+• `get` **cache**(): [`CacheManager`](CacheManager.md)
 
-Defined in bpmnServer/src/server/ServerComponent.ts:17
+#### Returns
 
-**Returns:** *[CacheManager](cachemanager.md)*
+[`CacheManager`](CacheManager.md)
 
-___
+#### Defined in
 
-###  configuration
-
-• **get configuration**(): *any*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:14
-
-**Returns:** *any*
+[server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L17)
 
 ___
 
-###  cron
+### configuration
 
-• **get cron**(): *[Cron](cron.md)*
+• `get` **configuration**(): `any`
 
-Defined in bpmnServer/src/server/ServerComponent.ts:16
+#### Returns
 
-**Returns:** *[Cron](cron.md)*
+`any`
 
-___
+#### Defined in
 
-###  dataStore
-
-• **get dataStore**(): *any*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:20
-
-**Returns:** *any*
+[server/ServerComponent.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L14)
 
 ___
 
-###  definitions
+### cron
 
-• **get definitions**(): *any*
+• `get` **cron**(): [`Cron`](Cron.md)
 
-Defined in bpmnServer/src/server/ServerComponent.ts:21
+#### Returns
 
-**Returns:** *any*
+[`Cron`](Cron.md)
 
-___
+#### Defined in
 
-###  engine
-
-• **get engine**(): *[IEngine](../interfaces/iengine.md)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:19
-
-**Returns:** *[IEngine](../interfaces/iengine.md)*
+[server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L16)
 
 ___
 
-###  iam
+### dataStore
 
-• **get iam**(): *any*
+• `get` **dataStore**(): `any`
 
-Defined in bpmnServer/src/server/ServerComponent.ts:24
+#### Returns
 
-**Returns:** *any*
+`any`
 
-___
+#### Defined in
 
-###  listener
-
-• **get listener**(): *any*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:22
-
-**Returns:** *any*
+[server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L20)
 
 ___
 
-###  logger
+### definitions
 
-• **get logger**(): *any*
+• `get` **definitions**(): `any`
 
-Defined in bpmnServer/src/server/ServerComponent.ts:15
+#### Returns
 
-**Returns:** *any*
+`any`
+
+#### Defined in
+
+[server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L21)
+
+___
+
+### engine
+
+• `get` **engine**(): [`IEngine`](../interfaces/IEngine.md)
+
+#### Returns
+
+[`IEngine`](../interfaces/IEngine.md)
+
+#### Defined in
+
+[server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L19)
+
+___
+
+### listener
+
+• `get` **listener**(): `any`
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[server/ServerComponent.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L22)
+
+___
+
+### logger
+
+• `get` **logger**(): `any`
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L15)

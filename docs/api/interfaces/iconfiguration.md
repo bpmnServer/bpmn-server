@@ -1,138 +1,202 @@
-[bpmn-server](../README.md) › [IConfiguration](iconfiguration.md)
+[bpmn-server](../README.md) / IConfiguration
 
 # Interface: IConfiguration
 
-## Hierarchy
-
-* **IConfiguration**
-
 ## Implemented by
 
-* [Configuration](../classes/configuration.md)
+- [`Configuration`](../classes/Configuration.md)
 
-## Index
+## Table of contents
 
 ### Properties
 
-* [apiKey](iconfiguration.md#apikey)
-* [database](iconfiguration.md#database)
-* [definitionsPath](iconfiguration.md#definitionspath)
-* [logger](iconfiguration.md#logger)
-* [templatesPath](iconfiguration.md#templatespath)
-* [timers](iconfiguration.md#timers)
+- [apiKey](IConfiguration.md#apikey)
+- [database](IConfiguration.md#database)
+- [definitionsPath](IConfiguration.md#definitionspath)
+- [logger](IConfiguration.md#logger)
+- [templatesPath](IConfiguration.md#templatespath)
+- [timers](IConfiguration.md#timers)
 
 ### Methods
 
-* [appDelegate](iconfiguration.md#appdelegate)
-* [dataStore](iconfiguration.md#datastore)
-* [definitions](iconfiguration.md#definitions)
+- [appDelegate](IConfiguration.md#appdelegate)
+- [cacheManager](IConfiguration.md#cachemanager)
+- [dataStore](IConfiguration.md#datastore)
+- [definitions](IConfiguration.md#definitions)
+- [userService](IConfiguration.md#userservice)
 
 ## Properties
 
-###  apiKey
+### apiKey
 
-• **apiKey**: *string*
+• **apiKey**: `string`
 
-Defined in bpmnServer/src/interfaces/common.ts:19
+#### Defined in
 
-___
-
-###  database
-
-• **database**: *object*
-
-Defined in bpmnServer/src/interfaces/common.ts:12
-
-#### Type declaration:
-
-* **MongoDB**(): *object*
-
-  * **db**: *string*
-
-  * **db_url**: *string*
+[interfaces/common.ts:23](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L23)
 
 ___
 
-###  definitionsPath
+### database
 
-• **definitionsPath**: *string*
+• **database**: `Object`
 
-Defined in bpmnServer/src/interfaces/common.ts:6
+#### Type declaration
 
-___
+| Name | Type |
+| :------ | :------ |
+| `MongoDB` | \{ `db`: `string` ; `db_url`: `string`  } |
+| `MongoDB.db` | `string` |
+| `MongoDB.db_url` | `string` |
+| `loopbackRepositories?` | `any` |
 
-###  logger
+#### Defined in
 
-• **logger**: *[ILogger](ilogger.md)*
-
-Defined in bpmnServer/src/interfaces/common.ts:20
-
-___
-
-###  templatesPath
-
-• **templatesPath**: *string*
-
-Defined in bpmnServer/src/interfaces/common.ts:7
+[interfaces/common.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L15)
 
 ___
 
-###  timers
+### definitionsPath
 
-• **timers**: *object*
+• **definitionsPath**: `string`
 
-Defined in bpmnServer/src/interfaces/common.ts:8
+#### Defined in
 
-#### Type declaration:
+[interfaces/common.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L9)
 
-* **forceTimersDelay**: *number*
+___
 
-* **precision**: *number*
+### logger
+
+• **logger**: [`ILogger`](ILogger.md)
+
+#### Defined in
+
+[interfaces/common.ts:24](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L24)
+
+___
+
+### templatesPath
+
+• **templatesPath**: `string`
+
+#### Defined in
+
+[interfaces/common.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L10)
+
+___
+
+### timers
+
+• **timers**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `forceTimersDelay` | `number` |
+| `precision` | `number` |
+
+#### Defined in
+
+[interfaces/common.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L11)
 
 ## Methods
 
-###  appDelegate
+### appDelegate
 
-▸ **appDelegate**(`server`: any): *[IAppDelegate](iappdelegate.md)*
+▸ **appDelegate**(`server`): [`IAppDelegate`](IAppDelegate.md)
 
-Defined in bpmnServer/src/interfaces/common.ts:22
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `server` | `any` |
 
-Name | Type |
------- | ------ |
-`server` | any |
+#### Returns
 
-**Returns:** *[IAppDelegate](iappdelegate.md)*
+[`IAppDelegate`](IAppDelegate.md)
 
-___
+#### Defined in
 
-###  dataStore
-
-▸ **dataStore**(`server`: any): *[IDataStore](idatastore.md)*
-
-Defined in bpmnServer/src/interfaces/common.ts:23
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`server` | any |
-
-**Returns:** *[IDataStore](idatastore.md)*
+[interfaces/common.ts:26](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L26)
 
 ___
 
-###  definitions
+### cacheManager
 
-▸ **definitions**(`server`: any): *[IModelsDatastore](imodelsdatastore.md)*
+▸ **cacheManager**(`server`): [`ICacheManager`](ICacheManager.md)
 
-Defined in bpmnServer/src/interfaces/common.ts:21
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `server` | `any` |
 
-Name | Type |
------- | ------ |
-`server` | any |
+#### Returns
 
-**Returns:** *[IModelsDatastore](imodelsdatastore.md)*
+[`ICacheManager`](ICacheManager.md)
+
+#### Defined in
+
+[interfaces/common.ts:28](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L28)
+
+___
+
+### dataStore
+
+▸ **dataStore**(`server`): [`IDataStore`](IDataStore.md)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `server` | `any` |
+
+#### Returns
+
+[`IDataStore`](IDataStore.md)
+
+#### Defined in
+
+[interfaces/common.ts:27](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L27)
+
+___
+
+### definitions
+
+▸ **definitions**(`server`): [`IModelsDatastore`](IModelsDatastore.md)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `server` | `any` |
+
+#### Returns
+
+[`IModelsDatastore`](IModelsDatastore.md)
+
+#### Defined in
+
+[interfaces/common.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L25)
+
+___
+
+### userService
+
+▸ **userService**(`server`): [`IUserService`](IUserService.md)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `server` | `any` |
+
+#### Returns
+
+[`IUserService`](IUserService.md)
+
+#### Defined in
+
+[interfaces/common.ts:29](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L29)

@@ -1,53 +1,85 @@
-[bpmn-server](../README.md) › [NODE_SUBTYPE](node_subtype.md)
+[bpmn-server](../README.md) / NODE\_SUBTYPE
 
-# Enumeration: NODE_SUBTYPE
+# Enumeration: NODE\_SUBTYPE
 
-## Index
+## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
-* [error](node_subtype.md#error)
-* [escalation](node_subtype.md#escalation)
-* [message](node_subtype.md#message)
-* [signal](node_subtype.md#signal)
-* [timer](node_subtype.md#timer)
+- [cancel](NODE_SUBTYPE.md#cancel)
+- [compensate](NODE_SUBTYPE.md#compensate)
+- [error](NODE_SUBTYPE.md#error)
+- [escalation](NODE_SUBTYPE.md#escalation)
+- [message](NODE_SUBTYPE.md#message)
+- [signal](NODE_SUBTYPE.md#signal)
+- [timer](NODE_SUBTYPE.md#timer)
 
-## Enumeration members
+## Enumeration Members
 
-###  error
+### cancel
 
-• **error**: = "error"
+• **cancel** = ``"cancel"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:28
+#### Defined in
 
-___
-
-###  escalation
-
-• **escalation**: = "escalation"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:29
+[interfaces/Enums.ts:30](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L30)
 
 ___
 
-###  message
+### compensate
 
-• **message**: = "message"
+• **compensate** = ``"compensate"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:26
+#### Defined in
 
-___
-
-###  signal
-
-• **signal**: = "signal"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:27
+[interfaces/Enums.ts:32](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L32)
 
 ___
 
-###  timer
+### error
 
-• **timer**: = "timer"
+• **error** = ``"error"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:25
+#### Defined in
+
+[interfaces/Enums.ts:28](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L28)
+
+___
+
+### escalation
+
+• **escalation** = ``"escalation"``
+
+#### Defined in
+
+[interfaces/Enums.ts:29](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L29)
+
+___
+
+### message
+
+• **message** = ``"message"``
+
+#### Defined in
+
+[interfaces/Enums.ts:26](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L26)
+
+___
+
+### signal
+
+• **signal** = ``"signal"``
+
+#### Defined in
+
+[interfaces/Enums.ts:27](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L27)
+
+___
+
+### timer
+
+• **timer** = ``"timer"``
+
+#### Defined in
+
+[interfaces/Enums.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L25)

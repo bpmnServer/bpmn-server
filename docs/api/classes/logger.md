@@ -1,247 +1,360 @@
-[bpmn-server](../README.md) › [Logger](logger.md)
+[bpmn-server](../README.md) / Logger
 
 # Class: Logger
 
-## Hierarchy
+A logging tool to take various message for monitoring and debugging
 
-* **Logger**
+it can also keep the message in memory till saved later through saveToFile
+msgs can be cleared by the clean method
 
 ## Implements
 
-* [ILogger](../interfaces/ilogger.md)
+- [`ILogger`](../interfaces/ILogger.md)
 
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](logger.md#constructor)
+- [constructor](Logger.md#constructor)
 
 ### Properties
 
-* [callback](logger.md#callback)
-* [debugMsgs](logger.md#debugmsgs)
-* [toConsole](logger.md#toconsole)
-* [toFile](logger.md#tofile)
+- [callback](Logger.md#callback)
+- [debugMsgs](Logger.md#debugmsgs)
+- [toConsole](Logger.md#toconsole)
+- [toFile](Logger.md#tofile)
 
 ### Methods
 
-* [clear](logger.md#clear)
-* [debug](logger.md#debug)
-* [error](logger.md#error)
-* [get](logger.md#get)
-* [log](logger.md#log)
-* [msg](logger.md#msg)
-* [save](logger.md#save)
-* [setOptions](logger.md#setoptions)
-* [warn](logger.md#warn)
+- [clear](Logger.md#clear)
+- [debug](Logger.md#debug)
+- [error](Logger.md#error)
+- [get](Logger.md#get)
+- [log](Logger.md#log)
+- [msg](Logger.md#msg)
+- [reportError](Logger.md#reporterror)
+- [save](Logger.md#save)
+- [setOptions](Logger.md#setoptions)
+- [toString](Logger.md#tostring)
+- [warn](Logger.md#warn)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new Logger**(`__namedParameters`: object): *[Logger](logger.md)*
+• **new Logger**(`«destructured»`): [`Logger`](Logger.md)
 
-Defined in bpmnServer/src/common/Logger.ts:12
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `«destructured»` | `Object` |
+| › `callback` | `any` |
+| › `toConsole` | `boolean` |
+| › `toFile` | `string` |
 
-▪ **__namedParameters**: *object*
+#### Returns
 
-Name | Type | Default |
------- | ------ | ------ |
-`callback` | any | null |
-`toConsole` | boolean | true |
-`toFile` | string | "" |
+[`Logger`](Logger.md)
 
-**Returns:** *[Logger](logger.md)*
+#### Defined in
+
+[common/Logger.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L14)
 
 ## Properties
 
-###  callback
+### callback
 
-• **callback**: *any* = null
+• **callback**: `any` = `null`
 
-Defined in bpmnServer/src/common/Logger.ts:12
+#### Defined in
 
-Defined in bpmnServer/node_modules/dmn-engine/common.ts:37
-
-___
-
-###  debugMsgs
-
-• **debugMsgs**: *any[]* = []
-
-Defined in bpmnServer/src/common/Logger.ts:9
-
-Defined in bpmnServer/node_modules/dmn-engine/common.ts:34
+[common/Logger.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L12)
 
 ___
 
-###  toConsole
+### debugMsgs
 
-• **toConsole**: *boolean* = true
+• **debugMsgs**: `any`[] = `[]`
 
-Defined in bpmnServer/src/common/Logger.ts:10
+#### Defined in
 
-Defined in bpmnServer/node_modules/dmn-engine/common.ts:35
+[common/Logger.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L9)
 
 ___
 
-###  toFile
+### toConsole
 
-• **toFile**: *any* = null
+• **toConsole**: `boolean` = `true`
 
-Defined in bpmnServer/src/common/Logger.ts:11
+#### Defined in
 
-Defined in bpmnServer/node_modules/dmn-engine/common.ts:36
+[common/Logger.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L10)
+
+___
+
+### toFile
+
+• **toFile**: `any` = `null`
+
+#### Defined in
+
+[common/Logger.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L11)
 
 ## Methods
 
-###  clear
+### clear
 
-▸ **clear**(): *void*
+▸ **clear**(): `void`
 
-*Implementation of [ILogger](../interfaces/ilogger.md)*
+#### Returns
 
-Defined in bpmnServer/src/common/Logger.ts:31
+`void`
 
-**Returns:** *void*
+#### Implementation of
 
-___
+[ILogger](../interfaces/ILogger.md).[clear](../interfaces/ILogger.md#clear)
 
-###  debug
+#### Defined in
 
-▸ **debug**(`message`: any): *void*
-
-*Implementation of [ILogger](../interfaces/ilogger.md)*
-
-Defined in bpmnServer/src/common/Logger.ts:39
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`message` | any |
-
-**Returns:** *void*
+[common/Logger.ts:36](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L36)
 
 ___
 
-###  error
+### debug
 
-▸ **error**(`err`: any): *void*
+▸ **debug**(`...message`): `void`
 
-*Implementation of [ILogger](../interfaces/ilogger.md)*
+#### Parameters
 
-Defined in bpmnServer/src/common/Logger.ts:49
+| Name | Type |
+| :------ | :------ |
+| `...message` | `any`[] |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`err` | any |
+`void`
 
-**Returns:** *void*
+#### Implementation of
 
-___
+[ILogger](../interfaces/ILogger.md).[debug](../interfaces/ILogger.md#debug)
 
-###  get
+#### Defined in
 
-▸ **get**(): *any[]*
-
-*Implementation of [ILogger](../interfaces/ilogger.md)*
-
-Defined in bpmnServer/src/common/Logger.ts:35
-
-**Returns:** *any[]*
+[common/Logger.ts:44](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L44)
 
 ___
 
-###  log
+### error
 
-▸ **log**(`message`: any): *void*
+▸ **error**(`err`): `void`
 
-*Implementation of [ILogger](../interfaces/ilogger.md)*
+#### Parameters
 
-Defined in bpmnServer/src/common/Logger.ts:46
+| Name | Type |
+| :------ | :------ |
+| `err` | `any` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`message` | any |
+`void`
 
-**Returns:** *void*
+#### Implementation of
 
-___
+[ILogger](../interfaces/ILogger.md).[error](../interfaces/ILogger.md#error)
 
-###  msg
+#### Defined in
 
-▸ **msg**(`message`: any, `type`: string): *void*
-
-Defined in bpmnServer/src/common/Logger.ts:23
-
-**Parameters:**
-
-Name | Type | Default |
------- | ------ | ------ |
-`message` | any | - |
-`type` | string | "log" |
-
-**Returns:** *void*
+[common/Logger.ts:91](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L91)
 
 ___
 
-###  save
+### get
 
-▸ **save**(`filename`: any): *Promise‹void›*
+▸ **get**(): `any`[]
 
-*Implementation of [ILogger](../interfaces/ilogger.md)*
+#### Returns
 
-Defined in bpmnServer/src/common/Logger.ts:67
+`any`[]
 
-**Parameters:**
+#### Implementation of
 
-Name | Type |
------- | ------ |
-`filename` | any |
+[ILogger](../interfaces/ILogger.md).[get](../interfaces/ILogger.md#get)
 
-**Returns:** *Promise‹void›*
+#### Defined in
 
-___
-
-###  setOptions
-
-▸ **setOptions**(`__namedParameters`: object): *void*
-
-Defined in bpmnServer/src/common/Logger.ts:17
-
-**Parameters:**
-
-▪ **__namedParameters**: *object*
-
-Name | Type |
------- | ------ |
-`callback` | any |
-`toConsole` | any |
-`toFile` | any |
-
-**Returns:** *void*
+[common/Logger.ts:40](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L40)
 
 ___
 
-###  warn
+### log
 
-▸ **warn**(`message`: any): *void*
+▸ **log**(`...message`): `Object`
 
-*Implementation of [ILogger](../interfaces/ilogger.md)*
+#### Parameters
 
-Defined in bpmnServer/src/common/Logger.ts:43
+| Name | Type |
+| :------ | :------ |
+| `...message` | `any`[] |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`message` | any |
+`Object`
 
-**Returns:** *void*
+| Name | Type |
+| :------ | :------ |
+| `date` | `Date` |
+| `message` | `any` |
+
+#### Implementation of
+
+[ILogger](../interfaces/ILogger.md).[log](../interfaces/ILogger.md#log)
+
+#### Defined in
+
+[common/Logger.ts:51](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L51)
+
+___
+
+### msg
+
+▸ **msg**(`message`, `type?`): `Object`
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `message` | `any` | `undefined` |
+| `type` | `string` | `'log'` |
+
+#### Returns
+
+`Object`
+
+| Name | Type |
+| :------ | :------ |
+| `date` | `Date` |
+| `message` | `any` |
+
+#### Defined in
+
+[common/Logger.ts:23](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L23)
+
+___
+
+### reportError
+
+▸ **reportError**(`err`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `err` | `any` |
+
+#### Returns
+
+`void`
+
+#### Implementation of
+
+[ILogger](../interfaces/ILogger.md).[reportError](../interfaces/ILogger.md#reporterror)
+
+#### Defined in
+
+[common/Logger.ts:74](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L74)
+
+___
+
+### save
+
+▸ **save**(`filename`): `Promise`\<`void`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `filename` | `any` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+[ILogger](../interfaces/ILogger.md).[save](../interfaces/ILogger.md#save)
+
+#### Defined in
+
+[common/Logger.ts:94](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L94)
+
+___
+
+### setOptions
+
+▸ **setOptions**(`«destructured»`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `«destructured»` | `Object` |
+| › `callback` | `any` |
+| › `toConsole` | `any` |
+| › `toFile` | `any` |
+
+#### Returns
+
+`void`
+
+#### Implementation of
+
+[ILogger](../interfaces/ILogger.md).[setOptions](../interfaces/ILogger.md#setoptions)
+
+#### Defined in
+
+[common/Logger.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L17)
+
+___
+
+### toString
+
+▸ **toString**(`...args`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `...args` | `any`[] |
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[common/Logger.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L54)
+
+___
+
+### warn
+
+▸ **warn**(`...message`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `...message` | `any`[] |
+
+#### Returns
+
+`void`
+
+#### Implementation of
+
+[ILogger](../interfaces/ILogger.md).[warn](../interfaces/ILogger.md#warn)
+
+#### Defined in
+
+[common/Logger.ts:48](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L48)

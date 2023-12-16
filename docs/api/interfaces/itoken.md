@@ -1,411 +1,525 @@
-[bpmn-server](../README.md) › [IToken](itoken.md)
+[bpmn-server](../README.md) / IToken
 
 # Interface: IToken
 
-## Hierarchy
-
-* **IToken**
-
 ## Implemented by
 
-* [Token](../classes/token.md)
+- [`Token`](../classes/Token.md)
 
-## Index
+## Table of contents
 
 ### Properties
 
-* [childrenTokens](itoken.md#childrentokens)
-* [currentItem](itoken.md#currentitem)
-* [currentNode](itoken.md#currentnode)
-* [data](itoken.md#data)
-* [dataPath](itoken.md#datapath)
-* [execution](itoken.md#execution)
-* [firstItem](itoken.md#firstitem)
-* [id](itoken.md#id)
-* [lastItem](itoken.md#lastitem)
-* [loop](itoken.md#loop)
-* [originItem](itoken.md#originitem)
-* [parentToken](itoken.md#optional-parenttoken)
-* [path](itoken.md#path)
-* [processId](itoken.md#processid)
-* [startNodeId](itoken.md#startnodeid)
-* [status](itoken.md#status)
-* [type](itoken.md#type)
+- [childrenTokens](IToken.md#childrentokens)
+- [currentItem](IToken.md#currentitem)
+- [currentNode](IToken.md#currentnode)
+- [data](IToken.md#data)
+- [dataPath](IToken.md#datapath)
+- [execution](IToken.md#execution)
+- [firstItem](IToken.md#firstitem)
+- [id](IToken.md#id)
+- [lastItem](IToken.md#lastitem)
+- [loop](IToken.md#loop)
+- [originItem](IToken.md#originitem)
+- [parentToken](IToken.md#parenttoken)
+- [path](IToken.md#path)
+- [processId](IToken.md#processid)
+- [startNodeId](IToken.md#startnodeid)
+- [status](IToken.md#status)
+- [type](IToken.md#type)
 
 ### Methods
 
-* [applyInput](itoken.md#applyinput)
-* [end](itoken.md#end)
-* [error](itoken.md#error)
-* [execute](itoken.md#execute)
-* [getChildrenTokens](itoken.md#getchildrentokens)
-* [getSubProcessToken](itoken.md#getsubprocesstoken)
-* [goNext](itoken.md#gonext)
-* [log](itoken.md#log)
-* [preExecute](itoken.md#preexecute)
-* [preNext](itoken.md#prenext)
-* [processError](itoken.md#processerror)
-* [restored](itoken.md#restored)
-* [resume](itoken.md#resume)
-* [save](itoken.md#save)
-* [signal](itoken.md#signal)
-* [stop](itoken.md#stop)
-* [terminate](itoken.md#terminate)
+- [appendData](IToken.md#appenddata)
+- [end](IToken.md#end)
+- [error](IToken.md#error)
+- [execute](IToken.md#execute)
+- [getChildrenTokens](IToken.md#getchildrentokens)
+- [getFullPath](IToken.md#getfullpath)
+- [getSubProcessToken](IToken.md#getsubprocesstoken)
+- [goNext](IToken.md#gonext)
+- [log](IToken.md#log)
+- [preExecute](IToken.md#preexecute)
+- [preNext](IToken.md#prenext)
+- [processError](IToken.md#processerror)
+- [restored](IToken.md#restored)
+- [resume](IToken.md#resume)
+- [save](IToken.md#save)
+- [signal](IToken.md#signal)
+- [stop](IToken.md#stop)
+- [terminate](IToken.md#terminate)
 
 ## Properties
 
-###  childrenTokens
+### childrenTokens
 
-• **childrenTokens**: *[Token](../classes/token.md)[]*
+• **childrenTokens**: [`Token`](../classes/Token.md)[]
 
-Defined in bpmnServer/src/interfaces/engine.ts:26
+#### Defined in
 
-___
-
-###  currentItem
-
-• **currentItem**: *[IItem](iitem.md)*
-
-Defined in bpmnServer/src/interfaces/engine.ts:23
+[interfaces/engine.ts:27](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L27)
 
 ___
 
-###  currentNode
+### currentItem
 
-• **currentNode**: *any*
+• **currentItem**: [`IItem`](IItem.md)
 
-Defined in bpmnServer/src/interfaces/engine.ts:19
+#### Defined in
 
-___
-
-###  data
-
-• **data**: *any*
-
-Defined in bpmnServer/src/interfaces/engine.ts:22
+[interfaces/engine.ts:24](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L24)
 
 ___
 
-###  dataPath
+### currentNode
 
-• **dataPath**: *string*
+• **currentNode**: `any`
 
-Defined in bpmnServer/src/interfaces/engine.ts:12
+#### Defined in
 
-___
-
-###  execution
-
-• **execution**: *[IExecution](iexecution.md)*
-
-Defined in bpmnServer/src/interfaces/engine.ts:11
+[interfaces/engine.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L20)
 
 ___
 
-###  firstItem
+### data
 
-• **firstItem**: *[Item](../classes/item.md)*
+• **data**: `any`
 
-Defined in bpmnServer/src/interfaces/engine.ts:25
+#### Defined in
 
-___
-
-###  id
-
-• **id**: *any*
-
-Defined in bpmnServer/src/interfaces/engine.ts:9
+[interfaces/engine.ts:23](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L23)
 
 ___
 
-###  lastItem
+### dataPath
 
-• **lastItem**: *[IItem](iitem.md)*
+• **dataPath**: `string`
 
-Defined in bpmnServer/src/interfaces/engine.ts:24
+#### Defined in
 
-___
-
-###  loop
-
-• **loop**: *any*
-
-Defined in bpmnServer/src/interfaces/engine.ts:18
+[interfaces/engine.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L13)
 
 ___
 
-###  originItem
+### execution
 
-• **originItem**: *[IItem](iitem.md)*
+• **execution**: [`IExecution`](IExecution.md)
 
-Defined in bpmnServer/src/interfaces/engine.ts:16
+#### Defined in
 
-___
-
-### `Optional` parentToken
-
-• **parentToken**? : *[IToken](itoken.md)*
-
-Defined in bpmnServer/src/interfaces/engine.ts:14
+[interfaces/engine.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L12)
 
 ___
 
-###  path
+### firstItem
 
-• **path**: *[IItem](iitem.md)[]*
+• **firstItem**: [`Item`](../classes/Item.md)
 
-Defined in bpmnServer/src/interfaces/engine.ts:17
+#### Defined in
 
-___
-
-###  processId
-
-• **processId**: *any*
-
-Defined in bpmnServer/src/interfaces/engine.ts:20
+[interfaces/engine.ts:26](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L26)
 
 ___
 
-###  startNodeId
+### id
 
-• **startNodeId**: *any*
+• **id**: `any`
 
-Defined in bpmnServer/src/interfaces/engine.ts:13
+#### Defined in
 
-___
-
-###  status
-
-• **status**: *[TOKEN_STATUS](../enums/token_status.md)*
-
-Defined in bpmnServer/src/interfaces/engine.ts:21
+[interfaces/engine.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L10)
 
 ___
 
-###  type
+### lastItem
 
-• **type**: *any*
+• **lastItem**: [`IItem`](IItem.md)
 
-Defined in bpmnServer/src/interfaces/engine.ts:10
+#### Defined in
+
+[interfaces/engine.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L25)
+
+___
+
+### loop
+
+• **loop**: `any`
+
+#### Defined in
+
+[interfaces/engine.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L19)
+
+___
+
+### originItem
+
+• **originItem**: [`IItem`](IItem.md)
+
+#### Defined in
+
+[interfaces/engine.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L17)
+
+___
+
+### parentToken
+
+• `Optional` **parentToken**: [`IToken`](IToken.md)
+
+#### Defined in
+
+[interfaces/engine.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L15)
+
+___
+
+### path
+
+• **path**: [`IItem`](IItem.md)[]
+
+#### Defined in
+
+[interfaces/engine.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L18)
+
+___
+
+### processId
+
+• **processId**: `any`
+
+#### Defined in
+
+[interfaces/engine.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L21)
+
+___
+
+### startNodeId
+
+• **startNodeId**: `any`
+
+#### Defined in
+
+[interfaces/engine.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L14)
+
+___
+
+### status
+
+• **status**: [`TOKEN_STATUS`](../enums/TOKEN_STATUS.md)
+
+#### Defined in
+
+[interfaces/engine.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L22)
+
+___
+
+### type
+
+• **type**: `any`
+
+#### Defined in
+
+[interfaces/engine.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L11)
 
 ## Methods
 
-###  applyInput
+### appendData
 
-▸ **applyInput**(`inputData`: any): *void*
+▸ **appendData**(`inputData`, `item`): `void`
 
-Defined in bpmnServer/src/interfaces/engine.ts:49
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `inputData` | `any` |
+| `item` | [`IItem`](IItem.md) |
 
-Name | Type |
------- | ------ |
-`inputData` | any |
+#### Returns
 
-**Returns:** *void*
+`void`
 
-___
+#### Defined in
 
-###  end
-
-▸ **end**(): *Promise‹void›*
-
-Defined in bpmnServer/src/interfaces/engine.ts:56
-
-**Returns:** *Promise‹void›*
+[interfaces/engine.ts:51](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L51)
 
 ___
 
-###  error
+### end
 
-▸ **error**(`msg`: any): *void*
+▸ **end**(): `Promise`\<`void`\>
 
-Defined in bpmnServer/src/interfaces/engine.ts:60
+#### Returns
 
-**Parameters:**
+`Promise`\<`void`\>
 
-Name | Type |
------- | ------ |
-`msg` | any |
+#### Defined in
 
-**Returns:** *void*
+[interfaces/engine.ts:59](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L59)
 
 ___
 
-###  execute
+### error
 
-▸ **execute**(`inputData`: any): *Promise‹any›*
+▸ **error**(`msg`): `void`
 
-Defined in bpmnServer/src/interfaces/engine.ts:48
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `msg` | `any` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[interfaces/engine.ts:63](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L63)
+
+___
+
+### execute
+
+▸ **execute**(`inputData`): `Promise`\<`any`\>
 
 this is the primary exectuion method for a token
 
-**Parameters:**
+#### Parameters
 
-Name | Type |
------- | ------ |
-`inputData` | any |
+| Name | Type |
+| :------ | :------ |
+| `inputData` | `any` |
 
-**Returns:** *Promise‹any›*
+#### Returns
 
-___
+`Promise`\<`any`\>
 
-###  getChildrenTokens
+#### Defined in
 
-▸ **getChildrenTokens**(): *any[]*
-
-Defined in bpmnServer/src/interfaces/engine.ts:42
-
-**Returns:** *any[]*
+[interfaces/engine.ts:50](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L50)
 
 ___
 
-###  getSubProcessToken
+### getChildrenTokens
 
-▸ **getSubProcessToken**(): *[IToken](itoken.md)*
+▸ **getChildrenTokens**(): `any`[]
 
-Defined in bpmnServer/src/interfaces/engine.ts:58
+#### Returns
 
-**Returns:** *[IToken](itoken.md)*
+`any`[]
 
-___
+#### Defined in
 
-###  goNext
-
-▸ **goNext**(): *Promise‹void›*
-
-Defined in bpmnServer/src/interfaces/engine.ts:57
-
-**Returns:** *Promise‹void›*
+[interfaces/engine.ts:44](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L44)
 
 ___
 
-###  log
+### getFullPath
 
-▸ **log**(`msg`: any): *void*
+▸ **getFullPath**(`fullPath?`): [`Item`](../classes/Item.md)[]
 
-Defined in bpmnServer/src/interfaces/engine.ts:59
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `fullPath?` | `any` |
 
-Name | Type |
------- | ------ |
-`msg` | any |
+#### Returns
 
-**Returns:** *void*
+[`Item`](../classes/Item.md)[]
 
-___
+#### Defined in
 
-###  preExecute
-
-▸ **preExecute**(): *Promise‹boolean›*
-
-Defined in bpmnServer/src/interfaces/engine.ts:43
-
-**Returns:** *Promise‹boolean›*
+[interfaces/engine.ts:58](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L58)
 
 ___
 
-###  preNext
+### getSubProcessToken
 
-▸ **preNext**(): *Promise‹boolean›*
+▸ **getSubProcessToken**(): [`IToken`](IToken.md)
 
-Defined in bpmnServer/src/interfaces/engine.ts:44
+#### Returns
 
-**Returns:** *Promise‹boolean›*
+[`IToken`](IToken.md)
 
-___
+#### Defined in
 
-###  processError
-
-▸ **processError**(): *any*
-
-Defined in bpmnServer/src/interfaces/engine.ts:40
-
-**Returns:** *any*
+[interfaces/engine.ts:61](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L61)
 
 ___
 
-###  restored
+### goNext
 
-▸ **restored**(): *void*
+▸ **goNext**(): `Promise`\<`void`\>
 
-Defined in bpmnServer/src/interfaces/engine.ts:41
+#### Returns
 
-**Returns:** *void*
+`Promise`\<`void`\>
 
-___
+#### Defined in
 
-###  resume
-
-▸ **resume**(): *void*
-
-Defined in bpmnServer/src/interfaces/engine.ts:38
-
-**Returns:** *void*
+[interfaces/engine.ts:60](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L60)
 
 ___
 
-###  save
+### log
 
-▸ **save**(): *object*
+▸ **log**(`...msg`): `void`
 
-Defined in bpmnServer/src/interfaces/engine.ts:27
+#### Parameters
 
-**Returns:** *object*
+| Name | Type |
+| :------ | :------ |
+| `...msg` | `any` |
 
-* **currentNode**: *any*
+#### Returns
 
-* **dataPath**: *string*
+`void`
 
-* **id**: *any*
+#### Defined in
 
-* **loopId**: *any*
-
-* **originItem**: *any*
-
-* **parentToken**: *any*
-
-* **startNodeId**: *any*
-
-* **status**: *[TOKEN_STATUS](../enums/token_status.md)*
-
-* **type**: *any*
+[interfaces/engine.ts:62](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L62)
 
 ___
 
-###  signal
+### preExecute
 
-▸ **signal**(`data`: any): *Promise‹any›*
+▸ **preExecute**(): `Promise`\<`boolean`\>
 
-Defined in bpmnServer/src/interfaces/engine.ts:55
+#### Returns
 
-**Parameters:**
+`Promise`\<`boolean`\>
 
-Name | Type |
------- | ------ |
-`data` | any |
+#### Defined in
 
-**Returns:** *Promise‹any›*
+[interfaces/engine.ts:45](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L45)
 
 ___
 
-###  stop
+### preNext
 
-▸ **stop**(): *void*
+▸ **preNext**(): `Promise`\<`boolean`\>
 
-Defined in bpmnServer/src/interfaces/engine.ts:39
+#### Returns
 
-**Returns:** *void*
+`Promise`\<`boolean`\>
+
+#### Defined in
+
+[interfaces/engine.ts:46](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L46)
 
 ___
 
-###  terminate
+### processError
 
-▸ **terminate**(): *void*
+▸ **processError**(): `any`
 
-Defined in bpmnServer/src/interfaces/engine.ts:54
+#### Returns
 
- is called by Gateways to cancel current token
+`any`
 
-**Returns:** *void*
+#### Defined in
+
+[interfaces/engine.ts:42](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L42)
+
+___
+
+### restored
+
+▸ **restored**(): `void`
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[interfaces/engine.ts:43](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L43)
+
+___
+
+### resume
+
+▸ **resume**(): `void`
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[interfaces/engine.ts:40](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L40)
+
+___
+
+### save
+
+▸ **save**(): `Object`
+
+#### Returns
+
+`Object`
+
+| Name | Type |
+| :------ | :------ |
+| `currentNode` | `any` |
+| `dataPath` | `string` |
+| `id` | `any` |
+| `loopId` | `any` |
+| `originItem` | `any` |
+| `parentToken` | `any` |
+| `startNodeId` | `any` |
+| `status` | [`TOKEN_STATUS`](../enums/TOKEN_STATUS.md) |
+| `type` | `any` |
+
+#### Defined in
+
+[interfaces/engine.ts:29](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L29)
+
+___
+
+### signal
+
+▸ **signal**(`data`): `Promise`\<`any`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `data` | `any` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+#### Defined in
+
+[interfaces/engine.ts:57](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L57)
+
+___
+
+### stop
+
+▸ **stop**(): `void`
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[interfaces/engine.ts:41](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L41)
+
+___
+
+### terminate
+
+▸ **terminate**(): `void`
+
+is called by Gateways to cancel current token
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[interfaces/engine.ts:56](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L56)

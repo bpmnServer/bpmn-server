@@ -1,4 +1,4 @@
-[bpmn-server](../README.md) › [Execution](execution.md)
+[bpmn-server](../README.md) / Execution
 
 # Class: Execution
 
@@ -8,819 +8,1263 @@ is accessed two ways:
 
 ## Hierarchy
 
-* [ServerComponent](servercomponent.md)
+- [`ServerComponent`](ServerComponent.md)
 
-  ↳ **Execution**
+  ↳ **`Execution`**
 
 ## Implements
 
-* [IExecution](../interfaces/iexecution.md)
+- [`IExecution`](../interfaces/IExecution.md)
 
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](execution.md#constructor)
+- [constructor](Execution.md#constructor)
 
 ### Properties
 
-* [currentUser](execution.md#currentuser)
-* [definition](execution.md#definition)
-* [errors](execution.md#errors)
-* [input](execution.md#input)
-* [instance](execution.md#instance)
-* [item](execution.md#item)
-* [messageMatchingKey](execution.md#messagematchingkey)
-* [output](execution.md#output)
-* [process](execution.md#process)
-* [promises](execution.md#promises)
-* [server](execution.md#server)
-* [tokens](execution.md#tokens)
-* [uids](execution.md#uids)
-* [worker](execution.md#worker)
+- [definition](Execution.md#definition)
+- [errors](Execution.md#errors)
+- [instance](Execution.md#instance)
+- [isLocked](Execution.md#islocked)
+- [item](Execution.md#item)
+- [messageMatchingKey](Execution.md#messagematchingkey)
+- [operation](Execution.md#operation)
+- [options](Execution.md#options)
+- [process](Execution.md#process)
+- [promises](Execution.md#promises)
+- [server](Execution.md#server)
+- [servicesProvider](Execution.md#servicesprovider)
+- [tokens](Execution.md#tokens)
+- [uids](Execution.md#uids)
+- [userName](Execution.md#username)
+- [worker](Execution.md#worker)
 
 ### Accessors
 
-* [acl](execution.md#acl)
-* [appDelegate](execution.md#appdelegate)
-* [cache](execution.md#cache)
-* [configuration](execution.md#configuration)
-* [cron](execution.md#cron)
-* [dataStore](execution.md#datastore)
-* [definitions](execution.md#definitions)
-* [engine](execution.md#engine)
-* [execution](execution.md#execution)
-* [iam](execution.md#iam)
-* [id](execution.md#id)
-* [listener](execution.md#listener)
-* [logger](execution.md#logger)
-* [name](execution.md#name)
-* [status](execution.md#status)
+- [appDelegate](Execution.md#appdelegate)
+- [cache](Execution.md#cache)
+- [configuration](Execution.md#configuration)
+- [cron](Execution.md#cron)
+- [dataStore](Execution.md#datastore)
+- [definitions](Execution.md#definitions)
+- [engine](Execution.md#engine)
+- [execution](Execution.md#execution)
+- [id](Execution.md#id)
+- [listener](Execution.md#listener)
+- [logger](Execution.md#logger)
+- [name](Execution.md#name)
+- [status](Execution.md#status)
 
 ### Methods
 
-* [applyInput](execution.md#applyinput)
-* [doExecutionEvent](execution.md#doexecutionevent)
-* [doItemEvent](execution.md#doitemevent)
-* [end](execution.md#end)
-* [error](execution.md#error)
-* [execute](execution.md#execute)
-* [getAndCreateData](execution.md#getandcreatedata)
-* [getData](execution.md#getdata)
-* [getItems](execution.md#getitems)
-* [getItemsData](execution.md#getitemsdata)
-* [getNewId](execution.md#getnewid)
-* [getNodeById](execution.md#getnodebyid)
-* [getState](execution.md#getstate)
-* [getToken](execution.md#gettoken)
-* [getUUID](execution.md#getuuid)
-* [log](execution.md#log)
-* [report](execution.md#report)
-* [restored](execution.md#restored)
-* [resume](execution.md#resume)
-* [signal](execution.md#signal)
-* [stop](execution.md#stop)
-* [terminate](execution.md#terminate)
-* [tillDone](execution.md#tilldone)
-* [tokenEnded](execution.md#tokenended)
-* [restore](execution.md#static-restore)
+- [addHistory](Execution.md#addhistory)
+- [appendData](Execution.md#appenddata)
+- [assign](Execution.md#assign)
+- [doExecutionEvent](Execution.md#doexecutionevent)
+- [doItemEvent](Execution.md#doitemevent)
+- [end](Execution.md#end)
+- [error](Execution.md#error)
+- [execute](Execution.md#execute)
+- [getAndCreateData](Execution.md#getandcreatedata)
+- [getData](Execution.md#getdata)
+- [getItems](Execution.md#getitems)
+- [getItemsData](Execution.md#getitemsdata)
+- [getNewId](Execution.md#getnewid)
+- [getNodeById](Execution.md#getnodebyid)
+- [getState](Execution.md#getstate)
+- [getToken](Execution.md#gettoken)
+- [getUUID](Execution.md#getuuid)
+- [log](Execution.md#log)
+- [report](Execution.md#report)
+- [restored](Execution.md#restored)
+- [resume](Execution.md#resume)
+- [save](Execution.md#save)
+- [signalEvent](Execution.md#signalevent)
+- [signalItem](Execution.md#signalitem)
+- [signalRepeatTimerEvent](Execution.md#signalrepeattimerevent)
+- [stop](Execution.md#stop)
+- [terminate](Execution.md#terminate)
+- [tillDone](Execution.md#tilldone)
+- [tokenEnded](Execution.md#tokenended)
+- [restore](Execution.md#restore)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new Execution**(`server`: any, `name`: string, `source`: any, `state`: any): *[Execution](execution.md)*
+• **new Execution**(`server`, `name`, `source`, `state?`): [`Execution`](Execution.md)
 
-*Overrides [ServerComponent](servercomponent.md).[constructor](servercomponent.md#constructor)*
+#### Parameters
 
-Defined in bpmnServer/src/engine/Execution.ts:73
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `server` | `any` | `undefined` | - |
+| `name` | `string` | `undefined` | process name |
+| `source` | `any` | `undefined` | bpmn source |
+| `state` | `any` | `null` | - |
 
-**Parameters:**
+#### Returns
 
-Name | Type | Default | Description |
------- | ------ | ------ | ------ |
-`server` | any | - | - |
-`name` | string | - | process name |
-`source` | any | - | bpmn source  |
-`state` | any | null | - |
+[`Execution`](Execution.md)
 
-**Returns:** *[Execution](execution.md)*
+#### Overrides
+
+[ServerComponent](ServerComponent.md).[constructor](ServerComponent.md#constructor)
+
+#### Defined in
+
+[engine/Execution.ts:62](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L62)
 
 ## Properties
 
-###  currentUser
+### definition
 
-• **currentUser**: *any*
+• **definition**: [`IDefinition`](../interfaces/IDefinition.md)
 
-*Implementation of [IExecution](../interfaces/iexecution.md).[currentUser](../interfaces/iexecution.md#currentuser)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Execution.ts:57
+[IExecution](../interfaces/IExecution.md).[definition](../interfaces/IExecution.md#definition)
 
-___
+#### Defined in
 
-###  definition
-
-• **definition**: *[IDefinition](../interfaces/idefinition.md)*
-
-*Implementation of [IExecution](../interfaces/iexecution.md).[definition](../interfaces/iexecution.md#definition)*
-
-Defined in bpmnServer/src/engine/Execution.ts:48
+[engine/Execution.ts:28](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L28)
 
 ___
 
-###  errors
+### errors
 
-• **errors**: *any*
+• **errors**: `any`
 
-*Implementation of [IExecution](../interfaces/iexecution.md).[errors](../interfaces/iexecution.md#errors)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Execution.ts:51
+[IExecution](../interfaces/IExecution.md).[errors](../interfaces/IExecution.md#errors)
 
-___
+#### Defined in
 
-###  input
-
-• **input**: *any*
-
-*Implementation of [IExecution](../interfaces/iexecution.md).[input](../interfaces/iexecution.md#input)*
-
-Defined in bpmnServer/src/engine/Execution.ts:53
+[engine/Execution.ts:30](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L30)
 
 ___
 
-###  instance
+### instance
 
-• **instance**: *[InstanceObject](instanceobject.md)*
+• **instance**: [`InstanceObject`](InstanceObject.md)
 
-*Implementation of [IExecution](../interfaces/iexecution.md).[instance](../interfaces/iexecution.md#instance)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Execution.ts:27
+[IExecution](../interfaces/IExecution.md).[instance](../interfaces/IExecution.md#instance)
 
-___
+#### Defined in
 
-###  item
-
-• **item**: *any*
-
-*Implementation of [IExecution](../interfaces/iexecution.md).[item](../interfaces/iexecution.md#item)*
-
-Defined in bpmnServer/src/engine/Execution.ts:52
+[engine/Execution.ts:26](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L26)
 
 ___
 
-###  messageMatchingKey
+### isLocked
 
-• **messageMatchingKey**: *any*
+• **isLocked**: `boolean` = `false`
 
-*Implementation of [IExecution](../interfaces/iexecution.md).[messageMatchingKey](../interfaces/iexecution.md#messagematchingkey)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Execution.ts:55
+[IExecution](../interfaces/IExecution.md).[isLocked](../interfaces/IExecution.md#islocked)
 
-___
+#### Defined in
 
-###  output
-
-• **output**: *any*
-
-*Implementation of [IExecution](../interfaces/iexecution.md).[output](../interfaces/iexecution.md#output)*
-
-Defined in bpmnServer/src/engine/Execution.ts:54
+[engine/Execution.ts:37](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L37)
 
 ___
 
-###  process
+### item
 
-• **process**: *[Process](process.md)*
+• **item**: `any`
 
-*Implementation of [IExecution](../interfaces/iexecution.md).[process](../interfaces/iexecution.md#process)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Execution.ts:49
+[IExecution](../interfaces/IExecution.md).[item](../interfaces/IExecution.md#item)
 
-___
+#### Defined in
 
-###  promises
-
-• **promises**: *any[]* = []
-
-*Implementation of [IExecution](../interfaces/iexecution.md).[promises](../interfaces/iexecution.md#promises)*
-
-Defined in bpmnServer/src/engine/Execution.ts:58
+[engine/Execution.ts:31](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L31)
 
 ___
 
-###  server
+### messageMatchingKey
 
-• **server**: *any*
+• **messageMatchingKey**: `any`
 
-*Implementation of [IExecution](../interfaces/iexecution.md).[server](../interfaces/iexecution.md#server)*
+#### Implementation of
 
-*Inherited from [ServerComponent](servercomponent.md).[server](servercomponent.md#server)*
+[IExecution](../interfaces/IExecution.md).[messageMatchingKey](../interfaces/IExecution.md#messagematchingkey)
 
-Defined in bpmnServer/src/server/ServerComponent.ts:9
+#### Defined in
 
-___
-
-###  tokens
-
-• **tokens**: *Map‹any, any›* = new Map()
-
-*Implementation of [IExecution](../interfaces/iexecution.md).[tokens](../interfaces/iexecution.md#tokens)*
-
-Defined in bpmnServer/src/engine/Execution.ts:47
+[engine/Execution.ts:32](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L32)
 
 ___
 
-###  uids
+### operation
 
-• **uids**: *object*
+• **operation**: `any`
 
-*Implementation of [IExecution](../interfaces/iexecution.md).[uids](../interfaces/iexecution.md#uids)*
+#### Defined in
 
-Defined in bpmnServer/src/engine/Execution.ts:425
-
-#### Type declaration:
+[engine/Execution.ts:39](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L39)
 
 ___
 
-###  worker
+### options
 
-• **worker**: *any*
+• **options**: `any`
 
-*Implementation of [IExecution](../interfaces/iexecution.md).[worker](../interfaces/iexecution.md#worker)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Execution.ts:56
+[IExecution](../interfaces/IExecution.md).[options](../interfaces/IExecution.md#options)
+
+#### Defined in
+
+[engine/Execution.ts:38](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L38)
+
+___
+
+### process
+
+• **process**: [`Process`](Process.md)
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[process](../interfaces/IExecution.md#process)
+
+#### Defined in
+
+[engine/Execution.ts:29](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L29)
+
+___
+
+### promises
+
+• **promises**: `any`[] = `[]`
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[promises](../interfaces/IExecution.md#promises)
+
+#### Defined in
+
+[engine/Execution.ts:35](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L35)
+
+___
+
+### server
+
+• **server**: `any`
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[server](../interfaces/IExecution.md#server)
+
+#### Inherited from
+
+[ServerComponent](ServerComponent.md).[server](ServerComponent.md#server)
+
+#### Defined in
+
+[server/ServerComponent.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L9)
+
+___
+
+### servicesProvider
+
+• **servicesProvider**: `any`
+
+#### Defined in
+
+[engine/Execution.ts:36](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L36)
+
+___
+
+### tokens
+
+• **tokens**: `Map`\<`any`, `any`\>
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[tokens](../interfaces/IExecution.md#tokens)
+
+#### Defined in
+
+[engine/Execution.ts:27](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L27)
+
+___
+
+### uids
+
+• **uids**: `Object` = `{}`
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[uids](../interfaces/IExecution.md#uids)
+
+#### Defined in
+
+[engine/Execution.ts:524](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L524)
+
+___
+
+### userName
+
+• **userName**: `any`
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[userName](../interfaces/IExecution.md#username)
+
+#### Defined in
+
+[engine/Execution.ts:34](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L34)
+
+___
+
+### worker
+
+• **worker**: `any`
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[worker](../interfaces/IExecution.md#worker)
+
+#### Defined in
+
+[engine/Execution.ts:33](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L33)
 
 ## Accessors
 
-###  acl
+### appDelegate
 
-• **get acl**(): *any*
+• `get` **appDelegate**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[acl](servercomponent.md#acl)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:23
+`any`
 
-**Returns:** *any*
+#### Implementation of
 
-___
+[IExecution](../interfaces/IExecution.md).[appDelegate](../interfaces/IExecution.md#appdelegate)
 
-###  appDelegate
+#### Inherited from
 
-• **get appDelegate**(): *any*
+ServerComponent.appDelegate
 
-*Inherited from [ServerComponent](servercomponent.md).[appDelegate](servercomponent.md#appdelegate)*
+#### Defined in
 
-Defined in bpmnServer/src/server/ServerComponent.ts:18
-
-**Returns:** *any*
+[server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L18)
 
 ___
 
-###  cache
+### cache
 
-• **get cache**(): *[CacheManager](cachemanager.md)*
+• `get` **cache**(): [`CacheManager`](CacheManager.md)
 
-*Inherited from [ServerComponent](servercomponent.md).[cache](servercomponent.md#cache)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:17
+[`CacheManager`](CacheManager.md)
 
-**Returns:** *[CacheManager](cachemanager.md)*
+#### Implementation of
 
-___
+[IExecution](../interfaces/IExecution.md).[cache](../interfaces/IExecution.md#cache)
 
-###  configuration
+#### Inherited from
 
-• **get configuration**(): *any*
+ServerComponent.cache
 
-*Inherited from [ServerComponent](servercomponent.md).[configuration](servercomponent.md#configuration)*
+#### Defined in
 
-Defined in bpmnServer/src/server/ServerComponent.ts:14
-
-**Returns:** *any*
+[server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L17)
 
 ___
 
-###  cron
+### configuration
 
-• **get cron**(): *[Cron](cron.md)*
+• `get` **configuration**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[cron](servercomponent.md#cron)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:16
+`any`
 
-**Returns:** *[Cron](cron.md)*
+#### Implementation of
 
-___
+[IExecution](../interfaces/IExecution.md).[configuration](../interfaces/IExecution.md#configuration)
 
-###  dataStore
+#### Inherited from
 
-• **get dataStore**(): *any*
+ServerComponent.configuration
 
-*Inherited from [ServerComponent](servercomponent.md).[dataStore](servercomponent.md#datastore)*
+#### Defined in
 
-Defined in bpmnServer/src/server/ServerComponent.ts:20
-
-**Returns:** *any*
+[server/ServerComponent.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L14)
 
 ___
 
-###  definitions
+### cron
 
-• **get definitions**(): *any*
+• `get` **cron**(): [`Cron`](Cron.md)
 
-*Inherited from [ServerComponent](servercomponent.md).[definitions](servercomponent.md#definitions)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:21
+[`Cron`](Cron.md)
 
-**Returns:** *any*
+#### Implementation of
 
-___
+[IExecution](../interfaces/IExecution.md).[cron](../interfaces/IExecution.md#cron)
 
-###  engine
+#### Inherited from
 
-• **get engine**(): *[IEngine](../interfaces/iengine.md)*
+ServerComponent.cron
 
-*Inherited from [ServerComponent](servercomponent.md).[engine](servercomponent.md#engine)*
+#### Defined in
 
-Defined in bpmnServer/src/server/ServerComponent.ts:19
-
-**Returns:** *[IEngine](../interfaces/iengine.md)*
+[server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L16)
 
 ___
 
-###  execution
+### dataStore
 
-• **get execution**(): *this*
+• `get` **dataStore**(): `any`
 
-Defined in bpmnServer/src/engine/Execution.ts:63
+#### Returns
 
-**Returns:** *this*
+`any`
 
-___
+#### Implementation of
 
-###  iam
+[IExecution](../interfaces/IExecution.md).[dataStore](../interfaces/IExecution.md#datastore)
 
-• **get iam**(): *any*
+#### Inherited from
 
-*Inherited from [ServerComponent](servercomponent.md).[iam](servercomponent.md#iam)*
+ServerComponent.dataStore
 
-Defined in bpmnServer/src/server/ServerComponent.ts:24
+#### Defined in
 
-**Returns:** *any*
-
-___
-
-###  id
-
-• **get id**(): *any*
-
-Defined in bpmnServer/src/engine/Execution.ts:60
-
-**Returns:** *any*
+[server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L20)
 
 ___
 
-###  listener
+### definitions
 
-• **get listener**(): *any*
+• `get` **definitions**(): `any`
 
-*Overrides [ServerComponent](servercomponent.md).[listener](servercomponent.md#listener)*
+#### Returns
 
-Defined in bpmnServer/src/engine/Execution.ts:71
+`any`
 
-**Returns:** *any*
+#### Implementation of
 
-___
+[IExecution](../interfaces/IExecution.md).[definitions](../interfaces/IExecution.md#definitions)
 
-###  logger
+#### Inherited from
 
-• **get logger**(): *any*
+ServerComponent.definitions
 
-*Inherited from [ServerComponent](servercomponent.md).[logger](servercomponent.md#logger)*
+#### Defined in
 
-Defined in bpmnServer/src/server/ServerComponent.ts:15
-
-**Returns:** *any*
+[server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L21)
 
 ___
 
-###  name
+### engine
 
-• **get name**(): *any*
+• `get` **engine**(): [`IEngine`](../interfaces/IEngine.md)
 
-Defined in bpmnServer/src/engine/Execution.ts:61
+#### Returns
 
-**Returns:** *any*
+[`IEngine`](../interfaces/IEngine.md)
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[engine](../interfaces/IExecution.md#engine)
+
+#### Inherited from
+
+ServerComponent.engine
+
+#### Defined in
+
+[server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L19)
 
 ___
 
-###  status
+### execution
 
-• **get status**(): *[EXECUTION_STATUS](../enums/execution_status.md)*
+• `get` **execution**(): `this`
 
-Defined in bpmnServer/src/engine/Execution.ts:62
+#### Returns
 
-**Returns:** *[EXECUTION_STATUS](../enums/execution_status.md)*
+`this`
+
+#### Defined in
+
+[engine/Execution.ts:44](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L44)
+
+___
+
+### id
+
+• `get` **id**(): `any`
+
+#### Returns
+
+`any`
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[id](../interfaces/IExecution.md#id)
+
+#### Defined in
+
+[engine/Execution.ts:41](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L41)
+
+___
+
+### listener
+
+• `get` **listener**(): `any`
+
+#### Returns
+
+`any`
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[listener](../interfaces/IExecution.md#listener)
+
+#### Overrides
+
+ServerComponent.listener
+
+#### Defined in
+
+[engine/Execution.ts:52](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L52)
+
+___
+
+### logger
+
+• `get` **logger**(): `any`
+
+#### Returns
+
+`any`
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[logger](../interfaces/IExecution.md#logger)
+
+#### Inherited from
+
+ServerComponent.logger
+
+#### Defined in
+
+[server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L15)
+
+___
+
+### name
+
+• `get` **name**(): `any`
+
+#### Returns
+
+`any`
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[name](../interfaces/IExecution.md#name)
+
+#### Defined in
+
+[engine/Execution.ts:42](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L42)
+
+___
+
+### status
+
+• `get` **status**(): [`EXECUTION_STATUS`](../enums/EXECUTION_STATUS.md)
+
+#### Returns
+
+[`EXECUTION_STATUS`](../enums/EXECUTION_STATUS.md)
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[status](../interfaces/IExecution.md#status)
+
+#### Defined in
+
+[engine/Execution.ts:43](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L43)
 
 ## Methods
 
-###  applyInput
+### addHistory
 
-▸ **applyInput**(`inputData`: any, `dataPath`: any): *void*
+▸ **addHistory**(`inputData`, `assignment`, `item`): `void`
 
-*Implementation of [IExecution](../interfaces/iexecution.md)*
+#### Parameters
 
-Defined in bpmnServer/src/engine/Execution.ts:464
+| Name | Type |
+| :------ | :------ |
+| `inputData` | `any` |
+| `assignment` | `any` |
+| `item` | `any` |
 
-**Parameters:**
+#### Returns
 
-Name | Type | Default |
------- | ------ | ------ |
-`inputData` | any | - |
-`dataPath` | any | null |
+`void`
 
-**Returns:** *void*
+#### Defined in
 
-___
-
-###  doExecutionEvent
-
-▸ **doExecutionEvent**(`process`: any, `event`: any): *Promise‹void›*
-
-*Implementation of [IExecution](../interfaces/iexecution.md)*
-
-Defined in bpmnServer/src/engine/Execution.ts:441
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`process` | any |
-`event` | any |
-
-**Returns:** *Promise‹void›*
+[engine/Execution.ts:599](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L599)
 
 ___
 
-###  doItemEvent
+### appendData
 
-▸ **doItemEvent**(`item`: any, `event`: any): *Promise‹void›*
+▸ **appendData**(`inputData`, `item`, `dataPath?`, `assignment?`): `void`
 
-*Implementation of [IExecution](../interfaces/iexecution.md)*
+#### Parameters
 
-Defined in bpmnServer/src/engine/Execution.ts:447
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `inputData` | `any` | `undefined` |
+| `item` | `any` | `undefined` |
+| `dataPath` | `any` | `null` |
+| `assignment` | `any` | `null` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`item` | any |
-`event` | any |
+`void`
 
-**Returns:** *Promise‹void›*
+#### Implementation of
 
-___
+[IExecution](../interfaces/IExecution.md).[appendData](../interfaces/IExecution.md#appenddata)
 
-###  end
+#### Defined in
 
-▸ **end**(): *Promise‹void›*
-
-*Implementation of [IExecution](../interfaces/iexecution.md)*
-
-Defined in bpmnServer/src/engine/Execution.ts:111
-
-**Returns:** *Promise‹void›*
+[engine/Execution.ts:562](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L562)
 
 ___
 
-###  error
+### assign
 
-▸ **error**(`msg`: any): *void*
+▸ **assign**(`executionId`, `inputData`, `assignment?`, `userName`, `options?`): `Promise`\<`void`\>
 
-*Implementation of [IExecution](../interfaces/iexecution.md)*
+#### Parameters
 
-Defined in bpmnServer/src/engine/Execution.ts:456
+| Name | Type |
+| :------ | :------ |
+| `executionId` | `any` |
+| `inputData` | `any` |
+| `assignment` | `Object` |
+| `userName` | `any` |
+| `options` | `Object` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`msg` | any |
+`Promise`\<`void`\>
 
-**Returns:** *void*
+#### Defined in
 
-___
-
-###  execute
-
-▸ **execute**(`startNodeId`: any, `inputData`: object, `options`: object): *Promise‹void›*
-
-Defined in bpmnServer/src/engine/Execution.ts:141
-
-**Parameters:**
-
-Name | Type | Default |
------- | ------ | ------ |
-`startNodeId` | any | null |
-`inputData` | object | {} |
-`options` | object | {} |
-
-**Returns:** *Promise‹void›*
+[engine/Execution.ts:179](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L179)
 
 ___
 
-###  getAndCreateData
+### doExecutionEvent
 
-▸ **getAndCreateData**(`dataPath`: any, `asArray`: boolean): *any*
+▸ **doExecutionEvent**(`process`, `event`): `Promise`\<`void`\>
 
-*Implementation of [IExecution](../interfaces/iexecution.md)*
+#### Parameters
 
-Defined in bpmnServer/src/engine/Execution.ts:506
+| Name | Type |
+| :------ | :------ |
+| `process` | `any` |
+| `event` | `any` |
 
-**Parameters:**
+#### Returns
 
-Name | Type | Default |
------- | ------ | ------ |
-`dataPath` | any | - |
-`asArray` | boolean | false |
+`Promise`\<`void`\>
 
-**Returns:** *any*
+#### Implementation of
 
-___
+[IExecution](../interfaces/IExecution.md).[doExecutionEvent](../interfaces/IExecution.md#doexecutionevent)
 
-###  getData
+#### Defined in
 
-▸ **getData**(`dataPath`: any): *any*
-
-*Implementation of [IExecution](../interfaces/iexecution.md)*
-
-Defined in bpmnServer/src/engine/Execution.ts:493
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`dataPath` | any |
-
-**Returns:** *any*
+[engine/Execution.ts:540](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L540)
 
 ___
 
-###  getItems
+### doItemEvent
 
-▸ **getItems**(`query`: any): *[Item](item.md)[]*
+▸ **doItemEvent**(`item`, `event`): `Promise`\<`void`\>
 
-*Implementation of [IExecution](../interfaces/iexecution.md)*
+#### Parameters
 
-Defined in bpmnServer/src/engine/Execution.ts:279
+| Name | Type |
+| :------ | :------ |
+| `item` | `any` |
+| `event` | `any` |
 
-**Parameters:**
+#### Returns
 
-Name | Type | Default |
------- | ------ | ------ |
-`query` | any | null |
+`Promise`\<`void`\>
 
-**Returns:** *[Item](item.md)[]*
+#### Implementation of
 
-___
+[IExecution](../interfaces/IExecution.md).[doItemEvent](../interfaces/IExecution.md#doitemevent)
 
-###  getItemsData
+#### Defined in
 
-▸ **getItemsData**(): *any[]*
-
-*Implementation of [IExecution](../interfaces/iexecution.md)*
-
-Defined in bpmnServer/src/engine/Execution.ts:290
-
-**Returns:** *any[]*
+[engine/Execution.ts:546](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L546)
 
 ___
 
-###  getNewId
+### end
 
-▸ **getNewId**(`scope`: string): *number*
+▸ **end**(): `Promise`\<`void`\>
 
-*Implementation of [IExecution](../interfaces/iexecution.md)*
+#### Returns
 
-Defined in bpmnServer/src/engine/Execution.ts:427
+`Promise`\<`void`\>
 
-**Parameters:**
+#### Implementation of
 
-Name | Type |
------- | ------ |
-`scope` | string |
+[IExecution](../interfaces/IExecution.md).[end](../interfaces/IExecution.md#end)
 
-**Returns:** *number*
+#### Defined in
 
-___
-
-###  getNodeById
-
-▸ **getNodeById**(`id`: any): *[Node](node.md)‹›*
-
-*Implementation of [IExecution](../interfaces/iexecution.md)*
-
-Defined in bpmnServer/src/engine/Execution.ts:97
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`id` | any |
-
-**Returns:** *[Node](node.md)‹›*
+[engine/Execution.ts:90](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L90)
 
 ___
 
-###  getState
+### error
 
-▸ **getState**(): *[IInstanceData](../interfaces/iinstancedata.md)*
+▸ **error**(`msg`): `void`
 
-*Implementation of [IExecution](../interfaces/iexecution.md)*
+#### Parameters
 
-Defined in bpmnServer/src/engine/Execution.ts:300
+| Name | Type |
+| :------ | :------ |
+| `msg` | `any` |
 
-**Returns:** *[IInstanceData](../interfaces/iinstancedata.md)*
+#### Returns
 
-___
+`void`
 
-###  getToken
+#### Implementation of
 
-▸ **getToken**(`id`: number): *[Token](token.md)*
+[IExecution](../interfaces/IExecution.md).[error](../interfaces/IExecution.md#error)
 
-*Implementation of [IExecution](../interfaces/iexecution.md)*
+#### Defined in
 
-Defined in bpmnServer/src/engine/Execution.ts:100
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`id` | number |
-
-**Returns:** *[Token](token.md)*
+[engine/Execution.ts:554](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L554)
 
 ___
 
-###  getUUID
+### execute
 
-▸ **getUUID**(): *any*
+▸ **execute**(`startNodeId?`, `inputData?`, `options?`): `Promise`\<`void`\>
 
-*Implementation of [IExecution](../interfaces/iexecution.md)*
+#### Parameters
 
-Defined in bpmnServer/src/engine/Execution.ts:434
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `startNodeId` | `any` | `null` |
+| `inputData` | `Object` | `{}` |
+| `options` | `Object` | `{}` |
 
-**Returns:** *any*
+#### Returns
 
-___
+`Promise`\<`void`\>
 
-###  log
+#### Implementation of
 
-▸ **log**(`msg`: any): *void*
+[IExecution](../interfaces/IExecution.md).[execute](../interfaces/IExecution.md#execute)
 
-*Implementation of [IExecution](../interfaces/iexecution.md)*
+#### Defined in
 
-Defined in bpmnServer/src/engine/Execution.ts:452
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`msg` | any |
-
-**Returns:** *void*
+[engine/Execution.ts:120](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L120)
 
 ___
 
-###  report
+### getAndCreateData
 
-▸ **report**(): *void*
+▸ **getAndCreateData**(`dataPath`, `asArray?`): `any`
 
-*Implementation of [IExecution](../interfaces/iexecution.md)*
+#### Parameters
 
-Defined in bpmnServer/src/engine/Execution.ts:400
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `dataPath` | `any` | `undefined` |
+| `asArray` | `boolean` | `false` |
 
-**Returns:** *void*
+#### Returns
 
-___
+`any`
 
-###  restored
+#### Implementation of
 
-▸ **restored**(): *void*
+[IExecution](../interfaces/IExecution.md).[getAndCreateData](../interfaces/IExecution.md#getandcreatedata)
 
-*Implementation of [IExecution](../interfaces/iexecution.md)*
+#### Defined in
 
-Defined in bpmnServer/src/engine/Execution.ts:387
-
-**Returns:** *void*
-
-___
-
-###  resume
-
-▸ **resume**(): *void*
-
-*Implementation of [IExecution](../interfaces/iexecution.md)*
-
-Defined in bpmnServer/src/engine/Execution.ts:394
-
-**Returns:** *void*
+[engine/Execution.ts:630](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L630)
 
 ___
 
-###  signal
+### getData
 
-▸ **signal**(`executionId`: any, `inputData`: any): *Promise‹void›*
+▸ **getData**(`dataPath`): `any`
 
-*Implementation of [IExecution](../interfaces/iexecution.md)*
+#### Parameters
 
-Defined in bpmnServer/src/engine/Execution.ts:202
+| Name | Type |
+| :------ | :------ |
+| `dataPath` | `any` |
+
+#### Returns
+
+`any`
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[getData](../interfaces/IExecution.md#getdata)
+
+#### Defined in
+
+[engine/Execution.ts:617](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L617)
+
+___
+
+### getItems
+
+▸ **getItems**(): [`Item`](Item.md)[]
+
+#### Returns
+
+[`Item`](Item.md)[]
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[getItems](../interfaces/IExecution.md#getitems)
+
+#### Defined in
+
+[engine/Execution.ts:376](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L376)
+
+___
+
+### getItemsData
+
+▸ **getItemsData**(): `any`[]
+
+#### Returns
+
+`any`[]
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[getItemsData](../interfaces/IExecution.md#getitemsdata)
+
+#### Defined in
+
+[engine/Execution.ts:387](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L387)
+
+___
+
+### getNewId
+
+▸ **getNewId**(`scope`): `number`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `scope` | `string` |
+
+#### Returns
+
+`number`
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[getNewId](../interfaces/IExecution.md#getnewid)
+
+#### Defined in
+
+[engine/Execution.ts:526](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L526)
+
+___
+
+### getNodeById
+
+▸ **getNodeById**(`id`): [`Node`](Node.md)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `id` | `any` |
+
+#### Returns
+
+[`Node`](Node.md)
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[getNodeById](../interfaces/IExecution.md#getnodebyid)
+
+#### Defined in
+
+[engine/Execution.ts:76](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L76)
+
+___
+
+### getState
+
+▸ **getState**(): [`IInstanceData`](../interfaces/IInstanceData.md)
+
+#### Returns
+
+[`IInstanceData`](../interfaces/IInstanceData.md)
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[getState](../interfaces/IExecution.md#getstate)
+
+#### Defined in
+
+[engine/Execution.ts:397](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L397)
+
+___
+
+### getToken
+
+▸ **getToken**(`id`): [`Token`](Token.md)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `id` | `number` |
+
+#### Returns
+
+[`Token`](Token.md)
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[getToken](../interfaces/IExecution.md#gettoken)
+
+#### Defined in
+
+[engine/Execution.ts:79](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L79)
+
+___
+
+### getUUID
+
+▸ **getUUID**(): `any`
+
+#### Returns
+
+`any`
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[getUUID](../interfaces/IExecution.md#getuuid)
+
+#### Defined in
+
+[engine/Execution.ts:533](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L533)
+
+___
+
+### log
+
+▸ **log**(`...msg`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `...msg` | `any`[] |
+
+#### Returns
+
+`void`
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[log](../interfaces/IExecution.md#log)
+
+#### Defined in
+
+[engine/Execution.ts:551](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L551)
+
+___
+
+### report
+
+▸ **report**(): `void`
+
+#### Returns
+
+`void`
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[report](../interfaces/IExecution.md#report)
+
+#### Defined in
+
+[engine/Execution.ts:496](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L496)
+
+___
+
+### restored
+
+▸ **restored**(): `Promise`\<`void`\>
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[restored](../interfaces/IExecution.md#restored)
+
+#### Defined in
+
+[engine/Execution.ts:483](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L483)
+
+___
+
+### resume
+
+▸ **resume**(): `Promise`\<`void`\>
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[resume](../interfaces/IExecution.md#resume)
+
+#### Defined in
+
+[engine/Execution.ts:490](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L490)
+
+___
+
+### save
+
+▸ **save**(): `Promise`\<`void`\>
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[save](../interfaces/IExecution.md#save)
+
+#### Defined in
+
+[engine/Execution.ts:363](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L363)
+
+___
+
+### signalEvent
+
+▸ **signalEvent**(`executionId`, `inputData`, `options?`): `Promise`\<[`IExecution`](../interfaces/IExecution.md)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `executionId` | `any` |
+| `inputData` | `any` |
+| `options` | `Object` |
+
+#### Returns
+
+`Promise`\<[`IExecution`](../interfaces/IExecution.md)\>
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[signalEvent](../interfaces/IExecution.md#signalevent)
+
+#### Defined in
+
+[engine/Execution.ts:258](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L258)
+
+___
+
+### signalItem
+
+▸ **signalItem**(`itemId`, `inputData`, `userName`, `options?`): `Promise`\<[`IExecution`](../interfaces/IExecution.md)\>
 
 invoke scenarios:
      itemId
      elementId   - but only one is active
      elementId   - for a startEvent in a secondary process
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Description |
------- | ------ | ------ |
-`executionId` | any | - |
-`inputData` | any |    |
+| Name | Type |
+| :------ | :------ |
+| `itemId` | `any` |
+| `inputData` | `any` |
+| `userName` | `any` |
+| `options` | `Object` |
 
-**Returns:** *Promise‹void›*
+#### Returns
+
+`Promise`\<[`IExecution`](../interfaces/IExecution.md)\>
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[signalItem](../interfaces/IExecution.md#signalitem)
+
+#### Defined in
+
+[engine/Execution.ts:216](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L216)
 
 ___
 
-###  stop
+### signalRepeatTimerEvent
 
-▸ **stop**(): *void*
+▸ **signalRepeatTimerEvent**(`executionId`, `prevItem`, `inputData`, `options?`): `Promise`\<[`IExecution`](../interfaces/IExecution.md)\>
 
-*Implementation of [IExecution](../interfaces/iexecution.md)*
+#### Parameters
 
-Defined in bpmnServer/src/engine/Execution.ts:134
+| Name | Type |
+| :------ | :------ |
+| `executionId` | `any` |
+| `prevItem` | `any` |
+| `inputData` | `any` |
+| `options` | `Object` |
+
+#### Returns
+
+`Promise`\<[`IExecution`](../interfaces/IExecution.md)\>
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[signalRepeatTimerEvent](../interfaces/IExecution.md#signalrepeattimerevent)
+
+#### Defined in
+
+[engine/Execution.ts:333](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L333)
+
+___
+
+### stop
+
+▸ **stop**(): `void`
 
 causes the execution to stop from running any further
 
-**Returns:** *void*
+#### Returns
+
+`void`
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[stop](../interfaces/IExecution.md#stop)
+
+#### Defined in
+
+[engine/Execution.ts:113](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L113)
 
 ___
 
-###  terminate
+### terminate
 
-▸ **terminate**(): *void*
-
-*Implementation of [IExecution](../interfaces/iexecution.md)*
-
-Defined in bpmnServer/src/engine/Execution.ts:124
+▸ **terminate**(): `void`
 
 causes the execution to stop from running any further
 
-**Returns:** *void*
+#### Returns
+
+`void`
+
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[terminate](../interfaces/IExecution.md#terminate)
+
+#### Defined in
+
+[engine/Execution.ts:103](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L103)
 
 ___
 
-###  tillDone
+### tillDone
 
-▸ **tillDone**(): *Promise‹this›*
+▸ **tillDone**(): `Promise`\<[`Execution`](Execution.md)\>
 
-Defined in bpmnServer/src/engine/Execution.ts:65
+#### Returns
 
-**Returns:** *Promise‹this›*
+`Promise`\<[`Execution`](Execution.md)\>
 
-___
+#### Defined in
 
-###  tokenEnded
-
-▸ **tokenEnded**(`token`: [Token](token.md)): *void*
-
-*Implementation of [IExecution](../interfaces/iexecution.md)*
-
-Defined in bpmnServer/src/engine/Execution.ts:103
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`token` | [Token](token.md) |
-
-**Returns:** *void*
+[engine/Execution.ts:46](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L46)
 
 ___
 
-### `Static` restore
+### tokenEnded
 
-▸ **restore**(`server`: any, `state`: [IInstanceData](../interfaces/iinstancedata.md)): *Promise‹[Execution](execution.md)›*
+▸ **tokenEnded**(`token`): `void`
 
-Defined in bpmnServer/src/engine/Execution.ts:326
+#### Parameters
 
- re-enstate the execution from db
+| Name | Type |
+| :------ | :------ |
+| `token` | [`Token`](Token.md) |
 
-**Parameters:**
+#### Returns
 
-Name | Type | Description |
------- | ------ | ------ |
-`server` | any | - |
-`state` | [IInstanceData](../interfaces/iinstancedata.md) |    |
+`void`
 
-**Returns:** *Promise‹[Execution](execution.md)›*
+#### Implementation of
+
+[IExecution](../interfaces/IExecution.md).[tokenEnded](../interfaces/IExecution.md#tokenended)
+
+#### Defined in
+
+[engine/Execution.ts:82](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L82)
+
+___
+
+### restore
+
+▸ **restore**(`server`, `state`): `Promise`\<[`Execution`](Execution.md)\>
+
+re-enstate the execution from db
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `server` | `any` |
+| `state` | [`IInstanceData`](../interfaces/IInstanceData.md) |
+
+#### Returns
+
+`Promise`\<[`Execution`](Execution.md)\>
+
+#### Defined in
+
+[engine/Execution.ts:423](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Execution.ts#L423)

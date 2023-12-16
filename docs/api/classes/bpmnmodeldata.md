@@ -1,126 +1,154 @@
-[bpmn-server](../README.md) › [BpmnModelData](bpmnmodeldata.md)
+[bpmn-server](../README.md) / BpmnModelData
 
 # Class: BpmnModelData
 
-## Hierarchy
-
-* **BpmnModelData**
-
 ## Implements
 
-* [IBpmnModelData](../interfaces/ibpmnmodeldata.md)
+- [`IBpmnModelData`](../interfaces/IBpmnModelData.md)
 
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](bpmnmodeldata.md#constructor)
+- [constructor](BpmnModelData.md#constructor)
 
 ### Properties
 
-* [events](bpmnmodeldata.md#events)
-* [name](bpmnmodeldata.md#name)
-* [processes](bpmnmodeldata.md#processes)
-* [saved](bpmnmodeldata.md#saved)
-* [source](bpmnmodeldata.md#source)
-* [svg](bpmnmodeldata.md#svg)
+- [events](BpmnModelData.md#events)
+- [name](BpmnModelData.md#name)
+- [processes](BpmnModelData.md#processes)
+- [saved](BpmnModelData.md#saved)
+- [source](BpmnModelData.md#source)
+- [svg](BpmnModelData.md#svg)
 
 ### Methods
 
-* [parse](bpmnmodeldata.md#parse)
+- [parse](BpmnModelData.md#parse)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new BpmnModelData**(`name`: any, `source`: any, `svg`: any, `processes`: any, `events`: any): *[BpmnModelData](bpmnmodeldata.md)*
+• **new BpmnModelData**(`name`, `source`, `svg`, `processes`, `events`): [`BpmnModelData`](BpmnModelData.md)
 
-Defined in bpmnServer/src/datastore/ModelsData.ts:17
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+| `source` | `any` |
+| `svg` | `any` |
+| `processes` | `any` |
+| `events` | `any` |
 
-Name | Type |
------- | ------ |
-`name` | any |
-`source` | any |
-`svg` | any |
-`processes` | any |
-`events` | any |
+#### Returns
 
-**Returns:** *[BpmnModelData](bpmnmodeldata.md)*
+[`BpmnModelData`](BpmnModelData.md)
+
+#### Defined in
+
+[datastore/ModelsData.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L18)
 
 ## Properties
 
-###  events
+### events
 
-• **events**: *[IEventData](../interfaces/ieventdata.md)[]*
+• **events**: [`IEventData`](../interfaces/IEventData.md)[]
 
-*Implementation of [IBpmnModelData](../interfaces/ibpmnmodeldata.md).[events](../interfaces/ibpmnmodeldata.md#events)*
+#### Implementation of
 
-Defined in bpmnServer/src/datastore/ModelsData.ts:16
+[IBpmnModelData](../interfaces/IBpmnModelData.md).[events](../interfaces/IBpmnModelData.md#events)
 
-___
+#### Defined in
 
-###  name
-
-• **name**: *any*
-
-*Implementation of [IBpmnModelData](../interfaces/ibpmnmodeldata.md).[name](../interfaces/ibpmnmodeldata.md#name)*
-
-Defined in bpmnServer/src/datastore/ModelsData.ts:12
+[datastore/ModelsData.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L16)
 
 ___
 
-###  processes
+### name
 
-• **processes**: *[IProcessData](../interfaces/iprocessdata.md)[]*
+• **name**: `any`
 
-*Implementation of [IBpmnModelData](../interfaces/ibpmnmodeldata.md).[processes](../interfaces/ibpmnmodeldata.md#processes)*
+#### Implementation of
 
-Defined in bpmnServer/src/datastore/ModelsData.ts:15
+[IBpmnModelData](../interfaces/IBpmnModelData.md).[name](../interfaces/IBpmnModelData.md#name)
 
-___
+#### Defined in
 
-###  saved
-
-• **saved**: *any*
-
-*Implementation of [IBpmnModelData](../interfaces/ibpmnmodeldata.md).[saved](../interfaces/ibpmnmodeldata.md#saved)*
-
-Defined in bpmnServer/src/datastore/ModelsData.ts:17
+[datastore/ModelsData.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L12)
 
 ___
 
-###  source
+### processes
 
-• **source**: *any*
+• **processes**: [`IProcessData`](../interfaces/IProcessData.md)[]
 
-*Implementation of [IBpmnModelData](../interfaces/ibpmnmodeldata.md).[source](../interfaces/ibpmnmodeldata.md#source)*
+#### Implementation of
 
-Defined in bpmnServer/src/datastore/ModelsData.ts:13
+[IBpmnModelData](../interfaces/IBpmnModelData.md).[processes](../interfaces/IBpmnModelData.md#processes)
+
+#### Defined in
+
+[datastore/ModelsData.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L15)
 
 ___
 
-###  svg
+### saved
 
-• **svg**: *any*
+• **saved**: `any`
 
-*Implementation of [IBpmnModelData](../interfaces/ibpmnmodeldata.md).[svg](../interfaces/ibpmnmodeldata.md#svg)*
+#### Implementation of
 
-Defined in bpmnServer/src/datastore/ModelsData.ts:14
+[IBpmnModelData](../interfaces/IBpmnModelData.md).[saved](../interfaces/IBpmnModelData.md#saved)
+
+#### Defined in
+
+[datastore/ModelsData.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L17)
+
+___
+
+### source
+
+• **source**: `any`
+
+#### Implementation of
+
+[IBpmnModelData](../interfaces/IBpmnModelData.md).[source](../interfaces/IBpmnModelData.md#source)
+
+#### Defined in
+
+[datastore/ModelsData.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L13)
+
+___
+
+### svg
+
+• **svg**: `any`
+
+#### Implementation of
+
+[IBpmnModelData](../interfaces/IBpmnModelData.md).[svg](../interfaces/IBpmnModelData.md#svg)
+
+#### Defined in
+
+[datastore/ModelsData.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L14)
 
 ## Methods
 
-###  parse
+### parse
 
-▸ **parse**(`definition`: [Definition](definition.md)): *void*
+▸ **parse**(`definition`): `void`
 
-Defined in bpmnServer/src/datastore/ModelsData.ts:30
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `definition` | [`Definition`](Definition.md) |
 
-Name | Type |
------- | ------ |
-`definition` | [Definition](definition.md) |
+#### Returns
 
-**Returns:** *void*
+`void`
+
+#### Defined in
+
+[datastore/ModelsData.ts:30](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L30)

@@ -1,224 +1,266 @@
-[bpmn-server](../README.md) › [MongoDB](mongodb.md)
+[bpmn-server](../README.md) / MongoDB
 
 # Class: MongoDB
 
-## Hierarchy
-
-* **MongoDB**
-
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](mongodb.md#constructor)
+- [constructor](MongoDB.md#constructor)
 
 ### Properties
 
-* [client](mongodb.md#client)
-* [dbConfig](mongodb.md#dbconfig)
-* [logger](mongodb.md#logger)
+- [client](MongoDB.md#client)
+- [dbConfig](MongoDB.md#dbconfig)
+- [logger](MongoDB.md#logger)
 
 ### Methods
 
-* [connect](mongodb.md#connect)
-* [createIndex](mongodb.md#createindex)
-* [find](mongodb.md#find)
-* [getClient](mongodb.md#getclient)
-* [insert](mongodb.md#insert)
-* [remove](mongodb.md#remove)
-* [removeById](mongodb.md#removebyid)
-* [update](mongodb.md#update)
-* [update2](mongodb.md#update2)
+- [connect](MongoDB.md#connect)
+- [createIndex](MongoDB.md#createindex)
+- [find](MongoDB.md#find)
+- [getClient](MongoDB.md#getclient)
+- [insert](MongoDB.md#insert)
+- [remove](MongoDB.md#remove)
+- [removeById](MongoDB.md#removebyid)
+- [update](MongoDB.md#update)
+- [update2](MongoDB.md#update2)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new MongoDB**(`dbConfig`: any, `logger`: any): *[MongoDB](mongodb.md)*
+• **new MongoDB**(`dbConfig`, `logger`): [`MongoDB`](MongoDB.md)
 
-Defined in bpmnServer/src/datastore/MongoDB.ts:21
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `dbConfig` | `any` |
+| `logger` | `any` |
 
-Name | Type |
------- | ------ |
-`dbConfig` | any |
-`logger` | any |
+#### Returns
 
-**Returns:** *[MongoDB](mongodb.md)*
+[`MongoDB`](MongoDB.md)
+
+#### Defined in
+
+[datastore/MongoDB.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/MongoDB.ts#L22)
 
 ## Properties
 
-###  client
+### client
 
-• **client**: *any*
+• **client**: `any`
 
-Defined in bpmnServer/src/datastore/MongoDB.ts:19
+#### Defined in
 
-___
-
-###  dbConfig
-
-• **dbConfig**: *any*
-
-Defined in bpmnServer/src/datastore/MongoDB.ts:20
+[datastore/MongoDB.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/MongoDB.ts#L19)
 
 ___
 
-###  logger
+### dbConfig
 
-• **logger**: *any*
+• **dbConfig**: `any`
 
-Defined in bpmnServer/src/datastore/MongoDB.ts:21
+#### Defined in
+
+[datastore/MongoDB.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/MongoDB.ts#L20)
+
+___
+
+### logger
+
+• **logger**: `any`
+
+#### Defined in
+
+[datastore/MongoDB.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/MongoDB.ts#L21)
 
 ## Methods
 
-###  connect
+### connect
 
-▸ **connect**(): *Promise‹unknown›*
+▸ **connect**(): `Promise`\<`unknown`\>
 
-Defined in bpmnServer/src/datastore/MongoDB.ts:208
+#### Returns
 
-**Returns:** *Promise‹unknown›*
+`Promise`\<`unknown`\>
 
-___
+#### Defined in
 
-###  createIndex
-
-▸ **createIndex**(`dbName`: any, `collName`: any, `index`: any, `unique`: object): *Promise‹unknown›*
-
-Defined in bpmnServer/src/datastore/MongoDB.ts:59
-
-**Parameters:**
-
-Name | Type | Default |
------- | ------ | ------ |
-`dbName` | any | - |
-`collName` | any | - |
-`index` | any | - |
-`unique` | object | {} |
-
-**Returns:** *Promise‹unknown›*
+[datastore/MongoDB.ts:210](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/MongoDB.ts#L210)
 
 ___
 
-###  find
+### createIndex
 
-▸ **find**(`dbName`: any, `collName`: any, `qry`: any, `projection`: any): *Promise‹unknown›*
+▸ **createIndex**(`dbName`, `collName`, `index`, `unique?`): `Promise`\<`unknown`\>
 
-Defined in bpmnServer/src/datastore/MongoDB.ts:33
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `dbName` | `any` |
+| `collName` | `any` |
+| `index` | `any` |
+| `unique` | `Object` |
 
-Name | Type | Default |
------- | ------ | ------ |
-`dbName` | any | - |
-`collName` | any | - |
-`qry` | any | - |
-`projection` | any | null |
+#### Returns
 
-**Returns:** *Promise‹unknown›*
+`Promise`\<`unknown`\>
 
-___
+#### Defined in
 
-###  getClient
-
-▸ **getClient**(): *Promise‹any›*
-
-Defined in bpmnServer/src/datastore/MongoDB.ts:26
-
-**Returns:** *Promise‹any›*
+[datastore/MongoDB.ts:59](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/MongoDB.ts#L59)
 
 ___
 
-###  insert
+### find
 
-▸ **insert**(`dbName`: any, `collName`: any, `docs`: any): *Promise‹unknown›*
+▸ **find**(`dbName`, `collName`, `qry`, `projection?`): `Promise`\<`unknown`\>
 
-Defined in bpmnServer/src/datastore/MongoDB.ts:82
+#### Parameters
 
-**Parameters:**
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `dbName` | `any` | `undefined` |
+| `collName` | `any` | `undefined` |
+| `qry` | `any` | `undefined` |
+| `projection` | `any` | `null` |
 
-Name | Type |
------- | ------ |
-`dbName` | any |
-`collName` | any |
-`docs` | any |
+#### Returns
 
-**Returns:** *Promise‹unknown›*
+`Promise`\<`unknown`\>
 
-___
+#### Defined in
 
-###  remove
-
-▸ **remove**(`dbName`: any, `collName`: any, `query`: any): *Promise‹unknown›*
-
-Defined in bpmnServer/src/datastore/MongoDB.ts:152
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`dbName` | any |
-`collName` | any |
-`query` | any |
-
-**Returns:** *Promise‹unknown›*
+[datastore/MongoDB.ts:33](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/MongoDB.ts#L33)
 
 ___
 
-###  removeById
+### getClient
 
-▸ **removeById**(`dbName`: any, `collName`: any, `id`: any): *Promise‹unknown›*
+▸ **getClient**(): `Promise`\<`any`\>
 
-Defined in bpmnServer/src/datastore/MongoDB.ts:180
+#### Returns
 
-**Parameters:**
+`Promise`\<`any`\>
 
-Name | Type |
------- | ------ |
-`dbName` | any |
-`collName` | any |
-`id` | any |
+#### Defined in
 
-**Returns:** *Promise‹unknown›*
+[datastore/MongoDB.ts:26](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/MongoDB.ts#L26)
 
 ___
 
-###  update
+### insert
 
-▸ **update**(`dbName`: any, `collName`: any, `query`: any, `updateObject`: any, `options`: object): *Promise‹unknown›*
+▸ **insert**(`dbName`, `collName`, `docs`): `Promise`\<`unknown`\>
 
-Defined in bpmnServer/src/datastore/MongoDB.ts:107
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `dbName` | `any` |
+| `collName` | `any` |
+| `docs` | `any` |
 
-Name | Type | Default |
------- | ------ | ------ |
-`dbName` | any | - |
-`collName` | any | - |
-`query` | any | - |
-`updateObject` | any | - |
-`options` | object | {} |
+#### Returns
 
-**Returns:** *Promise‹unknown›*
+`Promise`\<`unknown`\>
+
+#### Defined in
+
+[datastore/MongoDB.ts:84](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/MongoDB.ts#L84)
 
 ___
 
-###  update2
+### remove
 
-▸ **update2**(`dbName`: any, `collName`: any, `query`: any, `updateObject`: any, `options`: object): *Promise‹unknown›*
+▸ **remove**(`dbName`, `collName`, `query`): `Promise`\<`unknown`\>
 
-Defined in bpmnServer/src/datastore/MongoDB.ts:129
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `dbName` | `any` |
+| `collName` | `any` |
+| `query` | `any` |
 
-Name | Type | Default |
------- | ------ | ------ |
-`dbName` | any | - |
-`collName` | any | - |
-`query` | any | - |
-`updateObject` | any | - |
-`options` | object | {} |
+#### Returns
 
-**Returns:** *Promise‹unknown›*
+`Promise`\<`unknown`\>
+
+#### Defined in
+
+[datastore/MongoDB.ts:154](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/MongoDB.ts#L154)
+
+___
+
+### removeById
+
+▸ **removeById**(`dbName`, `collName`, `id`): `Promise`\<`unknown`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `dbName` | `any` |
+| `collName` | `any` |
+| `id` | `any` |
+
+#### Returns
+
+`Promise`\<`unknown`\>
+
+#### Defined in
+
+[datastore/MongoDB.ts:182](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/MongoDB.ts#L182)
+
+___
+
+### update
+
+▸ **update**(`dbName`, `collName`, `query`, `updateObject`, `options?`): `Promise`\<`unknown`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `dbName` | `any` |
+| `collName` | `any` |
+| `query` | `any` |
+| `updateObject` | `any` |
+| `options` | `Object` |
+
+#### Returns
+
+`Promise`\<`unknown`\>
+
+#### Defined in
+
+[datastore/MongoDB.ts:109](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/MongoDB.ts#L109)
+
+___
+
+### update2
+
+▸ **update2**(`dbName`, `collName`, `query`, `updateObject`, `options?`): `Promise`\<`unknown`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `dbName` | `any` |
+| `collName` | `any` |
+| `query` | `any` |
+| `updateObject` | `any` |
+| `options` | `Object` |
+
+#### Returns
+
+`Promise`\<`unknown`\>
+
+#### Defined in
+
+[datastore/MongoDB.ts:131](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/MongoDB.ts#L131)

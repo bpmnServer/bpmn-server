@@ -1,26 +1,30 @@
-[bpmn-server](../README.md) › [FLOW_ACTION](flow_action.md)
+[bpmn-server](../README.md) / FLOW\_ACTION
 
-# Enumeration: FLOW_ACTION
+# Enumeration: FLOW\_ACTION
 
-## Index
+## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
-* [discard](flow_action.md#discard)
-* [take](flow_action.md#take)
+- [discard](FLOW_ACTION.md#discard)
+- [take](FLOW_ACTION.md#take)
 
-## Enumeration members
+## Enumeration Members
 
-###  discard
+### discard
 
-• **discard**: = "discard"
+• **discard** = ``"discard"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:64
+#### Defined in
+
+[interfaces/Enums.ts:88](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L88)
 
 ___
 
-###  take
+### take
 
-• **take**: = "take"
+• **take** = ``"take"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:64
+#### Defined in
+
+[interfaces/Enums.ts:88](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L88)

@@ -1,197 +1,224 @@
-[bpmn-server](../README.md) › [IBehaviour](ibehaviour.md)
+[bpmn-server](../README.md) / IBehaviour
 
 # Interface: IBehaviour
 
 Behaviour
      ioSpecification
-     timer
+     timer 
      message
      signal
 
   each behaviour is a class
      it scans def and insert itself to perform actions as required
 
-## Hierarchy
-
-* **IBehaviour**
-
 ## Implemented by
 
-* [Behaviour](../classes/behaviour.md)
-* [CamundaFormData](../classes/camundaformdata.md)
-* [ErrorEventBehaviour](../classes/erroreventbehaviour.md)
-* [IOBehaviour](../classes/iobehaviour.md)
-* [LoopBehaviour](../classes/loopbehaviour.md)
-* [MessageEventBehaviour](../classes/messageeventbehaviour.md)
-* [ScriptBehaviour](../classes/scriptbehaviour.md)
-* [SignalEventBehaviour](../classes/signaleventbehaviour.md)
-* [TerminateBehaviour](../classes/terminatebehaviour.md)
-* [TimerBehaviour](../classes/timerbehaviour.md)
+- [`Behaviour`](../classes/Behaviour.md)
 
-## Index
+## Table of contents
 
 ### Properties
 
-* [definition](ibehaviour.md#definition)
-* [node](ibehaviour.md#node)
+- [definition](IBehaviour.md#definition)
+- [node](IBehaviour.md#node)
 
 ### Methods
 
-* [describe](ibehaviour.md#describe)
-* [end](ibehaviour.md#end)
-* [getItemAttributes](ibehaviour.md#getitemattributes)
-* [getNodeAttributes](ibehaviour.md#getnodeattributes)
-* [init](ibehaviour.md#init)
-* [restored](ibehaviour.md#restored)
-* [resume](ibehaviour.md#resume)
-* [run](ibehaviour.md#run)
-* [start](ibehaviour.md#start)
+- [describe](IBehaviour.md#describe)
+- [end](IBehaviour.md#end)
+- [getItemAttributes](IBehaviour.md#getitemattributes)
+- [getNodeAttributes](IBehaviour.md#getnodeattributes)
+- [init](IBehaviour.md#init)
+- [restored](IBehaviour.md#restored)
+- [resume](IBehaviour.md#resume)
+- [run](IBehaviour.md#run)
+- [start](IBehaviour.md#start)
 
 ## Properties
 
-###  definition
+### definition
 
-• **definition**: *any*
+• **definition**: `any`
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:25
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L25)
 
 ___
 
-###  node
+### node
 
-• **node**: *[Node](../classes/node.md)*
+• **node**: [`Node`](../classes/Node.md)
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:24
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:24](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L24)
 
 ## Methods
 
-###  describe
+### describe
 
-▸ **describe**(): *string[]*
+▸ **describe**(): `string`[]
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:33
+#### Returns
 
-**Returns:** *string[]*
+`string`[]
 
-___
+#### Defined in
 
-###  end
-
-▸ **end**(`item`: [IItem](iitem.md)): *any*
-
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:28
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [IItem](iitem.md) |
-
-**Returns:** *any*
+[elements/behaviours/Behaviour.ts:33](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L33)
 
 ___
 
-###  getItemAttributes
+### end
 
-▸ **getItemAttributes**(`item`: [IItem](iitem.md), `attributes`: any[]): *any*
+▸ **end**(`item`): `any`
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:32
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `item` | [`IItem`](IItem.md) |
 
-Name | Type |
------- | ------ |
-`item` | [IItem](iitem.md) |
-`attributes` | any[] |
+#### Returns
 
-**Returns:** *any*
+`any`
 
-___
+#### Defined in
 
-###  getNodeAttributes
-
-▸ **getNodeAttributes**(`attributes`: any[]): *any*
-
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:31
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`attributes` | any[] |
-
-**Returns:** *any*
+[elements/behaviours/Behaviour.ts:28](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L28)
 
 ___
 
-###  init
+### getItemAttributes
 
-▸ **init**(): *any*
+▸ **getItemAttributes**(`item`, `attributes`): `any`
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:34
+#### Parameters
 
-**Returns:** *any*
+| Name | Type |
+| :------ | :------ |
+| `item` | [`IItem`](IItem.md) |
+| `attributes` | `any`[] |
 
-___
+#### Returns
 
-###  restored
+`any`
 
-▸ **restored**(`item`: [IItem](iitem.md)): *any*
+#### Defined in
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:29
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [IItem](iitem.md) |
-
-**Returns:** *any*
+[elements/behaviours/Behaviour.ts:32](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L32)
 
 ___
 
-###  resume
+### getNodeAttributes
 
-▸ **resume**(`item`: [IItem](iitem.md)): *any*
+▸ **getNodeAttributes**(`attributes`): `any`
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:30
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `attributes` | `any`[] |
 
-Name | Type |
------- | ------ |
-`item` | [IItem](iitem.md) |
+#### Returns
 
-**Returns:** *any*
+`any`
 
-___
+#### Defined in
 
-###  run
-
-▸ **run**(`item`: [IItem](iitem.md)): *any*
-
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:27
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [IItem](iitem.md) |
-
-**Returns:** *any*
+[elements/behaviours/Behaviour.ts:31](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L31)
 
 ___
 
-###  start
+### init
 
-▸ **start**(`item`: [IItem](iitem.md)): *any*
+▸ **init**(): `any`
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:26
+#### Returns
 
-**Parameters:**
+`any`
 
-Name | Type |
------- | ------ |
-`item` | [IItem](iitem.md) |
+#### Defined in
 
-**Returns:** *any*
+[elements/behaviours/Behaviour.ts:34](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L34)
+
+___
+
+### restored
+
+▸ **restored**(`item`): `any`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`IItem`](IItem.md) |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:29](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L29)
+
+___
+
+### resume
+
+▸ **resume**(`item`): `any`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`IItem`](IItem.md) |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:30](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L30)
+
+___
+
+### run
+
+▸ **run**(`item`): `any`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`IItem`](IItem.md) |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:27](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L27)
+
+___
+
+### start
+
+▸ **start**(`item`): `any`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`IItem`](IItem.md) |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:26](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L26)

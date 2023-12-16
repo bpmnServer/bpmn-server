@@ -1,183 +1,275 @@
-[bpmn-server](../README.md) › [InstanceObject](instanceobject.md)
+[bpmn-server](../README.md) / InstanceObject
 
 # Class: InstanceObject
 
 as stored in MongoDB
 
-## Hierarchy
-
-* **InstanceObject**
-
 ## Implements
 
-* [IInstanceData](../interfaces/iinstancedata.md)
+- [`IInstanceData`](../interfaces/IInstanceData.md)
 
-## Index
+## Table of contents
+
+### Constructors
+
+- [constructor](InstanceObject.md#constructor)
 
 ### Properties
 
-* [authorizations](instanceobject.md#authorizations)
-* [data](instanceobject.md#data)
-* [endedAt](instanceobject.md#endedat)
-* [id](instanceobject.md#id)
-* [involvements](instanceobject.md#involvements)
-* [items](instanceobject.md#items)
-* [logs](instanceobject.md#logs)
-* [loops](instanceobject.md#loops)
-* [name](instanceobject.md#name)
-* [parentItemId](instanceobject.md#parentitemid)
-* [saved](instanceobject.md#saved)
-* [source](instanceobject.md#source)
-* [startedAt](instanceobject.md#startedat)
-* [status](instanceobject.md#status)
-* [tokens](instanceobject.md#tokens)
+- [authorizations](InstanceObject.md#authorizations)
+- [data](InstanceObject.md#data)
+- [endedAt](InstanceObject.md#endedat)
+- [id](InstanceObject.md#id)
+- [involvements](InstanceObject.md#involvements)
+- [items](InstanceObject.md#items)
+- [logs](InstanceObject.md#logs)
+- [loops](InstanceObject.md#loops)
+- [name](InstanceObject.md#name)
+- [parentItemId](InstanceObject.md#parentitemid)
+- [saved](InstanceObject.md#saved)
+- [source](InstanceObject.md#source)
+- [startedAt](InstanceObject.md#startedat)
+- [status](InstanceObject.md#status)
+- [tokens](InstanceObject.md#tokens)
+- [vars](InstanceObject.md#vars)
+- [version](InstanceObject.md#version)
+
+## Constructors
+
+### constructor
+
+• **new InstanceObject**(): [`InstanceObject`](InstanceObject.md)
+
+#### Returns
+
+[`InstanceObject`](InstanceObject.md)
 
 ## Properties
 
-###  authorizations
+### authorizations
 
-• **authorizations**: *any[]* = []
+• **authorizations**: `any`
 
-*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[authorizations](../interfaces/iinstancedata.md#authorizations)*
+#### Defined in
 
-Defined in bpmnServer/src/engine/Model.ts:23
-
-___
-
-###  data
-
-• **data**: *any*
-
-*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[data](../interfaces/iinstancedata.md#data)*
-
-Defined in bpmnServer/src/engine/Model.ts:15
+[engine/Model.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L25)
 
 ___
 
-###  endedAt
+### data
 
-• **endedAt**: *any*
+• **data**: `any`
 
-*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[endedAt](../interfaces/iinstancedata.md#endedat)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Model.ts:13
+[IInstanceData](../interfaces/IInstanceData.md).[data](../interfaces/IInstanceData.md#data)
 
-___
+#### Defined in
 
-###  id
-
-• **id**: *any*
-
-*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[id](../interfaces/iinstancedata.md#id)*
-
-Defined in bpmnServer/src/engine/Model.ts:9
+[engine/Model.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L16)
 
 ___
 
-###  involvements
+### endedAt
 
-• **involvements**: *any[]* = []
+• **endedAt**: `any`
 
-*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[involvements](../interfaces/iinstancedata.md#involvements)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Model.ts:22
+[IInstanceData](../interfaces/IInstanceData.md).[endedAt](../interfaces/IInstanceData.md#endedat)
 
-___
+#### Defined in
 
-###  items
-
-• **items**: *any[]* = []
-
-*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[items](../interfaces/iinstancedata.md#items)*
-
-Defined in bpmnServer/src/engine/Model.ts:16
+[engine/Model.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L14)
 
 ___
 
-###  logs
+### id
 
-• **logs**: *any[]* = []
+• **id**: `any`
 
-*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[logs](../interfaces/iinstancedata.md#logs)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Model.ts:18
+[IInstanceData](../interfaces/IInstanceData.md).[id](../interfaces/IInstanceData.md#id)
 
-___
+#### Defined in
 
-###  loops
-
-• **loops**: *any[]* = []
-
-*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[loops](../interfaces/iinstancedata.md#loops)*
-
-Defined in bpmnServer/src/engine/Model.ts:20
+[engine/Model.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L9)
 
 ___
 
-###  name
+### involvements
 
-• **name**: *any*
+• **involvements**: `any`
 
-*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[name](../interfaces/iinstancedata.md#name)*
+#### Defined in
 
-Defined in bpmnServer/src/engine/Model.ts:10
-
-___
-
-###  parentItemId
-
-• **parentItemId**: *any*
-
-*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[parentItemId](../interfaces/iinstancedata.md#parentitemid)*
-
-Defined in bpmnServer/src/engine/Model.ts:21
+[engine/Model.ts:24](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L24)
 
 ___
 
-###  saved
+### items
 
-• **saved**: *any*
+• **items**: `any`[] = `[]`
 
-*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[saved](../interfaces/iinstancedata.md#saved)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Model.ts:14
+[IInstanceData](../interfaces/IInstanceData.md).[items](../interfaces/IInstanceData.md#items)
 
-___
+#### Defined in
 
-###  source
-
-• **source**: *any*
-
-*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[source](../interfaces/iinstancedata.md#source)*
-
-Defined in bpmnServer/src/engine/Model.ts:17
+[engine/Model.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L17)
 
 ___
 
-###  startedAt
+### logs
 
-• **startedAt**: *any*
+• **logs**: `any`[] = `[]`
 
-*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[startedAt](../interfaces/iinstancedata.md#startedat)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Model.ts:12
+[IInstanceData](../interfaces/IInstanceData.md).[logs](../interfaces/IInstanceData.md#logs)
 
-___
+#### Defined in
 
-###  status
-
-• **status**: *[EXECUTION_STATUS](../enums/execution_status.md)*
-
-*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[status](../interfaces/iinstancedata.md#status)*
-
-Defined in bpmnServer/src/engine/Model.ts:11
+[engine/Model.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L19)
 
 ___
 
-###  tokens
+### loops
 
-• **tokens**: *any[]* = []
+• **loops**: `any`[] = `[]`
 
-*Implementation of [IInstanceData](../interfaces/iinstancedata.md).[tokens](../interfaces/iinstancedata.md#tokens)*
+#### Implementation of
 
-Defined in bpmnServer/src/engine/Model.ts:19
+[IInstanceData](../interfaces/IInstanceData.md).[loops](../interfaces/IInstanceData.md#loops)
+
+#### Defined in
+
+[engine/Model.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L21)
+
+___
+
+### name
+
+• **name**: `any`
+
+#### Implementation of
+
+[IInstanceData](../interfaces/IInstanceData.md).[name](../interfaces/IInstanceData.md#name)
+
+#### Defined in
+
+[engine/Model.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L10)
+
+___
+
+### parentItemId
+
+• **parentItemId**: `any`
+
+#### Implementation of
+
+[IInstanceData](../interfaces/IInstanceData.md).[parentItemId](../interfaces/IInstanceData.md#parentitemid)
+
+#### Defined in
+
+[engine/Model.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L22)
+
+___
+
+### saved
+
+• **saved**: `any`
+
+#### Implementation of
+
+[IInstanceData](../interfaces/IInstanceData.md).[saved](../interfaces/IInstanceData.md#saved)
+
+#### Defined in
+
+[engine/Model.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L15)
+
+___
+
+### source
+
+• **source**: `any`
+
+#### Implementation of
+
+[IInstanceData](../interfaces/IInstanceData.md).[source](../interfaces/IInstanceData.md#source)
+
+#### Defined in
+
+[engine/Model.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L18)
+
+___
+
+### startedAt
+
+• **startedAt**: `any`
+
+#### Implementation of
+
+[IInstanceData](../interfaces/IInstanceData.md).[startedAt](../interfaces/IInstanceData.md#startedat)
+
+#### Defined in
+
+[engine/Model.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L13)
+
+___
+
+### status
+
+• **status**: [`EXECUTION_STATUS`](../enums/EXECUTION_STATUS.md)
+
+#### Implementation of
+
+[IInstanceData](../interfaces/IInstanceData.md).[status](../interfaces/IInstanceData.md#status)
+
+#### Defined in
+
+[engine/Model.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L11)
+
+___
+
+### tokens
+
+• **tokens**: `any`[] = `[]`
+
+#### Implementation of
+
+[IInstanceData](../interfaces/IInstanceData.md).[tokens](../interfaces/IInstanceData.md#tokens)
+
+#### Defined in
+
+[engine/Model.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L20)
+
+___
+
+### vars
+
+• **vars**: `any`
+
+#### Implementation of
+
+[IInstanceData](../interfaces/IInstanceData.md).[vars](../interfaces/IInstanceData.md#vars)
+
+#### Defined in
+
+[engine/Model.ts:23](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L23)
+
+___
+
+### version
+
+• **version**: `any`
+
+#### Implementation of
+
+[IInstanceData](../interfaces/IInstanceData.md).[version](../interfaces/IInstanceData.md#version)
+
+#### Defined in
+
+[engine/Model.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L12)

@@ -1,197 +1,292 @@
-[bpmn-server](../README.md) › [Configuration](configuration.md)
+[bpmn-server](../README.md) / Configuration
 
 # Class: Configuration
 
-## Hierarchy
-
-* **Configuration**
-
 ## Implements
 
-* [IConfiguration](../interfaces/iconfiguration.md)
+- [`IConfiguration`](../interfaces/IConfiguration.md)
 
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](configuration.md#constructor)
+- [constructor](Configuration.md#constructor)
 
 ### Properties
 
-* [apiKey](configuration.md#apikey)
-* [database](configuration.md#database)
-* [definitionsPath](configuration.md#definitionspath)
-* [logger](configuration.md#logger)
-* [sendGridAPIKey](configuration.md#sendgridapikey)
-* [templatesPath](configuration.md#templatespath)
-* [timers](configuration.md#timers)
+- [apiKey](Configuration.md#apikey)
+- [database](Configuration.md#database)
+- [definitionsPath](Configuration.md#definitionspath)
+- [logger](Configuration.md#logger)
+- [sendGridAPIKey](Configuration.md#sendgridapikey)
+- [templatesPath](Configuration.md#templatespath)
+- [timers](Configuration.md#timers)
 
 ### Methods
 
-* [appDelegate](configuration.md#appdelegate)
-* [dataStore](configuration.md#datastore)
-* [definitions](configuration.md#definitions)
+- [appDelegate](Configuration.md#appdelegate)
+- [cacheManager](Configuration.md#cachemanager)
+- [dataStore](Configuration.md#datastore)
+- [definitions](Configuration.md#definitions)
+- [userService](Configuration.md#userservice)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new Configuration**(`__namedParameters`: object): *[Configuration](configuration.md)*
+• **new Configuration**(`«destructured»`): [`Configuration`](Configuration.md)
 
-Defined in bpmnServer/src/common/DefaultConfiguration.ts:27
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `«destructured»` | `Object` |
+| › `apiKey` | `any` |
+| › `appDelegate` | `any` |
+| › `cacheManager` | `any` |
+| › `dataStore` | `any` |
+| › `database` | `any` |
+| › `definitions` | `any` |
+| › `definitionsPath` | `any` |
+| › `logger` | `any` |
+| › `templatesPath` | `any` |
+| › `timers` | `any` |
+| › `userService` | `any` |
 
-▪ **__namedParameters**: *object*
+#### Returns
 
-Name | Type |
------- | ------ |
-`ACL` | any |
-`IAM` | any |
-`apiKey` | any |
-`appDelegate` | any |
-`dataStore` | any |
-`database` | any |
-`definitions` | any |
-`definitionsPath` | any |
-`logger` | any |
-`templatesPath` | any |
-`timers` | any |
+[`Configuration`](Configuration.md)
 
-**Returns:** *[Configuration](configuration.md)*
+#### Defined in
+
+[common/DefaultConfiguration.ts:39](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L39)
 
 ## Properties
 
-###  apiKey
+### apiKey
 
-• **apiKey**: *string*
+• **apiKey**: `string`
 
-*Implementation of [IConfiguration](../interfaces/iconfiguration.md).[apiKey](../interfaces/iconfiguration.md#apikey)*
+#### Implementation of
 
-Defined in bpmnServer/src/common/DefaultConfiguration.ts:17
+[IConfiguration](../interfaces/IConfiguration.md).[apiKey](../interfaces/IConfiguration.md#apikey)
 
-___
+#### Defined in
 
-###  database
-
-• **database**: *object*
-
-*Implementation of [IConfiguration](../interfaces/iconfiguration.md).[database](../interfaces/iconfiguration.md#database)*
-
-Defined in bpmnServer/src/common/DefaultConfiguration.ts:15
-
-#### Type declaration:
-
-* **MongoDB**(): *object*
-
-  * **db**: *string*
-
-  * **db_url**: *string*
+[common/DefaultConfiguration.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L20)
 
 ___
 
-###  definitionsPath
+### database
 
-• **definitionsPath**: *string*
+• **database**: `Object`
 
-*Implementation of [IConfiguration](../interfaces/iconfiguration.md).[definitionsPath](../interfaces/iconfiguration.md#definitionspath)*
+#### Type declaration
 
-Defined in bpmnServer/src/common/DefaultConfiguration.ts:12
+| Name | Type |
+| :------ | :------ |
+| `MongoDB` | \{ `db`: `string` ; `db_url`: `string`  } |
+| `MongoDB.db` | `string` |
+| `MongoDB.db_url` | `string` |
+| `loopbackRepositories?` | `any` |
 
-___
+#### Implementation of
 
-###  logger
+[IConfiguration](../interfaces/IConfiguration.md).[database](../interfaces/IConfiguration.md#database)
 
-• **logger**: *[ILogger](../interfaces/ilogger.md)*
+#### Defined in
 
-*Implementation of [IConfiguration](../interfaces/iconfiguration.md).[logger](../interfaces/iconfiguration.md#logger)*
-
-Defined in bpmnServer/src/common/DefaultConfiguration.ts:16
-
-___
-
-###  sendGridAPIKey
-
-• **sendGridAPIKey**: *string*
-
-Defined in bpmnServer/src/common/DefaultConfiguration.ts:18
+[common/DefaultConfiguration.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L15)
 
 ___
 
-###  templatesPath
+### definitionsPath
 
-• **templatesPath**: *string*
+• **definitionsPath**: `string`
 
-*Implementation of [IConfiguration](../interfaces/iconfiguration.md).[templatesPath](../interfaces/iconfiguration.md#templatespath)*
+#### Implementation of
 
-Defined in bpmnServer/src/common/DefaultConfiguration.ts:13
+[IConfiguration](../interfaces/IConfiguration.md).[definitionsPath](../interfaces/IConfiguration.md#definitionspath)
+
+#### Defined in
+
+[common/DefaultConfiguration.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L12)
 
 ___
 
-###  timers
+### logger
 
-• **timers**: *object*
+• **logger**: [`ILogger`](../interfaces/ILogger.md)
 
-*Implementation of [IConfiguration](../interfaces/iconfiguration.md).[timers](../interfaces/iconfiguration.md#timers)*
+#### Implementation of
 
-Defined in bpmnServer/src/common/DefaultConfiguration.ts:14
+[IConfiguration](../interfaces/IConfiguration.md).[logger](../interfaces/IConfiguration.md#logger)
 
-#### Type declaration:
+#### Defined in
 
-* **forceTimersDelay**: *number*
+[common/DefaultConfiguration.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L19)
 
-* **precision**: *number*
+___
+
+### sendGridAPIKey
+
+• **sendGridAPIKey**: `string`
+
+#### Defined in
+
+[common/DefaultConfiguration.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L21)
+
+___
+
+### templatesPath
+
+• **templatesPath**: `string`
+
+#### Implementation of
+
+[IConfiguration](../interfaces/IConfiguration.md).[templatesPath](../interfaces/IConfiguration.md#templatespath)
+
+#### Defined in
+
+[common/DefaultConfiguration.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L13)
+
+___
+
+### timers
+
+• **timers**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `forceTimersDelay` | `number` |
+| `precision` | `number` |
+
+#### Implementation of
+
+[IConfiguration](../interfaces/IConfiguration.md).[timers](../interfaces/IConfiguration.md#timers)
+
+#### Defined in
+
+[common/DefaultConfiguration.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L14)
 
 ## Methods
 
-###  appDelegate
+### appDelegate
 
-▸ **appDelegate**(`server`: any): *[IAppDelegate](../interfaces/iappdelegate.md)*
+▸ **appDelegate**(`server`): [`IAppDelegate`](../interfaces/IAppDelegate.md)
 
-*Implementation of [IConfiguration](../interfaces/iconfiguration.md)*
+#### Parameters
 
-Defined in bpmnServer/src/common/DefaultConfiguration.ts:22
+| Name | Type |
+| :------ | :------ |
+| `server` | `any` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`server` | any |
+[`IAppDelegate`](../interfaces/IAppDelegate.md)
 
-**Returns:** *[IAppDelegate](../interfaces/iappdelegate.md)*
+#### Implementation of
 
-___
+[IConfiguration](../interfaces/IConfiguration.md).[appDelegate](../interfaces/IConfiguration.md#appdelegate)
 
-###  dataStore
+#### Defined in
 
-▸ **dataStore**(`server`: any): *[DataStore](datastore.md)‹›*
-
-*Implementation of [IConfiguration](../interfaces/iconfiguration.md)*
-
-Defined in bpmnServer/src/common/DefaultConfiguration.ts:25
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`server` | any |
-
-**Returns:** *[DataStore](datastore.md)‹›*
+[common/DefaultConfiguration.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L25)
 
 ___
 
-###  definitions
+### cacheManager
 
-▸ **definitions**(`server`: any): *[ModelsDatastoreDB](modelsdatastoredb.md)‹›*
+▸ **cacheManager**(`server`): [`NoCacheManager`](NoCacheManager.md)
 
-*Implementation of [IConfiguration](../interfaces/iconfiguration.md)*
+#### Parameters
 
-Defined in bpmnServer/src/common/DefaultConfiguration.ts:19
+| Name | Type |
+| :------ | :------ |
+| `server` | `any` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`server` | any |
+[`NoCacheManager`](NoCacheManager.md)
 
-**Returns:** *[ModelsDatastoreDB](modelsdatastoredb.md)‹›*
+#### Implementation of
+
+[IConfiguration](../interfaces/IConfiguration.md).[cacheManager](../interfaces/IConfiguration.md#cachemanager)
+
+#### Defined in
+
+[common/DefaultConfiguration.ts:31](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L31)
+
+___
+
+### dataStore
+
+▸ **dataStore**(`server`): [`DataStore`](DataStore.md)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `server` | `any` |
+
+#### Returns
+
+[`DataStore`](DataStore.md)
+
+#### Implementation of
+
+[IConfiguration](../interfaces/IConfiguration.md).[dataStore](../interfaces/IConfiguration.md#datastore)
+
+#### Defined in
+
+[common/DefaultConfiguration.ts:28](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L28)
+
+___
+
+### definitions
+
+▸ **definitions**(`server`): [`ModelsDatastore`](ModelsDatastore.md)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `server` | `any` |
+
+#### Returns
+
+[`ModelsDatastore`](ModelsDatastore.md)
+
+#### Implementation of
+
+[IConfiguration](../interfaces/IConfiguration.md).[definitions](../interfaces/IConfiguration.md#definitions)
+
+#### Defined in
+
+[common/DefaultConfiguration.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L22)
+
+___
+
+### userService
+
+▸ **userService**(`server`): `any`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `server` | `any` |
+
+#### Returns
+
+`any`
+
+#### Implementation of
+
+[IConfiguration](../interfaces/IConfiguration.md).[userService](../interfaces/IConfiguration.md#userservice)
+
+#### Defined in
+
+[common/DefaultConfiguration.ts:34](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L34)

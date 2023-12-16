@@ -1,296 +1,469 @@
-[bpmn-server](../README.md) › [TimerBehaviour](timerbehaviour.md)
+[bpmn-server](../README.md) / TimerBehaviour
 
 # Class: TimerBehaviour
 
+Behaviour
+     ioSpecification
+     timer 
+     message
+     signal
+
+  each behaviour is a class
+     it scans def and insert itself to perform actions as required
+
 ## Hierarchy
 
-* [Behaviour](behaviour.md)
+- [`Behaviour`](Behaviour.md)
 
-  ↳ **TimerBehaviour**
+  ↳ **`TimerBehaviour`**
 
-## Implements
-
-* [IBehaviour](../interfaces/ibehaviour.md)
-
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](timerbehaviour.md#constructor)
+- [constructor](TimerBehaviour.md#constructor)
 
 ### Properties
 
-* [definition](timerbehaviour.md#definition)
-* [duration](timerbehaviour.md#duration)
-* [node](timerbehaviour.md#node)
-* [timeCycle](timerbehaviour.md#timecycle)
+- [definition](TimerBehaviour.md#definition)
+- [duration](TimerBehaviour.md#duration)
+- [node](TimerBehaviour.md#node)
+- [repeat](TimerBehaviour.md#repeat)
+- [timeCycle](TimerBehaviour.md#timecycle)
+- [timeDate](TimerBehaviour.md#timedate)
 
 ### Methods
 
-* [describe](timerbehaviour.md#describe)
-* [end](timerbehaviour.md#end)
-* [expires](timerbehaviour.md#expires)
-* [getItemAttributes](timerbehaviour.md#getitemattributes)
-* [getNodeAttributes](timerbehaviour.md#getnodeattributes)
-* [init](timerbehaviour.md#init)
-* [restored](timerbehaviour.md#restored)
-* [resume](timerbehaviour.md#resume)
-* [run](timerbehaviour.md#run)
-* [start](timerbehaviour.md#start)
-* [startTimer](timerbehaviour.md#starttimer)
-* [timeDue](timerbehaviour.md#timedue)
+- [describe](TimerBehaviour.md#describe)
+- [end](TimerBehaviour.md#end)
+- [enter](TimerBehaviour.md#enter)
+- [exit](TimerBehaviour.md#exit)
+- [expires](TimerBehaviour.md#expires)
+- [getItemAttributes](TimerBehaviour.md#getitemattributes)
+- [getNodeAttributes](TimerBehaviour.md#getnodeattributes)
+- [getRepeat](TimerBehaviour.md#getrepeat)
+- [init](TimerBehaviour.md#init)
+- [restored](TimerBehaviour.md#restored)
+- [resume](TimerBehaviour.md#resume)
+- [run](TimerBehaviour.md#run)
+- [start](TimerBehaviour.md#start)
+- [startTimer](TimerBehaviour.md#starttimer)
+- [timeDue](TimerBehaviour.md#timedue)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new TimerBehaviour**(`node`: [Node](node.md), `definition`: any): *[TimerBehaviour](timerbehaviour.md)*
+• **new TimerBehaviour**(`node`, `definition`): [`TimerBehaviour`](TimerBehaviour.md)
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[constructor](scriptbehaviour.md#constructor)*
+#### Parameters
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:39
+| Name | Type |
+| :------ | :------ |
+| `node` | [`Node`](Node.md) |
+| `definition` | `any` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`node` | [Node](node.md) |
-`definition` | any |
+[`TimerBehaviour`](TimerBehaviour.md)
 
-**Returns:** *[TimerBehaviour](timerbehaviour.md)*
+#### Inherited from
+
+[Behaviour](Behaviour.md).[constructor](Behaviour.md#constructor)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:40](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L40)
 
 ## Properties
 
-###  definition
+### definition
 
-• **definition**: *any*
+• **definition**: `any`
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md).[definition](../interfaces/ibehaviour.md#definition)*
+#### Inherited from
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[definition](scriptbehaviour.md#definition)*
+[Behaviour](Behaviour.md).[definition](Behaviour.md#definition)
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:39
+#### Defined in
 
-___
-
-###  duration
-
-• **duration**: *any*
-
-Defined in bpmnServer/src/elements/behaviours/Timer.ts:41
+[elements/behaviours/Behaviour.ts:39](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L39)
 
 ___
 
-###  node
+### duration
 
-• **node**: *[Node](node.md)*
+• **duration**: `any`
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md).[node](../interfaces/ibehaviour.md#node)*
+#### Defined in
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[node](scriptbehaviour.md#node)*
-
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:38
+[elements/behaviours/Timer.ts:55](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L55)
 
 ___
 
-###  timeCycle
+### node
 
-• **timeCycle**: *any*
+• **node**: [`Node`](Node.md)
 
-Defined in bpmnServer/src/elements/behaviours/Timer.ts:42
+#### Inherited from
+
+[Behaviour](Behaviour.md).[node](Behaviour.md#node)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:38](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L38)
+
+___
+
+### repeat
+
+• **repeat**: `number` = `1`
+
+#### Defined in
+
+[elements/behaviours/Timer.ts:56](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L56)
+
+___
+
+### timeCycle
+
+• **timeCycle**: `any`
+
+#### Defined in
+
+[elements/behaviours/Timer.ts:57](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L57)
+
+___
+
+### timeDate
+
+• **timeDate**: `any`
+
+#### Defined in
+
+[elements/behaviours/Timer.ts:58](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L58)
 
 ## Methods
 
-###  describe
+### describe
 
-▸ **describe**(): *string[]*
+▸ **describe**(): `string`[]
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md)*
+#### Returns
 
-*Overrides [Behaviour](behaviour.md).[describe](behaviour.md#describe)*
+`string`[]
 
-Defined in bpmnServer/src/elements/behaviours/Timer.ts:63
+#### Overrides
 
-**Returns:** *string[]*
+[Behaviour](Behaviour.md).[describe](Behaviour.md#describe)
 
-___
+#### Defined in
 
-###  end
-
-▸ **end**(`item`: [Item](item.md)): *void*
-
-*Overrides [Behaviour](behaviour.md).[end](behaviour.md#end)*
-
-Defined in bpmnServer/src/elements/behaviours/Timer.ts:130
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-
-**Returns:** *void*
+[elements/behaviours/Timer.ts:82](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L82)
 
 ___
 
-###  expires
+### end
 
-▸ **expires**(): *void*
+▸ **end**(`item`): `void`
 
-Defined in bpmnServer/src/elements/behaviours/Timer.ts:120
+#### Parameters
 
-**Returns:** *void*
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-___
+#### Returns
 
-###  getItemAttributes
+`void`
 
-▸ **getItemAttributes**(`item`: [Item](item.md), `attributes`: any[]): *void*
+#### Overrides
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[getItemAttributes](scriptbehaviour.md#getitemattributes)*
+[Behaviour](Behaviour.md).[end](Behaviour.md#end)
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:53
+#### Defined in
 
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-`attributes` | any[] |
-
-**Returns:** *void*
+[elements/behaviours/Timer.ts:193](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L193)
 
 ___
 
-###  getNodeAttributes
+### enter
 
-▸ **getNodeAttributes**(`attributes`: any[]): *void*
+▸ **enter**(`item`): `void`
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md)*
+#### Parameters
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[getNodeAttributes](scriptbehaviour.md#getnodeattributes)*
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:52
+#### Returns
 
-**Parameters:**
+`void`
 
-Name | Type |
------- | ------ |
-`attributes` | any[] |
+#### Inherited from
 
-**Returns:** *void*
+[Behaviour](Behaviour.md).[enter](Behaviour.md#enter)
 
-___
+#### Defined in
 
-###  init
-
-▸ **init**(): *void*
-
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md)*
-
-*Overrides [Behaviour](behaviour.md).[init](behaviour.md#init)*
-
-Defined in bpmnServer/src/elements/behaviours/Timer.ts:43
-
-**Returns:** *void*
+[elements/behaviours/Behaviour.ts:48](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L48)
 
 ___
 
-###  restored
+### exit
 
-▸ **restored**(`item`: any): *void*
+▸ **exit**(`item`): `void`
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[restored](scriptbehaviour.md#restored)*
+#### Parameters
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:45
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`item` | any |
+`void`
 
-**Returns:** *void*
+#### Inherited from
 
-___
+[Behaviour](Behaviour.md).[exit](Behaviour.md#exit)
 
-###  resume
+#### Defined in
 
-▸ **resume**(): *void*
-
-*Overrides [Behaviour](behaviour.md).[resume](behaviour.md#resume)*
-
-Defined in bpmnServer/src/elements/behaviours/Timer.ts:134
-
-**Returns:** *void*
+[elements/behaviours/Behaviour.ts:52](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L52)
 
 ___
 
-###  run
+### expires
 
-▸ **run**(`item`: [Item](item.md)): *void*
+▸ **expires**(): `Promise`\<`void`\>
 
-*Inherited from [Behaviour](behaviour.md).[run](behaviour.md#run)*
+#### Returns
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:49
+`Promise`\<`void`\>
 
-**Parameters:**
+#### Defined in
 
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-
-**Returns:** *void*
+[elements/behaviours/Timer.ts:157](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L157)
 
 ___
 
-###  start
+### getItemAttributes
 
-▸ **start**(`item`: [Item](item.md)): *[NODE_ACTION](../enums/node_action.md)*
+▸ **getItemAttributes**(`item`, `attributes`): `void`
 
-*Overrides [Behaviour](behaviour.md).[start](behaviour.md#start)*
+#### Parameters
 
-Defined in bpmnServer/src/elements/behaviours/Timer.ts:90
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+| `attributes` | `any`[] |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
+`void`
 
-**Returns:** *[NODE_ACTION](../enums/node_action.md)*
+#### Inherited from
 
-___
+[Behaviour](Behaviour.md).[getItemAttributes](Behaviour.md#getitemattributes)
 
-###  startTimer
+#### Defined in
 
-▸ **startTimer**(`item`: any): *void*
-
-Defined in bpmnServer/src/elements/behaviours/Timer.ts:102
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | any |
-
-**Returns:** *void*
+[elements/behaviours/Behaviour.ts:55](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L55)
 
 ___
 
-###  timeDue
+### getNodeAttributes
 
-▸ **timeDue**(`timerModifier`: any): *number*
+▸ **getNodeAttributes**(`attributes`): `void`
 
-Defined in bpmnServer/src/elements/behaviours/Timer.ts:71
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `attributes` | `any`[] |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Behaviour](Behaviour.md).[getNodeAttributes](Behaviour.md#getnodeattributes)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L54)
+
+___
+
+### getRepeat
+
+▸ **getRepeat**(`input`): `any`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `input` | `any` |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[elements/behaviours/Timer.ts:120](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L120)
+
+___
+
+### init
+
+▸ **init**(): `void`
+
+#### Returns
+
+`void`
+
+#### Overrides
+
+[Behaviour](Behaviour.md).[init](Behaviour.md#init)
+
+#### Defined in
+
+[elements/behaviours/Timer.ts:59](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L59)
+
+___
+
+### restored
+
+▸ **restored**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | `any` |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Behaviour](Behaviour.md).[restored](Behaviour.md#restored)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:45](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L45)
+
+___
+
+### resume
+
+▸ **resume**(): `void`
+
+#### Returns
+
+`void`
+
+#### Overrides
+
+[Behaviour](Behaviour.md).[resume](Behaviour.md#resume)
+
+#### Defined in
+
+[elements/behaviours/Timer.ts:197](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L197)
+
+___
+
+### run
+
+▸ **run**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Behaviour](Behaviour.md).[run](Behaviour.md#run)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:50](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L50)
+
+___
+
+### start
+
+▸ **start**(`item`): [`NODE_ACTION`](../enums/NODE_ACTION.md)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+[`NODE_ACTION`](../enums/NODE_ACTION.md)
+
+#### Overrides
+
+[Behaviour](Behaviour.md).[start](Behaviour.md#start)
+
+#### Defined in
+
+[elements/behaviours/Timer.ts:128](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L128)
+
+___
+
+### startTimer
+
+▸ **startTimer**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | `any` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[elements/behaviours/Timer.ts:139](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L139)
+
+___
+
+### timeDue
+
+▸ **timeDue**(`item`, `timerModifier?`): `any`
 
 return the next time the timer is due
 format is time format
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Default | Description |
------- | ------ | ------ | ------ |
-`timerModifier` | any | null | for testing purposes configuration can alter the timer  |
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `item` | `any` | `undefined` | - |
+| `timerModifier` | `any` | `null` | for testing purposes configuration can alter the timer |
 
-**Returns:** *number*
+#### Returns
+
+`any`
+
+#### Defined in
+
+[elements/behaviours/Timer.ts:90](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L90)

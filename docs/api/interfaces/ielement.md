@@ -1,196 +1,223 @@
-[bpmn-server](../README.md) › [IElement](ielement.md)
+[bpmn-server](../README.md) / IElement
 
 # Interface: IElement
 
 ## Hierarchy
 
-* **IElement**
+- **`IElement`**
 
-  ↳ [IFlow](iflow.md)
+  ↳ [`INode`](INode.md)
 
-  ↳ [INode](inode.md)
+  ↳ [`IFlow`](IFlow.md)
 
 ## Implemented by
 
-* [BoundaryEvent](../classes/boundaryevent.md)
-* [BusinessRuleTask](../classes/businessruletask.md)
-* [CallActivity](../classes/callactivity.md)
-* [CatchEvent](../classes/catchevent.md)
-* [Element](../classes/element.md)
-* [EndEvent](../classes/endevent.md)
-* [Event](../classes/event.md)
-* [EventBasedGateway](../classes/eventbasedgateway.md)
-* [Flow](../classes/flow.md)
-* [Gateway](../classes/gateway.md)
-* [MessageFlow](../classes/messageflow.md)
-* [Node](../classes/node.md)
-* [ReceiveTask](../classes/receivetask.md)
-* [ScriptTask](../classes/scripttask.md)
-* [SendTask](../classes/sendtask.md)
-* [ServiceTask](../classes/servicetask.md)
-* [StartEvent](../classes/startevent.md)
-* [SubProcess](../classes/subprocess.md)
-* [ThrowEvent](../classes/throwevent.md)
-* [UserTask](../classes/usertask.md)
-* [XORGateway](../classes/xorgateway.md)
+- [`Element`](../classes/Element.md)
 
-## Index
+## Table of contents
 
 ### Properties
 
-* [behaviours](ielement.md#behaviours)
-* [id](ielement.md#id)
-* [name](ielement.md#name)
-* [type](ielement.md#type)
+- [behaviours](IElement.md#behaviours)
+- [id](IElement.md#id)
+- [lane](IElement.md#lane)
+- [name](IElement.md#name)
+- [type](IElement.md#type)
 
 ### Methods
 
-* [addBehaviour](ielement.md#addbehaviour)
-* [continue](ielement.md#continue)
-* [describe](ielement.md#describe)
-* [getBehaviour](ielement.md#getbehaviour)
-* [hasBehaviour](ielement.md#hasbehaviour)
-* [restored](ielement.md#restored)
-* [resume](ielement.md#resume)
+- [addBehaviour](IElement.md#addbehaviour)
+- [continue](IElement.md#continue)
+- [describe](IElement.md#describe)
+- [getBehaviour](IElement.md#getbehaviour)
+- [hasBehaviour](IElement.md#hasbehaviour)
+- [restored](IElement.md#restored)
+- [resume](IElement.md#resume)
 
 ## Properties
 
-###  behaviours
+### behaviours
 
-• **behaviours**: *Map‹any, any›*
+• **behaviours**: `Map`\<`any`, `any`\>
 
-Defined in bpmnServer/src/interfaces/elements.ts:24
+#### Defined in
 
-___
-
-###  id
-
-• **id**: *any*
-
-Defined in bpmnServer/src/interfaces/elements.ts:21
+[interfaces/elements.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L25)
 
 ___
 
-###  name
+### id
 
-• **name**: *any*
+• **id**: `any`
 
-Defined in bpmnServer/src/interfaces/elements.ts:23
+#### Defined in
+
+[interfaces/elements.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L21)
 
 ___
 
-###  type
+### lane
 
-• **type**: *any*
+• **lane**: `any`
 
-Defined in bpmnServer/src/interfaces/elements.ts:22
+#### Defined in
+
+[interfaces/elements.ts:24](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L24)
+
+___
+
+### name
+
+• **name**: `any`
+
+#### Defined in
+
+[interfaces/elements.ts:23](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L23)
+
+___
+
+### type
+
+• **type**: `any`
+
+#### Defined in
+
+[interfaces/elements.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L22)
 
 ## Methods
 
-###  addBehaviour
+### addBehaviour
 
-▸ **addBehaviour**(`nane`: any, `behavriour`: any): *void*
+▸ **addBehaviour**(`nane`, `behavriour`): `void`
 
-Defined in bpmnServer/src/interfaces/elements.ts:35
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `nane` | `any` |
+| `behavriour` | `any` |
 
-Name | Type |
------- | ------ |
-`nane` | any |
-`behavriour` | any |
+#### Returns
 
-**Returns:** *void*
+`void`
 
-___
+#### Defined in
 
-###  continue
-
-▸ **continue**(`item`: [IItem](iitem.md)): *void*
-
-Defined in bpmnServer/src/interfaces/elements.ts:25
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [IItem](iitem.md) |
-
-**Returns:** *void*
+[interfaces/elements.ts:36](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L36)
 
 ___
 
-###  describe
+### continue
 
-▸ **describe**(): *string[][]*
+▸ **continue**(`item`): `void`
 
-Defined in bpmnServer/src/interfaces/elements.ts:26
+#### Parameters
 
-**Returns:** *string[][]*
+| Name | Type |
+| :------ | :------ |
+| `item` | [`IItem`](IItem.md) |
 
-___
+#### Returns
 
-###  getBehaviour
+`void`
 
-▸ **getBehaviour**(`name`: any): *any*
+#### Defined in
 
-Defined in bpmnServer/src/interfaces/elements.ts:34
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`name` | any |
-
-**Returns:** *any*
+[interfaces/elements.ts:26](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L26)
 
 ___
 
-###  hasBehaviour
+### describe
 
-▸ **hasBehaviour**(`name`: any): *boolean*
+▸ **describe**(): `string`[][]
 
-Defined in bpmnServer/src/interfaces/elements.ts:33
+#### Returns
+
+`string`[][]
+
+#### Defined in
+
+[interfaces/elements.ts:27](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L27)
+
+___
+
+### getBehaviour
+
+▸ **getBehaviour**(`name`): `any`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[interfaces/elements.ts:35](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L35)
+
+___
+
+### hasBehaviour
+
+▸ **hasBehaviour**(`name`): `boolean`
 
 respond by providing behaviour attributes beyond item and node information
  ex: timer due , input/outupt , fields
 
-**Parameters:**
+#### Parameters
 
-Name | Type |
------- | ------ |
-`name` | any |
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
 
-**Returns:** *boolean*
+#### Returns
 
-___
+`boolean`
 
-###  restored
+#### Defined in
 
-▸ **restored**(`item`: [IItem](iitem.md)): *void*
-
-Defined in bpmnServer/src/interfaces/elements.ts:27
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [IItem](iitem.md) |
-
-**Returns:** *void*
+[interfaces/elements.ts:34](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L34)
 
 ___
 
-###  resume
+### restored
 
-▸ **resume**(`item`: [IItem](iitem.md)): *void*
+▸ **restored**(`item`): `void`
 
-Defined in bpmnServer/src/interfaces/elements.ts:28
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `item` | [`IItem`](IItem.md) |
 
-Name | Type |
------- | ------ |
-`item` | [IItem](iitem.md) |
+#### Returns
 
-**Returns:** *void*
+`void`
+
+#### Defined in
+
+[interfaces/elements.ts:28](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L28)
+
+___
+
+### resume
+
+▸ **resume**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`IItem`](IItem.md) |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[interfaces/elements.ts:29](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L29)

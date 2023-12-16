@@ -1,83 +1,85 @@
-[bpmn-server](../README.md) › [ICacheManager](icachemanager.md)
+[bpmn-server](../README.md) / ICacheManager
 
 # Interface: ICacheManager
 
-## Hierarchy
-
-* **ICacheManager**
-
 ## Implemented by
 
-* [CacheManager](../classes/cachemanager.md)
+- [`CacheManager`](../classes/CacheManager.md)
+- [`NoCacheManager`](../classes/NoCacheManager.md)
 
-## Index
+## Table of contents
 
 ### Methods
 
-* [add](icachemanager.md#add)
-* [list](icachemanager.md#list)
-* [remove](icachemanager.md#remove)
-* [restart](icachemanager.md#restart)
-* [shutdown](icachemanager.md#shutdown)
+- [add](ICacheManager.md#add)
+- [list](ICacheManager.md#list)
+- [remove](ICacheManager.md#remove)
+- [shutdown](ICacheManager.md#shutdown)
 
 ## Methods
 
-###  add
+### add
 
-▸ **add**(`execution`: [IExecution](iexecution.md)): *any*
+▸ **add**(`execution`): `any`
 
-Defined in bpmnServer/src/interfaces/server.ts:134
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `execution` | [`IExecution`](IExecution.md) |
 
-Name | Type |
------- | ------ |
-`execution` | [IExecution](iexecution.md) |
+#### Returns
 
-**Returns:** *any*
+`any`
 
-___
+#### Defined in
 
-###  list
-
-▸ **list**(): *any*
-
-Defined in bpmnServer/src/interfaces/server.ts:133
-
-**Returns:** *any*
+[interfaces/server.ts:120](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L120)
 
 ___
 
-###  remove
+### list
 
-▸ **remove**(`instanceId`: any): *any*
+▸ **list**(): `any`
 
-Defined in bpmnServer/src/interfaces/server.ts:135
+#### Returns
 
-**Parameters:**
+`any`
 
-Name | Type |
------- | ------ |
-`instanceId` | any |
+#### Defined in
 
-**Returns:** *any*
+[interfaces/server.ts:119](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L119)
 
 ___
 
-###  restart
+### remove
 
-▸ **restart**(): *any*
+▸ **remove**(`instanceId`): `any`
 
-Defined in bpmnServer/src/interfaces/server.ts:137
+#### Parameters
 
-**Returns:** *any*
+| Name | Type |
+| :------ | :------ |
+| `instanceId` | `any` |
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[interfaces/server.ts:121](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L121)
 
 ___
 
-###  shutdown
+### shutdown
 
-▸ **shutdown**(): *any*
+▸ **shutdown**(): `any`
 
-Defined in bpmnServer/src/interfaces/server.ts:136
+#### Returns
 
-**Returns:** *any*
+`any`
+
+#### Defined in
+
+[interfaces/server.ts:122](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L122)

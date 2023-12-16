@@ -1,198 +1,225 @@
-[bpmn-server](../README.md) › [IDataStore](idatastore.md)
+[bpmn-server](../README.md) / IDataStore
 
 # Interface: IDataStore
 
-## Hierarchy
-
-* **IDataStore**
-
 ## Implemented by
 
-* [DataStore](../classes/datastore.md)
+- [`DataStore`](../classes/DataStore.md)
 
-## Index
+## Table of contents
 
 ### Properties
 
-* [db](idatastore.md#db)
-* [dbConfiguration](idatastore.md#dbconfiguration)
-* [execution](idatastore.md#execution)
-* [logger](idatastore.md#logger)
+- [db](IDataStore.md#db)
+- [dbConfiguration](IDataStore.md#dbconfiguration)
+- [locker](IDataStore.md#locker)
+- [logger](IDataStore.md#logger)
 
 ### Methods
 
-* [deleteInstances](idatastore.md#deleteinstances)
-* [findInstance](idatastore.md#findinstance)
-* [findInstances](idatastore.md#findinstances)
-* [findItem](idatastore.md#finditem)
-* [findItems](idatastore.md#finditems)
-* [install](idatastore.md#install)
-* [loadInstance](idatastore.md#loadinstance)
-* [monitorExecution](idatastore.md#monitorexecution)
-* [save](idatastore.md#save)
+- [deleteInstances](IDataStore.md#deleteinstances)
+- [findInstance](IDataStore.md#findinstance)
+- [findInstances](IDataStore.md#findinstances)
+- [findItem](IDataStore.md#finditem)
+- [findItems](IDataStore.md#finditems)
+- [install](IDataStore.md#install)
+- [loadInstance](IDataStore.md#loadinstance)
+- [save](IDataStore.md#save)
 
 ## Properties
 
-###  db
+### db
 
-• **db**: *any*
+• **db**: `any`
 
-Defined in bpmnServer/src/interfaces/datastore.ts:7
+#### Defined in
 
-___
-
-###  dbConfiguration
-
-• **dbConfiguration**: *any*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:6
+[interfaces/datastore.ts:8](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L8)
 
 ___
 
-###  execution
+### dbConfiguration
 
-• **execution**: *[IExecution](iexecution.md)*
+• **dbConfiguration**: `any`
 
-Defined in bpmnServer/src/interfaces/datastore.ts:9
+#### Defined in
+
+[interfaces/datastore.ts:7](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L7)
 
 ___
 
-###  logger
+### locker
 
-• **logger**: *any*
+• **locker**: `any`
 
-Defined in bpmnServer/src/interfaces/datastore.ts:8
+#### Defined in
+
+[interfaces/datastore.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L10)
+
+___
+
+### logger
+
+• **logger**: `any`
+
+#### Defined in
+
+[interfaces/datastore.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L9)
 
 ## Methods
 
-###  deleteInstances
+### deleteInstances
 
-▸ **deleteInstances**(`query?`: any): *Promise‹void›*
+▸ **deleteInstances**(`query?`): `Promise`\<`void`\>
 
-Defined in bpmnServer/src/interfaces/datastore.ts:23
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `query?` | `any` |
 
-Name | Type |
------- | ------ |
-`query?` | any |
+#### Returns
 
-**Returns:** *Promise‹void›*
+`Promise`\<`void`\>
 
-___
+#### Defined in
 
-###  findInstance
-
-▸ **findInstance**(`query`: any, `options`: any): *Promise‹any›*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:17
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`query` | any |
-`options` | any |
-
-**Returns:** *Promise‹any›*
+[interfaces/datastore.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L20)
 
 ___
 
-###  findInstances
+### findInstance
 
-▸ **findInstances**(`query`: any, `option`: "summary" | "full"): *Promise‹any›*
+▸ **findInstance**(`query`, `options`): `Promise`\<[`IInstanceData`](IInstanceData.md)\>
 
-Defined in bpmnServer/src/interfaces/datastore.ts:18
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
+| `options` | `any` |
 
-Name | Type |
------- | ------ |
-`query` | any |
-`option` | "summary" &#124; "full" |
+#### Returns
 
-**Returns:** *Promise‹any›*
+`Promise`\<[`IInstanceData`](IInstanceData.md)\>
 
-___
+#### Defined in
 
-###  findItem
-
-▸ **findItem**(`query`: any): *Promise‹any›*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:16
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`query` | any |
-
-**Returns:** *Promise‹any›*
+[interfaces/datastore.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L17)
 
 ___
 
-###  findItems
+### findInstances
 
-▸ **findItems**(`query`: any): *Promise‹any[]›*
+▸ **findInstances**(`query`, `option`): `Promise`\<[`IInstanceData`](IInstanceData.md)[]\>
 
-Defined in bpmnServer/src/interfaces/datastore.ts:22
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
+| `option` | ``"full"`` \| ``"summary"`` |
 
-Name | Type | Description |
------- | ------ | ------ |
-`query` | any |   |
+#### Returns
 
-**Returns:** *Promise‹any[]›*
+`Promise`\<[`IInstanceData`](IInstanceData.md)[]\>
 
-___
+#### Defined in
 
-###  install
-
-▸ **install**(): *any*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:24
-
-**Returns:** *any*
+[interfaces/datastore.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L18)
 
 ___
 
-###  loadInstance
+### findItem
 
-▸ **loadInstance**(`instanceId`: any): *Promise‹object›*
+▸ **findItem**(`query`): `Promise`\<[`IItemData`](IItemData.md)\>
 
-Defined in bpmnServer/src/interfaces/datastore.ts:12
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
 
-Name | Type |
------- | ------ |
-`instanceId` | any |
+#### Returns
 
-**Returns:** *Promise‹object›*
+`Promise`\<[`IItemData`](IItemData.md)\>
 
-___
+#### Defined in
 
-###  monitorExecution
-
-▸ **monitorExecution**(`execution`: [IExecution](iexecution.md)): *void*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:10
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`execution` | [IExecution](iexecution.md) |
-
-**Returns:** *void*
+[interfaces/datastore.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L16)
 
 ___
 
-###  save
+### findItems
 
-▸ **save**(): *Promise‹void›*
+▸ **findItems**(`query`): `Promise`\<[`IItemData`](IItemData.md)[]\>
 
-Defined in bpmnServer/src/interfaces/datastore.ts:11
+#### Parameters
 
-**Returns:** *Promise‹void›*
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
+
+#### Returns
+
+`Promise`\<[`IItemData`](IItemData.md)[]\>
+
+#### Defined in
+
+[interfaces/datastore.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L19)
+
+___
+
+### install
+
+▸ **install**(): `any`
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[interfaces/datastore.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L21)
+
+___
+
+### loadInstance
+
+▸ **loadInstance**(`instanceId`, `options`): `Promise`\<\{ `instance`: `any` ; `items`: `any`[]  }\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `instanceId` | `any` |
+| `options` | `any` |
+
+#### Returns
+
+`Promise`\<\{ `instance`: `any` ; `items`: `any`[]  }\>
+
+#### Defined in
+
+[interfaces/datastore.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L12)
+
+___
+
+### save
+
+▸ **save**(`instance`, `options`): `Promise`\<`void`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `instance` | `any` |
+| `options` | `any` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[interfaces/datastore.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L11)

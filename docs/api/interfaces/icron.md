@@ -1,55 +1,63 @@
-[bpmn-server](../README.md) › [ICron](icron.md)
+[bpmn-server](../README.md) / ICron
 
 # Interface: ICron
 
-## Hierarchy
-
-* **ICron**
-
 ## Implemented by
 
-* [Cron](../classes/cron.md)
+- [`Cron`](../classes/Cron.md)
 
-## Index
+## Table of contents
 
 ### Methods
 
-* [checkTimers](icron.md#checktimers)
-* [start](icron.md#start)
-* [startTimers](icron.md#starttimers)
+- [checkTimers](ICron.md#checktimers)
+- [start](ICron.md#start)
+- [startTimers](ICron.md#starttimers)
 
 ## Methods
 
-###  checkTimers
+### checkTimers
 
-▸ **checkTimers**(`duration`: any): *any*
+▸ **checkTimers**(`duration`): `any`
 
-Defined in bpmnServer/src/interfaces/server.ts:125
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `duration` | `any` |
 
-Name | Type |
------- | ------ |
-`duration` | any |
+#### Returns
 
-**Returns:** *any*
+`any`
 
-___
+#### Defined in
 
-###  start
-
-▸ **start**(): *any*
-
-Defined in bpmnServer/src/interfaces/server.ts:126
-
-**Returns:** *any*
+[interfaces/server.ts:111](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L111)
 
 ___
 
-###  startTimers
+### start
 
-▸ **startTimers**(): *any*
+▸ **start**(): `any`
 
-Defined in bpmnServer/src/interfaces/server.ts:127
+#### Returns
 
-**Returns:** *any*
+`any`
+
+#### Defined in
+
+[interfaces/server.ts:112](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L112)
+
+___
+
+### startTimers
+
+▸ **startTimers**(): `any`
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[interfaces/server.ts:113](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L113)

@@ -1,228 +1,288 @@
-[bpmn-server](../README.md) › [Loop](loop.md)
+[bpmn-server](../README.md) / Loop
 
 # Class: Loop
 
-## Hierarchy
-
-* **Loop**
-
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](loop.md#constructor)
+- [constructor](Loop.md#constructor)
 
 ### Properties
 
-* [completed](loop.md#completed)
-* [dataPath](loop.md#datapath)
-* [definition](loop.md#definition)
-* [id](loop.md#id)
-* [items](loop.md#items)
-* [node](loop.md#node)
-* [ownerToken](loop.md#ownertoken)
-* [sequence](loop.md#sequence)
+- [completed](Loop.md#completed)
+- [dataPath](Loop.md#datapath)
+- [definition](Loop.md#definition)
+- [id](Loop.md#id)
+- [items](Loop.md#items)
+- [node](Loop.md#node)
+- [ownerToken](Loop.md#ownertoken)
+- [sequence](Loop.md#sequence)
 
 ### Methods
 
-* [getKeyName](loop.md#getkeyname)
-* [getNext](loop.md#getnext)
-* [isDone](loop.md#isdone)
-* [isSequential](loop.md#issequential)
-* [save](loop.md#save)
-* [checkNext](loop.md#static-checknext)
-* [checkStart](loop.md#static-checkstart)
-* [load](loop.md#static-load)
+- [getKeyName](Loop.md#getkeyname)
+- [getNext](Loop.md#getnext)
+- [isDone](Loop.md#isdone)
+- [isSequential](Loop.md#issequential)
+- [isStandard](Loop.md#isstandard)
+- [save](Loop.md#save)
+- [checkNext](Loop.md#checknext)
+- [checkStart](Loop.md#checkstart)
+- [load](Loop.md#load)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new Loop**(`node`: [Node](node.md), `token`: [Token](token.md), `dataObject?`: any): *[Loop](loop.md)*
+• **new Loop**(`node`, `token`, `dataObject?`): [`Loop`](Loop.md)
 
-Defined in bpmnServer/src/engine/Loop.ts:15
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `node` | [`Node`](Node.md) |
+| `token` | [`Token`](Token.md) |
+| `dataObject?` | `any` |
 
-Name | Type |
------- | ------ |
-`node` | [Node](node.md) |
-`token` | [Token](token.md) |
-`dataObject?` | any |
+#### Returns
 
-**Returns:** *[Loop](loop.md)*
+[`Loop`](Loop.md)
+
+#### Defined in
+
+[engine/Loop.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Loop.ts#L19)
 
 ## Properties
 
-###  completed
+### completed
 
-• **completed**: *any*
+• **completed**: `any`
 
-Defined in bpmnServer/src/engine/Loop.ts:14
+#### Defined in
 
-___
-
-###  dataPath
-
-• **dataPath**: *any*
-
-Defined in bpmnServer/src/engine/Loop.ts:12
+[engine/Loop.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Loop.ts#L15)
 
 ___
 
-###  definition
+### dataPath
 
-• **definition**: *[LoopBehaviour](loopbehaviour.md)*
+• **dataPath**: `any`
 
-Defined in bpmnServer/src/engine/Loop.ts:10
+#### Defined in
 
-___
-
-###  id
-
-• **id**: *any*
-
-Defined in bpmnServer/src/engine/Loop.ts:7
+[engine/Loop.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Loop.ts#L13)
 
 ___
 
-###  items
+### definition
 
-• **items**: *any[]*
+• **definition**: [`LoopBehaviour`](LoopBehaviour.md)
 
-Defined in bpmnServer/src/engine/Loop.ts:13
+#### Defined in
 
-___
-
-###  node
-
-• **node**: *any*
-
-Defined in bpmnServer/src/engine/Loop.ts:8
+[engine/Loop.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Loop.ts#L11)
 
 ___
 
-###  ownerToken
+### id
 
-• **ownerToken**: *any*
+• **id**: `any`
 
-Defined in bpmnServer/src/engine/Loop.ts:9
+#### Defined in
+
+[engine/Loop.ts:8](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Loop.ts#L8)
 
 ___
 
-###  sequence
+### items
 
-• **sequence**: *any*
+• **items**: `any`[]
 
-Defined in bpmnServer/src/engine/Loop.ts:11
+#### Defined in
+
+[engine/Loop.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Loop.ts#L14)
+
+___
+
+### node
+
+• **node**: `any`
+
+#### Defined in
+
+[engine/Loop.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Loop.ts#L9)
+
+___
+
+### ownerToken
+
+• **ownerToken**: `any`
+
+#### Defined in
+
+[engine/Loop.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Loop.ts#L10)
+
+___
+
+### sequence
+
+• **sequence**: `any`
+
+#### Defined in
+
+[engine/Loop.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Loop.ts#L12)
 
 ## Methods
 
-###  getKeyName
+### getKeyName
 
-▸ **getKeyName**(): *string*
+▸ **getKeyName**(): `string`
 
-Defined in bpmnServer/src/engine/Loop.ts:57
+#### Returns
 
-**Returns:** *string*
+`string`
 
-___
+#### Defined in
 
-###  getNext
-
-▸ **getNext**(): *any*
-
-Defined in bpmnServer/src/engine/Loop.ts:63
-
-**Returns:** *any*
+[engine/Loop.ts:62](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Loop.ts#L62)
 
 ___
 
-###  isDone
+### getNext
 
-▸ **isDone**(): *boolean*
+▸ **getNext**(): `any`
 
-Defined in bpmnServer/src/engine/Loop.ts:60
+#### Returns
 
-**Returns:** *boolean*
+`any`
 
-___
+#### Defined in
 
-###  isSequential
-
-▸ **isSequential**(): *any*
-
-Defined in bpmnServer/src/engine/Loop.ts:15
-
-**Returns:** *any*
+[engine/Loop.ts:68](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Loop.ts#L68)
 
 ___
 
-###  save
+### isDone
 
-▸ **save**(): *object*
+▸ **isDone**(): `boolean`
 
-Defined in bpmnServer/src/engine/Loop.ts:40
+#### Returns
 
-**Returns:** *object*
+`boolean`
 
-* **completed**: *any* = this.completed
+#### Defined in
 
-* **dataPath**: *any* = this.dataPath
-
-* **id**: *any* = this.id
-
-* **nodeId**: *any* = this.node.id
-
-* **ownerTokenId**: *any* = this.ownerToken.id
-
-* **sequence**: *any* = this.sequence
+[engine/Loop.ts:65](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Loop.ts#L65)
 
 ___
 
-### `Static` checkNext
+### isSequential
 
-▸ **checkNext**(`token`: [Token](token.md)): *Promise‹boolean›*
+▸ **isSequential**(): `any`
 
-Defined in bpmnServer/src/engine/Loop.ts:115
+#### Returns
 
-**Parameters:**
+`any`
 
-Name | Type |
------- | ------ |
-`token` | [Token](token.md) |
+#### Defined in
 
-**Returns:** *Promise‹boolean›*
+[engine/Loop.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Loop.ts#L16)
 
 ___
 
-### `Static` checkStart
+### isStandard
 
-▸ **checkStart**(`token`: any): *Promise‹boolean›*
+▸ **isStandard**(): `boolean`
 
-Defined in bpmnServer/src/engine/Loop.ts:70
+#### Returns
 
-**Parameters:**
+`boolean`
 
-Name | Type |
------- | ------ |
-`token` | any |
+#### Defined in
 
-**Returns:** *Promise‹boolean›*
+[engine/Loop.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Loop.ts#L17)
 
 ___
 
-### `Static` load
+### save
 
-▸ **load**(`execution`: any, `dataObject`: any): *[Loop](loop.md)*
+▸ **save**(): `Object`
 
-Defined in bpmnServer/src/engine/Loop.ts:47
+#### Returns
 
-**Parameters:**
+`Object`
 
-Name | Type |
------- | ------ |
-`execution` | any |
-`dataObject` | any |
+| Name | Type |
+| :------ | :------ |
+| `completed` | `any` |
+| `dataPath` | `any` |
+| `id` | `any` |
+| `nodeId` | `any` |
+| `ownerTokenId` | `any` |
+| `sequence` | `any` |
 
-**Returns:** *[Loop](loop.md)*
+#### Defined in
+
+[engine/Loop.ts:45](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Loop.ts#L45)
+
+___
+
+### checkNext
+
+▸ **checkNext**(`token`): `Promise`\<`boolean`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `token` | [`Token`](Token.md) |
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+#### Defined in
+
+[engine/Loop.ts:142](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Loop.ts#L142)
+
+___
+
+### checkStart
+
+▸ **checkStart**(`token`): `Promise`\<`boolean`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `token` | `any` |
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+#### Defined in
+
+[engine/Loop.ts:75](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Loop.ts#L75)
+
+___
+
+### load
+
+▸ **load**(`execution`, `dataObject`): [`Loop`](Loop.md)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `execution` | `any` |
+| `dataObject` | `any` |
+
+#### Returns
+
+[`Loop`](Loop.md)
+
+#### Defined in
+
+[engine/Loop.ts:52](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Loop.ts#L52)

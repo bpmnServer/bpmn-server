@@ -1,256 +1,375 @@
-[bpmn-server](../README.md) › [CamundaFormData](camundaformdata.md)
+[bpmn-server](../README.md) / CamundaFormData
 
 # Class: CamundaFormData
 
+Behaviour
+     ioSpecification
+     timer 
+     message
+     signal
+
+  each behaviour is a class
+     it scans def and insert itself to perform actions as required
+
 ## Hierarchy
 
-* [Behaviour](behaviour.md)
+- [`Behaviour`](Behaviour.md)
 
-  ↳ **CamundaFormData**
+  ↳ **`CamundaFormData`**
 
-## Implements
-
-* [IBehaviour](../interfaces/ibehaviour.md)
-
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](camundaformdata.md#constructor)
+- [constructor](CamundaFormData.md#constructor)
 
 ### Properties
 
-* [definition](camundaformdata.md#definition)
-* [fields](camundaformdata.md#fields)
-* [node](camundaformdata.md#node)
+- [definition](CamundaFormData.md#definition)
+- [fields](CamundaFormData.md#fields)
+- [node](CamundaFormData.md#node)
 
 ### Methods
 
-* [describe](camundaformdata.md#describe)
-* [end](camundaformdata.md#end)
-* [getFields](camundaformdata.md#getfields)
-* [getItemAttributes](camundaformdata.md#getitemattributes)
-* [getNodeAttributes](camundaformdata.md#getnodeattributes)
-* [init](camundaformdata.md#init)
-* [restored](camundaformdata.md#restored)
-* [resume](camundaformdata.md#resume)
-* [run](camundaformdata.md#run)
-* [start](camundaformdata.md#start)
+- [describe](CamundaFormData.md#describe)
+- [end](CamundaFormData.md#end)
+- [enter](CamundaFormData.md#enter)
+- [exit](CamundaFormData.md#exit)
+- [getFields](CamundaFormData.md#getfields)
+- [getItemAttributes](CamundaFormData.md#getitemattributes)
+- [getNodeAttributes](CamundaFormData.md#getnodeattributes)
+- [init](CamundaFormData.md#init)
+- [restored](CamundaFormData.md#restored)
+- [resume](CamundaFormData.md#resume)
+- [run](CamundaFormData.md#run)
+- [start](CamundaFormData.md#start)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new CamundaFormData**(`node`: [Node](node.md), `definition`: any): *[CamundaFormData](camundaformdata.md)*
+• **new CamundaFormData**(`node`, `definition`): [`CamundaFormData`](CamundaFormData.md)
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[constructor](scriptbehaviour.md#constructor)*
+#### Parameters
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:39
+| Name | Type |
+| :------ | :------ |
+| `node` | [`Node`](Node.md) |
+| `definition` | `any` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`node` | [Node](node.md) |
-`definition` | any |
+[`CamundaFormData`](CamundaFormData.md)
 
-**Returns:** *[CamundaFormData](camundaformdata.md)*
+#### Inherited from
+
+[Behaviour](Behaviour.md).[constructor](Behaviour.md#constructor)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:40](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L40)
 
 ## Properties
 
-###  definition
+### definition
 
-• **definition**: *any*
+• **definition**: `any`
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md).[definition](../interfaces/ibehaviour.md#definition)*
+#### Inherited from
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[definition](scriptbehaviour.md#definition)*
+[Behaviour](Behaviour.md).[definition](Behaviour.md#definition)
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:39
+#### Defined in
 
-___
-
-###  fields
-
-• **fields**: *any*
-
-Defined in bpmnServer/src/elements/behaviours/Form.ts:10
+[elements/behaviours/Behaviour.ts:39](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L39)
 
 ___
 
-###  node
+### fields
 
-• **node**: *[Node](node.md)*
+• **fields**: `any`
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md).[node](../interfaces/ibehaviour.md#node)*
+#### Defined in
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[node](scriptbehaviour.md#node)*
+[elements/behaviours/Form.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Form.ts#L10)
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:38
+___
+
+### node
+
+• **node**: [`Node`](Node.md)
+
+#### Inherited from
+
+[Behaviour](Behaviour.md).[node](Behaviour.md#node)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:38](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L38)
 
 ## Methods
 
-###  describe
+### describe
 
-▸ **describe**(): *string[]*
+▸ **describe**(): `string`[]
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md)*
+#### Returns
 
-*Overrides [Behaviour](behaviour.md).[describe](behaviour.md#describe)*
+`string`[]
 
-Defined in bpmnServer/src/elements/behaviours/Form.ts:18
+#### Overrides
 
-**Returns:** *string[]*
+[Behaviour](Behaviour.md).[describe](Behaviour.md#describe)
 
-___
+#### Defined in
 
-###  end
-
-▸ **end**(`item`: [Item](item.md)): *void*
-
-*Inherited from [Behaviour](behaviour.md).[end](behaviour.md#end)*
-
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:50
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-
-**Returns:** *void*
+[elements/behaviours/Form.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Form.ts#L18)
 
 ___
 
-###  getFields
+### end
 
-▸ **getFields**(): *any*
+▸ **end**(`item`): `void`
 
-Defined in bpmnServer/src/elements/behaviours/Form.ts:17
+#### Parameters
 
-**Returns:** *any*
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-___
+#### Returns
 
-###  getItemAttributes
+`void`
 
-▸ **getItemAttributes**(`item`: [Item](item.md), `attributes`: any[]): *void*
+#### Inherited from
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[getItemAttributes](scriptbehaviour.md#getitemattributes)*
+[Behaviour](Behaviour.md).[end](Behaviour.md#end)
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:53
+#### Defined in
 
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-`attributes` | any[] |
-
-**Returns:** *void*
+[elements/behaviours/Behaviour.ts:51](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L51)
 
 ___
 
-###  getNodeAttributes
+### enter
 
-▸ **getNodeAttributes**(`attributes`: any[]): *void*
+▸ **enter**(`item`): `void`
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md)*
+#### Parameters
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[getNodeAttributes](scriptbehaviour.md#getnodeattributes)*
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:52
+#### Returns
 
-**Parameters:**
+`void`
 
-Name | Type |
------- | ------ |
-`attributes` | any[] |
+#### Inherited from
 
-**Returns:** *void*
+[Behaviour](Behaviour.md).[enter](Behaviour.md#enter)
 
-___
+#### Defined in
 
-###  init
-
-▸ **init**(): *void*
-
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md)*
-
-*Overrides [Behaviour](behaviour.md).[init](behaviour.md#init)*
-
-Defined in bpmnServer/src/elements/behaviours/Form.ts:11
-
-**Returns:** *void*
+[elements/behaviours/Behaviour.ts:48](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L48)
 
 ___
 
-###  restored
+### exit
 
-▸ **restored**(`item`: any): *void*
+▸ **exit**(`item`): `void`
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[restored](scriptbehaviour.md#restored)*
+#### Parameters
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:45
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`item` | any |
+`void`
 
-**Returns:** *void*
+#### Inherited from
 
-___
+[Behaviour](Behaviour.md).[exit](Behaviour.md#exit)
 
-###  resume
+#### Defined in
 
-▸ **resume**(`item`: [Item](item.md)): *void*
-
-*Inherited from [Behaviour](behaviour.md).[resume](behaviour.md#resume)*
-
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:51
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-
-**Returns:** *void*
+[elements/behaviours/Behaviour.ts:52](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L52)
 
 ___
 
-###  run
+### getFields
 
-▸ **run**(`item`: [Item](item.md)): *void*
+▸ **getFields**(): `any`
 
-*Inherited from [Behaviour](behaviour.md).[run](behaviour.md#run)*
+#### Returns
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:49
+`any`
 
-**Parameters:**
+#### Defined in
 
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-
-**Returns:** *void*
+[elements/behaviours/Form.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Form.ts#L17)
 
 ___
 
-###  start
+### getItemAttributes
 
-▸ **start**(`item`: [Item](item.md)): *void*
+▸ **getItemAttributes**(`item`, `attributes`): `void`
 
-*Inherited from [Behaviour](behaviour.md).[start](behaviour.md#start)*
+#### Parameters
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:48
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+| `attributes` | `any`[] |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
+`void`
 
-**Returns:** *void*
+#### Inherited from
+
+[Behaviour](Behaviour.md).[getItemAttributes](Behaviour.md#getitemattributes)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:55](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L55)
+
+___
+
+### getNodeAttributes
+
+▸ **getNodeAttributes**(`attributes`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `attributes` | `any`[] |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Behaviour](Behaviour.md).[getNodeAttributes](Behaviour.md#getnodeattributes)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L54)
+
+___
+
+### init
+
+▸ **init**(): `void`
+
+#### Returns
+
+`void`
+
+#### Overrides
+
+[Behaviour](Behaviour.md).[init](Behaviour.md#init)
+
+#### Defined in
+
+[elements/behaviours/Form.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Form.ts#L11)
+
+___
+
+### restored
+
+▸ **restored**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | `any` |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Behaviour](Behaviour.md).[restored](Behaviour.md#restored)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:45](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L45)
+
+___
+
+### resume
+
+▸ **resume**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Behaviour](Behaviour.md).[resume](Behaviour.md#resume)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:53](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L53)
+
+___
+
+### run
+
+▸ **run**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Behaviour](Behaviour.md).[run](Behaviour.md#run)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:50](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L50)
+
+___
+
+### start
+
+▸ **start**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Behaviour](Behaviour.md).[start](Behaviour.md#start)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:49](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L49)

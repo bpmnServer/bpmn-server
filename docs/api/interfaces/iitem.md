@@ -1,252 +1,407 @@
-[bpmn-server](../README.md) › [IItem](iitem.md)
+[bpmn-server](../README.md) / IItem
 
 # Interface: IItem
 
 ## Hierarchy
 
-* [IItemData](iitemdata.md)
+- [`IItemData`](IItemData.md)
 
-  ↳ **IItem**
+  ↳ **`IItem`**
 
 ## Implemented by
 
-* [Item](../classes/item.md)
+- [`Item`](../classes/Item.md)
 
-## Index
+## Table of contents
 
 ### Properties
 
-* [assignments](iitem.md#assignments)
-* [authorizations](iitem.md#authorizations)
-* [context](iitem.md#context)
-* [data](iitem.md#data)
-* [element](iitem.md#element)
-* [elementId](iitem.md#elementid)
-* [endedAt](iitem.md#endedat)
-* [id](iitem.md#id)
-* [itemKey](iitem.md#itemkey)
-* [messageId](iitem.md#messageid)
-* [name](iitem.md#name)
-* [node](iitem.md#node)
-* [notifications](iitem.md#notifications)
-* [seq](iitem.md#seq)
-* [signalId](iitem.md#signalid)
-* [startedAt](iitem.md#startedat)
-* [status](iitem.md#status)
-* [timeDue](iitem.md#timedue)
-* [token](iitem.md#token)
-* [tokenId](iitem.md#tokenid)
-* [type](iitem.md#type)
-* [userId](iitem.md#userid)
+- [assignee](IItem.md#assignee)
+- [candidateGroups](IItem.md#candidategroups)
+- [candidateUsers](IItem.md#candidateusers)
+- [context](IItem.md#context)
+- [dueDate](IItem.md#duedate)
+- [element](IItem.md#element)
+- [elementId](IItem.md#elementid)
+- [endedAt](IItem.md#endedat)
+- [followUpDate](IItem.md#followupdate)
+- [id](IItem.md#id)
+- [instanceId](IItem.md#instanceid)
+- [itemKey](IItem.md#itemkey)
+- [messageId](IItem.md#messageid)
+- [name](IItem.md#name)
+- [node](IItem.md#node)
+- [priority](IItem.md#priority)
+- [processName](IItem.md#processname)
+- [seq](IItem.md#seq)
+- [signalId](IItem.md#signalid)
+- [startedAt](IItem.md#startedat)
+- [status](IItem.md#status)
+- [timeDue](IItem.md#timedue)
+- [token](IItem.md#token)
+- [tokenId](IItem.md#tokenid)
+- [type](IItem.md#type)
+- [userName](IItem.md#username)
+- [vars](IItem.md#vars)
 
 ## Properties
 
-###  assignments
+### assignee
 
-• **assignments**: *any*
+• **assignee**: `any`
 
-*Inherited from [IItemData](iitemdata.md).[assignments](iitemdata.md#assignments)*
+#### Inherited from
 
-Defined in bpmnServer/src/interfaces/engine.ts:141
+[IItemData](IItemData.md).[assignee](IItemData.md#assignee)
 
-___
+#### Defined in
 
-###  authorizations
-
-• **authorizations**: *any*
-
-*Inherited from [IItemData](iitemdata.md).[authorizations](iitemdata.md#authorizations)*
-
-Defined in bpmnServer/src/interfaces/engine.ts:142
+[interfaces/DataObjects.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L22)
 
 ___
 
-###  context
+### candidateGroups
 
-• **context**: *[IExecution](iexecution.md)*
+• **candidateGroups**: `any`
 
-Defined in bpmnServer/src/interfaces/engine.ts:166
+#### Inherited from
 
-___
+[IItemData](IItemData.md).[candidateGroups](IItemData.md#candidategroups)
 
-###  data
+#### Defined in
 
-• **data**: *any*
-
-*Inherited from [IItemData](iitemdata.md).[data](iitemdata.md#data)*
-
-Defined in bpmnServer/src/interfaces/engine.ts:138
+[interfaces/DataObjects.ts:23](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L23)
 
 ___
 
-###  element
+### candidateUsers
 
-• **element**: *[Element](../classes/element.md)*
+• **candidateUsers**: `any`
 
-Defined in bpmnServer/src/interfaces/engine.ts:164
+#### Inherited from
 
-___
+[IItemData](IItemData.md).[candidateUsers](IItemData.md#candidateusers)
 
-###  elementId
+#### Defined in
 
-• **elementId**: *string*
-
-*Inherited from [IItemData](iitemdata.md).[elementId](iitemdata.md#elementid)*
-
-Defined in bpmnServer/src/interfaces/engine.ts:128
+[interfaces/DataObjects.ts:24](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L24)
 
 ___
 
-###  endedAt
+### context
 
-• **endedAt**: *any*
+• **context**: [`IExecution`](IExecution.md)
 
-*Inherited from [IItemData](iitemdata.md).[endedAt](iitemdata.md#endedat)*
+#### Defined in
 
-Defined in bpmnServer/src/interfaces/engine.ts:134
-
-___
-
-###  id
-
-• **id**: *string*
-
-*Inherited from [IItemData](iitemdata.md).[id](iitemdata.md#id)*
-
-Defined in bpmnServer/src/interfaces/engine.ts:126
+[interfaces/engine.ts:136](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L136)
 
 ___
 
-###  itemKey
+### dueDate
 
-• **itemKey**: *string*
+• **dueDate**: `any`
 
-*Inherited from [IItemData](iitemdata.md).[itemKey](iitemdata.md#itemkey)*
+#### Inherited from
 
-Defined in bpmnServer/src/interfaces/engine.ts:127
+[IItemData](IItemData.md).[dueDate](IItemData.md#duedate)
 
-___
+#### Defined in
 
-###  messageId
-
-• **messageId**: *any*
-
-*Inherited from [IItemData](iitemdata.md).[messageId](iitemdata.md#messageid)*
-
-Defined in bpmnServer/src/interfaces/engine.ts:139
+[interfaces/DataObjects.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L25)
 
 ___
 
-###  name
+### element
 
-• **name**: *string*
+• **element**: [`Element`](../classes/Element.md)
 
-*Inherited from [IItemData](iitemdata.md).[name](iitemdata.md#name)*
+#### Defined in
 
-Defined in bpmnServer/src/interfaces/engine.ts:129
-
-___
-
-###  node
-
-• **node**: *[Node](../classes/node.md)*
-
-Defined in bpmnServer/src/interfaces/engine.ts:167
+[interfaces/engine.ts:134](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L134)
 
 ___
 
-###  notifications
+### elementId
 
-• **notifications**: *any*
+• **elementId**: `string`
 
-*Inherited from [IItemData](iitemdata.md).[notifications](iitemdata.md#notifications)*
+#### Inherited from
 
-Defined in bpmnServer/src/interfaces/engine.ts:143
+[IItemData](IItemData.md).[elementId](IItemData.md#elementid)
 
-___
+#### Defined in
 
-###  seq
-
-• **seq**: *any*
-
-*Inherited from [IItemData](iitemdata.md).[seq](iitemdata.md#seq)*
-
-Defined in bpmnServer/src/interfaces/engine.ts:135
+[interfaces/DataObjects.ts:6](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L6)
 
 ___
 
-###  signalId
+### endedAt
 
-• **signalId**: *any*
+• **endedAt**: `any`
 
-*Inherited from [IItemData](iitemdata.md).[signalId](iitemdata.md#signalid)*
+#### Inherited from
 
-Defined in bpmnServer/src/interfaces/engine.ts:140
+[IItemData](IItemData.md).[endedAt](IItemData.md#endedat)
 
-___
+#### Defined in
 
-###  startedAt
-
-• **startedAt**: *any*
-
-*Inherited from [IItemData](iitemdata.md).[startedAt](iitemdata.md#startedat)*
-
-Defined in bpmnServer/src/interfaces/engine.ts:133
+[interfaces/DataObjects.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L14)
 
 ___
 
-###  status
+### followUpDate
 
-• **status**: *[ITEM_STATUS](../enums/item_status.md)*
+• **followUpDate**: `any`
 
-*Inherited from [IItemData](iitemdata.md).[status](iitemdata.md#status)*
+#### Inherited from
 
-Defined in bpmnServer/src/interfaces/engine.ts:137
+[IItemData](IItemData.md).[followUpDate](IItemData.md#followupdate)
 
-___
+#### Defined in
 
-###  timeDue
-
-• **timeDue**: *Date*
-
-*Inherited from [IItemData](iitemdata.md).[timeDue](iitemdata.md#timedue)*
-
-Defined in bpmnServer/src/interfaces/engine.ts:136
+[interfaces/DataObjects.ts:26](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L26)
 
 ___
 
-###  token
+### id
 
-• **token**: *[Token](../classes/token.md)*
+• **id**: `string`
 
-Defined in bpmnServer/src/interfaces/engine.ts:165
+#### Inherited from
 
-___
+[IItemData](IItemData.md).[id](IItemData.md#id)
 
-###  tokenId
+#### Defined in
 
-• **tokenId**: *any*
-
-*Inherited from [IItemData](iitemdata.md).[tokenId](iitemdata.md#tokenid)*
-
-Defined in bpmnServer/src/interfaces/engine.ts:131
+[interfaces/DataObjects.ts:4](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L4)
 
 ___
 
-###  type
+### instanceId
 
-• **type**: *string*
+• **instanceId**: `string`
 
-*Inherited from [IItemData](iitemdata.md).[type](iitemdata.md#type)*
+#### Inherited from
 
-Defined in bpmnServer/src/interfaces/engine.ts:130
+[IItemData](IItemData.md).[instanceId](IItemData.md#instanceid)
+
+#### Defined in
+
+[interfaces/DataObjects.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L9)
 
 ___
 
-###  userId
+### itemKey
 
-• **userId**: *any*
+• **itemKey**: `string`
 
-*Inherited from [IItemData](iitemdata.md).[userId](iitemdata.md#userid)*
+#### Inherited from
 
-Defined in bpmnServer/src/interfaces/engine.ts:132
+[IItemData](IItemData.md).[itemKey](IItemData.md#itemkey)
+
+#### Defined in
+
+[interfaces/DataObjects.ts:5](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L5)
+
+___
+
+### messageId
+
+• **messageId**: `any`
+
+#### Inherited from
+
+[IItemData](IItemData.md).[messageId](IItemData.md#messageid)
+
+#### Defined in
+
+[interfaces/DataObjects.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L19)
+
+___
+
+### name
+
+• **name**: `string`
+
+#### Inherited from
+
+[IItemData](IItemData.md).[name](IItemData.md#name)
+
+#### Defined in
+
+[interfaces/DataObjects.ts:7](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L7)
+
+___
+
+### node
+
+• **node**: [`Node`](../classes/Node.md)
+
+#### Defined in
+
+[interfaces/engine.ts:137](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L137)
+
+___
+
+### priority
+
+• **priority**: `any`
+
+#### Inherited from
+
+[IItemData](IItemData.md).[priority](IItemData.md#priority)
+
+#### Defined in
+
+[interfaces/DataObjects.ts:27](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L27)
+
+___
+
+### processName
+
+• `Optional` **processName**: `string`
+
+#### Inherited from
+
+[IItemData](IItemData.md).[processName](IItemData.md#processname)
+
+#### Defined in
+
+[interfaces/DataObjects.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L10)
+
+___
+
+### seq
+
+• **seq**: `any`
+
+#### Inherited from
+
+[IItemData](IItemData.md).[seq](IItemData.md#seq)
+
+#### Defined in
+
+[interfaces/DataObjects.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L15)
+
+___
+
+### signalId
+
+• **signalId**: `any`
+
+#### Inherited from
+
+[IItemData](IItemData.md).[signalId](IItemData.md#signalid)
+
+#### Defined in
+
+[interfaces/DataObjects.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L20)
+
+___
+
+### startedAt
+
+• **startedAt**: `any`
+
+#### Inherited from
+
+[IItemData](IItemData.md).[startedAt](IItemData.md#startedat)
+
+#### Defined in
+
+[interfaces/DataObjects.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L13)
+
+___
+
+### status
+
+• **status**: [`ITEM_STATUS`](../enums/ITEM_STATUS.md)
+
+#### Inherited from
+
+[IItemData](IItemData.md).[status](IItemData.md#status)
+
+#### Defined in
+
+[interfaces/DataObjects.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L17)
+
+___
+
+### timeDue
+
+• **timeDue**: `Date`
+
+#### Inherited from
+
+[IItemData](IItemData.md).[timeDue](IItemData.md#timedue)
+
+#### Defined in
+
+[interfaces/DataObjects.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L16)
+
+___
+
+### token
+
+• **token**: [`Token`](../classes/Token.md)
+
+#### Defined in
+
+[interfaces/engine.ts:135](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/engine.ts#L135)
+
+___
+
+### tokenId
+
+• **tokenId**: `any`
+
+#### Inherited from
+
+[IItemData](IItemData.md).[tokenId](IItemData.md#tokenid)
+
+#### Defined in
+
+[interfaces/DataObjects.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L11)
+
+___
+
+### type
+
+• **type**: `string`
+
+#### Inherited from
+
+[IItemData](IItemData.md).[type](IItemData.md#type)
+
+#### Defined in
+
+[interfaces/DataObjects.ts:8](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L8)
+
+___
+
+### userName
+
+• **userName**: `any`
+
+#### Inherited from
+
+[IItemData](IItemData.md).[userName](IItemData.md#username)
+
+#### Defined in
+
+[interfaces/DataObjects.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L12)
+
+___
+
+### vars
+
+• **vars**: `any`
+
+#### Inherited from
+
+[IItemData](IItemData.md).[vars](IItemData.md#vars)
+
+#### Defined in
+
+[interfaces/DataObjects.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L21)

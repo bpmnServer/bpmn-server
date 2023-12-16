@@ -1,62 +1,85 @@
-[bpmn-server](../README.md) › [NODE_ACTION](node_action.md)
+[bpmn-server](../README.md) / NODE\_ACTION
 
-# Enumeration: NODE_ACTION
+# Enumeration: NODE\_ACTION
 
-## Index
+## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
-* [abort](node_action.md#abort)
-* [continue](node_action.md#continue)
-* [end](node_action.md#end)
-* [error](node_action.md#error)
-* [stop](node_action.md#stop)
-* [wait](node_action.md#wait)
+- [abort](NODE_ACTION.md#abort)
+- [cancel](NODE_ACTION.md#cancel)
+- [continue](NODE_ACTION.md#continue)
+- [end](NODE_ACTION.md#end)
+- [error](NODE_ACTION.md#error)
+- [stop](NODE_ACTION.md#stop)
+- [wait](NODE_ACTION.md#wait)
 
-## Enumeration members
+## Enumeration Members
 
-###  abort
+### abort
 
-• **abort**:
+• **abort** = ``7``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:50
+#### Defined in
 
-___
-
-###  continue
-
-• **continue**: = 1
-
-Defined in bpmnServer/src/interfaces/Enums.ts:50
+[interfaces/Enums.ts:65](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L65)
 
 ___
 
-###  end
+### cancel
 
-• **end**:
+• **cancel** = ``4``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:50
+#### Defined in
 
-___
-
-###  error
-
-• **error**:
-
-Defined in bpmnServer/src/interfaces/Enums.ts:50
+[interfaces/Enums.ts:65](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L65)
 
 ___
 
-###  stop
+### continue
 
-• **stop**:
+• **continue** = ``1``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:50
+#### Defined in
+
+[interfaces/Enums.ts:65](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L65)
 
 ___
 
-###  wait
+### end
 
-• **wait**:
+• **end** = ``3``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:50
+#### Defined in
+
+[interfaces/Enums.ts:65](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L65)
+
+___
+
+### error
+
+• **error** = ``6``
+
+#### Defined in
+
+[interfaces/Enums.ts:65](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L65)
+
+___
+
+### stop
+
+• **stop** = ``5``
+
+#### Defined in
+
+[interfaces/Enums.ts:65](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L65)
+
+___
+
+### wait
+
+• **wait** = ``2``
+
+#### Defined in
+
+[interfaces/Enums.ts:65](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L65)

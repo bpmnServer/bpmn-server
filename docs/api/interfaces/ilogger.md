@@ -1,4 +1,4 @@
-[bpmn-server](../README.md) › [ILogger](ilogger.md)
+[bpmn-server](../README.md) / ILogger
 
 # Interface: ILogger
 
@@ -7,143 +7,191 @@ A logging tool to take various message for monitoring and debugging
 it can also keep the message in memory till saved later through saveToFile
 msgs can be cleared by the clean method
 
-## Hierarchy
-
-* **ILogger**
-
 ## Implemented by
 
-* [Logger](../classes/logger.md)
+- [`Logger`](../classes/Logger.md)
 
-## Index
+## Table of contents
 
 ### Methods
 
-* [clear](ilogger.md#clear)
-* [debug](ilogger.md#debug)
-* [error](ilogger.md#error)
-* [get](ilogger.md#get)
-* [log](ilogger.md#log)
-* [save](ilogger.md#save)
-* [setOptions](ilogger.md#setoptions)
-* [warn](ilogger.md#warn)
+- [clear](ILogger.md#clear)
+- [debug](ILogger.md#debug)
+- [error](ILogger.md#error)
+- [get](ILogger.md#get)
+- [log](ILogger.md#log)
+- [reportError](ILogger.md#reporterror)
+- [save](ILogger.md#save)
+- [setOptions](ILogger.md#setoptions)
+- [warn](ILogger.md#warn)
 
 ## Methods
 
-###  clear
+### clear
 
-▸ **clear**(): *void*
+▸ **clear**(): `void`
 
-Defined in bpmnServer/src/interfaces/common.ts:48
+#### Returns
 
-**Returns:** *void*
+`void`
 
-___
+#### Defined in
 
-###  debug
-
-▸ **debug**(`message`: any): *void*
-
-Defined in bpmnServer/src/interfaces/common.ts:50
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`message` | any |
-
-**Returns:** *void*
+[interfaces/common.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L54)
 
 ___
 
-###  error
+### debug
 
-▸ **error**(`err`: any): *void*
+▸ **debug**(`...message`): `void`
 
-Defined in bpmnServer/src/interfaces/common.ts:53
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `...message` | `any` |
 
-Name | Type |
------- | ------ |
-`err` | any |
+#### Returns
 
-**Returns:** *void*
+`void`
 
-___
+#### Defined in
 
-###  get
-
-▸ **get**(): *any[]*
-
-Defined in bpmnServer/src/interfaces/common.ts:49
-
-**Returns:** *any[]*
+[interfaces/common.ts:56](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L56)
 
 ___
 
-###  log
+### error
 
-▸ **log**(`message`: any): *void*
+▸ **error**(`err`): `void`
 
-Defined in bpmnServer/src/interfaces/common.ts:52
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `err` | `any` |
 
-Name | Type |
------- | ------ |
-`message` | any |
+#### Returns
 
-**Returns:** *void*
+`void`
 
-___
+#### Defined in
 
-###  save
-
-▸ **save**(`filename`: any): *Promise‹void›*
-
-Defined in bpmnServer/src/interfaces/common.ts:54
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`filename` | any |
-
-**Returns:** *Promise‹void›*
+[interfaces/common.ts:59](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L59)
 
 ___
 
-###  setOptions
+### get
 
-▸ **setOptions**(`__namedParameters`: object): *void*
+▸ **get**(): `any`[]
 
-Defined in bpmnServer/src/interfaces/common.ts:43
+#### Returns
 
-**Parameters:**
+`any`[]
 
-▪ **__namedParameters**: *object*
+#### Defined in
 
-Name | Type | Description |
------- | ------ | ------ |
-`callback` | any | - |
-`toConsole` | any | boolean  writes to the output console |
-`toFile` | any | string writes to file   |
-
-**Returns:** *void*
+[interfaces/common.ts:55](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L55)
 
 ___
 
-###  warn
+### log
 
-▸ **warn**(`message`: any): *void*
+▸ **log**(`...message`): `void`
 
-Defined in bpmnServer/src/interfaces/common.ts:51
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `...message` | `any` |
 
-Name | Type |
------- | ------ |
-`message` | any |
+#### Returns
 
-**Returns:** *void*
+`void`
+
+#### Defined in
+
+[interfaces/common.ts:58](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L58)
+
+___
+
+### reportError
+
+▸ **reportError**(`err`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `err` | `any` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[interfaces/common.ts:60](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L60)
+
+___
+
+### save
+
+▸ **save**(`filename`): `Promise`\<`void`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `filename` | `any` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[interfaces/common.ts:61](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L61)
+
+___
+
+### setOptions
+
+▸ **setOptions**(`«destructured»`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `«destructured»` | `Object` |
+| › `callback` | `any` |
+| › `toConsole` | `any` |
+| › `toFile` | `any` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[interfaces/common.ts:49](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L49)
+
+___
+
+### warn
+
+▸ **warn**(`...message`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `...message` | `any` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[interfaces/common.ts:57](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L57)

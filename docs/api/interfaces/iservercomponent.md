@@ -1,97 +1,113 @@
-[bpmn-server](../README.md) › [IServerComponent](iservercomponent.md)
+[bpmn-server](../README.md) / IServerComponent
 
 # Interface: IServerComponent
 
 ## Hierarchy
 
-* **IServerComponent**
+- **`IServerComponent`**
 
-  ↳ [IEngine](iengine.md)
+  ↳ [`IExecution`](IExecution.md)
 
-  ↳ [IExecution](iexecution.md)
-
-## Index
+## Table of contents
 
 ### Properties
 
-* [appDelegate](iservercomponent.md#appdelegate)
-* [cache](iservercomponent.md#cache)
-* [configuration](iservercomponent.md#configuration)
-* [cron](iservercomponent.md#cron)
-* [dataStore](iservercomponent.md#datastore)
-* [definitions](iservercomponent.md#definitions)
-* [engine](iservercomponent.md#engine)
-* [logger](iservercomponent.md#logger)
-* [server](iservercomponent.md#server)
+- [appDelegate](IServerComponent.md#appdelegate)
+- [cache](IServerComponent.md#cache)
+- [configuration](IServerComponent.md#configuration)
+- [cron](IServerComponent.md#cron)
+- [dataStore](IServerComponent.md#datastore)
+- [definitions](IServerComponent.md#definitions)
+- [engine](IServerComponent.md#engine)
+- [logger](IServerComponent.md#logger)
+- [server](IServerComponent.md#server)
 
 ## Properties
 
-###  appDelegate
+### appDelegate
 
-• **appDelegate**: *[IAppDelegate](iappdelegate.md)*
+• **appDelegate**: [`IAppDelegate`](IAppDelegate.md)
 
-Defined in bpmnServer/src/interfaces/server.ts:28
+#### Defined in
 
-___
-
-###  cache
-
-• **cache**: *any*
-
-Defined in bpmnServer/src/interfaces/server.ts:27
+[interfaces/server.ts:26](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L26)
 
 ___
 
-###  configuration
+### cache
 
-• **configuration**: *[IConfiguration](iconfiguration.md)*
+• **cache**: `any`
 
-Defined in bpmnServer/src/interfaces/server.ts:24
+#### Defined in
 
-___
-
-###  cron
-
-• **cron**: *any*
-
-Defined in bpmnServer/src/interfaces/server.ts:26
+[interfaces/server.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L25)
 
 ___
 
-###  dataStore
+### configuration
 
-• **dataStore**: *[IDataStore](idatastore.md)*
+• **configuration**: [`IConfiguration`](IConfiguration.md)
 
-Defined in bpmnServer/src/interfaces/server.ts:30
+#### Defined in
 
-___
-
-###  definitions
-
-• **definitions**: *any*
-
-Defined in bpmnServer/src/interfaces/server.ts:31
+[interfaces/server.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L22)
 
 ___
 
-###  engine
+### cron
 
-• **engine**: *any*
+• **cron**: `any`
 
-Defined in bpmnServer/src/interfaces/server.ts:29
+#### Defined in
 
-___
-
-###  logger
-
-• **logger**: *[ILogger](ilogger.md)*
-
-Defined in bpmnServer/src/interfaces/server.ts:25
+[interfaces/server.ts:24](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L24)
 
 ___
 
-###  server
+### dataStore
 
-• **server**: *[IBPMNServer](ibpmnserver.md)*
+• **dataStore**: [`IDataStore`](IDataStore.md)
 
-Defined in bpmnServer/src/interfaces/server.ts:23
+#### Defined in
+
+[interfaces/server.ts:28](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L28)
+
+___
+
+### definitions
+
+• **definitions**: `any`
+
+#### Defined in
+
+[interfaces/server.ts:29](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L29)
+
+___
+
+### engine
+
+• **engine**: `any`
+
+#### Defined in
+
+[interfaces/server.ts:27](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L27)
+
+___
+
+### logger
+
+• **logger**: [`ILogger`](ILogger.md)
+
+#### Defined in
+
+[interfaces/server.ts:23](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L23)
+
+___
+
+### server
+
+• **server**: [`IBPMNServer`](IBPMNServer.md)
+
+#### Defined in
+
+[interfaces/server.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L21)

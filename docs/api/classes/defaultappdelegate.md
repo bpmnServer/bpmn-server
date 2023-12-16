@@ -1,333 +1,353 @@
-[bpmn-server](../README.md) › [DefaultAppDelegate](defaultappdelegate.md)
+[bpmn-server](../README.md) / DefaultAppDelegate
 
 # Class: DefaultAppDelegate
 
-## Hierarchy
-
-* **DefaultAppDelegate**
+Application Delegate Object to respond to various events and services:
+ 
+ 1.  receive all events from workflow
+ 2.  receive service calls
+ 3.  receive message and signal calls 
+ 4.  execute scripts
 
 ## Implements
 
-* [IAppDelegate](../interfaces/iappdelegate.md)
+- [`IAppDelegate`](../interfaces/IAppDelegate.md)
 
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](defaultappdelegate.md#constructor)
+- [constructor](DefaultAppDelegate.md#constructor)
 
 ### Properties
 
-* [server](defaultappdelegate.md#server)
-* [servicesProvider](defaultappdelegate.md#servicesprovider)
+- [server](DefaultAppDelegate.md#server)
 
 ### Accessors
 
-* [moddleOptions](defaultappdelegate.md#moddleoptions)
+- [moddleOptions](DefaultAppDelegate.md#moddleoptions)
 
 ### Methods
 
-* [executionEvent](defaultappdelegate.md#executionevent)
-* [executionStarted](defaultappdelegate.md#executionstarted)
-* [issueMessage](defaultappdelegate.md#issuemessage)
-* [issueSignal](defaultappdelegate.md#issuesignal)
-* [messageThrown](defaultappdelegate.md#messagethrown)
-* [scopeEval](defaultappdelegate.md#scopeeval)
-* [scopeJS](defaultappdelegate.md#scopejs)
-* [sendEmail](defaultappdelegate.md#sendemail)
-* [serviceCalled](defaultappdelegate.md#servicecalled)
-* [signalThrown](defaultappdelegate.md#signalthrown)
+- [executionEvent](DefaultAppDelegate.md#executionevent)
+- [executionStarted](DefaultAppDelegate.md#executionstarted)
+- [getServicesProvider](DefaultAppDelegate.md#getservicesprovider)
+- [issueMessage](DefaultAppDelegate.md#issuemessage)
+- [issueSignal](DefaultAppDelegate.md#issuesignal)
+- [messageThrown](DefaultAppDelegate.md#messagethrown)
+- [sendEmail](DefaultAppDelegate.md#sendemail)
+- [serviceCalled](DefaultAppDelegate.md#servicecalled)
+- [signalThrown](DefaultAppDelegate.md#signalthrown)
+- [startUp](DefaultAppDelegate.md#startup)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new DefaultAppDelegate**(`server`: any): *[DefaultAppDelegate](defaultappdelegate.md)*
+• **new DefaultAppDelegate**(`server`): [`DefaultAppDelegate`](DefaultAppDelegate.md)
 
-Defined in bpmnServer/src/engine/DefaultAppDelegate.ts:14
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `server` | `any` |
 
-Name | Type |
------- | ------ |
-`server` | any |
+#### Returns
 
-**Returns:** *[DefaultAppDelegate](defaultappdelegate.md)*
+[`DefaultAppDelegate`](DefaultAppDelegate.md)
+
+#### Defined in
+
+[engine/DefaultAppDelegate.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/DefaultAppDelegate.ts#L11)
 
 ## Properties
 
-###  server
+### server
 
-• **server**: *any*
+• **server**: `any`
 
-Defined in bpmnServer/src/engine/DefaultAppDelegate.ts:8
+#### Defined in
 
-___
-
-###  servicesProvider
-
-• **servicesProvider**: *any*
-
-*Implementation of [IAppDelegate](../interfaces/iappdelegate.md).[servicesProvider](../interfaces/iappdelegate.md#servicesprovider)*
-
-Defined in bpmnServer/src/engine/DefaultAppDelegate.ts:14
+[engine/DefaultAppDelegate.ts:8](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/DefaultAppDelegate.ts#L8)
 
 ## Accessors
 
-###  moddleOptions
+### moddleOptions
 
-• **get moddleOptions**(): *object*
+• `get` **moddleOptions**(): `Object`
 
-Defined in bpmnServer/src/engine/DefaultAppDelegate.ts:19
+#### Returns
 
-**Returns:** *object*
+`Object`
 
-* **name**: *string* = "Node bpmn-engine"
+| Name | Type |
+| :------ | :------ |
+| `name` | `string` |
+| `prefix` | `string` |
+| `types` | (\{ `extends`: `string`[] ; `isAbstract`: `boolean` = true; `name`: `string` = "Task"; `properties`: \{ `isAttr`: `boolean` = true; `name`: `string` = "result"; `type`: `string` = "String" }[] ; `superClass?`: `undefined`  } \| \{ `extends?`: `undefined` ; `isAbstract?`: `undefined` = true; `name`: `string` = "Output"; `properties?`: `undefined` ; `superClass`: `string`[]  })[] |
+| `uri` | `string` |
+| `xml` | \{ `tagAlias`: `string` = "lowerCase" } |
+| `xml.tagAlias` | `string` |
 
-* **prefix**: *string* = "js"
+#### Implementation of
 
-* **types**: *object | object[]* = [{
-    "name": "Task",
-    "isAbstract": true,
-    "extends": [
-      "bpmn:Task"
-    ],
-    "properties": [
-      {
-        "name": "result",
-        "isAttr": true,
-        "type": "String"
-      }
-    ]
-  }, {
-    "name": "Output",
-    "superClass": ["Element"]
-  }, {
-    "name": "Collectable",
-    "isAbstract": true,
-    "extends": ["bpmn:MultiInstanceLoopCharacteristics"],
-    "properties": [
-      {
-        "name": "collection",
-        "isAttr": true,
-        "type": "String"
-      },
-      {
-        "name": "elementVariable",
-        "isAttr": true,
-        "type": "String"
-      }
-    ]
-  }, {
-    "name": "FormSupported",
-    "isAbstract": true,
-    "extends": [
-      "bpmn:StartEvent",
-      "bpmn:UserTask"
-    ],
-    "properties": [
-      {
-        "name": "formKey",
-        "isAttr": true,
-        "type": "String"
-      }
-    ]
-  }]
+[IAppDelegate](../interfaces/IAppDelegate.md).[moddleOptions](../interfaces/IAppDelegate.md#moddleoptions)
 
-* **uri**: *string* = "http://paed01.github.io/bpmn-engine/schema/2017/08/bpmn"
+#### Defined in
 
-* ### **xml**: *object*
-
-  * **tagAlias**: *string* = "lowerCase"
+[engine/DefaultAppDelegate.ts:29](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/DefaultAppDelegate.ts#L29)
 
 ## Methods
 
-###  executionEvent
+### executionEvent
 
-▸ **executionEvent**(`__namedParameters`: object): *Promise‹void›*
+▸ **executionEvent**(`context`, `event`): `Promise`\<`void`\>
 
-Defined in bpmnServer/src/engine/DefaultAppDelegate.ts:29
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `context` | `any` |
+| `event` | `any` |
 
-▪ **__namedParameters**: *object*
+#### Returns
 
-Name | Type |
------- | ------ |
-`event` | any |
-`execution` | any |
-`item` | any |
+`Promise`\<`void`\>
 
-**Returns:** *Promise‹void›*
+#### Defined in
 
-___
-
-###  executionStarted
-
-▸ **executionStarted**(`execution`: [IExecution](../interfaces/iexecution.md)): *Promise‹void›*
-
-Defined in bpmnServer/src/engine/DefaultAppDelegate.ts:22
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`execution` | [IExecution](../interfaces/iexecution.md) |
-
-**Returns:** *Promise‹void›*
+[engine/DefaultAppDelegate.ts:35](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/DefaultAppDelegate.ts#L35)
 
 ___
 
-###  issueMessage
+### executionStarted
 
-▸ **issueMessage**(`messageId`: any, `data`: any): *Promise‹void›*
+▸ **executionStarted**(`execution`): `Promise`\<`void`\>
 
-*Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
+#### Parameters
 
-Defined in bpmnServer/src/engine/DefaultAppDelegate.ts:63
+| Name | Type |
+| :------ | :------ |
+| `execution` | [`IExecution`](../interfaces/IExecution.md) |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+[IAppDelegate](../interfaces/IAppDelegate.md).[executionStarted](../interfaces/IAppDelegate.md#executionstarted)
+
+#### Defined in
+
+[engine/DefaultAppDelegate.ts:32](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/DefaultAppDelegate.ts#L32)
+
+___
+
+### getServicesProvider
+
+▸ **getServicesProvider**(`context`): `Promise`\<[`DefaultAppDelegate`](DefaultAppDelegate.md)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `context` | `any` |
+
+#### Returns
+
+`Promise`\<[`DefaultAppDelegate`](DefaultAppDelegate.md)\>
+
+#### Implementation of
+
+[IAppDelegate](../interfaces/IAppDelegate.md).[getServicesProvider](../interfaces/IAppDelegate.md#getservicesprovider)
+
+#### Defined in
+
+[engine/DefaultAppDelegate.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/DefaultAppDelegate.ts#L18)
+
+___
+
+### issueMessage
+
+▸ **issueMessage**(`messageId`, `data`): `Promise`\<`void`\>
 
 is called when an event throws a message that can not be answered by another process
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Description |
------- | ------ | ------ |
-`messageId` | any | - |
-`data` | any |   |
+| Name | Type |
+| :------ | :------ |
+| `messageId` | `any` |
+| `data` | `any` |
 
-**Returns:** *Promise‹void›*
+#### Returns
 
-___
+`Promise`\<`void`\>
 
-###  issueSignal
+#### Implementation of
 
-▸ **issueSignal**(`signalId`: any, `data`: any): *Promise‹void›*
+[IAppDelegate](../interfaces/IAppDelegate.md).[issueMessage](../interfaces/IAppDelegate.md#issuemessage)
 
-*Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
+#### Defined in
 
-Defined in bpmnServer/src/engine/DefaultAppDelegate.ts:66
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`signalId` | any |
-`data` | any |
-
-**Returns:** *Promise‹void›*
+[engine/DefaultAppDelegate.ts:64](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/DefaultAppDelegate.ts#L64)
 
 ___
 
-###  messageThrown
+### issueSignal
 
-▸ **messageThrown**(`messageId`: any, `data`: any, `messageMatchingKey`: any, `item`: [Item](item.md)): *Promise‹void›*
+▸ **issueSignal**(`signalId`, `data`): `Promise`\<`void`\>
 
-Defined in bpmnServer/src/engine/DefaultAppDelegate.ts:44
+#### Parameters
 
- is called when a event throws a message
+| Name | Type |
+| :------ | :------ |
+| `signalId` | `any` |
+| `data` | `any` |
 
-**Parameters:**
+#### Returns
 
-Name | Type | Description |
------- | ------ | ------ |
-`messageId` | any | - |
-`data` | any | - |
-`messageMatchingKey` | any | - |
-`item` | [Item](item.md) |   |
+`Promise`\<`void`\>
 
-**Returns:** *Promise‹void›*
+#### Implementation of
 
-___
+[IAppDelegate](../interfaces/IAppDelegate.md).[issueSignal](../interfaces/IAppDelegate.md#issuesignal)
 
-###  scopeEval
+#### Defined in
 
-▸ **scopeEval**(`scope`: any, `script`: any): *any*
-
-*Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
-
-Defined in bpmnServer/src/engine/DefaultAppDelegate.ts:85
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`scope` | any |
-`script` | any |
-
-**Returns:** *any*
+[engine/DefaultAppDelegate.ts:67](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/DefaultAppDelegate.ts#L67)
 
 ___
 
-###  scopeJS
+### messageThrown
 
-▸ **scopeJS**(`scope`: any, `script`: any): *Promise‹any›*
+▸ **messageThrown**(`messageId`, `data`, `messageMatchingKey`, `item`): `Promise`\<`void`\>
 
-*Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
+is called when a event throws a message
 
-Defined in bpmnServer/src/engine/DefaultAppDelegate.ts:95
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `messageId` | `any` |
+| `data` | `any` |
+| `messageMatchingKey` | `any` |
+| `item` | [`Item`](Item.md) |
 
-Name | Type |
------- | ------ |
-`scope` | any |
-`script` | any |
+#### Returns
 
-**Returns:** *Promise‹any›*
+`Promise`\<`void`\>
 
-___
+#### Implementation of
 
-###  sendEmail
+[IAppDelegate](../interfaces/IAppDelegate.md).[messageThrown](../interfaces/IAppDelegate.md#messagethrown)
 
-▸ **sendEmail**(`to`: any, `msg`: any, `body`: any): *void*
+#### Defined in
 
-*Implementation of [IAppDelegate](../interfaces/iappdelegate.md)*
-
-Defined in bpmnServer/src/engine/DefaultAppDelegate.ts:10
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`to` | any |
-`msg` | any |
-`body` | any |
-
-**Returns:** *void*
+[engine/DefaultAppDelegate.ts:46](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/DefaultAppDelegate.ts#L46)
 
 ___
 
-###  serviceCalled
+### sendEmail
 
-▸ **serviceCalled**(`serviceName`: any, `data`: any, `item`: [Item](item.md)): *Promise‹void›*
+▸ **sendEmail**(`to`, `msg`, `body`): `void`
 
-Defined in bpmnServer/src/engine/DefaultAppDelegate.ts:81
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `to` | `any` |
+| `msg` | `any` |
+| `body` | `any` |
 
-Name | Type |
------- | ------ |
-`serviceName` | any |
-`data` | any |
-`item` | [Item](item.md) |
+#### Returns
 
-**Returns:** *Promise‹void›*
+`void`
+
+#### Implementation of
+
+[IAppDelegate](../interfaces/IAppDelegate.md).[sendEmail](../interfaces/IAppDelegate.md#sendemail)
+
+#### Defined in
+
+[engine/DefaultAppDelegate.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/DefaultAppDelegate.ts#L25)
 
 ___
 
-###  signalThrown
+### serviceCalled
 
-▸ **signalThrown**(`signalId`: any, `data`: any, `messageMatchingKey`: any, `item`: [Item](item.md)): *Promise‹void›*
+▸ **serviceCalled**(`serviceName`, `data`, `item`): `Promise`\<`void`\>
 
-Defined in bpmnServer/src/engine/DefaultAppDelegate.ts:69
+is called only if the serviceTask has no implementation; otherwise the specified implementation will be called.
 
-**Parameters:**
+#### Parameters
 
-Name | Type |
------- | ------ |
-`signalId` | any |
-`data` | any |
-`messageMatchingKey` | any |
-`item` | [Item](item.md) |
+| Name | Type |
+| :------ | :------ |
+| `serviceName` | `any` |
+| `data` | `any` |
+| `item` | [`Item`](Item.md) |
 
-**Returns:** *Promise‹void›*
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+[IAppDelegate](../interfaces/IAppDelegate.md).[serviceCalled](../interfaces/IAppDelegate.md#servicecalled)
+
+#### Defined in
+
+[engine/DefaultAppDelegate.ts:82](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/DefaultAppDelegate.ts#L82)
+
+___
+
+### signalThrown
+
+▸ **signalThrown**(`signalId`, `data`, `messageMatchingKey`, `item`): `Promise`\<`void`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `signalId` | `any` |
+| `data` | `any` |
+| `messageMatchingKey` | `any` |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+[IAppDelegate](../interfaces/IAppDelegate.md).[signalThrown](../interfaces/IAppDelegate.md#signalthrown)
+
+#### Defined in
+
+[engine/DefaultAppDelegate.ts:70](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/DefaultAppDelegate.ts#L70)
+
+___
+
+### startUp
+
+▸ **startUp**(`options`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `any` |
+
+#### Returns
+
+`void`
+
+#### Implementation of
+
+[IAppDelegate](../interfaces/IAppDelegate.md).[startUp](../interfaces/IAppDelegate.md#startup)
+
+#### Defined in
+
+[engine/DefaultAppDelegate.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/DefaultAppDelegate.ts#L22)

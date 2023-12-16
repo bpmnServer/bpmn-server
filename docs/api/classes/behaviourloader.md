@@ -1,125 +1,99 @@
-[bpmn-server](../README.md) › [BehaviourLoader](behaviourloader.md)
+[bpmn-server](../README.md) / BehaviourLoader
 
 # Class: BehaviourLoader
 
-## Hierarchy
+## Table of contents
 
-* **BehaviourLoader**
+### Constructors
 
-## Index
+- [constructor](BehaviourLoader.md#constructor)
 
 ### Properties
 
-* [behaviours](behaviourloader.md#static-behaviours)
+- [behaviours](BehaviourLoader.md#behaviours)
 
 ### Methods
 
-* [load](behaviourloader.md#static-load)
-* [register](behaviourloader.md#static-register)
+- [load](BehaviourLoader.md#load)
+- [register](BehaviourLoader.md#register)
+
+## Constructors
+
+### constructor
+
+• **new BehaviourLoader**(): [`BehaviourLoader`](BehaviourLoader.md)
+
+#### Returns
+
+[`BehaviourLoader`](BehaviourLoader.md)
 
 ## Properties
 
-### `Static` behaviours
+### behaviours
 
-▪ **behaviours**: *object | object[]* = [
-        {
-            name: Behaviour_names.TimerEventDefinition, funct: function (node, def) {
-                return new TimerBehaviour(node, def);
-            }
-        },
-        {
-            name: Behaviour_names.LoopCharacteristics, funct: function (node, def) {
-                return new LoopBehaviour(node, def);
-            }
-        },
-        {
-            name: Behaviour_names.CamundaFormData, funct: function (node, def) {
-                return new CamundaFormData(node, def);
-            }
-        },
-        {
-            name: Behaviour_names.IOSpecification, funct: function (node, def) {
-                return new IOBehaviour(node, def);
-            }
-        },
-        {
-            name: Behaviour_names.MessageEventDefinition, funct: function (node, def) {
-                return new MessageEventBehaviour(node, def);
-            }
-        },
-        {
-            name: Behaviour_names.SignalEventDefinition, funct: function (node, def) {
-                return new SignalEventBehaviour(node, def);
-            }
-        },
-        {
-            name: Behaviour_names.ErrorEventDefinition, funct: function (node, def) {
-                return new ErrorEventBehaviour(node, def);
-            }
-        },
-        {
-            name: Behaviour_names.CamundaScript, funct: function (node, def) {
-                return new ScriptBehaviour(node, def);
-            }
-        },
-        {
-            name: Behaviour_names.TerminateEventDefinition, funct: function (node, def) {
-                return new TerminateBehaviour(node, def);
-            }
-        }
-    ]
+▪ `Static` **behaviours**: (\{ `funct`: (`node`: `any`, `def`: `any`) => [`IOBehaviour`](IOBehaviour.md) ; `name`: `string` = Behaviour\_names.CamundaIO } \| \{ `funct`: (`node`: `any`, `def`: `any`) => [`ScriptBehaviour`](ScriptBehaviour.md) ; `name`: `string` = Behaviour\_names.CamundaScript2 } \| \{ `funct`: (`node`: `any`, `def`: `any`) => [`TerminateBehaviour`](TerminateBehaviour.md) ; `name`: `string` = Behaviour\_names.TerminateEventDefinition })[]
 
-Defined in bpmnServer/src/elements/behaviours/BehaviourLoader.ts:27
+#### Defined in
+
+[elements/behaviours/BehaviourLoader.ts:36](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/BehaviourLoader.ts#L36)
 
 ## Methods
 
-### `Static` load
+### load
 
-▸ **load**(`node`: [Node](node.md)): *void*
+▸ **load**(`node`): `void`
 
-Defined in bpmnServer/src/elements/behaviours/BehaviourLoader.ts:102
-
- 1.  node.definition[<name>]
+1.  node.definition[<name>]
  2.  node.definition.eventDefinitions
          $type == <name>
-
+         
          example:
-
-<bpmn:timerEventDefinition id="TimerEventDefinition_07xu06a">
-<bpmn:timeDuration xsi:type="bpmn:tExpression">PT2S</bpmn:timeDuration>
-</bpmn:timerEventDefinition>
-
+         
+       <bpmn:timerEventDefinition id="TimerEventDefinition_07xu06a">
+          <bpmn:timeDuration xsi:type="bpmn:tExpression">PT2S</bpmn:timeDuration>
+       </bpmn:timerEventDefinition>
+         
  3.  node.definitions.extensionElements
          $type == <name>
          example: 'camunda:formData'
-<extensionElements>
-<camunda:formData >
-<camunda: formField id = "surname" label = "Surname" type = "string" />
-<camunda: formField id = "givenName" label = "Given name" type = "string" />
-</camunda:formData>
-< /extensionElements>
+           <extensionElements>
+               <camunda:formData >
+                   <camunda: formField id = "surname" label = "Surname" type = "string" />
+                       <camunda: formField id = "givenName" label = "Given name" type = "string" />
+               </camunda:formData>
+          < /extensionElements>
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Description |
------- | ------ | ------ |
-`node` | [Node](node.md) |   |
+| Name | Type |
+| :------ | :------ |
+| `node` | [`Node`](Node.md) |
 
-**Returns:** *void*
+#### Returns
+
+`void`
+
+#### Defined in
+
+[elements/behaviours/BehaviourLoader.ts:142](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/BehaviourLoader.ts#L142)
 
 ___
 
-### `Static` register
+### register
 
-▸ **register**(`name`: any, `funct`: any): *void*
+▸ **register**(`name`, `funct`): `void`
 
-Defined in bpmnServer/src/elements/behaviours/BehaviourLoader.ts:74
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+| `funct` | `any` |
 
-Name | Type |
------- | ------ |
-`name` | any |
-`funct` | any |
+#### Returns
 
-**Returns:** *void*
+`void`
+
+#### Defined in
+
+[elements/behaviours/BehaviourLoader.ts:114](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/BehaviourLoader.ts#L114)

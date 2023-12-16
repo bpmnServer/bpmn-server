@@ -1,215 +1,294 @@
-[bpmn-server](../README.md) › [EXECUTION_EVENT](execution_event.md)
+[bpmn-server](../README.md) / EXECUTION\_EVENT
 
-# Enumeration: EXECUTION_EVENT
+# Enumeration: EXECUTION\_EVENT
 
-## Index
+## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
-* [flow_discard](execution_event.md#flow_discard)
-* [flow_take](execution_event.md#flow_take)
-* [node_end](execution_event.md#node_end)
-* [node_enter](execution_event.md#node_enter)
-* [node_start](execution_event.md#node_start)
-* [node_terminated](execution_event.md#node_terminated)
-* [node_wait](execution_event.md#node_wait)
-* [process_end](execution_event.md#process_end)
-* [process_invoke](execution_event.md#process_invoke)
-* [process_invoked](execution_event.md#process_invoked)
-* [process_loaded](execution_event.md#process_loaded)
-* [process_restored](execution_event.md#process_restored)
-* [process_resumed](execution_event.md#process_resumed)
-* [process_start](execution_event.md#process_start)
-* [process_started](execution_event.md#process_started)
-* [process_terminated](execution_event.md#process_terminated)
-* [process_wait](execution_event.md#process_wait)
-* [token_end](execution_event.md#token_end)
-* [token_start](execution_event.md#token_start)
-* [token_terminated](execution_event.md#token_terminated)
-* [token_wait](execution_event.md#token_wait)
-* [transform_input](execution_event.md#transform_input)
-* [transform_output](execution_event.md#transform_output)
+- [flow\_discard](EXECUTION_EVENT.md#flow_discard)
+- [flow\_take](EXECUTION_EVENT.md#flow_take)
+- [node\_assign](EXECUTION_EVENT.md#node_assign)
+- [node\_end](EXECUTION_EVENT.md#node_end)
+- [node\_enter](EXECUTION_EVENT.md#node_enter)
+- [node\_start](EXECUTION_EVENT.md#node_start)
+- [node\_terminated](EXECUTION_EVENT.md#node_terminated)
+- [node\_validate](EXECUTION_EVENT.md#node_validate)
+- [node\_wait](EXECUTION_EVENT.md#node_wait)
+- [process\_end](EXECUTION_EVENT.md#process_end)
+- [process\_invoke](EXECUTION_EVENT.md#process_invoke)
+- [process\_invoked](EXECUTION_EVENT.md#process_invoked)
+- [process\_loaded](EXECUTION_EVENT.md#process_loaded)
+- [process\_restored](EXECUTION_EVENT.md#process_restored)
+- [process\_resumed](EXECUTION_EVENT.md#process_resumed)
+- [process\_saving](EXECUTION_EVENT.md#process_saving)
+- [process\_start](EXECUTION_EVENT.md#process_start)
+- [process\_started](EXECUTION_EVENT.md#process_started)
+- [process\_terminated](EXECUTION_EVENT.md#process_terminated)
+- [process\_wait](EXECUTION_EVENT.md#process_wait)
+- [token\_end](EXECUTION_EVENT.md#token_end)
+- [token\_start](EXECUTION_EVENT.md#token_start)
+- [token\_terminated](EXECUTION_EVENT.md#token_terminated)
+- [token\_wait](EXECUTION_EVENT.md#token_wait)
+- [transform\_input](EXECUTION_EVENT.md#transform_input)
+- [transform\_output](EXECUTION_EVENT.md#transform_output)
 
-## Enumeration members
+## Enumeration Members
 
-###  flow_discard
+### flow\_discard
 
-• **flow_discard**: = "discard"
+• **flow\_discard** = ``"discard"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:37
+#### Defined in
 
-___
-
-###  flow_take
-
-• **flow_take**: = "take"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:37
+[interfaces/Enums.ts:48](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L48)
 
 ___
 
-###  node_end
+### flow\_take
 
-• **node_end**: = "end"
+• **flow\_take** = ``"take"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:35
+#### Defined in
 
-___
-
-###  node_enter
-
-• **node_enter**: = "enter"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:35
+[interfaces/Enums.ts:47](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L47)
 
 ___
 
-###  node_start
+### node\_assign
 
-• **node_start**: = "start"
+• **node\_assign** = ``"assign"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:35
+#### Defined in
 
-___
-
-###  node_terminated
-
-• **node_terminated**: = "terminated"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:35
+[interfaces/Enums.ts:39](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L39)
 
 ___
 
-###  node_wait
+### node\_end
 
-• **node_wait**: = "wait"
+• **node\_end** = ``"end"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:35
+#### Defined in
 
-___
-
-###  process_end
-
-• **process_end**: = "process.end"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:43
+[interfaces/Enums.ts:43](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L43)
 
 ___
 
-###  process_invoke
+### node\_enter
 
-• **process_invoke**: = "process.invoke"
+• **node\_enter** = ``"enter"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:40
+#### Defined in
 
-___
-
-###  process_invoked
-
-• **process_invoked**: = "process.invoked"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:40
+[interfaces/Enums.ts:38](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L38)
 
 ___
 
-###  process_loaded
+### node\_start
 
-• **process_loaded**: = "process.loaded"
+• **node\_start** = ``"start"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:38
+#### Defined in
 
-___
-
-###  process_restored
-
-• **process_restored**: = "process.restored"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:41
+[interfaces/Enums.ts:41](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L41)
 
 ___
 
-###  process_resumed
+### node\_terminated
 
-• **process_resumed**: = "process_resumed"
+• **node\_terminated** = ``"terminated"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:41
+#### Defined in
 
-___
-
-###  process_start
-
-• **process_start**: = "process.start"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:39
+[interfaces/Enums.ts:44](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L44)
 
 ___
 
-###  process_started
+### node\_validate
 
-• **process_started**: = "process.started"
+• **node\_validate** = ``"validate"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:39
+#### Defined in
 
-___
-
-###  process_terminated
-
-• **process_terminated**: = "executeion.terminate"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:43
+[interfaces/Enums.ts:40](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L40)
 
 ___
 
-###  process_wait
+### node\_wait
 
-• **process_wait**: = "process.wait"
+• **node\_wait** = ``"wait"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:42
+#### Defined in
 
-___
-
-###  token_end
-
-• **token_end**: = "token.end"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:44
+[interfaces/Enums.ts:42](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L42)
 
 ___
 
-###  token_start
+### process\_end
 
-• **token_start**: = "token.start"
+• **process\_end** = ``"process.end"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:44
+#### Defined in
 
-___
-
-###  token_terminated
-
-• **token_terminated**: = "token.terminated"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:44
+[interfaces/Enums.ts:58](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L58)
 
 ___
 
-###  token_wait
+### process\_invoke
 
-• **token_wait**: = "token.wait"
+• **process\_invoke** = ``"process.invoke"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:44
+#### Defined in
 
-___
-
-###  transform_input
-
-• **transform_input**: = "transformInput"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:36
+[interfaces/Enums.ts:52](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L52)
 
 ___
 
-###  transform_output
+### process\_invoked
 
-• **transform_output**: = "transformOutput"
+• **process\_invoked** = ``"process.invoked"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:36
+#### Defined in
+
+[interfaces/Enums.ts:53](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L53)
+
+___
+
+### process\_loaded
+
+• **process\_loaded** = ``"process.loaded"``
+
+#### Defined in
+
+[interfaces/Enums.ts:49](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L49)
+
+___
+
+### process\_restored
+
+• **process\_restored** = ``"process.restored"``
+
+#### Defined in
+
+[interfaces/Enums.ts:55](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L55)
+
+___
+
+### process\_resumed
+
+• **process\_resumed** = ``"process_resumed"``
+
+#### Defined in
+
+[interfaces/Enums.ts:56](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L56)
+
+___
+
+### process\_saving
+
+• **process\_saving** = ``"process.saving"``
+
+#### Defined in
+
+[interfaces/Enums.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L54)
+
+___
+
+### process\_start
+
+• **process\_start** = ``"process.start"``
+
+#### Defined in
+
+[interfaces/Enums.ts:50](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L50)
+
+___
+
+### process\_started
+
+• **process\_started** = ``"process.started"``
+
+#### Defined in
+
+[interfaces/Enums.ts:51](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L51)
+
+___
+
+### process\_terminated
+
+• **process\_terminated** = ``"process.terminated"``
+
+#### Defined in
+
+[interfaces/Enums.ts:58](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L58)
+
+___
+
+### process\_wait
+
+• **process\_wait** = ``"process.wait"``
+
+#### Defined in
+
+[interfaces/Enums.ts:57](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L57)
+
+___
+
+### token\_end
+
+• **token\_end** = ``"token.end"``
+
+#### Defined in
+
+[interfaces/Enums.ts:59](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L59)
+
+___
+
+### token\_start
+
+• **token\_start** = ``"token.start"``
+
+#### Defined in
+
+[interfaces/Enums.ts:59](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L59)
+
+___
+
+### token\_terminated
+
+• **token\_terminated** = ``"token.terminated"``
+
+#### Defined in
+
+[interfaces/Enums.ts:59](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L59)
+
+___
+
+### token\_wait
+
+• **token\_wait** = ``"token.wait"``
+
+#### Defined in
+
+[interfaces/Enums.ts:59](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L59)
+
+___
+
+### transform\_input
+
+• **transform\_input** = ``"transformInput"``
+
+#### Defined in
+
+[interfaces/Enums.ts:45](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L45)
+
+___
+
+### transform\_output
+
+• **transform\_output** = ``"transformOutput"``
+
+#### Defined in
+
+[interfaces/Enums.ts:46](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L46)

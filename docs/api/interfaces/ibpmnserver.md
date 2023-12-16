@@ -1,115 +1,122 @@
-[bpmn-server](../README.md) › [IBPMNServer](ibpmnserver.md)
+[bpmn-server](../README.md) / IBPMNServer
 
 # Interface: IBPMNServer
 
-## Hierarchy
-
-* **IBPMNServer**
-
 ## Implemented by
 
-* [BPMNServer](../classes/bpmnserver.md)
+- [`BPMNServer`](../classes/BPMNServer.md)
 
-## Index
+## Table of contents
 
 ### Properties
 
-* [acl](ibpmnserver.md#acl)
-* [appDelegate](ibpmnserver.md#appdelegate)
-* [cache](ibpmnserver.md#cache)
-* [configuration](ibpmnserver.md#configuration)
-* [cron](ibpmnserver.md#cron)
-* [dataStore](ibpmnserver.md#datastore)
-* [definitions](ibpmnserver.md#definitions)
-* [engine](ibpmnserver.md#engine)
-* [iam](ibpmnserver.md#iam)
-* [listener](ibpmnserver.md#listener)
-* [logger](ibpmnserver.md#logger)
+- [appDelegate](IBPMNServer.md#appdelegate)
+- [cache](IBPMNServer.md#cache)
+- [configuration](IBPMNServer.md#configuration)
+- [cron](IBPMNServer.md#cron)
+- [dataStore](IBPMNServer.md#datastore)
+- [definitions](IBPMNServer.md#definitions)
+- [engine](IBPMNServer.md#engine)
+- [listener](IBPMNServer.md#listener)
+- [logger](IBPMNServer.md#logger)
+- [userService](IBPMNServer.md#userservice)
 
 ## Properties
 
-###  acl
+### appDelegate
 
-• **acl**: *[IACL](iacl.md)*
+• **appDelegate**: [`IAppDelegate`](IAppDelegate.md)
 
-Defined in bpmnServer/src/interfaces/server.ts:17
+#### Defined in
 
-___
-
-###  appDelegate
-
-• **appDelegate**: *[IAppDelegate](iappdelegate.md)*
-
-Defined in bpmnServer/src/interfaces/server.ts:13
+[interfaces/server.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L13)
 
 ___
 
-###  cache
+### cache
 
-• **cache**: *[ICacheManager](icachemanager.md)*
+• **cache**: [`ICacheManager`](ICacheManager.md)
 
-Defined in bpmnServer/src/interfaces/server.ts:15
+#### Defined in
 
-___
-
-###  configuration
-
-• **configuration**: *[IConfiguration](iconfiguration.md)*
-
-Defined in bpmnServer/src/interfaces/server.ts:10
+[interfaces/server.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L15)
 
 ___
 
-###  cron
+### configuration
 
-• **cron**: *[ICron](icron.md)*
+• **configuration**: [`IConfiguration`](IConfiguration.md)
 
-Defined in bpmnServer/src/interfaces/server.ts:16
+#### Defined in
 
-___
-
-###  dataStore
-
-• **dataStore**: *[IDataStore](idatastore.md)*
-
-Defined in bpmnServer/src/interfaces/server.ts:14
+[interfaces/server.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L10)
 
 ___
 
-###  definitions
+### cron
 
-• **definitions**: *[IDefinition](idefinition.md)*
+• **cron**: [`ICron`](ICron.md)
 
-Defined in bpmnServer/src/interfaces/server.ts:12
+#### Defined in
 
-___
-
-###  engine
-
-• **engine**: *[IEngine](iengine.md)*
-
-Defined in bpmnServer/src/interfaces/server.ts:8
+[interfaces/server.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L16)
 
 ___
 
-###  iam
+### dataStore
 
-• **iam**: *[IIAM](iiam.md)*
+• **dataStore**: [`IDataStore`](IDataStore.md)
 
-Defined in bpmnServer/src/interfaces/server.ts:18
+#### Defined in
 
-___
-
-###  listener
-
-• **listener**: *EventEmitter*
-
-Defined in bpmnServer/src/interfaces/server.ts:9
+[interfaces/server.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L14)
 
 ___
 
-###  logger
+### definitions
 
-• **logger**: *[ILogger](ilogger.md)*
+• **definitions**: [`IModelsDatastore`](IModelsDatastore.md)
 
-Defined in bpmnServer/src/interfaces/server.ts:11
+#### Defined in
+
+[interfaces/server.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L12)
+
+___
+
+### engine
+
+• **engine**: [`IEngine`](IEngine.md)
+
+#### Defined in
+
+[interfaces/server.ts:8](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L8)
+
+___
+
+### listener
+
+• **listener**: `EventEmitter`
+
+#### Defined in
+
+[interfaces/server.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L9)
+
+___
+
+### logger
+
+• **logger**: [`ILogger`](ILogger.md)
+
+#### Defined in
+
+[interfaces/server.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L11)
+
+___
+
+### userService
+
+• **userService**: [`IUserService`](IUserService.md)
+
+#### Defined in
+
+[interfaces/server.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L17)

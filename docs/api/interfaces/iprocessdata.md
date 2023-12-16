@@ -1,43 +1,45 @@
-[bpmn-server](../README.md) › [IProcessData](iprocessdata.md)
+[bpmn-server](../README.md) / IProcessData
 
 # Interface: IProcessData
 
-## Hierarchy
-
-* **IProcessData**
-
 ## Implemented by
 
-* [ProcessData](../classes/processdata.md)
+- [`ProcessData`](../classes/ProcessData.md)
 
-## Index
+## Table of contents
 
 ### Properties
 
-* [id](iprocessdata.md#id)
-* [isExecutable](iprocessdata.md#isexecutable)
-* [name](iprocessdata.md#name)
+- [id](IProcessData.md#id)
+- [isExecutable](IProcessData.md#isexecutable)
+- [name](IProcessData.md#name)
 
 ## Properties
 
-###  id
+### id
 
-• **id**: *any*
+• **id**: `any`
 
-Defined in bpmnServer/src/interfaces/datastore.ts:89
+#### Defined in
 
-___
-
-###  isExecutable
-
-• **isExecutable**: *any*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:91
+[interfaces/DataObjects.ts:103](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L103)
 
 ___
 
-###  name
+### isExecutable
 
-• **name**: *any*
+• **isExecutable**: `any`
 
-Defined in bpmnServer/src/interfaces/datastore.ts:90
+#### Defined in
+
+[interfaces/DataObjects.ts:105](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L105)
+
+___
+
+### name
+
+• **name**: `any`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:104](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L104)

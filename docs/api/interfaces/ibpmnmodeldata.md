@@ -1,70 +1,78 @@
-[bpmn-server](../README.md) › [IBpmnModelData](ibpmnmodeldata.md)
+[bpmn-server](../README.md) / IBpmnModelData
 
 # Interface: IBpmnModelData
 
-## Hierarchy
-
-* **IBpmnModelData**
-
 ## Implemented by
 
-* [BpmnModelData](../classes/bpmnmodeldata.md)
+- [`BpmnModelData`](../classes/BpmnModelData.md)
 
-## Index
+## Table of contents
 
 ### Properties
 
-* [events](ibpmnmodeldata.md#events)
-* [name](ibpmnmodeldata.md#name)
-* [processes](ibpmnmodeldata.md#processes)
-* [saved](ibpmnmodeldata.md#saved)
-* [source](ibpmnmodeldata.md#source)
-* [svg](ibpmnmodeldata.md#svg)
+- [events](IBpmnModelData.md#events)
+- [name](IBpmnModelData.md#name)
+- [processes](IBpmnModelData.md#processes)
+- [saved](IBpmnModelData.md#saved)
+- [source](IBpmnModelData.md#source)
+- [svg](IBpmnModelData.md#svg)
 
 ## Properties
 
-###  events
+### events
 
-• **events**: *[IEventData](ieventdata.md)[]*
+• **events**: [`IEventData`](IEventData.md)[]
 
-Defined in bpmnServer/src/interfaces/datastore.ts:84
+#### Defined in
 
-___
-
-###  name
-
-• **name**: *any*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:80
+[interfaces/DataObjects.ts:98](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L98)
 
 ___
 
-###  processes
+### name
 
-• **processes**: *[IProcessData](iprocessdata.md)[]*
+• **name**: `any`
 
-Defined in bpmnServer/src/interfaces/datastore.ts:83
+#### Defined in
 
-___
-
-###  saved
-
-• **saved**: *any*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:85
+[interfaces/DataObjects.ts:94](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L94)
 
 ___
 
-###  source
+### processes
 
-• **source**: *any*
+• **processes**: [`IProcessData`](IProcessData.md)[]
 
-Defined in bpmnServer/src/interfaces/datastore.ts:81
+#### Defined in
+
+[interfaces/DataObjects.ts:97](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L97)
 
 ___
 
-###  svg
+### saved
 
-• **svg**: *any*
+• **saved**: `any`
 
-Defined in bpmnServer/src/interfaces/datastore.ts:82
+#### Defined in
+
+[interfaces/DataObjects.ts:99](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L99)
+
+___
+
+### source
+
+• **source**: `any`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:95](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L95)
+
+___
+
+### svg
+
+• **svg**: `any`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:96](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L96)

@@ -1,159 +1,191 @@
-[bpmn-server](../README.md) › [IDefinition](idefinition.md)
+[bpmn-server](../README.md) / IDefinition
 
 # Interface: IDefinition
 
-## Hierarchy
-
-* **IDefinition**
-
 ## Implemented by
 
-* [Definition](../classes/definition.md)
+- [`Definition`](../classes/Definition.md)
 
-## Index
+## Table of contents
 
 ### Properties
 
-* [accessRules](idefinition.md#accessrules)
-* [flows](idefinition.md#flows)
-* [logger](idefinition.md#logger)
-* [name](idefinition.md#name)
-* [nodes](idefinition.md#nodes)
-* [processes](idefinition.md#processes)
-* [rootElements](idefinition.md#rootelements)
-* [source](idefinition.md#source)
+- [accessRules](IDefinition.md#accessrules)
+- [flows](IDefinition.md#flows)
+- [logger](IDefinition.md#logger)
+- [name](IDefinition.md#name)
+- [nodes](IDefinition.md#nodes)
+- [processes](IDefinition.md#processes)
+- [rootElements](IDefinition.md#rootelements)
+- [source](IDefinition.md#source)
 
 ### Methods
 
-* [getDefinition](idefinition.md#getdefinition)
-* [getJson](idefinition.md#getjson)
-* [getNodeById](idefinition.md#getnodebyid)
-* [getStartNode](idefinition.md#getstartnode)
-* [load](idefinition.md#load)
+- [getDefinition](IDefinition.md#getdefinition)
+- [getJson](IDefinition.md#getjson)
+- [getNodeById](IDefinition.md#getnodebyid)
+- [getStartNode](IDefinition.md#getstartnode)
+- [load](IDefinition.md#load)
 
 ## Properties
 
-###  accessRules
+### accessRules
 
-• **accessRules**: *any[]*
+• **accessRules**: `any`[]
 
-Defined in bpmnServer/src/interfaces/elements.ts:11
+#### Defined in
 
-___
-
-###  flows
-
-• **flows**: *any[]*
-
-Defined in bpmnServer/src/interfaces/elements.ts:8
+[interfaces/elements.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L11)
 
 ___
 
-###  logger
+### flows
 
-• **logger**: *any*
+• **flows**: `any`[]
 
-Defined in bpmnServer/src/interfaces/elements.ts:10
+#### Defined in
 
-___
-
-###  name
-
-• **name**: *any*
-
-Defined in bpmnServer/src/interfaces/elements.ts:4
+[interfaces/elements.ts:8](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L8)
 
 ___
 
-###  nodes
+### logger
 
-• **nodes**: *Map‹any, any›*
+• **logger**: `any`
 
-Defined in bpmnServer/src/interfaces/elements.ts:7
+#### Defined in
 
-___
-
-###  processes
-
-• **processes**: *Map‹any, any›*
-
-Defined in bpmnServer/src/interfaces/elements.ts:5
+[interfaces/elements.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L10)
 
 ___
 
-###  rootElements
+### name
 
-• **rootElements**: *any*
+• **name**: `any`
 
-Defined in bpmnServer/src/interfaces/elements.ts:6
+#### Defined in
+
+[interfaces/elements.ts:4](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L4)
 
 ___
 
-###  source
+### nodes
 
-• **source**: *any*
+• **nodes**: `Map`\<`any`, `any`\>
 
-Defined in bpmnServer/src/interfaces/elements.ts:9
+#### Defined in
+
+[interfaces/elements.ts:7](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L7)
+
+___
+
+### processes
+
+• **processes**: `Map`\<`any`, `any`\>
+
+#### Defined in
+
+[interfaces/elements.ts:5](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L5)
+
+___
+
+### rootElements
+
+• **rootElements**: `any`
+
+#### Defined in
+
+[interfaces/elements.ts:6](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L6)
+
+___
+
+### source
+
+• **source**: `any`
+
+#### Defined in
+
+[interfaces/elements.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L9)
 
 ## Methods
 
-###  getDefinition
+### getDefinition
 
-▸ **getDefinition**(`source`: any, `logger`: [ILogger](ilogger.md)): *Promise‹any›*
+▸ **getDefinition**(`source`, `logger`): `Promise`\<`any`\>
 
-Defined in bpmnServer/src/interfaces/elements.ts:14
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `source` | `any` |
+| `logger` | [`ILogger`](ILogger.md) |
 
-Name | Type |
------- | ------ |
-`source` | any |
-`logger` | [ILogger](ilogger.md) |
+#### Returns
 
-**Returns:** *Promise‹any›*
+`Promise`\<`any`\>
 
-___
+#### Defined in
 
-###  getJson
-
-▸ **getJson**(): *string*
-
-Defined in bpmnServer/src/interfaces/elements.ts:13
-
-**Returns:** *string*
+[interfaces/elements.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L14)
 
 ___
 
-###  getNodeById
+### getJson
 
-▸ **getNodeById**(`id`: any): *[Node](../classes/node.md)*
+▸ **getJson**(): `string`
 
-Defined in bpmnServer/src/interfaces/elements.ts:16
+#### Returns
 
-**Parameters:**
+`string`
 
-Name | Type |
------- | ------ |
-`id` | any |
+#### Defined in
 
-**Returns:** *[Node](../classes/node.md)*
+[interfaces/elements.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L13)
 
 ___
 
-###  getStartNode
+### getNodeById
 
-▸ **getStartNode**(): *[Node](../classes/node.md)*
+▸ **getNodeById**(`id`): [`Node`](../classes/Node.md)
 
-Defined in bpmnServer/src/interfaces/elements.ts:15
+#### Parameters
 
-**Returns:** *[Node](../classes/node.md)*
+| Name | Type |
+| :------ | :------ |
+| `id` | `any` |
+
+#### Returns
+
+[`Node`](../classes/Node.md)
+
+#### Defined in
+
+[interfaces/elements.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L16)
 
 ___
 
-###  load
+### getStartNode
 
-▸ **load**(): *Promise‹any›*
+▸ **getStartNode**(): [`Node`](../classes/Node.md)
 
-Defined in bpmnServer/src/interfaces/elements.ts:12
+#### Returns
 
-**Returns:** *Promise‹any›*
+[`Node`](../classes/Node.md)
+
+#### Defined in
+
+[interfaces/elements.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L15)
+
+___
+
+### load
+
+▸ **load**(): `Promise`\<`any`\>
+
+#### Returns
+
+`Promise`\<`any`\>
+
+#### Defined in
+
+[interfaces/elements.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L12)

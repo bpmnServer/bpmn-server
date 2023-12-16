@@ -1,250 +1,367 @@
-[bpmn-server](../README.md) › [SignalEventBehaviour](signaleventbehaviour.md)
+[bpmn-server](../README.md) / SignalEventBehaviour
 
 # Class: SignalEventBehaviour
 
+Behaviour
+     ioSpecification
+     timer 
+     message
+     signal
+
+  each behaviour is a class
+     it scans def and insert itself to perform actions as required
+
 ## Hierarchy
 
-* [Behaviour](behaviour.md)
+- [`Behaviour`](Behaviour.md)
 
-  ↳ **SignalEventBehaviour**
+  ↳ **`SignalEventBehaviour`**
 
-## Implements
-
-* [IBehaviour](../interfaces/ibehaviour.md)
-
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](signaleventbehaviour.md#constructor)
+- [constructor](SignalEventBehaviour.md#constructor)
 
 ### Properties
 
-* [definition](signaleventbehaviour.md#definition)
-* [node](signaleventbehaviour.md#node)
+- [definition](SignalEventBehaviour.md#definition)
+- [node](SignalEventBehaviour.md#node)
 
 ### Accessors
 
-* [signalId](signaleventbehaviour.md#signalid)
+- [signalId](SignalEventBehaviour.md#signalid)
 
 ### Methods
 
-* [describe](signaleventbehaviour.md#describe)
-* [end](signaleventbehaviour.md#end)
-* [getItemAttributes](signaleventbehaviour.md#getitemattributes)
-* [getNodeAttributes](signaleventbehaviour.md#getnodeattributes)
-* [init](signaleventbehaviour.md#init)
-* [restored](signaleventbehaviour.md#restored)
-* [resume](signaleventbehaviour.md#resume)
-* [run](signaleventbehaviour.md#run)
-* [start](signaleventbehaviour.md#start)
+- [describe](SignalEventBehaviour.md#describe)
+- [end](SignalEventBehaviour.md#end)
+- [enter](SignalEventBehaviour.md#enter)
+- [exit](SignalEventBehaviour.md#exit)
+- [getItemAttributes](SignalEventBehaviour.md#getitemattributes)
+- [getNodeAttributes](SignalEventBehaviour.md#getnodeattributes)
+- [init](SignalEventBehaviour.md#init)
+- [restored](SignalEventBehaviour.md#restored)
+- [resume](SignalEventBehaviour.md#resume)
+- [run](SignalEventBehaviour.md#run)
+- [start](SignalEventBehaviour.md#start)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new SignalEventBehaviour**(`node`: [Node](node.md), `definition`: any): *[SignalEventBehaviour](signaleventbehaviour.md)*
+• **new SignalEventBehaviour**(`node`, `definition`): [`SignalEventBehaviour`](SignalEventBehaviour.md)
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[constructor](scriptbehaviour.md#constructor)*
+#### Parameters
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:39
+| Name | Type |
+| :------ | :------ |
+| `node` | [`Node`](Node.md) |
+| `definition` | `any` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`node` | [Node](node.md) |
-`definition` | any |
+[`SignalEventBehaviour`](SignalEventBehaviour.md)
 
-**Returns:** *[SignalEventBehaviour](signaleventbehaviour.md)*
+#### Inherited from
+
+[Behaviour](Behaviour.md).[constructor](Behaviour.md#constructor)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:40](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L40)
 
 ## Properties
 
-###  definition
+### definition
 
-• **definition**: *any*
+• **definition**: `any`
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md).[definition](../interfaces/ibehaviour.md#definition)*
+#### Inherited from
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[definition](scriptbehaviour.md#definition)*
+[Behaviour](Behaviour.md).[definition](Behaviour.md#definition)
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:39
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:39](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L39)
 
 ___
 
-###  node
+### node
 
-• **node**: *[Node](node.md)*
+• **node**: [`Node`](Node.md)
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md).[node](../interfaces/ibehaviour.md#node)*
+#### Inherited from
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[node](scriptbehaviour.md#node)*
+[Behaviour](Behaviour.md).[node](Behaviour.md#node)
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:38
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:38](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L38)
 
 ## Accessors
 
-###  signalId
+### signalId
 
-• **get signalId**(): *any*
+• `get` **signalId**(): `any`
 
-Defined in bpmnServer/src/elements/behaviours/MessageSignal.ts:75
+#### Returns
 
-**Returns:** *any*
+`any`
+
+#### Defined in
+
+[elements/behaviours/MessageSignal.ts:76](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/MessageSignal.ts#L76)
 
 ## Methods
 
-###  describe
+### describe
 
-▸ **describe**(): *string[]*
+▸ **describe**(): `string`[]
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md)*
+#### Returns
 
-*Overrides [Behaviour](behaviour.md).[describe](behaviour.md#describe)*
+`string`[]
 
-Defined in bpmnServer/src/elements/behaviours/MessageSignal.ts:69
+#### Overrides
 
-**Returns:** *string[]*
+[Behaviour](Behaviour.md).[describe](Behaviour.md#describe)
 
-___
+#### Defined in
 
-###  end
-
-▸ **end**(`item`: [Item](item.md)): *void*
-
-*Overrides [Behaviour](behaviour.md).[end](behaviour.md#end)*
-
-Defined in bpmnServer/src/elements/behaviours/MessageSignal.ts:67
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-
-**Returns:** *void*
+[elements/behaviours/MessageSignal.ts:70](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/MessageSignal.ts#L70)
 
 ___
 
-###  getItemAttributes
+### end
 
-▸ **getItemAttributes**(`item`: [Item](item.md), `attributes`: any[]): *void*
+▸ **end**(`item`): `void`
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[getItemAttributes](scriptbehaviour.md#getitemattributes)*
+#### Parameters
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:53
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-`attributes` | any[] |
+`void`
 
-**Returns:** *void*
+#### Overrides
 
-___
+[Behaviour](Behaviour.md).[end](Behaviour.md#end)
 
-###  getNodeAttributes
+#### Defined in
 
-▸ **getNodeAttributes**(`attributes`: any[]): *void*
-
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md)*
-
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[getNodeAttributes](scriptbehaviour.md#getnodeattributes)*
-
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:52
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`attributes` | any[] |
-
-**Returns:** *void*
+[elements/behaviours/MessageSignal.ts:68](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/MessageSignal.ts#L68)
 
 ___
 
-###  init
+### enter
 
-▸ **init**(): *void*
+▸ **enter**(`item`): `void`
 
-*Implementation of [IBehaviour](../interfaces/ibehaviour.md)*
+#### Parameters
 
-*Overrides [Behaviour](behaviour.md).[init](behaviour.md#init)*
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-Defined in bpmnServer/src/elements/behaviours/MessageSignal.ts:50
+#### Returns
 
-**Returns:** *void*
+`void`
 
-___
+#### Inherited from
 
-###  restored
+[Behaviour](Behaviour.md).[enter](Behaviour.md#enter)
 
-▸ **restored**(`item`: any): *void*
+#### Defined in
 
-*Inherited from [ScriptBehaviour](scriptbehaviour.md).[restored](scriptbehaviour.md#restored)*
-
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:45
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | any |
-
-**Returns:** *void*
+[elements/behaviours/Behaviour.ts:48](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L48)
 
 ___
 
-###  resume
+### exit
 
-▸ **resume**(`item`: [Item](item.md)): *void*
+▸ **exit**(`item`): `void`
 
-*Inherited from [Behaviour](behaviour.md).[resume](behaviour.md#resume)*
+#### Parameters
 
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:51
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
+`void`
 
-**Returns:** *void*
+#### Inherited from
 
-___
+[Behaviour](Behaviour.md).[exit](Behaviour.md#exit)
 
-###  run
+#### Defined in
 
-▸ **run**(`item`: [Item](item.md)): *void*
-
-*Inherited from [Behaviour](behaviour.md).[run](behaviour.md#run)*
-
-Defined in bpmnServer/src/elements/behaviours/Behaviour.ts:49
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-
-**Returns:** *void*
+[elements/behaviours/Behaviour.ts:52](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L52)
 
 ___
 
-###  start
+### getItemAttributes
 
-▸ **start**(`item`: [Item](item.md)): *void*
+▸ **getItemAttributes**(`item`, `attributes`): `void`
 
-*Overrides [Behaviour](behaviour.md).[start](behaviour.md#start)*
+#### Parameters
 
-Defined in bpmnServer/src/elements/behaviours/MessageSignal.ts:54
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+| `attributes` | `any`[] |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
+`void`
 
-**Returns:** *void*
+#### Inherited from
+
+[Behaviour](Behaviour.md).[getItemAttributes](Behaviour.md#getitemattributes)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:55](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L55)
+
+___
+
+### getNodeAttributes
+
+▸ **getNodeAttributes**(`attributes`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `attributes` | `any`[] |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Behaviour](Behaviour.md).[getNodeAttributes](Behaviour.md#getnodeattributes)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L54)
+
+___
+
+### init
+
+▸ **init**(): `void`
+
+#### Returns
+
+`void`
+
+#### Overrides
+
+[Behaviour](Behaviour.md).[init](Behaviour.md#init)
+
+#### Defined in
+
+[elements/behaviours/MessageSignal.ts:50](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/MessageSignal.ts#L50)
+
+___
+
+### restored
+
+▸ **restored**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | `any` |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Behaviour](Behaviour.md).[restored](Behaviour.md#restored)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:45](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L45)
+
+___
+
+### resume
+
+▸ **resume**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Behaviour](Behaviour.md).[resume](Behaviour.md#resume)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:53](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L53)
+
+___
+
+### run
+
+▸ **run**(`item`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Behaviour](Behaviour.md).[run](Behaviour.md#run)
+
+#### Defined in
+
+[elements/behaviours/Behaviour.ts:50](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L50)
+
+___
+
+### start
+
+▸ **start**(`item`): `Promise`\<`void`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Overrides
+
+[Behaviour](Behaviour.md).[start](Behaviour.md#start)
+
+#### Defined in
+
+[elements/behaviours/MessageSignal.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/MessageSignal.ts#L54)

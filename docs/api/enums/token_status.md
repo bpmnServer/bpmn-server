@@ -1,44 +1,52 @@
-[bpmn-server](../README.md) › [TOKEN_STATUS](token_status.md)
+[bpmn-server](../README.md) / TOKEN\_STATUS
 
-# Enumeration: TOKEN_STATUS
+# Enumeration: TOKEN\_STATUS
 
-## Index
+## Table of contents
 
-### Enumeration members
+### Enumeration Members
 
-* [end](token_status.md#end)
-* [running](token_status.md#running)
-* [terminated](token_status.md#terminated)
-* [wait](token_status.md#wait)
+- [end](TOKEN_STATUS.md#end)
+- [running](TOKEN_STATUS.md#running)
+- [terminated](TOKEN_STATUS.md#terminated)
+- [wait](TOKEN_STATUS.md#wait)
 
-## Enumeration members
+## Enumeration Members
 
-###  end
+### end
 
-• **end**: = "end"
+• **end** = ``"end"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:58
+#### Defined in
 
-___
-
-###  running
-
-• **running**: = "running"
-
-Defined in bpmnServer/src/interfaces/Enums.ts:58
+[interfaces/Enums.ts:82](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L82)
 
 ___
 
-###  terminated
+### running
 
-• **terminated**: = "terminated"
+• **running** = ``"running"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:58
+#### Defined in
+
+[interfaces/Enums.ts:82](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L82)
 
 ___
 
-###  wait
+### terminated
 
-• **wait**: = "wait"
+• **terminated** = ``"terminated"``
 
-Defined in bpmnServer/src/interfaces/Enums.ts:58
+#### Defined in
+
+[interfaces/Enums.ts:82](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L82)
+
+___
+
+### wait
+
+• **wait** = ``"wait"``
+
+#### Defined in
+
+[interfaces/Enums.ts:82](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L82)

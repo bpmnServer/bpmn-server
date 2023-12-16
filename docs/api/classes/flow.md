@@ -1,335 +1,492 @@
-[bpmn-server](../README.md) › [Flow](flow.md)
+[bpmn-server](../README.md) / Flow
 
 # Class: Flow
 
 ## Hierarchy
 
-* [Element](element.md)
+- [`Element`](Element.md)
 
-  ↳ **Flow**
+  ↳ **`Flow`**
 
-  ↳ [MessageFlow](messageflow.md)
+  ↳↳ [`MessageFlow`](MessageFlow.md)
 
 ## Implements
 
-* [IElement](../interfaces/ielement.md)
-* [IFlow](../interfaces/iflow.md)
+- [`IFlow`](../interfaces/IFlow.md)
 
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](flow.md#constructor)
+- [constructor](Flow.md#constructor)
 
 ### Properties
 
-* [behaviours](flow.md#behaviours)
-* [def](flow.md#def)
-* [from](flow.md#from)
-* [id](flow.md#id)
-* [isFlow](flow.md#isflow)
-* [isMessageFlow](flow.md#ismessageflow)
-* [name](flow.md#name)
-* [subType](flow.md#subtype)
-* [to](flow.md#to)
-* [type](flow.md#type)
+- [behaviours](Flow.md#behaviours)
+- [def](Flow.md#def)
+- [from](Flow.md#from)
+- [id](Flow.md#id)
+- [isFlow](Flow.md#isflow)
+- [isMessageFlow](Flow.md#ismessageflow)
+- [lane](Flow.md#lane)
+- [name](Flow.md#name)
+- [subType](Flow.md#subtype)
+- [to](Flow.md#to)
+- [type](Flow.md#type)
 
 ### Methods
 
-* [addBehaviour](flow.md#addbehaviour)
-* [continue](flow.md#continue)
-* [describe](flow.md#describe)
-* [execute](flow.md#execute)
-* [getBehaviour](flow.md#getbehaviour)
-* [hasBehaviour](flow.md#hasbehaviour)
-* [restored](flow.md#restored)
-* [resume](flow.md#resume)
-* [run](flow.md#run)
+- [addBehaviour](Flow.md#addbehaviour)
+- [continue](Flow.md#continue)
+- [describe](Flow.md#describe)
+- [evaluateCondition](Flow.md#evaluatecondition)
+- [execute](Flow.md#execute)
+- [getBehaviour](Flow.md#getbehaviour)
+- [hasBehaviour](Flow.md#hasbehaviour)
+- [restored](Flow.md#restored)
+- [resume](Flow.md#resume)
+- [run](Flow.md#run)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new Flow**(`id`: any, `type`: any, `from`: any, `to`: any, `def`: any): *[Flow](flow.md)*
+• **new Flow**(`id`, `type`, `from`, `to`, `def`): [`Flow`](Flow.md)
 
-Defined in bpmnServer/src/elements/Flow.ts:15
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `id` | `any` |
+| `type` | `any` |
+| `from` | `any` |
+| `to` | `any` |
+| `def` | `any` |
 
-Name | Type |
------- | ------ |
-`id` | any |
-`type` | any |
-`from` | any |
-`to` | any |
-`def` | any |
+#### Returns
 
-**Returns:** *[Flow](flow.md)*
+[`Flow`](Flow.md)
+
+#### Overrides
+
+[Element](Element.md).[constructor](Element.md#constructor)
+
+#### Defined in
+
+[elements/Flow.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Flow.ts#L16)
 
 ## Properties
 
-###  behaviours
+### behaviours
 
-• **behaviours**: *Map‹any, any›* = new Map()
+• **behaviours**: `Map`\<`any`, `any`\>
 
-*Implementation of [IFlow](../interfaces/iflow.md).[behaviours](../interfaces/iflow.md#behaviours)*
+#### Implementation of
 
-*Inherited from [Node](node.md).[behaviours](node.md#behaviours)*
+[IFlow](../interfaces/IFlow.md).[behaviours](../interfaces/IFlow.md#behaviours)
 
-Defined in bpmnServer/src/elements/Element.ts:17
+#### Inherited from
 
-___
+[Element](Element.md).[behaviours](Element.md#behaviours)
 
-###  def
+#### Defined in
 
-• **def**: *any*
-
-Defined in bpmnServer/src/elements/Flow.ts:14
+[elements/Element.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L17)
 
 ___
 
-###  from
+### def
 
-• **from**: *[Node](node.md)*
+• **def**: `any`
 
-Defined in bpmnServer/src/elements/Flow.ts:12
+#### Defined in
 
-___
-
-###  id
-
-• **id**: *any*
-
-*Implementation of [IFlow](../interfaces/iflow.md).[id](../interfaces/iflow.md#id)*
-
-*Inherited from [Node](node.md).[id](node.md#id)*
-
-Defined in bpmnServer/src/elements/Element.ts:13
+[elements/Flow.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Flow.ts#L14)
 
 ___
 
-###  isFlow
+### from
 
-• **isFlow**: *boolean* = false
+• **from**: [`Node`](Node.md)
 
-*Inherited from [Node](node.md).[isFlow](node.md#isflow)*
+#### Defined in
 
-Defined in bpmnServer/src/elements/Element.ts:18
-
-___
-
-###  isMessageFlow
-
-• **isMessageFlow**: *boolean* = false
-
-Defined in bpmnServer/src/elements/Flow.ts:15
+[elements/Flow.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Flow.ts#L12)
 
 ___
 
-###  name
+### id
 
-• **name**: *any*
+• **id**: `any`
 
-*Implementation of [IFlow](../interfaces/iflow.md).[name](../interfaces/iflow.md#name)*
+#### Implementation of
 
-*Inherited from [Element](element.md).[name](element.md#name)*
+[IFlow](../interfaces/IFlow.md).[id](../interfaces/IFlow.md#id)
 
-Defined in bpmnServer/src/elements/Element.ts:16
+#### Inherited from
 
-___
+[Element](Element.md).[id](Element.md#id)
 
-###  subType
+#### Defined in
 
-• **subType**: *any*
-
-*Inherited from [Node](node.md).[subType](node.md#subtype)*
-
-Defined in bpmnServer/src/elements/Element.ts:15
+[elements/Element.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L13)
 
 ___
 
-###  to
+### isFlow
 
-• **to**: *[Node](node.md)*
+• **isFlow**: `boolean` = `false`
 
-Defined in bpmnServer/src/elements/Flow.ts:13
+#### Inherited from
+
+[Element](Element.md).[isFlow](Element.md#isflow)
+
+#### Defined in
+
+[elements/Element.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L18)
 
 ___
 
-###  type
+### isMessageFlow
 
-• **type**: *any*
+• **isMessageFlow**: `boolean` = `false`
 
-*Implementation of [IFlow](../interfaces/iflow.md).[type](../interfaces/iflow.md#type)*
+#### Defined in
 
-*Inherited from [Node](node.md).[type](node.md#type)*
+[elements/Flow.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Flow.ts#L15)
 
-Defined in bpmnServer/src/elements/Element.ts:14
+___
+
+### lane
+
+• **lane**: `any`
+
+#### Implementation of
+
+[IFlow](../interfaces/IFlow.md).[lane](../interfaces/IFlow.md#lane)
+
+#### Inherited from
+
+[Element](Element.md).[lane](Element.md#lane)
+
+#### Defined in
+
+[elements/Element.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L19)
+
+___
+
+### name
+
+• **name**: `any`
+
+#### Implementation of
+
+[IFlow](../interfaces/IFlow.md).[name](../interfaces/IFlow.md#name)
+
+#### Inherited from
+
+[Element](Element.md).[name](Element.md#name)
+
+#### Defined in
+
+[elements/Element.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L16)
+
+___
+
+### subType
+
+• **subType**: `any`
+
+#### Inherited from
+
+[Element](Element.md).[subType](Element.md#subtype)
+
+#### Defined in
+
+[elements/Element.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L15)
+
+___
+
+### to
+
+• **to**: [`Node`](Node.md)
+
+#### Defined in
+
+[elements/Flow.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Flow.ts#L13)
+
+___
+
+### type
+
+• **type**: `any`
+
+#### Implementation of
+
+[IFlow](../interfaces/IFlow.md).[type](../interfaces/IFlow.md#type)
+
+#### Inherited from
+
+[Element](Element.md).[type](Element.md#type)
+
+#### Defined in
+
+[elements/Element.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L14)
 
 ## Methods
 
-###  addBehaviour
+### addBehaviour
 
-▸ **addBehaviour**(`nane`: any, `behavriour`: any): *void*
+▸ **addBehaviour**(`nane`, `behavriour`): `void`
 
-*Implementation of [IFlow](../interfaces/iflow.md)*
+#### Parameters
 
-*Inherited from [Node](node.md).[addBehaviour](node.md#addbehaviour)*
+| Name | Type |
+| :------ | :------ |
+| `nane` | `any` |
+| `behavriour` | `any` |
 
-Defined in bpmnServer/src/elements/Element.ts:40
+#### Returns
 
-**Parameters:**
+`void`
 
-Name | Type |
------- | ------ |
-`nane` | any |
-`behavriour` | any |
+#### Implementation of
 
-**Returns:** *void*
+[IFlow](../interfaces/IFlow.md).[addBehaviour](../interfaces/IFlow.md#addbehaviour)
 
-___
+#### Inherited from
 
-###  continue
+[Element](Element.md).[addBehaviour](Element.md#addbehaviour)
 
-▸ **continue**(`item`: [Item](item.md)): *void*
+#### Defined in
 
-*Inherited from [Element](element.md).[continue](element.md#continue)*
-
-Defined in bpmnServer/src/elements/Element.ts:21
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-
-**Returns:** *void*
+[elements/Element.ts:39](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L39)
 
 ___
 
-###  describe
+### continue
 
-▸ **describe**(): *any[][]*
+▸ **continue**(`item`): `void`
 
-*Implementation of [IFlow](../interfaces/iflow.md)*
+#### Parameters
 
-*Overrides [Node](node.md).[describe](node.md#describe)*
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-Defined in bpmnServer/src/elements/Flow.ts:26
+#### Returns
 
-**Returns:** *any[][]*
+`void`
 
-___
+#### Implementation of
 
-###  execute
+[IFlow](../interfaces/IFlow.md).[continue](../interfaces/IFlow.md#continue)
 
-▸ **execute**(`item`: any): *Promise‹void›*
+#### Inherited from
 
-Defined in bpmnServer/src/elements/Flow.ts:60
+[Element](Element.md).[continue](Element.md#continue)
 
-**Parameters:**
+#### Defined in
 
-Name | Type |
------- | ------ |
-`item` | any |
-
-**Returns:** *Promise‹void›*
+[elements/Element.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L20)
 
 ___
 
-###  getBehaviour
+### describe
 
-▸ **getBehaviour**(`name`: any): *any*
+▸ **describe**(): `any`[][]
 
-*Implementation of [IFlow](../interfaces/iflow.md)*
+#### Returns
 
-*Inherited from [Node](node.md).[getBehaviour](node.md#getbehaviour)*
+`any`[][]
 
-Defined in bpmnServer/src/elements/Element.ts:37
+#### Implementation of
 
-**Parameters:**
+[IFlow](../interfaces/IFlow.md).[describe](../interfaces/IFlow.md#describe)
 
-Name | Type |
------- | ------ |
-`name` | any |
+#### Overrides
 
-**Returns:** *any*
+[Element](Element.md).[describe](Element.md#describe)
+
+#### Defined in
+
+[elements/Flow.ts:26](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Flow.ts#L26)
 
 ___
 
-###  hasBehaviour
+### evaluateCondition
 
-▸ **hasBehaviour**(`name`: any): *boolean*
+▸ **evaluateCondition**(`item`): `any`
 
-*Implementation of [IFlow](../interfaces/iflow.md)*
+#### Parameters
 
-*Inherited from [Node](node.md).[hasBehaviour](node.md#hasbehaviour)*
+| Name | Type |
+| :------ | :------ |
+| `item` | `any` |
 
-Defined in bpmnServer/src/elements/Element.ts:33
+#### Returns
+
+`any`
+
+#### Defined in
+
+[elements/Flow.ts:53](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Flow.ts#L53)
+
+___
+
+### execute
+
+▸ **execute**(`item`): `Promise`\<`void`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | `any` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[elements/Flow.ts:66](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Flow.ts#L66)
+
+___
+
+### getBehaviour
+
+▸ **getBehaviour**(`name`): `any`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+
+#### Returns
+
+`any`
+
+#### Implementation of
+
+[IFlow](../interfaces/IFlow.md).[getBehaviour](../interfaces/IFlow.md#getbehaviour)
+
+#### Inherited from
+
+[Element](Element.md).[getBehaviour](Element.md#getbehaviour)
+
+#### Defined in
+
+[elements/Element.ts:36](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L36)
+
+___
+
+### hasBehaviour
+
+▸ **hasBehaviour**(`name`): `boolean`
 
 respond by providing behaviour attributes beyond item and node information
  ex: timer due , input/outupt , fields
 
-**Parameters:**
+#### Parameters
 
-Name | Type |
------- | ------ |
-`name` | any |
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
 
-**Returns:** *boolean*
+#### Returns
 
-___
+`boolean`
 
-###  restored
+#### Implementation of
 
-▸ **restored**(`item`: [Item](item.md)): *void*
+[IFlow](../interfaces/IFlow.md).[hasBehaviour](../interfaces/IFlow.md#hasbehaviour)
 
-*Inherited from [Node](node.md).[restored](node.md#restored)*
+#### Inherited from
 
-Defined in bpmnServer/src/elements/Element.ts:23
+[Element](Element.md).[hasBehaviour](Element.md#hasbehaviour)
 
-**Parameters:**
+#### Defined in
 
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
-
-**Returns:** *void*
+[elements/Element.ts:32](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L32)
 
 ___
 
-###  resume
+### restored
 
-▸ **resume**(`item`: [Item](item.md)): *void*
+▸ **restored**(`item`): `void`
 
-*Inherited from [Element](element.md).[resume](element.md#resume)*
+#### Parameters
 
-Defined in bpmnServer/src/elements/Element.ts:26
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`item` | [Item](item.md) |
+`void`
 
-**Returns:** *void*
+#### Implementation of
+
+[IFlow](../interfaces/IFlow.md).[restored](../interfaces/IFlow.md#restored)
+
+#### Inherited from
+
+[Element](Element.md).[restored](Element.md#restored)
+
+#### Defined in
+
+[elements/Element.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L22)
 
 ___
 
-###  run
+### resume
 
-▸ **run**(`item`: [Item](item.md)): *[FLOW_ACTION](../enums/flow_action.md)*
+▸ **resume**(`item`): `void`
 
-Defined in bpmnServer/src/elements/Flow.ts:43
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
+
+#### Returns
+
+`void`
+
+#### Implementation of
+
+[IFlow](../interfaces/IFlow.md).[resume](../interfaces/IFlow.md#resume)
+
+#### Inherited from
+
+[Element](Element.md).[resume](Element.md#resume)
+
+#### Defined in
+
+[elements/Element.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Element.ts#L25)
+
+___
+
+### run
+
+▸ **run**(`item`): [`FLOW_ACTION`](../enums/FLOW_ACTION.md)
 
 <Rule> if flow has a condition, it must be evaluated and if result is true flow will continue
  otherwise, flow will be discarded.
 </Rule>
 
-**Parameters:**
+#### Parameters
 
-Name | Type | Description |
------- | ------ | ------ |
-`item` | [Item](item.md) |   |
+| Name | Type |
+| :------ | :------ |
+| `item` | [`Item`](Item.md) |
 
-**Returns:** *[FLOW_ACTION](../enums/flow_action.md)*
+#### Returns
+
+[`FLOW_ACTION`](../enums/FLOW_ACTION.md)
+
+#### Defined in
+
+[elements/Flow.ts:43](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Flow.ts#L43)

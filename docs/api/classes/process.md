@@ -1,204 +1,255 @@
-[bpmn-server](../README.md) › [Process](process.md)
+[bpmn-server](../README.md) / Process
 
 # Class: Process
 
-## Hierarchy
-
-* **Process**
-
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](process.md#constructor)
+- [constructor](Process.md#constructor)
 
 ### Properties
 
-* [childrenNodes](process.md#childrennodes)
-* [def](process.md#def)
-* [eventSubProcesses](process.md#eventsubprocesses)
-* [id](process.md#id)
-* [isExecutable](process.md#isexecutable)
-* [name](process.md#name)
-* [parent](process.md#parent)
-* [subProcessEvents](process.md#subprocessevents)
+- [childrenNodes](Process.md#childrennodes)
+- [def](Process.md#def)
+- [eventSubProcesses](Process.md#eventsubprocesses)
+- [id](Process.md#id)
+- [isExecutable](Process.md#isexecutable)
+- [name](Process.md#name)
+- [parent](Process.md#parent)
+- [scripts](Process.md#scripts)
+- [subProcessEvents](Process.md#subprocessevents)
 
 ### Methods
 
-* [end](process.md#end)
-* [getEventSubProcessStart](process.md#geteventsubprocessstart)
-* [getStartNode](process.md#getstartnode)
-* [getStartNodes](process.md#getstartnodes)
-* [init](process.md#init)
-* [start](process.md#start)
+- [end](Process.md#end)
+- [getEventSubProcessStart](Process.md#geteventsubprocessstart)
+- [getStartNode](Process.md#getstartnode)
+- [getStartNodes](Process.md#getstartnodes)
+- [init](Process.md#init)
+- [start](Process.md#start)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new Process**(`definition`: any, `parent`: any): *[Process](process.md)*
+• **new Process**(`definition`, `parent?`): [`Process`](Process.md)
 
-Defined in bpmnServer/src/elements/Process.ts:19
+#### Parameters
 
-**Parameters:**
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `definition` | `any` | `undefined` |
+| `parent` | `any` | `null` |
 
-Name | Type | Default |
------- | ------ | ------ |
-`definition` | any | - |
-`parent` | any | null |
+#### Returns
 
-**Returns:** *[Process](process.md)*
+[`Process`](Process.md)
+
+#### Defined in
+
+[elements/Process.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L22)
 
 ## Properties
 
-###  childrenNodes
+### childrenNodes
 
-• **childrenNodes**: *[Node](node.md)[]*
+• **childrenNodes**: [`Node`](Node.md)[]
 
-Defined in bpmnServer/src/elements/Process.ts:17
+#### Defined in
 
-___
-
-###  def
-
-• **def**: *[Definition](definition.md)*
-
-Defined in bpmnServer/src/elements/Process.ts:15
+[elements/Process.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L17)
 
 ___
 
-###  eventSubProcesses
+### def
 
-• **eventSubProcesses**: *any[]*
+• **def**: [`Definition`](Definition.md)
 
-Defined in bpmnServer/src/elements/Process.ts:18
+#### Defined in
 
-___
-
-###  id
-
-• **id**: *any*
-
-Defined in bpmnServer/src/elements/Process.ts:12
+[elements/Process.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L15)
 
 ___
 
-###  isExecutable
+### eventSubProcesses
 
-• **isExecutable**: *any*
+• **eventSubProcesses**: `any`[]
 
-Defined in bpmnServer/src/elements/Process.ts:14
+#### Defined in
 
-___
-
-###  name
-
-• **name**: *any*
-
-Defined in bpmnServer/src/elements/Process.ts:13
+[elements/Process.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L18)
 
 ___
 
-###  parent
+### id
 
-• **parent**: *[Process](process.md)*
+• **id**: `any`
 
-Defined in bpmnServer/src/elements/Process.ts:16
+#### Defined in
+
+[elements/Process.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L12)
 
 ___
 
-###  subProcessEvents
+### isExecutable
 
-• **subProcessEvents**: *any[]*
+• **isExecutable**: `any`
 
-Defined in bpmnServer/src/elements/Process.ts:19
+#### Defined in
+
+[elements/Process.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L14)
+
+___
+
+### name
+
+• **name**: `any`
+
+#### Defined in
+
+[elements/Process.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L13)
+
+___
+
+### parent
+
+• **parent**: [`Process`](Process.md)
+
+#### Defined in
+
+[elements/Process.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L16)
+
+___
+
+### scripts
+
+• **scripts**: `Map`\<`any`, `any`\>
+
+#### Defined in
+
+[elements/Process.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L20)
+
+___
+
+### subProcessEvents
+
+• **subProcessEvents**: `any`[]
+
+#### Defined in
+
+[elements/Process.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L19)
 
 ## Methods
 
-###  end
+### end
 
-▸ **end**(): *Promise‹void›*
-
-Defined in bpmnServer/src/elements/Process.ts:54
+▸ **end**(): `Promise`\<`void`\>
 
 Notify process that it ended
 
-**Returns:** *Promise‹void›*
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[elements/Process.ts:55](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L55)
 
 ___
 
-###  getEventSubProcessStart
+### getEventSubProcessStart
 
-▸ **getEventSubProcessStart**(): *[Node](node.md)[]*
+▸ **getEventSubProcessStart**(): [`Node`](Node.md)[]
 
-Defined in bpmnServer/src/elements/Process.ts:83
+#### Returns
 
-**Returns:** *[Node](node.md)[]*
+[`Node`](Node.md)[]
 
-___
+#### Defined in
 
-###  getStartNode
-
-▸ **getStartNode**(`userInvokable`: boolean): *any*
-
-Defined in bpmnServer/src/elements/Process.ts:63
-
-**Parameters:**
-
-Name | Type | Default |
------- | ------ | ------ |
-`userInvokable` | boolean | false |
-
-**Returns:** *any*
+[elements/Process.ts:84](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L84)
 
 ___
 
-###  getStartNodes
+### getStartNode
 
-▸ **getStartNodes**(`userInvokable`: boolean): *any[]*
+▸ **getStartNode**(`userInvokable?`): `any`
 
-Defined in bpmnServer/src/elements/Process.ts:66
+#### Parameters
 
-**Parameters:**
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `userInvokable` | `boolean` | `false` |
 
-Name | Type | Default |
------- | ------ | ------ |
-`userInvokable` | boolean | false |
+#### Returns
 
-**Returns:** *any[]*
+`any`
 
-___
+#### Defined in
 
-###  init
-
-▸ **init**(`children`: any, `eventSubProcesses`: any): *void*
-
-Defined in bpmnServer/src/elements/Process.ts:28
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`children` | any |
-`eventSubProcesses` | any |
-
-**Returns:** *void*
+[elements/Process.ts:64](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L64)
 
 ___
 
-###  start
+### getStartNodes
 
-▸ **start**(`execution`: [Execution](execution.md), `parentToken`: any): *Promise‹void›*
+▸ **getStartNodes**(`userInvokable?`): `any`[]
 
-Defined in bpmnServer/src/elements/Process.ts:35
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `userInvokable` | `boolean` | `false` |
+
+#### Returns
+
+`any`[]
+
+#### Defined in
+
+[elements/Process.ts:67](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L67)
+
+___
+
+### init
+
+▸ **init**(`children`, `eventSubProcesses`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `children` | `any` |
+| `eventSubProcesses` | `any` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[elements/Process.ts:29](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L29)
+
+___
+
+### start
+
+▸ **start**(`execution`, `parentToken`): `Promise`\<`void`\>
 
 Notify process that it started
 
-**Parameters:**
+#### Parameters
 
-Name | Type |
------- | ------ |
-`execution` | [Execution](execution.md) |
-`parentToken` | any |
+| Name | Type |
+| :------ | :------ |
+| `execution` | [`Execution`](Execution.md) |
+| `parentToken` | `any` |
 
-**Returns:** *Promise‹void›*
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[elements/Process.ts:36](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L36)

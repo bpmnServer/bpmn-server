@@ -1,134 +1,188 @@
-[bpmn-server](../README.md) › [IEventData](ieventdata.md)
+[bpmn-server](../README.md) / IEventData
 
 # Interface: IEventData
 
-## Hierarchy
-
-* **IEventData**
-
 ## Implemented by
 
-* [EventData](../classes/eventdata.md)
-* [EventData](../classes/eventdata.md)
+- [`EventData`](../classes/EventData.md)
 
-## Index
+## Table of contents
 
 ### Properties
 
-* [elementId](ieventdata.md#elementid)
-* [expression](ieventdata.md#expression)
-* [expressionFormat](ieventdata.md#expressionformat)
-* [maxRepeat](ieventdata.md#maxrepeat)
-* [messageId](ieventdata.md#optional-messageid)
-* [name](ieventdata.md#name)
-* [processId](ieventdata.md#processid)
-* [referenceDateTime](ieventdata.md#referencedatetime)
-* [repeatCount](ieventdata.md#repeatcount)
-* [signalId](ieventdata.md#optional-signalid)
-* [subType](ieventdata.md#subtype)
-* [timeDue](ieventdata.md#optional-timedue)
-* [type](ieventdata.md#type)
+- [candidateGroups](IEventData.md#candidategroups)
+- [candidateUsers](IEventData.md#candidateusers)
+- [elementId](IEventData.md#elementid)
+- [expression](IEventData.md#expression)
+- [expressionFormat](IEventData.md#expressionformat)
+- [lane](IEventData.md#lane)
+- [maxRepeat](IEventData.md#maxrepeat)
+- [messageId](IEventData.md#messageid)
+- [name](IEventData.md#name)
+- [processId](IEventData.md#processid)
+- [referenceDateTime](IEventData.md#referencedatetime)
+- [repeatCount](IEventData.md#repeatcount)
+- [signalId](IEventData.md#signalid)
+- [subType](IEventData.md#subtype)
+- [timeDue](IEventData.md#timedue)
+- [type](IEventData.md#type)
 
 ## Properties
 
-###  elementId
+### candidateGroups
 
-• **elementId**: *string*
+• `Optional` **candidateGroups**: `any`
 
-Defined in bpmnServer/src/interfaces/datastore.ts:46
+#### Defined in
 
-___
-
-###  expression
-
-• **expression**: *any*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:54
+[interfaces/DataObjects.ts:89](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L89)
 
 ___
 
-###  expressionFormat
+### candidateUsers
 
-• **expressionFormat**: *any*
+• `Optional` **candidateUsers**: `any`
 
-Defined in bpmnServer/src/interfaces/datastore.ts:55
+#### Defined in
 
-___
-
-###  maxRepeat
-
-• **maxRepeat**: *any*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:57
+[interfaces/DataObjects.ts:90](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L90)
 
 ___
 
-### `Optional` messageId
+### elementId
 
-• **messageId**? : *string*
+• **elementId**: `string`
 
-Defined in bpmnServer/src/interfaces/datastore.ts:52
+#### Defined in
 
-___
-
-###  name
-
-• **name**: *any*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:49
+[interfaces/DataObjects.ts:74](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L74)
 
 ___
 
-###  processId
+### expression
 
-• **processId**: *string*
+• **expression**: `any`
 
-Defined in bpmnServer/src/interfaces/datastore.ts:47
+#### Defined in
 
-___
-
-###  referenceDateTime
-
-• **referenceDateTime**: *any*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:56
+[interfaces/DataObjects.ts:82](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L82)
 
 ___
 
-###  repeatCount
+### expressionFormat
 
-• **repeatCount**: *any*
+• **expressionFormat**: `any`
 
-Defined in bpmnServer/src/interfaces/datastore.ts:58
+#### Defined in
 
-___
-
-### `Optional` signalId
-
-• **signalId**? : *string*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:51
+[interfaces/DataObjects.ts:83](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L83)
 
 ___
 
-###  subType
+### lane
 
-• **subType**: *any*
+• `Optional` **lane**: `string`
 
-Defined in bpmnServer/src/interfaces/datastore.ts:50
+#### Defined in
 
-___
-
-### `Optional` timeDue
-
-• **timeDue**? : *Date*
-
-Defined in bpmnServer/src/interfaces/datastore.ts:59
+[interfaces/DataObjects.ts:88](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L88)
 
 ___
 
-###  type
+### maxRepeat
 
-• **type**: *any*
+• **maxRepeat**: `any`
 
-Defined in bpmnServer/src/interfaces/datastore.ts:48
+#### Defined in
+
+[interfaces/DataObjects.ts:85](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L85)
+
+___
+
+### messageId
+
+• `Optional` **messageId**: `string`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:80](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L80)
+
+___
+
+### name
+
+• **name**: `any`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:77](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L77)
+
+___
+
+### processId
+
+• **processId**: `string`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:75](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L75)
+
+___
+
+### referenceDateTime
+
+• **referenceDateTime**: `any`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:84](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L84)
+
+___
+
+### repeatCount
+
+• **repeatCount**: `any`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:86](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L86)
+
+___
+
+### signalId
+
+• `Optional` **signalId**: `string`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:79](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L79)
+
+___
+
+### subType
+
+• **subType**: `any`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:78](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L78)
+
+___
+
+### timeDue
+
+• `Optional` **timeDue**: `Date`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:87](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L87)
+
+___
+
+### type
+
+• **type**: `any`
+
+#### Defined in
+
+[interfaces/DataObjects.ts:76](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L76)

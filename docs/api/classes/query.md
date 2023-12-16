@@ -1,186 +1,217 @@
-[bpmn-server](../README.md) › [Query](query.md)
+[bpmn-server](../README.md) / Query
 
 # Class: Query
 
-## Hierarchy
-
-* **Query**
-
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](query.md#constructor)
+- [constructor](Query.md#constructor)
 
 ### Methods
 
-* [data](query.md#data)
-* [instanceId](query.md#instanceid)
-* [instanceName](query.md#instancename)
-* [instanceStatus](query.md#instancestatus)
-* [itemElementId](query.md#itemelementid)
-* [itemId](query.md#itemid)
-* [itemName](query.md#itemname)
-* [itemStatus](query.md#itemstatus)
+- [data](Query.md#data)
+- [instanceId](Query.md#instanceid)
+- [instanceName](Query.md#instancename)
+- [instanceStatus](Query.md#instancestatus)
+- [itemElementId](Query.md#itemelementid)
+- [itemId](Query.md#itemid)
+- [itemName](Query.md#itemname)
+- [itemStatus](Query.md#itemstatus)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new Query**(`__namedParameters`: object): *[Query](query.md)*
+• **new Query**(`«destructured»?`): [`Query`](Query.md)
 
-Defined in bpmnServer/src/engine/Model.ts:107
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `«destructured»` | `Object` |
+| › `data?` | `any` |
+| › `instanceEndedAt?` | `any` |
+| › `instanceId?` | `any` |
+| › `instanceName?` | `any` |
+| › `instanceSaved?` | `any` |
+| › `instanceStartedAt?` | `any` |
+| › `instanceStatus?` | [`EXECUTION_STATUS`](../enums/EXECUTION_STATUS.md) |
+| › `itemElementId?` | `any` |
+| › `itemEndedAt?` | `any` |
+| › `itemId?` | `any` |
+| › `itemKey?` | `any` |
+| › `itemName?` | `any` |
+| › `itemSeq?` | `any` |
+| › `itemStartedAt?` | `any` |
+| › `itemStatus?` | [`ITEM_STATUS`](../enums/ITEM_STATUS.md) |
+| › `itemTokenId?` | `any` |
+| › `itemType?` | [`BPMN_TYPE`](../enums/BPMN_TYPE.md) |
 
-▪`Default value`  **__namedParameters**: *object*= {}
+#### Returns
 
-Name | Type | Default |
------- | ------ | ------ |
-`data` | any | null |
-`instanceEndedAt` | any | null |
-`instanceId` | any | null |
-`instanceName` | any | null |
-`instanceSaved` | any | null |
-`instanceStartedAt` | any | null |
-`instanceStatus` | [EXECUTION_STATUS](../enums/execution_status.md) | null |
-`itemElementId` | any | null |
-`itemEndedAt` | any | null |
-`itemId` | any | null |
-`itemKey` | any | null |
-`itemName` | any | null |
-`itemSeq` | any | null |
-`itemStartedAt` | any | null |
-`itemStatus` | [ITEM_STATUS](../enums/item_status.md) | null |
-`itemTokenId` | any | null |
-`itemType` | [BPMN_TYPE](../enums/bpmn_type.md) | null |
+[`Query`](Query.md)
 
-**Returns:** *[Query](query.md)*
+#### Defined in
+
+[engine/Model.ts:118](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L118)
 
 ## Methods
 
-###  data
+### data
 
-▸ **data**(`val`: any): *this*
+▸ **data**(`val`): [`Query`](Query.md)
 
-Defined in bpmnServer/src/engine/Model.ts:154
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `val` | `any` |
 
-Name | Type |
------- | ------ |
-`val` | any |
+#### Returns
 
-**Returns:** *this*
+[`Query`](Query.md)
 
-___
+#### Defined in
 
-###  instanceId
-
-▸ **instanceId**(`val`: any): *[Query](query.md)*
-
-Defined in bpmnServer/src/engine/Model.ts:151
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`val` | any |
-
-**Returns:** *[Query](query.md)*
+[engine/Model.ts:163](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L163)
 
 ___
 
-###  instanceName
+### instanceId
 
-▸ **instanceName**(`val`: any): *[Query](query.md)*
+▸ **instanceId**(`val`): [`Query`](Query.md)
 
-Defined in bpmnServer/src/engine/Model.ts:152
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `val` | `any` |
 
-Name | Type |
------- | ------ |
-`val` | any |
+#### Returns
 
-**Returns:** *[Query](query.md)*
+[`Query`](Query.md)
 
-___
+#### Defined in
 
-###  instanceStatus
-
-▸ **instanceStatus**(`val`: [EXECUTION_STATUS](../enums/execution_status.md)): *[Query](query.md)*
-
-Defined in bpmnServer/src/engine/Model.ts:153
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`val` | [EXECUTION_STATUS](../enums/execution_status.md) |
-
-**Returns:** *[Query](query.md)*
+[engine/Model.ts:160](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L160)
 
 ___
 
-###  itemElementId
+### instanceName
 
-▸ **itemElementId**(`val`: any): *[Query](query.md)*
+▸ **instanceName**(`val`): [`Query`](Query.md)
 
-Defined in bpmnServer/src/engine/Model.ts:158
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `val` | `any` |
 
-Name | Type |
------- | ------ |
-`val` | any |
+#### Returns
 
-**Returns:** *[Query](query.md)*
+[`Query`](Query.md)
 
-___
+#### Defined in
 
-###  itemId
-
-▸ **itemId**(`val`: any): *[Query](query.md)*
-
-Defined in bpmnServer/src/engine/Model.ts:155
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`val` | any |
-
-**Returns:** *[Query](query.md)*
+[engine/Model.ts:161](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L161)
 
 ___
 
-###  itemName
+### instanceStatus
 
-▸ **itemName**(`val`: any): *[Query](query.md)*
+▸ **instanceStatus**(`val`): [`Query`](Query.md)
 
-Defined in bpmnServer/src/engine/Model.ts:156
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `val` | [`EXECUTION_STATUS`](../enums/EXECUTION_STATUS.md) |
 
-Name | Type |
------- | ------ |
-`val` | any |
+#### Returns
 
-**Returns:** *[Query](query.md)*
+[`Query`](Query.md)
+
+#### Defined in
+
+[engine/Model.ts:162](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L162)
 
 ___
 
-###  itemStatus
+### itemElementId
 
-▸ **itemStatus**(`val`: [ITEM_STATUS](../enums/item_status.md)): *[Query](query.md)*
+▸ **itemElementId**(`val`): [`Query`](Query.md)
 
-Defined in bpmnServer/src/engine/Model.ts:157
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `val` | `any` |
 
-Name | Type |
------- | ------ |
-`val` | [ITEM_STATUS](../enums/item_status.md) |
+#### Returns
 
-**Returns:** *[Query](query.md)*
+[`Query`](Query.md)
+
+#### Defined in
+
+[engine/Model.ts:167](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L167)
+
+___
+
+### itemId
+
+▸ **itemId**(`val`): [`Query`](Query.md)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `val` | `any` |
+
+#### Returns
+
+[`Query`](Query.md)
+
+#### Defined in
+
+[engine/Model.ts:164](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L164)
+
+___
+
+### itemName
+
+▸ **itemName**(`val`): [`Query`](Query.md)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `val` | `any` |
+
+#### Returns
+
+[`Query`](Query.md)
+
+#### Defined in
+
+[engine/Model.ts:165](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L165)
+
+___
+
+### itemStatus
+
+▸ **itemStatus**(`val`): [`Query`](Query.md)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `val` | [`ITEM_STATUS`](../enums/ITEM_STATUS.md) |
+
+#### Returns
+
+[`Query`](Query.md)
+
+#### Defined in
+
+[engine/Model.ts:166](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L166)

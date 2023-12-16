@@ -1,30 +1,44 @@
-[bpmn-server](../README.md) › [NodeLoader](nodeloader.md)
+[bpmn-server](../README.md) / NodeLoader
 
 # Class: NodeLoader
 
-## Hierarchy
+## Table of contents
 
-* **NodeLoader**
+### Constructors
 
-## Index
+- [constructor](NodeLoader.md#constructor)
 
 ### Methods
 
-* [loadNode](nodeloader.md#static-loadnode)
+- [loadNode](NodeLoader.md#loadnode)
+
+## Constructors
+
+### constructor
+
+• **new NodeLoader**(): [`NodeLoader`](NodeLoader.md)
+
+#### Returns
+
+[`NodeLoader`](NodeLoader.md)
 
 ## Methods
 
-### `Static` loadNode
+### loadNode
 
-▸ **loadNode**(`el`: any, `process`: any): *[Node](node.md)*
+▸ **loadNode**(`el`, `process`): [`Node`](Node.md)
 
-Defined in bpmnServer/src/elements/NodeLoader.ts:13
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `el` | `any` |
+| `process` | `any` |
 
-Name | Type |
------- | ------ |
-`el` | any |
-`process` | any |
+#### Returns
 
-**Returns:** *[Node](node.md)*
+[`Node`](Node.md)
+
+#### Defined in
+
+[elements/NodeLoader.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/NodeLoader.ts#L13)

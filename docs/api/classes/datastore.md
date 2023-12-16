@@ -1,435 +1,514 @@
-[bpmn-server](../README.md) › [DataStore](datastore.md)
+[bpmn-server](../README.md) / DataStore
 
 # Class: DataStore
 
+super class for various objects that are part of the server
+
 ## Hierarchy
 
-* [ServerComponent](servercomponent.md)
+- [`ServerComponent`](ServerComponent.md)
 
-  ↳ **DataStore**
+  ↳ **`DataStore`**
 
 ## Implements
 
-* [IDataStore](../interfaces/idatastore.md)
+- [`IDataStore`](../interfaces/IDataStore.md)
 
-## Index
+## Table of contents
 
 ### Constructors
 
-* [constructor](datastore.md#constructor)
+- [constructor](DataStore.md#constructor)
 
 ### Properties
 
-* [db](datastore.md#db)
-* [dbConfiguration](datastore.md#dbconfiguration)
-* [execution](datastore.md#execution)
-* [inSaving](datastore.md#insaving)
-* [isModified](datastore.md#ismodified)
-* [isRunning](datastore.md#isrunning)
-* [promises](datastore.md#promises)
-* [saveCounter](datastore.md#savecounter)
-* [server](datastore.md#server)
-* [seq](datastore.md#static-seq)
+- [db](DataStore.md#db)
+- [dbConfiguration](DataStore.md#dbconfiguration)
+- [execution](DataStore.md#execution)
+- [inSaving](DataStore.md#insaving)
+- [isModified](DataStore.md#ismodified)
+- [isRunning](DataStore.md#isrunning)
+- [locker](DataStore.md#locker)
+- [promises](DataStore.md#promises)
+- [server](DataStore.md#server)
+- [seq](DataStore.md#seq)
 
 ### Accessors
 
-* [acl](datastore.md#acl)
-* [appDelegate](datastore.md#appdelegate)
-* [cache](datastore.md#cache)
-* [configuration](datastore.md#configuration)
-* [cron](datastore.md#cron)
-* [dataStore](datastore.md#datastore)
-* [definitions](datastore.md#definitions)
-* [engine](datastore.md#engine)
-* [iam](datastore.md#iam)
-* [listener](datastore.md#listener)
-* [logger](datastore.md#logger)
+- [appDelegate](DataStore.md#appdelegate)
+- [cache](DataStore.md#cache)
+- [configuration](DataStore.md#configuration)
+- [cron](DataStore.md#cron)
+- [dataStore](DataStore.md#datastore)
+- [definitions](DataStore.md#definitions)
+- [engine](DataStore.md#engine)
+- [listener](DataStore.md#listener)
+- [logger](DataStore.md#logger)
 
 ### Methods
 
-* [check](datastore.md#check)
-* [convertColl](datastore.md#convertcoll)
-* [convertObj](datastore.md#convertobj)
-* [deleteInstances](datastore.md#deleteinstances)
-* [findInstance](datastore.md#findinstance)
-* [findInstances](datastore.md#findinstances)
-* [findItem](datastore.md#finditem)
-* [findItems](datastore.md#finditems)
-* [install](datastore.md#install)
-* [loadInstance](datastore.md#loadinstance)
-* [monitorExecution](datastore.md#monitorexecution)
-* [save](datastore.md#save)
+- [convertColl](DataStore.md#convertcoll)
+- [convertObj](DataStore.md#convertobj)
+- [deleteInstances](DataStore.md#deleteinstances)
+- [findInstance](DataStore.md#findinstance)
+- [findInstances](DataStore.md#findinstances)
+- [findItem](DataStore.md#finditem)
+- [findItems](DataStore.md#finditems)
+- [install](DataStore.md#install)
+- [loadInstance](DataStore.md#loadinstance)
+- [save](DataStore.md#save)
 
 ## Constructors
 
-###  constructor
+### constructor
 
-\+ **new DataStore**(`server`: [IBPMNServer](../interfaces/ibpmnserver.md)): *[DataStore](datastore.md)*
+• **new DataStore**(`server`): [`DataStore`](DataStore.md)
 
-*Overrides [ServerComponent](servercomponent.md).[constructor](servercomponent.md#constructor)*
+#### Parameters
 
-Defined in bpmnServer/src/datastore/DataStore.ts:27
+| Name | Type |
+| :------ | :------ |
+| `server` | [`IBPMNServer`](../interfaces/IBPMNServer.md) |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`server` | [IBPMNServer](../interfaces/ibpmnserver.md) |
+[`DataStore`](DataStore.md)
 
-**Returns:** *[DataStore](datastore.md)*
+#### Overrides
+
+[ServerComponent](ServerComponent.md).[constructor](ServerComponent.md#constructor)
+
+#### Defined in
+
+[datastore/DataStore.ts:33](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L33)
 
 ## Properties
 
-###  db
+### db
 
-• **db**: *any*
+• **db**: `any`
 
-*Implementation of [IDataStore](../interfaces/idatastore.md).[db](../interfaces/idatastore.md#db)*
+#### Implementation of
 
-Defined in bpmnServer/src/datastore/DataStore.ts:21
+[IDataStore](../interfaces/IDataStore.md).[db](../interfaces/IDataStore.md#db)
 
-___
+#### Defined in
 
-###  dbConfiguration
-
-• **dbConfiguration**: *any*
-
-*Implementation of [IDataStore](../interfaces/idatastore.md).[dbConfiguration](../interfaces/idatastore.md#dbconfiguration)*
-
-Defined in bpmnServer/src/datastore/DataStore.ts:20
+[datastore/DataStore.ts:24](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L24)
 
 ___
 
-###  execution
+### dbConfiguration
 
-• **execution**: *[Execution](execution.md)*
+• **dbConfiguration**: `any`
 
-*Implementation of [IDataStore](../interfaces/idatastore.md).[execution](../interfaces/idatastore.md#execution)*
+#### Implementation of
 
-Defined in bpmnServer/src/datastore/DataStore.ts:23
+[IDataStore](../interfaces/IDataStore.md).[dbConfiguration](../interfaces/IDataStore.md#dbconfiguration)
 
-___
+#### Defined in
 
-###  inSaving
-
-• **inSaving**: *boolean* = false
-
-Defined in bpmnServer/src/datastore/DataStore.ts:26
+[datastore/DataStore.ts:23](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L23)
 
 ___
 
-###  isModified
+### execution
 
-• **isModified**: *boolean* = false
+• **execution**: [`Execution`](Execution.md)
 
-Defined in bpmnServer/src/datastore/DataStore.ts:24
+#### Defined in
 
-___
-
-###  isRunning
-
-• **isRunning**: *boolean* = false
-
-Defined in bpmnServer/src/datastore/DataStore.ts:25
+[datastore/DataStore.ts:26](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L26)
 
 ___
 
-###  promises
+### inSaving
 
-• **promises**: *any[]* = []
+• **inSaving**: `boolean` = `false`
 
-Defined in bpmnServer/src/datastore/DataStore.ts:27
+#### Defined in
 
-___
-
-###  saveCounter
-
-• **saveCounter**: *number* = 0
-
-Defined in bpmnServer/src/datastore/DataStore.ts:57
+[datastore/DataStore.ts:29](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L29)
 
 ___
 
-###  server
+### isModified
 
-• **server**: *any*
+• **isModified**: `boolean` = `false`
 
-*Inherited from [ServerComponent](servercomponent.md).[server](servercomponent.md#server)*
+#### Defined in
 
-Defined in bpmnServer/src/server/ServerComponent.ts:9
+[datastore/DataStore.ts:27](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L27)
 
 ___
 
-### `Static` seq
+### isRunning
 
-▪ **seq**: *number* = 0
+• **isRunning**: `boolean` = `false`
 
-Defined in bpmnServer/src/datastore/DataStore.ts:147
+#### Defined in
+
+[datastore/DataStore.ts:28](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L28)
+
+___
+
+### locker
+
+• **locker**: `any`
+
+#### Implementation of
+
+[IDataStore](../interfaces/IDataStore.md).[locker](../interfaces/IDataStore.md#locker)
+
+#### Defined in
+
+[datastore/DataStore.ts:31](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L31)
+
+___
+
+### promises
+
+• **promises**: `any`[] = `[]`
+
+#### Defined in
+
+[datastore/DataStore.ts:30](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L30)
+
+___
+
+### server
+
+• **server**: `any`
+
+#### Inherited from
+
+[ServerComponent](ServerComponent.md).[server](ServerComponent.md#server)
+
+#### Defined in
+
+[server/ServerComponent.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L9)
+
+___
+
+### seq
+
+▪ `Static` **seq**: `number` = `0`
+
+#### Defined in
+
+[datastore/DataStore.ts:89](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L89)
 
 ## Accessors
 
-###  acl
+### appDelegate
 
-• **get acl**(): *any*
+• `get` **appDelegate**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[acl](servercomponent.md#acl)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:23
+`any`
 
-**Returns:** *any*
+#### Inherited from
 
-___
+ServerComponent.appDelegate
 
-###  appDelegate
+#### Defined in
 
-• **get appDelegate**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[appDelegate](servercomponent.md#appdelegate)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:18
-
-**Returns:** *any*
+[server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L18)
 
 ___
 
-###  cache
+### cache
 
-• **get cache**(): *[CacheManager](cachemanager.md)*
+• `get` **cache**(): [`CacheManager`](CacheManager.md)
 
-*Inherited from [ServerComponent](servercomponent.md).[cache](servercomponent.md#cache)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:17
+[`CacheManager`](CacheManager.md)
 
-**Returns:** *[CacheManager](cachemanager.md)*
+#### Inherited from
 
-___
+ServerComponent.cache
 
-###  configuration
+#### Defined in
 
-• **get configuration**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[configuration](servercomponent.md#configuration)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:14
-
-**Returns:** *any*
+[server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L17)
 
 ___
 
-###  cron
+### configuration
 
-• **get cron**(): *[Cron](cron.md)*
+• `get` **configuration**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[cron](servercomponent.md#cron)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:16
+`any`
 
-**Returns:** *[Cron](cron.md)*
+#### Inherited from
 
-___
+ServerComponent.configuration
 
-###  dataStore
+#### Defined in
 
-• **get dataStore**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[dataStore](servercomponent.md#datastore)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:20
-
-**Returns:** *any*
+[server/ServerComponent.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L14)
 
 ___
 
-###  definitions
+### cron
 
-• **get definitions**(): *any*
+• `get` **cron**(): [`Cron`](Cron.md)
 
-*Inherited from [ServerComponent](servercomponent.md).[definitions](servercomponent.md#definitions)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:21
+[`Cron`](Cron.md)
 
-**Returns:** *any*
+#### Inherited from
 
-___
+ServerComponent.cron
 
-###  engine
+#### Defined in
 
-• **get engine**(): *[IEngine](../interfaces/iengine.md)*
-
-*Inherited from [ServerComponent](servercomponent.md).[engine](servercomponent.md#engine)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:19
-
-**Returns:** *[IEngine](../interfaces/iengine.md)*
+[server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L16)
 
 ___
 
-###  iam
+### dataStore
 
-• **get iam**(): *any*
+• `get` **dataStore**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[iam](servercomponent.md#iam)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:24
+`any`
 
-**Returns:** *any*
+#### Inherited from
 
-___
+ServerComponent.dataStore
 
-###  listener
+#### Defined in
 
-• **get listener**(): *any*
-
-*Inherited from [ServerComponent](servercomponent.md).[listener](servercomponent.md#listener)*
-
-Defined in bpmnServer/src/server/ServerComponent.ts:22
-
-**Returns:** *any*
+[server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L20)
 
 ___
 
-###  logger
+### definitions
 
-• **get logger**(): *any*
+• `get` **definitions**(): `any`
 
-*Inherited from [ServerComponent](servercomponent.md).[logger](servercomponent.md#logger)*
+#### Returns
 
-Defined in bpmnServer/src/server/ServerComponent.ts:15
+`any`
 
-**Returns:** *any*
+#### Inherited from
+
+ServerComponent.definitions
+
+#### Defined in
+
+[server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L21)
+
+___
+
+### engine
+
+• `get` **engine**(): [`IEngine`](../interfaces/IEngine.md)
+
+#### Returns
+
+[`IEngine`](../interfaces/IEngine.md)
+
+#### Inherited from
+
+ServerComponent.engine
+
+#### Defined in
+
+[server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L19)
+
+___
+
+### listener
+
+• `get` **listener**(): `any`
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+ServerComponent.listener
+
+#### Defined in
+
+[server/ServerComponent.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L22)
+
+___
+
+### logger
+
+• `get` **logger**(): `any`
+
+#### Returns
+
+`any`
+
+#### Implementation of
+
+[IDataStore](../interfaces/IDataStore.md).[logger](../interfaces/IDataStore.md#logger)
+
+#### Inherited from
+
+ServerComponent.logger
+
+#### Defined in
+
+[server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/server/ServerComponent.ts#L15)
 
 ## Methods
 
-###  check
+### convertColl
 
-▸ **check**(`event`: any, `item`: any): *Promise‹number›*
+▸ **convertColl**(`coll`, `cls`): `void`
 
-Defined in bpmnServer/src/datastore/DataStore.ts:97
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `coll` | `any` |
+| `cls` | `any` |
 
-Name | Type |
------- | ------ |
-`event` | any |
-`item` | any |
+#### Returns
 
-**Returns:** *Promise‹number›*
+`void`
 
-___
+#### Defined in
 
-###  convertColl
-
-▸ **convertColl**(`coll`: any, `cls`: any): *void*
-
-Defined in bpmnServer/src/datastore/DataStore.ts:231
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`coll` | any |
-`cls` | any |
-
-**Returns:** *void*
+[datastore/DataStore.ts:167](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L167)
 
 ___
 
-###  convertObj
+### convertObj
 
-▸ **convertObj**(`obj`: any, `cls`: any): *any*
+▸ **convertObj**(`obj`, `cls`): `any`
 
-Defined in bpmnServer/src/datastore/DataStore.ts:227
+#### Parameters
 
-**Parameters:**
+| Name | Type |
+| :------ | :------ |
+| `obj` | `any` |
+| `cls` | `any` |
 
-Name | Type |
------- | ------ |
-`obj` | any |
-`cls` | any |
+#### Returns
 
-**Returns:** *any*
+`any`
 
-___
+#### Defined in
 
-###  deleteInstances
-
-▸ **deleteInstances**(`query`: any): *Promise‹any›*
-
-*Implementation of [IDataStore](../interfaces/idatastore.md)*
-
-Defined in bpmnServer/src/datastore/DataStore.ts:391
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`query` | any |
-
-**Returns:** *Promise‹any›*
+[datastore/DataStore.ts:163](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L163)
 
 ___
 
-###  findInstance
+### deleteInstances
 
-▸ **findInstance**(`query`: any, `options`: any): *Promise‹[IInstanceData](../interfaces/iinstancedata.md)›*
+▸ **deleteInstances**(`query`): `Promise`\<`any`\>
 
-*Implementation of [IDataStore](../interfaces/idatastore.md)*
+#### Parameters
 
-Defined in bpmnServer/src/datastore/DataStore.ts:206
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`query` | any |
-`options` | any |
+`Promise`\<`any`\>
 
-**Returns:** *Promise‹[IInstanceData](../interfaces/iinstancedata.md)›*
+#### Implementation of
 
-___
+[IDataStore](../interfaces/IDataStore.md).[deleteInstances](../interfaces/IDataStore.md#deleteinstances)
 
-###  findInstances
+#### Defined in
 
-▸ **findInstances**(`query`: any, `option`: "summary" | "full" | any): *Promise‹any›*
-
-Defined in bpmnServer/src/datastore/DataStore.ts:238
-
-**Parameters:**
-
-Name | Type | Default |
------- | ------ | ------ |
-`query` | any | - |
-`option` | "summary" &#124; "full" &#124; any | "summary" |
-
-**Returns:** *Promise‹any›*
+[datastore/DataStore.ts:225](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L225)
 
 ___
 
-###  findItem
+### findInstance
 
-▸ **findItem**(`query`: any): *Promise‹any›*
+▸ **findInstance**(`query`, `options`): `Promise`\<[`IInstanceData`](../interfaces/IInstanceData.md)\>
 
-*Implementation of [IDataStore](../interfaces/idatastore.md)*
+#### Parameters
 
-Defined in bpmnServer/src/datastore/DataStore.ts:196
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
+| `options` | `any` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`query` | any |
+`Promise`\<[`IInstanceData`](../interfaces/IInstanceData.md)\>
 
-**Returns:** *Promise‹any›*
+#### Implementation of
+
+[IDataStore](../interfaces/IDataStore.md).[findInstance](../interfaces/IDataStore.md#findinstance)
+
+#### Defined in
+
+[datastore/DataStore.ts:142](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L142)
 
 ___
 
-###  findItems
+### findInstances
 
-▸ **findItems**(`query`: any): *Promise‹any[]›*
+▸ **findInstances**(`query`, `option?`): `Promise`\<[`IInstanceData`](../interfaces/IInstanceData.md)[]\>
 
-*Implementation of [IDataStore](../interfaces/idatastore.md)*
+#### Parameters
 
-Defined in bpmnServer/src/datastore/DataStore.ts:272
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `query` | `any` | `undefined` |
+| `option` | `any` | `'summary'` |
+
+#### Returns
+
+`Promise`\<[`IInstanceData`](../interfaces/IInstanceData.md)[]\>
+
+#### Implementation of
+
+[IDataStore](../interfaces/IDataStore.md).[findInstances](../interfaces/IDataStore.md#findinstances)
+
+#### Defined in
+
+[datastore/DataStore.ts:177](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L177)
+
+___
+
+### findItem
+
+▸ **findItem**(`query`): `Promise`\<[`IItemData`](../interfaces/IItemData.md)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
+
+#### Returns
+
+`Promise`\<[`IItemData`](../interfaces/IItemData.md)\>
+
+#### Implementation of
+
+[IDataStore](../interfaces/IDataStore.md).[findItem](../interfaces/IDataStore.md#finditem)
+
+#### Defined in
+
+[datastore/DataStore.ts:132](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L132)
+
+___
+
+### findItems
+
+▸ **findItems**(`query`): `Promise`\<[`IItemData`](../interfaces/IItemData.md)[]\>
 
 scenario:
 itemId			{ items { id : value } }
@@ -443,77 +522,99 @@ New approach:
 just like MongoDB
 itemId			{ items { id : value } }
 itemKey			{ items {key: value } }
-instance, task	{ instance: { id: instanceId }, items: { elementId: value }}
-message			{ items: { messageId: nameofmessage, key: value } {}
-status			{ items: {status: 'wait' } }
+instance, task	{  id: instanceId , items.elementId: value }
+message			{ items.messageId: nameofmessage, key: value } {}
+status			{ items.status: 'wait' } }
 custom: { query: query, projection: projection }
 
-**Parameters:**
+Problem with Mongodb:	projection $elematch returns only the first record
 
-Name | Type | Description |
------- | ------ | ------ |
-`query` | any |   |
+#### Parameters
 
-**Returns:** *Promise‹any[]›*
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
+
+#### Returns
+
+`Promise`\<[`IItemData`](../interfaces/IItemData.md)[]\>
+
+#### Implementation of
+
+[IDataStore](../interfaces/IDataStore.md).[findItems](../interfaces/IDataStore.md#finditems)
+
+#### Defined in
+
+[datastore/DataStore.ts:211](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L211)
 
 ___
 
-###  install
+### install
 
-▸ **install**(): *Promise‹any›*
-
-*Implementation of [IDataStore](../interfaces/idatastore.md)*
-
-Defined in bpmnServer/src/datastore/DataStore.ts:404
+▸ **install**(): `Promise`\<`void`\>
 
 first time installation of DB
 
 creates a new collection and add an index
 
-**Returns:** *Promise‹any›*
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+[IDataStore](../interfaces/IDataStore.md).[install](../interfaces/IDataStore.md#install)
+
+#### Defined in
+
+[datastore/DataStore.ts:238](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L238)
 
 ___
 
-###  loadInstance
+### loadInstance
 
-▸ **loadInstance**(`instanceId`: any): *Promise‹object›*
+▸ **loadInstance**(`instanceId`, `options?`): `Promise`\<\{ `instance`: [`IInstanceData`](../interfaces/IInstanceData.md) = instanceData; `items`: `any`[]  }\>
 
-*Implementation of [IDataStore](../interfaces/idatastore.md)*
+#### Parameters
 
-Defined in bpmnServer/src/datastore/DataStore.ts:108
+| Name | Type |
+| :------ | :------ |
+| `instanceId` | `any` |
+| `options` | `Object` |
 
-**Parameters:**
+#### Returns
 
-Name | Type |
------- | ------ |
-`instanceId` | any |
+`Promise`\<\{ `instance`: [`IInstanceData`](../interfaces/IInstanceData.md) = instanceData; `items`: `any`[]  }\>
 
-**Returns:** *Promise‹object›*
+#### Implementation of
 
-___
+[IDataStore](../interfaces/IDataStore.md).[loadInstance](../interfaces/IDataStore.md#loadinstance)
 
-###  monitorExecution
+#### Defined in
 
-▸ **monitorExecution**(`execution`: [Execution](execution.md)): *void*
-
-Defined in bpmnServer/src/datastore/DataStore.ts:36
-
-**Parameters:**
-
-Name | Type |
------- | ------ |
-`execution` | [Execution](execution.md) |
-
-**Returns:** *void*
+[datastore/DataStore.ts:49](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L49)
 
 ___
 
-###  save
+### save
 
-▸ **save**(): *Promise‹void›*
+▸ **save**(`instance`, `options?`): `Promise`\<`void`\>
 
-*Implementation of [IDataStore](../interfaces/idatastore.md)*
+#### Parameters
 
-Defined in bpmnServer/src/datastore/DataStore.ts:59
+| Name | Type |
+| :------ | :------ |
+| `instance` | `any` |
+| `options` | `Object` |
 
-**Returns:** *Promise‹void›*
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+[IDataStore](../interfaces/IDataStore.md).[save](../interfaces/IDataStore.md#save)
+
+#### Defined in
+
+[datastore/DataStore.ts:46](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/DataStore.ts#L46)
