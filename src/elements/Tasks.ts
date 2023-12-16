@@ -64,21 +64,32 @@ class ServiceTask extends Node {
 //
         let obj = servicesProvider;
         let method = null;
-        if (obj && this.serviceName)  {
-
-            const objs = this.serviceName.split('.');
-            for (var i = 0; i < objs.length - 1; i++) {
-                const o = objs[i];
-                obj = obj[o];
+        if (obj && this.serviceName) {
+                const objnames = this.serviceName.split('.');
+                for (var i = 0; i < objnames.length ; i++) {
+                    const objname = objnames[i];
+                    obj = obj[objname];
+                }
+                method = obj;
             }
-            method = objs[objs.length - 1];
-        }
 //
+              //delegate service name defined in task but not found in the service provider
+            if(this.serviceName && typeof method!='function'){
+                console.log(`deletegate ${this.serviceName} not found, run "serviceCalled"`)
+                ret = yield appDelegate['serviceCalled'](item.input, item.context);
+            }else if (!this.serviceName)  // undefined delegates in task, use default serviceCall
+                ret = yield appDelegate['serviceCalled'](item.input, item.context);
+            else{
+                //everything fine
+                ret = yield method(item.input, item.context);                
+            }
 
-        if (obj && obj[this.serviceName])
-            ret = await obj[this.serviceName](item.input, item.context);
-        else
-            ret = await appDelegate['serviceCalled'](item.input,item.context);
+        
+        //below code no validation, will cause run time error
+       // if (obj && obj[this.serviceName])
+         //   ret = await obj[this.serviceName](item.input, item.context);
+       // else
+         //   ret = await appDelegate['serviceCalled'](item.input,item.context);
         
         item.log("service returned " + ret);
         item.output = ret;
