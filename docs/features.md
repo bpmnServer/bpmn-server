@@ -6,7 +6,9 @@ Features
 - [Persistence](#Persistence)
 - [Data Query](#data-query)
 - [Customization](#customization)
-- [Cache]()
+- [Scripting](./scripting.md)
+- [AccessControl](./userAssignment.md)
+- [Concurrency]()
 - [Logging]()
 
 

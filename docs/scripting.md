@@ -80,6 +80,15 @@ There are for User Tasks only
 | assign   |   invoked after `assign` command is issued |
 | validate  |invoked after `assign` or `invoke`  command is issued|
 
+`validate` scripts have a special handling, that they can stop execution by raising errors, to return errors to the execution:
+```
+    // do some checking here
+    return {error:'Not a valid Input'};
+
+```
+As a result execution will raise an exception and the command will fail.
+
+
 ## Item Scripts Scope and variables
 Items Expressions and Listeners have the following variables
 
