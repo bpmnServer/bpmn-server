@@ -16,9 +16,13 @@ class CamundaFormData extends Behaviour {
     }
     getFields() { return this.fields; }
     describe() {
+        let desc = [];
         let fields = '';
-        this.fields.forEach(f => { fields += `<p/>field id:'${f.id}'  name:'${f.label}' type: ${f.type} ` });
-        return ['input fields', fields];
+        this.fields.forEach(f => {
+            desc.push(['Form Field', `id: ${f.id} name: ${f.label} type: ${ f.type }`]);
+            //fields += `<p/>field id:'${f.id}'  name:'${f.label}' type: ${f.type} `
+        });
+        return desc;//['input fields', fields];
     }
 }
 

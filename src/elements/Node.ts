@@ -20,6 +20,8 @@ class Node extends Element {
     signalId;
     initiator;
     assignee;
+    candidateGroups;
+    candidateUsers;
     scripts = new Map();
     get processId() : any {
 
@@ -42,11 +44,13 @@ class Node extends Element {
     async validate(item: Item) {
 
         let validate = await item.node.doEvent(item, EXECUTION_EVENT.node_validate,item.status);
-        console.log('validate:', validate,item.options);
         validate.forEach(retVal => {
-            if (retVal == false)
-                item.token.execution.logger.error('Validation failed');
-
+            if (retVal) {
+                const err = retVal['error'];
+                if (err) {
+                    item.token.execution.error('Validation failed with error:' + err);
+                }
+            }
         });
 
     }
@@ -158,7 +162,7 @@ class Node extends Element {
 
         let ret =await this.start(item);
 
-        item.token.log('Node('+this.name+'|'+this.id+').execute: start complete ...token:'+item.token.id+' ret:'+ret);
+        item.token.info('Node('+this.name+'|'+this.id+').execute: start complete ...token:'+item.token.id+' ret:'+ret);
 
         for (var i = 0; i < behaviourlist.length; i++) {
             const b = behaviourlist[i];
@@ -266,6 +270,7 @@ class Node extends Element {
         }
     }
     async end(item: Item,cancel:Boolean=false) {
+        item.token.info('Node(' + this.name + '|' + this.id + ').ended: item=' + item.id);
         item.token.log('Node('+this.name+'|'+this.id+').end: item=' + item.id+ ' cancel:'+cancel + ' attachments:'+this.attachments.length);
         /**
          * Rule:    boundary events are canceled when owner task status is 'end'
@@ -338,6 +343,21 @@ class Node extends Element {
         }
 
 
+    }
+    describe() {
+        var desc = [];
+        if (this.initiator)
+            desc.push(['Initiator', this.initiator]);
+        if (this.assignee)
+            desc.push(['assignee', this.assignee]);
+
+        this.scripts.forEach((scripts, event) => {
+            scripts.forEach(scr => {
+                desc.push([`script on ${event} `, `${scr}`]);
+            });
+        })
+
+        return desc;
     }
 }
 

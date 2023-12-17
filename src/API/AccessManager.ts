@@ -22,8 +22,6 @@ class SecureUser implements ISecureUser {
         else
             console.log('Security is enabled as requested in .env');
 
-        console.log(this);
-
     }
     static SystemUser() {
         return new SecureUser({ userName: 'system', userGroups: [USER_ROLE.SYSTEM], tenantId: null, modelsOwner: null });

@@ -22,10 +22,6 @@ class ScriptTask extends Node {
         }
         return NODE_ACTION.end;
     }
-    describe() {
-
-        return [[`script on ${this.def.script} ${this.scripts}`]];
-    }
 }
 /**
  * 
@@ -63,7 +59,7 @@ class ServiceTask extends Node {
         const servicesProvider=await appDelegate.getServicesProvider(item.token.execution);
 //
         let obj = servicesProvider;
-        let method = null;
+        let method = this.serviceName;
         if (obj && this.serviceName)  {
 
             const objs = this.serviceName.split('.');
@@ -73,16 +69,17 @@ class ServiceTask extends Node {
             }
             method = objs[objs.length - 1];
         }
-//
 
-        if (obj && obj[this.serviceName])
-            ret = await obj[this.serviceName](item.input, item.context);
-        else
-            ret = await appDelegate['serviceCalled'](item.input,item.context);
+        if (obj && obj[method]) {
+            ret = await obj[method](item.input, item.context);
+        }
+        else {
+            ret = await appDelegate['serviceCalled'](item.input, item.context);
+        }
         
         item.log("service returned " + ret);
         item.output = ret;
-        item.log('service ', this.serviceName,'completed-output', ret, item.output);
+        item.log('service '+ this.serviceName+' completed-output:' + ret + item.output);
         // await item.node.setInput(item,ret);
 
         if (item.context.action && item.context.action == NODE_ACTION.wait) {
@@ -94,7 +91,9 @@ class ServiceTask extends Node {
     }
     describe() {
 
-        return [[`service  ${this.serviceName}`]];
+        let desc = super.describe();
+        desc.push([[`service delegate:`,` ${this.serviceName}`]]);
+        return desc;
     }
 }
 //    <bpmn2:businessRuleTask id="Task_1lcamp6" name="Vacation"  camunda:decisionRef="Vacation">
@@ -145,6 +144,10 @@ class SendTask extends ServiceTask {
 
 class UserTask extends Node {
 
+    async end(item: Item) {
+        item.token.info(`Task ${this.name} -${this.id} ended by ${item.token.execution.userName}`);
+        return await super.end(item);
+    }
     async start(item: Item): Promise<NODE_ACTION> {
         if (this.def.$attrs)
             {
@@ -162,7 +165,8 @@ class UserTask extends Node {
 
             item.candidateGroups.push(this.lane);
             }
-            
+
+        item.token.info(`Task ${this.name} -${this.id} started.`);
         return await super.start(item);
     }
     async setAssignVal(item,attr,dateFormat=false) {
@@ -192,7 +196,18 @@ class UserTask extends Node {
         item[attr] = val;
         item.token.log('..setting attribute '+attr+' exp: '+exp+'='+val);
         //console.log('----setAttVal', attr, exp, val);
-     }
+    }
+    describe() {
+        let attrs = ["assignee","candidateGroups", "candidateUsers", "dueDate", "followUpDate", "priority"];
+        let desc = super.describe();
+
+        attrs.forEach(attr => {
+            let val = this.def.$attrs["camunda:" + attr];
+            if (val)
+                desc.push([attr, val]);
+        });
+        return desc;
+    }
     get requiresWait() { return true; }
     get canBeInvoked() { return true; }
 }

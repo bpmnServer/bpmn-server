@@ -16,7 +16,7 @@ class TerminateBehaviour extends Behaviour {
             });
     }
     describe() {
-        return ['','Terminates all active nodes'];
+        return [['','Terminates all active nodes']];
     }
 }
 

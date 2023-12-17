@@ -80,7 +80,16 @@ class TimerBehaviour extends Behaviour {
 
     }
     describe() {
-        return ['timer','is a timer duration='+this.duration];
+        let spec = '';
+        if (this.duration)
+            spec = 'Duration:'+ this.duration;
+        else if (this.timeCycle)
+            spec = 'Cycle:'+ this.timeCycle;
+        else if (this.timeDate)
+            spec ='DateTime:'+ this.timeDate;
+        
+
+        return [['timer',spec]];
     }
     /**
      * return the next time the timer is due
