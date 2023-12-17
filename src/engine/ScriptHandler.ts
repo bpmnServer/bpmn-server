@@ -115,6 +115,7 @@ class ScriptHandler {
     }
     static getJSvars(scope) {
         let isToken = scope.hasOwnProperty('startNodeId');
+        let isExecution = scope.hasOwnProperty('tokens');
 
         if (isToken) {
             return `
@@ -125,6 +126,14 @@ class ScriptHandler {
             var appServices=this.execution.servicesProvider;
             var appUtils=appDelegate.appUtils;
             var item=this;  // for backward support only
+            `;
+
+        }
+        else if (isExecution) {
+            return `
+            var appDelegate=this.appDelegate;
+            var appServices=this.servicesProvider;
+            var appUtils=appDelegate.appUtils;
             `;
 
         }

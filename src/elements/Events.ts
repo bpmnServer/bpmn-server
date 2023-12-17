@@ -116,19 +116,19 @@ class EndEvent extends Event {
     }
 }
 class StartEvent extends Event {
-    candidateGroups;
-    candidateUsers;
     constructor(id, process, type, def) {
         super(id, process, type, def);
         this.candidateGroups= this.def.$attrs["camunda:candidateGroups"];
         this.candidateUsers = this.def.$attrs["camunda:candidateUsers"];
+        if (this.def.$attrs && this.def.$attrs["camunda:initiator"]) {
+            this.initiator = this.def.$attrs["camunda:initiator"];
+        }
     }
     async start(item: Item): Promise<NODE_ACTION> {
 
-        if (this.def.$attrs && this.def.$attrs["camunda:initiator"])
+        if (this.initiator)
             {
-            const initiator=this.def.$attrs["camunda:initiator"];
-            item.token.data[initiator]=item.userName;
+            item.token.data[this.initiator]=item.userName;
             }
         return await super.start(item);
     }

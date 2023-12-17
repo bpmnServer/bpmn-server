@@ -1,19 +1,21 @@
 
-import { IBPMNServer, IEngine, IDefinition, IConfiguration, IDataStore , EXECUTION_EVENT
-        , IExecution, IInstanceData,IItemData ,ISecureUser} from '../';
+import {
+    IBPMNServer, IEngine, IDefinition, IConfiguration, IDataStore, EXECUTION_EVENT
+    , IExecution, IInstanceData, IItemData, ISecureUser
+} from '../';
 
 
 class BPMNAPI {
     server: IBPMNServer;
-    engine: Engine;
-    data: Data;
-    model: Model;
+    engine: APIEngine;
+    data: APIData;
+    model: APIModel;
 
-    constructor(server:IBPMNServer) {
+    constructor(server: IBPMNServer) {
         this.server = server;
-        this.engine = new Engine(this);
-        this.data = new Data(this);
-        this.model = new Model(this);
+        this.engine = new APIEngine(this);
+        this.data = new APIData(this);
+        this.model = new APIModel(this);
     }
 }
 class APIComponent {
@@ -38,41 +40,41 @@ class APIComponent {
 
 **/
 interface IEngineAPI {
-     start(modelName, data : {}, user: ISecureUser , options?: {}): Promise<IExecution>;
-     invoke(query, data : {}, user: ISecureUser, options?: {}): Promise<IExecution>;
-     assign(query, data, assignment, user: ISecureUser,options?:{}): Promise<IExecution>;
-     throwMessage(messageId, data, messageMatchingKey, user: ISecureUser,options?:{}): Promise<IExecution>;
-     throwSignal(signalId, data, messageMatchingKey, user: ISecureUser,options?:{}):  Promise<IExecution>;
-     startEvent(query, elementId, data: {}, user: ISecureUser,options?:{}): Promise<IExecution>;
+    start(modelName, data: {}, user: ISecureUser, options?: {}): Promise<IExecution>;
+    invoke(query, data: {}, user: ISecureUser, options?: {}): Promise<IExecution>;
+    assign(query, data, assignment, user: ISecureUser, options?: {}): Promise<IExecution>;
+    throwMessage(messageId, data, messageMatchingKey, user: ISecureUser, options?: {}): Promise<IExecution>;
+    throwSignal(signalId, data, messageMatchingKey, user: ISecureUser, options?: {}): Promise<IExecution>;
+    startEvent(query, elementId, data: {}, user: ISecureUser, options?: {}): Promise<IExecution>;
 }
 
-class Engine extends APIComponent implements IEngineAPI {
+class APIEngine extends APIComponent implements IEngineAPI {
 
-    async start(name, data = {}, user: ISecureUser , options = {}): Promise<IExecution> {
+    public async start(name, data = {}, user: ISecureUser, options = {}): Promise<IExecution> {
 
         return await this.server.engine.start(name, data, options['startNodeId'], user.userName, options);
     }
-    async invoke(query, data = {}, user: ISecureUser, options = {}): Promise<IExecution> {
+    public async invoke(query, data = {}, user: ISecureUser, options = {}): Promise<IExecution> {
         query = user.qualifyItems(query);
-        return await this.server.engine.invoke(query, data, user.userName,options);
+        return await this.server.engine.invoke(query, data, user.userName, options);
     }
 
-    async assign(query, data, assignment, user: ISecureUser,options={}): Promise<IExecution> {
+    public async assign(query, data, assignment, user: ISecureUser, options = {}): Promise<IExecution> {
         query = user.qualifyItems(query);
-        return await this.server.engine.assign(query, data, assignment, user.userName,options);
+        return await this.server.engine.assign(query, data, assignment, user.userName, options);
     }
-    async throwMessage(messageId, data, messageMatchingKey, user: ISecureUser,options={}) {
+    public async throwMessage(messageId, data, messageMatchingKey, user: ISecureUser, options = {}) {
         return await this.server.engine.throwMessage(messageId, data, messageMatchingKey);
     }
-    async throwSignal(signalId, data, messageMatchingKey, user: ISecureUser,options={}) {
+    public async throwSignal(signalId, data, messageMatchingKey, user: ISecureUser, options = {}) {
         return await this.server.engine.throwSignal(signalId, data, messageMatchingKey);
     }
-    async startEvent(query, elementId, data = {}, user: ISecureUser,options={}): Promise<IExecution> {
+    public async startEvent(query, elementId, data = {}, user: ISecureUser, options = {}): Promise<IExecution> {
         return await this.server.engine.startEvent(query, elementId, data);
     }
 }
-class Data extends APIComponent {
-    async getPendingUserTasks(query, user: ISecureUser): Promise<IItemData[]> {
+class APIData extends APIComponent {
+    public async getPendingUserTasks(query, user: ISecureUser): Promise<IItemData[]> {
 
         query['items.status'] = 'wait';
         query['items.type'] = 'bpmn:UserTask';
@@ -80,69 +82,69 @@ class Data extends APIComponent {
         return this.findItems(query, user);
     }
 
-    async findItems(query, user: ISecureUser): Promise<IItemData[]> {
+    public async findItems(query, user: ISecureUser): Promise<IItemData[]> {
         query = user.qualifyInstances(query);
         return await this.server.dataStore.findItems(query);
     }
-    async findItem(query, user: ISecureUser): Promise<IItemData> {
+    public async findItem(query, user: ISecureUser): Promise<IItemData> {
         query = user.qualifyInstances(query);
         const items = await this.server.dataStore.findItems(query);
         return items[0];
     }
-    async findInstances(query, user: ISecureUser, options): Promise<IInstanceData[]> {
+    public async findInstances(query, user: ISecureUser, options): Promise<IInstanceData[]> {
         query = user.qualifyInstances(query);
         return await this.server.dataStore.findInstances(query, options);
     }
-    async deleteInstances(query, user: ISecureUser) {
+    public async deleteInstances(query, user: ISecureUser) {
         query = user.qualifyDeleteInstances(query);
         return await this.server.dataStore.deleteInstances(query)
     }
 }
-class Model extends APIComponent {
+class APIModel extends APIComponent {
 
-    async save(name, source, svg, user: ISecureUser) {
+    public async save(name, source, svg, user: ISecureUser) {
 
         if (await user.canModifyModel(name))
-             return await this.server.definitions.save(name, source, svg, user.modelsOwner);
-         else
+            return await this.server.definitions.save(name, source, svg, user.modelsOwner);
+        else
             return false;
-     }
-    async list(user: ISecureUser): Promise<string[]> {
+    }
+    public async list(user: ISecureUser): Promise<string[]> {
 
-        const query={};
+        const query = {};
         if (user.tenantId)
-            query['owner']= user.modelsOwner;
+            query['owner'] = user.modelsOwner;
         return await this.server.definitions.getList(query);
-     }
-    async findEvents(query, user: ISecureUser) {
+    }
+    public async findEvents(query, user: ISecureUser) {
 
-        return await this.server.definitions.findEvents(query,user.modelsOwner);
-     }
-    async findStartEvents(query, user: ISecureUser) {
+        return await this.server.definitions.findEvents(query, user.modelsOwner);
+    }
+    public async findStartEvents(query, user: ISecureUser) {
         query['events.subType'] = null;
         query = user.qualifyStartEvents(query);
         return await this.server.definitions.findEvents(query, user.modelsOwner);
     }
-    async delete(name, user: ISecureUser) {
+    public async delete(name, user: ISecureUser) {
         if (await user.canDeleteModel(name))
-             return await this.server.definitions.deleteModel(name, user.modelsOwner);
-         return false;
-     }
-    async rename(name, newName, user: ISecureUser) {
+            return await this.server.definitions.deleteModel(name, user.modelsOwner);
+        return false;
+    }
+    public async rename(name, newName, user: ISecureUser) {
         if (await user.canModifyModel(name))
-            return await this.server.definitions.renameModel(name,newName,user.modelsOwner);
-         return false;
-     }
-    async getSource(name, user: ISecureUser) {
-        return await this.server.definitions.getSource(name,user.modelsOwner);
-     }
-    async load(name, user: ISecureUser) {
+            return await this.server.definitions.renameModel(name, newName, user.modelsOwner);
+        return false;
+    }
+    public async getSource(name, user: ISecureUser) {
+        return await this.server.definitions.getSource(name, user.modelsOwner);
+    }
+    public async load(name, user: ISecureUser) {
         return await this.server.definitions.load(name, user.modelsOwner);
     }
-    async export(query, folder, user: ISecureUser) {
+    public async export(query, folder, user: ISecureUser) {
 
     }
 }
 
 
-export { BPMNAPI}
+export { BPMNAPI, APIEngine, APIData, APIModel }

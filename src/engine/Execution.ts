@@ -143,7 +143,7 @@ class Execution extends ServerComponent implements IExecution {
             startNode = this.getNodeById(startNodeId);
         if (!startNode) {
 
-            this.logger.error("No Start Node");
+            this.error("No Start Node");
             return;
 
         }
@@ -198,7 +198,7 @@ class Execution extends ServerComponent implements IExecution {
         await this.item.node.doEvent(this.item, EXECUTION_EVENT.node_assign);
 
         await this.item.node.validate(this.item);
-
+        this.info(`Task ${this.item.node.name} -${this.item.node.id} Assigned by ${this.userName} to:${assignment}`);
         await this.save();
         this.log('Execution('+this.name+').assign: finished!');
     }
@@ -307,7 +307,7 @@ class Execution extends ServerComponent implements IExecution {
                     console.log(`** trying to execute item ${i.id} - ${i.node.id} token ${i.token.id} currentItem ${i.token.currentItem.id}- token current ${i.token.currentNode.id} - token status ${i.token.status}`);
                     }
                 });
-                this.logger.error("*** ERROR *** task id not valid:" + executionId);
+                this.error("*** ERROR *** task id not valid:" + executionId);
             }
         }
 
@@ -551,7 +551,11 @@ class Execution extends ServerComponent implements IExecution {
     log(...msg) {
         this.instance.logs.push(this.logger.log(...msg));
     }
+    info(...msg) {
+        this.instance.logs.push(this.logger.info(...msg));
+    }
     error(msg) {
+        this.doExecutionEvent(this, EXECUTION_EVENT.process_error);
         this.instance.logs.push(msg);
         this.logger.error(msg);
     }
@@ -572,7 +576,7 @@ class Execution extends ServerComponent implements IExecution {
         let target = this.getAndCreateData(dataPath, asArray);
 
         if (!target) {
-            this.logger.error("*** Error *** target is not defined");
+            this.error("*** Error *** target is not defined");
             return;
         }
 

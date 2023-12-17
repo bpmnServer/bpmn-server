@@ -8,6 +8,7 @@ import { CacheManager } from './CacheManager';
 import { Cron } from './Cron';
 import { EventEmitter } from 'events';
 
+console.log('BPMNServer from ',__filename);
 
 process.on('uncaughtException', function (err) {
 	console.log('***************BPMNServer UNCAUGHT ERROR***********');

@@ -41,9 +41,9 @@ class MessageEventBehaviour extends Behaviour {
     }
     describe() {
         if (this.node.isCatching) 
-            return ['Message', `catches message '${this.messageId}'`];
+            return [['Message', `catches message '${this.messageId}'`]];
         else
-            return ['Message', `throws message '${this.messageId}'`];
+            return [['Message', `throws message '${this.messageId}'`]];
     }
 }
 class SignalEventBehaviour extends Behaviour {

@@ -31,7 +31,7 @@ class Logger implements ILogger {
                 FS.appendFileSync(this.toFile, message);        
         }
         this.debugMsgs.push({date:new Date(),message, type});
-        return ({date:new Date(),message});
+        return ({date:new Date(),message,type});
     }
     clear() {
 
@@ -41,15 +41,18 @@ class Logger implements ILogger {
 
         return this.debugMsgs;
     }
+    info(...message) {
+        return this.msg(this.toString(...message), 'info');
+    }
     debug(...message)
     {
-        this.msg(this.toString(...message),'debug');
+        return this.msg(this.toString(...message),'debug');
     }
     warn(...message) {
-        this.msg(this.toString(...message),'warn');
+        return this.msg(this.toString(...message),'warn');
     }
     log(...message) {
-        return this.msg(this.toString(...message));
+        return this.msg(this.toString(...message),'log');
     }
     toString(...args) {
         var out = '';

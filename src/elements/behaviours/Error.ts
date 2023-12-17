@@ -30,9 +30,9 @@ class ErrorEventBehaviour extends Behaviour {
     }
     describe() {
         if (this.node.isCatching) 
-            return ['Message', `catches message '${this.errorId}'`];
+            return [['Message', `catches message '${this.errorId}'`]];
         else
-            return ['Message', `throws message '${this.errorId}'`];
+            return [['Message', `throws message '${this.errorId}'`]];
     }
 }
 

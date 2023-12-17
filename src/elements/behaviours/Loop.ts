@@ -38,9 +38,9 @@ class LoopBehaviour extends Behaviour {
     }
     describe() {
         if (this.isSequential)
-            return ['loop', `is a sequential loop based on '${this.collection}'`];
+            return [['loop', `is a sequential loop based on '${this.collection}'`]];
         else
-            return ['loop', `is a parallel loop based on '${this.collection}'`];
+            return [['loop', `is a parallel loop based on '${this.collection}'`]];
 
     }
 

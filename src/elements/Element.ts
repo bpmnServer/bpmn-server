@@ -18,7 +18,9 @@ class Element implements IElement {
     isFlow=false;
     lane;
     continue(item: Item) { }
-    describe():string[][] { return [];}
+    describe(): string[][] {
+        return [];
+    }
     restored(item: Item) {
         this.behaviours.forEach(behav => { behav.restored(item) });
     }

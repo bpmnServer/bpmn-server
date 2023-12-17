@@ -55,8 +55,13 @@ enum EXECUTION_EVENT {
     process_restored = 'process.restored', 
     process_resumed = 'process_resumed',
     process_wait = 'process.wait',
-    process_end = 'process.end', process_terminated = 'process.terminated' ,
-    token_start = 'token.start', token_wait = 'token.wait', token_end = 'token.end', token_terminated = 'token.terminated' 
+    process_end = 'process.end',
+    process_terminated = 'process.terminated',
+    token_start = 'token.start',
+    token_wait = 'token.wait',
+    token_end = 'token.end',
+    token_terminated = 'token.terminated',
+    process_error = 'process.error'
 }
 /*
  *  possible actions by node

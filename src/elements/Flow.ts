@@ -31,7 +31,7 @@ class Flow extends Element implements IFlow {
             return [['condition: ' , expression]];
         }
         else
-            super.describe();
+            return [];
     }
     /**
      * 

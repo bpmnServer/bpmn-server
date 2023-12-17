@@ -45,7 +45,6 @@ class Definition implements IDefinition{
 
         const children = [];
         const process=new Process(processElement,parentProcess);
-
         if (processElement.extensionElements) {
             processElement.extensionElements.values.forEach(ext=>{
                 let scripts = [];
@@ -278,18 +277,23 @@ references:
         const flows = [];
         const processes = [];
         this.processes.forEach(process => {
-            processes.push({ id: process.id, name: process.name, isExecutable: process.isExecutable });
+            processes.push({
+                id: process.id, name: process.name, isExecutable: process.isExecutable,
+                description: process.describe() , docs: process.def.documentation
+            });
         });
         this.nodes.forEach(node => {
-            let behaviours = [];
-            node.behaviours.forEach(behav => {
-                behaviours.push(behav.describe());});
-            
-            elements.push({ id: node.id, name: node.name, type: node.type, process: node.processId , def: node.def, description: node.describe() , behaviours });
+            if (node.type != 'bpmn:SequenceFlow') {
+                let behaviours = [];
+                node.behaviours.forEach(behav => {
+                    behaviours.push(behav.describe());
+                });
+                elements.push({ id: node.id, name: node.name, type: node.type, process: node.processId, def: node.def, description: node.describe(), behaviours ,docs:node.def.documentation });
+            }
         });
 
         this.flows.forEach(flow=> {
-            flows.push({ id: flow.id, from: flow.from.id, to: flow.to.id, type: flow.type, description: flow.describe() });
+            flows.push({ id: flow.id, name: flow.name, from: flow.from.id, to: flow.to.id, type: flow.type, description: flow.describe() });
         });
 
         return JSON.stringify({ root: this.rootElements, processes , elements, flows });
