@@ -59,7 +59,8 @@ class ServiceTask extends Node {
         const servicesProvider=await appDelegate.getServicesProvider(item.token.execution);
 //
         let obj = servicesProvider;
-        let method = this.serviceName;
+
+      let method = this.serviceName;
         if (obj && this.serviceName)  {
 
             const objs = this.serviceName.split('.');
