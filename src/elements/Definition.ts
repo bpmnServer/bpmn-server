@@ -45,7 +45,7 @@ class Definition implements IDefinition{
 
         const children = [];
         const process=new Process(processElement,parentProcess);
-        if (processElement.extensionElements) {
+        if (processElement.extensionElements && processElement.extensionElements.values) {
             processElement.extensionElements.values.forEach(ext=>{
                 let scripts = [];
                 var scrs = ext['$children'];
