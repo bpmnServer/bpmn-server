@@ -8,7 +8,7 @@
     "clean": "rimraf dist",
     "wintest": "node_modules/.bin/mocha",
     "docs:check": "node scripts/test-markdown.js ./docs/API.md && node scripts/test-markdown.js ./docs/Examples.md",
-    "docs:generate:api": "typedoc --plugin typedoc-plugin-markdown --out docs src",
+    "docs:generate:api": "typedoc --options typedoc.json",
     "docs:build": "docusaurus build",
     "docs:dev": "docusaurus start"
   },

@@ -41,11 +41,13 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
-      - name: Check API Docs
-        run: npm run docs:check
       # TODO: add scripts/test-markdown.js back
-      # - name: Build
-      #   run: npm docs:build
+      # - name: Check API Docs
+      #   run: npm run docs:check
+      - name: Gen API Docs
+        run: npm run docs:generate:api
+      - name: Build Docs Site
+        run: npm run docs:build
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
