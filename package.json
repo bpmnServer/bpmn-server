@@ -7,10 +7,10 @@
     "build": "tsc --build",
     "clean": "rimraf dist",
     "wintest": "node_modules/.bin/mocha",
-    "docs:check": "node scripts/test-markdown.js ./docs/API.md && node scripts/test-markdown.js ./docs/Examples.md",
-    "docs:generate:api": "typedoc --options typedoc.json",
     "docs:build": "docusaurus build",
-    "docs:dev": "docusaurus start"
+    "docs:dev": "docusaurus start",
+    "docs:generate:api": "rimraf docs/api && typedoc --options typedoc.json",
+    "docs:check": "node scripts/test-markdown.js ./docs/API.md && node scripts/test-markdown.js ./docs/Examples.md"
   },
   "repository": {
     "type": "git",
