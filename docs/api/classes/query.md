@@ -54,7 +54,7 @@
 
 #### Defined in
 
-[engine/Model.ts:118](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L118)
+[engine/Model.ts:118](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-118)
 
 ## Methods
 
@@ -74,7 +74,7 @@
 
 #### Defined in
 
-[engine/Model.ts:163](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L163)
+[engine/Model.ts:163](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-163)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:160](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L160)
+[engine/Model.ts:160](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-160)
 
 ___
 
@@ -114,7 +114,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:161](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L161)
+[engine/Model.ts:161](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-161)
 
 ___
 
@@ -134,7 +134,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:162](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L162)
+[engine/Model.ts:162](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-162)
 
 ___
 
@@ -154,7 +154,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:167](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L167)
+[engine/Model.ts:167](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-167)
 
 ___
 
@@ -174,7 +174,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:164](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L164)
+[engine/Model.ts:164](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-164)
 
 ___
 
@@ -194,7 +194,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:165](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L165)
+[engine/Model.ts:165](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-165)
 
 ___
 
@@ -214,4 +214,4 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:166](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L166)
+[engine/Model.ts:166](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-166)

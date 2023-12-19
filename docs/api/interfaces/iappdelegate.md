@@ -39,7 +39,7 @@ Application Delegate Object to respond to various events and services:
 
 #### Defined in
 
-[interfaces/common.ts:73](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L73)
+[interfaces/common.ts:73](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-73)
 
 ## Methods
 
@@ -59,7 +59,7 @@ Application Delegate Object to respond to various events and services:
 
 #### Defined in
 
-[interfaces/common.ts:76](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L76)
+[interfaces/common.ts:76](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-76)
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:74](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L74)
+[interfaces/common.ts:74](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-74)
 
 ___
 
@@ -102,7 +102,7 @@ is called when an event throws a message that can not be answered by another pro
 
 #### Defined in
 
-[interfaces/common.ts:87](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L87)
+[interfaces/common.ts:87](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-87)
 
 ___
 
@@ -123,7 +123,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:88](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L88)
+[interfaces/common.ts:88](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-88)
 
 ___
 
@@ -146,7 +146,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:78](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L78)
+[interfaces/common.ts:78](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-78)
 
 ___
 
@@ -168,7 +168,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:75](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L75)
+[interfaces/common.ts:75](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-75)
 
 ___
 
@@ -192,7 +192,7 @@ is called only if the serviceTask has no implementation; otherwise the specified
 
 #### Defined in
 
-[interfaces/common.ts:94](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L94)
+[interfaces/common.ts:94](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-94)
 
 ___
 
@@ -215,7 +215,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:79](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L79)
+[interfaces/common.ts:79](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-79)
 
 ___
 
@@ -235,4 +235,4 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:77](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L77)
+[interfaces/common.ts:77](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-77)

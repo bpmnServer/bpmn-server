@@ -146,7 +146,7 @@ class SendTask extends ServiceTask {
 class UserTask extends Node {
 
     async end(item: Item) {
-        item.token.info(`Task ${this.name} -${this.id} ended by ${item.token.execution.userName}`);
+        item.token.info(`Task ${this.name} ended by ${item.token.execution.userName}`);
         return await super.end(item);
     }
     async start(item: Item): Promise<NODE_ACTION> {

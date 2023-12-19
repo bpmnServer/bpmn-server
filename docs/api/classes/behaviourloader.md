@@ -31,11 +31,11 @@
 
 ### behaviours
 
-▪ `Static` **behaviours**: (\{ `funct`: (`node`: `any`, `def`: `any`) => [`IOBehaviour`](IOBehaviour.md) ; `name`: `string` = Behaviour\_names.CamundaIO } \| \{ `funct`: (`node`: `any`, `def`: `any`) => [`ScriptBehaviour`](ScriptBehaviour.md) ; `name`: `string` = Behaviour\_names.CamundaScript2 } \| \{ `funct`: (`node`: `any`, `def`: `any`) => [`TerminateBehaviour`](TerminateBehaviour.md) ; `name`: `string` = Behaviour\_names.TerminateEventDefinition })[]
+▪ `Static` **behaviours**: (\{ `funct`: (`node`: `any`, `def`: `any`) => [`CamundaFormData`](CamundaFormData.md) ; `name`: `string` = Behaviour\_names.CamundaFormData } \| \{ `funct`: (`node`: `any`, `def`: `any`) => [`SignalEventBehaviour`](SignalEventBehaviour.md) ; `name`: `string` = Behaviour\_names.SignalEventDefinition } \| \{ `funct`: (`node`: `any`, `def`: `any`) => `CompensateEventBehaviour` ; `name`: `string` = Behaviour\_names.CompensateEventDefinition } \| \{ `funct`: (`node`: `any`, `def`: `any`) => `CancelEventBehaviour` ; `name`: `string` = Behaviour\_names.CancelEventDefinition } \| \{ `funct`: (`node`: `any`, `def`: `any`) => [`ScriptBehaviour`](ScriptBehaviour.md) ; `name`: `string` = Behaviour\_names.CamundaScript2 } \| \{ `funct`: (`node`: `any`, `def`: `any`) => [`TerminateBehaviour`](TerminateBehaviour.md) ; `name`: `string` = Behaviour\_names.TerminateEventDefinition })[]
 
 #### Defined in
 
-[elements/behaviours/BehaviourLoader.ts:36](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/BehaviourLoader.ts#L36)
+[elements/behaviours/BehaviourLoader.ts:36](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/BehaviourLoader.ts#lines-36)
 
 ## Methods
 
@@ -75,7 +75,7 @@
 
 #### Defined in
 
-[elements/behaviours/BehaviourLoader.ts:142](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/BehaviourLoader.ts#L142)
+[elements/behaviours/BehaviourLoader.ts:142](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/BehaviourLoader.ts#lines-142)
 
 ___
 
@@ -96,4 +96,4 @@ ___
 
 #### Defined in
 
-[elements/behaviours/BehaviourLoader.ts:114](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/BehaviourLoader.ts#L114)
+[elements/behaviours/BehaviourLoader.ts:114](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/BehaviourLoader.ts#lines-114)

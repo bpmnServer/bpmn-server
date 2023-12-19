@@ -33,7 +33,7 @@
 
 #### Defined in
 
-[engine/Model.ts:79](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L79)
+[engine/Model.ts:79](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-79)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:77](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L77)
+[engine/Model.ts:77](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-77)
 
 ___
 
@@ -53,7 +53,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:78](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L78)
+[engine/Model.ts:78](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-78)
 
 ___
 
@@ -63,4 +63,4 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:80](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L80)
+[engine/Model.ts:80](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-80)

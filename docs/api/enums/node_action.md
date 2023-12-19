@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[interfaces/Enums.ts:65](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L65)
+[interfaces/Enums.ts:70](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-70)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:65](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L65)
+[interfaces/Enums.ts:70](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-70)
 
 ___
 
@@ -42,7 +42,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:65](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L65)
+[interfaces/Enums.ts:70](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-70)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:65](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L65)
+[interfaces/Enums.ts:70](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-70)
 
 ___
 
@@ -62,7 +62,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:65](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L65)
+[interfaces/Enums.ts:70](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-70)
 
 ___
 
@@ -72,7 +72,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:65](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L65)
+[interfaces/Enums.ts:70](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-70)
 
 ___
 
@@ -82,4 +82,4 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:65](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L65)
+[interfaces/Enums.ts:70](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-70)

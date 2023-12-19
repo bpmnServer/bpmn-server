@@ -22,6 +22,8 @@
 
 ### Methods
 
+- [describe](Process.md#describe)
+- [doEvent](Process.md#doevent)
 - [end](Process.md#end)
 - [getEventSubProcessStart](Process.md#geteventsubprocessstart)
 - [getStartNode](Process.md#getstartnode)
@@ -48,7 +50,7 @@
 
 #### Defined in
 
-[elements/Process.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L22)
+[elements/Process.ts:22](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Process.ts#lines-22)
 
 ## Properties
 
@@ -58,7 +60,7 @@
 
 #### Defined in
 
-[elements/Process.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L17)
+[elements/Process.ts:17](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Process.ts#lines-17)
 
 ___
 
@@ -68,7 +70,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L15)
+[elements/Process.ts:15](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Process.ts#lines-15)
 
 ___
 
@@ -78,7 +80,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L18)
+[elements/Process.ts:18](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Process.ts#lines-18)
 
 ___
 
@@ -88,7 +90,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L12)
+[elements/Process.ts:12](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Process.ts#lines-12)
 
 ___
 
@@ -98,7 +100,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L14)
+[elements/Process.ts:14](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Process.ts#lines-14)
 
 ___
 
@@ -108,7 +110,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L13)
+[elements/Process.ts:13](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Process.ts#lines-13)
 
 ___
 
@@ -118,7 +120,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L16)
+[elements/Process.ts:16](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Process.ts#lines-16)
 
 ___
 
@@ -128,7 +130,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L20)
+[elements/Process.ts:20](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Process.ts#lines-20)
 
 ___
 
@@ -138,15 +140,34 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L19)
+[elements/Process.ts:19](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Process.ts#lines-19)
 
 ## Methods
 
-### end
+### describe
 
-▸ **end**(): `Promise`\<`void`\>
+▸ **describe**(): `any`[]
 
-Notify process that it ended
+#### Returns
+
+`any`[]
+
+#### Defined in
+
+[elements/Process.ts:111](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Process.ts#lines-111)
+
+___
+
+### doEvent
+
+▸ **doEvent**(`execution`, `event`): `Promise`\<`void`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `execution` | `any` |
+| `event` | `any` |
 
 #### Returns
 
@@ -154,7 +175,29 @@ Notify process that it ended
 
 #### Defined in
 
-[elements/Process.ts:55](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L55)
+[elements/Process.ts:100](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Process.ts#lines-100)
+
+___
+
+### end
+
+▸ **end**(`execution`): `Promise`\<`void`\>
+
+Notify process that it ended
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `execution` | [`IExecution`](../interfaces/IExecution.md) |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[elements/Process.ts:57](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Process.ts#lines-57)
 
 ___
 
@@ -168,7 +211,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:84](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L84)
+[elements/Process.ts:87](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Process.ts#lines-87)
 
 ___
 
@@ -188,7 +231,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:64](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L64)
+[elements/Process.ts:67](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Process.ts#lines-67)
 
 ___
 
@@ -208,7 +251,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:67](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L67)
+[elements/Process.ts:70](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Process.ts#lines-70)
 
 ___
 
@@ -229,7 +272,7 @@ ___
 
 #### Defined in
 
-[elements/Process.ts:29](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L29)
+[elements/Process.ts:29](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Process.ts#lines-29)
 
 ___
 
@@ -252,4 +295,4 @@ Notify process that it started
 
 #### Defined in
 
-[elements/Process.ts:36](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Process.ts#L36)
+[elements/Process.ts:36](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Process.ts#lines-36)

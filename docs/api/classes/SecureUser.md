@@ -55,7 +55,7 @@
 
 #### Defined in
 
-[API/SecureUser.ts:37](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L37)
+[API/SecureUser.ts:37](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-37)
 
 ## Properties
 
@@ -69,7 +69,7 @@
 
 #### Defined in
 
-[API/SecureUser.ts:36](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L36)
+[API/SecureUser.ts:36](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-36)
 
 ___
 
@@ -83,7 +83,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:35](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L35)
+[API/SecureUser.ts:35](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-35)
 
 ___
 
@@ -97,7 +97,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:34](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L34)
+[API/SecureUser.ts:34](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-34)
 
 ___
 
@@ -111,7 +111,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:33](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L33)
+[API/SecureUser.ts:33](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-33)
 
 ## Methods
 
@@ -135,7 +135,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:198](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L198)
+[API/SecureUser.ts:198](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-198)
 
 ___
 
@@ -159,7 +159,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:175](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L175)
+[API/SecureUser.ts:175](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-175)
 
 ___
 
@@ -183,7 +183,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:189](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L189)
+[API/SecureUser.ts:189](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-189)
 
 ___
 
@@ -207,7 +207,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:167](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L167)
+[API/SecureUser.ts:167](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-167)
 
 ___
 
@@ -233,7 +233,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:225](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L225)
+[API/SecureUser.ts:225](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-225)
 
 ___
 
@@ -257,7 +257,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:63](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L63)
+[API/SecureUser.ts:63](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-63)
 
 ___
 
@@ -275,7 +275,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:53](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L53)
+[API/SecureUser.ts:53](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-53)
 
 ___
 
@@ -293,7 +293,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:58](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L58)
+[API/SecureUser.ts:58](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-58)
 
 ___
 
@@ -321,7 +321,7 @@ query
 
 #### Defined in
 
-[API/SecureUser.ts:146](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L146)
+[API/SecureUser.ts:146](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-146)
 
 ___
 
@@ -349,7 +349,7 @@ query
 
 #### Defined in
 
-[API/SecureUser.ts:73](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L73)
+[API/SecureUser.ts:73](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-73)
 
 ___
 
@@ -377,7 +377,7 @@ query
 
 #### Defined in
 
-[API/SecureUser.ts:112](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L112)
+[API/SecureUser.ts:112](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-112)
 
 ___
 
@@ -405,7 +405,7 @@ query
 
 #### Defined in
 
-[API/SecureUser.ts:157](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L157)
+[API/SecureUser.ts:157](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-157)
 
 ___
 
@@ -433,7 +433,7 @@ query
 
 #### Defined in
 
-[API/SecureUser.ts:124](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L124)
+[API/SecureUser.ts:124](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-124)
 
 ___
 
@@ -461,7 +461,7 @@ query
 
 #### Defined in
 
-[API/SecureUser.ts:186](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L186)
+[API/SecureUser.ts:186](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-186)
 
 ___
 
@@ -475,4 +475,4 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:50](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/SecureUser.ts#L50)
+[API/SecureUser.ts:50](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-50)

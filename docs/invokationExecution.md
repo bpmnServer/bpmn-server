@@ -32,7 +32,7 @@ To Invoke a process from your code:
 ## Execution Behaviour:
 
 ### Synchrouns Execution:
-The default behaviour is that engine.starts will execute the process in sequence specified in a synchronous fashion and returns control in one of these cases:
+The default behaviour is that engine.start will execute the process in sequence specified in a synchronous fashion and returns control in one of these cases:
 
   1. Process has completed or Aborted; this happens when all active tokens come to completions
   2. All active tokens( threads) come to completion or wait state like in case of User Input, timers or Send Message
@@ -69,10 +69,10 @@ optional parameter to start to return the instance itself,
 
 // this will return immediatly
 
-let worker = server.engine.start(name, data, {noWait: true }); 
+let context = await server.engine.start(name, data, {noWait: true }); 
 
-// this will wait till next wait
-let executionContext = await worker;
+console.log(context.id); // returns the instance id, but may not have any items yet
+
 
 ```
 

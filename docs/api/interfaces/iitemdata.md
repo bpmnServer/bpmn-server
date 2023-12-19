@@ -48,7 +48,7 @@
 
 #### Defined in
 
-[interfaces/DataObjects.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L22)
+[interfaces/DataObjects.ts:22](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-22)
 
 ___
 
@@ -58,7 +58,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:23](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L23)
+[interfaces/DataObjects.ts:23](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-23)
 
 ___
 
@@ -68,7 +68,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:24](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L24)
+[interfaces/DataObjects.ts:24](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-24)
 
 ___
 
@@ -78,7 +78,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L25)
+[interfaces/DataObjects.ts:25](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-25)
 
 ___
 
@@ -88,7 +88,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:6](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L6)
+[interfaces/DataObjects.ts:6](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-6)
 
 ___
 
@@ -98,7 +98,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L14)
+[interfaces/DataObjects.ts:14](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-14)
 
 ___
 
@@ -108,7 +108,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:26](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L26)
+[interfaces/DataObjects.ts:26](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-26)
 
 ___
 
@@ -118,7 +118,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:4](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L4)
+[interfaces/DataObjects.ts:4](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-4)
 
 ___
 
@@ -128,7 +128,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L9)
+[interfaces/DataObjects.ts:9](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-9)
 
 ___
 
@@ -138,7 +138,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:5](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L5)
+[interfaces/DataObjects.ts:5](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-5)
 
 ___
 
@@ -148,7 +148,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L19)
+[interfaces/DataObjects.ts:19](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-19)
 
 ___
 
@@ -158,7 +158,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:7](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L7)
+[interfaces/DataObjects.ts:7](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-7)
 
 ___
 
@@ -168,7 +168,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:27](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L27)
+[interfaces/DataObjects.ts:27](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-27)
 
 ___
 
@@ -178,7 +178,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L10)
+[interfaces/DataObjects.ts:10](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-10)
 
 ___
 
@@ -188,7 +188,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L15)
+[interfaces/DataObjects.ts:15](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-15)
 
 ___
 
@@ -198,7 +198,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L20)
+[interfaces/DataObjects.ts:20](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-20)
 
 ___
 
@@ -208,7 +208,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L13)
+[interfaces/DataObjects.ts:13](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-13)
 
 ___
 
@@ -218,7 +218,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L17)
+[interfaces/DataObjects.ts:17](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-17)
 
 ___
 
@@ -228,7 +228,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L16)
+[interfaces/DataObjects.ts:16](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-16)
 
 ___
 
@@ -238,7 +238,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L11)
+[interfaces/DataObjects.ts:11](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-11)
 
 ___
 
@@ -248,7 +248,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:8](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L8)
+[interfaces/DataObjects.ts:8](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-8)
 
 ___
 
@@ -258,7 +258,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L12)
+[interfaces/DataObjects.ts:12](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-12)
 
 ___
 
@@ -268,4 +268,4 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/DataObjects.ts#L21)
+[interfaces/DataObjects.ts:21](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/DataObjects.ts#lines-21)

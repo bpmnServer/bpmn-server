@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[interfaces/Enums.ts:82](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L82)
+[interfaces/Enums.ts:87](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-87)
 
 ___
 
@@ -29,7 +29,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:82](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L82)
+[interfaces/Enums.ts:87](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-87)
 
 ___
 
@@ -39,7 +39,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:82](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L82)
+[interfaces/Enums.ts:87](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-87)
 
 ___
 
@@ -49,4 +49,4 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:82](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L82)
+[interfaces/Enums.ts:87](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-87)

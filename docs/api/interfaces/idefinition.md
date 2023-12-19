@@ -35,7 +35,7 @@
 
 #### Defined in
 
-[interfaces/elements.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L11)
+[interfaces/elements.ts:11](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/elements.ts#lines-11)
 
 ___
 
@@ -45,7 +45,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:8](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L8)
+[interfaces/elements.ts:8](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/elements.ts#lines-8)
 
 ___
 
@@ -55,7 +55,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L10)
+[interfaces/elements.ts:10](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/elements.ts#lines-10)
 
 ___
 
@@ -65,7 +65,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:4](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L4)
+[interfaces/elements.ts:4](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/elements.ts#lines-4)
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:7](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L7)
+[interfaces/elements.ts:7](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/elements.ts#lines-7)
 
 ___
 
@@ -85,7 +85,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:5](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L5)
+[interfaces/elements.ts:5](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/elements.ts#lines-5)
 
 ___
 
@@ -95,7 +95,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:6](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L6)
+[interfaces/elements.ts:6](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/elements.ts#lines-6)
 
 ___
 
@@ -105,7 +105,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L9)
+[interfaces/elements.ts:9](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/elements.ts#lines-9)
 
 ## Methods
 
@@ -126,7 +126,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L14)
+[interfaces/elements.ts:14](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/elements.ts#lines-14)
 
 ___
 
@@ -140,7 +140,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L13)
+[interfaces/elements.ts:13](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/elements.ts#lines-13)
 
 ___
 
@@ -160,7 +160,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L16)
+[interfaces/elements.ts:16](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/elements.ts#lines-16)
 
 ___
 
@@ -174,7 +174,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L15)
+[interfaces/elements.ts:15](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/elements.ts#lines-15)
 
 ___
 
@@ -188,4 +188,4 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/elements.ts#L12)
+[interfaces/elements.ts:12](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/elements.ts#lines-12)

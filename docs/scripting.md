@@ -1,3 +1,18 @@
+
+
+<!-- toc -->
+
+- [Scripting](#scripting)
+  - [Model Expressions/Scripts](#model-expressionsscripts)
+    - [Model Expressions](#model-expressions)
+    - [Model Listeners](#model-listeners)
+  - [Execution Listeners](#execution-listeners)
+    - [Task Listeners](#task-listeners)
+    - [Scripts Scope and variables](#scripts-scope-and-variables)
+  - [Application Listener](#application-listener)
+
+<!-- tocstop -->
+
 # Scripting 
 Scripting is using NodeJs `JavaScript` engine.
 scripts have full access to the running working full, as well as your application logic in:
@@ -7,7 +22,10 @@ scripts have full access to the running working full, as well as your applicatio
 
 Scripting is used to add logic to your workflow and is achieved by:
 
+## Model Expressions/Scripts
+
 ### Model Expressions 
+
 Many of the model properties accept `JavaScript Expressions` for example:
 - conditional flow
 - timers
@@ -43,7 +61,7 @@ For duration timers
     $appServices.getSupervisorUser('user1')
 
 ```
-### Execution/Task Listeners
+### Model Listeners
 
 Inside your model, you can attach Listeners to various nodes as `JavaScript Listeners`
 
@@ -61,7 +79,7 @@ No syntax required for these scripts
         data.message='any text here';
     }
 ```
-### Execution Listeners
+## Execution Listeners
 There are for all node types and processes
 
 | event        |       Description        |
@@ -72,8 +90,10 @@ There are for all node types and processes
 Also at the process level, start and end are triggered
 
 ### Task Listeners
-
+<details>
+<summary>
 There are for User Tasks only
+</summary>
 
 | event        |       Description        |
 |-------------  |-------------   |
@@ -88,8 +108,10 @@ There are for User Tasks only
 ```
 As a result execution will raise an exception and the command will fail.
 
+</details>
 
-## Item Scripts Scope and variables
+### Scripts Scope and variables
+#### For Items
 Items Expressions and Listeners have the following variables
 
 | Variable        |       Description        |
@@ -103,6 +125,7 @@ Items Expressions and Listeners have the following variables
 |appServices| reference to appServices object	|
 |appUtils|	   reference to appUtils object|
 
+
 - Common Item properties:
 ```
     id;                 
@@ -112,7 +135,8 @@ Items Expressions and Listeners have the following variables
 ```
 - Item methods 
 ```
-    log(msg) 
+    log(msg)        // issues a log message into the logger
+    info(msg)       // issues an information message
 ```
 - Execution (context) properties
 ```
@@ -120,7 +144,6 @@ Items Expressions and Listeners have the following variables
     tokens = new Map();
     definition: IDefinition;
     process : Process;
-    errors;
     item;
     messageMatchingKey;
     userName;
@@ -128,8 +151,8 @@ Items Expressions and Listeners have the following variables
     options;
     operation;
 ```
-## Execution Scripts Scope and variables
-Items Expressions and Listeners have the following variables
+#### For Execution
+Expressions and Listeners have the following variables
 
 | Variable        |       Description        |
 |-------------  |-------------   |
@@ -139,7 +162,7 @@ Items Expressions and Listeners have the following variables
 |appUtils|	   reference to appUtils object|
 
 
-### Workflow Listener
+## Application Listener
 
 You can place a listener in your application delegate or your execution scripts class to listen to all events
 Example:
@@ -161,6 +184,3 @@ Example:
     });
 
 ```
-
-
-

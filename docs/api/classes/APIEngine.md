@@ -2,6 +2,21 @@
 
 # Class: APIEngine
 
+common parameters:
+
+- query:      MongoDB query to locate the target instance or item
+
+- data:       input Data 
+
+- user:       an instance of ISecureUser object 
+
+- options:    various options, this is an open object that is based through the run-time
+
+Returns IExecution
+containing the instance and the results of the call
+
+*
+
 ## Hierarchy
 
 - `APIComponent`
@@ -10,7 +25,7 @@
 
 ## Implements
 
-- `IEngineAPI`
+- [`IAPIEngine`](../interfaces/IAPIEngine.md)
 
 ## Table of contents
 
@@ -57,7 +72,7 @@ APIComponent.constructor
 
 #### Defined in
 
-[API/API.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/API.ts#L22)
+[API/API.ts:24](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/API.ts#lines-24)
 
 ## Properties
 
@@ -71,7 +86,7 @@ APIComponent.api
 
 #### Defined in
 
-[API/API.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/API.ts#L20)
+[API/API.ts:22](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/API.ts#lines-22)
 
 ## Accessors
 
@@ -89,7 +104,7 @@ APIComponent.server
 
 #### Defined in
 
-[API/API.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/API.ts#L25)
+[API/API.ts:27](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/API.ts#lines-27)
 
 ## Methods
 
@@ -113,11 +128,11 @@ APIComponent.server
 
 #### Implementation of
 
-IEngineAPI.assign
+[IAPIEngine](../interfaces/IAPIEngine.md).[assign](../interfaces/IAPIEngine.md#assign)
 
 #### Defined in
 
-[API/API.ts:60](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/API.ts#L60)
+[API/API.ts:92](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/API.ts#lines-92)
 
 ___
 
@@ -140,17 +155,20 @@ ___
 
 #### Implementation of
 
-IEngineAPI.invoke
+[IAPIEngine](../interfaces/IAPIEngine.md).[invoke](../interfaces/IAPIEngine.md#invoke)
 
 #### Defined in
 
-[API/API.ts:55](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/API.ts#L55)
+[API/API.ts:87](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/API.ts#lines-87)
 
 ___
 
 ### start
 
 ▸ **start**(`name`, `data?`, `user`, `options?`): `Promise`\<[`IExecution`](../interfaces/IExecution.md)\>
+
+start a new Instance of specified model
+*
 
 #### Parameters
 
@@ -167,11 +185,11 @@ ___
 
 #### Implementation of
 
-IEngineAPI.start
+[IAPIEngine](../interfaces/IAPIEngine.md).[start](../interfaces/IAPIEngine.md#start)
 
 #### Defined in
 
-[API/API.ts:51](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/API.ts#L51)
+[API/API.ts:83](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/API.ts#lines-83)
 
 ___
 
@@ -195,11 +213,11 @@ ___
 
 #### Implementation of
 
-IEngineAPI.startEvent
+[IAPIEngine](../interfaces/IAPIEngine.md).[startEvent](../interfaces/IAPIEngine.md#startevent)
 
 #### Defined in
 
-[API/API.ts:70](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/API.ts#L70)
+[API/API.ts:102](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/API.ts#lines-102)
 
 ___
 
@@ -223,11 +241,11 @@ ___
 
 #### Implementation of
 
-IEngineAPI.throwMessage
+[IAPIEngine](../interfaces/IAPIEngine.md).[throwMessage](../interfaces/IAPIEngine.md#throwmessage)
 
 #### Defined in
 
-[API/API.ts:64](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/API.ts#L64)
+[API/API.ts:96](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/API.ts#lines-96)
 
 ___
 
@@ -251,8 +269,8 @@ ___
 
 #### Implementation of
 
-IEngineAPI.throwSignal
+[IAPIEngine](../interfaces/IAPIEngine.md).[throwSignal](../interfaces/IAPIEngine.md#throwsignal)
 
 #### Defined in
 
-[API/API.ts:67](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/API.ts#L67)
+[API/API.ts:99](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/API.ts#lines-99)

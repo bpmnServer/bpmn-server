@@ -56,7 +56,7 @@
 
 #### Defined in
 
-[elements/Definition.ts:34](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L34)
+[elements/Definition.ts:34](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-34)
 
 ## Properties
 
@@ -70,7 +70,7 @@
 
 #### Defined in
 
-[elements/Definition.ts:33](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L33)
+[elements/Definition.ts:33](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-33)
 
 ___
 
@@ -84,7 +84,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:28](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L28)
+[elements/Definition.ts:28](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-28)
 
 ___
 
@@ -98,7 +98,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:30](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L30)
+[elements/Definition.ts:30](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-30)
 
 ___
 
@@ -108,7 +108,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:32](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L32)
+[elements/Definition.ts:32](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-32)
 
 ___
 
@@ -122,7 +122,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:24](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L24)
+[elements/Definition.ts:24](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-24)
 
 ___
 
@@ -136,7 +136,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:27](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L27)
+[elements/Definition.ts:27](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-27)
 
 ___
 
@@ -150,7 +150,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L25)
+[elements/Definition.ts:25](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-25)
 
 ___
 
@@ -164,7 +164,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:26](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L26)
+[elements/Definition.ts:26](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-26)
 
 ___
 
@@ -174,7 +174,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:31](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L31)
+[elements/Definition.ts:31](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-31)
 
 ___
 
@@ -188,7 +188,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:29](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L29)
+[elements/Definition.ts:29](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-29)
 
 ## Methods
 
@@ -213,7 +213,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:297](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L297)
+[elements/Definition.ts:301](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-301)
 
 ___
 
@@ -233,7 +233,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:310](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L310)
+[elements/Definition.ts:314](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-314)
 
 ___
 
@@ -251,7 +251,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:275](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L275)
+[elements/Definition.ts:274](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-274)
 
 ___
 
@@ -275,7 +275,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:335](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L335)
+[elements/Definition.ts:339](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-339)
 
 ___
 
@@ -293,7 +293,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:332](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L332)
+[elements/Definition.ts:336](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-336)
 
 ___
 
@@ -313,7 +313,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:321](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L321)
+[elements/Definition.ts:325](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-325)
 
 ___
 
@@ -331,7 +331,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:134](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L134)
+[elements/Definition.ts:133](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-133)
 
 ___
 
@@ -353,4 +353,4 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:44](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/Definition.ts#L44)
+[elements/Definition.ts:44](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/Definition.ts#lines-44)

@@ -2,34 +2,37 @@
 
 <!-- toc -->
 
-- Invoking Workflow Examples
-  - [Buy Used Car - Using WebApp ](./examples/BuyCar-Web.md)
-  - [Buy Used Car - Using API](./examples/BuyCar-Server.md)
-  - [Buy Used Car - Remotely Using WebServices](./examples/BuyCar-Remote.md)
+- [Invoking Workflow Examples](#invoking-workflow-examples)
+  - [Invoking Process Using WebApp](#invoking-process-using-webapp-examplesbuycar-webmd)
+  - [Invoking Proccess through API](#invoking-proccess-through-api)
+  - [Invoking Remotely Using WebServices](#invoking-remotely-using-webservicesexamplesbuycar-remotemd)
   - [Async Execution](#async-execution)
-- Process Definitions Examples
+- [Process Definitions Examples](#process-definitions-examples)
   - [Service Task](#service-task)
   - [Script Task](#script-task)
   - [Conditional Flow](#conditional-flow)
-  - [Input Fields](#input-fields)
+  - [Form Input Fields](#form-input-fields)
   - [Multiple Start Event](#multiple-start-event)
   - [Business Rule Task](#business-rule-task)
   - [Script Extensions](#script-extensions)
   - [Timer Event](#timer-event)
   - [Multi-instances Tasks](#multi-instances-tasks)
-  - [SubProcess](#subprocess)
   - [Call Process](#call-process)
   - [Message Flow](#message-flow)
   - [Throwing and Cathcing Messages](#throwing-and-cathcing-messages)
   - [Input and Output Data Handling](#input-and-output-data-handling)
-  - [Gateway](./examples/gateway.md)
-  - [Event Based Gateway ](./examples/gateway.md)
-  - [Boundary Events](./examples/boundary-events.md)
-  - [UserTask Assignment](./userAssignment.md)
+  - [Gateway](#gatewayexamplesgatewaymd)
+  - [Event Based Gateway](#event-based-gateway-examplesgatewaymd)
+  - [Boundary Events](#boundary-eventsexamplesboundary-eventsmd)
+  - [UserTask Assignment](#usertask-assignmentuserassignmentmd)
 
 <!-- tocstop -->
 
-## Invoking Proccess through API
+## Invoking Workflow Examples
+
+### [Invoking Process Using WebApp ](./examples/BuyCar-Web.md)
+
+### Invoking Proccess through API
 
 To Invoke a process from your code:
 
@@ -64,6 +67,8 @@ To Invoke a process from your code:
 
     console.log(`that is it!, process is now complete status=<${response.execution.status}>`)
 ```
+### [Invoking Remotely Using WebServices](./examples/BuyCar-Remote.md)
+
 ### Async Execution
 ```js
     const api = new BPMNAPI(new BPMNServer(configuration,new Logger({ toConsole: false}),{cron:false}));
@@ -91,7 +96,7 @@ appDelegate service1 is now complete input: { repeat: '100', inputVar2: undefine
 ### Service Task
 In Process definition (.bpmn file), use `implementation` attribute to define name of JavaScript/TypeScript Method to perform the Task:
 
-![Using Modeler](bb-service.PNG)
+![Using Modeler](./images/bb-service.PNG)
 ```xml
     <bpmn:serviceTask id="serviceTask" name="Service Task" implementation="service1">
     ...
@@ -115,7 +120,7 @@ class AppServices {
 ```
 ### Script Task
 
-![Using Modeler](bb-script.PNG)
+![Using Modeler](./images/bb-script.PNG)
 ```xml
     <bpmn2:scriptTask id="Activity_06typtl" name="script" scriptFormat="JavaScript">
       <bpmn2:script>
@@ -129,7 +134,7 @@ class AppServices {
 
 ### Conditional Flow
 
-![Using Modeler](bb-conditional-flow.PNG)
+![Using Modeler](./images/bb-conditional-flow.PNG)
 ```xml
 
   <bpmn:sequenceFlow>    
@@ -141,7 +146,7 @@ class AppServices {
 
 ```
 ### Form Input Fields
-![Using Modeler](bb-form.PNG)
+![Using Modeler](./images/bb-form.PNG)
 
 ```xml
     <bpmn:userTask id="task_Buy" name="Buy">
@@ -190,7 +195,7 @@ Scripts can be added to listen to two events:
 - Start before the Task is executed
 - End after the task is executed
 
-![Using Modeler](bb-event-scripts.PNG)
+![Using Modeler](./images/bb-event-scripts.PNG)
 
 In this example we are adding a script to bpmn:startEvent
 
@@ -221,7 +226,7 @@ In this example we are adding a script to bpmn:startEvent
 
 ### Timer Event
 
-![Using Modeler](bb-timer.PNG)
+![Using Modeler](./images/bb-timer.PNG)
 ```xml
     <bpmn:intermediateCatchEvent id="Event_timer">
       <bpmn:incoming>Flow_1sg7v2d</bpmn:incoming>
@@ -234,7 +239,7 @@ In this example we are adding a script to bpmn:startEvent
 More on [timers](./timers.md)
 ### Multi-instances Tasks
 
-![Using Modeler](bb-multi-instance.PNG)
+![Using Modeler](./images/bb-multi-instance.PNG)
 ```xml
     <bpmn:scriptTask id="scriptTask" name="Script Task">
       <bpmn:incoming>Flow_159xzcz</bpmn:incoming>
@@ -248,7 +253,7 @@ For Multi-instance data handling [see](./data.md)
 
 ### Call Process
 
-![Using Modeler](bb-call.PNG)
+![Using Modeler](./images/bb-call.PNG)
 ```xml
     <bpmn:callActivity id="activity_call" name="Call Task" calledElement="loop">
     ...
@@ -263,7 +268,7 @@ In the above example 'loop' is the name of process to be called.
 ### Throwing and Cathcing Messages
 In this example, we will demonstrate how can two seperate processes communicate through "Messages"
 
-![Using Modeler](bb-message.PNG)
+![Using Modeler](./images/bb-message.PNG)
 
 #### 1 Throw a message with data
 When a process throw a message, bpmn-server checks if there is another process that can catch this message before dispatching it to AppDelegate.
@@ -327,3 +332,7 @@ Howerver, the challenge here is that make sure the message is sent to the specif
 
 [this for details](data.md#Input-Output_Data)
 
+### [Gateway](./examples/gateway.md)
+### [Event Based Gateway ](./examples/gateway.md)
+### [Boundary Events](./examples/boundary-events.md)
+### [UserTask Assignment](./userAssignment.md)

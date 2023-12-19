@@ -41,7 +41,7 @@
 
 #### Defined in
 
-[interfaces/server.ts:69](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L69)
+[interfaces/server.ts:69](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/server.ts#lines-69)
 
 ___
 
@@ -65,7 +65,7 @@ this will also resume execution
 
 #### Defined in
 
-[interfaces/server.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L54)
+[interfaces/server.ts:54](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/server.ts#lines-54)
 
 ___
 
@@ -96,7 +96,7 @@ scenario:
 
 #### Defined in
 
-[interfaces/server.ts:67](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L67)
+[interfaces/server.ts:67](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/server.ts#lines-67)
 
 ___
 
@@ -122,7 +122,7 @@ loads a definitions  and start execution
 
 #### Defined in
 
-[interfaces/server.ts:40](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L40)
+[interfaces/server.ts:40](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/server.ts#lines-40)
 
 ___
 
@@ -153,7 +153,7 @@ Invoking a start event (of a secondary process) against an existing instance
 
 #### Defined in
 
-[interfaces/server.ts:90](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L90)
+[interfaces/server.ts:90](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/server.ts#lines-90)
 
 ___
 
@@ -176,7 +176,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:72](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L72)
+[interfaces/server.ts:72](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/server.ts#lines-72)
 
 ___
 
@@ -205,7 +205,7 @@ that can be againt a running instance or it may start a new instance
 
 #### Defined in
 
-[interfaces/server.ts:104](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L104)
+[interfaces/server.ts:104](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/server.ts#lines-104)
 
 ___
 
@@ -227,4 +227,4 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:105](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L105)
+[interfaces/server.ts:105](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/server.ts#lines-105)

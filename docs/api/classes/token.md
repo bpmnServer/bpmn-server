@@ -50,6 +50,7 @@
 - [getSubProcessToken](Token.md#getsubprocesstoken)
 - [goNext](Token.md#gonext)
 - [hasNode](Token.md#hasnode)
+- [info](Token.md#info)
 - [log](Token.md#log)
 - [preExecute](Token.md#preexecute)
 - [preNext](Token.md#prenext)
@@ -88,7 +89,7 @@
 
 #### Defined in
 
-[engine/Token.ts:115](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L115)
+[engine/Token.ts:115](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-115)
 
 ## Properties
 
@@ -102,7 +103,7 @@
 
 #### Defined in
 
-[engine/Token.ts:68](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L68)
+[engine/Token.ts:68](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-68)
 
 ___
 
@@ -116,7 +117,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:61](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L61)
+[engine/Token.ts:61](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-61)
 
 ___
 
@@ -130,7 +131,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:60](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L60)
+[engine/Token.ts:60](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-60)
 
 ___
 
@@ -144,7 +145,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:58](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L58)
+[engine/Token.ts:58](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-58)
 
 ___
 
@@ -154,7 +155,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:71](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L71)
+[engine/Token.ts:71](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-71)
 
 ___
 
@@ -168,7 +169,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:67](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L67)
+[engine/Token.ts:67](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-67)
 
 ___
 
@@ -178,7 +179,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:73](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L73)
+[engine/Token.ts:73](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-73)
 
 ___
 
@@ -192,7 +193,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:65](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L65)
+[engine/Token.ts:65](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-65)
 
 ___
 
@@ -202,7 +203,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:72](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L72)
+[engine/Token.ts:72](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-72)
 
 ___
 
@@ -216,7 +217,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:63](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L63)
+[engine/Token.ts:63](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-63)
 
 ___
 
@@ -230,7 +231,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:66](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L66)
+[engine/Token.ts:66](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-66)
 
 ___
 
@@ -244,7 +245,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:69](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L69)
+[engine/Token.ts:69](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-69)
 
 ___
 
@@ -258,7 +259,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:62](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L62)
+[engine/Token.ts:62](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-62)
 
 ___
 
@@ -272,7 +273,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:70](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L70)
+[engine/Token.ts:70](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-70)
 
 ___
 
@@ -286,7 +287,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:59](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L59)
+[engine/Token.ts:59](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-59)
 
 ## Accessors
 
@@ -304,7 +305,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:103](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L103)
+[engine/Token.ts:103](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-103)
 
 ___
 
@@ -322,7 +323,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:78](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L78)
+[engine/Token.ts:78](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-78)
 
 ___
 
@@ -340,7 +341,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:75](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L75)
+[engine/Token.ts:75](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-75)
 
 ___
 
@@ -358,7 +359,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:81](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L81)
+[engine/Token.ts:81](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-81)
 
 ___
 
@@ -376,7 +377,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:93](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L93)
+[engine/Token.ts:93](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-93)
 
 ## Methods
 
@@ -403,7 +404,7 @@ renamed from applyInput to appendData
 
 #### Defined in
 
-[engine/Token.ts:358](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L358)
+[engine/Token.ts:358](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-358)
 
 ___
 
@@ -419,7 +420,7 @@ is called by events to cancel current token
 
 #### Defined in
 
-[engine/Token.ts:375](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L375)
+[engine/Token.ts:375](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-375)
 
 ___
 
@@ -443,7 +444,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:416](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L416)
+[engine/Token.ts:416](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-416)
 
 ___
 
@@ -467,7 +468,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:526](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L526)
+[engine/Token.ts:529](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-529)
 
 ___
 
@@ -496,7 +497,7 @@ Pre-Conditions:
 
 #### Defined in
 
-[engine/Token.ts:238](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L238)
+[engine/Token.ts:238](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-238)
 
 ___
 
@@ -514,7 +515,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:208](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L208)
+[engine/Token.ts:208](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-208)
 
 ___
 
@@ -538,7 +539,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:109](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L109)
+[engine/Token.ts:109](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-109)
 
 ___
 
@@ -556,7 +557,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:199](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L199)
+[engine/Token.ts:199](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-199)
 
 ___
 
@@ -574,7 +575,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:454](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L454)
+[engine/Token.ts:454](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-454)
 
 ___
 
@@ -594,7 +595,31 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:85](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L85)
+[engine/Token.ts:85](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-85)
+
+___
+
+### info
+
+▸ **info**(`msg`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `msg` | `any` |
+
+#### Returns
+
+`void`
+
+#### Implementation of
+
+[IToken](../interfaces/IToken.md).[info](../interfaces/IToken.md#info)
+
+#### Defined in
+
+[engine/Token.ts:526](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-526)
 
 ___
 
@@ -618,7 +643,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:523](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L523)
+[engine/Token.ts:523](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-523)
 
 ___
 
@@ -636,7 +661,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:220](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L220)
+[engine/Token.ts:220](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-220)
 
 ___
 
@@ -654,7 +679,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:227](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L227)
+[engine/Token.ts:227](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-227)
 
 ___
 
@@ -672,7 +697,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:300](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L300)
+[engine/Token.ts:300](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-300)
 
 ___
 
@@ -686,7 +711,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:330](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L330)
+[engine/Token.ts:330](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-330)
 
 ___
 
@@ -704,7 +729,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:194](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L194)
+[engine/Token.ts:194](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-194)
 
 ___
 
@@ -722,7 +747,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:190](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L190)
+[engine/Token.ts:190](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-190)
 
 ___
 
@@ -752,7 +777,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:153](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L153)
+[engine/Token.ts:153](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-153)
 
 ___
 
@@ -772,7 +797,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:444](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L444)
+[engine/Token.ts:444](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-444)
 
 ___
 
@@ -797,7 +822,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:384](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L384)
+[engine/Token.ts:384](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-384)
 
 ___
 
@@ -815,7 +840,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:181](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L181)
+[engine/Token.ts:181](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-181)
 
 ___
 
@@ -835,7 +860,7 @@ is called by Gateways to cancel current token
 
 #### Defined in
 
-[engine/Token.ts:365](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L365)
+[engine/Token.ts:365](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-365)
 
 ___
 
@@ -856,7 +881,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:168](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L168)
+[engine/Token.ts:168](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-168)
 
 ___
 
@@ -884,4 +909,4 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:141](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L141)
+[engine/Token.ts:141](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-141)

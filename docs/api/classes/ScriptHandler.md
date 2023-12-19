@@ -44,7 +44,7 @@
 
 #### Defined in
 
-[engine/ScriptHandler.ts:46](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/ScriptHandler.ts#L46)
+[engine/ScriptHandler.ts:46](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/ScriptHandler.ts#lines-46)
 
 ___
 
@@ -84,7 +84,7 @@ ___
 
 #### Defined in
 
-[engine/ScriptHandler.ts:24](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/ScriptHandler.ts#L24)
+[engine/ScriptHandler.ts:24](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/ScriptHandler.ts#lines-24)
 
 ___
 
@@ -105,13 +105,13 @@ ___
 
 #### Defined in
 
-[engine/ScriptHandler.ts:75](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/ScriptHandler.ts#L75)
+[engine/ScriptHandler.ts:75](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/ScriptHandler.ts#lines-75)
 
 ___
 
 ### getJSvars
 
-▸ **getJSvars**(`scope`): ``"\n            var data=this.data;\n            var input=this.input;\n            var output=this.output;\n            var appDelegate=this.execution.appDelegate;\n            var appServices=this.execution.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            var item=this;  // for backward support only\n            "`` \| ``"\n            var item=this;\n            var data=this.data;\n            var input=this.input;\n            var output=this.output;\n            var appDelegate=this.token.execution.appDelegate;\n            var appServices=this.token.execution.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            "``
+▸ **getJSvars**(`scope`): ``"\n            var data=this.data;\n            var input=this.input;\n            var output=this.output;\n            var appDelegate=this.execution.appDelegate;\n            var appServices=this.execution.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            var item=this;  // for backward support only\n            "`` \| ``"\n            var appDelegate=this.appDelegate;\n            var appServices=this.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            "`` \| ``"\n            var item=this;\n            var data=this.data;\n            var input=this.input;\n            var output=this.output;\n            var appDelegate=this.token.execution.appDelegate;\n            var appServices=this.token.execution.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            "``
 
 #### Parameters
 
@@ -121,8 +121,8 @@ ___
 
 #### Returns
 
-``"\n            var data=this.data;\n            var input=this.input;\n            var output=this.output;\n            var appDelegate=this.execution.appDelegate;\n            var appServices=this.execution.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            var item=this;  // for backward support only\n            "`` \| ``"\n            var item=this;\n            var data=this.data;\n            var input=this.input;\n            var output=this.output;\n            var appDelegate=this.token.execution.appDelegate;\n            var appServices=this.token.execution.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            "``
+``"\n            var data=this.data;\n            var input=this.input;\n            var output=this.output;\n            var appDelegate=this.execution.appDelegate;\n            var appServices=this.execution.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            var item=this;  // for backward support only\n            "`` \| ``"\n            var appDelegate=this.appDelegate;\n            var appServices=this.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            "`` \| ``"\n            var item=this;\n            var data=this.data;\n            var input=this.input;\n            var output=this.output;\n            var appDelegate=this.token.execution.appDelegate;\n            var appServices=this.token.execution.servicesProvider;\n            var appUtils=appDelegate.appUtils;\n            "``
 
 #### Defined in
 
-[engine/ScriptHandler.ts:116](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/ScriptHandler.ts#L116)
+[engine/ScriptHandler.ts:116](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/ScriptHandler.ts#lines-116)

@@ -52,7 +52,7 @@ APIComponent.constructor
 
 #### Defined in
 
-[API/API.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/API.ts#L22)
+[API/API.ts:24](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/API.ts#lines-24)
 
 ## Properties
 
@@ -66,7 +66,7 @@ APIComponent.api
 
 #### Defined in
 
-[API/API.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/API.ts#L20)
+[API/API.ts:22](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/API.ts#lines-22)
 
 ## Accessors
 
@@ -84,7 +84,7 @@ APIComponent.server
 
 #### Defined in
 
-[API/API.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/API.ts#L25)
+[API/API.ts:27](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/API.ts#lines-27)
 
 ## Methods
 
@@ -105,7 +105,7 @@ APIComponent.server
 
 #### Defined in
 
-[API/API.ts:96](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/API.ts#L96)
+[API/API.ts:128](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/API.ts#lines-128)
 
 ___
 
@@ -127,7 +127,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:92](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/API.ts#L92)
+[API/API.ts:124](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/API.ts#lines-124)
 
 ___
 
@@ -148,7 +148,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:87](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/API.ts#L87)
+[API/API.ts:119](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/API.ts#lines-119)
 
 ___
 
@@ -169,7 +169,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:83](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/API.ts#L83)
+[API/API.ts:115](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/API.ts#lines-115)
 
 ___
 
@@ -190,4 +190,4 @@ ___
 
 #### Defined in
 
-[API/API.ts:75](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/API/API.ts#L75)
+[API/API.ts:107](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/API.ts#lines-107)

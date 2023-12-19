@@ -30,6 +30,7 @@ msgs can be cleared by the clean method
 - [debug](Logger.md#debug)
 - [error](Logger.md#error)
 - [get](Logger.md#get)
+- [info](Logger.md#info)
 - [log](Logger.md#log)
 - [msg](Logger.md#msg)
 - [reportError](Logger.md#reporterror)
@@ -59,7 +60,7 @@ msgs can be cleared by the clean method
 
 #### Defined in
 
-[common/Logger.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L14)
+[common/Logger.ts:14](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/Logger.ts#lines-14)
 
 ## Properties
 
@@ -69,7 +70,7 @@ msgs can be cleared by the clean method
 
 #### Defined in
 
-[common/Logger.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L12)
+[common/Logger.ts:12](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/Logger.ts#lines-12)
 
 ___
 
@@ -79,7 +80,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L9)
+[common/Logger.ts:9](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/Logger.ts#lines-9)
 
 ___
 
@@ -89,7 +90,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L10)
+[common/Logger.ts:10](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/Logger.ts#lines-10)
 
 ___
 
@@ -99,7 +100,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L11)
+[common/Logger.ts:11](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/Logger.ts#lines-11)
 
 ## Methods
 
@@ -117,13 +118,13 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:36](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L36)
+[common/Logger.ts:36](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/Logger.ts#lines-36)
 
 ___
 
 ### debug
 
-▸ **debug**(`...message`): `void`
+▸ **debug**(`...message`): `Object`
 
 #### Parameters
 
@@ -133,7 +134,13 @@ ___
 
 #### Returns
 
-`void`
+`Object`
+
+| Name | Type |
+| :------ | :------ |
+| `date` | `Date` |
+| `message` | `any` |
+| `type` | `string` |
 
 #### Implementation of
 
@@ -141,7 +148,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:44](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L44)
+[common/Logger.ts:47](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/Logger.ts#lines-47)
 
 ___
 
@@ -165,7 +172,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:91](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L91)
+[common/Logger.ts:94](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/Logger.ts#lines-94)
 
 ___
 
@@ -183,7 +190,33 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:40](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L40)
+[common/Logger.ts:40](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/Logger.ts#lines-40)
+
+___
+
+### info
+
+▸ **info**(`...message`): `Object`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `...message` | `any`[] |
+
+#### Returns
+
+`Object`
+
+| Name | Type |
+| :------ | :------ |
+| `date` | `Date` |
+| `message` | `any` |
+| `type` | `string` |
+
+#### Defined in
+
+[common/Logger.ts:44](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/Logger.ts#lines-44)
 
 ___
 
@@ -205,6 +238,7 @@ ___
 | :------ | :------ |
 | `date` | `Date` |
 | `message` | `any` |
+| `type` | `string` |
 
 #### Implementation of
 
@@ -212,7 +246,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:51](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L51)
+[common/Logger.ts:54](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/Logger.ts#lines-54)
 
 ___
 
@@ -235,10 +269,11 @@ ___
 | :------ | :------ |
 | `date` | `Date` |
 | `message` | `any` |
+| `type` | `string` |
 
 #### Defined in
 
-[common/Logger.ts:23](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L23)
+[common/Logger.ts:23](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/Logger.ts#lines-23)
 
 ___
 
@@ -262,7 +297,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:74](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L74)
+[common/Logger.ts:77](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/Logger.ts#lines-77)
 
 ___
 
@@ -286,7 +321,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:94](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L94)
+[common/Logger.ts:97](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/Logger.ts#lines-97)
 
 ___
 
@@ -313,7 +348,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L17)
+[common/Logger.ts:17](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/Logger.ts#lines-17)
 
 ___
 
@@ -333,13 +368,13 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L54)
+[common/Logger.ts:57](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/Logger.ts#lines-57)
 
 ___
 
 ### warn
 
-▸ **warn**(`...message`): `void`
+▸ **warn**(`...message`): `Object`
 
 #### Parameters
 
@@ -349,7 +384,13 @@ ___
 
 #### Returns
 
-`void`
+`Object`
+
+| Name | Type |
+| :------ | :------ |
+| `date` | `Date` |
+| `message` | `any` |
+| `type` | `string` |
 
 #### Implementation of
 
@@ -357,4 +398,4 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:48](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/Logger.ts#L48)
+[common/Logger.ts:51](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/Logger.ts#lines-51)

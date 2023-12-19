@@ -1,15 +1,58 @@
-Release 2.0 Design Changes
-Release 2.0 contains major changes that require some design attention, this document will list those changes.
-## Overal Architecture
 
-### New API
-The New AP supports Security as described below
-### Changes to Front-end
-- Move configuration.ts and appDelegate.ts to WorkflowApp sub-folder
-- New AppUtils class; to provide common functions to all process
-- Moved application Services to AppServices.ts - to contain Services called by ServiceTasks
-- Added Sample UserAccess folder (for demo purposes only) to perform user management
-## Data Handling
+
+<!-- toc -->
+
+- [Overview](#overview)
+  - [Modeling](#modeling)
+  - [Execution](#execution)
+  - [Datastore](#datastore)
+- [Application Integration](#application-integration)
+  - [User Management and Security](#user-management-and-security)
+  - [Handling Access Control](#handling-access-control)
+    - [Filtering data for Security:](#filtering-data-for-security)
+
+<!-- tocstop -->
+
+# Overview
+
+`bpmn-server` provides full Workflow solution based on **Business Process Model and Notation**
+
+## Modeling
+`bpmn-server` provides a modeling tool based on `bpmn.io`
+
+Typically your application has multiple bpmn models, a model like the one below `Leave Application` has elements, an `element` can be a `node` in the diagram (events/tasks/gateway) or a  `flow`
+
+Models are saved by `bpmn-server` and can be queried [see API.model](./api/interfaces/IAPIModel)
+
+`bpmn-server` support all bpmn 2.0 elements [see Modeling Support]()
+
+## Execution
+`bpmn-server` is primiraly an execution engine for bpmn models.
+
+Everytime a model is executed,it creates an `instance` and for each `element` it creates an `item'
+
+Execution is based on the model logic that is enhanced by various extensions that allow scripting and access to your application.
+
+- Script Expressions
+- Script Listeners
+- Application Listener
+
+The execution `engine` is availabe through an API [see API.engine](./api/interfaces/IAPIEngine).
+
+For more details about Model Invokation and Execution [see](invokationExecution.md)
+
+## Datastore
+
+At various stages of execution, instance object is saved into a datastore (defaults to MongoDB)
+
+Instances and Items can be queried through an API [see API.data](./api/interfaces/IAPIData)
+
+For more details about data management [see Data]()
+
+# Application Integration
+
+`bpmn-server` is intended to be integration into your application
+
 ## User Management and Security
 
 1. `bpmnServer` (npm package) is a backend only, is passed user information in the API
@@ -59,6 +102,3 @@ To See only Tasks Assigned to User
     let pending = await bpmnAPI.data.getPendingTasks({'items.assignee':user.userName},user); 
 ```
 or you can use filter for the items to check `item.assignee`
-
-
-

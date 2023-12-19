@@ -37,7 +37,7 @@
 
 #### Defined in
 
-[engine/Model.ts:71](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L71)
+[engine/Model.ts:71](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-71)
 
 ___
 
@@ -47,7 +47,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:73](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L73)
+[engine/Model.ts:73](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-73)
 
 ___
 
@@ -57,7 +57,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:68](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L68)
+[engine/Model.ts:68](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-68)
 
 ___
 
@@ -67,7 +67,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:66](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L66)
+[engine/Model.ts:66](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-66)
 
 ___
 
@@ -77,7 +77,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:69](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L69)
+[engine/Model.ts:69](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-69)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:70](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L70)
+[engine/Model.ts:70](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-70)
 
 ___
 
@@ -97,7 +97,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:72](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L72)
+[engine/Model.ts:72](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-72)
 
 ___
 
@@ -107,4 +107,4 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:67](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Model.ts#L67)
+[engine/Model.ts:67](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Model.ts#lines-67)

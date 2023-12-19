@@ -40,7 +40,7 @@
 
 #### Defined in
 
-[datastore/ModelsData.ts:78](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L78)
+[datastore/ModelsData.ts:78](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/datastore/ModelsData.ts#lines-78)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:80](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L80)
+[datastore/ModelsData.ts:80](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/datastore/ModelsData.ts#lines-80)
 
 ___
 
@@ -68,4 +68,4 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:79](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/ModelsData.ts#L79)
+[datastore/ModelsData.ts:79](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/datastore/ModelsData.ts#lines-79)

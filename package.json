@@ -1,6 +1,6 @@
 {
   "name": "bpmn-server",
-  "version": "2.0.5-alpha2",
+  "version": "2.0.6-alpha2",
   "description": "BPMN 2.0 Server including Modeling, Execution and Presistence, an open source for Node.js",
   "license": "MIT",
   "scripts": {
@@ -27,6 +27,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
+    "src/**/*.ts",
     "dist/**/*.js",
     "dist/**/*.js.map",
     "dist/**/*.d.ts",

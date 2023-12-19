@@ -34,7 +34,7 @@
 
 #### Defined in
 
-[interfaces/server.ts:120](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L120)
+[interfaces/server.ts:120](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/server.ts#lines-120)
 
 ___
 
@@ -48,7 +48,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:119](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L119)
+[interfaces/server.ts:119](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/server.ts#lines-119)
 
 ___
 
@@ -68,7 +68,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:121](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L121)
+[interfaces/server.ts:121](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/server.ts#lines-121)
 
 ___
 
@@ -82,4 +82,4 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:122](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/server.ts#L122)
+[interfaces/server.ts:122](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/server.ts#lines-122)

@@ -39,7 +39,7 @@
 
 #### Defined in
 
-[datastore/InstanceLocker.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/InstanceLocker.ts#L11)
+[datastore/InstanceLocker.ts:11](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/datastore/InstanceLocker.ts#lines-11)
 
 ## Properties
 
@@ -49,7 +49,7 @@
 
 #### Defined in
 
-[datastore/InstanceLocker.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/InstanceLocker.ts#L9)
+[datastore/InstanceLocker.ts:9](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/datastore/InstanceLocker.ts#lines-9)
 
 ## Methods
 
@@ -70,7 +70,7 @@
 
 #### Defined in
 
-[datastore/InstanceLocker.ts:69](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/InstanceLocker.ts#L69)
+[datastore/InstanceLocker.ts:69](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/datastore/InstanceLocker.ts#lines-69)
 
 ___
 
@@ -90,7 +90,7 @@ ___
 
 #### Defined in
 
-[datastore/InstanceLocker.ts:58](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/InstanceLocker.ts#L58)
+[datastore/InstanceLocker.ts:58](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/datastore/InstanceLocker.ts#lines-58)
 
 ___
 
@@ -104,7 +104,7 @@ ___
 
 #### Defined in
 
-[datastore/InstanceLocker.ts:63](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/InstanceLocker.ts#L63)
+[datastore/InstanceLocker.ts:63](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/datastore/InstanceLocker.ts#lines-63)
 
 ___
 
@@ -124,7 +124,7 @@ ___
 
 #### Defined in
 
-[datastore/InstanceLocker.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/InstanceLocker.ts#L14)
+[datastore/InstanceLocker.ts:14](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/datastore/InstanceLocker.ts#lines-14)
 
 ___
 
@@ -144,7 +144,7 @@ ___
 
 #### Defined in
 
-[datastore/InstanceLocker.ts:52](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/InstanceLocker.ts#L52)
+[datastore/InstanceLocker.ts:52](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/datastore/InstanceLocker.ts#lines-52)
 
 ___
 
@@ -164,4 +164,4 @@ ___
 
 #### Defined in
 
-[datastore/InstanceLocker.ts:35](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/datastore/InstanceLocker.ts#L35)
+[datastore/InstanceLocker.ts:35](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/datastore/InstanceLocker.ts#lines-35)

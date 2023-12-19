@@ -76,7 +76,7 @@
 
 #### Defined in
 
-[engine/Item.ts:55](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L55)
+[engine/Item.ts:55](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-55)
 
 ## Properties
 
@@ -90,7 +90,7 @@
 
 #### Defined in
 
-[engine/Item.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L20)
+[engine/Item.ts:20](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-20)
 
 ___
 
@@ -104,7 +104,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L21)
+[engine/Item.ts:21](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-21)
 
 ___
 
@@ -118,7 +118,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L22)
+[engine/Item.ts:22](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-22)
 
 ___
 
@@ -132,7 +132,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:23](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L23)
+[engine/Item.ts:23](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-23)
 
 ___
 
@@ -146,7 +146,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L10)
+[engine/Item.ts:10](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-10)
 
 ___
 
@@ -160,7 +160,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L15)
+[engine/Item.ts:15](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-15)
 
 ___
 
@@ -174,7 +174,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:24](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L24)
+[engine/Item.ts:24](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-24)
 
 ___
 
@@ -188,7 +188,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:8](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L8)
+[engine/Item.ts:8](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-8)
 
 ___
 
@@ -198,7 +198,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L17)
+[engine/Item.ts:17](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-17)
 
 ___
 
@@ -212,7 +212,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L16)
+[engine/Item.ts:16](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-16)
 
 ___
 
@@ -226,7 +226,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L9)
+[engine/Item.ts:9](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-9)
 
 ___
 
@@ -240,7 +240,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:52](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L52)
+[engine/Item.ts:52](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-52)
 
 ___
 
@@ -250,7 +250,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L18)
+[engine/Item.ts:18](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-18)
 
 ___
 
@@ -264,7 +264,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L25)
+[engine/Item.ts:25](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-25)
 
 ___
 
@@ -278,7 +278,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L12)
+[engine/Item.ts:12](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-12)
 
 ___
 
@@ -292,7 +292,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:53](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L53)
+[engine/Item.ts:53](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-53)
 
 ___
 
@@ -306,7 +306,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L14)
+[engine/Item.ts:14](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-14)
 
 ___
 
@@ -320,7 +320,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:28](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L28)
+[engine/Item.ts:28](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-28)
 
 ___
 
@@ -334,7 +334,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:49](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L49)
+[engine/Item.ts:49](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-49)
 
 ___
 
@@ -344,7 +344,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:50](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L50)
+[engine/Item.ts:50](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-50)
 
 ___
 
@@ -358,7 +358,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L11)
+[engine/Item.ts:11](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-11)
 
 ___
 
@@ -372,7 +372,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L13)
+[engine/Item.ts:13](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-13)
 
 ___
 
@@ -386,7 +386,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L19)
+[engine/Item.ts:19](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-19)
 
 ## Accessors
 
@@ -404,7 +404,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:34](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L34)
+[engine/Item.ts:34](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-34)
 
 ___
 
@@ -418,7 +418,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:30](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L30)
+[engine/Item.ts:30](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-30)
 
 • `set` **data**(`val`): `void`
 
@@ -434,7 +434,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:31](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L31)
+[engine/Item.ts:31](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-31)
 
 ___
 
@@ -452,7 +452,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:35](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L35)
+[engine/Item.ts:35](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-35)
 
 ___
 
@@ -470,7 +470,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:36](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L36)
+[engine/Item.ts:36](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-36)
 
 ___
 
@@ -488,7 +488,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:45](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L45)
+[engine/Item.ts:45](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-45)
 
 ___
 
@@ -502,7 +502,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:33](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L33)
+[engine/Item.ts:33](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-33)
 
 ___
 
@@ -520,7 +520,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:39](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L39)
+[engine/Item.ts:39](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-39)
 
 ___
 
@@ -538,7 +538,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:42](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L42)
+[engine/Item.ts:42](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-42)
 
 ## Methods
 
@@ -558,7 +558,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:29](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L29)
+[engine/Item.ts:29](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-29)
 
 ___
 
@@ -572,7 +572,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:64](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L64)
+[engine/Item.ts:64](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-64)
 
 ___
 
@@ -592,7 +592,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:32](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L32)
+[engine/Item.ts:32](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-32)
 
 ___
 
@@ -614,4 +614,4 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:80](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Item.ts#L80)
+[engine/Item.ts:80](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Item.ts#lines-80)

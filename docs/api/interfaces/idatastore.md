@@ -34,7 +34,7 @@
 
 #### Defined in
 
-[interfaces/datastore.ts:8](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L8)
+[interfaces/datastore.ts:8](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/datastore.ts#lines-8)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:7](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L7)
+[interfaces/datastore.ts:7](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/datastore.ts#lines-7)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L10)
+[interfaces/datastore.ts:10](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/datastore.ts#lines-10)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L9)
+[interfaces/datastore.ts:9](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/datastore.ts#lines-9)
 
 ## Methods
 
@@ -84,7 +84,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L20)
+[interfaces/datastore.ts:20](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/datastore.ts#lines-20)
 
 ___
 
@@ -105,7 +105,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L17)
+[interfaces/datastore.ts:17](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/datastore.ts#lines-17)
 
 ___
 
@@ -126,7 +126,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L18)
+[interfaces/datastore.ts:18](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/datastore.ts#lines-18)
 
 ___
 
@@ -146,7 +146,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L16)
+[interfaces/datastore.ts:16](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/datastore.ts#lines-16)
 
 ___
 
@@ -166,7 +166,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L19)
+[interfaces/datastore.ts:19](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/datastore.ts#lines-19)
 
 ___
 
@@ -180,7 +180,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L21)
+[interfaces/datastore.ts:21](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/datastore.ts#lines-21)
 
 ___
 
@@ -201,7 +201,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L12)
+[interfaces/datastore.ts:12](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/datastore.ts#lines-12)
 
 ___
 
@@ -222,4 +222,4 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/datastore.ts#L11)
+[interfaces/datastore.ts:11](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/datastore.ts#lines-11)

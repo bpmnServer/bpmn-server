@@ -37,7 +37,7 @@ msgs can be cleared by the clean method
 
 #### Defined in
 
-[interfaces/common.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L54)
+[interfaces/common.ts:54](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-54)
 
 ___
 
@@ -57,7 +57,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:56](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L56)
+[interfaces/common.ts:56](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-56)
 
 ___
 
@@ -77,7 +77,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:59](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L59)
+[interfaces/common.ts:59](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-59)
 
 ___
 
@@ -91,7 +91,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:55](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L55)
+[interfaces/common.ts:55](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-55)
 
 ___
 
@@ -111,7 +111,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:58](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L58)
+[interfaces/common.ts:58](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-58)
 
 ___
 
@@ -131,7 +131,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:60](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L60)
+[interfaces/common.ts:60](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-60)
 
 ___
 
@@ -151,7 +151,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:61](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L61)
+[interfaces/common.ts:61](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-61)
 
 ___
 
@@ -174,7 +174,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:49](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L49)
+[interfaces/common.ts:49](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-49)
 
 ___
 
@@ -194,4 +194,4 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:57](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/common.ts#L57)
+[interfaces/common.ts:57](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/common.ts#lines-57)

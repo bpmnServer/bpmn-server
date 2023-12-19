@@ -1,10 +1,24 @@
-# Table of Contents
-- [Instance Data](#instance-data) 
-- [Item Data](#item-data)
-- [Data Scope](#data-scope) 
-- [Query on Data](#query-on-data) 
-- [input/Output Data](#input-output-data) 
 
+
+<!-- toc -->
+
+- [Instance Data](#instance-data)
+  - [As Input to Engine calls](#as-input-to-engine-calls)
+  - [Expressions](#expressions)
+  - [Part of Script and Service Task](#part-of-script-and-service-task)
+  - [AppDelegate](#appdelegate)
+  - [Script Extensions](#script-extensions)
+- [Item Data](#item-data)
+  - [Setting item.vars](#setting-itemvars)
+  - [MongoDB:](#mongodb)
+  - [Using findItems:](#using-finditems)
+- [Data Scope](#data-scope)
+- [Query on Data](#query-on-data)
+- [Input-Output Data](#input-output-data)
+  - [Input/Output using Scripts](#inputoutput-using-scripts)
+  - [Input/Output using Camunda Extension of Input/Output Parameter](#inputoutput-using-camunda-extension-of-inputoutput-parameter)
+
+<!-- tocstop -->
 
 # Instance Data
 Instance Data can be manipulated in several ways:
@@ -91,7 +105,7 @@ You can set item.vars Inside your service logic :
 ```
 or by having an event-listener such as:
 
-![Item Vars Script](item-vars-script.png)
+![Item Vars Script](./images/item-vars-script.png)
 
 ## MongoDB:
 As a result MongoDB stores item.vars
@@ -111,12 +125,12 @@ The entire execution will have one data scope object, shared among all nodes, ex
   - and Loops (Multi-instances)
 
 
-![Image description](./Data_BuyUsedCar.PNG)
+![Image description](./images/Data_BuyUsedCar.PNG)
 
 However, for SubProcess and Loop elements a seperate scope 
 
-![Image description](./Data_Scripts_Services_model.PNG)
-![Image description](./Data_Scripts_Services.PNG)
+![Image description](./images/Data_Scripts_Services_model.PNG)
+![Image description](./images/Data_Scripts_Services.PNG)
 
 # Query on Data
 You can use Instance data as part of your query for Instances or Items
@@ -244,5 +258,3 @@ Input and output is used in the following scenarios:
     start trigger:
 
             data.caseId=input.caseId;
-
-

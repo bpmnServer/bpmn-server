@@ -89,6 +89,7 @@ class Execution extends ServerComponent implements IExecution {
     }
     async end() {
         this.log(".execution ended.");
+        this.info("execution ended.");
         this.instance.endedAt = new Date();
         this.instance.status = EXECUTION_STATUS.end;
         if (this.instance.parentItemId) {
@@ -120,6 +121,7 @@ class Execution extends ServerComponent implements IExecution {
     public async execute(startNodeId = null, inputData = {}, options = {}) {
 
         this.log('ACTION:execute:');
+        this.info('execution started');
         this.operation='execute';
         this.options=options;
         await this.definition.load();

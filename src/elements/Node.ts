@@ -162,7 +162,7 @@ class Node extends Element {
 
         let ret =await this.start(item);
 
-        item.token.info('Node('+this.name+'|'+this.id+').execute: start complete ...token:'+item.token.id+' ret:'+ret);
+        item.token.log('Node('+this.name+'|'+this.id+').execute: start complete ...token:'+item.token.id+' ret:'+ret);
 
         for (var i = 0; i < behaviourlist.length; i++) {
             const b = behaviourlist[i];
@@ -270,7 +270,6 @@ class Node extends Element {
         }
     }
     async end(item: Item,cancel:Boolean=false) {
-        item.token.info('Node(' + this.name + '|' + this.id + ').ended: item=' + item.id);
         item.token.log('Node('+this.name+'|'+this.id+').end: item=' + item.id+ ' cancel:'+cancel + ' attachments:'+this.attachments.length);
         /**
          * Rule:    boundary events are canceled when owner task status is 'end'

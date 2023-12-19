@@ -59,7 +59,7 @@
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:39](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L39)
+[common/DefaultConfiguration.ts:39](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/DefaultConfiguration.ts#lines-39)
 
 ## Properties
 
@@ -73,7 +73,7 @@
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L20)
+[common/DefaultConfiguration.ts:20](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/DefaultConfiguration.ts#lines-20)
 
 ___
 
@@ -96,7 +96,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L15)
+[common/DefaultConfiguration.ts:15](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/DefaultConfiguration.ts#lines-15)
 
 ___
 
@@ -110,7 +110,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L12)
+[common/DefaultConfiguration.ts:12](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/DefaultConfiguration.ts#lines-12)
 
 ___
 
@@ -124,7 +124,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L19)
+[common/DefaultConfiguration.ts:19](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/DefaultConfiguration.ts#lines-19)
 
 ___
 
@@ -134,7 +134,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L21)
+[common/DefaultConfiguration.ts:21](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/DefaultConfiguration.ts#lines-21)
 
 ___
 
@@ -148,7 +148,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L13)
+[common/DefaultConfiguration.ts:13](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/DefaultConfiguration.ts#lines-13)
 
 ___
 
@@ -169,7 +169,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L14)
+[common/DefaultConfiguration.ts:14](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/DefaultConfiguration.ts#lines-14)
 
 ## Methods
 
@@ -193,7 +193,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:25](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L25)
+[common/DefaultConfiguration.ts:25](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/DefaultConfiguration.ts#lines-25)
 
 ___
 
@@ -217,7 +217,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:31](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L31)
+[common/DefaultConfiguration.ts:31](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/DefaultConfiguration.ts#lines-31)
 
 ___
 
@@ -241,7 +241,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:28](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L28)
+[common/DefaultConfiguration.ts:28](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/DefaultConfiguration.ts#lines-28)
 
 ___
 
@@ -265,7 +265,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:22](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L22)
+[common/DefaultConfiguration.ts:22](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/DefaultConfiguration.ts#lines-22)
 
 ___
 
@@ -289,4 +289,4 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:34](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/common/DefaultConfiguration.ts#L34)
+[common/DefaultConfiguration.ts:34](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/DefaultConfiguration.ts#lines-34)

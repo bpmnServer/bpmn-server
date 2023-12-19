@@ -21,7 +21,7 @@
 
 #### Defined in
 
-[engine/Token.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L54)
+[engine/Token.ts:54](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-54)
 
 ___
 
@@ -31,7 +31,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:53](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L53)
+[engine/Token.ts:53](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-53)
 
 ___
 
@@ -41,7 +41,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L54)
+[engine/Token.ts:54](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-54)
 
 ___
 
@@ -51,7 +51,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:53](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L53)
+[engine/Token.ts:53](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-53)
 
 ___
 
@@ -61,7 +61,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:53](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L53)
+[engine/Token.ts:53](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-53)
 
 ___
 
@@ -71,4 +71,4 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:53](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/engine/Token.ts#L53)
+[engine/Token.ts:53](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/engine/Token.ts#lines-53)

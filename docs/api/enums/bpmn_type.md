@@ -34,7 +34,7 @@
 
 #### Defined in
 
-[interfaces/Enums.ts:14](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L14)
+[interfaces/Enums.ts:14](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-14)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:8](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L8)
+[interfaces/Enums.ts:8](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-8)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:21](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L21)
+[interfaces/Enums.ts:21](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-21)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:18](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L18)
+[interfaces/Enums.ts:18](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-18)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:11](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L11)
+[interfaces/Enums.ts:11](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-11)
 
 ___
 
@@ -84,7 +84,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:13](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L13)
+[interfaces/Enums.ts:13](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-13)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:12](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L12)
+[interfaces/Enums.ts:12](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-12)
 
 ___
 
@@ -104,7 +104,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:16](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L16)
+[interfaces/Enums.ts:16](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-16)
 
 ___
 
@@ -114,7 +114,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:17](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L17)
+[interfaces/Enums.ts:17](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-17)
 
 ___
 
@@ -124,7 +124,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:20](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L20)
+[interfaces/Enums.ts:20](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-20)
 
 ___
 
@@ -134,7 +134,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:10](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L10)
+[interfaces/Enums.ts:10](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-10)
 
 ___
 
@@ -144,7 +144,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:7](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L7)
+[interfaces/Enums.ts:7](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-7)
 
 ___
 
@@ -154,7 +154,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:4](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L4)
+[interfaces/Enums.ts:4](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-4)
 
 ___
 
@@ -164,7 +164,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:6](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L6)
+[interfaces/Enums.ts:6](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-6)
 
 ___
 
@@ -174,7 +174,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:19](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L19)
+[interfaces/Enums.ts:19](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-19)
 
 ___
 
@@ -184,7 +184,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:5](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L5)
+[interfaces/Enums.ts:5](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-5)
 
 ___
 
@@ -194,7 +194,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:15](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L15)
+[interfaces/Enums.ts:15](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-15)
 
 ___
 
@@ -204,7 +204,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:9](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L9)
+[interfaces/Enums.ts:9](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-9)
 
 ___
 
@@ -214,4 +214,4 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:3](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/interfaces/Enums.ts#L3)
+[interfaces/Enums.ts:3](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/interfaces/Enums.ts#lines-3)

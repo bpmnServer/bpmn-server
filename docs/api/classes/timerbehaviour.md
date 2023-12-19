@@ -73,7 +73,7 @@ Behaviour
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:40](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L40)
+[elements/behaviours/Behaviour.ts:40](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Behaviour.ts#lines-40)
 
 ## Properties
 
@@ -87,7 +87,7 @@ Behaviour
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:39](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L39)
+[elements/behaviours/Behaviour.ts:39](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Behaviour.ts#lines-39)
 
 ___
 
@@ -97,7 +97,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:55](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L55)
+[elements/behaviours/Timer.ts:55](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Timer.ts#lines-55)
 
 ___
 
@@ -111,7 +111,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:38](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L38)
+[elements/behaviours/Behaviour.ts:38](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Behaviour.ts#lines-38)
 
 ___
 
@@ -121,7 +121,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:56](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L56)
+[elements/behaviours/Timer.ts:56](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Timer.ts#lines-56)
 
 ___
 
@@ -131,7 +131,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:57](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L57)
+[elements/behaviours/Timer.ts:57](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Timer.ts#lines-57)
 
 ___
 
@@ -141,17 +141,17 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:58](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L58)
+[elements/behaviours/Timer.ts:58](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Timer.ts#lines-58)
 
 ## Methods
 
 ### describe
 
-▸ **describe**(): `string`[]
+▸ **describe**(): `string`[][]
 
 #### Returns
 
-`string`[]
+`string`[][]
 
 #### Overrides
 
@@ -159,7 +159,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:82](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L82)
+[elements/behaviours/Timer.ts:82](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Timer.ts#lines-82)
 
 ___
 
@@ -183,7 +183,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:193](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L193)
+[elements/behaviours/Timer.ts:202](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Timer.ts#lines-202)
 
 ___
 
@@ -207,7 +207,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:48](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L48)
+[elements/behaviours/Behaviour.ts:48](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Behaviour.ts#lines-48)
 
 ___
 
@@ -231,7 +231,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:52](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L52)
+[elements/behaviours/Behaviour.ts:52](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Behaviour.ts#lines-52)
 
 ___
 
@@ -245,7 +245,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:157](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L157)
+[elements/behaviours/Timer.ts:166](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Timer.ts#lines-166)
 
 ___
 
@@ -270,7 +270,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:55](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L55)
+[elements/behaviours/Behaviour.ts:55](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Behaviour.ts#lines-55)
 
 ___
 
@@ -294,7 +294,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:54](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L54)
+[elements/behaviours/Behaviour.ts:54](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Behaviour.ts#lines-54)
 
 ___
 
@@ -314,7 +314,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:120](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L120)
+[elements/behaviours/Timer.ts:129](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Timer.ts#lines-129)
 
 ___
 
@@ -332,7 +332,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:59](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L59)
+[elements/behaviours/Timer.ts:59](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Timer.ts#lines-59)
 
 ___
 
@@ -356,7 +356,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:45](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L45)
+[elements/behaviours/Behaviour.ts:45](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Behaviour.ts#lines-45)
 
 ___
 
@@ -374,7 +374,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:197](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L197)
+[elements/behaviours/Timer.ts:206](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Timer.ts#lines-206)
 
 ___
 
@@ -398,7 +398,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:50](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Behaviour.ts#L50)
+[elements/behaviours/Behaviour.ts:50](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Behaviour.ts#lines-50)
 
 ___
 
@@ -422,7 +422,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:128](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L128)
+[elements/behaviours/Timer.ts:137](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Timer.ts#lines-137)
 
 ___
 
@@ -442,7 +442,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:139](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L139)
+[elements/behaviours/Timer.ts:148](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Timer.ts#lines-148)
 
 ___
 
@@ -466,4 +466,4 @@ format is time format
 
 #### Defined in
 
-[elements/behaviours/Timer.ts:90](https://github.com/bpmnServer/bpmn-server/blob/b56411b/src/elements/behaviours/Timer.ts#L90)
+[elements/behaviours/Timer.ts:99](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/Timer.ts#lines-99)
