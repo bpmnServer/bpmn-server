@@ -1,214 +1,234 @@
+bpmn-server / [Exports](modules.md)
+
 bpmn-server
+===========
 
-# bpmn-server
+[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 
-## Table of contents
+## Introduction
+BPMN 2.0 Modeling, Execution and Presistence, an open source Workflow Server for Node.js 
 
-### Enumerations
+This package is designed specifically for Node.js and TypeScript
 
-- [BPMN\_TYPE](enums/BPMN_TYPE.md)
-- [EXECUTION\_EVENT](enums/EXECUTION_EVENT.md)
-- [EXECUTION\_STATUS](enums/EXECUTION_STATUS.md)
-- [FLOW\_ACTION](enums/FLOW_ACTION.md)
-- [ITEM\_STATUS](enums/ITEM_STATUS.md)
-- [NODE\_ACTION](enums/NODE_ACTION.md)
-- [NODE\_SUBTYPE](enums/NODE_SUBTYPE.md)
-- [TOKEN\_STATUS](enums/TOKEN_STATUS.md)
-- [TOKEN\_TYPE](enums/TOKEN_TYPE.md)
-- [USER\_ROLE](enums/USER_ROLE.md)
+## Features
+### Web based Process modeller
 
-### Classes
+A web based modeler is included based on http://bpmn.io , models definitions are saved at your server
+![Modeller](./docs/model-demo.gif)
 
-- [APIData](classes/APIData.md)
-- [APIEngine](classes/APIEngine.md)
-- [APIModel](classes/APIModel.md)
-- [BPMNAPI](classes/BPMNAPI.md)
-- [BPMNServer](classes/BPMNServer.md)
-- [Behaviour](classes/Behaviour.md)
-- [BehaviourLoader](classes/BehaviourLoader.md)
-- [BoundaryEvent](classes/BoundaryEvent.md)
-- [BpmnModelData](classes/BpmnModelData.md)
-- [BusinessRuleTask](classes/BusinessRuleTask.md)
-- [CacheManager](classes/CacheManager.md)
-- [CallActivity](classes/CallActivity.md)
-- [CamundaFormData](classes/CamundaFormData.md)
-- [CatchEvent](classes/CatchEvent.md)
-- [Configuration](classes/Configuration.md)
-- [Cron](classes/Cron.md)
-- [DataStore](classes/DataStore.md)
-- [DefaultAppDelegate](classes/DefaultAppDelegate.md)
-- [Definition](classes/Definition.md)
-- [Element](classes/Element.md)
-- [EndEvent](classes/EndEvent.md)
-- [Engine](classes/Engine.md)
-- [Event](classes/Event.md)
-- [EventBasedGateway](classes/EventBasedGateway.md)
-- [EventData](classes/EventData.md)
-- [Execution](classes/Execution.md)
-- [Flow](classes/Flow.md)
-- [Gateway](classes/Gateway.md)
-- [IOBehaviour](classes/IOBehaviour.md)
-- [InstanceLocker](classes/InstanceLocker.md)
-- [InstanceObject](classes/InstanceObject.md)
-- [Item](classes/Item.md)
-- [ItemObject](classes/ItemObject.md)
-- [Logger](classes/Logger.md)
-- [Loop](classes/Loop.md)
-- [LoopBehaviour](classes/LoopBehaviour.md)
-- [LoopObject](classes/LoopObject.md)
-- [MessageEventBehaviour](classes/MessageEventBehaviour.md)
-- [MessageFlow](classes/MessageFlow.md)
-- [ModelsDatastore](classes/ModelsDatastore.md)
-- [ModelsDatastoreDB](classes/ModelsDatastoreDB.md)
-- [MongoDB](classes/MongoDB.md)
-- [NoCacheManager](classes/NoCacheManager.md)
-- [Node](classes/Node.md)
-- [NodeLoader](classes/NodeLoader.md)
-- [Process](classes/Process.md)
-- [ProcessData](classes/ProcessData.md)
-- [Query](classes/Query.md)
-- [ReceiveTask](classes/ReceiveTask.md)
-- [ScriptBehaviour](classes/ScriptBehaviour.md)
-- [ScriptHandler](classes/ScriptHandler.md)
-- [ScriptTask](classes/ScriptTask.md)
-- [SecureUser](classes/SecureUser.md)
-- [SendTask](classes/SendTask.md)
-- [ServerComponent](classes/ServerComponent.md)
-- [ServiceTask](classes/ServiceTask.md)
-- [SignalEventBehaviour](classes/SignalEventBehaviour.md)
-- [StartEvent](classes/StartEvent.md)
-- [SubProcess](classes/SubProcess.md)
-- [TerminateBehaviour](classes/TerminateBehaviour.md)
-- [ThrowEvent](classes/ThrowEvent.md)
-- [TimerBehaviour](classes/TimerBehaviour.md)
-- [Token](classes/Token.md)
-- [TokenObject](classes/TokenObject.md)
-- [Transaction](classes/Transaction.md)
-- [UserTask](classes/UserTask.md)
-- [XORGateway](classes/XORGateway.md)
+### Full BPMN Process Engine
 
-### Interfaces
+bpmn-server provides an bpmnEngine to execute your workflow definition supporting all of BPMN 2.0 elements with advanced extensions
 
-- [IAPIData](interfaces/IAPIData.md)
-- [IAPIEngine](interfaces/IAPIEngine.md)
-- [IAPIModel](interfaces/IAPIModel.md)
-- [IAppDelegate](interfaces/IAppDelegate.md)
-- [IBPMNServer](interfaces/IBPMNServer.md)
-- [IBehaviour](interfaces/IBehaviour.md)
-- [IBpmnModelData](interfaces/IBpmnModelData.md)
-- [ICacheManager](interfaces/ICacheManager.md)
-- [IConfiguration](interfaces/IConfiguration.md)
-- [ICron](interfaces/ICron.md)
-- [IDataStore](interfaces/IDataStore.md)
-- [IDefinition](interfaces/IDefinition.md)
-- [IDefinitionData](interfaces/IDefinitionData.md)
-- [IElement](interfaces/IElement.md)
-- [IElementData](interfaces/IElementData.md)
-- [IEngine](interfaces/IEngine.md)
-- [IEventData](interfaces/IEventData.md)
-- [IExecution](interfaces/IExecution.md)
-- [IFlow](interfaces/IFlow.md)
-- [IFlowData](interfaces/IFlowData.md)
-- [IInstanceData](interfaces/IInstanceData.md)
-- [IItem](interfaces/IItem.md)
-- [IItemData](interfaces/IItemData.md)
-- [ILogger](interfaces/ILogger.md)
-- [IModelsDatastore](interfaces/IModelsDatastore.md)
-- [INode](interfaces/INode.md)
-- [IProcessData](interfaces/IProcessData.md)
-- [ISecureUser](interfaces/ISecureUser.md)
-- [IServerComponent](interfaces/IServerComponent.md)
-- [IToken](interfaces/IToken.md)
-- [IUserInfo](interfaces/IUserInfo.md)
-- [IUserService](interfaces/IUserService.md)
+bpmn-server is highly scalable solution, allow you to run multiple nodeJS either in same machine or in a distributed mode against same MongoDB 
 
-### Variables
+### Presistent Processes
 
-- [Behaviour\_names](README.md#behaviour_names)
-- [SystemUser](README.md#systemuser)
-- [defaultConfiguration](README.md#defaultconfiguration)
-- [docsFolder](README.md#docsfolder)
+provides an environment to presist execution Instances while running and communicate with your application.
 
-### Functions
+Applications can monitor and communicate to Instances whether they are running or offline, allowing user interface to query and process Workflow steps
 
-- [dateDiff](README.md#datediff)
+### Data Queries 
 
-## Variables
+Since instances are saved in MongoDB you can easily query your instances (running or completed)
 
-### Behaviour\_names
+### User Assignment and Access Control
 
-• `Const` **Behaviour\_names**: `Object`
+### Application Integration
 
-#### Type declaration
+### Sample Web App
 
-| Name | Type |
-| :------ | :------ |
-| `CamundaFormData` | `string` |
-| `CamundaIO` | `string` |
-| `CamundaScript` | `string` |
-| `CamundaScript2` | `string` |
-| `CamundaScript3` | `string` |
-| `CancelEventDefinition` | `string` |
-| `CompensateEventDefinition` | `string` |
-| `ErrorEventDefinition` | `string` |
-| `EscalationEventDefinition` | `string` |
-| `IOSpecification` | `string` |
-| `LoopCharacteristics` | `string` |
-| `MessageEventDefinition` | `string` |
-| `SignalEventDefinition` | `string` |
-| `TerminateEventDefinition` | `string` |
-| `TimerEventDefinition` | `string` |
+Included is a sample web application (running Node.js and Express.js) to allow you to visualize your workflow 
 
-#### Defined in
+# Installation
 
-[elements/behaviours/BehaviourLoader.ts:16](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/elements/behaviours/BehaviourLoader.ts#lines-16)
+This package requires Node.js and an access to MongoDB ()
+if you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas)
 
-___
+```javascript
+$ mkdir myBPMN
 
-### SystemUser
+$ cd myBPMN
 
-• `Const` **SystemUser**: [`SecureUser`](classes/SecureUser.md)
+$ git clone https://github.com/bpmnServer/bpmn-web.git
 
-#### Defined in
+$ npm install 
 
-[API/SecureUser.ts:227](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/API/SecureUser.ts#lines-227)
+$ npm run setup 
 
-___
+Edit .env file to have MongoDB point to your server or free cloud account
+```javascript
+# PORT # for express application
+PORT=3000
 
-### defaultConfiguration
+#API_KEY is used for remote access
+API_KEY=12345
 
-• **defaultConfiguration**: [`Configuration`](classes/Configuration.md)
+# MongoDB Settings
+MONGO_DB_URL=mongodb://0.0.0.0:27017/bpmn	
+#
+DEFINITIONS_PATH="./WorkflowApp/processes/"
+SESSION_SECRET=omni-secret
 
-#### Defined in
+# Used to identify Servers when using multiple servers, each server needs a unique Id
+SERVER_ID=PRIMARY
 
-[common/DefaultConfiguration.ts:59](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/DefaultConfiguration.ts#lines-59)
+# --- Mail Setting  USING google email
 
-___
+SITE_NAME=BPMN.SERVER
+EMAIL_FROM=<your email here>	# CHANGE TO YOUR EMAIL ADDRESS
+SMTP_USER=<your email here>		# CHANGE TO YOUR GOOGLE EMAIL ADDRESS
+SMTP_PASSWORD=<your application password here>	# CHANGE TO YOUR GOOGLE EMAIL PASSWORD  - see this link https://miracleio.me/snippets/use-gmail-with-nodemailer/
 
-### docsFolder
+# -- Security Setting
+# if true, would direct users to login page, requires registration
+# valid values:	true	flase
 
-• `Const` **docsFolder**: `string`
+REQUIRE_AUTHENTICATION=true		# set to false if you just want to run in DEV environment
+ENFORCE_SECURITY=true
 
-#### Defined in
+```
+Run Setup one more time
 
-[index.ts:9](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/index.ts#lines-9)
+```
+$ npm run setup 
+```
+## To start server
+```
+npm run start
+```
+Console will display:
+```text 
+bpmn-server WebApp.ts version 1.4.0
+MongoDB URL mongodb://0.0.0.0:27017/bpmn
+db connection open
 
-## Functions
+App is running at http://localhost:3000 in development mode
+  Press CTRL-C to stop
 
-### dateDiff
+```
+Use your browser to view the bpmn-server running
 
-▸ **dateDiff**(`dateStr`): `string`
+### Command Line Interface
 
-#### Parameters
+bpmnServer provide some basic functionalities using CLI
+```
+$ npm run cli
 
-| Name | Type |
-| :------ | :------ |
-| `dateStr` | `any` |
+server started..
+Commands:
+        q       to quit
+        s       start process
+        lo      list outstanding items
+        li      list items
+        l       list instances for a process
+        di      display Instance information
+        i       Invoke Task
+        sgl     Signal Task
+        msg     Message Task
+        d       delete instnaces
+        lm      List of Models
+        lme     List of Models
+        ck      Check locked instnaces
+        re      Recover hung processes
+        lu      List Users
+        spw     Set User Password
+        ?       repeat this list
+Enter Command, q to quit, or ? to list commands
+>
+```
 
-#### Returns
+## to update to latest release
 
-`string`
+```
+$ npm update bpmn-server
+```
 
-#### Defined in
+# Documentation
+- [Features](./docs/features.md)
+- [Examples](./docs/examples.md)
 
-[common/timer.ts:4](https://bitbucket.org/ralphhanna/bpmn-server/src/2ac50a51/WebApp/bpmnServer/src/common/timer.ts#lines-4)
+## Executing Workflow
+
+`bpmn-server` provide full API for your application to execute, monitor and query the Workflow.
+Typicall this is done through your business application or through a web Application 
+see [API](./docs/API.md) for details
+
+## Adding Logic to your Workflow 
+Beyond BPMN Models, you can add scripts and logic to the working through the followings:
+### Model Expressions 
+Many of the model properties accept `JavaScript Expressions` for example:
+- conditional flow
+- timers
+- assignment properties
+see [Model Expressions](./docs/scripting.md#expressions) for details
+
+### Execution/Task Listeners
+Inside your model, you can attach Listeners to various nodes as `JavaScript Listeners`
+see [Listeners](./docs/scripting.md#listeners) for details
+
+### Workflow Application Delegate
+You can place a listener in your application delegate class to listen to all events
+
+see [Application Listener](./docs/scripting.md#Applistener) for details
+
+## Deployment Modes
+
+BPMNServer is a backend server aimed to execute BPMN Models
+You can deploy in several scenarios:
+### Web Application 
+We Provide a full demo @ http://bpmn.omniworkflow.com
+
+Or installation above to install on your environemnt
+
+### as a MicroService 
+
+By running the WebApplication described above and access only the API
+
+### Remote Access to WebServer
+
+Using bpmnClient app
+
+### Stand-alone
+
+You can deploy a stand alone app using NodeJs scripts
+for example:
+
+```javascript
+/* Most simple Script to start a process 
+*/
+    const api = new BPMNAPI(new BPMNServer(configuration));
+
+    let response=await api.engine.start('Leave Request',{type:'Vacation'},SystemUser);
+
+    const items = response.items.filter(item => {
+        return (item.status == 'wait');
+    });
+
+    items.forEach(item => {
+        console.log(`  waiting for <${item.name}> -<${item.elementId}> id: <${item.id}> `);
+    });
+
+    console.log('Invoking Buy');
+
+    response = await api.engine.invoke({instanceId: response.execution.id, elementId: 'task_Buy' },
+        { model: 'Thunderbird', needsRepairs: false, needsCleaning: false },SystemUser);
+
+    console.log("Ready to drive");
+
+    response = await api.engine.invoke({ instanceId: response.execution.id, elementId: 'task_Drive' },{},SsytemUser);
+
+    console.log(`that is it!, process is now complete status=<${response.execution.status}>`)
+
+```
+for more complete examples see [Examples](./docs/examples.md)
+
+# License 
+
+This project is licensed under the terms of the MIT license.
+
+# Acknowledgments
+
+The **bpmn-server** resides upon the excellent library [bpmn-io/bpmn-moddle](https://github.com/bpmn-io/bpmn-moddle) developed by [bpmn.io](http://bpmn.io/)
+
+The **bpmn-server** is inspired by the library [bpmn-engine](https://github.com/paed01/bpmn-engine)
