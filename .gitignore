@@ -11,4 +11,5 @@
 *.tgz
 # Transpiled JavaScript files from Typescript
 /dist
-
+# generated docs
+/.docusaurus
