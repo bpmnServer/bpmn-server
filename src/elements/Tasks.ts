@@ -24,7 +24,7 @@ class ScriptTask extends Node {
     }
 }
 /**
- * 
+ * ```ts
  *      foo[method]();
  *      
  *      await this.token.appDelegate[serviceName](data);
@@ -32,6 +32,7 @@ class ScriptTask extends Node {
  *      
  *      service signature:
  *              output= service (input,context)
+ * ```
  */
 class ServiceTask extends Node {
     get serviceName() {

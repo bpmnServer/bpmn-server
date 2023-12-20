@@ -5,7 +5,7 @@
 
 Event Based Gateway launches all valid outbound flows, but once on event is completed, it must cancel the rest.
 
-```javascript
+```ts
 
 const { BPMNServer , DefaultHandler , Logger } = require("../../");
 const { configuration } = require('../../configuration');
@@ -42,7 +42,7 @@ Feature('Event Based Gateway', () => {
     to visualize the process, let us borrow from the WebApp
 ![BPMN Diagram](ebg2.png)
 
-```javascript
+```ts
             When('we wait a bit for timer to complete', async () => {
                 await delay(3000, 'test');
 
@@ -67,7 +67,7 @@ Feature('Event Based Gateway', () => {
     again, let us see what it looks like now!
 ![BPMN Diagram](ebg3.png)
 
-```javascript
+```ts
 
             When('we issue reminder', async () => {
 

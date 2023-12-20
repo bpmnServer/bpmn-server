@@ -45,10 +45,14 @@ interface IEngine {
      *
      * @param instanceQuery		criteria to fetch the instance
      *
-     * query example:	{ id: instanceId}
-     *					{ data: {caseId: 1005}}
-     *					{ items.id : 'abcc111322'}
-     *					{ items.itemKey : 'businesskey here'}
+     * query example:
+     * 
+     * ```jsonl
+     * { id: instanceId}
+     * { data: {caseId: 1005}}
+     * { items.id : 'abcc111322'}
+     * { items.itemKey : 'businesskey here'}
+     * ```
      *
      */
     get(instanceQuery: any): Promise<IExecution>;
@@ -56,10 +60,14 @@ interface IEngine {
      * Continue an existing item that is in a wait state
      *
      * -------------------------------------------------
+     * 
      * scenario:
-     *		itemId			{itemId: value }
-     *		itemKey			{itemKey: value}
-     *		instance,task	{instanceId: instanceId, elementId: value }
+     * 
+     * ```
+     * itemId 	{itemId: value }
+     * itemKey 	{itemKey: value}
+     * instance,task	{instanceId: instanceId, elementId: value }
+     * ```
      *
      * @param itemQuery		criteria to retrieve the item
      * @param data

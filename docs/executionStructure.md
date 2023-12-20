@@ -40,7 +40,7 @@ Execution:
 		execution.worker = execution.execute(startNodeId, data, options);
 
 2 execution.execute
-```js
+```ts
   public async execute(startNodeId = null, inputData = {}, options = {}) {
 
         await this.definition.load();
@@ -57,7 +57,7 @@ Execution:
         await Promise.all(this.promises);
 ```
 3. process
-```js   
+```ts   
 /**
      * Notify process that it started
      * */
@@ -79,7 +79,7 @@ Execution:
     }
 ```
 4. Token.execute
-```js
+```ts
 		new item
 		ret=node.execute(item)
 		if (ret)
@@ -91,7 +91,7 @@ Execution:
 ```
 5.  Node.execute
 
-```js
+```ts
 
         this.enter(item);   // no choice
         let ret =await this.start(item);

@@ -9,7 +9,9 @@
     "wintest": "node_modules/.bin/mocha",
     "docs:build": "docusaurus build",
     "docs:dev": "docusaurus start",
+    "docs:generate": "npm run docs:generate:copy && npm run docs:generate:api",
     "docs:generate:api": "rimraf docs/api && typedoc --options typedoc.json",
+    "docs:generate:copy": "ts-node scripts/copy-readme.ts",
     "docs:check": "node scripts/test-markdown.js ./docs/API.md && node scripts/test-markdown.js ./docs/Examples.md"
   },
   "repository": {

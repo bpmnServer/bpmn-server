@@ -2,7 +2,7 @@
 
 To Invoke a process from your code:
 
-```javascript
+```ts
     const { configuration }  = require('../configuration.js');
     const { BPMNServer, Logger } = require('bpmn-server');
 
@@ -41,7 +41,7 @@ The default behaviour is that engine.start will execute the process in sequence 
 
 #### Listener
 
-```js
+```ts
     const logger = new Logger({ toConsole: false });
 
     const listener = new EventEmitter();
@@ -65,7 +65,7 @@ In the above example; engine.start return immediatly, but a listener keep track 
 #### NoWait option
 optional parameter to start to return the instance itself, 
 
-```js
+```ts
 
 // this will return immediatly
 

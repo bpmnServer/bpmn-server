@@ -74,13 +74,16 @@ class Engine extends ServerComponent implements IEngine{
 	 * 
 	 * this will also resume execution
 	 * 
-	 * @param instanceQuery		criteria to fetch the instance
-	 * 
-	 * query example:	{ id: instanceId}
-	 *					{ data: {caseId: 1005}}
-	 *					{ items.item.id : 'abcc111322'}
-	 *					{ items.item.itemKey : 'businesskey here'}
-	 *					
+		* @param instanceQuery		criteria to fetch the instance
+		*
+		* query example:
+		* 
+		* ```jsonl
+		* { id: instanceId}
+		* { data: {caseId: 1005}}
+		* { items.id : 'abcc111322'}
+		* { items.itemKey : 'businesskey here'}
+		* ```
 	 */
 	async get(instanceQuery): Promise<Execution> {
 
@@ -200,13 +203,17 @@ class Engine extends ServerComponent implements IEngine{
 		}
 	}
 	/**
-	 * Continue an existing item that is in a wait state
-	 * 
-	 * -------------------------------------------------
-	 * scenario:
-	 *		itemId			{itemId: value }
-	 *		itemKey			{itemKey: value}
-	 *		instance,task	{instanceId: instanceId, elementId: value }
+     * Continue an existing item that is in a wait state
+     *
+     * -------------------------------------------------
+     * 
+     * scenario:
+     * 
+     * ```
+     * itemId 	{itemId: value }
+     * itemKey 	{itemKey: value}
+     * instance,task	{instanceId: instanceId, elementId: value }
+     * ```
 	 *		
 	 * @param itemQuery		criteria to retrieve the item
 	 * @param data

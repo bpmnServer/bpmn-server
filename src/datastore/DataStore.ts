@@ -187,24 +187,28 @@ class DataStore extends ServerComponent  implements IDataStore {
 		return records;
 	}
 	/**
-            * scenario:
-            * itemId			{ items { id : value } }
-            * itemKey			{ items {key: value } }
-            * instance, task	{ instance: { id: instanceId }, items: { elementId: value }}
-            * message			{ items: { messageId: nameofmessage, key: value } {}
-            * status			{ items: {status: 'wait' } }
-            * custom: { query: query, projection: projection }
+		* scenario:
+		*
+		* ```
+		* itemId			{ items { id : value } }
+		* itemKey			{ items {key: value } }
+		* instance, task	{ instance: { id: instanceId }, items: { elementId: value }}
+		* message			{ items: { messageId: nameofmessage, key: value } {}
+		* status			{ items: {status: 'wait' } }
+		* custom: { query: query, projection: projection }
+		* ```
+		* New approach:
+		* just like MongoDB
+		* ```
+		* itemId			{ items { id : value } }
+		* itemKey			{ items {key: value } }
+		* instance, task	{  id: instanceId , items.elementId: value }
+		* message			{ items.messageId: nameofmessage, key: value } {}
+		* status			{ items.status: 'wait' } }
+		* custom: { query: query, projection: projection }
+		* ```
 
-	New approach:
-		just like MongoDB
-	        * itemId			{ items { id : value } }
-            * itemKey			{ items {key: value } }
-            * instance, task	{  id: instanceId , items.elementId: value }
-            * message			{ items.messageId: nameofmessage, key: value } {}
-            * status			{ items.status: 'wait' } }
-            * custom: { query: query, projection: projection }
-
-     Problem with Mongodb:	projection $elematch returns only the first record
+		* Problem with Mongodb:	`projection $elematch returns only the first record`
 	 *
 	 * @param query
 	 */

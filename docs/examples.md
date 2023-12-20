@@ -30,13 +30,13 @@
 
 ## Invoking Workflow Examples
 
-### [Invoking Process Using WebApp ](./examples/BuyCar-Web.md)
+### [Invoking Process Using WebApp ](examples/BuyCar-Web.md)
 
 ### Invoking Proccess through API
 
 To Invoke a process from your code:
 
-```javascript
+```ts
     const { configuration }  = require('../configuration.js');
     const { BPMNServer, Logger } = require('bpmn-server');
 
@@ -67,10 +67,10 @@ To Invoke a process from your code:
 
     console.log(`that is it!, process is now complete status=<${response.execution.status}>`)
 ```
-### [Invoking Remotely Using WebServices](./examples/BuyCar-Remote.md)
+### [Invoking Remotely Using WebServices](examples/BuyCar-Remote.md)
 
 ### Async Execution
-```js
+```ts
     const api = new BPMNAPI(new BPMNServer(configuration,new Logger({ toConsole: false}),{cron:false}));
 
     console.log('starting serviceTask');
@@ -79,7 +79,7 @@ To Invoke a process from your code:
     console.log('immediate response id',response.instance.id);
 ```
 In the above example; engine.start return immediatly, but other nodes will continue to execute 
-```js
+```ts
 starting serviceTask
 immediate response id d7df99ab-f0b5-4fdf-8ac3-2701d0bf9b79
  add service start: { v1: 1, v2: 2 }
@@ -96,14 +96,14 @@ appDelegate service1 is now complete input: { repeat: '100', inputVar2: undefine
 ### Service Task
 In Process definition (.bpmn file), use `implementation` attribute to define name of JavaScript/TypeScript Method to perform the Task:
 
-![Using Modeler](./images/bb-service.PNG)
+![Using Modeler](images/bb-service.PNG)
 ```xml
     <bpmn:serviceTask id="serviceTask" name="Service Task" implementation="service1">
     ...
     </bpmn:serviceTask>
 ```
 
-```js 
+```ts 
 class AppServices {
 
     // for services that are not defined
@@ -120,7 +120,7 @@ class AppServices {
 ```
 ### Script Task
 
-![Using Modeler](./images/bb-script.PNG)
+![Using Modeler](images/bb-script.PNG)
 ```xml
     <bpmn2:scriptTask id="Activity_06typtl" name="script" scriptFormat="JavaScript">
       <bpmn2:script>
@@ -134,7 +134,7 @@ class AppServices {
 
 ### Conditional Flow
 
-![Using Modeler](./images/bb-conditional-flow.PNG)
+![Using Modeler](images/bb-conditional-flow.PNG)
 ```xml
 
   <bpmn:sequenceFlow>    
@@ -146,7 +146,7 @@ class AppServices {
 
 ```
 ### Form Input Fields
-![Using Modeler](./images/bb-form.PNG)
+![Using Modeler](images/bb-form.PNG)
 
 ```xml
     <bpmn:userTask id="task_Buy" name="Buy">
@@ -162,16 +162,16 @@ class AppServices {
 ```
 ### Multiple Start Event
 
-![Image description](./examples/invoice-start.png)
+![Image description](examples/invoice-start.png)
 
 When a definition/process has multiple start node, you need to specify the start node when starting the process:
 
 From the Web UI:
 
-![Image description](./examples/invoice-start-prompt.png)
+![Image description](examples/invoice-start-prompt.png)
 
 From API:
-```js
+```ts
     
     response = await api.engine.start('invoice', 
         { reminderCounter: 0, caseId: caseId}, user, {startNodeId:'StartEvent_AP'});
@@ -181,10 +181,10 @@ From API:
 BPMN-Server supports Business Rules implemented through DMN-Engine
 Business Rules can be defined as a Decision Table as in this example:
 
-![Vacation Decision Table](./examples/VacationDecisionTable.PNG)
+![Vacation Decision Table](examples/VacationDecisionTable.PNG)
 
 Decision Table is called through 
-```js
+```ts
     <bpmn2:businessRuleTask id="Task_1lcamp6" name="Vacation"  camunda:decisionRef="Vacation">
 ````
 This will load the file 'Vacation.json' form the Processes folder as defined in configuration.js
@@ -195,7 +195,7 @@ Scripts can be added to listen to two events:
 - Start before the Task is executed
 - End after the task is executed
 
-![Using Modeler](./images/bb-event-scripts.PNG)
+![Using Modeler](images/bb-event-scripts.PNG)
 
 In this example we are adding a script to bpmn:startEvent
 
@@ -226,7 +226,7 @@ In this example we are adding a script to bpmn:startEvent
 
 ### Timer Event
 
-![Using Modeler](./images/bb-timer.PNG)
+![Using Modeler](images/bb-timer.PNG)
 ```xml
     <bpmn:intermediateCatchEvent id="Event_timer">
       <bpmn:incoming>Flow_1sg7v2d</bpmn:incoming>
@@ -236,10 +236,10 @@ In this example we are adding a script to bpmn:startEvent
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
 ```
-More on [timers](./timers.md)
+More on [timers](timers.md)
 ### Multi-instances Tasks
 
-![Using Modeler](./images/bb-multi-instance.PNG)
+![Using Modeler](images/bb-multi-instance.PNG)
 ```xml
     <bpmn:scriptTask id="scriptTask" name="Script Task">
       <bpmn:incoming>Flow_159xzcz</bpmn:incoming>
@@ -249,11 +249,11 @@ More on [timers](./timers.md)
       <bpmn:script><![CDATA[this.log('testing from the inside: '+data.loopKey);]]></bpmn:script>
     </bpmn:scriptTask>
 ```
-For Multi-instance data handling [see](./data.md)
+For Multi-instance data handling [see](data.md)
 
 ### Call Process
 
-![Using Modeler](./images/bb-call.PNG)
+![Using Modeler](images/bb-call.PNG)
 ```xml
     <bpmn:callActivity id="activity_call" name="Call Task" calledElement="loop">
     ...
@@ -262,13 +262,13 @@ For Multi-instance data handling [see](./data.md)
 ```
 In the above example 'loop' is the name of process to be called.
 ### Message Flow
-```js
+```ts
 ```
 
 ### Throwing and Cathcing Messages
 In this example, we will demonstrate how can two seperate processes communicate through "Messages"
 
-![Using Modeler](./images/bb-message.PNG)
+![Using Modeler](images/bb-message.PNG)
 
 #### 1 Throw a message with data
 When a process throw a message, bpmn-server checks if there is another process that can catch this message before dispatching it to AppDelegate.
@@ -323,16 +323,16 @@ Howerver, the challenge here is that make sure the message is sent to the specif
 - Message Output:         `confirm: true`
 - Message Matching Keyt:   'data.caseId': this.token.data.caseId 
 
-```js
+```ts
 ```
 
-![Image description](./examples/msg-throw-catch.png)
+![Image description](examples/msg-throw-catch.png)
 
 ### Input and Output Data Handling
 
 [this for details](data.md#Input-Output_Data)
 
-### [Gateway](./examples/gateway.md)
-### [Event Based Gateway ](./examples/gateway.md)
-### [Boundary Events](./examples/boundary-events.md)
-### [UserTask Assignment](./userAssignment.md)
+### [Gateway](examples/gateway.md)
+### [Event Based Gateway ](examples/gateway.md)
+### [Boundary Events](examples/boundary-events.md)
+### [UserTask Assignment](userAssignment.md)

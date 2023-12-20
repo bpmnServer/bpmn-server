@@ -1,14 +1,15 @@
-bpmn-server
-===========
+# bpmn-server
 
 [![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 
 ## Introduction
-BPMN 2.0 Modeling, Execution and Presistence, an open source Workflow Server for Node.js 
+
+BPMN 2.0 Modeling, Execution and Presistence, an open source Workflow Server for Node.js
 
 This package is designed specifically for Node.js and TypeScript
 
 ## Features
+
 ### Web based Process modeller
 
 A web based modeler is included based on http://bpmn.io , models definitions are saved at your server
@@ -18,7 +19,7 @@ A web based modeler is included based on http://bpmn.io , models definitions are
 
 bpmn-server provides an bpmnEngine to execute your workflow definition supporting all of BPMN 2.0 elements with advanced extensions
 
-bpmn-server is highly scalable solution, allow you to run multiple nodeJS either in same machine or in a distributed mode against same MongoDB 
+bpmn-server is highly scalable solution, allow you to run multiple nodeJS either in same machine or in a distributed mode against same MongoDB
 
 ### Presistent Processes
 
@@ -26,7 +27,7 @@ provides an environment to presist execution Instances while running and communi
 
 Applications can monitor and communicate to Instances whether they are running or offline, allowing user interface to query and process Workflow steps
 
-### Data Queries 
+### Data Queries
 
 Since instances are saved in MongoDB you can easily query your instances (running or completed)
 
@@ -36,26 +37,28 @@ Since instances are saved in MongoDB you can easily query your instances (runnin
 
 ### Sample Web App
 
-Included is a sample web application (running Node.js and Express.js) to allow you to visualize your workflow 
+Included is a sample web application (running Node.js and Express.js) to allow you to visualize your workflow
 
 # Installation
 
 This package requires Node.js and an access to MongoDB ()
 if you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas)
 
-```javascript
-$ mkdir myBPMN
+```sh
+mkdir myBPMN
 
-$ cd myBPMN
+cd myBPMN
 
-$ git clone https://github.com/bpmnServer/bpmn-web.git
+git clone https://github.com/bpmnServer/bpmn-web.git
 
-$ npm install 
+npm install
 
-$ npm run setup 
+npm run setup
+```
 
 Edit .env file to have MongoDB point to your server or free cloud account
-```javascript
+
+```env
 # PORT # for express application
 PORT=3000
 
@@ -63,7 +66,7 @@ PORT=3000
 API_KEY=12345
 
 # MongoDB Settings
-MONGO_DB_URL=mongodb://0.0.0.0:27017/bpmn	
+MONGO_DB_URL=mongodb://0.0.0.0:27017/bpmn
 #
 DEFINITIONS_PATH="./WorkflowApp/processes/"
 SESSION_SECRET=omni-secret
@@ -86,34 +89,39 @@ SMTP_PASSWORD=<your application password here>	# CHANGE TO YOUR GOOGLE EMAIL PAS
 REQUIRE_AUTHENTICATION=true		# set to false if you just want to run in DEV environment
 ENFORCE_SECURITY=true
 
-
 ```
+
 Run Setup one more time
 
+```sh
+npm run setup
 ```
-$ npm run setup 
-```
+
 ## To start server
-```
+
+```sh
 npm run start
 ```
+
 Console will display:
-```text 
+
+```text
 bpmn-server WebApp.ts version 1.4.0
 MongoDB URL mongodb://0.0.0.0:27017/bpmn
 db connection open
 
 App is running at http://localhost:3000 in development mode
   Press CTRL-C to stop
-
 ```
+
 Use your browser to view the bpmn-server running
 
 ### Command Line Interface
 
 bpmnServer provide some basic functionalities using CLI
-```
-$ npm run cli
+
+```sh
+npm run cli
 
 
 server started..
@@ -141,35 +149,41 @@ Enter Command, q to quit, or ? to list commands
 
 ## to update to latest release
 
-```
-$ npm update bpmn-server
+```sh
+npm update bpmn-server
 ```
 
 # Documentation
+
 - [Features](./docs/features.md)
 - [Examples](./docs/examples.md)
 
 ## Executing Workflow
 
 `bpmn-server` provide full API for your application to execute, monitor and query the Workflow.
-Typicall this is done through your business application or through a web Application 
-see [API](./docs/API.md) for details
+Typicall this is done through your business application or through a web Application
+see [API](./docs/api/API.md) for details
 
+## Adding Logic to your Workflow
 
-## Adding Logic to your Workflow 
 Beyond BPMN Models, you can add scripts and logic to the working through the followings:
-### Model Expressions 
+
+### Model Expressions
+
 Many of the model properties accept `JavaScript Expressions` for example:
+
 - conditional flow
 - timers
 - assignment properties
-see [Model Expressions](./docs/scripting.md#expressions) for details
+  see [Model Expressions](./docs/scripting.md#expressions) for details
 
 ### Execution/Task Listeners
+
 Inside your model, you can attach Listeners to various nodes as `JavaScript Listeners`
 see [Listeners](./docs/scripting.md#listeners) for details
 
 ### Workflow Application Delegate
+
 You can place a listener in your application delegate class to listen to all events
 
 see [Application Listener](./docs/scripting.md#Applistener) for details
@@ -178,12 +192,14 @@ see [Application Listener](./docs/scripting.md#Applistener) for details
 
 BPMNServer is a backend server aimed to execute BPMN Models
 You can deploy in several scenarios:
-### Web Application 
+
+### Web Application
+
 We Provide a full demo @ http://bpmn.omniworkflow.com
 
 Or installation above to install on your environemnt
 
-### as a MicroService 
+### as a MicroService
 
 By running the WebApplication described above and access only the API
 
@@ -196,41 +212,44 @@ Using bpmnClient app
 You can deploy a stand alone app using NodeJs scripts
 for example:
 
-```javascript
-/* Most simple Script to start a process 
-*/
-    const api = new BPMNAPI(new BPMNServer(configuration));
+```ts
+/* Most simple Script to start a process
+ */
+const api = new BPMNAPI(new BPMNServer(configuration));
 
-    let response=await api.engine.start('Leave Request',{type:'Vacation'},SystemUser);
+let response = await api.engine.start('Leave Request', { type: 'Vacation' }, SystemUser);
 
-    const items = response.items.filter(item => {
-        return (item.status == 'wait');
-    });
+const items = response.items.filter((item) => {
+  return item.status == 'wait';
+});
 
-    items.forEach(item => {
-        console.log(`  waiting for <${item.name}> -<${item.elementId}> id: <${item.id}> `);
-    });
+items.forEach((item) => {
+  console.log(`  waiting for <${item.name}> -<${item.elementId}> id: <${item.id}> `);
+});
 
-    console.log('Invoking Buy');
+console.log('Invoking Buy');
 
-    response = await api.engine.invoke({instanceId: response.execution.id, elementId: 'task_Buy' },
-        { model: 'Thunderbird', needsRepairs: false, needsCleaning: false },SystemUser);
+response = await api.engine.invoke(
+  { instanceId: response.execution.id, elementId: 'task_Buy' },
+  { model: 'Thunderbird', needsRepairs: false, needsCleaning: false },
+  SystemUser,
+);
 
-    console.log("Ready to drive");
+console.log('Ready to drive');
 
-    response = await api.engine.invoke({ instanceId: response.execution.id, elementId: 'task_Drive' },{},SsytemUser);
+response = await api.engine.invoke({ instanceId: response.execution.id, elementId: 'task_Drive' }, {}, SsytemUser);
 
-    console.log(`that is it!, process is now complete status=<${response.execution.status}>`)
-
+console.log(`that is it!, process is now complete status=<${response.execution.status}>`);
 ```
+
 for more complete examples see [Examples](./docs/examples.md)
 
-# License 
+## License
 
 This project is licensed under the terms of the MIT license.
 
-# Acknowledgments
+## Acknowledgments
 
 The **bpmn-server** resides upon the excellent library [bpmn-io/bpmn-moddle](https://github.com/bpmn-io/bpmn-moddle) developed by [bpmn.io](http://bpmn.io/)
 
-The **bpmn-server** is inspired by the library [bpmn-engine](https://github.com/paed01/bpmn-engine) 
+The **bpmn-server** is inspired by the library [bpmn-engine](https://github.com/paed01/bpmn-engine)

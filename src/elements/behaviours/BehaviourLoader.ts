@@ -116,26 +116,40 @@ class BehaviourLoader {
         BehaviourLoader.behaviours.push({ name, funct });
     }
     /**
+     * #### 1. Load behaviours from node definition
      * 
-     *  1.  node.definition[<name>]
-     *  2.  node.definition.eventDefinitions
+     * `node.definition[<name>]`
+     * 
+     * #### 2. Load behaviours from node definition.eventDefinitions
+     * 
+     * ```ts
+     * node.definition.eventDefinitions
      *          $type == <name>
-     *          
-     *          example:
-     *          
+     * ```
+     * example:
+     * 
+     * ```xml  
             <bpmn:timerEventDefinition id="TimerEventDefinition_07xu06a">
                <bpmn:timeDuration xsi:type="bpmn:tExpression">PT2S</bpmn:timeDuration>
             </bpmn:timerEventDefinition>
-     *          
-     *  3.  node.definitions.extensionElements
+     *  ```
+     *  #### 3. Load behaviours from node definition.extensionElements
+     * 
+     * ```ts
+     * node.definitions.extensionElements
      *          $type == <name>
-     *          example: 'camunda:formData'
-                <extensionElements>
-                    <camunda:formData >
-                        <camunda: formField id = "surname" label = "Surname" type = "string" />
-                            <camunda: formField id = "givenName" label = "Given name" type = "string" />
-                    </camunda:formData>
-               < /extensionElements> 
+     * ```
+     * example:
+     * 
+     * ```xml
+     * 'camunda:formData'
+        <extensionElements>
+            <camunda:formData >
+                <camunda: formField id = "surname" label = "Surname" type = "string" />
+                    <camunda: formField id = "givenName" label = "Given name" type = "string" />
+            </camunda:formData>
+        < /extensionElements>
+     * ```
      * 
      * @param node
      */

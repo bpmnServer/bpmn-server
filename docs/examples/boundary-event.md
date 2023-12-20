@@ -5,7 +5,7 @@
 
 Boundary Events are started with the owner Activity, but are cancelled when the the owner activity is completed.
 
-```javascript
+```ts
 
 const { BPMNServer, DefaultHandler, Logger } = require("../../");
 const { configuration } = require('../../configuration');
@@ -23,7 +23,7 @@ let instanceId;
 Feature('Boundary Event', () => {
 ```
 ##Do the task right-away
-```javascript
+```ts
         Scenario('do the task right-away- events will cancel', () => {
             Given('Start '+ name + ' Process',async () => {
                 response = await server.engine.start(name, {});
@@ -38,7 +38,7 @@ Feature('Boundary Event', () => {
 ```
 ![BPMN Diagram](boundary-event1.png)
  boundary events have started in a wait state
-```javascript
+```ts
 
             When('a process defintion is executed', async () => {
 
@@ -51,7 +51,7 @@ Feature('Boundary Event', () => {
 ```
 ![BPMN Diagram](boundary-event-nowait.png)
  boundary events have started in a wait state
-```javascript
+```ts
 
             When('I dont wait for events to complete', async () => {
 
@@ -68,7 +68,7 @@ Feature('Boundary Event', () => {
         });
 ```
 ##Don't do the task right-away , wait for timer to fire
-```javascript
+```ts
             Scenario('Dont do the task right - away, wait for timer to fire', () => {
                 Given('Start ' + name + ' Process', async () => {
                     response = await server.engine.start(name, {});
@@ -83,7 +83,7 @@ Feature('Boundary Event', () => {
 ```
 ![BPMN Diagram](boundary-event1.png)
  boundary events have started in a wait state
-```javascript
+```ts
             When('wait for the timer to fire', async () => {
 
                 await server.cron.checkTimers();

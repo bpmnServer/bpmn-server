@@ -7,7 +7,7 @@ For the model above we will walk-through how to execute it programaticaly.
 
 ## Using bpmn-server Server Class
 
-```javascript
+```ts
 const { configuration }  = require('../configuration.js');
 const { BPMNServer, Logger } = require('bpmn-server');
 
@@ -43,7 +43,7 @@ async function test() {
 
     The query is passed to MongoDB to select the appropriate item.
    
-```javascript
+```ts
 
     response = await server.invoke({items: { id: itemId } },
         { model: 'Thunderbird', needsRepairs: false, needsCleaning: false });
@@ -53,7 +53,7 @@ async function test() {
 ```
     in the next scenario, we will query on instance id as well as the element id 
 
-```javascript
+```ts
     response = await server.invoke({ instance: { response.execution.id }, items: {elementId: 'task_Drive' }});
 
     console.log(`that is it!, process is now complete status=<${response.execution.status}>`)

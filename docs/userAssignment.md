@@ -6,7 +6,7 @@ BPMNServer does not provide user identification and authentication component, bu
 Remote calls rely on apiKey to be passed along with the userId
 
 ### Web
-```javascript
+```ts
 
     const user1 =new SecureUser({ userName: 'user1', userGroups: ['Owner', 'Others']});
 
@@ -19,7 +19,7 @@ Remote calls rely on apiKey to be passed along with the userId
 
     Since WebAPP is already authenticated by **APIKey** is trusted to pass user object
 
-```javascript
+```ts
 
     // get api-key from header
     // url/engine/start
@@ -29,7 +29,7 @@ Remote calls rely on apiKey to be passed along with the userId
 ``` 
 ## Using BPMNClient as a service
 
-```javascript
+```ts
 
     const client= new BPMNClient(url,apiKey);
     // userId is passed here bypassing authentication, assuming user is already authenticated
@@ -49,7 +49,7 @@ Remote calls rely on apiKey to be passed along with the userId
 ### Defining Process Initiator
 You can define the variable name for the instance initiator 
 
-![BPMN Editor Initiator](./images/initiator.PNG)
+![BPMN Editor Initiator](images/initiator.PNG)
 
 This will assign the userId of that started the process
 ```
@@ -58,7 +58,7 @@ This will assign the userId of that started the process
 
 ## BPMN Editor
 
-![BPMN Editor Assignee](./images/Assignee1.PNG)
+![BPMN Editor Assignee](images/Assignee1.PNG)
 
 At the start of the userTask the designer values are evaluated into the instance item.
 
@@ -68,7 +68,7 @@ These fields can accept the following:
 - JavaScript Async function call `#(services.getSupervisorUser(this.data.requester))`
 
 The last calls a services function:
-```js
+```ts
 class MyServices {
     
     async getSupervisorUser(input, context) {

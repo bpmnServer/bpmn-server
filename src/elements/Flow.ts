@@ -34,10 +34,11 @@ class Flow extends Element implements IFlow {
             return [];
     }
     /**
-     * 
+     * ```xml
      * <Rule> if flow has a condition, it must be evaluated and if result is true flow will continue
      *  otherwise, flow will be discarded.
      * </Rule> 
+     * ```
      * @param item
      */
     run(item: Item) {
@@ -69,10 +70,11 @@ class Flow extends Element implements IFlow {
 }
 // ---------------------------------------------
 /**
-* 
+* ```xml
 * <Rule>MessageFlow: can only be sent to active node in waiting
  * or to a start event
 * </Rule>
+* ```
 * */
 class MessageFlow extends Flow {
     isMessageFlow = true;

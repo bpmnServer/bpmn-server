@@ -45,7 +45,7 @@ jobs:
       # - name: Check API Docs
       #   run: npm run docs:check
       - name: Gen API Docs
-        run: npm run docs:generate:api
+        run: npm run docs:generate
       - name: Build Docs Site
         run: npm run docs:build
       - name: Setup Pages
