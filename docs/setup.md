@@ -27,7 +27,7 @@ npm update
 
 ## Configuration
 
-Every project must have a configuration file that is an instance of [Configuration class](api/classes/configuration.md)
+Every project must have a configuration file that is an instance of [Configuration class](api/classes/common_DefaultConfiguration.Configuration.md)
 
 This configuration file is passed to the BPMNServer constructor.
 
