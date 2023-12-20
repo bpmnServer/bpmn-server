@@ -1,6 +1,6 @@
 [bpmn-server](./api/README.md)
 
-# API Summary [Full Listing](./api-index.md)
+# API Summary [Full Listing](./api/modules.md)
 
 ## Server Components
 
@@ -21,14 +21,7 @@
 
 ## engine:
 
-The execution Engine , processes an BPMN definition - [Engine](api/classes/engine.md)
-
-| Method     |                   parameters                   | return                                              | description                              |
-| ---------- | :--------------------------------------------: | --------------------------------------------------- | ---------------------------------------- |
-| **start**  |                  name, input                   | [ExecutionContext](api/classes/executioncontext.md) | - Start a new Process execution          |
-| **invoke** | [itemQuery](./dataQuery.md#item-query) ,input  | [ExecutionContext](api/classes/executioncontext.md) | Invoke an already started Item (waiting) |
-| **signal** |                 signalId,input                 | [ExecutionContext](api/classes/executioncontext.md) | Issue a signal or message                |
-| **get**    | [instanceQuery](./dataQuery.md#instance-query) | [Instance](api/interfaces/iinstancedata.md)         | Get an already running or idle Instance  |
+The execution Engine , processes an BPMN definition - [Engine](api/classes/server_Engine.Engine.md)
 
 examples:
 
@@ -46,7 +39,7 @@ response = await bpmn.engine.get(instanceQuery);
 
 ## definitions
 
-Manages BPMN defintions - [Definitions](api/classes/modelsdatastoredb.md)
+Manages BPMN defintions - [Definitions](api/classes/elements_Definition.Definition.md)
 
 | Method | parameters | return     | description |
 | ------ | :--------: | ---------- | ----------- |
@@ -55,16 +48,16 @@ Manages BPMN defintions - [Definitions](api/classes/modelsdatastoredb.md)
 
 ## datastore
 
-Saves and retrievs Instances Data - [DataStore](api/classes/datastore.md)
+Saves and retrievs Instances Data - [DataStore](api/classes/datastore_DataStore.DataStore.md)
 
 | Method            |                   parameters                   | return                                        | description |
 | ----------------- | :--------------------------------------------: | --------------------------------------------- | ----------- |
-| **findInstances** | [instanceQuery](./dataQuery.md#instance-query) | [Instance[]](api/interfaces/iinstancedata.md) |             |
-| **findItems**     |     [itemQuery](./dataQuery.md#item-query)     | [Item[]](api/interfaces/iitemdata.md)         |             |
+| **findInstances** | [instanceQuery](./dataQuery.md#instance-query) | [Instance[]](api/interfaces/interfaces_DataObjects.IInstanceData.md) |             |
+| **findItems**     |     [itemQuery](./dataQuery.md#item-query)     | [Item[]](api/interfaces/interfaces_DataObjects.IItemData.md)         |             |
 
 ## cache
 
-Caches running instances for performance - [CacheManager](api/classes/cachemanager.md)
+Caches running instances for performance - [CacheManager](api/modules/server_CacheManager.md)
 
 ```
 list		id[]
@@ -76,7 +69,7 @@ restart
 
 ## cron
 
-Manages background tasks, primarly timers - [Cron](api/classes/cron.md)
+Manages background tasks, primarly timers - [Cron](api/modules/server_Cron.md)
 
 ```
 start
@@ -91,8 +84,8 @@ stop
 
 ## Enumerations
 
-- [BPMN_TYPE](api/enums/bpmn_type.md)
-- [EXECUTION_EVENT](api/enums/execution_event.md)
-- [EXECUTION_STATUS](api/enums/execution_status.md)
-- [ITEM_STATUS](api/enums/item_status.md)
-- [Behaviour_names](api/README.md#const-behaviour_names)
+- [BPMN_TYPE](api/enums/interfaces_Enums.BPMN_TYPE.md)
+- [EXECUTION_EVENT](api/enums/interfaces_Enums.BPMN_TYPE.md)
+- [EXECUTION_STATUS](api/enums/interfaces_Enums.EXECUTION_STATUS.md)
+- [ITEM_STATUS](api/enums/interfaces_Enums.ITEM_STATUS.md)
+- [Behaviour_names](api/modules/elements_behaviours_BehaviourLoader.md#behaviour_names)

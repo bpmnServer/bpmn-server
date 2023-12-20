@@ -8,5 +8,6 @@
     "skipLibCheck": true,
     "rootDir": ".",
   },
+  "readme": "none",
   "plugin": ["typedoc-plugin-markdown"]
 }
