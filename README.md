@@ -43,7 +43,7 @@ Included is a sample web application (running Node.js and Express.js) to allow y
 This package requires Node.js and an access to MongoDB ()
 if you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas)
 
-```javascript
+```ts
 $ mkdir myBPMN
 
 $ cd myBPMN
@@ -55,7 +55,7 @@ $ npm install
 $ npm run setup 
 
 Edit .env file to have MongoDB point to your server or free cloud account
-```javascript
+```ts
 # PORT # for express application
 PORT=3000
 
@@ -196,7 +196,7 @@ Using bpmnClient app
 You can deploy a stand alone app using NodeJs scripts
 for example:
 
-```javascript
+```ts
 /* Most simple Script to start a process 
 */
     const api = new BPMNAPI(new BPMNServer(configuration));

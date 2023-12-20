@@ -44,7 +44,7 @@ things that vary between dev and production
             db_url
             db
 
-```javascript 
+```ts 
 
 import { Configuration, ModelsDatastore, DataStore , Logger } from './';
 import { MyAppDelegate } from './appDelegate';
@@ -85,13 +85,13 @@ export { configuration}
 
 ```
 Example of usage in javascript 
-```javascript 
+```ts 
 const { configuration }  = require('../configuration.js');
 
     const server = new BPMNServer(configuration, logger);
 ```
 or in Typesciprt
-```javascript 
+```ts 
 	import  { configuration }  from '../configuration.js';
 
     const server = new BPMNServer(configuration, logger);

@@ -24,7 +24,7 @@ Instance Data can be manipulated in several ways:
 
 ## As Input to Engine calls
 
-```javascript
+```ts
 const input = { model: 'Thunderbird', needsRepairs: false, needsCleaning: false };
 response = await engine.invoke({ items: { id: itemId } }, input);
 ```
@@ -73,7 +73,7 @@ Script Extensions are supported in release 1.1 and later, allowing you to add a 
 
 In this example we are adding a script to bpmn:startEvent
 
-```javascript
+```ts
 
     <bpmn:startEvent id="StartEvent_1ohx91b">
       <bpmn:extensionElements>

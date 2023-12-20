@@ -6,7 +6,7 @@ BPMNServer does not provide user identification and authentication component, bu
 Remote calls rely on apiKey to be passed along with the userId
 
 ### Web
-```javascript
+```ts
 
     const user1 =new SecureUser({ userName: 'user1', userGroups: ['Owner', 'Others']});
 
@@ -19,7 +19,7 @@ Remote calls rely on apiKey to be passed along with the userId
 
     Since WebAPP is already authenticated by **APIKey** is trusted to pass user object
 
-```javascript
+```ts
 
     // get api-key from header
     // url/engine/start
@@ -29,7 +29,7 @@ Remote calls rely on apiKey to be passed along with the userId
 ``` 
 ## Using BPMNClient as a service
 
-```javascript
+```ts
 
     const client= new BPMNClient(url,apiKey);
     // userId is passed here bypassing authentication, assuming user is already authenticated

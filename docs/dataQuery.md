@@ -1,7 +1,7 @@
 # Data Query 
 
 The syntax follows MongoDB standards, since instance data is saved in the format of :
-```javascript
+```ts
 {
 id;
 name;
@@ -34,7 +34,7 @@ the query syntax must be
 |	{"items.status": "wait" , "items.elementId": "task_Buy" }	| find all items that has "wait" status |
 
 
-```javascript
+```ts
          query = { "items.id": item.id };
          items = await server.dataStore.findItems(query);
 ```
@@ -43,7 +43,7 @@ the query syntax must be
 
 Instance Queries are similar to Items Query but return entire Instances with all the items
 
-```javascript
+```ts
 
         // find instances having elementId
 

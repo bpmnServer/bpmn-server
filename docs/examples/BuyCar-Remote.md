@@ -9,7 +9,7 @@ For the model above we will walk-through how to execute it programaticaly.
 
 Make sure you have installed 'bpmn-client' using npm install bpmn-client
 
-```javascript
+```ts
 const { BPMNServer } = require('bpmn-client');
 
 test();
@@ -35,7 +35,7 @@ The server object provides a set of components;for now, we need the engine
 We start a process execution by name; in this case 'Buy Used Car' 
 BPMN definitions are saved our catalog as defined by the [configuration](../setup.md), in our WebApp they are under WebApp/processes folder
 
-```javascript
+```ts
     let response = await engine.start('Buy Used Car');
 
 ```
@@ -44,7 +44,7 @@ BPMN definitions are saved our catalog as defined by the [configuration](../setu
     let us get the items; items are the instances of various nodes executed so far
 ![status](BuyCar-web2br.png)
 
-```javascript
+```ts
 
     const items = response.items.filter(item => {
         return (item.status == 'wait');
@@ -63,7 +63,7 @@ so we need to identify the instance as well as the item, but since the ItemId is
 
 The [query](../DataQuery.md) is passed to MongoDB to select the appropriate item.
    
-```javascript
+```ts
 
     const input={ model: 'Thunderbird', needsRepairs: false, needsCleaning: false };
     response = await engine.invoke({items: { id: itemId } }, input );
@@ -73,7 +73,7 @@ The [query](../DataQuery.md) is passed to MongoDB to select the appropriate item
 ```
     keeping in mind that the bpmn definition defines conditional flow as such:
 
-```javascript
+```ts
 
     <bpmn:sequenceFlow id="flow_gw1_clean" sourceRef="gateway_1" targetRef="task_clean">
       <bpmn:conditionExpression xsi:type="bpmn:tExpression"><![CDATA[
@@ -85,7 +85,7 @@ The [query](../DataQuery.md) is passed to MongoDB to select the appropriate item
 
     in the next step, we will query on instance id as well as the element id 
 
-```javascript
+```ts
     response = await engine.invoke({ instance: { response.execution.id }, items: {elementId: 'task_Drive' }});
 
     console.log(`that is it!, process is now complete status=<${response.execution.status}>`)

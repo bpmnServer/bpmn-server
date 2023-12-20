@@ -25,7 +25,7 @@ The execution Engine , processes an BPMN definition - [Engine](api/classes/serve
 
 examples:
 
-```javascript
+```ts
 let response: executioncontext;
 let data = {};
 

@@ -36,7 +36,7 @@
 
 To Invoke a process from your code:
 
-```javascript
+```ts
     const { configuration }  = require('../configuration.js');
     const { BPMNServer, Logger } = require('bpmn-server');
 

@@ -9,7 +9,7 @@ For the model above we will walk-through how to execute it programaticaly.
 
 
 
-```javascript
+```ts
 const { configuration }  = require('../configuration.js');
 
 const api = new BPMNAPI(new BPMNServer(configuration));
@@ -33,7 +33,7 @@ async function test() {
 bpmn-server support Access Control, so we need to define the user information when invoking any API call
 
 At minimum, you need to pass the `userName` and `userGroups` that user belongs to:
-```javascript
+```ts
 
     \\start(name: any, data?: any,userName?: string, options?: any): Promise<IExecution>;
 
@@ -45,7 +45,7 @@ At minimum, you need to pass the `userName` and `userGroups` that user belongs t
     let us get the items; items are the instances of various nodes executed so far
 ![status](BuyCar-web2br.png)
 
-```javascript
+```ts
 
     const items = response.items.filter(item => {
         return (item.status == 'wait');
@@ -64,7 +64,7 @@ so we need to identify the instance as well as the item, but since the ItemId is
 
 The [query](../query.md) is passed to MongoDB to select the appropriate item.
    
-```javascript
+```ts
 
     const input={ model: 'Thunderbird', needsRepairs: false, needsCleaning: false };
     response = await api.engine.invoke({items: { id: itemId } }, input );
@@ -74,7 +74,7 @@ The [query](../query.md) is passed to MongoDB to select the appropriate item.
 ```
     keeping in mind that the bpmn definition defines conditional flow as such:
 
-```javascript
+```ts
 
     <bpmn:sequenceFlow id="flow_gw1_clean" sourceRef="gateway_1" targetRef="task_clean">
       <bpmn:conditionExpression xsi:type="bpmn:tExpression"><![CDATA[
@@ -86,7 +86,7 @@ The [query](../query.md) is passed to MongoDB to select the appropriate item.
 
     in the next step, we will query on instance id as well as the element id 
 
-```javascript
+```ts
     response = await api.engine.invoke({ instance: { response.execution.id }, items: {elementId: 'task_Drive' }});
 
     console.log(`that is it!, process is now complete status=<${response.execution.status}>`)
