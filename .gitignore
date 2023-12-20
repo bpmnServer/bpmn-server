@@ -13,3 +13,4 @@
 /dist
 # generated docs
 /.docusaurus
+/docs/api
