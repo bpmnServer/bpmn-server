@@ -61,7 +61,7 @@ For more details about data management, see [Data](data.md).
 2. bpmn model will define assignee, candidateUsers, candidateUserGroups, they can be string or JS expressions
 3. The Application front-end is concerned with managing users authentication and user info (UserName,Groups,Tenant)
 
-```js
+```ts
 let user1 = new SecureUser({ userName: 'user1', userGroups: ['Owner', 'Others'] });
 let response = await api.engine.start('Vacation Request', { reason: 'I like it', type: 'Vacation' }, user1);
 ```
@@ -83,7 +83,7 @@ Here is a typical flow of a Process:
 5. `Task Approve` Need to be assigned to the requester supervisor
    A Javascript event trigger on `start' will determine the supervisor userName and assign it the task
 
-```js
+```ts
 item.assignee = appServices.getSupervisor(item.data.requester);
 ```
 
@@ -95,20 +95,20 @@ item.assignee = appServices.getSupervisor(item.data.requester);
 
 #### Filtering data for Security:
 
-```js
+```ts
 let pending = await bpmnAPI.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask' }, user);
 ```
 
 or
 
-```js
+```ts
 let pending = await bpmnAPI.data.getPendingTasks({}, user);
 ```
 
 will return all pending tasks that the user is **AUTHORIZED TO SEE**
 To See only Tasks Assigned to User
 
-```js
+```ts
 let pending = await bpmnAPI.data.getPendingTasks({ 'items.assignee': user.userName }, user);
 ```
 

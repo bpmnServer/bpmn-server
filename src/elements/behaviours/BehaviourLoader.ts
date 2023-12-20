@@ -122,7 +122,7 @@ class BehaviourLoader {
      * 
      * #### 2. Load behaviours from node definition.eventDefinitions
      * 
-     * ```js
+     * ```ts
      * node.definition.eventDefinitions
      *          $type == <name>
      * ```
@@ -135,7 +135,7 @@ class BehaviourLoader {
      *  ```
      *  #### 3. Load behaviours from node definition.extensionElements
      * 
-     * ```js
+     * ```ts
      * node.definitions.extensionElements
      *          $type == <name>
      * ```

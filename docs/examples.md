@@ -70,7 +70,7 @@ To Invoke a process from your code:
 ### [Invoking Remotely Using WebServices](examples/BuyCar-Remote.md)
 
 ### Async Execution
-```js
+```ts
     const api = new BPMNAPI(new BPMNServer(configuration,new Logger({ toConsole: false}),{cron:false}));
 
     console.log('starting serviceTask');
@@ -79,7 +79,7 @@ To Invoke a process from your code:
     console.log('immediate response id',response.instance.id);
 ```
 In the above example; engine.start return immediatly, but other nodes will continue to execute 
-```js
+```ts
 starting serviceTask
 immediate response id d7df99ab-f0b5-4fdf-8ac3-2701d0bf9b79
  add service start: { v1: 1, v2: 2 }
@@ -103,7 +103,7 @@ In Process definition (.bpmn file), use `implementation` attribute to define nam
     </bpmn:serviceTask>
 ```
 
-```js 
+```ts 
 class AppServices {
 
     // for services that are not defined
@@ -171,7 +171,7 @@ From the Web UI:
 ![Image description](examples/invoice-start-prompt.png)
 
 From API:
-```js
+```ts
     
     response = await api.engine.start('invoice', 
         { reminderCounter: 0, caseId: caseId}, user, {startNodeId:'StartEvent_AP'});
@@ -184,7 +184,7 @@ Business Rules can be defined as a Decision Table as in this example:
 ![Vacation Decision Table](examples/VacationDecisionTable.PNG)
 
 Decision Table is called through 
-```js
+```ts
     <bpmn2:businessRuleTask id="Task_1lcamp6" name="Vacation"  camunda:decisionRef="Vacation">
 ````
 This will load the file 'Vacation.json' form the Processes folder as defined in configuration.js
@@ -262,7 +262,7 @@ For Multi-instance data handling [see](data.md)
 ```
 In the above example 'loop' is the name of process to be called.
 ### Message Flow
-```js
+```ts
 ```
 
 ### Throwing and Cathcing Messages
@@ -323,7 +323,7 @@ Howerver, the challenge here is that make sure the message is sent to the specif
 - Message Output:         `confirm: true`
 - Message Matching Keyt:   'data.caseId': this.token.data.caseId 
 
-```js
+```ts
 ```
 
 ![Image description](examples/msg-throw-catch.png)

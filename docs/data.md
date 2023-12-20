@@ -96,7 +96,7 @@ In Release 1.3.22 added **item.vars** to store any variables related to the item
 
 You can set item.vars Inside your service logic :
 
-```js
+```ts
   async service1(input, context) {
   ...
   item.vars= input;
@@ -115,7 +115,7 @@ As a result MongoDB stores item.vars
 
 ## Using findItems:
 
-```js
+```ts
 query = { 'data.caseId': caseId, 'items.vars.param1': 'value1' };
 items = await server.dataStore.findItems(query);
 console.log('items count', items);

@@ -68,7 +68,7 @@ These fields can accept the following:
 - JavaScript Async function call `#(services.getSupervisorUser(this.data.requester))`
 
 The last calls a services function:
-```js
+```ts
 class MyServices {
     
     async getSupervisorUser(input, context) {
