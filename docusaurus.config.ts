@@ -62,7 +62,7 @@ export default {
         logo: {
           alt: "My Site Logo",
           // temporary logo, change this when we have a real one
-          src: "./docs/images/Logo.png",
+          src: "docs/images/Logo.png",
         },
         items: [
           {
@@ -71,7 +71,7 @@ export default {
             position: "left",
             label: "Tutorial",
           },
-          { to: "/blog", label: "API", position: "left" },
+          { to: "/docs/api", label: "API", position: "left" },
           {
             href: `https://github.com/${organizationName}/${projectName}`,
             label: "GitHub",

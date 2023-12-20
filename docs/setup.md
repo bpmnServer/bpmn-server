@@ -1,29 +1,40 @@
 # Installation
+
 ## installation of bpmn-server along with bpmn-web
-git clone .../bpmn-web 
+
+```sh
+git clone .../bpmn-web
 npm install
 copy sample.env .env
-edit .env file
+# edit .env file
 
 npm run setup
 npm start
+```
+
 ### To Update
+
+```sh
 git pull
 npm update
+```
 
 ## installation of bpmn-client
+
 create a folder or use an existing project
 
-git clone .../bpmn-client-sample 
+```sh
+git clone .../bpmn-client-sample
 copy sample.env .env
 edit .env file
 
 npm install
-To Update
+# To Update
 git pull
 npm update
-# Setup bpmn Application with bpmn-server
+```
 
+# Setup bpmn Application with bpmn-server
 
 ## Configuration
 
@@ -34,67 +45,66 @@ This configuration file is passed to the BPMNServer constructor.
 For testing purposes, you can have a different configuration than production in same environemnt by passign a different object.
 
 ## Environment
+
 things that vary between dev and production
 
--  timers: 
-   -    forceTimersDelay
-   -    precision
+- timers:
+  - forceTimersDelay
+  - precision
 - database:
-   - MongoDB:
-            db_url
-            db
+  - MongoDB:
+    db_url
+    db
 
-```ts 
-
-import { Configuration, ModelsDatastore, DataStore , Logger } from './';
+```ts
+import { Configuration, ModelsDatastore, DataStore, Logger } from './';
 import { MyAppDelegate } from './appDelegate';
 
-
 let definitionsPath = __dirname + '/processes/';
-var configuration = new Configuration(
-	{
-		definitionsPath: definitionsPath,
-		timers: {
-			forceTimersDelay: 1000,
-			precision: 3000,
-		},
-		database: {
-			MongoDB:
-			{
-				db_url: "mongodb://localhost:27017?retryWrites=true&w=majority",
-				db: 'bpmn'
-			}
-		},
-		/* Define Server Components */
-		logger: function (server) {
-			new Logger(server);
-		},							
-		definitions: function (server) {
-			return new ModelsDatastore(server);
-		},			
-		appDelegate: function (server) {
-			return new MyAppDelegate(server);
-		},		
-		dataStore: function (server) {
-			return new DataStore(server);
-		}		
-	});
+var configuration = new Configuration({
+  definitionsPath: definitionsPath,
+  timers: {
+    forceTimersDelay: 1000,
+    precision: 3000,
+  },
+  database: {
+    MongoDB: {
+      db_url: 'mongodb://localhost:27017?retryWrites=true&w=majority',
+      db: 'bpmn',
+    },
+  },
+  /* Define Server Components */
+  logger: function (server) {
+    new Logger(server);
+  },
+  definitions: function (server) {
+    return new ModelsDatastore(server);
+  },
+  appDelegate: function (server) {
+    return new MyAppDelegate(server);
+  },
+  dataStore: function (server) {
+    return new DataStore(server);
+  },
+});
 
-
-export { configuration}
-
+export { configuration };
 ```
-Example of usage in javascript 
-```ts 
-const { configuration }  = require('../configuration.js');
 
-    const server = new BPMNServer(configuration, logger);
+Example of usage in javascript
+
+```ts
+const { configuration } = require('../configuration.js');
+
+const server = new BPMNServer(configuration, logger);
 ```
+
 or in Typesciprt
-```ts 
-	import  { configuration }  from '../configuration.js';
 
-    const server = new BPMNServer(configuration, logger);
+```ts
+import { configuration } from '../configuration.js';
+
+const server = new BPMNServer(configuration, logger);
 ```
 
 ## Processes Folder
@@ -105,19 +115,17 @@ This is where the definition files reside, the demo WebApp contains a set of tho
 
 This class handles application specific calls
 
-    moddleOptions;
-    servicesProvider;       // to respond to all named services
-    sendEmail(to, msg, body);
-    executionStarted(execution);
-    executionEvent({ event, item, execution });
-    messageThrown(signalId, data, messageMatchingKey: any, item: IItem);
-    signalThrown(signalId, data, messageMatchingKey: any, item: IItem);
-    issueMessage(messageId, data);
-    issueSignal(messageId, data);
-    serviceCalled(serviceName,data,item: IItem);
-    scopeEval(scope, script);
-    scopeJS(scope, script);
-
-
-
-
+```ts
+moddleOptions;
+servicesProvider;       // to respond to all named services
+sendEmail(to, msg, body);
+executionStarted(execution);
+executionEvent({ event, item, execution });
+messageThrown(signalId, data, messageMatchingKey: any, item: IItem);
+signalThrown(signalId, data, messageMatchingKey: any, item: IItem);
+issueMessage(messageId, data);
+issueSignal(messageId, data);
+serviceCalled(serviceName,data,item: IItem);
+scopeEval(scope, script);
+scopeJS(scope, script);
+```

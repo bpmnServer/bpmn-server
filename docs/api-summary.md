@@ -1,6 +1,6 @@
-[bpmn-server](api/README.md)
+[bpmn-server](api/API.md)
 
-# API Summary [Full Listing](api/README.md)
+# API Summary [Full Listing](api/API.md)
 
 ## Server Components
 
