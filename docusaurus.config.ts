@@ -62,16 +62,16 @@ export default {
         logo: {
           alt: "My Site Logo",
           // temporary logo, change this when we have a real one
-          src: "docs/APIs.png",
+          src: "./docs/images/Logo.png",
         },
         items: [
           {
             type: "doc",
-            docId: "api-index",
+            docId: "api-summary",
             position: "left",
             label: "Tutorial",
           },
-          { to: "/blog", label: "Blog", position: "left" },
+          { to: "/blog", label: "API", position: "left" },
           {
             href: `https://github.com/${organizationName}/${projectName}`,
             label: "GitHub",
