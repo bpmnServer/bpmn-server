@@ -55,6 +55,6 @@ Perform calls to DataStore , accessing processes data
 | Method| parameters           | return  | description |
 | ------------- |:-------------:| -----| ----------|
 | **findInstances** | [instanceQuery](dataQuery.md#instance-query) 	 | [Instance[]](api/interfaces/interfaces_DataObjects.IInstanceData.md) | |
-| **findItems**| [itemQuery](dataQuery.md#item-query)|	[Item[]](api/interfaces/iitemdata.md) | |
-| **deleteInstances**| [instance](dataQuery.md#instance-query)|	[Item[]](api/interfaces/iitemdata.md) | |
+| **findItems**| [itemQuery](dataQuery.md#item-query)|	[Item[]](api/interfaces/interfaces_DataObjects.IItemData.md) | |
+| **deleteInstances**| [instance](dataQuery.md#instance-query)|	[Item[]](api/interfaces/interfaces_DataObjects.IItemData.md) | |
 

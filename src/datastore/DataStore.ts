@@ -188,6 +188,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 	}
 	/**
 		* scenario:
+		*
 		* ```
 		* itemId			{ items { id : value } }
 		* itemKey			{ items {key: value } }

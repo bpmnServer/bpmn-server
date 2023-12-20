@@ -60,12 +60,13 @@ interface IEngine {
      * Continue an existing item that is in a wait state
      *
      * -------------------------------------------------
+     * 
      * scenario:
      * 
      * ```
-     *		itemId			{itemId: value }
-     *		itemKey			{itemKey: value}
-     *		instance,task	{instanceId: instanceId, elementId: value }
+     * itemId 	{itemId: value }
+     * itemKey 	{itemKey: value}
+     * instance,task	{instanceId: instanceId, elementId: value }
      * ```
      *
      * @param itemQuery		criteria to retrieve the item
