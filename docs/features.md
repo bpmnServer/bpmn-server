@@ -6,8 +6,8 @@ Features
 - [Persistence](#Persistence)
 - [Data Query](#data-query)
 - [Customization](#customization)
-- [Scripting](./scripting.md)
-- [AccessControl](./userAssignment.md)
+- [Scripting](scripting.md)
+- [AccessControl](userAssignment.md)
 - [Concurrency]()
 - [Logging]()
 
@@ -28,7 +28,7 @@ The following elements are tested and supported.
   Same as user task
 - UserTask
 - ServiceTask
-- [Business Rule Task](./examples#BusinessRuleTask) 
+- [Business Rule Task](examples#BusinessRuleTask) 
 - SendTask: Same behaviour as ServiceTask
 - SignalTask
 ## Behaviour
@@ -70,7 +70,7 @@ The following elements are tested and supported.
 - [Pool](userAssignment#Pool-as-a-role)
 - ErrorEventDefinition
 ## Special
-- [Script Events](./examples#ScriptExtensions) 
+- [Script Events](examples#ScriptExtensions) 
 
 ## Advanced 
 - BpmnError

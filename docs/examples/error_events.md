@@ -1,7 +1,7 @@
 
 # Error Events:
 
-![BPMN Diagram](./error_events.png)
+![BPMN Diagram](error_events.png)
 
 ## Raising Errors
 ### Through an End Events of type Error

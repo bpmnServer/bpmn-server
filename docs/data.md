@@ -105,7 +105,7 @@ You can set item.vars Inside your service logic :
 ```
 or by having an event-listener such as:
 
-![Item Vars Script](./images/item-vars-script.png)
+![Item Vars Script](images/item-vars-script.png)
 
 ## MongoDB:
 As a result MongoDB stores item.vars
@@ -125,16 +125,16 @@ The entire execution will have one data scope object, shared among all nodes, ex
   - and Loops (Multi-instances)
 
 
-![Image description](./images/Data_BuyUsedCar.PNG)
+![Image description](images/Data_BuyUsedCar.PNG)
 
 However, for SubProcess and Loop elements a seperate scope 
 
-![Image description](./images/Data_Scripts_Services_model.PNG)
-![Image description](./images/Data_Scripts_Services.PNG)
+![Image description](images/Data_Scripts_Services_model.PNG)
+![Image description](images/Data_Scripts_Services.PNG)
 
 # Query on Data
 You can use Instance data as part of your query for Instances or Items
-For Details on Query see [Data Query](./api-summary#data-query) 
+For Details on Query see [Data Query](api-summary#data-query) 
 
 # Input-Output Data
 

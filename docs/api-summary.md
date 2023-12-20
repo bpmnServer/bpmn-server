@@ -1,6 +1,6 @@
-[bpmn-server](./api/README.md)
+[bpmn-server](api/README.md)
 
-# API Summary [Full Listing](./api/modules.md)
+# API Summary [Full Listing](api/README.md)
 
 ## Server Components
 
@@ -12,12 +12,12 @@
 
 ## Other Components and Topics
 
-- [Data Query](./dataQuery.md)
+- [Data Query](dataQuery.md)
 - [configuration](#configuration)
 - [appDelegate](#appDelegate)
 - [events listener](#events)
-- [Data Variables and input/output](./data.md)
-- [Timers](./timers.md)
+- [Data Variables and input/output](data.md)
+- [Timers](timers.md)
 
 ## engine:
 
@@ -52,8 +52,8 @@ Saves and retrievs Instances Data - [DataStore](api/classes/datastore_DataStore.
 
 | Method            |                   parameters                   | return                                        | description |
 | ----------------- | :--------------------------------------------: | --------------------------------------------- | ----------- |
-| **findInstances** | [instanceQuery](./dataQuery.md#instance-query) | [Instance[]](api/interfaces/interfaces_DataObjects.IInstanceData.md) |             |
-| **findItems**     |     [itemQuery](./dataQuery.md#item-query)     | [Item[]](api/interfaces/interfaces_DataObjects.IItemData.md)         |             |
+| **findInstances** | [instanceQuery](dataQuery.md#instance-query) | [Instance[]](api/interfaces/interfaces_DataObjects.IInstanceData.md) |             |
+| **findItems**     |     [itemQuery](dataQuery.md#item-query)     | [Item[]](api/interfaces/interfaces_DataObjects.IItemData.md)         |             |
 
 ## cache
 

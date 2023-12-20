@@ -20,10 +20,10 @@ In the demo app:
 - root files
 - Web Files; views, routes, public
 
-![](./images/bpmn-web-folders.png)
+![](images/bpmn-web-folders.png)
 ### Workflow app
 
-![](./images/workflowApp-folders.png)
+![](images/workflowApp-folders.png)
 
 - appDelegate
 
@@ -44,10 +44,10 @@ This is your custom installation of bpmn-server
 In this use case a User invokes some business logic that requires a process start ...
 When a process reaches a User Task it issues a notification to user(s).
 
-![](./images/processStart.png)
+![](images/processStart.png)
 
 ## Use Case 2: Invoking an Oustatnding Tasks
 
 
-![](./images/invokeTask.png)
+![](images/invokeTask.png)
 

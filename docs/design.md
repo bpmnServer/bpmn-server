@@ -22,7 +22,7 @@
 
 Typically your application has multiple bpmn models, a model like the one below `Leave Application` has elements, an `element` can be a `node` in the diagram (events/tasks/gateway) or a  `flow`
 
-Models are saved by `bpmn-server` and can be queried [see API.model](./api/interfaces/IAPIModel)
+Models are saved by `bpmn-server` and can be queried [see API.model](api/interfaces/IAPIModel)
 
 `bpmn-server` support all bpmn 2.0 elements [see Modeling Support]()
 
@@ -37,7 +37,7 @@ Execution is based on the model logic that is enhanced by various extensions tha
 - Script Listeners
 - Application Listener
 
-The execution `engine` is availabe through an API [see API.engine](./api/interfaces/IAPIEngine).
+The execution `engine` is availabe through an API [see API.engine](api/interfaces/IAPIEngine).
 
 For more details about Model Invokation and Execution [see](invokationExecution.md)
 
@@ -45,7 +45,7 @@ For more details about Model Invokation and Execution [see](invokationExecution.
 
 At various stages of execution, instance object is saved into a datastore (defaults to MongoDB)
 
-Instances and Items can be queried through an API [see API.data](./api/interfaces/IAPIData)
+Instances and Items can be queried through an API [see API.data](api/interfaces/IAPIData)
 
 For more details about data management [see Data]()
 
