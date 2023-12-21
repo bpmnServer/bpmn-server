@@ -58,7 +58,7 @@ In Process definition (.bpmn file), use `implementation` attribute to define nam
 
 ### Input Fields
 
-````ts
+```ts
     <bpmn:userTask id="task_Buy" name="Buy">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -84,7 +84,7 @@ In Process definition (.bpmn file), use `implementation` attribute to define nam
 Decision Table is called through
 ```ts
     <bpmn2:businessRuleTask id="Task_1lcamp6" name="Vacation"  camunda:decisionRef="Vacation">
-````
+```
 
 This will load the file 'Vacation.json' form the Processes folder as defined in configuration.js
 
@@ -128,7 +128,7 @@ In this example we are adding a script to bpmn:startEvent
 
 ### Timer Event
 
-````ts
+```ts
     <bpmn:intermediateCatchEvent id="Event_timer">
       <bpmn:incoming>Flow_1sg7v2d</bpmn:incoming>
       <bpmn:outgoing>Flow_1nku8og</bpmn:outgoing>
@@ -149,7 +149,7 @@ More on [timers](./timers.md)
       <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="(this.records)" />
       <bpmn:script><![CDATA[this.token.log('testing from the inside: '+this.token.data.loopKey);]]></bpmn:script>
     </bpmn:scriptTask>
-````
+```
 
 ### Input-Output
 
