@@ -13,7 +13,7 @@ This package is designed specifically for Node.js and TypeScript
 ### Web based Process modeller
 
 A web based modeler is included based on http://bpmn.io , models definitions are saved at your server
-![Modeller](./docs/model-demo.gif)
+![Modeller](./docs/images/model-demo.gif)
 
 ### Full BPMN Process Engine
 
