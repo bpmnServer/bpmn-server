@@ -67,7 +67,7 @@ export default {
             position: "left",
             label: "Tutorial",
           },
-          { to: "/docs/api", label: "API", position: "left" },
+          { to: "api", label: "API", position: "left" },
           {
             href: `https://github.com/${organizationName}/${projectName}`,
             label: "GitHub",
@@ -83,7 +83,7 @@ export default {
             items: [
               {
                 label: "Tutorial",
-                to: "/docs/api-summary",
+                to: "api-summary",
               },
             ],
           },
@@ -109,7 +109,7 @@ export default {
             items: [
               {
                 label: "API",
-                to: "/docs/api",
+                to: "api",
               },
               {
                 label: "GitHub",
