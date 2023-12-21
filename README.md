@@ -13,7 +13,7 @@ This package is designed specifically for Node.js and TypeScript
 ### Web based Process modeller
 
 A web based modeler is included based on http://bpmn.io , models definitions are saved at your server
-![Modeller](./docs/model-demo.gif)
+![Modeller](./docs/images/model-demo.gif)
 
 ### Full BPMN Process Engine
 
@@ -39,7 +39,7 @@ Since instances are saved in MongoDB you can easily query your instances (runnin
 
 Included is a sample web application (running Node.js and Express.js) to allow you to visualize your workflow
 
-# Installation
+## Installation
 
 This package requires Node.js and an access to MongoDB ()
 if you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas)
@@ -243,6 +243,10 @@ console.log(`that is it!, process is now complete status=<${response.execution.s
 ```
 
 for more complete examples see [Examples](./docs/examples.md)
+
+## Contribution
+
+See [Development Guide](./docs/Development.md)
 
 ## License
 
