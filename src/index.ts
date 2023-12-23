@@ -8,4 +8,5 @@ export * from './API/';
 
 const docsFolder = __dirname + '/../docs/';
 
+
 export { docsFolder };

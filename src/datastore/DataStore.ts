@@ -221,7 +221,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		// console.log('...find items for query:', query, " translated to :", JSON.stringify(result),  " recs:" , records.length)
 
 		const items=this.getItemsFromInstances(records, result,trans);
-		this.logger.log('...find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result) + " instances:" + records.length+ " items: "+items.length);
+//		this.logger.log('...find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result) + " instances:" + records.length+ " items: "+items.length);
 		return items;
 	}
 

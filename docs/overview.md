@@ -1,12 +1,4 @@
-# bpmn-server
 
-[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-
-## Introduction
-
-BPMN 2.0 Modeling, Execution and Presistence, an open source Workflow Server for Node.js
-
-This package is designed specifically for Node.js and TypeScript
 
 <!-- toc -->
 
@@ -35,15 +27,15 @@ to make them ideal platform to do long running business processes, durable servi
 ## Modeling
 `bpmn-server` provides a modeling tool based on `bpmn.io` with customized property panel, no need to edit bpmn files
 
-![](docs/images/Modeler.png)
+![](images/Modeler.png)
 
 Typically your application has multiple bpmn models, a model is represented in a bpmn definition (xml).
 
 Each Model is made of various elements, an `element` can be a `node` in the diagram (events/tasks/gateway) or a  `flow`
 
-Models are saved by `bpmn-server` and can be queried [see API.model](docs/api/interfaces/IAPIModel)
+Models are saved by `bpmn-server` and can be queried [see API.model](api/interfaces/IAPIModel)
 
-`bpmn-server` support all bpmn 2.0 elements [see Modeling Support](docs/examples)
+`bpmn-server` support all bpmn 2.0 elements [see Modeling Support](examples)
 
 ## Execution
 `bpmn-server` is primiraly an execution engine for bpmn models.
@@ -54,19 +46,19 @@ Execution is based on the model logic that is enhanced by various extensions tha
 
 During Execution, Model Listeners and Application Listeners are invoked.
 
-The execution `engine` is availabe through an API [see API.engine](docs/api/interfaces/IAPIEngine).
+The execution `engine` is availabe through an API [see API.engine](api/interfaces/IAPIEngine).
 
-For more details about Invoking Execution Engine [see](docs/invokation)
+For more details about Invoking Execution Engine [see](invokation.md)
 
-For more details about Execution behaviour [see](docs/execution)
+For more details about Execution behaviour [see](execution.md)
 
 ## Datastore
 
 At various stages of execution, instance object with its parts is saved into a datastore (defaults to MongoDB)
 
-Instances and Items can be queried through an API [see API.data](docs/api/interfaces/IAPIData)
+Instances and Items can be queried through an API [see API.data](api/interfaces/IAPIData)
 
-For more details about data management [see Data](docs/data)
+For more details about data management [see Data](data)
 
 # Demo Web Application
 
@@ -80,15 +72,15 @@ The web app provides:
 - Model property panel supporting all features of `bpmn-server` , no need to edit bpmn file
 - Execution with input form for defined fields
 
-![](docs/images/inputFields.png)
+![](images/inputFields.png)
 
 - List of outstanding/recent tasks and workflow
 - Viewing of `instance` details
 
-![](docs/images/instance-details1.png)
+![](images/instance-details1.png)
 
 - View of Model specification
-![](docs/images/instance-details2.png)
+![](images/instance-details2.png)
 
 </details>
 

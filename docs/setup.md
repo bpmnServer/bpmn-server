@@ -3,13 +3,24 @@
 ## installation of bpmn-server along with bpmn-web
 
 ```sh
-git clone .../bpmn-web
-npm install
-copy sample.env .env
-# edit .env file
+git clone https://github.com/bpmnServer/bpmn-web.git
+
+# this will install bpmn-server along with all dependencies 
+
+npm install 
+
+# this will copy Initial files that are not tracked by .git; .env and appDelegate
 
 npm run setup
-npm start
+
+# now edit `.env` file, change your mongoDB connection
+
+# after editing .env, run setup again to initialize DB 
+
+npm run setup
+
+npm run start
+
 ```
 
 ### To Update

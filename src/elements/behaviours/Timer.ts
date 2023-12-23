@@ -73,7 +73,7 @@ class TimerBehaviour extends Behaviour {
                     this.timeDate = ed.timeDate.body;
                 }
             else {
-                    console.log("Error No timeDuration is defined");
+//                  console.log("Error No timeDuration is defined in "+this.node.process.name+' node '+this.node.id);
                 }
             }
         });

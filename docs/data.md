@@ -17,109 +17,77 @@
   - [Input/Output using Camunda Extension of Input/Output Parameter](#inputoutput-using-camunda-extension-of-inputoutput-parameter)
 
 <!-- tocstop -->
+# Introduction
 
-# Instance Data
+`bpmn-server` relies on a Database to store workflow information.
+This makes it suitable for long-running workflows and multi-servers.
 
-Instance Data can be manipulated in several ways:
+Developers can query on data as well [Data Query](dataQuery)
 
-## As Input to Engine calls
+'bpmn-server' manages three collections in MongoDB:
 
-```ts
-const input = { model: 'Thunderbird', needsRepairs: false, needsCleaning: false };
-response = await engine.invoke({ items: { id: itemId } }, input);
+<table> <tr><td> 
+
+- wf_instances; stores workflow instances, including items, tokens, logs ,etc.
+
+- wf_models; stores workflow models, this is important for querying on events
+
+- wf_locks; to achieve concurrency, running instances place a lock in this collection
+
+</td><td>
+
+![MongDB Collection](images/mongodb-dbs.png)
+
+</td></tr></table>
+
+
+[api.data object](api/interfaces/IAPIData.md) provides several methods to handle  workflow instances and items
+
+While [api.model object](api/interfaces/IAPIModel.md) provides methods to access workflow models
+
+In addition to saving bpmn specific properties, `bpmn-server` supports the following data elements:
+
+- Presistent Data
+  - instance.data 
+  - item.vars
+- In-Memory Data
+  - item.input
+  - item.output
+
+All of the above all available during process execution and event listeners.
+
+## Instance Object
+
+
+The instance object is similar to: 
+
+
+<table> <tr><td> 
+
+```json
+instance: {
+  id;
+  name;
+//.. other instance attributes
+  items: { // items here
+    id;
+    elementId;
+    status;
+    vars;
+    // items here
+  }
+  data: { // data attributes here}
+
+  }
 ```
 
-## Expressions
+</td><td>
 
-    keeping in mind that the bpmn definition defines conditional flow as such:
+![MongDB Collection](images/mongo-instance-sample.png)
 
-```xml
-<bpmn:sequenceFlow id="flow_gw1_clean" sourceRef="gateway_1" targetRef="task_clean">
-  <bpmn:conditionExpression xsi:type="bpmn:tExpression"><![CDATA[
-  (this.needsCleaning=="Yes")
-  ]]></bpmn:conditionExpression>
-</bpmn:sequenceFlow>
-```
+</td></tr></table>
 
-## Part of Script and Service Task
 
-```xml
-    <bpmn2:scriptTask id="task_reminder" name="Issue Reminder">
-      <bpmn2:incoming>SequenceFlow_1h10gv4</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_0cokf0m</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[
-            let data = this.token.data;
-            console.log("sending a reminder scirpt");
-            console.log(data);
-
-            if (typeof data.reminderCounter === 'undefined') {
-              data['reminderCounter']=0;
-            }
-
-            data['reminderCounter']=data['reminderCounter']+1;
-            this.token.log('testing from the inside: ');
-      ]]></bpmn2:script>
-    </bpmn2:scriptTask>
-
-```
-
-## AppDelegate
-
-Similar to Script and Service AppDelegate can manupilate Instance data.
-
-## Script Extensions
-
-Script Extensions are supported in release 1.1 and later, allowing you to add a script to any node.
-
-In this example we are adding a script to bpmn:startEvent
-
-```ts
-
-    <bpmn:startEvent id="StartEvent_1ohx91b">
-      <bpmn:extensionElements>
-        <camunda:script event="start"><![CDATA[
-        console.log("This is the start event");
-          this.applyInput({records:[1,2,3]});
-          console.log(this.data);
-          console.log("This is the start event");]]></camunda:script>
-      </bpmn:extensionElements>
-      <bpmn:outgoing>Flow_18xinq3</bpmn:outgoing>
-    </bpmn:startEvent>
-
-```
-
-# Item Data
-
-In Release 1.3.22 added **item.vars** to store any variables related to the item as follows
-
-## Setting item.vars
-
-You can set item.vars Inside your service logic :
-
-```ts
-  async service1(input, context) {
-  ...
-  item.vars= input;
- ...
-}
-```
-
-or by having an event-listener such as:
-
-![Item Vars Script](images/item-vars-script.png)
-
-## MongoDB:
-
-As a result MongoDB stores item.vars
-![image](https://github.com/ralphhanna/bpmn-server/assets/11893416/320e2e2f-e6e3-46a9-964b-f10e91ce8a32)
-
-## Using findItems:
-
-```ts
-query = { 'data.caseId': caseId, 'items.vars.param1': 'value1' };
-items = await server.dataStore.findItems(query);
-console.log('items count', items);
-```
 
 # Data Scope
 
@@ -135,10 +103,69 @@ However, for SubProcess and Loop elements a seperate scope
 ![Image description](images/Data_Scripts_Services_model.PNG)
 ![Image description](images/Data_Scripts_Services.PNG)
 
-# Query on Data
+# Data Query
 
-You can use Instance data as part of your query for Instances or Items
-For Details on Query see [Data Query](api-summary#data-query)
+
+The syntax follows MongoDB standards.
+
+the query syntax must be
+- instance attributes unqualified
+- item attributes are qualified by `items.\<attributeName\>`
+- data attributes are qualified by `data.\<attributeName\>`
+
+```
+
+## Item Query
+
+| example                                                        | will retrieve                              |
+| -------------------------------------------------------------- | ------------------------------------------ |
+| `{ "items.id": "value-of-id" }`                                | find items by id only - unique             |
+| `{ id: instanceId, "items.elementId": item.elementId }`        | find items by instance id and elementId    |
+| `{"data.caseId": caseId ,"items.elementId" : item.elementId }` | find items by caseId and item elementId    |
+| `{ "name" : "processName" , "items.status": "wait"}`           | find items for the process in a wait state |
+| `{ id: instanceId, "items.status": 'wait' }`                   | check for items in "wait"                  |
+| `{"items.status": "wait" , "items.elementId": "task_Buy" }`    | find all items that has "wait" status      |
+
+```ts
+query = { 'items.id': item.id };
+items = await api.data.findItems(query);
+```
+`findItems` performs the following 
+- Adds security conditions
+
+- Parses the query and converts it to MongoDB syntax
+
+- Issue mongoDB query; mongoDb returns instances (not items)
+
+- Filters the items and converts object into items
+
+As an example if the api calls
+
+ -  findItems query: ```{"id":"e213ff1b-bb09-43cf-9392-665036903a2c","items.elementId":"task_clean"} ```
+ -  it converts to: ```{"id":"e213ff1b-bb09-43cf-9392-665036903a2c","items":{"$elemMatch":{"elementId":"task_clean"}}} ```
+ -  returns on instance with several items
+ -  it filters the items and returns only the 1 item as required
+
+## Instance Query
+
+Instance Queries are similar to Items Query but return entire Instances with all the items
+
+```ts
+// find instances having elementId
+
+instances = await api.data.findInstances({
+  'items.elementId': 'task_Buy',
+});
+
+//  find instance by itemd id
+
+instances = await api.data.findInstances({ 'items.id': item.id });
+
+// find instance by caseId
+
+instances = await api.data.findInstances({ 'data.caseId': 3030 });
+```
+
 
 # Input-Output Data
 

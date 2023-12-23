@@ -37,7 +37,7 @@ class Cron  extends ServerComponent implements ICron {
 
 		await this.definitions.rebuild();
 
-		this.logger.log("Start timers");
+//		this.logger.log("Start timers");
 
 		let promises = [];
 		const self = this;
@@ -67,7 +67,7 @@ class Cron  extends ServerComponent implements ICron {
 			//query = { query: { "items.timeDue": { $lt: new Date(target).toISOString() } } };
 			//query = { items: {timeDue: { $lt: new Date(target).toISOString() } }};
 			list = await this.dataStore.findItems(query);
-			this.logger.log("...items query returend " + list.length);
+//			this.logger.log("...items query returend " + list.length);
 			for (i = 0; i < list.length; i++) {
 				let item = list[i];
 				if (item.timeDue) {

@@ -30,25 +30,127 @@ class APIComponent {
 }
 /**
         common parameters:
-        query:      MongoDB query to locate the target instance or item
-        data:       input Data 
-        user:       an instance of ISecureUser object 
-        options:    various options, this is an open object that is based through the run-time
+
+        - query:      MongoDB query to locate the target instance or item
+
+        - data:       input Data 
+
+        - user:       an instance of ISecureUser object 
+
+        - options:    various options, this is an open object that is based through the run-time
 
     Returns IExecution
         containing the instance and the results of the call
 
-**/
-interface IEngineAPI {
+*/
+interface IAPIEngine {
+/**
+    start a new Instance of specified model
+*/
     start(modelName, data: {}, user: ISecureUser, options?: {}): Promise<IExecution>;
+/**
+    continue with the execution of a particular item that is in a wait state, typically a user task
+*/
     invoke(query, data: {}, user: ISecureUser, options?: {}): Promise<IExecution>;
+/**
+    provide assignment data to a user task
+*/
     assign(query, data, assignment, user: ISecureUser, options?: {}): Promise<IExecution>;
+/**
+    throw a message with an id, system will identify receiving item
+*/
     throwMessage(messageId, data, messageMatchingKey, user: ISecureUser, options?: {}): Promise<IExecution>;
+/**
+    throw a signal with an id, system will identify receiving item(s)
+*/
     throwSignal(signalId, data, messageMatchingKey, user: ISecureUser, options?: {}): Promise<IExecution>;
+/**
+    start a second event node (in a subprocess) for a running instance
+*/
     startEvent(query, elementId, data: {}, user: ISecureUser, options?: {}): Promise<IExecution>;
 }
 
-class APIEngine extends APIComponent implements IEngineAPI {
+
+interface IAPIData {
+/**
+    returns list of `User Tasks` that the user has access to
+
+    to get assigned tasks for a user
+
+```ts
+    api.data.getPendingUserTasks({"item.assignee":user.userName});
+```
+
+*/
+     getPendingUserTasks(query, user: ISecureUser): Promise<IItemData[]>;
+/**
+    returns list of `item`s
+*/
+     findItems(query, user: ISecureUser): Promise<IItemData[]>;
+     findItem(query, user: ISecureUser): Promise<IItemData>;
+/**
+    returns list of `instance`s
+*/
+     findInstances(query, user: ISecureUser, options): Promise<IInstanceData[]>;
+/**
+    deletes the `instance`s
+*/
+     deleteInstances(query, user: ISecureUser);
+}
+/**
+        common parameters:
+
+        - query:      MongoDB query to locate the target instance or item
+
+        - user:       an instance of ISecureUser object 
+
+*/
+interface IAPIModel {
+/**
+    save a model to the modelStore
+*/
+
+     save(name, source, svg, user: ISecureUser);
+/**
+    list all models authorized to the user
+*/
+     list(user: ISecureUser): Promise<string[]>;
+/**
+    returns Model Events (like timers) for authorized to the user and based on specifid query
+*/
+
+     findEvents(query, user: ISecureUser);
+/**
+    returns Model Start Events for authorized to the user and based on specifid query
+*/
+
+     findStartEvents(query, user: ISecureUser);
+/**
+    delete the specified model
+*/
+
+     delete(name, user: ISecureUser);
+/**
+    delete the specified model
+*/
+     rename(name, newName, user: ISecureUser);
+/**
+    returns the bpmn (xml) for the model
+*/
+     getSource(name, user: ISecureUser);
+/**
+    load a model 
+*/
+     load(name, user: ISecureUser);
+/**
+    export the specified models based on a query to a folder
+*/
+     export(query, folder, user: ISecureUser) ;
+}
+
+
+
+class APIEngine extends APIComponent implements IAPIEngine {
 
     public async start(name, data = {}, user: ISecureUser, options = {}): Promise<IExecution> {
 
@@ -146,5 +248,4 @@ class APIModel extends APIComponent {
     }
 }
 
-
-export { BPMNAPI, APIEngine, APIData, APIModel }
+export { BPMNAPI, APIEngine, APIData, APIModel ,IAPIEngine ,IAPIData,IAPIModel  }

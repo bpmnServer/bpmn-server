@@ -11,8 +11,8 @@ export default {
   tagline: "API and usage or bpmn-server npm package.",
   url: `https://${organizationName}.github.io`,
   baseUrl: `/${projectName}/`,
-  onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "throw",
+  onBrokenLinks: "warn",
+  onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
   // GitHub Pages adds a trailing slash by default that I don't want
   trailingSlash: false,

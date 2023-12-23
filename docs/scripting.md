@@ -38,6 +38,15 @@ These are simple expression that evaluates to an appropriate value.
 Expressions, do not support async functions
 
 #### conditional flow examples:
+
+<table>
+<tr><td>
+
+![flow-conditin](images/flow-condition.png)
+
+</td><td>
+
+
 ```
     $data.approval=='Approved'
   or 
@@ -48,6 +57,9 @@ Expressions, do not support async functions
     $(this.data.v1 + this.data.v2)<4
     
 ```
+
+</td></tr></table>
+
 #### timers examples:
 For duration timers
 ```
@@ -82,12 +94,25 @@ No syntax required for these scripts
 ## Execution Listeners
 There are for all node types and processes
 
+<table>
+<tr><td>
+
+
 | event        |       Description        |
 |-------------  |-------------   |
 | start   |   is fired at the start of item execution|
 | end   |	  is fired at the end of item execution|
 
+
 Also at the process level, start and end are triggered
+
+</td><td>
+
+![flow-conditin](images/execution%20listener.png)
+
+
+</td></tr></table>
+
 
 ### Task Listeners
 <details>

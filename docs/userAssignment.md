@@ -1,5 +1,129 @@
+# Security 
 
-## User Identification and Authentication
+
+<div id="docs" style="display: block;"> 
+<table>
+<tbody>
+<tr>
+<th colspan="5">Leave Application - Relevant Nodes specifications
+</th>
+</tr>
+<tr>
+<th>id
+</th>
+<th>name
+</th>
+<th>type/feature
+</th>
+<th>details</th>
+<th>explanation</th>
+</tr>
+<tr>
+<td>StartEvent_1
+</td>
+<td>
+</td>
+<td>bpmn:StartEvent
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td> 
+</td>
+<td>
+</td>
+<td>Initiator
+</td>
+<td>requester</td>
+<td>user name that has started the process is saved in `data.requester`</td>
+</tr>
+<tr>
+<td> 
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>Request
+</td>
+<td>Request
+</td>
+<td>bpmn:UserTask
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td> 
+</td>
+<td>
+</td>
+<td>assignee
+</td>
+<td>$(this.data.requester)
+</td></td><td>Only the user that started the request can invoke it</td>
+
+</tr>
+
+<tr>
+<td>Approve
+</td>
+<td>Approve
+</td>
+<td>bpmn:UserTask
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td> 
+</td>
+<td>
+</td>
+<td>script on start 
+</td>
+<td>this.assignee=appServices.getSupervisor(item.userName);
+</td></td><td>Only the supervisor can perform this task `approval`</td>
+
+</tr>
+<tr>
+<td>timer-event
+</td>
+<td>
+</td>
+<td>bpmn:BoundaryEvent
+</td>
+<td>
+</td>
+</tr>
+
+<tr>
+<td>
+</td>
+<td>
+</td>
+<td>timer
+</td>
+<td>Cycle:R3P2D
+</td></td><td>Reminder is issued 2 days after Request completion date</td>
+</tr>
+
+<tr>
+<td>Activity_1escddn
+</td>
+<td>Reminder
+</td>
+<td>bpmn:ScriptTask
+</td>
+<td>/* issue notification here */
+</td></td><td>Issue a reminder notification</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+# User Identification and Authentication
 
 BPMNServer does not provide user identification and authentication component, but relies on the calling application to authenticate the user.
 
@@ -42,11 +166,11 @@ Remote calls rely on apiKey to be passed along with the userId
     response = await server.engine.invoke({id: response.id , "items.elementId": 'task_Buy' },{},'user1');
 
 ```
+## Access Control Rules
 
-# Task Assignee (Camunda Extension)
+### Task Assignee (Camunda Extension)
 
-
-### Defining Process Initiator
+#### Defining Process Initiator
 You can define the variable name for the instance initiator 
 
 ![BPMN Editor Initiator](images/initiator.PNG)
@@ -56,7 +180,7 @@ This will assign the userId of that started the process
     console.log(data.starterUserId)
 ```
 
-## BPMN Editor
+### BPMN Editor
 
 ![BPMN Editor Assignee](images/Assignee1.PNG)
 

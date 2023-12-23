@@ -2,101 +2,38 @@
 
 <!-- toc -->
 
-- [Invoking Workflow Examples](#invoking-workflow-examples)
-  - [Invoking Process Using WebApp](#invoking-process-using-webapp-examplesbuycar-webmd)
-  - [Invoking Proccess through API](#invoking-proccess-through-api)
-  - [Invoking Remotely Using WebServices](#invoking-remotely-using-webservicesexamplesbuycar-remotemd)
-  - [Async Execution](#async-execution)
 - [Process Definitions Examples](#process-definitions-examples)
-  - [Service Task](#service-task)
-  - [Script Task](#script-task)
-  - [Conditional Flow](#conditional-flow)
-  - [Form Input Fields](#form-input-fields)
-  - [Multiple Start Event](#multiple-start-event)
-  - [Business Rule Task](#business-rule-task)
-  - [Script Extensions](#script-extensions)
-  - [Timer Event](#timer-event)
-  - [Multi-instances Tasks](#multi-instances-tasks)
-  - [Call Process](#call-process)
-  - [Message Flow](#message-flow)
-  - [Throwing and Cathcing Messages](#throwing-and-cathcing-messages)
-  - [Input and Output Data Handling](#input-and-output-data-handling)
-  - [Gateway](#gatewayexamplesgatewaymd)
-  - [Event Based Gateway](#event-based-gateway-examplesgatewaymd)
-  - [Boundary Events](#boundary-eventsexamplesboundary-eventsmd)
-  - [UserTask Assignment](#usertask-assignmentuserassignmentmd)
+    - [Service Task](#service-task)
+    - [Script Task](#script-task)
+    - [Conditional Flow](#conditional-flow)
+    - [Form Input Fields](#form-input-fields)
+    - [Multiple Start Event](#multiple-start-event)
+    - [Business Rule Task](#business-rule-task)
+    - [Script Extensions](#script-extensions)
+    - [Timer Event](#timer-event)
+    - [Multi-instances Tasks](#multi-instances-tasks)
+    - [Call Process](#call-process)
+    - [Message Flow](#message-flow)
+    - [Throwing and Cathcing Messages](#throwing-and-cathcing-messages)
+    - [Input and Output Data Handling](#input-and-output-data-handling)
+    - [Gateway](#gateway)
+    - [Event Based Gateway](#event-based-gateway)
+    - [Boundary Events](#boundary-events)
+    - [UserTask Assignment](#usertask-assignment)
 
 <!-- tocstop -->
 
-## Invoking Workflow Examples
-
-### [Invoking Process Using WebApp ](examples/BuyCar-Web.md)
-
-### Invoking Proccess through API
-
-To Invoke a process from your code:
-
-```ts
-    const { configuration }  = require('../configuration.js');
-    const { BPMNServer, Logger } = require('bpmn-server');
-
-    const logger = new Logger({ toConsole: true });
-
-    const server = new BPMNServer(configuration, logger);
-
-    const api = new BPMNAPI(server));
-
-    let response=await api.engine.start('Leave Request',{type:'Vacation'},SystemUser);
-
-    const items = response.items.filter(item => {
-        return (item.status == 'wait');
-    });
-
-    items.forEach(item => {
-        console.log(`  waiting for <${item.name}> -<${item.elementId}> id: <${item.id}> `);
-    });
-
-    console.log('Invoking Buy');
-
-    response = await api.engine.invoke({instanceId: response.execution.id, elementId: 'task_Buy' },
-        { model: 'Thunderbird', needsRepairs: false, needsCleaning: false },SystemUser);
-
-    console.log("Ready to drive");
-
-    response = await api.engine.invoke({ instanceId: response.execution.id, elementId: 'task_Drive' },{},SsytemUser);
-
-    console.log(`that is it!, process is now complete status=<${response.execution.status}>`)
-```
-### [Invoking Remotely Using WebServices](examples/BuyCar-Remote.md)
-
-### Async Execution
-```ts
-    const api = new BPMNAPI(new BPMNServer(configuration,new Logger({ toConsole: false}),{cron:false}));
-
-    console.log('starting serviceTask');
-    let response=await api.engine.start('serviceTask', { v1: 1, v2: 2 }, SystemUser, {noWait:true});
-
-    console.log('immediate response id',response.instance.id);
-```
-In the above example; engine.start return immediatly, but other nodes will continue to execute 
-```ts
-starting serviceTask
-immediate response id d7df99ab-f0b5-4fdf-8ac3-2701d0bf9b79
- add service start: { v1: 1, v2: 2 }
-Add Service 5 3
-Add Service 33 25
-delaying ... 5000
-delayed is done.
-appDelegate service1 is now complete input: { repeat: '100', inputVar2: undefined } output: 1 item.data { v1: 1, v2: 2, result: 8, result2: 158 }
- service1 end: { v1: 1, v2: 2, result: 8, result2: 158 }
-```
-
-## Process Definitions Examples
+# Process Definitions Examples
 
 ### Service Task
 In Process definition (.bpmn file), use `implementation` attribute to define name of JavaScript/TypeScript Method to perform the Task:
 
-![Using Modeler](images/bb-service.PNG)
+<table class="docs" class="docs"><tr><td class="docs">
+
+![Using Modeler](./images/bb-service.PNG)
+
+</td><td class="docs">
+
 ```xml
     <bpmn:serviceTask id="serviceTask" name="Service Task" implementation="service1">
     ...
@@ -118,9 +55,16 @@ class AppServices {
 }
 
 ```
+</td></tr></table>
+
 ### Script Task
 
+<table class="docs"><tr><td class="docs">
+
 ![Using Modeler](images/bb-script.PNG)
+
+</td><td class="docs">
+
 ```xml
     <bpmn2:scriptTask id="Activity_06typtl" name="script" scriptFormat="JavaScript">
       <bpmn2:script>
@@ -130,11 +74,17 @@ class AppServices {
  ..
     </bpmn2:scriptTask>
 ```
+</td></tr></table>
 
 
 ### Conditional Flow
 
+<table class="docs"><tr><td class="docs">
+
 ![Using Modeler](images/bb-conditional-flow.PNG)
+
+</td><td class="docs">
+
 ```xml
 
   <bpmn:sequenceFlow>    
@@ -145,8 +95,16 @@ class AppServices {
   ..
 
 ```
+
+</td></tr></table>
+
 ### Form Input Fields
+
+<table class="docs"><tr><td class="docs">
+
 ![Using Modeler](images/bb-form.PNG)
+
+</td><td class="docs">
 
 ```xml
     <bpmn:userTask id="task_Buy" name="Buy">
@@ -160,9 +118,16 @@ class AppServices {
     </bpmn:userTask>    
 
 ```
+
+</td></tr></table>
+
 ### Multiple Start Event
 
+<table class="docs"><tr><td class="docs">
+
 ![Image description](examples/invoice-start.png)
+
+</td><td class="docs">
 
 When a definition/process has multiple start node, you need to specify the start node when starting the process:
 
@@ -176,26 +141,21 @@ From API:
     response = await api.engine.start('invoice', 
         { reminderCounter: 0, caseId: caseId}, user, {startNodeId:'StartEvent_AP'});
 ```
-### Business Rule Task
-
-BPMN-Server supports Business Rules implemented through DMN-Engine
-Business Rules can be defined as a Decision Table as in this example:
-
-![Vacation Decision Table](examples/VacationDecisionTable.PNG)
-
-Decision Table is called through 
-```ts
-    <bpmn2:businessRuleTask id="Task_1lcamp6" name="Vacation"  camunda:decisionRef="Vacation">
-````
-This will load the file 'Vacation.json' form the Processes folder as defined in configuration.js
+</td></tr></table>
 
 ### Script Extensions
+
 
 Scripts can be added to listen to two events:
 - Start before the Task is executed
 - End after the task is executed
 
+<table class="docs"><tr><td class="docs">
+
+
 ![Using Modeler](images/bb-event-scripts.PNG)
+
+</td><td class="docs">
 
 In this example we are adding a script to bpmn:startEvent
 
@@ -222,6 +182,7 @@ In this example we are adding a script to bpmn:startEvent
 
    
 ```
+</td></tr></table>
 
 
 ### Timer Event
@@ -332,7 +293,7 @@ Howerver, the challenge here is that make sure the message is sent to the specif
 
 [this for details](data.md#Input-Output_Data)
 
-### [Gateway](examples/gateway.md)
-### [Event Based Gateway ](examples/gateway.md)
-### [Boundary Events](examples/boundary-events.md)
+### [Gateway](./examples/gateway.md)
+### [Event Based Gateway ](./examples/gateway.md)
+### [Boundary Events](./examples/boundary-events.md)
 ### [UserTask Assignment](userAssignment.md)

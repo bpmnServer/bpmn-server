@@ -2,7 +2,7 @@
 
 - Boundary Events start with the owner Activity
 - Are cancelled when the the owner activity is completed
-- Intrupting BoundaryEvent when complete, the cancel (Intrupt) the owner
+- Intrupting BoundaryEvent, when complete they cancel (Intrupt) the owner
 - Non-Intrupting BoundaryEvent they fire without impacting the owner
 
 ![BPMN Diagram](boundary-event1.png)

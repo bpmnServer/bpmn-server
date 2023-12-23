@@ -6,7 +6,9 @@ enum USER_ROLE {
     ADMIN = 'ADMIN',    // TENANT ADMIN
     DESIGNER = 'DESIGNER'
 }
-/** Security Rules:
+/** 
+ *  
+ *  Security Rules:
  *  Security Rules are by-passed if
  *      a.  User is and Admin or System
  *      b.  .env REQUIRE_AUTHENTICATION === 'false' || process.env.ENFORCE_SECURITY
@@ -26,6 +28,7 @@ enum USER_ROLE {
  *      Then User can Invoke Task
  *  We may need to utilize Optimistic Lock pattern here, keep track of version # of the Instance and on update
  *  Warn the User that instance information has changed since last seen
+ *  
  * */
 var byPass = false;
 

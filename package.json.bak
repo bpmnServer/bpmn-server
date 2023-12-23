@@ -7,7 +7,6 @@
     "build": "tsc --build",
     "clean": "rimraf dist",
     "wintest": "node_modules/.bin/mocha",
-    "toc": "node scripts/generate-api-toc ./docs/API.md,./docs/Examples.md",
     "docs:build": "docusaurus build",
     "docs:dev": "docusaurus start",
     "docs:generate": "npm run docs:generate:copy && npm run docs:generate:api",
@@ -17,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https:github.com/bpmnServer/bpmn-server.git"
+    "url": "git+https:github.com/ralphhanna/bpmn-server.git"
   },
   "keywords": [
     "BPMN",
