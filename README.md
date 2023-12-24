@@ -1,45 +1,99 @@
-# bpmn-server
+# Overview
 
-[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+`bpmn-server` provides a Workflow component based on **Business Process Model and Notation** that can be easily integrated into your application.
 
-## Introduction
 
-BPMN 2.0 Modeling, Execution and Presistence, an open source Workflow Server for Node.js
+As workflow application can outlive Node.js applications, `bpmn-server` has out-of-the-box state presistence and variables, with concurrency across Node.js cluster and process instances
+to make them ideal platform to do long running business processes, durable services or scheduled backgound tasks.
 
-This package is designed specifically for Node.js and TypeScript
 
-## Features
+## Modeling
+`bpmn-server` provides a modeling tool based on `bpmn.io` with customized property panel, no need to edit bpmn files
 
-### Web based Process modeller
+![](docs/images/Modeler.png)
 
-A web based modeler is included based on http://bpmn.io , models definitions are saved at your server
-![Modeller](./docs/model-demo.gif)
+Typically your application has multiple bpmn models, a model is represented in a bpmn definition (xml).
 
-### Full BPMN Process Engine
+Each Model is made of various elements, an `element` can be a `node` in the diagram (events/tasks/gateway) or a  `flow`
 
-bpmn-server provides an bpmnEngine to execute your workflow definition supporting all of BPMN 2.0 elements with advanced extensions
+Models are saved by `bpmn-server` and can be queried [see API.model](docs/api/interfaces/IAPIModel)
 
-bpmn-server is highly scalable solution, allow you to run multiple nodeJS either in same machine or in a distributed mode against same MongoDB
+`bpmn-server` support all bpmn 2.0 elements [see Modeling Support](docs/examples)
 
-### Presistent Processes
+## Execution
+`bpmn-server` is primiraly an execution engine for bpmn models.
 
-provides an environment to presist execution Instances while running and communicate with your application.
+Everytime a model is executed (started), an `instance` is created, and for each `element` that is executed it creates an `item' 
 
-Applications can monitor and communicate to Instances whether they are running or offline, allowing user interface to query and process Workflow steps
+Execution is based on the model logic that is enhanced by various extensions that allow scripting and access to your application.
 
-### Data Queries
+During Execution, Model Listeners and Application Listeners are invoked.
 
-Since instances are saved in MongoDB you can easily query your instances (running or completed)
+The execution `engine` is availabe through an API [see API.engine](docs/api/interfaces/IAPIEngine).
 
-### User Assignment and Access Control
+For more details about Invoking Execution Engine [see](docs/invokation.md)
 
-### Application Integration
+For more details about Execution behaviour [see](docs/execution.md)
 
-### Sample Web App
+## Datastore
 
-Included is a sample web application (running Node.js and Express.js) to allow you to visualize your workflow
+At various stages of execution, instance object with its parts is saved into a datastore (defaults to MongoDB)
 
-## Installation
+Instances and Items can be queried through an API [see API.data](docs/api/interfaces/IAPIData)
+
+For more details about data management [see Data](docs/data)
+
+# Demo Web Application
+
+<details>
+<summary>
+A Demo Web application `bpmn-web` provides full front-end along with security features to demonstrate and test the capabilities of `bpmn-server`.
+</summary>
+
+The web app provides:
+- Presistent Modeling tool, using bpmn.io 
+- Model property panel supporting all features of `bpmn-server` , no need to edit bpmn file
+- Execution with input form for defined fields
+
+![](docs/images/inputFields.png)
+
+- List of outstanding/recent tasks and workflow
+- Viewing of `instance` details
+
+![](docs/images/instance-details1.png)
+
+- View of Model specification
+![](docs/images/instance-details2.png)
+
+</details>
+
+# User Management and Security
+
+`bpmn-server` is relying on the front-end applicaton authenticate users and to pass user information through the API.
+1. Model designer/developr can define assignee, candidateUsers, candidateUserGroups as static string or JavaScript expressions
+
+2. Application fron-end need to pass the implementation of `userService' 
+
+```ts
+       let user1 =new SecureUser({ userName: 'user1', userGroups: ['Owner', 'Others']});
+       let response = await api.engine.start('Vacation Request', {reason:'I like it',type:'Vacation'}, user1);
+``` 
+   
+3. `bpmnServer` will enforce security rules based on the current user passed by the application
+
+Demo Application(Express or NestJS) , provides a complete implementation of users management using Passport and MongoDB
+
+# Application Integration
+
+`bpmn-server` is intended to be integration into your application
+
+-- copy from readme
+
+# Demo Web Application
+
+We Provide a full demo @ http://bpmn.omniworkflow.com
+
+# Installation
 
 This package requires Node.js and an access to MongoDB ()
 if you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas)
@@ -131,96 +185,20 @@ npm update bpmn-server
 
 # Documentation
 
-- [Features](./docs/features.md)
-- [Examples](./docs/examples.md)
+- [Invoking Workflows](/docs/invokation) Ok
+- [Execution](/docs/execution) OK
+- [Scripting](/docs/scripting) OK
+- [Security](/docs/security) Ok
+- [Data](/docs/data) Needs Review
+  -  [Input/Output](/docs/data#input-output-data)
+  -  [Data Query](/docs/data#dataQuery) OK
+- [Examples](/docs/examples) OK
+- [API Summary](/docs/api-summary)
+- [API](/docs/api/readme) OK
+- [Setup](/docs/setup) Needs Review
+- [Application Integration](/docs/customization) Needs work
 
-## Executing Workflow
-
-`bpmn-server` provide full API for your application to execute, monitor and query the Workflow.
-Typicall this is done through your business application or through a web Application
-see [API](./docs/api/API.md) for details
-
-## Adding Logic to your Workflow
-
-Beyond BPMN Models, you can add scripts and logic to the working through the followings:
-
-### Model Expressions
-
-Many of the model properties accept `JavaScript Expressions` for example:
-
-- conditional flow
-- timers
-- assignment properties
-  see [Model Expressions](./docs/scripting.md#expressions) for details
-
-### Execution/Task Listeners
-
-Inside your model, you can attach Listeners to various nodes as `JavaScript Listeners`
-see [Listeners](./docs/scripting.md#listeners) for details
-
-### Workflow Application Delegate
-
-You can place a listener in your application delegate class to listen to all events
-
-see [Application Listener](./docs/scripting.md#Applistener) for details
-
-## Deployment Modes
-
-BPMNServer is a backend server aimed to execute BPMN Models
-You can deploy in several scenarios:
-
-### Web Application
-
-We Provide a full demo @ http://bpmn.omniworkflow.com
-
-Or installation above to install on your environemnt
-
-### as a MicroService
-
-By running the WebApplication described above and access only the API
-
-### Remote Access to WebServer
-
-Using bpmnClient app
-
-### Stand-alone
-
-You can deploy a stand alone app using NodeJs scripts
-for example:
-
-```ts
-/* Most simple Script to start a process
- */
-const api = new BPMNAPI(new BPMNServer(configuration));
-
-let response = await api.engine.start('Leave Request', { type: 'Vacation' }, SystemUser);
-
-const items = response.items.filter((item) => {
-  return item.status == 'wait';
-});
-
-items.forEach((item) => {
-  console.log(`  waiting for <${item.name}> -<${item.elementId}> id: <${item.id}> `);
-});
-
-console.log('Invoking Buy');
-
-response = await api.engine.invoke(
-  { instanceId: response.execution.id, elementId: 'task_Buy' },
-  { model: 'Thunderbird', needsRepairs: false, needsCleaning: false },
-  SystemUser,
-);
-
-console.log('Ready to drive');
-
-response = await api.engine.invoke({ instanceId: response.execution.id, elementId: 'task_Drive' }, {}, SsytemUser);
-
-console.log(`that is it!, process is now complete status=<${response.execution.status}>`);
-```
-
-for more complete examples see [Examples](./docs/examples.md)
-
-## License
+# License
 
 This project is licensed under the terms of the MIT license.
 

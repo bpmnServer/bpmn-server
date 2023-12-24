@@ -7,17 +7,12 @@
     "build": "tsc --build",
     "clean": "rimraf dist",
     "wintest": "node_modules/.bin/mocha",
-    "toc": "node scripts/generate-api-toc ./docs/API.md,./docs/Examples.md",
+    "toc": "node src/scripts/generate-toc docs/examples.md,docs/scripting.md,docs/data.md,docs/overview.md",
     "docs:build": "docusaurus build",
     "docs:dev": "docusaurus start",
     "docs:generate": "npm run docs:generate:copy && npm run docs:generate:api",
     "docs:generate:api": "rimraf docs/api && typedoc --options typedoc.json",
-<<<<<<< HEAD
-    "docs:generate:copy": "ts-node src/scripts/copy-readme.ts",
-    "docs:check": "node scripts/test-markdown.js ./docs/API.md && node scripts/test-markdown.js ./docs/Examples.md"
-=======
     "docs:generate:copy": "ts-node scripts/copy-readme.ts"
->>>>>>> ae19f027a2c8a55e9cc9311606e0b42da25e772c
   },
   "repository": {
     "type": "git",

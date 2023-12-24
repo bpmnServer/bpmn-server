@@ -8,10 +8,15 @@
   - [Datastore](#datastore)
 - [Demo Web Application](#demo-web-application)
 - [User Management and Security](#user-management-and-security)
-    - [Demo Application Authentication and Security](#demo-application-authentication-and-security)
-  - [Handling Access Control](#handling-access-control)
-    - [Filtering data for Security:](#filtering-data-for-security)
 - [Application Integration](#application-integration)
+- [Demo Web Application](#demo-web-application)
+- [Installation](#installation)
+  - [To start server](#to-start-server)
+    - [Command Line Interface](#command-line-interface)
+  - [to update to latest release](#to-update-to-latest-release)
+- [Documentation](#documentation)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
 
 <!-- tocstop -->
 
