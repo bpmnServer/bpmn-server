@@ -16,9 +16,9 @@ Typically your application has multiple bpmn models, a model is represented in a
 
 Each Model is made of various elements, an `element` can be a `node` in the diagram (events/tasks/gateway) or a  `flow`
 
-Models are saved by `bpmn-server` and can be queried [see API.model](docs/api/interfaces/IAPIModel)
+Models are saved by `bpmn-server` and can be queried [see API.model](docs/api/interfaces/IAPIModel.md)
 
-`bpmn-server` support all bpmn 2.0 elements [see Modeling Support](docs/examples)
+`bpmn-server` support all bpmn 2.0 elements [see Modeling Support](docs/examples.md)
 
 ## Execution
 `bpmn-server` is primiraly an execution engine for bpmn models.
@@ -29,7 +29,7 @@ Execution is based on the model logic that is enhanced by various extensions tha
 
 During Execution, Model Listeners and Application Listeners are invoked.
 
-The execution `engine` is availabe through an API [see API.engine](docs/api/interfaces/IAPIEngine).
+The execution `engine` is availabe through an API [see API.engine](docs/api/interfaces/IAPIEngine.md).
 
 For more details about Invoking Execution Engine [see](docs/invokation.md)
 
@@ -39,9 +39,9 @@ For more details about Execution behaviour [see](docs/execution.md)
 
 At various stages of execution, instance object with its parts is saved into a datastore (defaults to MongoDB)
 
-Instances and Items can be queried through an API [see API.data](docs/api/interfaces/IAPIData)
+Instances and Items can be queried through an API [see API.data](docs/api/interfaces/IAPIData.md)
 
-For more details about data management [see Data](docs/data)
+For more details about data management [see Data](docs/data.md)
 
 # Demo Web Application
 
@@ -185,18 +185,18 @@ npm update bpmn-server
 
 # Documentation
 
-- [Invoking Workflows](/docs/invokation) Ok
-- [Execution](/docs/execution) OK
-- [Scripting](/docs/scripting) OK
-- [Security](/docs/security) Ok
-- [Data](/docs/data) Needs Review
-  -  [Input/Output](/docs/data#input-output-data)
-  -  [Data Query](/docs/data#dataQuery) OK
-- [Examples](/docs/examples) OK
-- [API Summary](/docs/api-summary)
-- [API](/docs/api/readme) OK
-- [Setup](/docs/setup) Needs Review
-- [Application Integration](/docs/customization) Needs work
+- [Invoking Workflows](/docs/invokation.md) Ok
+- [Execution](/docs/execution.md) OK
+- [Scripting](/docs/scripting.md) OK
+- [Security](/docs/security.md) Ok
+- [Data](/docs/data.md) Needs Review
+  -  [Input/Output](/docs/data#input-output-data.md)
+  -  [Data Query](/docs/data#dataQuery.md) OK
+- [Examples](/docs/examples.md) OK
+- [API Summary](/docs/api-summary.md)
+- [API](/docs/api/readme.md) OK
+- [Setup](/docs/setup.md) Needs Review
+- [Application Integration](/docs/customization.md) Needs work
 
 # License
 

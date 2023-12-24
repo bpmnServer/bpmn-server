@@ -13,7 +13,7 @@
 /dist
 # generated docs
 /.docusaurus
-/docs/api
+#/docs/api  - needs them for /README.md
 /build
 # Copied by scripts\copy-readme.ts
 docs/README.md

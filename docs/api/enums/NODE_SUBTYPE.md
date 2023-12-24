@@ -1,0 +1,85 @@
+[bpmn-server](../API.md) / NODE\_SUBTYPE
+
+# Enumeration: NODE\_SUBTYPE
+
+## Table of contents
+
+### Enumeration Members
+
+- [timer](NODE_SUBTYPE.md#timer)
+- [message](NODE_SUBTYPE.md#message)
+- [signal](NODE_SUBTYPE.md#signal)
+- [error](NODE_SUBTYPE.md#error)
+- [escalation](NODE_SUBTYPE.md#escalation)
+- [cancel](NODE_SUBTYPE.md#cancel)
+- [compensate](NODE_SUBTYPE.md#compensate)
+
+## Enumeration Members
+
+### timer
+
+• **timer** = ``"timer"``
+
+#### Defined in
+
+[interfaces/Enums.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/Enums.ts#L25)
+
+___
+
+### message
+
+• **message** = ``"message"``
+
+#### Defined in
+
+[interfaces/Enums.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/Enums.ts#L26)
+
+___
+
+### signal
+
+• **signal** = ``"signal"``
+
+#### Defined in
+
+[interfaces/Enums.ts:27](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/Enums.ts#L27)
+
+___
+
+### error
+
+• **error** = ``"error"``
+
+#### Defined in
+
+[interfaces/Enums.ts:28](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/Enums.ts#L28)
+
+___
+
+### escalation
+
+• **escalation** = ``"escalation"``
+
+#### Defined in
+
+[interfaces/Enums.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/Enums.ts#L29)
+
+___
+
+### cancel
+
+• **cancel** = ``"cancel"``
+
+#### Defined in
+
+[interfaces/Enums.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/Enums.ts#L30)
+
+___
+
+### compensate
+
+• **compensate** = ``"compensate"``
+
+#### Defined in
+
+[interfaces/Enums.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/Enums.ts#L32)
