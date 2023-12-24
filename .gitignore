@@ -14,5 +14,6 @@
 # generated docs
 /.docusaurus
 /docs/api
+/build
 # Copied by scripts\copy-readme.ts
 docs/README.md

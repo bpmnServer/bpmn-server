@@ -11,9 +11,15 @@ export default {
   tagline: "API and usage or bpmn-server npm package.",
   url: `https://${organizationName}.github.io`,
   baseUrl: `/${projectName}/`,
+<<<<<<< HEAD
   onBrokenLinks: "warn",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
+=======
+  onBrokenLinks: "throw",
+  onBrokenMarkdownLinks: "throw",
+  favicon: "favicon.ico",
+>>>>>>> ae19f027a2c8a55e9cc9311606e0b42da25e772c
   // GitHub Pages adds a trailing slash by default that I don't want
   trailingSlash: false,
 
@@ -39,13 +45,8 @@ export default {
           // sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl: `https://github.com/${organizationName}/${projectName}/tree/master/docs/api/`,
-        },
-        'debug': {
-          showReadingTime: true,
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
           editUrl: `https://github.com/${organizationName}/${projectName}/tree/master/docs/`,
+          routeBasePath: '/',
         },
         theme: {
           // customCss: require.resolve("./src/css/custom.css"),
@@ -60,9 +61,10 @@ export default {
       navbar: {
         title: "Bpmn-Server Docs",
         logo: {
-          alt: "My Site Logo",
+          alt: "Logo",
           // temporary logo, change this when we have a real one
-          src: "docs/images/Logo.png",
+          // it will try to load `static/images/Logo.png` if provided `"/images/Logo.png"`.
+          src: "/images/Logo.png",
         },
         items: [
           {
@@ -71,7 +73,7 @@ export default {
             position: "left",
             label: "Tutorial",
           },
-          { to: "/docs/api", label: "API", position: "left" },
+          { to: "api", label: "API", position: "left" },
           {
             href: `https://github.com/${organizationName}/${projectName}`,
             label: "GitHub",
@@ -87,7 +89,7 @@ export default {
             items: [
               {
                 label: "Tutorial",
-                to: "/docs/intro",
+                to: "api-summary",
               },
             ],
           },
@@ -113,7 +115,7 @@ export default {
             items: [
               {
                 label: "API",
-                to: "/api-docs",
+                to: "api",
               },
               {
                 label: "GitHub",
