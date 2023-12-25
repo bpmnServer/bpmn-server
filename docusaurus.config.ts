@@ -7,13 +7,13 @@ const projectName = "bpmn-server";
 
 
 export default {
-  title: "Bpmn-Server Docs",
+  title: "bpmn-Server Docs",
   tagline: "API and usage or bpmn-server npm package.",
   url: `https://${organizationName}.github.io`,
   baseUrl: `/${projectName}/`,
   onBrokenLinks: "warn",
   onBrokenMarkdownLinks: "warn",
-  favicon: "img/favicon.ico",
+  favicon: "images/favicon.ico",
   // GitHub Pages adds a trailing slash by default that I don't want
   trailingSlash: false,
 
@@ -36,6 +36,7 @@ export default {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
+  //        sidebarPath: "docs/sidebar.js",
           // sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
@@ -53,7 +54,7 @@ export default {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
-        title: "Bpmn-Server Docs",
+        title: "bpmn-Server Docs",
         logo: {
           alt: "Logo",
           // temporary logo, change this when we have a real one

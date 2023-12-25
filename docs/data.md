@@ -6,6 +6,7 @@
   - [Instance Object](#instance-object)
 - [Data Scope](#data-scope)
 - [Data Query](#data-query)
+  - [Item Query](#item-query)
   - [Instance Query](#instance-query)
 - [Input-Output Data](#input-output-data)
   - [Input/Output using Scripts](#inputoutput-using-scripts)
@@ -109,16 +110,15 @@ the query syntax must be
 - item attributes are qualified by `items.\<attributeName\>`
 - data attributes are qualified by `data.\<attributeName\>`
 
-```
 
 ## Item Query
 
 | example                                                        | will retrieve                              |
 | -------------------------------------------------------------- | ------------------------------------------ |
 | `{ "items.id": "value-of-id" }`                                | find items by id only - unique             |
-| `{ id: instanceId, "items.elementId": item.elementId }`        | find items by instance id and elementId    |
-| `{"data.caseId": caseId ,"items.elementId" : item.elementId }` | find items by caseId and item elementId    |
-| `{ "name" : "processName" , "items.status": "wait"}`           | find items for the process in a wait state |
+| `{ id: instanceId, "items.elementId": 'Approve' }`        | find items by instance id and elementId    |
+| `{"data.caseId": caseId ,"items.elementId" : 'Request' }` | find items by caseId and item elementId    |
+| `{ "name" : "Leave Application" , "items.status": "wait"}`           | find items for the process in a wait state |
 | `{ id: instanceId, "items.status": 'wait' }`                   | check for items in "wait"                  |
 | `{"items.status": "wait" , "items.elementId": "task_Buy" }`    | find all items that has "wait" status      |
 

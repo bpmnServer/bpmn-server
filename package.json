@@ -12,7 +12,8 @@
     "docs:dev": "docusaurus start",
     "docs:generate": "npm run docs:generate:copy && npm run docs:generate:api",
     "docs:generate:api": "rimraf docs/api && typedoc --options typedoc.json",
-    "docs:generate:copy": "ts-node scripts/copy-readme.ts"
+    "docs:generate:copy": "ts-node src/scripts/copy-readme.ts",
+    "run":"ts-node ../bpmn-web/src/app.ts"
   },
   "repository": {
     "type": "git",

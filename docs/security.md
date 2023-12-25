@@ -225,4 +225,3 @@ To See only Tasks Assigned to User
 ```
 or you can use filter for the items to check `item.assignee`
 
-</details>

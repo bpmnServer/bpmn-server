@@ -29,11 +29,11 @@ Perform WebAPI calls to the execution Engine
 
 | Method| parameters           | return  | description |
 | ------------- |:-------------:| -----| ----------|
-| **start** | name, input , startNodeId?,options? 	 | [Instance](api/interfaces/interfaces_DataObjects.IInstanceData.md) | - Start a new Process execution |
-| **invoke**| [itemQuery](dataQuery.md#item-query) ,input |	[Instance](api/interfaces/interfaces_DataObjects.IInstanceData.md) | Invoke an already started Item (waiting)  |
-| **throwMessage**|messageId,input| [Instance](api/interfaces/interfaces_DataObjects.IInstanceData.md) | Issue a signal or message|
-| **throwSignal**|signalId,input| [Instance](api/interfaces/interfaces_DataObjects.IInstanceData.md) | Issue a signal or message|
-| **get**|[instanceQuery](dataQuery.md#instance-query) |		[Instance](api/interfaces/interfaces_DataObjects.IInstanceData.md) | Get an already running or idle Instance |
+| **start** | name, input , startNodeId?,options? 	 | [Instance](api/interfaces/IInstanceData.md) | - Start a new Process execution |
+| **invoke**| [itemQuery](data.md#item-query) ,input |	[Instance](api/interfaces/IInstanceData.md) | Invoke an already started Item (waiting)  |
+| **throwMessage**|messageId,input| [Instance](api/interfaces/IInstanceData.md) | Issue a signal or message|
+| **throwSignal**|signalId,input| [Instance](api/interfaces/IInstanceData.md) | Issue a signal or message|
+| **get**|[instanceQuery](data.md#instance-query) |		[Instance](api/interfaces/IInstanceData.md) | Get an already running or idle Instance |
 | **status**| |		 | Return as list of running instances or recently completed |
 
 
@@ -54,7 +54,7 @@ Perform calls to DataStore , accessing processes data
 
 | Method| parameters           | return  | description |
 | ------------- |:-------------:| -----| ----------|
-| **findInstances** | [instanceQuery](dataQuery.md#instance-query) 	 | [Instance[]](api/interfaces/interfaces_DataObjects.IInstanceData.md) | |
-| **findItems**| [itemQuery](dataQuery.md#item-query)|	[Item[]](api/interfaces/interfaces_DataObjects.IItemData.md) | |
-| **deleteInstances**| [instance](dataQuery.md#instance-query)|	[Item[]](api/interfaces/interfaces_DataObjects.IItemData.md) | |
+| **findInstances** | [instanceQuery](data.md#instance-query) 	 | [Instance[]](api/interfaces/IInstanceData.md) | |
+| **findItems**| [itemQuery](data.md#item-query)|	[Item[]](api/interfaces/IItemData.md) | |
+| **deleteInstances**| [instance](data.md#instance-query)|	[Item[]](api/interfaces/IItemData.md) | |
 

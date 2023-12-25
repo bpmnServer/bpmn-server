@@ -30,7 +30,7 @@
 
 #### Defined in
 
-[interfaces/server.ts:21](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/server.ts#L21)
+[interfaces/server.ts:21](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/server.ts#L21)
 
 ___
 
@@ -40,7 +40,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:22](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/server.ts#L22)
+[interfaces/server.ts:22](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/server.ts#L22)
 
 ___
 
@@ -50,7 +50,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:23](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/server.ts#L23)
+[interfaces/server.ts:23](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/server.ts#L23)
 
 ___
 
@@ -60,7 +60,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:24](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/server.ts#L24)
+[interfaces/server.ts:24](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/server.ts#L24)
 
 ___
 
@@ -70,7 +70,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/server.ts#L25)
+[interfaces/server.ts:25](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/server.ts#L25)
 
 ___
 
@@ -80,7 +80,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/server.ts#L26)
+[interfaces/server.ts:26](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/server.ts#L26)
 
 ___
 
@@ -90,7 +90,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:27](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/server.ts#L27)
+[interfaces/server.ts:27](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/server.ts#L27)
 
 ___
 
@@ -100,7 +100,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:28](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/server.ts#L28)
+[interfaces/server.ts:28](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/server.ts#L28)
 
 ___
 
@@ -110,4 +110,4 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/server.ts#L29)
+[interfaces/server.ts:29](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/server.ts#L29)

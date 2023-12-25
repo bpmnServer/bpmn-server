@@ -4,25 +4,26 @@
  input Query:
 
  ```json
- {"items.status":"wait",
+ {		"items.status":"wait",
 		"name": "Buy Used Car with Lanes",
 		"$or":[
 			{"items.candidateGroups":"Owner"},
 			{"items.candidateUsers":"User1"}
 			]
-			};
+}
 ```
 	/*
 
 MongoQuery:
 
  ```json
-	{"name":"Buy Used Car with Lanes",
+{	"name":"Buy Used Car with Lanes",
 	"$or":[
 			{"items":{"$elemMatch":{"candidateGroups":"Owner"}}},
 			{"items":{"$elemMatch":{"candidateUsers":"User1"}}}
 		],
-	"items":{"$elemMatch":{"status":"wait"}}
+	"items":{"$elemMatch":{"status":"wait"}
+}
 ```
 
 	And filter items by performing the Query on each Instance Item 

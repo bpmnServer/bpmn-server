@@ -62,7 +62,7 @@ console.log(`Invoking Buy id: <${itemId}>`);
 We now need to specify which node to invoke, keep in mind this can happen any time later
 so we need to identify the instance as well as the item, but since the ItemId is unique we can use it for the query.
 
-The [query](dataQuery.md) is passed to MongoDB to select the appropriate item.
+The [query](../data.md) is passed to MongoDB to select the appropriate item.
 
 ```ts
 const input = { model: 'Thunderbird', needsRepairs: false, needsCleaning: false };

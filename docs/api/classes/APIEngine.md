@@ -70,7 +70,7 @@ APIComponent.constructor
 
 #### Defined in
 
-[API/API.ts:24](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/API/API.ts#L24)
+[API/API.ts:24](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L24)
 
 ## Properties
 
@@ -84,7 +84,7 @@ APIComponent.api
 
 #### Defined in
 
-[API/API.ts:22](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/API/API.ts#L22)
+[API/API.ts:22](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L22)
 
 ## Accessors
 
@@ -102,7 +102,7 @@ APIComponent.server
 
 #### Defined in
 
-[API/API.ts:27](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/API/API.ts#L27)
+[API/API.ts:27](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L27)
 
 ## Methods
 
@@ -131,7 +131,7 @@ start a new Instance of specified model
 
 #### Defined in
 
-[API/API.ts:155](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/API/API.ts#L155)
+[API/API.ts:155](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L155)
 
 ___
 
@@ -160,7 +160,7 @@ continue with the execution of a particular item that is in a wait state, typica
 
 #### Defined in
 
-[API/API.ts:159](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/API/API.ts#L159)
+[API/API.ts:159](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L159)
 
 ___
 
@@ -190,7 +190,7 @@ provide assignment data to a user task
 
 #### Defined in
 
-[API/API.ts:164](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/API/API.ts#L164)
+[API/API.ts:164](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L164)
 
 ___
 
@@ -220,7 +220,7 @@ throw a message with an id, system will identify receiving item
 
 #### Defined in
 
-[API/API.ts:168](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/API/API.ts#L168)
+[API/API.ts:168](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L168)
 
 ___
 
@@ -250,7 +250,7 @@ throw a signal with an id, system will identify receiving item(s)
 
 #### Defined in
 
-[API/API.ts:171](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/API/API.ts#L171)
+[API/API.ts:171](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L171)
 
 ___
 
@@ -280,4 +280,4 @@ start a second event node (in a subprocess) for a running instance
 
 #### Defined in
 
-[API/API.ts:174](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/API/API.ts#L174)
+[API/API.ts:174](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L174)

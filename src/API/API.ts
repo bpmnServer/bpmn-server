@@ -143,7 +143,7 @@ interface IAPIModel {
 */
      load(name, user: ISecureUser);
 /**
-    export the specified models based on a query to a folder
+     export the specified models based on a query to a folder
 */
      export(query, folder, user: ISecureUser) ;
 }

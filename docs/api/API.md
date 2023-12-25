@@ -141,7 +141,7 @@ bpmn-server
 
 #### Defined in
 
-[API/SecureUser.ts:230](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/API/SecureUser.ts#L230)
+[API/SecureUser.ts:230](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/SecureUser.ts#L230)
 
 ___
 
@@ -151,7 +151,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:59](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/common/DefaultConfiguration.ts#L59)
+[common/DefaultConfiguration.ts:59](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/common/DefaultConfiguration.ts#L59)
 
 ___
 
@@ -181,7 +181,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/BehaviourLoader.ts:16](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/elements/behaviours/BehaviourLoader.ts#L16)
+[elements/behaviours/BehaviourLoader.ts:16](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/behaviours/BehaviourLoader.ts#L16)
 
 ___
 
@@ -191,7 +191,7 @@ ___
 
 #### Defined in
 
-[index.ts:9](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/index.ts#L9)
+[index.ts:9](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/index.ts#L9)
 
 ## Functions
 
@@ -211,4 +211,4 @@ ___
 
 #### Defined in
 
-[common/timer.ts:4](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/common/timer.ts#L4)
+[common/timer.ts:4](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/common/timer.ts#L4)

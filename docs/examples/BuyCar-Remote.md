@@ -33,7 +33,7 @@ async function test() {
 
 The server object provides a set of components;for now, we need the engine
 We start a process execution by name; in this case 'Buy Used Car'
-BPMN definitions are saved our catalog as defined by the [configuration](setup.md), in our WebApp they are under WebApp/processes folder
+BPMN definitions are saved our catalog as defined by the [configuration](../setup.md), in our WebApp they are under WebApp/processes folder
 
 ```ts
 let response = await engine.start('Buy Used Car');
@@ -61,7 +61,7 @@ console.log(`Invoking Buy id: <${itemId}>`);
 We now need to specify which node to invoke, keep in mind this can happen any time later
 so we need to identify the instance as well as the item, but since the ItemId is unique we can use it for the query.
 
-The [query](dataQuery.md) is passed to MongoDB to select the appropriate item.
+The [query](../data.md) is passed to MongoDB to select the appropriate item.
 
 ```ts
 const input = { model: 'Thunderbird', needsRepairs: false, needsCleaning: false };

@@ -28,7 +28,7 @@ Once the process goes into a **wait** state, it waits for some external input:
 
 ![](images/processStart.png)
 
-</td><tr></table>
+</td></tr></table>
 
 ## Invoking a User Task
 

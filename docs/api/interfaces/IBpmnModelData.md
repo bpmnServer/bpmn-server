@@ -25,7 +25,7 @@
 
 #### Defined in
 
-[interfaces/DataObjects.ts:93](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/DataObjects.ts#L93)
+[interfaces/DataObjects.ts:93](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/DataObjects.ts#L93)
 
 ___
 
@@ -35,7 +35,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:94](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/DataObjects.ts#L94)
+[interfaces/DataObjects.ts:94](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/DataObjects.ts#L94)
 
 ___
 
@@ -45,7 +45,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:95](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/DataObjects.ts#L95)
+[interfaces/DataObjects.ts:95](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/DataObjects.ts#L95)
 
 ___
 
@@ -55,7 +55,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:96](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/DataObjects.ts#L96)
+[interfaces/DataObjects.ts:96](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/DataObjects.ts#L96)
 
 ___
 
@@ -65,7 +65,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:97](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/DataObjects.ts#L97)
+[interfaces/DataObjects.ts:97](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/DataObjects.ts#L97)
 
 ___
 
@@ -75,4 +75,4 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:98](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/DataObjects.ts#L98)
+[interfaces/DataObjects.ts:98](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/DataObjects.ts#L98)

@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[interfaces/Enums.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/Enums.ts#L25)
+[interfaces/Enums.ts:25](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/Enums.ts#L25)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/Enums.ts#L26)
+[interfaces/Enums.ts:26](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/Enums.ts#L26)
 
 ___
 
@@ -42,7 +42,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:27](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/Enums.ts#L27)
+[interfaces/Enums.ts:27](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/Enums.ts#L27)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:28](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/Enums.ts#L28)
+[interfaces/Enums.ts:28](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/Enums.ts#L28)
 
 ___
 
@@ -62,7 +62,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/Enums.ts#L29)
+[interfaces/Enums.ts:29](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/Enums.ts#L29)
 
 ___
 
@@ -72,7 +72,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/Enums.ts#L30)
+[interfaces/Enums.ts:30](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/Enums.ts#L30)
 
 ___
 
@@ -82,4 +82,4 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/Enums.ts#L32)
+[interfaces/Enums.ts:32](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/Enums.ts#L32)

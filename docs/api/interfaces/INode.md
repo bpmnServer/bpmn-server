@@ -54,7 +54,7 @@
 
 #### Defined in
 
-[interfaces/elements.ts:21](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L21)
+[interfaces/elements.ts:21](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L21)
 
 ___
 
@@ -68,7 +68,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:22](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L22)
+[interfaces/elements.ts:22](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L22)
 
 ___
 
@@ -82,7 +82,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:24](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L24)
+[interfaces/elements.ts:24](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L24)
 
 ___
 
@@ -96,7 +96,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L25)
+[interfaces/elements.ts:25](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L25)
 
 ___
 
@@ -110,7 +110,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:42](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L42)
+[interfaces/elements.ts:42](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L42)
 
 ___
 
@@ -120,7 +120,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:43](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L43)
+[interfaces/elements.ts:43](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L43)
 
 ___
 
@@ -130,7 +130,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:44](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L44)
+[interfaces/elements.ts:44](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L44)
 
 ___
 
@@ -140,7 +140,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:45](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L45)
+[interfaces/elements.ts:45](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L45)
 
 ___
 
@@ -150,7 +150,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:46](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L46)
+[interfaces/elements.ts:46](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L46)
 
 ## Methods
 
@@ -168,7 +168,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:27](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L27)
+[interfaces/elements.ts:27](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L27)
 
 ___
 
@@ -192,7 +192,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:28](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L28)
+[interfaces/elements.ts:28](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L28)
 
 ___
 
@@ -219,7 +219,7 @@ respond by providing behaviour attributes beyond item and node information
 
 #### Defined in
 
-[interfaces/elements.ts:34](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L34)
+[interfaces/elements.ts:34](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L34)
 
 ___
 
@@ -243,7 +243,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:35](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L35)
+[interfaces/elements.ts:35](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L35)
 
 ___
 
@@ -268,7 +268,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:36](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L36)
+[interfaces/elements.ts:36](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L36)
 
 ___
 
@@ -290,7 +290,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:47](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L47)
+[interfaces/elements.ts:47](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L47)
 
 ___
 
@@ -310,7 +310,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:48](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L48)
+[interfaces/elements.ts:48](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L48)
 
 ___
 
@@ -324,7 +324,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:49](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L49)
+[interfaces/elements.ts:49](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L49)
 
 ___
 
@@ -338,7 +338,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:50](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L50)
+[interfaces/elements.ts:50](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L50)
 
 ___
 
@@ -366,7 +366,7 @@ considerations: the following are handled by Token
 
 #### Defined in
 
-[interfaces/elements.ts:60](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L60)
+[interfaces/elements.ts:60](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L60)
 
 ___
 
@@ -390,7 +390,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:61](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L61)
+[interfaces/elements.ts:61](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L61)
 
 ___
 
@@ -410,7 +410,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:62](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L62)
+[interfaces/elements.ts:62](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L62)
 
 ___
 
@@ -430,7 +430,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:63](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L63)
+[interfaces/elements.ts:63](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L63)
 
 ___
 
@@ -450,7 +450,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:64](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L64)
+[interfaces/elements.ts:64](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L64)
 
 ___
 
@@ -477,7 +477,7 @@ different than init, which is called for all items
 
 #### Defined in
 
-[interfaces/elements.ts:70](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L70)
+[interfaces/elements.ts:70](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L70)
 
 ___
 
@@ -497,7 +497,7 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:71](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L71)
+[interfaces/elements.ts:71](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L71)
 
 ___
 
@@ -517,4 +517,4 @@ ___
 
 #### Defined in
 
-[interfaces/elements.ts:72](https://github.com/bpmnServer/bpmn-server/blob/2a5d20f/src/interfaces/elements.ts#L72)
+[interfaces/elements.ts:72](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/elements.ts#L72)
