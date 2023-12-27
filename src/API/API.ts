@@ -114,17 +114,17 @@ interface IAPIModel {
 /**
     list all models authorized to the user
 */
-     list(user: ISecureUser): Promise<string[]>;
+     list(query:any ,user: ISecureUser): Promise<string[]>;
 /**
     returns Model Events (like timers) for authorized to the user and based on specifid query
 */
 
-     findEvents(query, user: ISecureUser);
+     findEvents(query:any, user: ISecureUser);
 /**
     returns Model Start Events for authorized to the user and based on specifid query
 */
 
-     findStartEvents(query, user: ISecureUser);
+     findStartEvents(query:any, user: ISecureUser);
 /**
     delete the specified model
 */
@@ -211,10 +211,9 @@ class APIModel extends APIComponent {
         else
             return false;
     }
-    public async list(user: ISecureUser): Promise<string[]> {
+    public async list(query,user: ISecureUser): Promise<string[]> {
 
-        const query = {};
-        if (user.tenantId)
+                if (user.tenantId)
             query['owner'] = user.modelsOwner;
         return await this.server.definitions.getList(query);
     }
