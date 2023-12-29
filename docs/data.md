@@ -1,8 +1,8 @@
-
+# Managing Data
 
 <!-- toc -->
 
-- [Introduction](#introduction)
+  - [Introduction](#introduction)
   - [Instance Object](#instance-object)
 - [Data Scope](#data-scope)
 - [Data Query](#data-query)
@@ -14,7 +14,7 @@
 
 <!-- tocstop -->
 
-# Introduction
+## Introduction
 
 `bpmn-server` relies on a Database to store workflow information.
 This makes it suitable for long-running workflows and multi-servers.

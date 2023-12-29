@@ -1,7 +1,7 @@
 # Security 
 
 
-<div id="docs" style="display: block;"> 
+<div> 
 <table>
 <tbody>
 <tr>

@@ -85,13 +85,11 @@ Demo Application(Express or NestJS) , provides a complete implementation of user
 
 # Application Integration
 
-`bpmn-server` is intended to be integration into your application
+`bpmn-server` is intended to be integrated into your application[see](docs/customization.md)
 
--- copy from readme
+# Full Demo Web Application
 
-# Demo Web Application
-
-We Provide a full demo @ http://bpmn.omniworkflow.com
+We Provide a full demo @ https://bpmn.omniworkflow.com
 
 # Installation
 
@@ -100,11 +98,11 @@ if you don't have MongoDB already installed you can [create a free cloud account
 
 ```sh
 
-git clone https://github.com/bpmnServer/bpmn-web.git
+> git clone https://github.com/bpmnServer/bpmn-web.git
 
-npm install
+> npm install
 
-npm run setup
+> npm run setup
 ```
 Edit .env file to have MongoDB point to your server or free cloud account
 
@@ -121,16 +119,18 @@ MONGO_DB_URL=mongodb://0.0.0.0:27017/bpmn
 ... more settings
 ```
 
-Run Setup one more time
+- Run Setup one more time
 
 ```sh
-npm run setup
+> npm run setup
 ```
+
+Your installation is now complete.
 
 ## To start server
 
 ```sh
-npm run start
+> npm run start
 ```
 
 Console will display:
@@ -146,13 +146,13 @@ App is running at http://localhost:3000 in development mode
 
 Use your browser to view the bpmn-server running
 
-### Command Line Interface
+## Command Line Interface
 
 bpmnServer provide some basic functionalities using CLI
 
 ```sh
-npm run cli
-
+>npm run cli
+```
 
 server started..
 Commands:
@@ -180,23 +180,23 @@ Enter Command, q to quit, or ? to list commands
 ## to update to latest release
 
 ```sh
-npm update bpmn-server
+> npm update bpmn-server
 ```
 
 # Documentation
 
-- [Invoking Workflows](/docs/invokation.md) Ok
-- [Execution](/docs/execution.md) OK
-- [Scripting](/docs/scripting.md) OK
-- [Security](/docs/security.md) Ok
-- [Data](/docs/data.md) Needs Review
+- [Invoking Workflows](/docs/invokation.md) 
+- [Execution](/docs/execution.md) 
+- [Scripting](/docs/scripting.md) 
+- [Security](/docs/security.md)
+- [Data](/docs/data.md)
   -  [Input/Output](/docs/data#input-output-data.md)
-  -  [Data Query](/docs/data#dataQuery.md) OK
-- [Examples](/docs/examples.md) OK
+  -  [Data Query](/docs/data#dataQuery.md) 
+- [Examples](/docs/examples.md)
 - [API Summary](/docs/api-summary.md)
-- [API](/docs/api/readme.md) OK
-- [Setup](/docs/setup.md) Needs Review
-- [Application Integration](/docs/customization.md) Needs work
+- [API](/docs/api/readme.md) 
+- [Setup](/docs/setup.md) 
+- [Application Integration](/docs/customization.md) 
 
 # License
 

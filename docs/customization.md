@@ -1,4 +1,4 @@
-# Workflow as a Service
+# Integration into your Application
 In this document, we discuss how to integrate your application with bpmn-server.
 
 **bpmn-server** package is a NodeJs package requires an application as a front-end and to customize the workflow logic

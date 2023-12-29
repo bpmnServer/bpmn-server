@@ -1,4 +1,4 @@
-## Execution
+# Workflow Execution
 
 Execution is based on the model logic that is enhanced by various extensions that allow scripting and access to your application.
 
@@ -16,7 +16,7 @@ The execution `engine` is availabe through an API [see API.engine](api/interface
 ## Starting a Process
 For more details about scenarios of Invoking Execution Engine [Engine Invokation](invokation.md)
 
-<table style="border:0"><tr><td>
+<table><tr><td>
 This illustrate the flow of Model Execution:
 Once the process goes into a **wait** state, it waits for some external input:
 

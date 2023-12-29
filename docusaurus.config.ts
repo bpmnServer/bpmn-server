@@ -30,17 +30,28 @@ export default {
     locales: ["en"],
   },
 
+
+
+
   presets: [
-    [
+/*    [
+      '@docusaurus/preset-classic',
+      {
+        docs: {
+          sidebarPath: './sidebar.js',
+        },
+      },
+    ],*/
+  [
       "classic",
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-  //        sidebarPath: "docs/sidebar.js",
+          sidebarPath: './sidebar.js',
           // sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl: `https://github.com/${organizationName}/${projectName}/tree/master/docs/`,
+          // editUrl: `https://github.com/${organizationName}/${projectName}/tree/master/docs/`,
           routeBasePath: '/',
         },
         theme: {
@@ -64,7 +75,7 @@ export default {
         items: [
           {
             type: "doc",
-            docId: "api-summary",
+            docId: "tutorial",
             position: "left",
             label: "Tutorial",
           },
