@@ -10,15 +10,15 @@ to make them ideal platform to do long running business processes, durable servi
 ## Modeling
 `bpmn-server` provides a modeling tool based on `bpmn.io` with customized property panel, no need to edit bpmn files
 
-![](docs/images/Modeler.png)
+![](./images/Modeler.png)
 
 Typically your application has multiple bpmn models, a model is represented in a bpmn definition (xml).
 
 Each Model is made of various elements, an `element` can be a `node` in the diagram (events/tasks/gateway) or a  `flow`
 
-Models are saved by `bpmn-server` and can be queried [see API.model](docs/api/interfaces/IAPIModel.md)
+Models are saved by `bpmn-server` and can be queried [see API.model](./api/interfaces/IAPIModel.md)
 
-`bpmn-server` support all bpmn 2.0 elements [see Modeling Support](docs/examples.md)
+`bpmn-server` support all bpmn 2.0 elements [see Modeling Support](./examples.md)
 
 ## Execution
 `bpmn-server` is primiraly an execution engine for bpmn models.
@@ -29,19 +29,19 @@ Execution is based on the model logic that is enhanced by various extensions tha
 
 During Execution, Model Listeners and Application Listeners are invoked.
 
-The execution `engine` is availabe through an API [see API.engine](docs/api/interfaces/IAPIEngine.md).
+The execution `engine` is availabe through an API [see API.engine](./api/interfaces/IAPIEngine.md).
 
-For more details about Invoking Execution Engine [see](docs/invokation.md)
+For more details about Invoking Execution Engine [see](./invokation.md)
 
-For more details about Execution behaviour [see](docs/execution.md)
+For more details about Execution behaviour [see](./execution.md)
 
 ## Datastore
 
 At various stages of execution, instance object with its parts is saved into a datastore (defaults to MongoDB)
 
-Instances and Items can be queried through an API [see API.data](docs/api/interfaces/IAPIData.md)
+Instances and Items can be queried through an API [see API.data](./api/interfaces/IAPIData.md)
 
-For more details about data management [see Data](docs/data.md)
+For more details about data management [see Data](./data.md)
 
 # Demo Web Application
 
@@ -55,15 +55,15 @@ The web app provides:
 - Model property panel supporting all features of `bpmn-server` , no need to edit bpmn file
 - Execution with input form for defined fields
 
-![](docs/images/inputFields.png)
+![](./images/inputFields.png)
 
 - List of outstanding/recent tasks and workflow
 - Viewing of `instance` details
 
-![](docs/images/instance-details1.png)
+![](./images/instance-details1.png)
 
 - View of Model specification
-![](docs/images/instance-details2.png)
+![](./images/instance-details2.png)
 
 </details>
 
@@ -85,7 +85,7 @@ Demo Application(Express or NestJS) , provides a complete implementation of user
 
 # Application Integration
 
-`bpmn-server` is intended to be integrated into your application[see](docs/customization.md)
+`bpmn-server` is intended to be integrated into your application[see](./customization.md)
 
 # Full Demo Web Application
 
@@ -185,18 +185,18 @@ Enter Command, q to quit, or ? to list commands
 
 # Documentation
 
-- [Invoking Workflows](/docs/invokation.md) 
-- [Execution](/docs/execution.md) 
-- [Scripting](/docs/scripting.md) 
-- [Security](/docs/security.md)
-- [Data](/docs/data.md)
-  -  [Input/Output](/docs/data#input-output-data.md)
-  -  [Data Query](/docs/data#dataQuery.md) 
-- [Examples](/docs/examples.md)
-- [API Summary](/docs/api-summary.md)
-- [API](/docs/api/readme.md) 
-- [Setup](/docs/setup.md) 
-- [Application Integration](/docs/customization.md) 
+- [Invoking Workflows](./invokation.md) 
+- [Execution](./execution.md) 
+- [Scripting](./scripting.md) 
+- [Security](./security.md)
+- [Data](./data.md)
+  -  [Input/Output](./data#input-output-data.md)
+  -  [Data Query](./data#dataQuery.md) 
+- [Examples](./examples.md)
+- [API Summary](./api-summary.md)
+- [API](./api/readme.md) 
+- [Setup](./setup.md) 
+- [Application Integration](./customization.md) 
 
 # License
 
