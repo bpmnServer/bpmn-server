@@ -19,23 +19,18 @@
 `bpmn-server` relies on a Database to store workflow information.
 This makes it suitable for long-running workflows and multi-servers.
 
-Developers can query on data as well [Data Query](dataQuery)
+Developers can query on data using [Data Query](dataQuery)
 
 'bpmn-server' manages three collections in MongoDB:
 
-<table> <tr><td> 
+<table> 
+<tr><td>wf_instances</td><td> stores workflow instances, including items, tokens, logs ,etc. </td></tr>
 
-- wf_instances; stores workflow instances, including items, tokens, logs ,etc.
+<tr><td>wf_models</td><td> stores workflow models, this is important for querying on events</td></tr>
 
-- wf_models; stores workflow models, this is important for querying on events
+<tr><td>wf_locks</td><td> to achieve concurrency, running instances place a lock in this collection</td></tr>
+</table>
 
-- wf_locks; to achieve concurrency, running instances place a lock in this collection
-
-</td><td>
-
-![MongDB Collection](images/mongodb-dbs.png)
-
-</td></tr></table>
 
 
 [api.data object](api/interfaces/IAPIData.md) provides several methods to handle  workflow instances and items
@@ -86,7 +81,7 @@ instance: {
 
 
 
-# Data Scope
+# instance.data Scope
 
 The entire execution will have one data scope object, shared among all nodes, except the following will have own item part of the data object
 
@@ -172,12 +167,13 @@ Input and output is used in the following scenarios:
 - Call Tasks (input/output)
 - Throw Message/Signal (input)
 - Catch Message/Signal (output)
+- User Task (input)
 
 ## Input/Output using Scripts
 
 | variable        | description                                                         |
 | --------------- | ------------------------------------------------------------------- |
-| **item.data**   | refers to Instance Data or the token data for multi-instance tokens |
+| **data**   | refers to Instance Data or the token data for multi-instance tokens |
 | **item.input**  | refers to input variable into the called task/event                 |
 | **item.output** | is the output of the called task/event                              |
 

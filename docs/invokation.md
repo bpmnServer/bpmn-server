@@ -1,8 +1,15 @@
 # Invoking Workflow Scenarios
 
-### [Invoking Process Using WebApp ](./examples/BuyCar-Web.md)
+## Invoking Workflow Using WebApp
 
-### Invoking Proccess through API
+Since workflow require a User Interface, a web-app is required as front-end to interact with user providing at least:
+- Selection of Workflows to Start
+- Show outstanding Tasks
+- Show recent Tasks
+
+[see Buy Used Car Demo ](./examples/BuyCar-Web.md)
+
+## Invoking Proccess through API
 
 To Invoke a process from your code:
 
@@ -27,7 +34,9 @@ The above code uses `SystemUser`, to define another user:
 ```
 In real applications, you get userName and userGroups from you application UserAccess.
 
-### [Invoking Remotely Using WebServices](./examples/BuyCar-Remote.md)
+## [Invoking Remotely Using WebServices](./examples/BuyCar-Remote.md)
+
+Similar to above, API can be invoked remotely
 
 ### Async Execution
 
