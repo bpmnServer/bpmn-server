@@ -215,7 +215,7 @@ ___
 
 ▸ **export**(`query`, `folder`, `user`): `any`
 
-exports the specified models based on a query to a folder
+outputs the specified models based on a query to a folder
 
 #### Parameters
 

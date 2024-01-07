@@ -92,8 +92,8 @@ The entire execution will have one data scope object, shared among all nodes, ex
 
 However, for SubProcess and Loop elements a seperate scope
 
-![Image description](images/Data_Scripts_Services_model.PNG)
-![Image description](images/Data_Scripts_Services.PNG)
+![Image description](images/Data_scripts_services_model.PNG)
+![Image description](images/Data_scripts_services.PNG)
 
 # Data Query
 
