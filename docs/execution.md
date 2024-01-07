@@ -100,3 +100,38 @@ Below is the sequence of events after each command:
 
 Error Message: Error: Validation failed with error:Not a valid value
 ```
+
+
+# Scope and variables
+[See Scope and Variables in Scripts](scripting.md#Scripts_scope_and_variables)
+
+# Scripts and Services Impact on Execution
+Scripts and Services can impact workflow in the following manners:
+- Change workflow Data
+- Service Tasks and Script Tasks, receive input and return output
+- Scripts and Service Task can raise Errors and Exceptions
+
+# Raisng Errors and Exceptions
+## Validation Scripts
+Validation Scripts can return and error object as such:
+```
+    return {error:'Invalid input'};
+    execution.validationError('invalid input');
+```
+## BPMN Errors
+All Scripts and Services can Raise `BPMN Errors`, to be handled by the appropriate Error node
+```
+    execution.throwError('error code');
+
+```
+The current item status will be `error` and execution will continue at the Error node.
+
+## Throwing Exceptions
+```
+    execution.throwExceptions('exception code',actionToTake);
+
+```
+
+This will raise an Excption, stop workflow execution and save the instance datatake action
+
+The item executing will have a status of 'error' 

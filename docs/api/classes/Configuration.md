@@ -1,4 +1,4 @@
-[bpmn-server](../API.md) / Configuration
+[bpmn-server](../readme.md) / Configuration
 
 # Class: Configuration
 
@@ -59,7 +59,7 @@
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:39](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/common/DefaultConfiguration.ts#L39)
+[common/DefaultConfiguration.ts:39](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/common/DefaultConfiguration.ts#L39)
 
 ## Properties
 
@@ -73,7 +73,7 @@
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:12](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/common/DefaultConfiguration.ts#L12)
+[common/DefaultConfiguration.ts:12](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/common/DefaultConfiguration.ts#L12)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:13](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/common/DefaultConfiguration.ts#L13)
+[common/DefaultConfiguration.ts:13](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/common/DefaultConfiguration.ts#L13)
 
 ___
 
@@ -108,7 +108,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:14](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/common/DefaultConfiguration.ts#L14)
+[common/DefaultConfiguration.ts:14](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/common/DefaultConfiguration.ts#L14)
 
 ___
 
@@ -131,7 +131,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:15](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/common/DefaultConfiguration.ts#L15)
+[common/DefaultConfiguration.ts:15](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/common/DefaultConfiguration.ts#L15)
 
 ___
 
@@ -145,7 +145,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:19](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/common/DefaultConfiguration.ts#L19)
+[common/DefaultConfiguration.ts:19](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/common/DefaultConfiguration.ts#L19)
 
 ___
 
@@ -159,7 +159,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:20](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/common/DefaultConfiguration.ts#L20)
+[common/DefaultConfiguration.ts:20](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/common/DefaultConfiguration.ts#L20)
 
 ___
 
@@ -169,7 +169,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:21](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/common/DefaultConfiguration.ts#L21)
+[common/DefaultConfiguration.ts:21](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/common/DefaultConfiguration.ts#L21)
 
 ## Methods
 
@@ -193,7 +193,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:22](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/common/DefaultConfiguration.ts#L22)
+[common/DefaultConfiguration.ts:22](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/common/DefaultConfiguration.ts#L22)
 
 ___
 
@@ -217,7 +217,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:25](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/common/DefaultConfiguration.ts#L25)
+[common/DefaultConfiguration.ts:25](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/common/DefaultConfiguration.ts#L25)
 
 ___
 
@@ -241,7 +241,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:28](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/common/DefaultConfiguration.ts#L28)
+[common/DefaultConfiguration.ts:28](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/common/DefaultConfiguration.ts#L28)
 
 ___
 
@@ -265,7 +265,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:31](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/common/DefaultConfiguration.ts#L31)
+[common/DefaultConfiguration.ts:31](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/common/DefaultConfiguration.ts#L31)
 
 ___
 
@@ -289,4 +289,4 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:34](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/common/DefaultConfiguration.ts#L34)
+[common/DefaultConfiguration.ts:34](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/common/DefaultConfiguration.ts#L34)

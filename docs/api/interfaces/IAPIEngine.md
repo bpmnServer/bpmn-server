@@ -1,4 +1,4 @@
-[bpmn-server](../API.md) / IAPIEngine
+[bpmn-server](../readme.md) / IAPIEngine
 
 # Interface: IAPIEngine
 
@@ -53,7 +53,7 @@ start a new Instance of specified model
 
 #### Defined in
 
-[API/API.ts:50](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L50)
+[API/API.ts:50](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L50)
 
 ___
 
@@ -78,7 +78,7 @@ continue with the execution of a particular item that is in a wait state, typica
 
 #### Defined in
 
-[API/API.ts:54](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L54)
+[API/API.ts:54](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L54)
 
 ___
 
@@ -104,7 +104,7 @@ provide assignment data to a user task
 
 #### Defined in
 
-[API/API.ts:58](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L58)
+[API/API.ts:58](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L58)
 
 ___
 
@@ -130,7 +130,7 @@ throw a message with an id, system will identify receiving item
 
 #### Defined in
 
-[API/API.ts:62](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L62)
+[API/API.ts:62](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L62)
 
 ___
 
@@ -156,7 +156,7 @@ throw a signal with an id, system will identify receiving item(s)
 
 #### Defined in
 
-[API/API.ts:66](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L66)
+[API/API.ts:66](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L66)
 
 ___
 
@@ -182,4 +182,4 @@ start a second event node (in a subprocess) for a running instance
 
 #### Defined in
 
-[API/API.ts:70](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L70)
+[API/API.ts:70](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L70)

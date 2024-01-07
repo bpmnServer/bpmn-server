@@ -19,7 +19,7 @@
 `bpmn-server` relies on a Database to store workflow information.
 This makes it suitable for long-running workflows and multi-servers.
 
-Developers can query on data using [Data Query](dataQuery)
+Developers can query on data using [Data Query](#data-query)
 
 'bpmn-server' manages three collections in MongoDB:
 

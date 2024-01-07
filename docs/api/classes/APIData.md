@@ -1,4 +1,4 @@
-[bpmn-server](../API.md) / APIData
+[bpmn-server](../readme.md) / APIData
 
 # Class: APIData
 
@@ -52,7 +52,7 @@ APIComponent.constructor
 
 #### Defined in
 
-[API/API.ts:24](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L24)
+[API/API.ts:24](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L24)
 
 ## Properties
 
@@ -66,7 +66,7 @@ APIComponent.api
 
 #### Defined in
 
-[API/API.ts:22](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L22)
+[API/API.ts:22](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L22)
 
 ## Accessors
 
@@ -84,7 +84,7 @@ APIComponent.server
 
 #### Defined in
 
-[API/API.ts:27](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L27)
+[API/API.ts:27](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L27)
 
 ## Methods
 
@@ -105,7 +105,7 @@ APIComponent.server
 
 #### Defined in
 
-[API/API.ts:179](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L179)
+[API/API.ts:179](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L179)
 
 ___
 
@@ -126,7 +126,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:187](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L187)
+[API/API.ts:187](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L187)
 
 ___
 
@@ -147,7 +147,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:191](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L191)
+[API/API.ts:191](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L191)
 
 ___
 
@@ -169,7 +169,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:196](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L196)
+[API/API.ts:196](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L196)
 
 ___
 
@@ -190,4 +190,4 @@ ___
 
 #### Defined in
 
-[API/API.ts:200](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L200)
+[API/API.ts:200](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L200)

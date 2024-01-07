@@ -34,7 +34,7 @@
          ['tutorial', 'examples/BuyCar-Web','tutorial-model','tutorial-design','tutorial-security','tutorial-setup'],
     ],
     mySidebar: [
-        'README','invokation','execution',
+        'index','invokation','execution',
         'data',
         'scripting', 
         'security',

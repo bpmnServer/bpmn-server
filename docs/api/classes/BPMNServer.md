@@ -1,4 +1,4 @@
-[bpmn-server](../API.md) / BPMNServer
+[bpmn-server](../readme.md) / BPMNServer
 
 # Class: BPMNServer
 
@@ -71,7 +71,7 @@ Server Constructor
 
 #### Defined in
 
-[server/BPMNServer.ts:65](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/BPMNServer.ts#L65)
+[server/BPMNServer.ts:65](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/BPMNServer.ts#L65)
 
 ## Properties
 
@@ -85,7 +85,7 @@ Server Constructor
 
 #### Defined in
 
-[server/BPMNServer.ts:44](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/BPMNServer.ts#L44)
+[server/BPMNServer.ts:44](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/BPMNServer.ts#L44)
 
 ___
 
@@ -99,7 +99,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:45](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/BPMNServer.ts#L45)
+[server/BPMNServer.ts:45](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/BPMNServer.ts#L45)
 
 ___
 
@@ -113,7 +113,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:46](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/BPMNServer.ts#L46)
+[server/BPMNServer.ts:46](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/BPMNServer.ts#L46)
 
 ___
 
@@ -127,7 +127,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:47](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/BPMNServer.ts#L47)
+[server/BPMNServer.ts:47](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/BPMNServer.ts#L47)
 
 ___
 
@@ -141,7 +141,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:48](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/BPMNServer.ts#L48)
+[server/BPMNServer.ts:48](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/BPMNServer.ts#L48)
 
 ___
 
@@ -155,7 +155,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:49](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/BPMNServer.ts#L49)
+[server/BPMNServer.ts:49](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/BPMNServer.ts#L49)
 
 ___
 
@@ -169,7 +169,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:50](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/BPMNServer.ts#L50)
+[server/BPMNServer.ts:50](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/BPMNServer.ts#L50)
 
 ___
 
@@ -183,7 +183,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:51](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/BPMNServer.ts#L51)
+[server/BPMNServer.ts:51](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/BPMNServer.ts#L51)
 
 ___
 
@@ -197,7 +197,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:52](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/BPMNServer.ts#L52)
+[server/BPMNServer.ts:52](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/BPMNServer.ts#L52)
 
 ___
 
@@ -211,7 +211,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:53](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/BPMNServer.ts#L53)
+[server/BPMNServer.ts:53](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/BPMNServer.ts#L53)
 
 ___
 
@@ -221,7 +221,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:54](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/BPMNServer.ts#L54)
+[server/BPMNServer.ts:54](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/BPMNServer.ts#L54)
 
 ___
 
@@ -231,7 +231,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:56](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/BPMNServer.ts#L56)
+[server/BPMNServer.ts:56](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/BPMNServer.ts#L56)
 
 ## Accessors
 
@@ -245,7 +245,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:111](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/BPMNServer.ts#L111)
+[server/BPMNServer.ts:111](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/BPMNServer.ts#L111)
 
 ## Methods
 
@@ -259,7 +259,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:96](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/BPMNServer.ts#L96)
+[server/BPMNServer.ts:96](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/BPMNServer.ts#L96)
 
 ___
 
@@ -273,4 +273,4 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:114](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/BPMNServer.ts#L114)
+[server/BPMNServer.ts:114](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/BPMNServer.ts#L114)

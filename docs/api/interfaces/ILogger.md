@@ -1,4 +1,4 @@
-[bpmn-server](../API.md) / ILogger
+[bpmn-server](../readme.md) / ILogger
 
 # Interface: ILogger
 
@@ -46,7 +46,7 @@ msgs can be cleared by the clean method
 
 #### Defined in
 
-[interfaces/common.ts:49](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L49)
+[interfaces/common.ts:49](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L49)
 
 ___
 
@@ -60,7 +60,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:54](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L54)
+[interfaces/common.ts:54](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L54)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:55](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L55)
+[interfaces/common.ts:55](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L55)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:56](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L56)
+[interfaces/common.ts:56](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L56)
 
 ___
 
@@ -114,7 +114,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:57](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L57)
+[interfaces/common.ts:57](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L57)
 
 ___
 
@@ -134,7 +134,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:58](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L58)
+[interfaces/common.ts:58](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L58)
 
 ___
 
@@ -154,7 +154,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:59](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L59)
+[interfaces/common.ts:59](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L59)
 
 ___
 
@@ -174,7 +174,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:60](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L60)
+[interfaces/common.ts:60](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L60)
 
 ___
 
@@ -194,4 +194,4 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:61](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L61)
+[interfaces/common.ts:61](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L61)

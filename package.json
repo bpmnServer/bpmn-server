@@ -1,19 +1,17 @@
 {
   "name": "bpmn-server",
-  "version": "2.0.6-alpha2",
+  "version": "2.0.8-alpha2",
   "description": "BPMN 2.0 Server including Modeling, Execution and Presistence, an open source for Node.js",
   "license": "MIT",
   "scripts": {
     "build": "tsc --build",
     "clean": "rimraf dist",
-    "wintest": "node_modules/.bin/mocha",
-    "toc": "node src/scripts/generate-toc docs/examples.md,docs/scripting.md,docs/data.md,docs/overview.md",
+    "toc": "node src/scripts/generate-toc docs/examples.md,docs/scripting.md,docs/data.md",
     "docs:build": "docusaurus build",
     "docs:dev": "docusaurus start",
     "docs:generate": "npm run docs:generate:copy && npm run docs:generate:api",
     "docs:generate:api": "rimraf docs/api && typedoc --options typedoc.json",
-    "docs:generate:copy": "ts-node src/scripts/copy-readme.ts",
-    "run":"ts-node ../bpmn-web/src/app.ts"
+    "docs:generate:copy": "ts-node src/scripts/copy-readme.ts"
   },
   "repository": {
     "type": "git",
@@ -68,7 +66,6 @@
     "multer": "*",
     "nock": "^12.0.3",
     "nodemon": "^3.0.1",
-    "ts-node": "^8.10.1",
     "uuid": "^8.3.0"
   },
   "devDependencies": {
@@ -85,11 +82,12 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "rimraf": "^5.0.5",
+    "ts-node": "^10.9.2",
     "tslint": "^6.1.3",
     "tslint-config-prettier": "^1.18.0",
     "typedoc": "^0.25.4",
     "typedoc-plugin-markdown": "^3.17.1",
-    "typescript": ">=3.9.7"
+    "typescript": "^5.3.3"
   },
   "engines": {
     "node": ">=12.0.0"

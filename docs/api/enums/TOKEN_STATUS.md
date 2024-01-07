@@ -1,4 +1,4 @@
-[bpmn-server](../API.md) / TOKEN\_STATUS
+[bpmn-server](../readme.md) / TOKEN\_STATUS
 
 # Enumeration: TOKEN\_STATUS
 
@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[interfaces/Enums.ts:87](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/Enums.ts#L87)
+[interfaces/Enums.ts:87](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/Enums.ts#L87)
 
 ___
 
@@ -29,7 +29,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:87](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/Enums.ts#L87)
+[interfaces/Enums.ts:87](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/Enums.ts#L87)
 
 ___
 
@@ -39,7 +39,7 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:87](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/Enums.ts#L87)
+[interfaces/Enums.ts:87](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/Enums.ts#L87)
 
 ___
 
@@ -49,4 +49,4 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:87](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/Enums.ts#L87)
+[interfaces/Enums.ts:87](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/Enums.ts#L87)

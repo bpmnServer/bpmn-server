@@ -1,4 +1,4 @@
-[bpmn-server](../API.md) / BehaviourLoader
+[bpmn-server](../readme.md) / BehaviourLoader
 
 # Class: BehaviourLoader
 
@@ -35,7 +35,7 @@
 
 #### Defined in
 
-[elements/behaviours/BehaviourLoader.ts:36](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/behaviours/BehaviourLoader.ts#L36)
+[elements/behaviours/BehaviourLoader.ts:36](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/behaviours/BehaviourLoader.ts#L36)
 
 ## Methods
 
@@ -56,7 +56,7 @@
 
 #### Defined in
 
-[elements/behaviours/BehaviourLoader.ts:114](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/behaviours/BehaviourLoader.ts#L114)
+[elements/behaviours/BehaviourLoader.ts:114](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/behaviours/BehaviourLoader.ts#L114)
 
 ___
 
@@ -111,4 +111,4 @@ example:
 
 #### Defined in
 
-[elements/behaviours/BehaviourLoader.ts:156](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/behaviours/BehaviourLoader.ts#L156)
+[elements/behaviours/BehaviourLoader.ts:156](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/behaviours/BehaviourLoader.ts#L156)

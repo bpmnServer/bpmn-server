@@ -1,4 +1,4 @@
-[bpmn-server](../API.md) / IAPIModel
+[bpmn-server](../readme.md) / IAPIModel
 
 # Interface: IAPIModel
 
@@ -45,13 +45,13 @@ save a model to the modelStore
 
 #### Defined in
 
-[API/API.ts:113](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L113)
+[API/API.ts:113](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L113)
 
 ___
 
 ### list
 
-▸ **list**(`user`): `Promise`\<`string`[]\>
+▸ **list**(`query`, `user`): `Promise`\<`string`[]\>
 
 list all models authorized to the user
 
@@ -59,6 +59,7 @@ list all models authorized to the user
 
 | Name | Type |
 | :------ | :------ |
+| `query` | `any` |
 | `user` | [`ISecureUser`](ISecureUser.md) |
 
 #### Returns
@@ -67,7 +68,7 @@ list all models authorized to the user
 
 #### Defined in
 
-[API/API.ts:117](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L117)
+[API/API.ts:117](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L117)
 
 ___
 
@@ -90,7 +91,7 @@ returns Model Events (like timers) for authorized to the user and based on speci
 
 #### Defined in
 
-[API/API.ts:122](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L122)
+[API/API.ts:122](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L122)
 
 ___
 
@@ -113,7 +114,7 @@ returns Model Start Events for authorized to the user and based on specifid quer
 
 #### Defined in
 
-[API/API.ts:127](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L127)
+[API/API.ts:127](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L127)
 
 ___
 
@@ -136,7 +137,7 @@ delete the specified model
 
 #### Defined in
 
-[API/API.ts:132](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L132)
+[API/API.ts:132](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L132)
 
 ___
 
@@ -160,7 +161,7 @@ delete the specified model
 
 #### Defined in
 
-[API/API.ts:136](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L136)
+[API/API.ts:136](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L136)
 
 ___
 
@@ -183,7 +184,7 @@ returns the bpmn (xml) for the model
 
 #### Defined in
 
-[API/API.ts:140](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L140)
+[API/API.ts:140](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L140)
 
 ___
 
@@ -206,7 +207,7 @@ load a model
 
 #### Defined in
 
-[API/API.ts:144](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L144)
+[API/API.ts:144](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L144)
 
 ___
 
@@ -214,7 +215,7 @@ ___
 
 ▸ **export**(`query`, `folder`, `user`): `any`
 
- export the specified models based on a query to a folder
+exports the specified models based on a query to a folder
 
 #### Parameters
 
@@ -230,4 +231,4 @@ ___
 
 #### Defined in
 
-[API/API.ts:148](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/API.ts#L148)
+[API/API.ts:148](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/API.ts#L148)

@@ -135,8 +135,31 @@ As a result execution will raise an exception and the command will fail.
 
 </details>
 
-### Scripts Scope and variables
-#### For Items
+## Application Listener
+
+You can place a listener in your application delegate or your execution scripts class to listen to all events
+Example:
+```
+    const api = new BPMNAPI(new BPMNServer(configuration,new Logger({ toConsole: false}),{cron:false}));
+
+    let options= {option1:1234}; //,option2:SystemUser};
+
+    api.server.listener.on('all', async function ({ context, event, }) {
+        if (event=='process.restored')
+            {
+            context.options=options;
+            context.options['restored']=true;
+            }
+        if (event.startsWith('process.'))
+            console.log('---Event: -->' + event , context.options);
+        else 
+            console.log('---Event: -->'+event, 'item:',context.item.elementId,context.options );
+    });
+
+```
+
+# Scripts Scope and variables
+## Item Scope
 Items Expressions and Listeners have the following variables
 
 | Variable        |       Description        |
@@ -176,7 +199,7 @@ Items Expressions and Listeners have the following variables
     options;
     operation;
 ```
-#### For Execution
+## Execution Scope
 Expressions and Listeners have the following variables
 
 | Variable        |       Description        |

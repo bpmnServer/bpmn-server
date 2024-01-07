@@ -1,4 +1,4 @@
-[bpmn-server](../API.md) / UserTask
+[bpmn-server](../readme.md) / UserTask
 
 # Class: UserTask
 
@@ -95,7 +95,7 @@
 
 #### Defined in
 
-[elements/Node.ts:31](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L31)
+[elements/Node.ts:31](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L31)
 
 ## Properties
 
@@ -109,7 +109,7 @@
 
 #### Defined in
 
-[elements/Element.ts:13](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Element.ts#L13)
+[elements/Element.ts:13](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L13)
 
 ___
 
@@ -123,7 +123,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:14](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Element.ts#L14)
+[elements/Element.ts:14](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L14)
 
 ___
 
@@ -137,7 +137,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:15](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Element.ts#L15)
+[elements/Element.ts:15](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L15)
 
 ___
 
@@ -151,7 +151,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:17](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Element.ts#L17)
+[elements/Element.ts:17](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L17)
 
 ___
 
@@ -165,7 +165,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:18](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Element.ts#L18)
+[elements/Element.ts:18](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L18)
 
 ___
 
@@ -179,7 +179,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:19](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Element.ts#L19)
+[elements/Element.ts:19](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L19)
 
 ___
 
@@ -193,7 +193,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:12](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L12)
+[elements/Node.ts:12](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L12)
 
 ___
 
@@ -207,7 +207,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:13](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L13)
+[elements/Node.ts:13](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L13)
 
 ___
 
@@ -221,7 +221,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:14](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L14)
+[elements/Node.ts:14](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L14)
 
 ___
 
@@ -235,7 +235,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:15](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L15)
+[elements/Node.ts:15](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L15)
 
 ___
 
@@ -249,7 +249,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:16](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L16)
+[elements/Node.ts:16](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L16)
 
 ___
 
@@ -263,7 +263,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:17](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L17)
+[elements/Node.ts:17](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L17)
 
 ___
 
@@ -277,7 +277,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:18](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L18)
+[elements/Node.ts:18](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L18)
 
 ___
 
@@ -291,7 +291,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:19](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L19)
+[elements/Node.ts:19](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L19)
 
 ___
 
@@ -305,7 +305,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:20](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L20)
+[elements/Node.ts:20](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L20)
 
 ___
 
@@ -319,7 +319,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:21](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L21)
+[elements/Node.ts:21](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L21)
 
 ___
 
@@ -333,7 +333,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:22](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L22)
+[elements/Node.ts:22](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L22)
 
 ___
 
@@ -347,7 +347,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:23](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L23)
+[elements/Node.ts:23](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L23)
 
 ___
 
@@ -361,7 +361,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:24](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L24)
+[elements/Node.ts:24](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L24)
 
 ___
 
@@ -375,7 +375,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:25](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L25)
+[elements/Node.ts:25](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L25)
 
 ## Accessors
 
@@ -393,7 +393,7 @@ Node.processId
 
 #### Defined in
 
-[elements/Node.ts:26](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L26)
+[elements/Node.ts:26](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L26)
 
 ___
 
@@ -411,7 +411,7 @@ Node.isCatching
 
 #### Defined in
 
-[elements/Node.ts:129](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L129)
+[elements/Node.ts:129](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L129)
 
 ___
 
@@ -429,7 +429,7 @@ Node.requiresWait
 
 #### Defined in
 
-[elements/Tasks.ts:213](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Tasks.ts#L213)
+[elements/Tasks.ts:213](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Tasks.ts#L213)
 
 ___
 
@@ -447,7 +447,7 @@ Node.canBeInvoked
 
 #### Defined in
 
-[elements/Tasks.ts:214](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Tasks.ts#L214)
+[elements/Tasks.ts:214](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Tasks.ts#L214)
 
 ## Methods
 
@@ -471,7 +471,7 @@ Node.canBeInvoked
 
 #### Defined in
 
-[elements/Element.ts:24](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Element.ts#L24)
+[elements/Element.ts:24](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L24)
 
 ___
 
@@ -498,7 +498,7 @@ respond by providing behaviour attributes beyond item and node information
 
 #### Defined in
 
-[elements/Element.ts:34](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Element.ts#L34)
+[elements/Element.ts:34](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L34)
 
 ___
 
@@ -522,7 +522,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:38](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Element.ts#L38)
+[elements/Element.ts:38](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L38)
 
 ___
 
@@ -547,7 +547,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:41](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Element.ts#L41)
+[elements/Element.ts:41](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L41)
 
 ___
 
@@ -571,7 +571,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:44](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L44)
+[elements/Node.ts:44](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L44)
 
 ___
 
@@ -597,7 +597,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:57](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L57)
+[elements/Node.ts:57](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L57)
 
 ___
 
@@ -626,7 +626,7 @@ todo
 
 #### Defined in
 
-[elements/Node.ts:85](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L85)
+[elements/Node.ts:85](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L85)
 
 ___
 
@@ -651,7 +651,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:95](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L95)
+[elements/Node.ts:95](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L95)
 
 ___
 
@@ -678,7 +678,7 @@ todo
 
 #### Defined in
 
-[elements/Node.ts:109](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L109)
+[elements/Node.ts:109](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L109)
 
 ___
 
@@ -702,7 +702,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:113](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L113)
+[elements/Node.ts:113](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L113)
 
 ___
 
@@ -734,7 +734,7 @@ considerations: the following are handled by Token
 
 #### Defined in
 
-[elements/Node.ts:139](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L139)
+[elements/Node.ts:139](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L139)
 
 ___
 
@@ -758,7 +758,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:212](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L212)
+[elements/Node.ts:212](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L212)
 
 ___
 
@@ -782,7 +782,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:227](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L227)
+[elements/Node.ts:227](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L227)
 
 ___
 
@@ -806,7 +806,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:231](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L231)
+[elements/Node.ts:231](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L231)
 
 ___
 
@@ -830,7 +830,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:239](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L239)
+[elements/Node.ts:239](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L239)
 
 ___
 
@@ -857,7 +857,7 @@ different than init, which is called for all items
 
 #### Defined in
 
-[elements/Node.ts:307](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L307)
+[elements/Node.ts:307](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L307)
 
 ___
 
@@ -881,7 +881,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:310](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L310)
+[elements/Node.ts:310](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L310)
 
 ___
 
@@ -905,7 +905,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:315](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L315)
+[elements/Node.ts:315](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L315)
 
 ___
 
@@ -930,7 +930,7 @@ ___
 
 #### Defined in
 
-[elements/Node.ts:334](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Node.ts#L334)
+[elements/Node.ts:334](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Node.ts#L334)
 
 ___
 
@@ -954,7 +954,7 @@ ___
 
 #### Defined in
 
-[elements/Tasks.ts:149](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Tasks.ts#L149)
+[elements/Tasks.ts:149](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Tasks.ts#L149)
 
 ___
 
@@ -978,7 +978,7 @@ ___
 
 #### Defined in
 
-[elements/Tasks.ts:153](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Tasks.ts#L153)
+[elements/Tasks.ts:153](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Tasks.ts#L153)
 
 ___
 
@@ -1000,7 +1000,7 @@ ___
 
 #### Defined in
 
-[elements/Tasks.ts:174](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Tasks.ts#L174)
+[elements/Tasks.ts:174](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Tasks.ts#L174)
 
 ___
 
@@ -1018,4 +1018,4 @@ ___
 
 #### Defined in
 
-[elements/Tasks.ts:202](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/Tasks.ts#L202)
+[elements/Tasks.ts:202](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Tasks.ts#L202)

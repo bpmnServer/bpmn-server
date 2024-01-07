@@ -1,4 +1,4 @@
-[bpmn-server](../API.md) / InstanceLocker
+[bpmn-server](../readme.md) / InstanceLocker
 
 # Class: InstanceLocker
 
@@ -39,7 +39,7 @@
 
 #### Defined in
 
-[datastore/InstanceLocker.ts:11](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/datastore/InstanceLocker.ts#L11)
+[datastore/InstanceLocker.ts:11](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/datastore/InstanceLocker.ts#L11)
 
 ## Properties
 
@@ -49,7 +49,7 @@
 
 #### Defined in
 
-[datastore/InstanceLocker.ts:9](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/datastore/InstanceLocker.ts#L9)
+[datastore/InstanceLocker.ts:9](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/datastore/InstanceLocker.ts#L9)
 
 ## Methods
 
@@ -69,7 +69,7 @@
 
 #### Defined in
 
-[datastore/InstanceLocker.ts:14](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/datastore/InstanceLocker.ts#L14)
+[datastore/InstanceLocker.ts:14](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/datastore/InstanceLocker.ts#L14)
 
 ___
 
@@ -89,7 +89,7 @@ ___
 
 #### Defined in
 
-[datastore/InstanceLocker.ts:35](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/datastore/InstanceLocker.ts#L35)
+[datastore/InstanceLocker.ts:35](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/datastore/InstanceLocker.ts#L35)
 
 ___
 
@@ -109,7 +109,7 @@ ___
 
 #### Defined in
 
-[datastore/InstanceLocker.ts:52](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/datastore/InstanceLocker.ts#L52)
+[datastore/InstanceLocker.ts:52](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/datastore/InstanceLocker.ts#L52)
 
 ___
 
@@ -129,7 +129,7 @@ ___
 
 #### Defined in
 
-[datastore/InstanceLocker.ts:58](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/datastore/InstanceLocker.ts#L58)
+[datastore/InstanceLocker.ts:58](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/datastore/InstanceLocker.ts#L58)
 
 ___
 
@@ -143,7 +143,7 @@ ___
 
 #### Defined in
 
-[datastore/InstanceLocker.ts:63](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/datastore/InstanceLocker.ts#L63)
+[datastore/InstanceLocker.ts:63](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/datastore/InstanceLocker.ts#L63)
 
 ___
 
@@ -164,4 +164,4 @@ ___
 
 #### Defined in
 
-[datastore/InstanceLocker.ts:69](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/datastore/InstanceLocker.ts#L69)
+[datastore/InstanceLocker.ts:69](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/datastore/InstanceLocker.ts#L69)

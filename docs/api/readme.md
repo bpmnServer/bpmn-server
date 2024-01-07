@@ -124,14 +124,13 @@ bpmn-server
 
 ### Variables
 
-- [SystemUser](API.md#systemuser)
-- [defaultConfiguration](API.md#defaultconfiguration)
-- [Behaviour\_names](API.md#behaviour_names)
-- [docsFolder](API.md#docsfolder)
+- [SystemUser](readme.md#systemuser)
+- [defaultConfiguration](readme.md#defaultconfiguration)
+- [Behaviour\_names](readme.md#behaviour_names)
 
 ### Functions
 
-- [dateDiff](API.md#datediff)
+- [dateDiff](readme.md#datediff)
 
 ## Variables
 
@@ -141,7 +140,7 @@ bpmn-server
 
 #### Defined in
 
-[API/SecureUser.ts:230](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/API/SecureUser.ts#L230)
+[API/SecureUser.ts:230](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/API/SecureUser.ts#L230)
 
 ___
 
@@ -151,7 +150,7 @@ ___
 
 #### Defined in
 
-[common/DefaultConfiguration.ts:59](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/common/DefaultConfiguration.ts#L59)
+[common/DefaultConfiguration.ts:59](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/common/DefaultConfiguration.ts#L59)
 
 ___
 
@@ -181,17 +180,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/BehaviourLoader.ts:16](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/elements/behaviours/BehaviourLoader.ts#L16)
-
-___
-
-### docsFolder
-
-• `Const` **docsFolder**: `string`
-
-#### Defined in
-
-[index.ts:9](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/index.ts#L9)
+[elements/behaviours/BehaviourLoader.ts:16](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/behaviours/BehaviourLoader.ts#L16)
 
 ## Functions
 
@@ -211,4 +200,4 @@ ___
 
 #### Defined in
 
-[common/timer.ts:4](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/common/timer.ts#L4)
+[common/timer.ts:4](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/common/timer.ts#L4)

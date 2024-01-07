@@ -1,3 +1,3 @@
-[bpmn-server](../API.md) / IFlowData
+[bpmn-server](../readme.md) / IFlowData
 
 # Interface: IFlowData

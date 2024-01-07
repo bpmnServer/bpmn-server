@@ -1,4 +1,4 @@
-[bpmn-server](../API.md) / TokenObject
+[bpmn-server](../readme.md) / TokenObject
 
 # Class: TokenObject
 
@@ -37,7 +37,7 @@
 
 #### Defined in
 
-[engine/Model.ts:66](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/engine/Model.ts#L66)
+[engine/Model.ts:66](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/engine/Model.ts#L66)
 
 ___
 
@@ -47,7 +47,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:67](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/engine/Model.ts#L67)
+[engine/Model.ts:67](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/engine/Model.ts#L67)
 
 ___
 
@@ -57,7 +57,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:68](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/engine/Model.ts#L68)
+[engine/Model.ts:68](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/engine/Model.ts#L68)
 
 ___
 
@@ -67,7 +67,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:69](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/engine/Model.ts#L69)
+[engine/Model.ts:69](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/engine/Model.ts#L69)
 
 ___
 
@@ -77,7 +77,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:70](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/engine/Model.ts#L70)
+[engine/Model.ts:70](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/engine/Model.ts#L70)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:71](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/engine/Model.ts#L71)
+[engine/Model.ts:71](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/engine/Model.ts#L71)
 
 ___
 
@@ -97,7 +97,7 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:72](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/engine/Model.ts#L72)
+[engine/Model.ts:72](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/engine/Model.ts#L72)
 
 ___
 
@@ -107,4 +107,4 @@ ___
 
 #### Defined in
 
-[engine/Model.ts:73](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/engine/Model.ts#L73)
+[engine/Model.ts:73](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/engine/Model.ts#L73)

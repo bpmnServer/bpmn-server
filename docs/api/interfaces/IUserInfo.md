@@ -1,4 +1,4 @@
-[bpmn-server](../API.md) / IUserInfo
+[bpmn-server](../readme.md) / IUserInfo
 
 # Interface: IUserInfo
 
@@ -25,7 +25,7 @@
 
 #### Defined in
 
-[interfaces/User.ts:3](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/User.ts#L3)
+[interfaces/User.ts:3](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/User.ts#L3)
 
 ___
 
@@ -35,7 +35,7 @@ ___
 
 #### Defined in
 
-[interfaces/User.ts:4](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/User.ts#L4)
+[interfaces/User.ts:4](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/User.ts#L4)
 
 ___
 
@@ -45,7 +45,7 @@ ___
 
 #### Defined in
 
-[interfaces/User.ts:5](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/User.ts#L5)
+[interfaces/User.ts:5](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/User.ts#L5)
 
 ___
 
@@ -55,4 +55,4 @@ ___
 
 #### Defined in
 
-[interfaces/User.ts:6](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/User.ts#L6)
+[interfaces/User.ts:6](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/User.ts#L6)

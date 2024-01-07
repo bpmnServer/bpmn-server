@@ -1,4 +1,4 @@
-[bpmn-server](../API.md) / IUserService
+[bpmn-server](../readme.md) / IUserService
 
 # Interface: IUserService
 
@@ -29,7 +29,7 @@
 
 #### Defined in
 
-[interfaces/User.ts:63](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/User.ts#L63)
+[interfaces/User.ts:63](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/User.ts#L63)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[interfaces/User.ts:64](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/User.ts#L64)
+[interfaces/User.ts:64](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/User.ts#L64)
 
 ___
 
@@ -73,7 +73,7 @@ ___
 
 #### Defined in
 
-[interfaces/User.ts:65](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/User.ts#L65)
+[interfaces/User.ts:65](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/User.ts#L65)
 
 ___
 
@@ -87,4 +87,4 @@ ___
 
 #### Defined in
 
-[interfaces/User.ts:66](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/User.ts#L66)
+[interfaces/User.ts:66](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/User.ts#L66)

@@ -1,4 +1,4 @@
-[bpmn-server](../API.md) / ServerComponent
+[bpmn-server](../readme.md) / ServerComponent
 
 # Class: ServerComponent
 
@@ -62,7 +62,7 @@ super class for various objects that are part of the server
 
 #### Defined in
 
-[server/ServerComponent.ts:10](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L10)
+[server/ServerComponent.ts:10](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L10)
 
 ## Properties
 
@@ -72,7 +72,7 @@ super class for various objects that are part of the server
 
 #### Defined in
 
-[server/ServerComponent.ts:9](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L9)
+[server/ServerComponent.ts:9](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L9)
 
 ## Accessors
 
@@ -86,7 +86,7 @@ super class for various objects that are part of the server
 
 #### Defined in
 
-[server/ServerComponent.ts:14](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L14)
+[server/ServerComponent.ts:14](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L14)
 
 ___
 
@@ -100,7 +100,7 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L15)
+[server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L15)
 
 ___
 
@@ -114,7 +114,7 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L16)
+[server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L16)
 
 ___
 
@@ -128,7 +128,7 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L17)
+[server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L17)
 
 ___
 
@@ -142,7 +142,7 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L18)
+[server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L18)
 
 ___
 
@@ -156,7 +156,7 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L19)
+[server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L19)
 
 ___
 
@@ -170,7 +170,7 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L20)
+[server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L20)
 
 ___
 
@@ -184,7 +184,7 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L21)
+[server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L21)
 
 ___
 
@@ -198,4 +198,4 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:22](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L22)
+[server/ServerComponent.ts:22](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L22)

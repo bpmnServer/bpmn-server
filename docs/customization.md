@@ -23,17 +23,25 @@ In the demo app:
 ![](images/bpmn-web-folders.png)
 ### Workflow app
 
-![](images/workflowApp-folders.png)
+<table>
+<tr><td>Folder    </td><td>Class    </td><td>   </td></tr>
+<tr><td>WorkflowApp    </td><td>    </td><td>   </td></tr>
+<tr><td>    </td><td>
 
-- appDelegate
+[configuration](api/classes/Configuration.md)
 
-- appServices
+</td><td>
+Entry point to application configuration parameters and defining various components used in the workflow app   
+</td></tr>
+<tr><td>    </td><td>
 
-- appUtils
+[appDelegate](api/classes/DefaultAppDelegate.md)
 
-- processes: to contain bpmn files
-
-- test: test scripts
+</td><td>   </td></tr>
+<tr><td>    </td><td>appServices</td><td>Receives Service Calls  </td></tr>
+<tr><td>    </td><td>appUtils</td><td>Provide common methods to application scripts   </td></tr>
+<tr><td>    </td><td>    </td><td>   </td></tr>
+</table>
 
 This is your custom installation of bpmn-server 
 

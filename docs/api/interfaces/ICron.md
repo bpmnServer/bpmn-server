@@ -1,4 +1,4 @@
-[bpmn-server](../API.md) / ICron
+[bpmn-server](../readme.md) / ICron
 
 # Interface: ICron
 
@@ -32,7 +32,7 @@
 
 #### Defined in
 
-[interfaces/server.ts:119](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/server.ts#L119)
+[interfaces/server.ts:119](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/server.ts#L119)
 
 ___
 
@@ -46,7 +46,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:120](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/server.ts#L120)
+[interfaces/server.ts:120](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/server.ts#L120)
 
 ___
 
@@ -60,4 +60,4 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:121](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/server.ts#L121)
+[interfaces/server.ts:121](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/server.ts#L121)

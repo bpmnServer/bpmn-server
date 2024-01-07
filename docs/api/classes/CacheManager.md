@@ -1,4 +1,4 @@
-[bpmn-server](../API.md) / CacheManager
+[bpmn-server](../readme.md) / CacheManager
 
 # Class: CacheManager
 
@@ -67,7 +67,7 @@ super class for various objects that are part of the server
 
 #### Defined in
 
-[server/CacheManager.ts:32](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/CacheManager.ts#L32)
+[server/CacheManager.ts:32](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/CacheManager.ts#L32)
 
 ## Properties
 
@@ -77,7 +77,7 @@ super class for various objects that are part of the server
 
 #### Defined in
 
-[server/CacheManager.ts:30](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/CacheManager.ts#L30)
+[server/CacheManager.ts:30](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/CacheManager.ts#L30)
 
 ___
 
@@ -91,7 +91,7 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:9](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L9)
+[server/ServerComponent.ts:9](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L9)
 
 ## Accessors
 
@@ -109,7 +109,7 @@ ServerComponent.configuration
 
 #### Defined in
 
-[server/ServerComponent.ts:14](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L14)
+[server/ServerComponent.ts:14](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L14)
 
 ___
 
@@ -127,7 +127,7 @@ ServerComponent.logger
 
 #### Defined in
 
-[server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L15)
+[server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L15)
 
 ___
 
@@ -145,7 +145,7 @@ ServerComponent.cron
 
 #### Defined in
 
-[server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L16)
+[server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L16)
 
 ___
 
@@ -163,7 +163,7 @@ ServerComponent.cache
 
 #### Defined in
 
-[server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L17)
+[server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L17)
 
 ___
 
@@ -181,7 +181,7 @@ ServerComponent.appDelegate
 
 #### Defined in
 
-[server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L18)
+[server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L18)
 
 ___
 
@@ -199,7 +199,7 @@ ServerComponent.engine
 
 #### Defined in
 
-[server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L19)
+[server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L19)
 
 ___
 
@@ -217,7 +217,7 @@ ServerComponent.dataStore
 
 #### Defined in
 
-[server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L20)
+[server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L20)
 
 ___
 
@@ -235,7 +235,7 @@ ServerComponent.definitions
 
 #### Defined in
 
-[server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L21)
+[server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L21)
 
 ___
 
@@ -253,7 +253,7 @@ ServerComponent.listener
 
 #### Defined in
 
-[server/ServerComponent.ts:22](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/ServerComponent.ts#L22)
+[server/ServerComponent.ts:22](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/ServerComponent.ts#L22)
 
 ## Methods
 
@@ -271,7 +271,7 @@ ServerComponent.listener
 
 #### Defined in
 
-[server/CacheManager.ts:44](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/CacheManager.ts#L44)
+[server/CacheManager.ts:44](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/CacheManager.ts#L44)
 
 ___
 
@@ -291,7 +291,7 @@ ___
 
 #### Defined in
 
-[server/CacheManager.ts:52](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/CacheManager.ts#L52)
+[server/CacheManager.ts:52](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/CacheManager.ts#L52)
 
 ___
 
@@ -315,7 +315,7 @@ ___
 
 #### Defined in
 
-[server/CacheManager.ts:58](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/CacheManager.ts#L58)
+[server/CacheManager.ts:58](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/CacheManager.ts#L58)
 
 ___
 
@@ -339,7 +339,7 @@ ___
 
 #### Defined in
 
-[server/CacheManager.ts:62](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/CacheManager.ts#L62)
+[server/CacheManager.ts:62](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/CacheManager.ts#L62)
 
 ___
 
@@ -357,4 +357,4 @@ ___
 
 #### Defined in
 
-[server/CacheManager.ts:66](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/server/CacheManager.ts#L66)
+[server/CacheManager.ts:66](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/server/CacheManager.ts#L66)

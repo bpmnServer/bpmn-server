@@ -1,4 +1,4 @@
-[bpmn-server](../API.md) / IAppDelegate
+[bpmn-server](../readme.md) / IAppDelegate
 
 # Interface: IAppDelegate
 
@@ -39,7 +39,7 @@ Application Delegate Object to respond to various events and services:
 
 #### Defined in
 
-[interfaces/common.ts:73](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L73)
+[interfaces/common.ts:73](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L73)
 
 ## Methods
 
@@ -59,7 +59,7 @@ Application Delegate Object to respond to various events and services:
 
 #### Defined in
 
-[interfaces/common.ts:74](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L74)
+[interfaces/common.ts:74](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L74)
 
 ___
 
@@ -81,7 +81,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:75](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L75)
+[interfaces/common.ts:75](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L75)
 
 ___
 
@@ -101,7 +101,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:76](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L76)
+[interfaces/common.ts:76](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L76)
 
 ___
 
@@ -121,7 +121,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:77](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L77)
+[interfaces/common.ts:77](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L77)
 
 ___
 
@@ -144,7 +144,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:78](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L78)
+[interfaces/common.ts:78](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L78)
 
 ___
 
@@ -167,7 +167,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:79](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L79)
+[interfaces/common.ts:79](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L79)
 
 ___
 
@@ -190,7 +190,7 @@ is called when an event throws a message that can not be answered by another pro
 
 #### Defined in
 
-[interfaces/common.ts:87](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L87)
+[interfaces/common.ts:87](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L87)
 
 ___
 
@@ -211,7 +211,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:88](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L88)
+[interfaces/common.ts:88](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L88)
 
 ___
 
@@ -235,4 +235,4 @@ is called only if the serviceTask has no implementation; otherwise the specified
 
 #### Defined in
 
-[interfaces/common.ts:94](https://github.com/bpmnServer/bpmn-server/blob/637b6d1/src/interfaces/common.ts#L94)
+[interfaces/common.ts:94](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/common.ts#L94)
