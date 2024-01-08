@@ -1,6 +1,6 @@
 [bpmn-server](api/readme)
 
-# API Summary [Full Listing](api/readme)
+# API Summary [Full Listing](./api)
 
 ## Service Layer API
 

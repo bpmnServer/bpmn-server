@@ -194,7 +194,7 @@ Enter Command, q to quit, or ? to list commands
   -  [Data Query](data#data-query.md) 
 - [Examples](examples.md)
 - [API Summary](api-summary.md)
-- [API](api/readme.md) 
+- [API](./api/readme.md) 
 - [Setup](setup.md) 
 - [Application Integration](customization.md) 
 
