@@ -1,4 +1,5 @@
 # Integration into your Application
+
 In this document, we discuss how to integrate your application with bpmn-server.
 
 **bpmn-server** package is a NodeJs package requires an application as a front-end and to customize the workflow logic
@@ -11,16 +12,17 @@ We assume that you are already familiar with setting up bpmn-server along with y
 
 Please note code in this page is for illustration purposes only.
 
-
 ## Workflow Application Components
 
 ### UI and User Authentication
 
 In the demo app:
+
 - root files
 - Web Files; views, routes, public
 
 ![](images/bpmn-web-folders.png)
+
 ### Workflow app
 
 <table>
@@ -31,7 +33,7 @@ In the demo app:
 [configuration](api/classes/Configuration.md)
 
 </td><td>
-Entry point to application configuration parameters and defining various components used in the workflow app   
+Entry point to application configuration parameters and defining various components used in the workflow app
 </td></tr>
 <tr><td>    </td><td>
 
@@ -43,19 +45,17 @@ Entry point to application configuration parameters and defining various compone
 <tr><td>    </td><td>    </td><td>   </td></tr>
 </table>
 
-This is your custom installation of bpmn-server 
+This is your custom installation of bpmn-server
 
+## Putting it Together
 
-# Putting it Togother
+### Use Case 1: Staging a Process
 
-## Use Case 1: Staging a Process
 In this use case a User invokes some business logic that requires a process start ...
 When a process reaches a User Task it issues a notification to user(s).
 
-![](images/processStart.png)
+![processStart](images/processStart.png)
 
-## Use Case 2: Invoking an Oustatnding Tasks
+### Use Case 2: Invoking an Outstanding Tasks
 
-
-![](images/invokeTask.png)
-
+![invokeTask](images/invokeTask.png)
