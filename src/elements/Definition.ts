@@ -117,10 +117,13 @@ class Definition implements IDefinition{
 
         processElement.laneSets.forEach(ls=>{
             ls.lanes.forEach(lane=>{
-                lane.flowNodeRef.forEach(fnr=>{
+                if (lane.flowNodeRef) {
+                    lane.flowNodeRef.forEach(fnr=>{
                         let target = this.getNodeById(fnr.id);
                         target.lane=lane.name;
                     });
+                }
+
                 });
             });
         }
