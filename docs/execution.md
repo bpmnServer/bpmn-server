@@ -32,7 +32,7 @@ Once the process goes into a **wait** state, it waits for some external input:
 
 ## Invoking a User Task
 
-![](images/invokeTask.png)
+![](images/InvokeTask.png)
 
 ## Execution Sequence
 
