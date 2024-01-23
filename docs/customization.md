@@ -56,5 +56,5 @@ When a process reaches a User Task it issues a notification to user(s).
 ### Use Case 2: Invoking Oustatnding (User Tasks in wait state) Tasks
 
 
-![](images/invokeTask.png)
+![](images/InvokeTask.png)
 
