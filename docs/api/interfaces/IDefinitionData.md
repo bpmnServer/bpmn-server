@@ -23,7 +23,7 @@
 
 #### Defined in
 
-[interfaces/DataObjects.ts:50](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L50)
+[interfaces/DataObjects.ts:50](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L50)
 
 ___
 
@@ -33,7 +33,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:51](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L51)
+[interfaces/DataObjects.ts:51](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L51)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:52](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L52)
+[interfaces/DataObjects.ts:52](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L52)
 
 ___
 
@@ -53,7 +53,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:53](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L53)
+[interfaces/DataObjects.ts:53](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L53)
 
 ___
 
@@ -63,7 +63,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:54](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L54)
+[interfaces/DataObjects.ts:54](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L54)
 
 ___
 
@@ -73,7 +73,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:55](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L55)
+[interfaces/DataObjects.ts:55](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L55)
 
 ___
 
@@ -83,7 +83,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:56](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L56)
+[interfaces/DataObjects.ts:56](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L56)
 
 ___
 
@@ -93,4 +93,4 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:57](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L57)
+[interfaces/DataObjects.ts:57](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L57)

@@ -1,6 +1,6 @@
 {
   "name": "bpmn-server",
-  "version": "2.0.8-alpha2",
+  "version": "2.0.9-alpha3",
   "description": "BPMN 2.0 Server including Modeling, Execution and Presistence, an open source for Node.js",
   "license": "MIT",
   "scripts": {
@@ -8,7 +8,7 @@
     "clean": "rimraf dist",
     "toc": "node src/scripts/generate-toc docs/examples.md,docs/scripting.md,docs/data.md",
     "docs:build": "docusaurus build",
-    "docs:dev": "docusaurus start",
+    "docs:dev": "docusaurus start --port 5000",
     "docs:generate": "npm run docs:generate:copy && npm run docs:generate:api",
     "docs:generate:api": "rimraf docs/api && typedoc --options typedoc.json",
     "docs:generate:copy": "ts-node src/scripts/copy-readme.ts"
@@ -77,6 +77,7 @@
     "@types/mime": "^1.3.1",
     "@types/node": "^12.12.7",
     "@types/serve-static": "^1.13.5",
+    "markdown-toc": "^1.2.0",
     "prettier": "^2.0.5",
     "prism-react-renderer": "^2.3.1",
     "react": "^18.2.0",

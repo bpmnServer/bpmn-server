@@ -94,7 +94,7 @@ class ServiceTask extends Node {
     describe() {
 
         let desc = super.describe();
-        desc.push([[`service delegate:`,` ${this.serviceName}`]]);
+        desc.push([`Service Delegate`,` ${this.serviceName}`]);
         return desc;
     }
 }

@@ -62,7 +62,7 @@
 
 #### Defined in
 
-[elements/Element.ts:13](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L13)
+[elements/Element.ts:13](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/elements/Element.ts#L13)
 
 ___
 
@@ -76,7 +76,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:14](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L14)
+[elements/Element.ts:14](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/elements/Element.ts#L14)
 
 ___
 
@@ -86,7 +86,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:15](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L15)
+[elements/Element.ts:15](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/elements/Element.ts#L15)
 
 ___
 
@@ -100,7 +100,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:16](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L16)
+[elements/Element.ts:16](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/elements/Element.ts#L16)
 
 ___
 
@@ -114,7 +114,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:17](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L17)
+[elements/Element.ts:17](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/elements/Element.ts#L17)
 
 ___
 
@@ -124,7 +124,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:18](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L18)
+[elements/Element.ts:18](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/elements/Element.ts#L18)
 
 ___
 
@@ -138,7 +138,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:19](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L19)
+[elements/Element.ts:19](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/elements/Element.ts#L19)
 
 ## Methods
 
@@ -162,7 +162,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:20](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L20)
+[elements/Element.ts:20](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/elements/Element.ts#L20)
 
 ___
 
@@ -180,7 +180,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:21](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L21)
+[elements/Element.ts:21](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/elements/Element.ts#L21)
 
 ___
 
@@ -204,7 +204,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:24](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L24)
+[elements/Element.ts:24](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/elements/Element.ts#L24)
 
 ___
 
@@ -228,7 +228,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:27](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L27)
+[elements/Element.ts:27](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/elements/Element.ts#L27)
 
 ___
 
@@ -255,7 +255,7 @@ respond by providing behaviour attributes beyond item and node information
 
 #### Defined in
 
-[elements/Element.ts:34](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L34)
+[elements/Element.ts:34](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/elements/Element.ts#L34)
 
 ___
 
@@ -279,7 +279,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:38](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L38)
+[elements/Element.ts:38](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/elements/Element.ts#L38)
 
 ___
 
@@ -304,4 +304,4 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:41](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/elements/Element.ts#L41)
+[elements/Element.ts:41](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/elements/Element.ts#L41)

@@ -4,7 +4,7 @@
 
   - [Introduction](#introduction)
   - [Instance Object](#instance-object)
-- [Data Scope](#data-scope)
+- [instance.data Scope](#instancedata-scope)
 - [Data Query](#data-query)
   - [Item Query](#item-query)
   - [Instance Query](#instance-query)

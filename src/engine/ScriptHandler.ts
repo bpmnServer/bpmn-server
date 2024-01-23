@@ -26,6 +26,7 @@ class ScriptHandler {
         if (!exp)
             return;
         var val;
+        
         if (exp.startsWith('$')) {
             val =await ScriptHandler.evaluateExpression(item, exp);
         }
@@ -43,13 +44,24 @@ class ScriptHandler {
         //console.log('----setAttVal', attr, exp, val);
     }
     // old name :scopeEval(scope, script) {
+    /**
+     * execute JavaScript expression , no need for $
+     *  
+     * @param scope 
+     * @param expression 
+     * @returns 
+     */
     static evaluateExpression(scope, expression) {
 
-        if (!(expression && expression.startsWith('$')))
-            return expression;
-        let script = expression.substring(1);
+        let script=expression;
         let result;
 		let ret;
+
+        if (!expression)
+            return;
+        if ((expression.startsWith('$')))
+            script=expression.substring(1);
+
         try {
             var js = ScriptHandler.getJSvars(scope) + `
                 return (${script});`;

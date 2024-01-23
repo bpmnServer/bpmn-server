@@ -33,7 +33,7 @@
 
 #### Defined in
 
-[interfaces/DataObjects.ts:31](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L31)
+[interfaces/DataObjects.ts:31](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L31)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:32](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L32)
+[interfaces/DataObjects.ts:32](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L32)
 
 ___
 
@@ -53,7 +53,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:33](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L33)
+[interfaces/DataObjects.ts:33](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L33)
 
 ___
 
@@ -63,7 +63,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:34](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L34)
+[interfaces/DataObjects.ts:34](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L34)
 
 ___
 
@@ -73,7 +73,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:35](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L35)
+[interfaces/DataObjects.ts:35](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L35)
 
 ___
 
@@ -83,7 +83,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:36](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L36)
+[interfaces/DataObjects.ts:36](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L36)
 
 ___
 
@@ -93,7 +93,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:37](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L37)
+[interfaces/DataObjects.ts:37](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L37)
 
 ___
 
@@ -103,7 +103,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:38](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L38)
+[interfaces/DataObjects.ts:38](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L38)
 
 ___
 
@@ -113,7 +113,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:39](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L39)
+[interfaces/DataObjects.ts:39](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L39)
 
 ___
 
@@ -123,7 +123,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:40](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L40)
+[interfaces/DataObjects.ts:40](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L40)
 
 ___
 
@@ -133,7 +133,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:41](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L41)
+[interfaces/DataObjects.ts:41](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L41)
 
 ___
 
@@ -143,7 +143,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:42](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L42)
+[interfaces/DataObjects.ts:42](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L42)
 
 ___
 
@@ -153,7 +153,7 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:43](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L43)
+[interfaces/DataObjects.ts:43](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L43)
 
 ___
 
@@ -163,4 +163,4 @@ ___
 
 #### Defined in
 
-[interfaces/DataObjects.ts:44](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/interfaces/DataObjects.ts#L44)
+[interfaces/DataObjects.ts:44](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/DataObjects.ts#L44)

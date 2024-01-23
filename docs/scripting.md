@@ -2,14 +2,17 @@
 
 <!-- toc -->
 
-- [Introduction](#introduction)
-- [Model Expressions/Scripts](#model-expressionsscripts)
-  - [Model Expressions](#model-expressions)
-  - [Model Listeners](#model-listeners)
-- [Execution Listeners](#execution-listeners)
-  - [Task Listeners](#task-listeners)
-  - [Scripts Scope and variables](#scripts-scope-and-variables)
-- [Application Listener](#application-listener)
+  - [Introduction](#introduction)
+  - [Model Expressions/Scripts](#model-expressionsscripts)
+    - [Model Expressions](#model-expressions)
+    - [Model Listeners](#model-listeners)
+  - [Execution Listeners](#execution-listeners)
+    - [Task Listeners](#task-listeners)
+  - [Application Listener](#application-listener)
+- [Scripts Scope and variables](#scripts-scope-and-variables)
+  - [Item Scope](#item-scope)
+  - [Execution Scope](#execution-scope)
+  - [Application Listener](#application-listener)
 
 <!-- tocstop -->
 
@@ -26,17 +29,6 @@ Scripting is used to add logic to your workflow and is achieved by:
 
 ### Model Expressions 
 
-Many of the model properties accept `JavaScript Expressions` for example:
-- conditional flow
-- timers
-- assignment properties
-
-Syntax for the expression is `$` followed by a javascript code
-
-These are simple expression that evaluates to an appropriate value.
-
-Expressions, do not support async functions
-
 #### conditional flow examples:
 
 <table>
@@ -48,13 +40,13 @@ Expressions, do not support async functions
 
 
 ```
-    $data.approval=='Approved'
+    data.approval=='Approved'
   or 
-    $(data.approval=='Approved')
-    $(this.data.v1 + this.data.v2)
-    $(this.data.v1 == this.data.v2)
-    $(this.data.v1 + this.data.v2)>0
-    $(this.data.v1 + this.data.v2)<4
+    (data.approval=='Approved')
+    (this.data.v1 + this.data.v2)
+    (this.data.v1 == this.data.v2)
+    (this.data.v1 + this.data.v2)>0
+    (this.data.v1 + this.data.v2)<4
     
 ```
 
@@ -65,14 +57,27 @@ For duration timers
 ```
     $appServices.dateAdd(item.dateStarted,10,'days')
 ```   
-#### other examples:
-```
-    $this.data.v1 + 4
-    $this.data.name + "testing"
-    $appServices.test1(100)
-    $appServices.getSupervisorUser('user1')
 
-```
+
+#### Input/Output
+
+<table>
+<tr><th>Type</th><th>Example Value</th></tr>
+<tr><td>Text/String</td><td>hello</td></tr>
+<tr><td>List</td><td>[ 'str1', 'str2', item.data.myExistingVar ]</td></tr>
+<tr><td>Map</td><td>\{ 'key1':  'val1', 'key2': 'val2' \}</td></tr>
+<tr><td>JavaScript</td><td>data.item.myExistingVar</td></tr>
+<tr><td>JavaScript</td><td>\{ 'key1': 'val1', 'key2': 'val2' , 'key3': [item.data.myExistingVar, 'hello'], 'key4': \{ 'ikey5': item.data.myExistingVar\}\}</td></tr>
+</table>
+
+#### Assignment properties
+
+User Task Assignment properties can be JavaScript expression, in this case they must start with '$'
+
+For example:
+
+`assignee` 	`$(this.data.requester)`
+
 ### Model Listeners
 
 Inside your model, you can attach Listeners to various nodes as `JavaScript Listeners`
@@ -92,7 +97,7 @@ No syntax required for these scripts
     }
 ```
 ## Execution Listeners
-There are for all node types and processes
+These are for all node types and processes
 
 <table>
 <tr><td>
@@ -117,7 +122,7 @@ Also at the process level, start and end are triggered
 ### Task Listeners
 <details>
 <summary>
-There are for User Tasks only
+These are for User Tasks only
 </summary>
 
 | event        |       Description        |

@@ -63,13 +63,15 @@
 
 #### Defined in
 
-[engine/ScriptHandler.ts:24](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/engine/ScriptHandler.ts#L24)
+[engine/ScriptHandler.ts:24](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/ScriptHandler.ts#L24)
 
 ___
 
 ### evaluateExpression
 
 ▸ **evaluateExpression**(`scope`, `expression`): `any`
+
+execute JavaScript expression , no need for $
 
 #### Parameters
 
@@ -84,7 +86,7 @@ ___
 
 #### Defined in
 
-[engine/ScriptHandler.ts:46](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/engine/ScriptHandler.ts#L46)
+[engine/ScriptHandler.ts:54](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/ScriptHandler.ts#L54)
 
 ___
 
@@ -105,7 +107,7 @@ ___
 
 #### Defined in
 
-[engine/ScriptHandler.ts:75](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/engine/ScriptHandler.ts#L75)
+[engine/ScriptHandler.ts:87](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/ScriptHandler.ts#L87)
 
 ___
 
@@ -125,4 +127,4 @@ ___
 
 #### Defined in
 
-[engine/ScriptHandler.ts:116](https://github.com/bpmnServer/bpmn-server/blob/6f144fc/src/engine/ScriptHandler.ts#L116)
+[engine/ScriptHandler.ts:128](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/ScriptHandler.ts#L128)

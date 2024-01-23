@@ -44,18 +44,42 @@ class IOParameter {
                         this.value = map;
                     }
                 }
+                else if (this.subType == 'camunda:script') {
+                  this.value=detail['$body'];
+                }
                 else
                     this.value = detail['$children'];
             });
         }
     }
+    /**
+     * 
+     * 
+#### Input/Output
+
+`myVar` Type| Example Value| |
+--- | --- | --- |
+Text/String| hello| No explicit quotes needed
+List| [ 'str1', 'str2', item.data.myExistingVar ]
+Map| { 'key1':  'val1', 'key2': 'val2' } 
+JavaScript | data.item.myExistingVar 
+JavaScript| { 'key1': 'val1', 'key2': 'val2' , 'key3': [item.data.myExistingVar, 'hello'], 'key4': { 'ikey5': item.data.myExistingVar}}
+
+     * 
+     * @param item 
+     *  
+     * @returns 
+     */
     evaluate(item) {
         /**
          * scenario for call
          * */
         var val;
         var evalValue;
-        if (this.subType == 'camunda:list') {
+        if (this.subType == 'camunda:text') {
+            val = this.value;
+        }
+        else if (this.subType == 'camunda:list') {
             val = [];
             this.value.forEach(entry => {
                 //val.push(item.token.execution.appDelegate.scopeEval(item, entry));
@@ -73,8 +97,48 @@ class IOParameter {
                 val.set(key, evalValue)
             });
         }
-        else {
-             val = ScriptHandler.evaluateExpression(item, this.value);
+        else if (this.subType == 'camunda:script') {
+            val = ScriptHandler.evaluateExpression(item, this.value);
+        }        
+        else { // just text
+            if ((this.value.startsWith('$')))
+                val = ScriptHandler.evaluateExpression(item, this.value.substring(1));
+            else
+                val=this.value;
+        }
+
+        return val;
+    }
+
+    describe() {
+        /**
+         * scenario for call
+         * */
+        var val;
+        var evalValue;
+        if (this.subType == 'camunda:text') {
+            val = 'text:'+this.value;
+        }
+        else if (this.subType == 'camunda:list') {
+            val = [];
+            this.value.forEach(entry => {
+                val.push(entry);
+            });
+            val='list:'+JSON.stringify(val);
+        }
+        else if (this.subType == 'camunda:map') {
+            val = new Map();
+            (this.value).forEach((value, key) => {
+                //const newVal = item.token.execution.appDelegate.scopeEval(item, value);
+                val.set(key, value)
+            });
+            val='map:'+JSON.stringify(val);
+        }
+        else if (this.subType == 'camunda:script') {
+            val = 'script:'+this.value;
+        }        
+        else { // just text
+                val='text:'+this.value;
         }
 
         return val;
@@ -167,10 +231,10 @@ class IOBehaviour extends Behaviour {
         var output = '';
         this.parameters.forEach(param => {
             if (param.isOutput()) {
-                    output += param.name +'='+param.value;
+                    output +='\n' + param.name +'='+param.value;
             }
             else
-                input+= param.name + '=' + param.value;
+                input+='<br />'+ param.name + '=' + param.describe();
 
         });
 
