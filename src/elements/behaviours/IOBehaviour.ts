@@ -129,10 +129,9 @@ JavaScript| { 'key1': 'val1', 'key2': 'val2' , 'key3': [item.data.myExistingVar,
         else if (this.subType == 'camunda:map') {
             val = new Map();
             (this.value).forEach((value, key) => {
-                //const newVal = item.token.execution.appDelegate.scopeEval(item, value);
                 val.set(key, value)
             });
-            val='map:'+JSON.stringify(val);
+            val='map:'+Array.from(val.entries());
         }
         else if (this.subType == 'camunda:script') {
             val = 'script:'+this.value;

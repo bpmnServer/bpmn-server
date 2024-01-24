@@ -7,7 +7,7 @@ Since workflow require a User Interface, a web-app is required as front-end to i
 - Show outstanding Tasks
 - Show recent Tasks
 
-[see Buy Used Car Demo ](./examples/BuyCar-Web.md)
+[see Demo of WebApp ](./examples/BuyCar-Web.md)
 
 ## Invoking Proccess through API
 
@@ -36,7 +36,19 @@ In real applications, you get userName and userGroups from you application UserA
 
 ## [Invoking Remotely Using WebServices](./examples/BuyCar-Remote.md)
 
-Similar to above, API can be invoked remotely
+NPM package 'bpmn-client' provide access to bpmn-server using remotely using webServices
+```ts
+
+const { BPMNServer } = require('bpmn-client');
+
+test();
+
+async function test() {
+
+    const client = new BPMNClient(process.env.HOST, process.env.PORT, process.env.API_KEY);
+
+    let response = await client.engine.start('Buy Used Car');
+``` 
 
 ### Async Execution
 

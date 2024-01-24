@@ -113,12 +113,18 @@ Scripts and Services can impact workflow in the following manners:
 
 # Raisng Errors and Exceptions
 ## Validation Scripts
-Validation Scripts can return and error object as such:
+Validation Scripts can return an error as such:
 ```
     return {error:'Invalid input'};
+```
+or:
+```
     execution.validationError('invalid input');
 ```
+As a result execution will raise an exception and the command will fail.
+
 ## BPMN Errors
+
 All Scripts and Services can Raise `BPMN Errors`, to be handled by the appropriate Error node
 ```
     execution.throwError('error code');

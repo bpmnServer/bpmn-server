@@ -85,7 +85,7 @@ class AppServices {
   <bpmn:sequenceFlow>    
 
    <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">
-      $(data.needsCleaning=="Yes")
+      (data.needsCleaning=="Yes")
    </bpmn:conditionExpression>
   ..
 
