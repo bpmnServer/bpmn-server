@@ -16,7 +16,7 @@ export default {
   favicon: "images/favicon.ico",
   // GitHub Pages adds a trailing slash by default that I don't want
   trailingSlash: false,
-
+  // themes: ['@docusaurus/theme-search-algolia'],
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName, // Usually your GitHub org/user name.
@@ -63,7 +63,40 @@ export default {
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
-    ({
+    (
+      
+      {
+
+        algolia: {
+          // The application ID provided by Algolia
+          appId: '9MJK98NCGG',
+    
+          // Public API key: it is safe to commit it
+          apiKey: '81bd390c1662182d8e821e85858c4ddc',
+    
+          indexName: 'bpmn-server',
+    
+          // Optional: see doc section below
+          contextualSearch: true,
+    
+          // Optional: Specify domains where the navigation should occur through window.location instead on history.push. Useful when our Algolia config crawls multiple documentation sites and we want to navigate with window.location.href to them.
+          externalUrlRegex: 'external\\.com|domain\\.com',
+    
+          // Optional: Replace parts of the item URLs from Algolia. Useful when using the same search index for multiple deployments using a different baseUrl. You can use regexp or string in the `from` param. For example: localhost:3000 vs myCompany.com/docs
+          replaceSearchResultPathname: {
+            from: '/docs/', // or as RegExp: /\/docs\//
+            to: '/',
+          },
+    
+          // Optional: Algolia search parameters
+          searchParameters: {},
+    
+          // Optional: path for search page that enabled by default (`false` to disable it)
+          searchPagePath: 'search',
+    
+          //... other Algolia params
+        },
+
       navbar: {
         title: "bpmn-Server Docs",
         logo: {
