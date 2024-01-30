@@ -8,10 +8,10 @@
     "clean": "rimraf dist",
     "toc": "node src/scripts/generate-toc docs/examples.md,docs/scripting.md,docs/data.md",
     "docs:build": "docusaurus build",
-    "docs:dev": "docusaurus start --port 5000",
-    "docs:generate": "npm run docs:generate:copy && npm run docs:generate:api",
-    "docs:generate:api": "rimraf docs/api && typedoc --options typedoc.json",
-    "docs:generate:copy": "ts-node src/scripts/copy-readme.ts"
+    "docs:start": "docusaurus start --port 5000",
+    "docs:generate": "npm run _docs:generate:copy && npm run _docs:generate:api",
+    "_docs:generate:api": "rimraf docs/api && typedoc --options typedoc.json",
+    "_docs:generate:copy": "ts-node src/scripts/copy-readme.ts"
   },
   "repository": {
     "type": "git",
