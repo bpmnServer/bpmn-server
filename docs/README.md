@@ -146,6 +146,50 @@ App is running at http://localhost:3000 in development mode
 
 Use your browser to view the bpmn-server running
 
+### Docker installation
+To install MongoDB, bpmn-server and bpmn-web in on container
+#### 1. Create a folder
+#### 2. create a `docker-compose.yml` as follows:
+```
+version: "3.7"
+name: bpmn-server
+services:
+ bpmn-web:
+    image: ralphhanna/bpmn-web
+    command: sh -c "
+        npm run setup &&
+        npm run start"
+    ports:
+      - 3000:3000
+    volumes:
+      - 'app:/app'      
+    depends_on:
+      - mongo      
+ mongo:
+   image: mongo
+   ports:
+     - 27017:27017
+   volumes:
+     - mongodb:/data/db
+volumes:
+  mongodb:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './mongodb_volume'    
+  app:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './bpmn_server_volume'    
+
+```
+#### 3. start the container `docker compose up -d`
+
+
+
 ## Command Line Interface
 
 bpmnServer provide some basic functionalities using CLI

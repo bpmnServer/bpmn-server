@@ -83,10 +83,6 @@ The web app provides:
 
 Demo Application(Express or NestJS) , provides a complete implementation of users management using Passport and MongoDB
 
-# Application Integration
-
-`bpmn-server` is intended to be integrated into your application[see](./docs/customization.md)
-
 # Full Demo Web Application
 
 We Provide a full demo @ https://bpmn.omniworkflow.com
@@ -96,30 +92,28 @@ We Provide a full demo @ https://bpmn.omniworkflow.com
 This package requires Node.js and an access to MongoDB ()
 if you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas)
 
+### 1. git clone
 ```sh
 
 > git clone https://github.com/bpmnServer/bpmn-web.git
-
+```
+### 2. install packages
+```
 > npm install
-
+``````
+### 3. setup the app
+```
 > npm run setup
 ```
+ 
 Edit .env file to have MongoDB point to your server or free cloud account
 
 ```env
-# PORT # for express application
-PORT=3000
-
-#API_KEY is used for remote access
-API_KEY=12345
-
 # MongoDB Settings
 MONGO_DB_URL=mongodb://0.0.0.0:27017/bpmn
 #
-... more settings
 ```
-
-- Run Setup one more time
+- Run Setup again to create db objects
 
 ```sh
 > npm run setup
@@ -127,7 +121,7 @@ MONGO_DB_URL=mongodb://0.0.0.0:27017/bpmn
 
 Your installation is now complete.
 
-## To start server
+### 4. Start server
 
 ```sh
 > npm run start
@@ -146,9 +140,59 @@ App is running at http://localhost:3000 in development mode
 
 Use your browser to view the bpmn-server running
 
-## Command Line Interface
+## Docker installation
+<details>
+<summary>
+To install MongoDB, bpmn-server and bpmn-web in on a docker container
+</summary>
 
+#### 1. Create a folder , cd to folder
+#### 2. Create a `docker-compose.yml` as follows:
+```
+version: "3.7"
+name: bpmn-server
+services:
+ bpmn-web:
+    image: ralphhanna/bpmn-web
+    command: sh -c "
+        npm run setup &&
+        npm run start"
+    ports:
+      - 3000:3000
+    volumes:
+      - 'app:/app'      
+    depends_on:
+      - mongo      
+ mongo:
+   image: mongo
+   ports:
+     - 27017:27017
+   volumes:
+     - mongodb:/data/db
+volumes:
+  mongodb:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './mongodb_volume'    
+  app:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './bpmn_server_volume'    
+
+```
+#### 3. start the container `docker compose up -d`
+
+</details>
+
+## Command Line Interface
+<details>
+<summary>
 bpmnServer provide some basic functionalities using CLI
+</summary>
 
 ```sh
 >npm run cli
@@ -177,11 +221,16 @@ Enter Command, q to quit, or ? to list commands
 >
 ```
 
+</details>
+
 ## to update to latest release
 
 ```sh
 > npm update bpmn-server
 ```
+# Application Integration
+
+`bpmn-server` is intended to be integrated into your application [see](./docs/customization.md)
 
 # Documentation
 
