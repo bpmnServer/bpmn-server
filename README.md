@@ -3,14 +3,8 @@
 `bpmn-server` provides a Workflow component based on **Business Process Model and Notation** that can be easily integrated into your application.
 
 
-<<<<<<< HEAD
-### Documentation
-- [Features](./docs/features)
-- [Examples](./docs/examples.md)
-=======
 As workflow application can outlive Node.js applications, `bpmn-server` has out-of-the-box state presistence and variables, with concurrency across Node.js cluster and process instances
 to make them ideal platform to do long running business processes, durable services or scheduled backgound tasks.
->>>>>>> rel2.0.0
 
 
 ## Modeling
