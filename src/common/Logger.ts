@@ -1,6 +1,6 @@
 'use strict';
 
-import { ILogger } from "../../";
+import { ILogger } from "../";
 
 const FS = require('fs');
 
@@ -26,8 +26,12 @@ class Logger implements ILogger {
         if (this.callback) {
             this.callback(message, type);
         }
-        this.debugMsgs.push({ message, type });
-        return message;
+
+        if (this.toFile !== '') {
+                FS.appendFileSync(this.toFile, message);        
+        }
+        this.debugMsgs.push({date:new Date(),message, type});
+        return ({date:new Date(),message,type});
     }
     clear() {
 
@@ -37,15 +41,18 @@ class Logger implements ILogger {
 
         return this.debugMsgs;
     }
+    info(...message) {
+        return this.msg(this.toString(...message), 'info');
+    }
     debug(...message)
     {
-        this.msg(this.toString(...message),'debug');
+        return this.msg(this.toString(...message),'debug');
     }
     warn(...message) {
-        this.msg(this.toString(...message),'warn');
+        return this.msg(this.toString(...message),'warn');
     }
     log(...message) {
-        return this.msg(this.toString(...message));
+        return this.msg(this.toString(...message),'log');
     }
     toString(...args) {
         var out = '';
@@ -67,22 +74,24 @@ class Logger implements ILogger {
         }
         return out;
     }
-    error(err) {
-       if (typeof err === 'object') {
-          if (err.message) {
-              this.msg(err.message, 'error');
-               console.log('\nError Message: ' + err.message)
-             }
-             if (err.stack) {
-                    console.log('\nStacktrace:')
-                    console.log('====================')
-                 console.log(err.stack);
-                 this.log(err.stack);
-                }
-            } else {
-                   this.msg(err, 'error');
+    reportError(err) {
+        if (typeof err === 'object') {
+            if (err.message) {
+                this.msg(err.message, 'error');
+                console.log('\nError Message: ' + err.message)
+            }
+            if (err.stack) {
+                console.log('\nStacktrace:')
+                console.log('====================')
+                console.log(err.stack);
+                this.log(err.stack);
+            }
+        } else {
+            this.msg(err, 'error');
         }
 
+    }
+    error(err) {
         throw new Error(err);
     }
     async save(filename) {

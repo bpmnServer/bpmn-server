@@ -1,4 +1,4 @@
-import { IExecution, Item, NODE_ACTION, FLOW_ACTION, IAppDelegate , IDefinition} from "../..";
+import { IExecution, Item, NODE_ACTION, FLOW_ACTION, IAppDelegate , IDefinition} from "../";
 
 import { moddleOptions} from '../elements/js-bpmn-moddle';
 
@@ -8,8 +8,6 @@ class DefaultAppDelegate implements IAppDelegate {
     server;
 
 
-    servicesProvider: any;
-
     constructor(server) {
         this.server = server;
         let self = this;
@@ -17,6 +15,10 @@ class DefaultAppDelegate implements IAppDelegate {
             await self.executionEvent(context, event);
         });
     }
+    async getServicesProvider(context)  {
+        return this;
+    }
+
     startUp(options) {
         console.log('server started..');
     }
@@ -43,11 +45,11 @@ class DefaultAppDelegate implements IAppDelegate {
      */
     async messageThrown(messageId, data, messageMatchingKey: any , item: Item) {
         const msgId = item.node.messageId;
-        item.context.logger.log("Message Issued" + msgId);
+        item.log("Message Issued" + msgId);
         // issue it back for others to receive
         const resp = await item.context.engine.throwMessage(msgId, data, messageMatchingKey);
         if (resp && resp.instance) {
-            item.context.logger.log(" invoked another process " + resp.instance.id + " for " + resp.instance.name);
+            item.log(" invoked another process " + resp.instance.id + " for " + resp.instance.name);
         }
         else
             await this.issueMessage(messageId, data);
@@ -67,62 +69,21 @@ class DefaultAppDelegate implements IAppDelegate {
     }
     async signalThrown(signalId, data, messageMatchingKey: any, item: Item) {
 
-        item.context.logger.log("Signal Issued" + signalId);
+        item.log("Signal Issued" + signalId);
         // issue it back for others to receive
 
         const resp = await item.context.engine.throwSignal(signalId, data, messageMatchingKey);
         if (resp && resp.instance) {
-            item.context.logger.log(" invoked another process " + resp.instance.id + " for " + resp.instance.name);
+            item.log(" invoked another process " + resp.instance.id + " for " + resp.instance.name);
         }
         else
             await this.issueSignal(signalId, data);
     }
     async serviceCalled(serviceName, data, item: Item) {
-        item.context.logger.log("Service called:"+serviceName+data);
+        item.log("Service called:"+serviceName+data);
 
     }
 
-
-
-    scopeEval(scope, script) {
-        let result;
-
-        try {
-            var js = `
-            var item=this;
-            var data=this.data;
-            var input=this.input;
-            var output=this.output;
-            return (${script});`;
-            result = Function(js).bind(scope)();
-        }
-        catch (exc) {
-            console.log('error in script evaluation', js);
-            console.log(exc);
-        }
-        return result;
-    }
-    async scopeJS(scope, script) {
-        const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
-        let result;
-        try {
-            var js = `
-            var item=this;
-            var data=this.data;
-            var input=this.input;
-            var output=this.output;
-            ${script}`;
-            result = await new AsyncFunction(js).bind(scope)();
-            scope.token.log("..executing js is done " + scope.id);
-        }
-        catch (exc) {
-            scope.token.log("ERROR in executing Script " + exc.message + "\n" + script);
-            console.log('error in script execution', js);
-            console.log(exc);
-        }
-        return result;
-
-    }
 }
 
 

@@ -1,7 +1,7 @@
 import { TimerBehaviour, CamundaFormData, IOBehaviour, MessageEventBehaviour, SignalEventBehaviour, TerminateBehaviour, LoopBehaviour } from ".";
 import { Node } from "../Node";
 import { Item } from "../../engine/Item";
-import { IItem } from "../../..";
+import { IItem } from "../../";
 import { ScriptBehaviour } from "./Script";
 import { CancelEventBehaviour, CompensateEventBehaviour } from "./TransEvents";
 import { EscalationEventBehaviour } from "./Escalation";
@@ -27,6 +27,7 @@ const Behaviour_names = {
     CamundaFormData: 'camunda:formData',
     CamundaScript: 'camunda:script',
     CamundaScript2: 'camunda:executionListener',
+    CamundaScript3: 'camunda:taskListener',
     CamundaIO: 'camunda:inputOutput'
 
 }
@@ -100,6 +101,11 @@ class BehaviourLoader {
             }
         },
         {
+            name: Behaviour_names.CamundaScript3, funct: function (node, def) {
+                return new ScriptBehaviour(node, def);
+            }
+        },
+        {
             name: Behaviour_names.TerminateEventDefinition, funct: function (node, def) {
                 return new TerminateBehaviour(node, def);
             }
@@ -110,26 +116,40 @@ class BehaviourLoader {
         BehaviourLoader.behaviours.push({ name, funct });
     }
     /**
+     * #### 1. Load behaviours from node definition
      * 
-     *  1.  node.definition[<name>]
-     *  2.  node.definition.eventDefinitions
+     * `node.definition[<name>]`
+     * 
+     * #### 2. Load behaviours from node definition.eventDefinitions
+     * 
+     * ```ts
+     * node.definition.eventDefinitions
      *          $type == <name>
-     *          
-     *          example:
-     *          
+     * ```
+     * example:
+     * 
+     * ```xml  
             <bpmn:timerEventDefinition id="TimerEventDefinition_07xu06a">
                <bpmn:timeDuration xsi:type="bpmn:tExpression">PT2S</bpmn:timeDuration>
             </bpmn:timerEventDefinition>
-     *          
-     *  3.  node.definitions.extensionElements
+     *  ```
+     *  #### 3. Load behaviours from node definition.extensionElements
+     * 
+     * ```ts
+     * node.definitions.extensionElements
      *          $type == <name>
-     *          example: 'camunda:formData'
-                <extensionElements>
-                    <camunda:formData >
-                        <camunda: formField id = "surname" label = "Surname" type = "string" />
-                            <camunda: formField id = "givenName" label = "Given name" type = "string" />
-                    </camunda:formData>
-               < /extensionElements> 
+     * ```
+     * example:
+     * 
+     * ```xml
+     * 'camunda:formData'
+        <extensionElements>
+            <camunda:formData >
+                <camunda: formField id = "surname" label = "Surname" type = "string" />
+                    <camunda: formField id = "givenName" label = "Given name" type = "string" />
+            </camunda:formData>
+        < /extensionElements>
+     * ```
      * 
      * @param node
      */

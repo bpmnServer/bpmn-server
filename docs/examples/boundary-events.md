@@ -2,13 +2,13 @@
 
 - Boundary Events start with the owner Activity
 - Are cancelled when the the owner activity is completed
-- Intrupting BoundaryEvent when complete, the cancel (Intrupt) the owner
+- Intrupting BoundaryEvent, when complete they cancel (Intrupt) the owner
 - Non-Intrupting BoundaryEvent they fire without impacting the owner
 
 ![BPMN Diagram](boundary-event1.png)
 
 
-```javascript
+```ts
 
 const { BPMNServer, DefaultHandler, Logger } = require("../../");
 const { configuration } = require('../../configuration');
@@ -26,7 +26,7 @@ let instanceId;
 Feature('Boundary Event', () => {
 ```
 ## Do the task right-away
-```javascript
+```ts
         Scenario('do the task right-away- events will cancel', () => {
             Given('Start '+ name + ' Process',async () => {
                 response = await server.engine.start(name, {});
@@ -42,7 +42,7 @@ Feature('Boundary Event', () => {
 ![BPMN Diagram](boundary-event2.png)
 
 boundary events have started in a wait state
-```javascript
+```ts
 
             When('I invoke user_task', async () => {
 
@@ -56,7 +56,7 @@ boundary events have started in a wait state
 ![BPMN Diagram](boundary-event-nowait.png)
 
 Events are terminated.
-```javascript
+```ts
 
             When('I dont wait for events to complete', async () => {
 
@@ -73,7 +73,7 @@ Events are terminated.
         });
 ```
 ## Don't do the task right-away , wait for timer to fire
-```javascript
+```ts
             Scenario('Dont do the task right - away, wait for timer to fire', () => {
                 Given('Start ' + name + ' Process', async () => {
                     response = await server.engine.start(name, {});
@@ -89,7 +89,7 @@ Events are terminated.
 ![BPMN Diagram](boundary-event2.png)
 
 boundary events have started in a wait state
-```javascript
+```ts
             When('wait for the timer to fire', async () => {
 
                 await server.cron.checkTimers();
@@ -100,7 +100,7 @@ boundary events have started in a wait state
 ![BPMN Diagram](boundary-event3.png)
 
 
-```javascript
+```ts
 
             When('I wait for events to complete', async () => {
 

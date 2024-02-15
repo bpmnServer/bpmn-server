@@ -1,6 +1,6 @@
 import { Node } from ".";
 import { Behaviour_names } from "./behaviours";
-import { NODE_ACTION } from "../../";
+import { NODE_ACTION } from "../";
 import { Item } from "../engine/Item";
 import { ITEM_STATUS } from "../interfaces";
 
@@ -73,10 +73,12 @@ class BoundaryEvent extends Event {
     }
     async run(item: Item): Promise<NODE_ACTION> {
 
-        if (item.token.parentToken.currentItem.status == ITEM_STATUS.end)   // in cancelling mode
+        if (item.token.parentToken && (item.token.parentToken.currentItem.status == ITEM_STATUS.end))   // in cancelling mode
             return;
         var ret=super.run(item);
         if (this.isCancelling) {
+             if (!item.token.parentToken)
+                    return;
             item.token.log('BoundaryEvent(' + this.id + ').run: isCancelling .. parentToken: '+item.token.parentToken.id);
             item.token.parentToken.currentItem.status = ITEM_STATUS.end; //force status so it would not run
             /* fix bug #86
@@ -114,13 +116,19 @@ class EndEvent extends Event {
     }
 }
 class StartEvent extends Event {
-
+    constructor(id, process, type, def) {
+        super(id, process, type, def);
+        this.candidateGroups= this.def.$attrs["camunda:candidateGroups"];
+        this.candidateUsers = this.def.$attrs["camunda:candidateUsers"];
+        if (this.def.$attrs && this.def.$attrs["camunda:initiator"]) {
+            this.initiator = this.def.$attrs["camunda:initiator"];
+        }
+    }
     async start(item: Item): Promise<NODE_ACTION> {
 
-        if (this.def.$attrs && this.def.$attrs["camunda:initiator"])
+        if (this.initiator)
             {
-            const initiator=this.def.$attrs["camunda:initiator"];
-            item.token.data[initiator]=item.userId;
+            item.token.data[this.initiator]=item.userName;
             }
         return await super.start(item);
     }

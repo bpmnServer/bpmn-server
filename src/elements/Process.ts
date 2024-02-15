@@ -1,11 +1,11 @@
 import { Execution } from '../engine/Execution';
 import { Token, TOKEN_TYPE } from '../engine/Token';
 import { IBehaviour, Behaviour } from "./behaviours";
-import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../../';
+import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, ScriptHandler } from '../';
 
 import { Item } from '../engine/Item';
 import { Node, Definition } from '.';
-import { NODE_SUBTYPE } from '../interfaces';
+import { IExecution, NODE_SUBTYPE } from '../interfaces';
 
 
 class Process {
@@ -17,6 +17,7 @@ class Process {
     childrenNodes: Node[];
     eventSubProcesses: any[];
     subProcessEvents: any[];
+    scripts = new Map();
 
     constructor(definition,parent=null) {
         this.id = definition.id;
@@ -32,7 +33,9 @@ class Process {
     /**
      * Notify process that it started
      * */
-    async start(execution: Execution,parentToken) {
+    async start(execution: Execution, parentToken) {
+        this.doEvent(execution, 'start');
+
         this.subProcessEvents = [];
         const events = [];
         this.eventSubProcesses.forEach(p => {
@@ -51,7 +54,8 @@ class Process {
     /**
      * Notify process that it ended
      * */
-    async end() {
+    async end(execution:IExecution) {
+        this.doEvent(execution, 'end');
         /* removed; already done by token
         let i;
         for (i = 0; i < this.subProcessEvents.length;i++) {
@@ -93,6 +97,28 @@ class Process {
         });
         return starts;
     }
+    async doEvent(execution,event) {
+        execution.log('Process(' + this.name + '|' + this.id + ').doEvent: executing script for event:' + event);
+        const scripts = this.scripts.get(event);
+        if (scripts) {
+            for (var s = 0; s < scripts.length; s++) {
+                var script = scripts[s];
+                const ret = await ScriptHandler.executeScript(execution, script);
+
+            }
+        }
+    }
+    describe() {
+        var desc = [];
+
+        this.scripts.forEach((scripts, event) => {
+            scripts.forEach(scr => {
+                desc.push([`script on ${event} `, `${scr}`]);
+            });
+        })
+        return desc;
+    }
+
 }
 
 export { Process }

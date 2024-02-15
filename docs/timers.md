@@ -4,7 +4,7 @@ All Timers are persisted, therefore, if the Node.js session is restared timers w
 ## Timer Types
 
 ### DateTime (not supported)
-```javascript
+```ts
   <timerEventDefinition>
         <timeDate>2011-03-11T12:13:14Z</timeDate>
     </timerEventDefinition>
@@ -13,7 +13,7 @@ All Timers are persisted, therefore, if the Node.js session is restared timers w
 
 Example (interval lasting 10 days):
 
-```javascript
+```ts
     <timerEventDefinition>
         <timeDuration>P10D</timeDuration>
     </timerEventDefinition>
@@ -23,7 +23,7 @@ Example (interval lasting 10 days):
 
 Example (3 repeating intervals, each lasting 10 hours):
 
-```javascript
+```ts
     <timerEventDefinition>
         <timeCycle>R3/PT10H</timeCycle>
     </timerEventDefinition>
@@ -33,7 +33,7 @@ Time Cycle accepts both ISO 8601 format and Cron format
 
 Example for cron format:
 
-```javascript
+```ts
     <timerEventDefinition>
         <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">5 * * * *</bpmn:timeCycle>
     </timerEventDefinition>
@@ -45,7 +45,7 @@ bpmn-server allow you to modify the timer behaviour during development without c
 
 By changing the configuration.ts to force timers to specific time
 
-```javascript
+```ts
 
 let definitionsPath = __dirname + '/processes/';
 var configuration = new Configuration(

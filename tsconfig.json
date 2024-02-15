@@ -2,16 +2,19 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es6",
-    "lib": [ "es6" ],
+    "lib": [ "es6" , "es2021" ],
     "sourceMap": true,
-    "declaration": true ,
-/*    "rootDir": "./src",*/
+    "skipLibCheck": true,
+    "declaration": true,
+    "rootDir": "./src",
     "outDir": "./dist" 
   },
   "include": [
     "**/*.ts", "test/handler.js"
   ],
   "exclude": [
-    "node_modules" , "./dist" , "./webApp"
+    "node_modules",
+    "./dist",
+    "docusaurus.config.ts"
   ]
 }

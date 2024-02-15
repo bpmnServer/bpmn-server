@@ -5,6 +5,7 @@ import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, N
 import { Item } from '../engine/Item';
 import { BPMN_TYPE } from '../interfaces/Enums';
 import { BehaviourLoader } from './behaviours/BehaviourLoader';
+import { ScriptHandler } from '../';
 
 // ---------------------------------------------
 class Node extends Element {
@@ -19,6 +20,8 @@ class Node extends Element {
     signalId;
     initiator;
     assignee;
+    candidateGroups;
+    candidateUsers;
     scripts = new Map();
     get processId() : any {
 
@@ -38,22 +41,39 @@ class Node extends Element {
 
         BehaviourLoader.load(this);
     }
+    async validate(item: Item) {
+
+        let validate = await item.node.doEvent(item, EXECUTION_EVENT.node_validate,item.status);
+        validate.forEach(retVal => {
+            if (retVal) {
+                const err = retVal['error'];
+                if (err) {
+                    item.token.execution.error('Validation failed with error:' + err);
+                }
+            }
+        });
+
+    }
     async doEvent(item: Item, event: EXECUTION_EVENT, newStatus: ITEM_STATUS) {
         item.token.log('Node('+this.name+'|'+this.id+').doEvent: executing script for event:' + event + ' newStatus:'+newStatus);
         if (newStatus)
             item.status = newStatus;
         ///item.token.log('..>' + event + ' ' + this.id);
         const scripts = this.scripts.get(event);
+        const rets = [];
         if (scripts) {
             for (var s = 0; s < scripts.length; s++) {
                 var script = scripts[s];
                 item.token.log('--executing script for event:' + event);
 
-                await item.token.execution.appDelegate.scopeJS(item, script);
+                const ret = await ScriptHandler.executeScript(item, script);
+                rets.push(ret);
 
             }
         }
-        return await item.token.execution.doItemEvent(item, event);
+        const ret1 = await item.token.execution.doItemEvent(item, event);
+        rets.push(ret1);
+        return rets;
 
     }
     /**
@@ -69,7 +89,7 @@ class Node extends Element {
 
         const data = await this.getInput(item, input);
 
-        item.token.appendData(data);
+        item.token.appendData(data,item);
 
     }
     async getInput(item: Item, input) {
@@ -92,7 +112,7 @@ class Node extends Element {
     }
     enter(item: Item) {
         item.token.log('Node('+this.name+'|'+this.id+').enter: item=' + item.id);
-        item.startedAt = new Date().toISOString();;
+        item.startedAt = new Date();
 
     }
     /*
@@ -133,7 +153,6 @@ class Node extends Element {
             const b = behaviourlist[i];
             const bRet = await b.enter(item);
         }
-
 
         //  3   start
         //  --------
@@ -270,7 +289,7 @@ class Node extends Element {
         if (cancel)
             item.endedAt = null;
         else
-            item.endedAt = new Date().toISOString();
+            item.endedAt = new Date();
 
         if (item.status == ITEM_STATUS.end)
             return;
@@ -323,6 +342,21 @@ class Node extends Element {
         }
 
 
+    }
+    describe() {
+        var desc = [];
+        if (this.initiator)
+            desc.push(['Initiator', this.initiator]);
+        if (this.assignee)
+            desc.push(['assignee', this.assignee]);
+
+        this.scripts.forEach((scripts, event) => {
+            scripts.forEach(scr => {
+                desc.push([`script on ${event} `, `${scr}`]);
+            });
+        })
+
+        return desc;
     }
 }
 

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["./src/"],
+  "out": "docs/api",
+  "sort":"source-order",
+  "compilerOptions": {
+    "strictNullChecks": false,
+    "skipLibCheck": true,
+    "rootDir": ".",
+  },
+  "readme": "none",
+  "entryDocument": "readme.md",
+  "plugin": ["typedoc-plugin-markdown"]
+}

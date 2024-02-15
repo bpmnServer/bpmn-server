@@ -8,6 +8,7 @@ import { Process } from './Process';
 import { IExecution } from '../interfaces/engine';
 import { EXECUTION_STATUS } from '../interfaces/Enums';
 import { Item } from '../engine/Item';
+import { ScriptHandler } from '../';
 //NO_import { DecisionTable } from 'dmn-engine';
 
 // ---------------------------------------------
@@ -17,17 +18,13 @@ class ScriptTask extends Node {
         if (this.def.script) {
             item.token.log('executing script task');
             item.token.log(this.def.script);
-            await item.token.execution.appDelegate.scopeJS(item, this.def.script);
+            await ScriptHandler.executeScript(item, this.def.script);
         }
         return NODE_ACTION.end;
     }
-    describe() {
-
-        return [[`script on ${this.def.script} ${this.scripts}`]];
-    }
 }
 /**
- * 
+ * ```ts
  *      foo[method]();
  *      
  *      await this.token.appDelegate[serviceName](data);
@@ -35,6 +32,7 @@ class ScriptTask extends Node {
  *      
  *      service signature:
  *              output= service (input,context)
+ * ```
  */
 class ServiceTask extends Node {
     get serviceName() {
@@ -59,28 +57,31 @@ class ServiceTask extends Node {
 
         item.log("invoking service:" + this.serviceName + " input:" + JSON.stringify(item.input));
 
-        const provider = appDelegate.servicesProvider
-        if(this.serviceName){
-            const serviceNameArr=this.serviceName.split('.')    
-            let fn = provider
-            for(let i=0;i<serviceNameArr.length; i++){
-                const funcname = serviceNameArr[i]
-                fn=fn[funcname]                
+        const servicesProvider=await appDelegate.getServicesProvider(item.token.execution);
+//
+        let obj = servicesProvider;
+
+      let method = this.serviceName;
+        if (obj && this.serviceName)  {
+
+            const objs = this.serviceName.split('.');
+            for (var i = 0; i < objs.length - 1; i++) {
+                const o = objs[i];
+                obj = obj[o];
             }
-            
-            ret = await fn(item.input, item.context)
-        }else{
-            ret = await appDelegate['serviceCalled'](item.input,item.context);
+            method = objs[objs.length - 1];
+        }
+
+        if (obj && obj[method]) {
+            ret = await obj[method](item.input, item.context);
+        }
+        else {
+            ret = await appDelegate['serviceCalled'](item.input, item.context);
         }
         
-        // if (this.serviceName && appDelegate.servicesProvider[this.serviceName])
-        //     ret = await appDelegate.servicesProvider[this.serviceName](item.input,item.context);
-        // else
-            // ret = await appDelegate['serviceCalled'](item.input,item.context);
-
         item.log("service returned " + ret);
         item.output = ret;
-        item.log('service ', this.serviceName,'completed-output', ret, item.output);
+        item.log('service '+ this.serviceName+' completed-output:' + ret + item.output);
         // await item.node.setInput(item,ret);
 
         if (item.context.action && item.context.action == NODE_ACTION.wait) {
@@ -92,7 +93,9 @@ class ServiceTask extends Node {
     }
     describe() {
 
-        return [[`service  ${this.serviceName}`]];
+        let desc = super.describe();
+        desc.push([`Service Delegate`,` ${this.serviceName}`]);
+        return desc;
     }
 }
 //    <bpmn2:businessRuleTask id="Task_1lcamp6" name="Vacation"  camunda:decisionRef="Vacation">
@@ -103,10 +106,10 @@ class BusinessRuleTask extends ServiceTask {
         let businessRule;
         const token: Token = item.token;
 
-        const config= token.execution.configuration;
+        const config= token.execution.server.configuration;
         const path = config.definitionsPath;
 
-        console.log('Business Rule Task'); //.loopCharacteristics.$attrs["camunda:collection"];
+        //console.log('Business Rule Task'); //.loopCharacteristics.$attrs["camunda:collection"];
         if (this.def.$attrs && this.def.$attrs["camunda:decisionRef"]) {
 
             throw new Error("Business Rule Task Not supported in this release.");
@@ -143,16 +146,19 @@ class SendTask extends ServiceTask {
 
 class UserTask extends Node {
 
+    async end(item: Item) {
+        item.token.info(`Task ${this.name} ended by ${item.token.execution.userName}`);
+        return await super.end(item);
+    }
     async start(item: Item): Promise<NODE_ACTION> {
-
         if (this.def.$attrs)
             {
-            this.setAssignVal(item,"assignee");
-            this.setAssignVal(item,"candidateGroups");
-            this.setAssignVal(item,"candidateUsers");
-            this.setAssignVal(item,"dueDate",true);
-            this.setAssignVal(item,"followUpDate",true);
-            this.setAssignVal(item,"priority");
+            await this.setAssignVal(item,"assignee");
+            await this.setAssignVal(item,"candidateGroups");
+            await this.setAssignVal(item,"candidateUsers");
+            await this.setAssignVal(item,"dueDate",true);
+            await this.setAssignVal(item,"followUpDate",true);
+            await this.setAssignVal(item,"priority");
             }
         if (this.lane && this.lane !=='')
             {
@@ -161,10 +167,11 @@ class UserTask extends Node {
 
             item.candidateGroups.push(this.lane);
             }
-            
+
+        item.token.info(`Task ${this.name} -${this.id} started.`);
         return await super.start(item);
     }
-    setAssignVal(item,attr,dateFormat=false) {
+    async setAssignVal(item,attr,dateFormat=false) {
         const exp=this.def.$attrs["camunda:"+attr];
 
         if (!exp)
@@ -172,7 +179,10 @@ class UserTask extends Node {
         var val;
         if (exp.startsWith('$'))
         {
-            val=item.token.execution.appDelegate.scopeEval(item, exp.substring(1));
+            val = ScriptHandler.evaluateExpression(item, exp);
+        }
+        else if (exp.startsWith('#')) {
+            val = await ScriptHandler.executeScript(item, exp);
         }
         else if (exp.includes(","))
         {
@@ -185,27 +195,21 @@ class UserTask extends Node {
         if (dateFormat)
             val=new Date(val);
 
-        item[attr]=val;
-     }
-    evaluateExpr(item,attr) {
-        if (!this.def.$attrs[attr])
-            return null;
-        const exp=this.def.$attrs[attr];
+        item[attr] = val;
+        item.token.log('..setting attribute '+attr+' exp: '+exp+'='+val);
+        //console.log('----setAttVal', attr, exp, val);
+    }
+    describe() {
+        let attrs = ["assignee","candidateGroups", "candidateUsers", "dueDate", "followUpDate", "priority"];
+        let desc = super.describe();
 
-        if (!exp)
-            return null;
-        if (exp.startsWith('$'))
-        {
-            return item.token.execution.appDelegate.scopeEval(item, exp.substring(1));
-        }
-        else if (exp.includes(","))
-        {
-            const arr=exp.split(",");
-            return arr;
-        }
-        else
-            return exp;
-     }
+        attrs.forEach(attr => {
+            let val = this.def.$attrs["camunda:" + attr];
+            if (val)
+                desc.push([attr, val]);
+        });
+        return desc;
+    }
     get requiresWait() { return true; }
     get canBeInvoked() { return true; }
 }
@@ -276,7 +280,7 @@ class CallActivity extends Node {
 
     static async executionEnded(execution: IExecution) {
         const itemId = execution.instance.parentItemId;
-        const engine = execution.engine;
+        const engine = execution.server.engine;
         await engine.invoke({ "items.id": itemId }, execution.instance.data);
 
     }

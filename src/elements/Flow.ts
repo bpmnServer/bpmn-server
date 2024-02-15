@@ -2,7 +2,7 @@
 import { Execution } from '../engine/Execution';
 import { Token, TOKEN_TYPE } from '../engine/Token';
 import { IBehaviour, Behaviour} from "./behaviours";
-import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, IFlow } from '../../';
+import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, IFlow, ScriptHandler } from '../';
 
 import { Item } from '../engine/Item';
 import { Node, Element } from '.';
@@ -31,13 +31,14 @@ class Flow extends Element implements IFlow {
             return [['condition: ' , expression]];
         }
         else
-            super.describe();
+            return [];
     }
     /**
-     * 
+     * ```xml
      * <Rule> if flow has a condition, it must be evaluated and if result is true flow will continue
      *  otherwise, flow will be discarded.
      * </Rule> 
+     * ```
      * @param item
      */
     run(item: Item) {
@@ -57,7 +58,7 @@ class Flow extends Element implements IFlow {
             let expression = this.def.conditionExpression.body;
             item.token.log('..conditionExpression:' + JSON.stringify(expression));
             item.token.log(JSON.stringify(item.token.data));
-            let result = item.token.execution.appDelegate.scopeEval(item, expression);
+            let result = ScriptHandler.evaluateExpression(item, expression);
             item.token.log('..conditionExpression:' + expression + " result: " + result);
             return result;
         }
@@ -69,10 +70,11 @@ class Flow extends Element implements IFlow {
 }
 // ---------------------------------------------
 /**
-* 
+* ```xml
 * <Rule>MessageFlow: can only be sent to active node in waiting
  * or to a start event
 * </Rule>
+* ```
 * */
 class MessageFlow extends Flow {
     isMessageFlow = true;

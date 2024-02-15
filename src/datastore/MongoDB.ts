@@ -2,7 +2,7 @@
 
 const MongoClient = require('mongodb').MongoClient;
 const MongoDb = require('mongodb');
-const mongoose= require('mongoose');
+//const mongoose= require('mongoose');
 const assert = require('assert');
 
 //mongoose.set('useNewUrlParser', true);

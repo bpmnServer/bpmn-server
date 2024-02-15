@@ -3,7 +3,7 @@ import { Logger } from '../common/Logger';
 
 import { ServerComponent } from './ServerComponent';
 
-import { IEventData, ICron } from '../..';
+import { IEventData, ICron } from '../';
 
 const duration = require('iso8601-duration');
 const parse = duration.parse;
@@ -37,7 +37,7 @@ class Cron  extends ServerComponent implements ICron {
 
 		await this.definitions.rebuild();
 
-		this.logger.log("Start timers");
+//		this.logger.log("Start timers");
 
 		let promises = [];
 		const self = this;
@@ -67,7 +67,7 @@ class Cron  extends ServerComponent implements ICron {
 			//query = { query: { "items.timeDue": { $lt: new Date(target).toISOString() } } };
 			//query = { items: {timeDue: { $lt: new Date(target).toISOString() } }};
 			list = await this.dataStore.findItems(query);
-			this.logger.log("...items query returend " + list.length);
+//			this.logger.log("...items query returend " + list.length);
 			for (i = 0; i < list.length; i++) {
 				let item = list[i];
 				if (item.timeDue) {
@@ -122,7 +122,7 @@ class Cron  extends ServerComponent implements ICron {
 		delay = entry.timeDue - now;
 		if (delay < 0) delay = .1;
 		entry.cron = this;
-		setTimeout(this.itemTimerExpired.bind(entry), delay * 1000);
+		setTimeout(this.itemTimerExpired.bind(entry), delay );
 	}
 
 	static checkCron(expression,referenceDateTime) {
@@ -155,14 +155,14 @@ class Cron  extends ServerComponent implements ICron {
 			try {
 				delay = Cron.checkCron(expression, baseDate);
 				if (delay) {
-					console.log(" expression " + expression + " base date" + baseDate+ " -> delay of " + delay + " sec " + delay / 60 + " min" + delay/3600 + " hours ");
+//					console.log(" expression " + expression + " base date" + baseDate+ " -> delay of " + delay + " sec " + delay / 60 + " min" + delay/3600 + " hours ");
 				}
 				else {
 					delay = toSeconds(parse(expression));
 					if (referenceDateTime) {
 						delay += (referenceDateTime - now) / 1000;
 					} 
-					console.log(" expression " + expression + " base date" + baseDate + " -> delay of " + delay + " sec " + delay / 60 + " min" + delay / 3600 + " hours ");
+//					console.log(" expression " + expression + " base date" + baseDate + " -> delay of " + delay + " sec " + delay / 60 + " min" + delay / 3600 + " hours ");
 				}
 			}
 			catch (exc) {
@@ -174,8 +174,46 @@ class Cron  extends ServerComponent implements ICron {
 		}
 		return null;
     }
-
+	/**
+	 * Schedule Scripts
+	 *	script,itemId(scope),dateTime,cancelCondition
+	 *	1.	ScheduleScripts is called by app
+	 *	2.	Save in DB in case of system failure or shutdown
+	 *	3.	if due within period issue setTime
+	 *	4.	checkForDueScripts: Check periodically for prev. old scripts and scripts due in next prev.
+	 *			Prev. scripts fire now
+	 *					executeScript
+	 *			due issue setTimeout for them
+	 *					setTimerForScript
+	 *	
+	 * 
+	 **/
 }
 
+class ScriptScheduler {
+	script;
+	itemId;
+	dateDue;
+	cancelCondition;
+	constructor(script, item, dateDue, cancelCondition) {
+		this.script = script;
+		this.itemId = item.id;
+		if (dateDue) {// within period
+			this.executeScript(item);
+		}
+	}
+	executeScript(item = null) {
+		if (item) { // no need to retrieve just fire it
 
+		}
+	}
+	save() {
+
+    }
+
+	static checkForDueScripts() {
+
+    }
+
+}
 export { Cron};

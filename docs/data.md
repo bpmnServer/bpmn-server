@@ -1,143 +1,181 @@
-# Table of Contents
-- [Instance Data](#instance-data) 
-- [Item Data](#item-data)
-- [Data Scope](#data-scope) 
-- [Query on Data](#query-on-data) 
-- [input/Output Data](#input-output-data) 
+# Managing Data
+
+<!-- toc -->
+
+  - [Introduction](#introduction)
+  - [Instance Object](#instance-object)
+- [instance.data Scope](#instancedata-scope)
+- [Data Query](#data-query)
+  - [Item Query](#item-query)
+  - [Instance Query](#instance-query)
+- [Input-Output Data](#input-output-data)
+  - [Input/Output using Scripts](#inputoutput-using-scripts)
+  - [Input/Output using Camunda Extension of Input/Output Parameter](#inputoutput-using-camunda-extension-of-inputoutput-parameter)
+
+<!-- tocstop -->
+
+## Introduction
+
+`bpmn-server` relies on a Database to store workflow information.
+This makes it suitable for long-running workflows and multi-servers.
+
+Developers can query on data using [Data Query](#data-query)
+
+'bpmn-server' manages three collections in MongoDB:
+
+<table> 
+<tr><td>wf_instances</td><td> stores workflow instances, including items, tokens, logs ,etc. </td></tr>
+
+<tr><td>wf_models</td><td> stores workflow models, this is important for querying on events</td></tr>
+
+<tr><td>wf_locks</td><td> to achieve concurrency, running instances place a lock in this collection</td></tr>
+</table>
 
 
-# Instance Data
-Instance Data can be manipulated in several ways:
 
-## As Input to Engine calls
+[api.data object](api/interfaces/IAPIData.md) provides several methods to handle  workflow instances and items
 
-```javascript
+While [api.model object](api/interfaces/IAPIModel.md) provides methods to access workflow models
 
-    const input={ model: 'Thunderbird', needsRepairs: false, needsCleaning: false };
-    response = await engine.invoke({items: { id: itemId } }, input );
+In addition to saving bpmn specific properties, `bpmn-server` supports the following data elements:
 
+- Presistent Data
+  - instance.data 
+  - item.vars
+- In-Memory Data
+  - item.input
+  - item.output
+
+All of the above all available during process execution and event listeners.
+
+## Instance Object
+
+
+The instance object is similar to: 
+
+
+<table> <tr><td> 
+
+```json
+instance: {
+  id;
+  name;
+//.. other instance attributes
+  items: { // items here
+    id;
+    elementId;
+    status;
+    vars;
+    // items here
+  }
+  data: { // data attributes here}
+
+  }
 ```
 
-## Expressions
-    keeping in mind that the bpmn definition defines conditional flow as such:
+</td><td>
 
-```javascript
+![MongDB Collection](images/mongo-instance-sample.png)
 
-    <bpmn:sequenceFlow id="flow_gw1_clean" sourceRef="gateway_1" targetRef="task_clean">
-      <bpmn:conditionExpression xsi:type="bpmn:tExpression"><![CDATA[
-      (this.needsCleaning=="Yes")
-      ]]></bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
+</td></tr></table>
 
-```
 
-## Part of Script and Service Task
-```javascript
 
-    <bpmn2:scriptTask id="task_reminder" name="Issue Reminder">
-      <bpmn2:incoming>SequenceFlow_1h10gv4</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_0cokf0m</bpmn2:outgoing>
-      <bpmn2:script><![CDATA[
-            let data = this.token.data;
-            console.log("sending a reminder scirpt");
-            console.log(data);
-            
-            if (typeof data.reminderCounter === 'undefined') {
-              data['reminderCounter']=0;
-            }            
-            
-            data['reminderCounter']=data['reminderCounter']+1;
-            this.token.log('testing from the inside: ');
-      ]]></bpmn2:script>
-    </bpmn2:scriptTask>
-
-```
-
-## AppDelegate
-
-   Similar to Script and Service AppDelegate can manupilate Instance data.
-
-## Script Extensions
-
-Script Extensions are supported in release 1.1 and later, allowing you to add a script to any node.
-
-In this example we are adding a script to bpmn:startEvent
-
-```javascript
-
-    <bpmn:startEvent id="StartEvent_1ohx91b">
-      <bpmn:extensionElements>
-        <camunda:script event="start"><![CDATA[
-        console.log("This is the start event");
-          this.applyInput({records:[1,2,3]});
-          console.log(this.data);
-          console.log("This is the start event");]]></camunda:script>
-      </bpmn:extensionElements>
-      <bpmn:outgoing>Flow_18xinq3</bpmn:outgoing>
-    </bpmn:startEvent>
-    
-```
-# Item Data
-In Release 1.3.22 added **item.vars** to store any variables related to the item as follows
-
-## Setting item.vars
-You can set item.vars Inside your service logic :
-```js
-  async service1(input, context) {
-  ...
-  item.vars= input;
- ...
-}
-```
-or by having an event-listener such as:
-
-![Item Vars Script](item-vars-script.png)
-
-## MongoDB:
-As a result MongoDB stores item.vars
-![image](https://github.com/ralphhanna/bpmn-server/assets/11893416/320e2e2f-e6e3-46a9-964b-f10e91ce8a32)
-
-## Using findItems:
-```js
-            query = { "data.caseId": caseId, "items.vars.param1": 'value1' };
-            items = await server.dataStore.findItems(query);
-            console.log('items count',items);
-
-```
-# Data Scope
+# instance.data Scope
 
 The entire execution will have one data scope object, shared among all nodes, except the following will have own item part of the data object
-  - SubProcess 
-  - and Loops (Multi-instances)
+
+- SubProcess
+- and Loops (Multi-instances)
+
+![Image description](images/Data_BuyUsedCar.PNG)
+
+However, for SubProcess and Loop elements a seperate scope
+
+![Image description](images/Data_scripts_services_model.PNG)
+![Image description](images/Data_scripts_services.PNG)
+
+# Data Query
 
 
-![Image description](./Data_BuyUsedCar.PNG)
+The syntax follows MongoDB standards.
 
-However, for SubProcess and Loop elements a seperate scope 
+the query syntax must be
+- instance attributes unqualified
+- item attributes are qualified by `items.\<attributeName\>`
+- data attributes are qualified by `data.\<attributeName\>`
 
-![Image description](./Data_Scripts_Services_model.PNG)
-![Image description](./Data_Scripts_Services.PNG)
 
-# Query on Data
-You can use Instance data as part of your query for Instances or Items
-For Details on Query see [Data Query](./api-summary#data-query) 
+## Item Query
+
+| example                                                        | will retrieve                              |
+| -------------------------------------------------------------- | ------------------------------------------ |
+| `{ "items.id": "value-of-id" }`                                | find items by id only - unique             |
+| `{ id: instanceId, "items.elementId": 'Approve' }`        | find items by instance id and elementId    |
+| `{"data.caseId": caseId ,"items.elementId" : 'Request' }` | find items by caseId and item elementId    |
+| `{ "name" : "Leave Application" , "items.status": "wait"}`           | find items for the process in a wait state |
+| `{ id: instanceId, "items.status": 'wait' }`                   | check for items in "wait"                  |
+| `{"items.status": "wait" , "items.elementId": "task_Buy" }`    | find all items that has "wait" status      |
+
+```ts
+query = { 'items.id': item.id };
+items = await api.data.findItems(query);
+```
+`findItems` performs the following 
+- Adds security conditions
+
+- Parses the query and converts it to MongoDB syntax
+
+- Issue mongoDB query; mongoDb returns instances (not items)
+
+- Filters the items and converts object into items
+
+As an example if the api calls
+
+ -  findItems query: ```{"id":"e213ff1b-bb09-43cf-9392-665036903a2c","items.elementId":"task_clean"} ```
+ -  it converts to: ```{"id":"e213ff1b-bb09-43cf-9392-665036903a2c","items":{"$elemMatch":{"elementId":"task_clean"}}} ```
+ -  returns on instance with several items
+ -  it filters the items and returns only the 1 item as required
+
+## Instance Query
+
+Instance Queries are similar to Items Query but return entire Instances with all the items
+
+```ts
+// find instances having elementId
+
+instances = await api.data.findInstances({
+  'items.elementId': 'task_Buy',
+});
+
+//  find instance by itemd id
+
+instances = await api.data.findInstances({ 'items.id': item.id });
+
+// find instance by caseId
+
+instances = await api.data.findInstances({ 'data.caseId': 3030 });
+```
+
 
 # Input-Output Data
 
 Input and output is used in the following scenarios:
+
 - Subprocess (input/output)
 - Service Tasks (input/output)
 - Call Tasks (input/output)
 - Throw Message/Signal (input)
 - Catch Message/Signal (output)
+- User Task (input)
 
 ## Input/Output using Scripts
 
-| variable | description |
-|--|--|
-| **item.data** | refers to Instance Data or the token data for multi-instance tokens |
-| **item.input** | refers to input variable into the called task/event |
-| **item.output** |  is the output of the called task/event |
+| variable        | description                                                         |
+| --------------- | ------------------------------------------------------------------- |
+| **data**   | refers to Instance Data or the token data for multi-instance tokens |
+| **item.input**  | refers to input variable into the called task/event                 |
+| **item.output** | is the output of the called task/event                              |
 
 ```xml
     <bpmn2:serviceTask id="Activity_00ticbc" name="Add 2 Using scripts" implementation="add" camunda:delegateExpression="add">
@@ -152,7 +190,7 @@ Input and output is used in the following scenarios:
         </camunda:executionListener>
         <camunda:executionListener event="end">
           <camunda:script scriptFormat="JavaScript">
-            
+
             item.data.result2= item.output + 100;
 
           </camunda:script>
@@ -172,24 +210,23 @@ Input and output is used in the following scenarios:
           <camunda:outputParameter name="returnText">'out text:'+this.output.text</camunda:outputParameter>
         </camunda:inputOutput>
       </bpmn2:extensionElements>
-
 ```
-* parameter name is the name of variable
-* value is a JavaScript expression
-    
 
+- parameter name is the name of variable
+- value is a JavaScript expression
 
-| Scenario | before call | caller Syntax| after call|
-|--|--|--|--|--|
-|  Throw Msg| parameters.var1= '123';<br />output.var1 | throw(msg,parameters)| - | 
-|  Catch Msg| - | catch(msg,parameters)| data.var1= parameters.var1;|
-|  Call Process| parameters.var1= '123';  | result=call(parameters)|data.var1= result.var1; |
-|  Service Call | parameters.var1= '123';  | result=call(parameters)| data.var1= result.var1;|
-|  Start Event| -| start(parameters)| data.var1= parameters.var1;<br /> data.var1=input.var1;|
+| Scenario     | before call                              | caller Syntax           | after call                                              |
+| ------------ | ---------------------------------------- | ----------------------- | ------------------------------------------------------- |
+| Throw Msg    | parameters.var1= '123';<br />output.var1 | throw(msg,parameters)   | -                                                       |
+| Catch Msg    | -                                        | catch(msg,parameters)   | data.var1= parameters.var1;                             |
+| Call Process | parameters.var1= '123';                  | result=call(parameters) | data.var1= result.var1;                                 |
+| Service Call | parameters.var1= '123';                  | result=call(parameters) | data.var1= result.var1;                                 |
+| Start Event  | -                                        | start(parameters)       | data.var1= parameters.var1;<br /> data.var1=input.var1; |
 
-* Call
- specs:
+- Call
+  specs:
 
+```mermaid
         input:
             var1    ->  data.myVar1
             var2    ->  5
@@ -205,44 +242,49 @@ Input and output is used in the following scenarios:
 
   on-run:
         item.output=call fun(item.input)
-  
+
   on-exit:
 
         scenario 1:
         data.result  = item.output;
         scenario 2:
         data.result  = item.output.result;
+```
 
-* Throw
+- Throw
 
+```mermaid
     specs:
-        
+
     output:
 
             caseId  ->  data.caseId
-    
+
     on-entry:
-       
+
          item.output.caseId= data.caseId;
 
     on-call:
 
         throw (signal,item.output)
+```
 
-* Catch
+- Catch
 
-    specs:  none 
-
-    start trigger:
-
-            data.caseId=input.caseId;
-
-* Start
-
-    specs:  none 
+```mermaid
+    specs:  none
 
     start trigger:
 
             data.caseId=input.caseId;
+```
 
+- Start
 
+```mermaid
+    specs:  none
+
+    start trigger:
+
+            data.caseId=input.caseId;
+```

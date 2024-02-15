@@ -2,6 +2,7 @@ import { Token, TOKEN_TYPE } from './Token';
 import { Node, LoopBehaviour, Behaviour_names } from '../elements/';
 
 import { Execution } from './Execution';
+import { ScriptHandler } from '.';
 
 class Loop {
     id;
@@ -35,7 +36,7 @@ class Loop {
             this.dataPath = token.dataPath + '.' + this.node.id + '[]';
             if (coll) {
                 token.log('loop collection:' + coll);
-                this.items = token.execution.appDelegate.scopeEval(token, coll);
+                this.items = ScriptHandler.evaluateExpression(token, coll);
             }
             else
                 this.items = [];

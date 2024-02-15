@@ -55,6 +55,10 @@ class InstanceLocker {
 
         return await this.dataStore.db.remove(this.dataStore.dbConfiguration.db, "wf_locks", query );
     }    
+    async delete(query) {
+
+        return await this.dataStore.db.remove(this.dataStore.dbConfiguration.db, "wf_locks", query);
+    }    
 
     async list() {
 

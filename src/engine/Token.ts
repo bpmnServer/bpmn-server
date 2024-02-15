@@ -4,7 +4,7 @@ const fs = require('fs');
 
 import { Execution } from './Execution';
 import { SubProcess ,  LoopBehaviour , Element, Node, Flow } from '../elements/'
-import { EXECUTION_EVENT , NODE_ACTION , FLOW_ACTION, TOKEN_STATUS, EXECUTION_STATUS,  ITEM_STATUS, INode, NODE_SUBTYPE} from '../../';
+import { EXECUTION_EVENT , NODE_ACTION , FLOW_ACTION, TOKEN_STATUS, EXECUTION_STATUS,  ITEM_STATUS, INode, NODE_SUBTYPE} from '../';
 import { EventEmitter } from 'events';
 import { Loop } from './Loop';
 import { Item } from './Item';
@@ -145,7 +145,7 @@ class Token implements IToken {
 
         token.loop = loop;
         execution.tokens.set(token.id, token);
-        token.appendData(data);
+        token.appendData(data, originItem);
         if (noExecute==false)
             await token.execute(data);
         return token;
@@ -355,8 +355,8 @@ class Token implements IToken {
      *  renamed from applyInput to appendData
      * @param inputData
      */
-    appendData(inputData) {
-        this.execution.appendData(inputData, this.dataPath);
+    appendData(inputData,item) {
+        this.execution.appendData(inputData, item, this.dataPath);
     }
     /**
      *  is called by Gateways to cancel current token
@@ -394,6 +394,9 @@ class Token implements IToken {
 
         await this.currentNode.setInput(item, data);
         if (item.status == ITEM_STATUS.wait || recover) {// || item.type=='bpmn:SubProcess') {
+
+            await item.node.validate(item);
+
             const ret = await this.currentNode.run(item);
 
 
@@ -519,6 +522,9 @@ class Token implements IToken {
     }
     log(msg) {
         this.execution.log(msg);
+    }
+    info(msg) {
+        this.execution.info(msg);
     }
     error(msg) {
         this.execution.error(msg);

@@ -1,5 +1,5 @@
 
-import { Execution } from '../..';
+import { Execution } from '../';
 import { ServerComponent } from '../server/ServerComponent';
 import { IEngine} from "../interfaces";
 
@@ -23,44 +23,50 @@ class Engine extends ServerComponent implements IEngine{
 	async start(name: any,
 		data: any = {}, 
 		startNodeId: string = null,
-		userId: string=null,
+		userName: string=null,
 		options = {}): Promise<Execution> {
 
 		this.logger.log(`Action:engine.start ${name}`);
-
+		
 
 		const definitions = this.definitions;
 		const source = await definitions.getSource(name);
 
 		const execution = new Execution(this.server,name, source);
-		execution.userId = userId;
+		execution.userName = userName;
+		execution.operation='start';
+		execution.options=options;
 	
-		// new dataStore for every execution to be monitored 
-		/* const newDataStore =new DataStore(this.server);
-		this.server.dataStore = newDataStore;
-
-		newDataStore.monitorExecution(execution); */
 		this.cache.add(execution);
 
-		await this.lock(execution.id);
-		execution.isLocked = true;
+		try {
+			await this.lock(execution.id);
+			execution.isLocked = true;
 
-		execution.worker = execution.execute(startNodeId, data, options);
+			execution.worker = execution.execute(startNodeId, data, options);
 
-		if (options['noWait'] == true) {
-				execution.worker.then(obj=>{ 
-					this.logger.log('after worker is done releasing ..'+execution.instance.id);
-					this.release(execution);
-					});
-			return execution;
+			if (options['noWait'] == true) {
+					execution.worker.then(obj=>{ 
+						this.logger.log('after worker is done releasing ..'+execution.instance.id);
+						this.release(execution);
+						});
+				return execution;
+			}
+			else {
+				const waiter = await execution.worker;
+				await this.release(execution);
+				this.logger.log(`.engine.start ended for ${name}`);
+				return execution;
+			}
 		}
-		else {
-			const waiter = await execution.worker;
-			await this.release(execution);
-			this.logger.log(`.engine.start ended for ${name}`);
-			return execution;
+		catch(exc) {
+			return this.logger.error(exc);
 		}
-
+		finally {
+			if (execution.isLocked)
+				await this.release(execution);
+			execution.isLocked=false;
+		}
 		
 	}
 	/**
@@ -68,13 +74,16 @@ class Engine extends ServerComponent implements IEngine{
 	 * 
 	 * this will also resume execution
 	 * 
-	 * @param instanceQuery		criteria to fetch the instance
-	 * 
-	 * query example:	{ id: instanceId}
-	 *					{ data: {caseId: 1005}}
-	 *					{ items.item.id : 'abcc111322'}
-	 *					{ items.item.itemKey : 'businesskey here'}
-	 *					
+		* @param instanceQuery		criteria to fetch the instance
+		*
+		* query example:
+		* 
+		* ```jsonl
+		* { id: instanceId}
+		* { data: {caseId: 1005}}
+		* { items.id : 'abcc111322'}
+		* { items.itemKey : 'businesskey here'}
+		* ```
 	 */
 	async get(instanceQuery): Promise<Execution> {
 
@@ -87,16 +96,16 @@ class Engine extends ServerComponent implements IEngine{
 		lock instance 
 	*/
 	private async lock(executionId) {
-			this.logger.log('===============locking ..'+executionId);
+			this.logger.log('...locking ..'+executionId);
 			await this.server.dataStore.locker.lock(executionId);
 			
-			this.logger.log('		locking complete ..' + executionId);
+			this.logger.log('   locking complete' + executionId);
 	}
 	/**
 		release instance lock
 	*/
 	private async release(execution: Execution) {
-		this.logger.log('---------------unlocking ..' + execution.id + ' seq ' + execution.seq);
+		this.logger.log('...unlocking ..' + execution.id);
 			await this.server.dataStore.locker.release(execution.id);
 			execution.isLocked=false;
 	}
@@ -143,6 +152,7 @@ class Engine extends ServerComponent implements IEngine{
 
 			newDataStore.monitorExecution(execution); */
 
+
 			this.cache.add(execution);
 			this.logger.log("restore completed: "+instance.saved);
 
@@ -163,7 +173,7 @@ class Engine extends ServerComponent implements IEngine{
 	 * @param itemQuery		criteria to retrieve the item
 	 * @param data
 	 */
-	async assign(itemQuery, data = {}, userId: string = null, assignment = {}): Promise<Execution> {
+	async assign(itemQuery, data = {}, assignment = {}, userName: string,options= {}): Promise<Execution> {
 		
 		this.logger.log(`Action:engine.assign`);
 		this.logger.log(itemQuery);
@@ -172,7 +182,7 @@ class Engine extends ServerComponent implements IEngine{
 
 			const items = await this.server.dataStore.findItems(itemQuery);
 			if (items.length > 1) {
-				this.logger.error(`query produced more than ${items.length} items expecting only one`);
+				this.logger.error(`query produced more than ${items.length} items expecting only one`+JSON.stringify(itemQuery));
 			}
 			const item = items[0];
 			if (!item) {
@@ -181,7 +191,7 @@ class Engine extends ServerComponent implements IEngine{
 
 			const execution = await this.restore(item.instanceId);
 
-			execution.worker = execution.assign(item.id, data,userId,assignment);
+			execution.worker = execution.assign(item.id, data, assignment, userName,options);
 
 			await this.release(execution);
 
@@ -193,18 +203,22 @@ class Engine extends ServerComponent implements IEngine{
 		}
 	}
 	/**
-	 * Continue an existing item that is in a wait state
-	 * 
-	 * -------------------------------------------------
-	 * scenario:
-	 *		itemId			{itemId: value }
-	 *		itemKey			{itemKey: value}
-	 *		instance,task	{instanceId: instanceId, elementId: value }
+     * Continue an existing item that is in a wait state
+     *
+     * -------------------------------------------------
+     * 
+     * scenario:
+     * 
+     * ```
+     * itemId 	{itemId: value }
+     * itemKey 	{itemKey: value}
+     * instance,task	{instanceId: instanceId, elementId: value }
+     * ```
 	 *		
 	 * @param itemQuery		criteria to retrieve the item
 	 * @param data
 	 */
-	async invoke(itemQuery, data = {}, userId: string = null, options = {}): Promise<Execution> {
+	async invoke(itemQuery, data = {}, userName: string = null, options = {}): Promise<Execution> {
 
 		this.logger.log(`Action:engine.invoke`);
 		this.logger.log(itemQuery);
@@ -213,17 +227,20 @@ class Engine extends ServerComponent implements IEngine{
 
 			const items = await this.server.dataStore.findItems(itemQuery);
 			if (items.length > 1) {
-				this.logger.error(`query produced more than ${items.length} items expecting only one`);
+				this.logger.error(`query produced more than ${items.length} items expecting only one`+JSON.stringify(itemQuery));
 			}
 			const item = items[0];
 			if (!item) {
 				this.logger.error("query produced no items for "+JSON.stringify(itemQuery));
 			}
 
+			if (item.status !== 'wait') {
+				this.logger.log(`*****Item status is not in wait state ${item.status} ${item.elementId}-${item.processName}`)
+                    //this.logger.error(`Item status is not in wait state`);
+            }
 			const execution = await this.restore(item.instanceId);
-			execution.userId=userId;
 
-			execution.worker = execution.signal(item.id, data,options);
+			execution.worker = execution.signalItem(item.id, data,userName,options);
 
 			try {
 				if (options['noWait'] == true) {
@@ -257,6 +274,35 @@ class Engine extends ServerComponent implements IEngine{
 	}
 	/**
 	 * 
+	 *	Repeat Timers need to create new Item
+	 * @param instanceId
+	 * @param elementId
+	 * @param data
+	 */
+	async startRepeatTimerEvent(instanceId, prevItem, data = {},options={}) : Promise<Execution> {
+
+		// need to load instance first
+		this.logger.log('startRepeatTimeEvent');
+
+		try {
+
+			const execution= await this.restore(instanceId);
+
+			await execution.signalRepeatTimerEvent(instanceId,prevItem,data,options);
+
+			await this.release(execution);
+
+			this.logger.log("StartRepeatTimerEvent completed "+execution.isLocked);
+
+			return execution;
+		}
+		catch (exc) {
+			return this.logger.error(exc);
+
+		}
+	}
+	/**
+	 * 
 	 * Invoking an event (usually start event of a secondary process) against an existing instance
 	 * or
 	 * Invoking a start event (of a secondary process) against an existing instance
@@ -279,13 +325,13 @@ class Engine extends ServerComponent implements IEngine{
 
 			const execution= await this.restore(instanceId);
 
-			await execution.signal(elementId, data);
+			await execution.signalEvent(elementId, data);
 
 			await this.server.dataStore.save(execution.instance);
 
 			await this.release(execution);
 
-			this.logger.log("invoke completed");
+			this.logger.log("Engine.StartEvent completed "+execution.isLocked);
 
 			return execution;
 		}

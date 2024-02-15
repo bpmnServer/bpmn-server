@@ -1,12 +1,18 @@
 
 import { Token, Execution, TOKEN_TYPE  } from '../../engine';
 import { Node } from '..';
-import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../../..';
-import { Item } from '../../engine/Item';
+import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../../';
+import { Item ,ScriptHandler} from '../../engine';
 import { BPMNServer } from '../../server';
-import { Behaviour } from './';
+import { Behaviour  } from './';
 import { Cron } from '../../server/Cron';
 import { NODE_SUBTYPE } from '../../interfaces';
+
+const dayjs = require('dayjs');
+var relativeTime = require('dayjs/plugin/relativeTime')
+dayjs.extend(relativeTime)
+
+
 
 
 /*
@@ -49,6 +55,7 @@ class TimerBehaviour extends Behaviour {
     duration;
     repeat=1;
     timeCycle;
+    timeDate;
     init() {
         let def;
         this.node.subType = NODE_SUBTYPE.timer;
@@ -62,39 +69,61 @@ class TimerBehaviour extends Behaviour {
             else if (ed.timeCycle) {
                     this.timeCycle = ed.timeCycle.body;
                 }
+            else if (ed.timeDate) {
+                    this.timeDate = ed.timeDate.body;
+                }
             else {
-                    console.log("Error No timeDuration is defined");
+//                  console.log("Error No timeDuration is defined in "+this.node.process.name+' node '+this.node.id);
                 }
             }
         });
 
     }
     describe() {
-        return ['timer','is a timer duration='+this.duration];
+        let spec = '';
+        if (this.duration)
+            spec = 'Duration:'+ this.duration;
+        else if (this.timeCycle)
+            spec = 'Cycle:'+ this.timeCycle;
+        else if (this.timeDate)
+            spec ='DateTime:'+ this.timeDate;
+        
+
+        return [['timer',spec]];
     }
     /**
      * return the next time the timer is due
      * format is time format
      * @param timerModifier - for testing purposes configuration can alter the timer
      */
-    timeDue(timerModifier=null) {
+    timeDue(item,timerModifier=null) {
 
         let seconds;
+        let timeDue;
         if (timerModifier)
             seconds = timerModifier/1000;
         else {
             if (this.duration) {
                 //seconds = toSeconds((parse(this.duration)));
                 seconds= Cron.timeDue(this.duration, null);
+                timeDue = new Date();
+                timeDue = dayjs(timeDue).add(seconds,'s').toDate();
             }
             else if (this.timeCycle) {
                 //seconds = toSeconds((parse(this.timeCycle)));
                 seconds = Cron.timeDue(this.timeCycle, null);
-                 this.repeat = this.getRepeat(this.timeCycle);
+                this.repeat = this.getRepeat(this.timeCycle);
+                timeDue = new Date();
+                timeDue = dayjs(timeDue).add(seconds,'s').toDate();
+            }
+            else if (this.timeDate) {
+                    let timeDate=this.timeDate;
+                    if (timeDate.startsWith('$')) {
+                        timeDate= ScriptHandler.evaluateExpression(item,timeDate);
+                        }
+                timeDue=timeDate;
             }
         }
-        let timeDue = new Date().getTime()/1000;
-        timeDue += seconds;
         return timeDue;
     }
     getRepeat(input) {
@@ -125,42 +154,51 @@ class TimerBehaviour extends Behaviour {
             item.token.log("...Timer duration modified by the configuration to " + timerModifier);
         }
 
-        item.timeDue = this.timeDue(timerModifier);
+        item.timeDue = this.timeDue(item,timerModifier);
 
         item.token.log("timer is set at " + item.timeDue + " - "+ new Date(item.timeDue).toISOString());
 
-        const seconds = item.timeDue - (new Date().getTime()/1000);
+        const seconds = ((new Date(item.timeDue)).getTime()/1000) - (new Date().getTime()/1000);
 
-        item.log("..setting timer for " + seconds + " seconds");
-        setTimeout(this.expires.bind({ item, timer: this }), seconds * 1000);
+        item.log("..setting timer for " + seconds + " seconds for: "+item.id);
+        setTimeout(this.expires.bind({ item, instanceId: item.token.execution.id, timer: this }), seconds * 1000);
     }
     async expires() {
         let item = this['item'] as unknown as Item;
         let timer = this['timer'];
+        let instanceId= this['instanceId'];
      
-        item.timerCount++;
         const exec=item.token.execution;
-        item.token.log("Action:---timer Expired --- lock:"+exec.isLocked+" seq:"+exec.seq);
+        item.token.log("Action:---timer Expired --- lock:"+exec.isLocked+' for '+item.id);
         if (item.status == ITEM_STATUS.wait)    // just in case it was cancelled
         {
             //item.token.signal(null);
 
             if (exec.isLocked===true)
-                await exec.signal(item.id, {});
+                exec.promises.push(exec.signalItem(item.id, {}));
             else
     			await exec.server.engine.invoke({ "items.id": item.id }, null); 
 
         }
         // check for repeat
-        if (timer.repeat > item.timerCount) {
-            let newToken=await Token.startNewToken(TOKEN_TYPE.BoundaryEvent, item.token.execution, item.node, null, item.token, item, null);
-            let newItem = newToken.currentItem;
-            item.token.log('new token for timer repeat ' + item.timerCount + '  '+newItem.elementId);
-            newItem.timerCount = item.timerCount;     
+        if (this.timeCycle) {
 
-            //await timer.startTimer(new);
+console.log('repeating ',item.timerCount);
+
+            if (timer.repeat > item.timerCount) {
+
+                let resp=await exec.server.engine.startRepeatTimerEvent(instanceId, item,{});
+                //let newToken=await Token.startNewToken(TOKEN_TYPE.BoundaryEvent, item.token.execution, item.node, null, item.token, item, null);
+                //let newItem = newToken.currentItem;
+                //item.token.log('new token for timer repeat ' + item.timerCount + '  '+newItem.elementId);
+
+                //            item.timerCount++;
+
+                //await timer.startTimer(new);
+            }
         }
     }
+
     end(item: Item) {
         Cron.timerEnded(item);
         item.timeDue = undefined;

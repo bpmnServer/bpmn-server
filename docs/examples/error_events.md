@@ -1,12 +1,12 @@
 
 # Error Events:
 
-![BPMN Diagram](./error_events.png)
+![BPMN Diagram](error_events.png)
 
 ## Raising Errors
 ### Through an End Events of type Error
 
-```js
+```ts
     <bpmn2:endEvent id="EmdEvemt_error1" name="Throw Error 1">
       <bpmn2:incoming>SequenceFlow_0plhz17</bpmn2:incoming>
       <bpmn2:errorEventDefinition />
@@ -28,7 +28,7 @@ Example of Boundary Event
 
 
 Example of Start Event 
-```js
+```ts
     <bpmn2:subProcess id="SubProcess_0hpeg3q" name="Event Process" triggeredByEvent="true">
       <bpmn2:sequenceFlow id="SequenceFlow_1l0v2kk" sourceRef="StartEvent_catchErrors" targetRef="Task_10xnxy7" />
       <bpmn2:startEvent id="StartEvent_catchErrors" name="Error Catcher for Process">

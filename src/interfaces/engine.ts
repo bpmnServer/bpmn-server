@@ -1,6 +1,6 @@
 import { ITEM_STATUS, EXECUTION_STATUS, NODE_ACTION, FLOW_ACTION, TOKEN_STATUS } from './Enums';
 import { IItemData , IInstanceData } from './';
-import { ILogger, IAppDelegate, IBPMNServer, IDefinition, IElement, Execution, Token, Item, Element, INode, Node, IServerComponent } from '../../';
+import { ILogger, IAppDelegate, IBPMNServer, IDefinition, IElement, Execution, Token, Item, Element, INode, Node, IServerComponent } from '../';
 import { EventEmitter } from 'events';
 interface IDataStore {
 
@@ -48,7 +48,7 @@ interface IToken {
      * this is the primary exectuion method for a token
      */
     execute(inputData): Promise<any>;
-    appendData(inputData: any): void;
+    appendData(inputData: any,item: IItem): void;
     /**
      *  is called by Gateways to cancel current token
      *
@@ -60,12 +60,13 @@ interface IToken {
     goNext(): Promise<void>;
     getSubProcessToken(): IToken;
     log(...msg: any): void;
+    info(...msg: any): void;
     error(msg: any): void;
 }
 
 interface IExecution extends IServerComponent {
     instance: IInstanceData;
-
+    server: IBPMNServer;
     tokens: Map<any, IToken>;
     definition: IDefinition;
     appDelegate: IAppDelegate;
@@ -79,12 +80,12 @@ interface IExecution extends IServerComponent {
     item;
     messageMatchingKey;
     worker;
-    userId;
+    userName;
 
     id;
     status;
+    options;
     name;
-    seq;
 
     getNodeById(id: any): Node;
     getToken(id: number): IToken;
@@ -109,7 +110,10 @@ interface IExecution extends IServerComponent {
      * @param executionId
      * @param inputData
      */
-    signal(executionId: any, inputData: any): Promise<void>;
+    signalItem(executionId: any, inputData: any,options?:{}): Promise<IExecution>;
+    signalEvent(executionId: any, inputData: any,options?:{}): Promise<IExecution>;
+    signalRepeatTimerEvent(executionId,prevItem, inputData:any,options?:{}): Promise<IExecution>;
+
     getItems(query?: any): IItem[];
     getState(): IInstanceData;
     restored(): void;
@@ -121,8 +125,9 @@ interface IExecution extends IServerComponent {
     doExecutionEvent(process:any, event: any): Promise<any>;
     doItemEvent(item: any, event: any): Promise<any>;
     log(...msg: any): void;
+    info(...msg: any): void;
     error(msg: any): void;
-    appendData(inputData: any, dataPath?: any): void;
+    appendData(inputData: any,item:IItem, dataPath?: any,assignment?:any): void;
     getData(dataPath: any): any;
     getAndCreateData(dataPath: any, asArray?: boolean): any;
 }

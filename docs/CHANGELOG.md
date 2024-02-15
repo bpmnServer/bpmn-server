@@ -12,6 +12,12 @@ and here
 
 ### Changed
 -->
+## Release 1.5.0 -- 2023-11
+- New API
+- Added User Authentication for WebApp
+- Added User Management; Signup and Admin
+- Added Assign function, users can Assign other users to the task
+- Improved Users Interface to support above changes 
 
 ## Release 1.4.1 -- 2023-10-2
 - Added Instance Locking, supporting multiple nodeJS servers running against same MongoDB
@@ -70,10 +76,10 @@ and here
 ## Release 1.3.8    - 2022-07-09
 
 - Fix errors in throwSignal/throwMessage in bpmn-client
-- Fix errors in throwSignal/throwMessage in api [#52](/../../issues/52)
+- Fix errors in throwSignal/throwMessage in api [#52](https://github.com/bpmnServer/bpmn-server/issues/52)
 - Fix bug showing instance 'end' while still running when in gateway
-- Fix issue with editing element name in property panel [#54](/../../issues/54)
-- Include tmp folder in install [#56](/../../issues/56)
+- Fix issue with editing element name in property panel [#54](https://github.com/bpmnServer/bpmn-server/issues/54)
+- Include tmp folder in install [#56](https://github.com/bpmnServer/bpmn-server/issues/56)
 - Minor changes to UI - preserve the last process
 
 

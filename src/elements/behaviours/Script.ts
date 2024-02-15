@@ -1,5 +1,5 @@
 import { Behaviour } from '.';
-import { Item } from "../../..";
+import { Item } from "../../";
 
 class ScriptBehaviour extends Behaviour {
     /*    
@@ -36,7 +36,6 @@ class ScriptBehaviour extends Behaviour {
             this.scripts.push(scr.$body);
             this.node.scripts.set(this.definition.event, this.scripts);
         }
-
     }
     /*
     start(item: Item) {
@@ -62,14 +61,7 @@ class ScriptBehaviour extends Behaviour {
         item.token.log('returned from script call ' + " for " + item.id);
     } */
     describe() {
-        var scrs = this.definition['$children'];
-        var desc = [];
-        for (var i = 0; i < scrs.length; i++) {
-            var scr = scrs[i];
-            desc.push([`script on ${this.definition.event}`,` ${this.scripts}`]);
-        }
-
-        return desc;
+        return super.describe();
     }
 }
 

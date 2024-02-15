@@ -2,7 +2,7 @@ import type { TimerBehaviour } from ".";
 import type { Node } from "..";
 import { Behaviour } from '.';
 import { Item } from "../../engine/Item";
-import { NODE_SUBTYPE } from "../../..";
+import { NODE_SUBTYPE } from "../../";
 /**
  * 
  * 
@@ -20,7 +20,7 @@ class MessageEventBehaviour extends Behaviour {
 
     }
     async start(item: Item) {
-        item.context.logger.log("message event behaviour start");
+        item.log("message event behaviour start");
         if (this.node.isCatching) {
             item.messageId = this.messageId;
         }
@@ -41,9 +41,9 @@ class MessageEventBehaviour extends Behaviour {
     }
     describe() {
         if (this.node.isCatching) 
-            return ['Message', `catches message '${this.messageId}'`];
+            return [['Message', `catches message '${this.messageId}'`]];
         else
-            return ['Message', `throws message '${this.messageId}'`];
+            return [['Message', `throws message '${this.messageId}'`]];
     }
 }
 class SignalEventBehaviour extends Behaviour {

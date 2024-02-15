@@ -1,4 +1,7 @@
-import { IExecution, IItem, NODE_ACTION, FLOW_ACTION, IModelsDatastore, IDataStore,ICacheManager} from '../..';
+import {
+    IExecution, IItem, NODE_ACTION, FLOW_ACTION, IModelsDatastore,
+    IDataStore, ICacheManager,IUserService
+} from '../';
 
 
 interface IConfiguration 
@@ -15,7 +18,8 @@ interface IConfiguration
     definitions(server): IModelsDatastore,
     appDelegate(server): IAppDelegate,
     dataStore(server): IDataStore,
-    cacheManager(server): ICacheManager
+    cacheManager(server): ICacheManager,
+    userService(server): IUserService
 }
 
 interface IDatabaseConfigurationBase {
@@ -62,6 +66,7 @@ interface ILogger {
     warn(...message: any): void;
     log(...message: any): void;
     error(err: any): void;
+    reportError(err: any): void;
     save(filename: any): Promise<void>;
 }
 /**
@@ -75,7 +80,7 @@ interface ILogger {
  * */
 interface IAppDelegate {
     moddleOptions;
-    servicesProvider;       // to respond to all named services
+    getServicesProvider(IExecution): any;       // to respond to all named services
     sendEmail(to, msg, body);
     executionStarted(execution);
     startUp(options); // start of server
@@ -97,8 +102,6 @@ interface IAppDelegate {
      */
     serviceCalled(serviceName,data,item: IItem);
 
-    scopeEval(scope, script);
-    scopeJS(scope, script);
 
 }
 

@@ -1,25 +1,10 @@
 'use strict';
 
-/**
- * 
- * */
-// is fired when item is wait state
-function checkOnWait(task,item) {
-
-}
-// is fired when item is end state
-function checkOnEnd() {
-
-}
-function getDueTimers() {
-
-}
-function getDueDate(task) {
-
-}
 
 function dateDiff(dateStr) {
 
+    if (dateStr == null)
+        return '';
     var endDate = new Date();
     var startTime = new Date(dateStr);
     var time1 = endDate.getTime();
@@ -54,4 +39,4 @@ function dateDiff(dateStr) {
     return (seconds + " seconds");
 }
 
-export { dateDiff, checkOnWait, checkOnEnd, getDueTimers, getDueDate }
+export { dateDiff }

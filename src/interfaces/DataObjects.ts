@@ -7,14 +7,15 @@ interface IItemData {
     name: string;       // name of bpmn element
     type: string;       // bpmn element type
     instanceId: string;   // Instance Id of the item
+    processName?: string;
     tokenId: any;         // execution Token
-    userId: any;
+    userName: any;
     startedAt: any;
     endedAt: any;
     seq: any;
     timeDue: Date;
     status: ITEM_STATUS;
-    data: any;
+//    data: any;
     messageId;
     signalId;
     vars;
@@ -24,11 +25,13 @@ interface IItemData {
     dueDate;
     followUpDate;
     priority;
+
 }
 interface IInstanceData {
     id;
     name;
     status;
+    version;
     startedAt;
     endedAt;
     saved;
@@ -39,7 +42,6 @@ interface IInstanceData {
     tokens;
     loops;
     parentItemId;   // used for subProcess Calls
-    vars;
 }
 
 
@@ -82,6 +84,9 @@ interface IEventData {
     maxRepeat;
     repeatCount;
     timeDue?: Date;
+    lane?: string;
+    candidateGroups?;
+    candidateUsers?;
 
 }
 interface IBpmnModelData {

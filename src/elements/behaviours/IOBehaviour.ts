@@ -2,6 +2,7 @@ import { TimerBehaviour } from ".";
 import { Node } from "..";
 import { Behaviour } from '.';
 import type { Item } from "../../engine/Item";
+import { ScriptHandler } from "../../engine/ScriptHandler";
 
 /*
  * will prepare input at start
@@ -12,14 +13,137 @@ import type { Item } from "../../engine/Item";
 class IOParameter {
     type;
     name;
+    subType;
     value;
     isInput() { return (this.type == 'camunda:inputParameter'); }
     isOutput() { return (this.type == 'camunda:outputParameter'); }
-    constructor(type, name, value) {
-        this.type = type;
-        this.name = name;
-        this.value = value;
+    constructor(ioObject) {
+        
+        this.type = ioObject['$type'];
+        this.name = ioObject['name'];
+        if (ioObject['$body'])
+            this.value = ioObject['$body'];
+        else if (ioObject['$children']) {
+            let details = ioObject['$children'];
+            details.forEach(detail => {
+                this.subType = detail['$type'];
+                if (this.subType == 'camunda:list') {
+                    if (detail['$children']) {
+                        this.value = [];
+                        detail['$children'].forEach(entry => {
+                            this.value.push(entry['$body']);
+                        });
+                    }
+                }
+                else if (this.subType == 'camunda:map') {
+                    if (detail['$children']) {
+                        const map = new Map();
+                        detail['$children'].forEach(entry => {
+                            map.set(entry['key'], entry['$body']);
+                        });
+                        this.value = map;
+                    }
+                }
+                else if (this.subType == 'camunda:script') {
+                  this.value=detail['$body'];
+                }
+                else
+                    this.value = detail['$children'];
+            });
+        }
     }
+    /**
+     * 
+     * 
+#### Input/Output
+
+`myVar` Type| Example Value| |
+--- | --- | --- |
+Text/String| hello| No explicit quotes needed
+List| [ 'str1', 'str2', item.data.myExistingVar ]
+Map| { 'key1':  'val1', 'key2': 'val2' } 
+JavaScript | data.item.myExistingVar 
+JavaScript| { 'key1': 'val1', 'key2': 'val2' , 'key3': [item.data.myExistingVar, 'hello'], 'key4': { 'ikey5': item.data.myExistingVar}}
+
+     * 
+     * @param item 
+     *  
+     * @returns 
+     */
+    evaluate(item) {
+        /**
+         * scenario for call
+         * */
+        var val;
+        var evalValue;
+        if (this.subType == 'camunda:text') {
+            val = this.value;
+        }
+        else if (this.subType == 'camunda:list') {
+            val = [];
+            this.value.forEach(entry => {
+                //val.push(item.token.execution.appDelegate.scopeEval(item, entry));
+                evalValue = ScriptHandler.evaluateExpression(item, entry);
+
+                val.push(evalValue);
+            });
+        }
+        else if (this.subType == 'camunda:map') {
+            val = new Map();
+            (this.value).forEach((value, key) => {
+                //const newVal = item.token.execution.appDelegate.scopeEval(item, value);
+                evalValue = ScriptHandler.evaluateExpression(item, value);
+
+                val.set(key, evalValue)
+            });
+        }
+        else if (this.subType == 'camunda:script') {
+            val = ScriptHandler.evaluateExpression(item, this.value);
+        }        
+        else { // just text
+            if ((this.value.startsWith('$')))
+                val = ScriptHandler.evaluateExpression(item, this.value.substring(1));
+            else
+                val=this.value;
+        }
+
+        return val;
+    }
+
+    describe() {
+        /**
+         * scenario for call
+         * */
+        var val;
+        var evalValue;
+        if (this.subType == 'camunda:text') {
+            val = 'text:'+this.value;
+        }
+        else if (this.subType == 'camunda:list') {
+            val = [];
+            this.value.forEach(entry => {
+                val.push(entry);
+            });
+            val='list:'+JSON.stringify(val);
+        }
+        else if (this.subType == 'camunda:map') {
+            val = new Map();
+            (this.value).forEach((value, key) => {
+                val.set(key, value)
+            });
+            val='map:'+Array.from(val.entries());
+        }
+        else if (this.subType == 'camunda:script') {
+            val = 'script:'+this.value;
+        }        
+        else { // just text
+                val='text:'+this.value;
+        }
+
+        return val;
+    }
+
+    
 
 }
 class IOBehaviour extends Behaviour {
@@ -30,7 +154,7 @@ class IOBehaviour extends Behaviour {
         var ios = this.definition['$children'];
         for (var i = 0; i < ios.length; i++) {
             var io = ios[i];
-            this.parameters.push(new IOParameter(io['$type'], io['name'], io['$body']));
+            this.parameters.push(new IOParameter(io));//['$type'], io['name'], io['$body']));
         }
     }
     /*
@@ -50,7 +174,8 @@ class IOBehaviour extends Behaviour {
                  * scenario for call
                  * */
                 hasInput = true;
-                var val = item.token.execution.appDelegate.scopeEval(item, param.value);
+                var val;
+                val = param.evaluate(item);
                 item.input[param.name] = val;
                 item.log('...set at enter data input : input.' + param.name + ' = ' + val);
             }
@@ -61,7 +186,7 @@ class IOBehaviour extends Behaviour {
              * */
             this.parameters.forEach(param => {
                 if (param.isOutput()) {
-                    var val = item.token.execution.appDelegate.scopeEval(item, param.value);
+                    var val = ScriptHandler.evaluateExpression(item, param.value);
                     item.output[param.name] = val;
                     item.log('...set at enter data output : output.' + param.name + ' = ' + val);
                 }
@@ -87,7 +212,7 @@ class IOBehaviour extends Behaviour {
                  * */
 
                 if (typeof param.value !== 'undefined' && param.value !== '') {
-                    var val = item.token.execution.appDelegate.scopeEval(item, param.value);
+                    var val = ScriptHandler.evaluateExpression(item, param.value);
                     item.log('...set at exit data output : data.' + param.name + ' = ' + val);
                     item.token.data[param.name] = val;
                 }
@@ -105,10 +230,10 @@ class IOBehaviour extends Behaviour {
         var output = '';
         this.parameters.forEach(param => {
             if (param.isOutput()) {
-                    output += param.name +'='+param.value;
+                    output +='\n' + param.name +'='+param.value;
             }
             else
-                input+= param.name + '=' + param.value;
+                input+='<br />'+ param.name + '=' + param.describe();
 
         });
 
