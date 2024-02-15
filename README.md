@@ -12,6 +12,8 @@ to make them ideal platform to do long running business processes, durable servi
 
 ![](./docs/images/Modeler.png)
 
+`bpmn` models can also be imported from other tools.
+
 Typically your application has multiple bpmn models, a model is represented in a bpmn definition (xml).
 
 Each Model is made of various elements, an `element` can be a `node` in the diagram (events/tasks/gateway) or a  `flow`
@@ -31,9 +33,9 @@ During Execution, Model Listeners and Application Listeners are invoked.
 
 The execution `engine` is availabe through an API [see API.engine](./docs/api/interfaces/IAPIEngine.md).
 
-For more details about Invoking Execution Engine [see](./docs/invokation.md)
+[For more details about Invoking Execution Engine](./docs/invokation.md)
 
-For more details about Execution behaviour [see](./docs/execution.md)
+[For more details about Execution behaviour](./docs/execution.md)
 
 ## Datastore
 
@@ -41,7 +43,20 @@ At various stages of execution, instance object with its parts is saved into a d
 
 Instances and Items can be queried through an API [see API.data](./docs/api/interfaces/IAPIData.md)
 
-For more details about data management [see Data](./docs/data.md)
+[For more details about data management](./docs/data.md)
+
+# User Management and Security
+
+`bpmn-server` is relying on the front-end applicaton to authenticate users and to pass user information through the API.
+1. Model designer/developr can define assignee, candidateUsers, candidateUserGroups as static string or JavaScript expressions
+
+2. Application fron-end need to pass the implementation of `userService' 
+  
+3. `bpmnServer` will enforce security rules based on the current user passed by the application
+
+`bpmn-web` Demo Application , provides a complete implementation of users management using Passport and MongoDB.
+
+[For more details about security](./docs/security.md)
 
 # Demo Web Application
 
@@ -67,22 +82,6 @@ The web app provides:
 
 </details>
 
-# User Management and Security
-
-`bpmn-server` is relying on the front-end applicaton authenticate users and to pass user information through the API.
-1. Model designer/developr can define assignee, candidateUsers, candidateUserGroups as static string or JavaScript expressions
-
-2. Application fron-end need to pass the implementation of `userService' 
-
-```ts
-       let user1 =new SecureUser({ userName: 'user1', userGroups: ['Owner', 'Others']});
-       let response = await api.engine.start('Vacation Request', {reason:'I like it',type:'Vacation'}, user1);
-``` 
-   
-3. `bpmnServer` will enforce security rules based on the current user passed by the application
-
-Demo Application(Express or NestJS) , provides a complete implementation of users management using Passport and MongoDB
-
 # Full Demo Web Application
 
 We Provide a full demo @ https://bpmn.omniworkflow.com
@@ -90,11 +89,10 @@ We Provide a full demo @ https://bpmn.omniworkflow.com
 # Installation
 
 This package requires Node.js and an access to MongoDB ()
-if you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas)
+if you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas) or can be [installed locally](https://www.mongodb.com/docs/manual/installation/)
 
 ### 1. git clone
 ```sh
-
 > git clone https://github.com/bpmnServer/bpmn-web.git
 ```
 ### 2. install packages

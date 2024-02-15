@@ -17,12 +17,33 @@ Please note code in this page is for illustration purposes only.
 
 In the demo app:
 
-- root files
-- Web Files; views, routes, public
-
-![](images/bpmn-web-folders.png)
+```
++---src
+|   +---examples        examples stand-alone scripts
+|   +---routes          express routes 
+|   +---scripts         stand-alone express (cli/setup)
+|   +---test            test scripts
+|   |   +---feature
+|   |   +---helpers
+|   +---uploads
+|   +---userAccess      Using passport
+|   |   +---config
+|   |   +---controllers
+|   |   +---models
+|   |   +---routes
+|   |   \---views
+|   |       \---account
+|   +---views           express views for bpmn-web
+|   |   +---includes
+|   |   +---models
+|   |   \---partials
+|   \---WorkflowApp     Entry point into application 
+        
+```
 
 ### Workflow app
+
+This is your custom installation of bpmn-server 
 
 <table>
 <tr><td>Folder    </td><td>Class    </td><td>   </td></tr>
@@ -32,7 +53,9 @@ In the demo app:
 [configuration](api/classes/Configuration.md)
 
 </td><td>
-Entry point to application configuration parameters and defining various components used in the workflow app   
+Entry point to application configuration parameters and defining various components used in the workflow app.
+
+
 </td></tr>
 <tr><td>    </td><td>
 
@@ -44,17 +67,4 @@ Entry point to application configuration parameters and defining various compone
 <tr><td>    </td><td>    </td><td>   </td></tr>
 </table>
 
-This is your custom installation of bpmn-server 
-
-
-### Use Case 1: Staging a Process
-In this use case a User invokes some business logic that requires a process start ...
-When a process reaches a User Task it issues a notification to user(s).
-
-![](images/processStart.png)
-
-### Use Case 2: Invoking Oustatnding (User Tasks in wait state) Tasks
-
-
-![](images/InvokeTask.png)
 

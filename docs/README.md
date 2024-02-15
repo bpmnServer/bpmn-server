@@ -12,6 +12,8 @@ to make them ideal platform to do long running business processes, durable servi
 
 ![](images/Modeler.png)
 
+`bpmn` models can also be imported from other tools.
+
 Typically your application has multiple bpmn models, a model is represented in a bpmn definition (xml).
 
 Each Model is made of various elements, an `element` can be a `node` in the diagram (events/tasks/gateway) or a  `flow`
@@ -31,9 +33,9 @@ During Execution, Model Listeners and Application Listeners are invoked.
 
 The execution `engine` is availabe through an API [see API.engine](api/interfaces/IAPIEngine.md).
 
-For more details about Invoking Execution Engine [see](invokation.md)
+[For more details about Invoking Execution Engine](invokation.md)
 
-For more details about Execution behaviour [see](execution.md)
+[For more details about Execution behaviour](execution.md)
 
 ## Datastore
 
@@ -41,7 +43,20 @@ At various stages of execution, instance object with its parts is saved into a d
 
 Instances and Items can be queried through an API [see API.data](api/interfaces/IAPIData.md)
 
-For more details about data management [see Data](data.md)
+[For more details about data management](data.md)
+
+# User Management and Security
+
+`bpmn-server` is relying on the front-end applicaton to authenticate users and to pass user information through the API.
+1. Model designer/developr can define assignee, candidateUsers, candidateUserGroups as static string or JavaScript expressions
+
+2. Application fron-end need to pass the implementation of `userService' 
+  
+3. `bpmnServer` will enforce security rules based on the current user passed by the application
+
+`bpmn-web` Demo Application , provides a complete implementation of users management using Passport and MongoDB.
+
+[For more details about security](security.md)
 
 # Demo Web Application
 
@@ -67,26 +82,6 @@ The web app provides:
 
 </details>
 
-# User Management and Security
-
-`bpmn-server` is relying on the front-end applicaton authenticate users and to pass user information through the API.
-1. Model designer/developr can define assignee, candidateUsers, candidateUserGroups as static string or JavaScript expressions
-
-2. Application fron-end need to pass the implementation of `userService' 
-
-```ts
-       let user1 =new SecureUser({ userName: 'user1', userGroups: ['Owner', 'Others']});
-       let response = await api.engine.start('Vacation Request', {reason:'I like it',type:'Vacation'}, user1);
-``` 
-   
-3. `bpmnServer` will enforce security rules based on the current user passed by the application
-
-Demo Application(Express or NestJS) , provides a complete implementation of users management using Passport and MongoDB
-
-# Application Integration
-
-`bpmn-server` is intended to be integrated into your application[see](customization.md)
-
 # Full Demo Web Application
 
 We Provide a full demo @ https://bpmn.omniworkflow.com
@@ -94,32 +89,29 @@ We Provide a full demo @ https://bpmn.omniworkflow.com
 # Installation
 
 This package requires Node.js and an access to MongoDB ()
-if you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas)
+if you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas) or can be [installed locally](https://www.mongodb.com/docs/manual/installation/)
 
+### 1. git clone
 ```sh
-
 > git clone https://github.com/bpmnServer/bpmn-web.git
-
+```
+### 2. install packages
+```
 > npm install
-
+``````
+### 3. setup the app
+```
 > npm run setup
 ```
+ 
 Edit .env file to have MongoDB point to your server or free cloud account
 
 ```env
-# PORT # for express application
-PORT=3000
-
-#API_KEY is used for remote access
-API_KEY=12345
-
 # MongoDB Settings
 MONGO_DB_URL=mongodb://0.0.0.0:27017/bpmn
 #
-... more settings
 ```
-
-- Run Setup one more time
+- Run Setup again to create db objects
 
 ```sh
 > npm run setup
@@ -127,7 +119,7 @@ MONGO_DB_URL=mongodb://0.0.0.0:27017/bpmn
 
 Your installation is now complete.
 
-## To start server
+### 4. Start server
 
 ```sh
 > npm run start
@@ -146,10 +138,14 @@ App is running at http://localhost:3000 in development mode
 
 Use your browser to view the bpmn-server running
 
-### Docker installation
-To install MongoDB, bpmn-server and bpmn-web in on container
-#### 1. Create a folder
-#### 2. create a `docker-compose.yml` as follows:
+## Docker installation
+<details>
+<summary>
+To install MongoDB, bpmn-server and bpmn-web in on a docker container
+</summary>
+
+#### 1. Create a folder , cd to folder
+#### 2. Create a `docker-compose.yml` as follows:
 ```
 version: "3.7"
 name: bpmn-server
@@ -188,11 +184,13 @@ volumes:
 ```
 #### 3. start the container `docker compose up -d`
 
-
+</details>
 
 ## Command Line Interface
-
+<details>
+<summary>
 bpmnServer provide some basic functionalities using CLI
+</summary>
 
 ```sh
 >npm run cli
@@ -221,11 +219,16 @@ Enter Command, q to quit, or ? to list commands
 >
 ```
 
+</details>
+
 ## to update to latest release
 
 ```sh
 > npm update bpmn-server
 ```
+# Application Integration
+
+`bpmn-server` is intended to be integrated into your application [see](customization.md)
 
 # Documentation
 
