@@ -12,6 +12,22 @@ and here
 
 ### Changed
 -->
+## Release 2.0.1 -- 2024-02
+- Moved webApp as a separate Repo 
+- Changed install procedure 
+- Compile src into dist , repos only include src (TS)
+- Re-Write docs 
+- Added Docusaruas
+- Configuration.ts: - Added UserService
+- AppServices.ts is the location for all services
+- Logger: added info to summarize actions
+- Support TaskListener 
+- Input/Output Variables now supports multiple types
+- Timer: now supports timeDate type and repeat
+- Process: supports script events
+- ServiceName can now include child objects
+- UserService: added `validate` Event
+
 ## Release 1.5.0 -- 2023-11
 - New API
 - Added User Authentication for WebApp

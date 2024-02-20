@@ -583,8 +583,6 @@ class Execution extends ServerComponent implements IExecution {
         }
 
         if (inputData) {
-            this.addHistory(inputData,assignment,item);
-
             if (asArray) {
                 target.push(inputData);
             }
@@ -602,24 +600,7 @@ class Execution extends ServerComponent implements IExecution {
             }
         }
     }
-    addHistory(inputData, assignment,item) {
-        return; // disabled
-        if (!this.instance.data['_history'])
-            this.instance.data['_history'] = [];
-        const history = this.instance.data['_history'];
-        const historyRecord = {
-            date: new Date(), user: this.userName,
-            operation: this.operation,
-            data: inputData
-        };
-        if (assignment) {
-            historyRecord['assignment'] = assignment;
-            historyRecord['itemId'] = item.id;
 
-        }
-        history.push(historyRecord);
-
-    }
     getData(dataPath) {
         let target = this.instance.data;
 

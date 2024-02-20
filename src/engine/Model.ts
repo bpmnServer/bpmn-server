@@ -21,8 +21,6 @@ class InstanceObject implements IInstanceData {
     loops=[];
     parentItemId;
     vars;
-    involvements;
-    authorizations;
 
 }
 /**
@@ -57,9 +55,6 @@ class ItemObject implements IItemData {
     dueDate;
     followUpDate;
     priority;
-    assignments;
-    authorizations;
-    notifications;
 
 }
 class TokenObject {
