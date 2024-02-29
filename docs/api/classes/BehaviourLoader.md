@@ -35,7 +35,7 @@
 
 #### Defined in
 
-[elements/behaviours/BehaviourLoader.ts:36](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/elements/behaviours/BehaviourLoader.ts#L36)
+[elements/behaviours/BehaviourLoader.ts:36](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/elements/behaviours/BehaviourLoader.ts#L36)
 
 ## Methods
 
@@ -56,7 +56,7 @@
 
 #### Defined in
 
-[elements/behaviours/BehaviourLoader.ts:114](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/elements/behaviours/BehaviourLoader.ts#L114)
+[elements/behaviours/BehaviourLoader.ts:114](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/elements/behaviours/BehaviourLoader.ts#L114)
 
 ___
 
@@ -111,4 +111,4 @@ example:
 
 #### Defined in
 
-[elements/behaviours/BehaviourLoader.ts:156](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/elements/behaviours/BehaviourLoader.ts#L156)
+[elements/behaviours/BehaviourLoader.ts:156](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/elements/behaviours/BehaviourLoader.ts#L156)

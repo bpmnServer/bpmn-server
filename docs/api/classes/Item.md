@@ -76,7 +76,7 @@
 
 #### Defined in
 
-[engine/Item.ts:55](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L55)
+[engine/Item.ts:55](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L55)
 
 ## Properties
 
@@ -90,7 +90,7 @@
 
 #### Defined in
 
-[engine/Item.ts:8](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L8)
+[engine/Item.ts:8](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L8)
 
 ___
 
@@ -104,7 +104,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:9](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L9)
+[engine/Item.ts:9](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L9)
 
 ___
 
@@ -118,7 +118,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:10](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L10)
+[engine/Item.ts:10](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L10)
 
 ___
 
@@ -132,7 +132,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:11](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L11)
+[engine/Item.ts:11](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L11)
 
 ___
 
@@ -146,7 +146,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:12](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L12)
+[engine/Item.ts:12](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L12)
 
 ___
 
@@ -160,7 +160,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:13](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L13)
+[engine/Item.ts:13](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L13)
 
 ___
 
@@ -174,7 +174,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:14](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L14)
+[engine/Item.ts:14](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L14)
 
 ___
 
@@ -188,7 +188,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:15](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L15)
+[engine/Item.ts:15](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L15)
 
 ___
 
@@ -202,7 +202,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:16](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L16)
+[engine/Item.ts:16](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L16)
 
 ___
 
@@ -212,7 +212,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:17](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L17)
+[engine/Item.ts:17](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L17)
 
 ___
 
@@ -222,7 +222,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:18](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L18)
+[engine/Item.ts:18](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L18)
 
 ___
 
@@ -236,7 +236,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:19](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L19)
+[engine/Item.ts:19](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L19)
 
 ___
 
@@ -250,7 +250,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:20](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L20)
+[engine/Item.ts:20](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L20)
 
 ___
 
@@ -264,7 +264,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:21](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L21)
+[engine/Item.ts:21](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L21)
 
 ___
 
@@ -278,7 +278,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:22](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L22)
+[engine/Item.ts:22](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L22)
 
 ___
 
@@ -292,7 +292,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:23](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L23)
+[engine/Item.ts:23](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L23)
 
 ___
 
@@ -306,7 +306,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:24](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L24)
+[engine/Item.ts:24](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L24)
 
 ___
 
@@ -320,7 +320,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:25](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L25)
+[engine/Item.ts:25](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L25)
 
 ___
 
@@ -334,7 +334,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:28](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L28)
+[engine/Item.ts:28](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L28)
 
 ___
 
@@ -348,7 +348,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:49](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L49)
+[engine/Item.ts:49](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L49)
 
 ___
 
@@ -358,7 +358,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:50](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L50)
+[engine/Item.ts:50](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L50)
 
 ___
 
@@ -372,7 +372,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:52](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L52)
+[engine/Item.ts:52](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L52)
 
 ___
 
@@ -386,7 +386,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:53](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L53)
+[engine/Item.ts:53](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L53)
 
 ## Accessors
 
@@ -400,7 +400,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:30](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L30)
+[engine/Item.ts:30](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L30)
 
 • `set` **data**(`val`): `void`
 
@@ -416,7 +416,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:31](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L31)
+[engine/Item.ts:31](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L31)
 
 ___
 
@@ -430,7 +430,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:33](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L33)
+[engine/Item.ts:33](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L33)
 
 ___
 
@@ -448,7 +448,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:34](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L34)
+[engine/Item.ts:34](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L34)
 
 ___
 
@@ -466,7 +466,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:35](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L35)
+[engine/Item.ts:35](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L35)
 
 ___
 
@@ -484,7 +484,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:36](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L36)
+[engine/Item.ts:36](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L36)
 
 ___
 
@@ -502,7 +502,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:39](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L39)
+[engine/Item.ts:39](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L39)
 
 ___
 
@@ -520,7 +520,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:42](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L42)
+[engine/Item.ts:42](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L42)
 
 ___
 
@@ -538,7 +538,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:45](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L45)
+[engine/Item.ts:45](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L45)
 
 ## Methods
 
@@ -558,7 +558,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:29](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L29)
+[engine/Item.ts:29](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L29)
 
 ___
 
@@ -578,7 +578,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:32](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L32)
+[engine/Item.ts:32](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L32)
 
 ___
 
@@ -592,7 +592,7 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:64](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L64)
+[engine/Item.ts:64](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L64)
 
 ___
 
@@ -614,4 +614,4 @@ ___
 
 #### Defined in
 
-[engine/Item.ts:80](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/engine/Item.ts#L80)
+[engine/Item.ts:80](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/engine/Item.ts#L80)

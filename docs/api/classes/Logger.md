@@ -60,7 +60,7 @@ msgs can be cleared by the clean method
 
 #### Defined in
 
-[common/Logger.ts:14](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/common/Logger.ts#L14)
+[common/Logger.ts:14](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/common/Logger.ts#L14)
 
 ## Properties
 
@@ -70,7 +70,7 @@ msgs can be cleared by the clean method
 
 #### Defined in
 
-[common/Logger.ts:9](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/common/Logger.ts#L9)
+[common/Logger.ts:9](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/common/Logger.ts#L9)
 
 ___
 
@@ -80,7 +80,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:10](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/common/Logger.ts#L10)
+[common/Logger.ts:10](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/common/Logger.ts#L10)
 
 ___
 
@@ -90,7 +90,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:11](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/common/Logger.ts#L11)
+[common/Logger.ts:11](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/common/Logger.ts#L11)
 
 ___
 
@@ -100,7 +100,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:12](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/common/Logger.ts#L12)
+[common/Logger.ts:12](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/common/Logger.ts#L12)
 
 ## Methods
 
@@ -127,7 +127,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:17](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/common/Logger.ts#L17)
+[common/Logger.ts:17](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/common/Logger.ts#L17)
 
 ___
 
@@ -154,7 +154,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:23](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/common/Logger.ts#L23)
+[common/Logger.ts:23](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/common/Logger.ts#L23)
 
 ___
 
@@ -172,7 +172,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:36](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/common/Logger.ts#L36)
+[common/Logger.ts:36](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/common/Logger.ts#L36)
 
 ___
 
@@ -190,7 +190,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:40](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/common/Logger.ts#L40)
+[common/Logger.ts:40](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/common/Logger.ts#L40)
 
 ___
 
@@ -216,7 +216,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:44](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/common/Logger.ts#L44)
+[common/Logger.ts:44](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/common/Logger.ts#L44)
 
 ___
 
@@ -246,7 +246,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:47](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/common/Logger.ts#L47)
+[common/Logger.ts:47](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/common/Logger.ts#L47)
 
 ___
 
@@ -276,7 +276,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:51](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/common/Logger.ts#L51)
+[common/Logger.ts:51](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/common/Logger.ts#L51)
 
 ___
 
@@ -306,7 +306,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:54](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/common/Logger.ts#L54)
+[common/Logger.ts:54](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/common/Logger.ts#L54)
 
 ___
 
@@ -326,7 +326,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:57](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/common/Logger.ts#L57)
+[common/Logger.ts:57](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/common/Logger.ts#L57)
 
 ___
 
@@ -350,7 +350,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:77](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/common/Logger.ts#L77)
+[common/Logger.ts:77](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/common/Logger.ts#L77)
 
 ___
 
@@ -374,7 +374,7 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:94](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/common/Logger.ts#L94)
+[common/Logger.ts:94](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/common/Logger.ts#L94)
 
 ___
 
@@ -398,4 +398,4 @@ ___
 
 #### Defined in
 
-[common/Logger.ts:97](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/common/Logger.ts#L97)
+[common/Logger.ts:97](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/common/Logger.ts#L97)

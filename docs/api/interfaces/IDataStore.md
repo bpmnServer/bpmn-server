@@ -34,7 +34,7 @@
 
 #### Defined in
 
-[interfaces/datastore.ts:7](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/datastore.ts#L7)
+[interfaces/datastore.ts:7](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/datastore.ts#L7)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:8](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/datastore.ts#L8)
+[interfaces/datastore.ts:8](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/datastore.ts#L8)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:9](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/datastore.ts#L9)
+[interfaces/datastore.ts:9](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/datastore.ts#L9)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:10](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/datastore.ts#L10)
+[interfaces/datastore.ts:10](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/datastore.ts#L10)
 
 ## Methods
 
@@ -85,7 +85,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:11](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/datastore.ts#L11)
+[interfaces/datastore.ts:11](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/datastore.ts#L11)
 
 ___
 
@@ -106,7 +106,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:12](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/datastore.ts#L12)
+[interfaces/datastore.ts:12](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/datastore.ts#L12)
 
 ___
 
@@ -126,7 +126,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:16](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/datastore.ts#L16)
+[interfaces/datastore.ts:16](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/datastore.ts#L16)
 
 ___
 
@@ -147,7 +147,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:17](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/datastore.ts#L17)
+[interfaces/datastore.ts:17](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/datastore.ts#L17)
 
 ___
 
@@ -168,7 +168,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:18](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/datastore.ts#L18)
+[interfaces/datastore.ts:18](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/datastore.ts#L18)
 
 ___
 
@@ -188,7 +188,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:19](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/datastore.ts#L19)
+[interfaces/datastore.ts:19](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/datastore.ts#L19)
 
 ___
 
@@ -208,7 +208,7 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:20](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/datastore.ts#L20)
+[interfaces/datastore.ts:20](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/datastore.ts#L20)
 
 ___
 
@@ -222,4 +222,4 @@ ___
 
 #### Defined in
 
-[interfaces/datastore.ts:21](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/datastore.ts#L21)
+[interfaces/datastore.ts:21](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/datastore.ts#L21)

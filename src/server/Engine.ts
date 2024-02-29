@@ -69,6 +69,33 @@ class Engine extends ServerComponent implements IEngine{
 		}
 		
 	}
+
+
+	public async restart(instanceQuery:object, startNodeId: string, data:any,userName, options={}) :Promise<Execution>  {
+	
+		this.logger.log(`Action:engine.restart`);
+		this.logger.log(instanceQuery);
+
+		try {
+
+			const instance = await this.server.dataStore.findInstance(instanceQuery);
+
+			const execution = await this.restore(instance.id);
+
+			await execution.restart(startNodeId, data,userName, options);
+
+			await this.release(execution);
+
+			return execution;
+		}
+		catch (exc) {
+			return this.logger.error(exc);
+
+		}
+			
+	}
+	
+	
 	/**
 	 * restores an instance into memeory or provides you access to a running instance
 	 * 
@@ -316,7 +343,7 @@ class Engine extends ServerComponent implements IEngine{
 	 * @param elementId
 	 * @param data
 	 */
-	async startEvent(instanceId, elementId, data = {}) : Promise<Execution> {
+	async startEvent(instanceId, elementId, data = {},userName: string = null, options = {}) : Promise<Execution> {
 
 		// need to load instance first
 		this.logger.log('serverinvokeSignal');
@@ -325,9 +352,7 @@ class Engine extends ServerComponent implements IEngine{
 
 			const execution= await this.restore(instanceId);
 
-			await execution.signalEvent(elementId, data);
-
-			await this.server.dataStore.save(execution.instance);
+			await execution.signalEvent(elementId, data,userName,options);
 
 			await this.release(execution);
 

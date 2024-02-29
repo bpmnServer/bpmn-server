@@ -46,7 +46,7 @@ msgs can be cleared by the clean method
 
 #### Defined in
 
-[interfaces/common.ts:49](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L49)
+[interfaces/common.ts:58](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L58)
 
 ___
 
@@ -60,7 +60,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:54](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L54)
+[interfaces/common.ts:63](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L63)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:55](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L55)
+[interfaces/common.ts:64](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L64)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:56](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L56)
+[interfaces/common.ts:65](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L65)
 
 ___
 
@@ -114,7 +114,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:57](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L57)
+[interfaces/common.ts:66](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L66)
 
 ___
 
@@ -134,7 +134,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:58](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L58)
+[interfaces/common.ts:67](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L67)
 
 ___
 
@@ -154,7 +154,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:59](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L59)
+[interfaces/common.ts:68](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L68)
 
 ___
 
@@ -174,7 +174,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:60](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L60)
+[interfaces/common.ts:69](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L69)
 
 ___
 
@@ -194,4 +194,4 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:61](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L61)
+[interfaces/common.ts:70](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L70)

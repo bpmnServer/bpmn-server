@@ -256,8 +256,44 @@ class Execution extends ServerComponent implements IExecution {
 
         return this;
     }
+    /**
+     * 
+     * restarting an already completed instance at a particular node
+     *      
+     * @param startNodeId
+     * @param inputData
+     * 
+     */
+    public async restart(startNodeId, inputData:any,userName, options={}) :Promise<IExecution>  {
 
-    public async signalEvent(executionId, inputData:any,options={}) :Promise<IExecution> {
+        this.log('Execution('+this.name+').restart: startNodeId=' + startNodeId + ' data '+JSON.stringify(inputData));
+        this.operation = 'signal';
+        this.options=options;
+        this.userName=userName;
+
+        let startNode = this.getNodeById(startNodeId);
+
+        this.servicesProvider = await this.appDelegate.getServicesProvider();        
+
+        await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoke);
+
+        this.log('..restarting at :' + startNodeId);
+
+        let token = await Token.startNewToken(TOKEN_TYPE.Primary,this, startNode, null, null, null, null,inputData,true);
+
+        await token.execute(inputData);
+
+        this.report();
+
+        await Promise.all(this.promises);
+        await this.save();
+        this.log('Execution('+this.name+').signalItem: finished!');
+
+        return this;
+    }
+
+
+    public async signalEvent(executionId, inputData:any,userName,options={}) :Promise<IExecution> {
         this.log('Execution('+this.name+').signal: executionId=' + executionId + ' data '+JSON.stringify(inputData));
         this.operation = 'signal';
         this.options=options;
@@ -287,6 +323,10 @@ class Execution extends ServerComponent implements IExecution {
             let node;
                  // check for startEvent of a secondary process
                 const startedNodeId = this.tokens.get(0).path[0].elementId;
+                let restart=false;
+                if (options['restart'] && options['restart']==true )
+                    restart=true;
+
                 this.definition.processes.forEach(proc => {
                     let startNodeId = proc.getStartNode().id;
                     if (startNodeId !== startedNodeId) {
@@ -294,13 +334,15 @@ class Execution extends ServerComponent implements IExecution {
                         if (startNodeId == executionId) {
                             // ok we will start new token for this
                             node = this.getNodeById(executionId);
-                            this.log('..starting at :' + executionId);
+                            if (this.instance.status==EXECUTION_STATUS.end && restart==false)
+                                this.error('*** ERROR **** can not start a completed process');
+                            this.log('..starting at :' + executionId,this.instance.status);
                         }
                     }
                 });
 
             if (node) {
-                let token = await Token.startNewToken(TOKEN_TYPE.Primary,this, node, null, null, null, inputData);
+                let token = await Token.startNewToken(TOKEN_TYPE.Primary,this, node, null, null, null,null, inputData);
             }
             else { //Error 
                 this.getItems().forEach(i => {
@@ -316,6 +358,10 @@ class Execution extends ServerComponent implements IExecution {
 
         this.log('Execution('+this.name+').signal: returning .. waiting for promises status:' + this.instance.status + " id: " + executionId);
         await Promise.all(this.promises);
+        await this.save();
+        this.log('Execution('+this.name+').signalEvent: finished!');
+
+        return this;
 
 
         await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoked);
@@ -405,7 +451,7 @@ class Execution extends ServerComponent implements IExecution {
                 loopsMap.set(t.loop.id, t.loop);
             tokens.push(t.save());
         });
-        loopsMap.forEach(l => { loops.push(l.save()); });
+        loopsMap.forEach(l => {loops.push(l.save()); });
 
         const items = [];
         this.getItems().forEach(item => { items.push(item.save()); });

@@ -404,7 +404,7 @@ class Token implements IToken {
             result =await this.goNext();
         }
         else
-            this.log(`*** ERROR===== invoking a type of  ${this.currentNode.type} with status of ${item.status}`);
+            this.log(`*** ERROR===== invoking item ${this.currentItem.node.id} ${this.currentItem.id} type of  ${this.currentNode.type} with status of ${item.status}`);
 
         this.log('Token('+this.id +').signal: invoke '+this.currentNode.id+' '+this.currentNode.type+' finished!');
 

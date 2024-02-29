@@ -41,6 +41,13 @@ class BpmnModelData implements IBpmnModelData {
                 event.candidateGroups=n.candidateGroups;
                 event.candidateUsers=n.candidateUsers;
                 event.processId = n.processId;
+                let doc;
+                if (n.def.documentation)
+                    {
+                        n.def.documentation.forEach(d=>{ doc=d.text;})
+                        event.documentation = doc;
+
+                    }
 
                 let timer = n.hasTimer();
                 if (timer) {
@@ -70,6 +77,13 @@ class BpmnModelData implements IBpmnModelData {
             proc.id = p.def.id;
             proc.name = p.def.name;
             proc.isExecutable = p.def.isExecutable;
+            let doc;
+            if (p.def.documentation)
+                {
+                    p.def.documentation.forEach(d=>{ doc=d.text;})
+                    proc.documentation = doc;
+
+                }
             this.processes.push(proc);
         });
     }
@@ -77,6 +91,7 @@ class BpmnModelData implements IBpmnModelData {
 class ProcessData implements IProcessData {
     id;
     name;
+    documentation;
     isExecutable;
 }
 class EventData implements IEventData  {
@@ -97,6 +112,7 @@ class EventData implements IEventData  {
     lane;
     candidateGroups;
     candidateUsers;
+    documentation;
 }
 
 

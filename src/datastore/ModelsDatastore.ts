@@ -140,7 +140,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
             var mtime = stats.mtime;
             models.set(f['name'], mtime);
         });
-        const dbList = await super.getList();
+        const dbList = await super.get();
         dbList.forEach(model => {
             const name = model['name'];
             const saved = new Date(model['saved']);

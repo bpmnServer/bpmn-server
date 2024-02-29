@@ -12,6 +12,16 @@ and here
 
 ### Changed
 -->
+## Release 2.1.0  -- 2024-03
+### API model:
+- Add: ```get(query:any ,user: ISecureUser): Promise<object[]>```  returns full model data, including documentation
+- Change: ```getList(..)``` returns only names
+### API engine
+- Add: ```   restart(instanceQuery:object, startNodeId: string, data:any,user?:ISecureUser, options?:IEngineOptions) :Promise<IExecution>``` 
+    restarting an already completed instance at a particular node
+ 
+
+
 ## Release 2.0.1 -- 2024-02
 - Moved webApp as a separate Repo 
 - Changed install procedure 

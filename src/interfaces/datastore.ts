@@ -22,6 +22,7 @@ interface IDataStore {
 }
 
 interface IModelsDatastore {
+    get(query): Promise<object[]>;
     getList(query): Promise<string[]>;
     getSource(name: any,owner): Promise<string>;
     getSVG(name: any,owner): Promise<string>;

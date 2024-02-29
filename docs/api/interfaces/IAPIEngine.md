@@ -40,12 +40,12 @@ start a new Instance of specified model
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `modelName` | `any` |
-| `data` | `Object` |
-| `user` | [`ISecureUser`](ISecureUser.md) |
-| `options?` | `Object` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `modelName` | `any` | name of the model to start. |
+| `data` | `Object` | - |
+| `user` | [`ISecureUser`](ISecureUser.md) | user object {} |
+| `options?` | `Object` | - |
 
 #### Returns
 
@@ -53,7 +53,7 @@ start a new Instance of specified model
 
 #### Defined in
 
-[API/API.ts:50](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/API/API.ts#L50)
+[API/API.ts:55](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L55)
 
 ___
 
@@ -78,7 +78,7 @@ continue with the execution of a particular item that is in a wait state, typica
 
 #### Defined in
 
-[API/API.ts:54](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/API/API.ts#L54)
+[API/API.ts:62](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L62)
 
 ___
 
@@ -87,6 +87,7 @@ ___
 ▸ **assign**(`query`, `data`, `assignment`, `user`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
 
 provide assignment data to a user task
+Also, updates item data
 
 #### Parameters
 
@@ -104,7 +105,7 @@ provide assignment data to a user task
 
 #### Defined in
 
-[API/API.ts:58](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/API/API.ts#L58)
+[API/API.ts:67](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L67)
 
 ___
 
@@ -130,7 +131,7 @@ throw a message with an id, system will identify receiving item
 
 #### Defined in
 
-[API/API.ts:62](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/API/API.ts#L62)
+[API/API.ts:71](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L71)
 
 ___
 
@@ -156,7 +157,7 @@ throw a signal with an id, system will identify receiving item(s)
 
 #### Defined in
 
-[API/API.ts:66](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/API/API.ts#L66)
+[API/API.ts:75](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L75)
 
 ___
 
@@ -182,4 +183,4 @@ start a second event node (in a subprocess) for a running instance
 
 #### Defined in
 
-[API/API.ts:70](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/API/API.ts#L70)
+[API/API.ts:79](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L79)

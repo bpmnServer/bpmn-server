@@ -95,7 +95,7 @@ interface IEngine {
      * @param elementId
      * @param data
      */
-    startEvent(instanceId: any, elementId: any, data?: {}): Promise<IExecution>;
+    startEvent(instanceId: any, elementId: any, data?: {},userName?: string,options?:{}): Promise<IExecution>;
     /**
      *
      * signal/message raise a signal or throw a message
@@ -111,6 +111,8 @@ interface IEngine {
     //signal(messageId: any, matchingKey: any, data?: {}): Promise<IExecution>;
     throwMessage(messageId, data: {}, matchingQuery: {}): Promise<IExecution>;
     throwSignal(signalId, data: {}, matchingQuery: {});
+    restart(instanceQuery:object, startNodeId: string, data:any,userName, options) :Promise<IExecution>;
+
 
 }
 

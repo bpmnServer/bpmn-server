@@ -332,7 +332,6 @@ class Node extends Element {
         return outbounds;
     }
     async startBoundaryEvents(item,token) {
-        item.token.log('Node('+this.name+'|'+this.id+').startBoundaryEvents: itemId='+item.id);
         let i;
         // check for attachments - boundary events:
         for (i = 0; i < this.attachments.length; i++) {

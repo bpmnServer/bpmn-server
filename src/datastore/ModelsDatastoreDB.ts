@@ -31,13 +31,20 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
         this.db = new MongoDB(this.dbConfiguration, this.logger);
 
     }
+    async get(query={}): Promise<object[]> {
+
+        const list=await this.db.find(this.dbConfiguration.db, Definition_collection,query, {});
+        return list;
+
+    }
     async getList(query={}): Promise<string[]> {
 
         var records = await this.db.find(this.dbConfiguration.db, Definition_collection,query, {});
 
 //        this.logger.log('find events for ' + " recs:" + records.length);
         const list = [];
-        records.forEach(r => { list.push({ name: r.name, saved: r.saved }); });
+      
+        records.forEach(r => { list.push({ name: r.name }); });
         return list;
     }
     /*

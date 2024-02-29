@@ -33,7 +33,7 @@
 
 #### Defined in
 
-[interfaces/common.ts:9](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L9)
+[interfaces/common.ts:9](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L9)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:10](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L10)
+[interfaces/common.ts:10](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L10)
 
 ___
 
@@ -60,26 +60,17 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:11](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L11)
+[interfaces/common.ts:11](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L11)
 
 ___
 
 ### database
 
-• **database**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `MongoDB` | \{ `db_url`: `string` ; `db`: `string`  } |
-| `MongoDB.db_url` | `string` |
-| `MongoDB.db` | `string` |
-| `loopbackRepositories?` | `any` |
+• **database**: `IMongoDBDatabaseConfiguration` \| `ISQLiteDatabaseConfiguration`
 
 #### Defined in
 
-[interfaces/common.ts:15](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L15)
+[interfaces/common.ts:15](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L15)
 
 ___
 
@@ -89,7 +80,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:23](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L23)
+[interfaces/common.ts:16](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L16)
 
 ___
 
@@ -99,7 +90,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:24](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L24)
+[interfaces/common.ts:17](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L17)
 
 ## Methods
 
@@ -119,7 +110,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:25](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L25)
+[interfaces/common.ts:18](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L18)
 
 ___
 
@@ -139,7 +130,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:26](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L26)
+[interfaces/common.ts:19](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L19)
 
 ___
 
@@ -159,7 +150,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:27](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L27)
+[interfaces/common.ts:20](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L20)
 
 ___
 
@@ -179,7 +170,7 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:28](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L28)
+[interfaces/common.ts:21](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L21)
 
 ___
 
@@ -199,4 +190,4 @@ ___
 
 #### Defined in
 
-[interfaces/common.ts:29](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/interfaces/common.ts#L29)
+[interfaces/common.ts:22](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/common.ts#L22)

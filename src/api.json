@@ -1,0 +1,267 @@
+{
+	"id": 0,
+	"name": "bpmn-server",
+	"variant": "project",
+	"kind": 1,
+	"flags": {},
+	"packageName": "bpmn-server",
+	"readme": [
+		{
+			"kind": "text",
+			"text": "# Overview Home\r\n\r\n"
+		},
+		{
+			"kind": "code",
+			"text": "`bpmn-server`"
+		},
+		{
+			"kind": "text",
+			"text": " provides a Workflow component based on **Business Process Model and Notation** that can be easily integrated into your application.\r\n\r\n\r\nAs workflow application can outlive Node.js applications, "
+		},
+		{
+			"kind": "code",
+			"text": "`bpmn-server`"
+		},
+		{
+			"kind": "text",
+			"text": " has out-of-the-box state presistence and variables, with concurrency across Node.js cluster and process instances\r\nto make them ideal platform to do long running business processes, durable services or scheduled backgound tasks.\r\n\r\n\r\n## Modeling\r\n"
+		},
+		{
+			"kind": "code",
+			"text": "`bpmn-server`"
+		},
+		{
+			"kind": "text",
+			"text": " provides a modeling tool based on "
+		},
+		{
+			"kind": "code",
+			"text": "`bpmn.io`"
+		},
+		{
+			"kind": "text",
+			"text": " with customized property panel, no need to edit bpmn files\r\n\r\n![](./docs/images/Modeler.png)\r\n\r\n"
+		},
+		{
+			"kind": "code",
+			"text": "`bpmn`"
+		},
+		{
+			"kind": "text",
+			"text": " models can also be imported from other tools.\r\n\r\nTypically your application has multiple bpmn models, a model is represented in a bpmn definition (xml).\r\n\r\nEach Model is made of various elements, an "
+		},
+		{
+			"kind": "code",
+			"text": "`element`"
+		},
+		{
+			"kind": "text",
+			"text": " can be a "
+		},
+		{
+			"kind": "code",
+			"text": "`node`"
+		},
+		{
+			"kind": "text",
+			"text": " in the diagram (events/tasks/gateway) or a  "
+		},
+		{
+			"kind": "code",
+			"text": "`flow`"
+		},
+		{
+			"kind": "text",
+			"text": "\r\n\r\nModels are saved by "
+		},
+		{
+			"kind": "code",
+			"text": "`bpmn-server`"
+		},
+		{
+			"kind": "text",
+			"text": " and can be queried [see API.model](./docs/api/interfaces/IAPIModel.md)\r\n\r\n"
+		},
+		{
+			"kind": "code",
+			"text": "`bpmn-server`"
+		},
+		{
+			"kind": "text",
+			"text": " support all bpmn 2.0 elements [see Modeling Support](./docs/examples.md)\r\n\r\n## Execution\r\n"
+		},
+		{
+			"kind": "code",
+			"text": "`bpmn-server`"
+		},
+		{
+			"kind": "text",
+			"text": " is primiraly an execution engine for bpmn models.\r\n\r\nEverytime a model is executed (started), an "
+		},
+		{
+			"kind": "code",
+			"text": "`instance`"
+		},
+		{
+			"kind": "text",
+			"text": " is created, and for each "
+		},
+		{
+			"kind": "code",
+			"text": "`element`"
+		},
+		{
+			"kind": "text",
+			"text": " that is executed it creates an "
+		},
+		{
+			"kind": "code",
+			"text": "`item' \r\n\r\nExecution is based on the model logic that is enhanced by various extensions that allow scripting and access to your application.\r\n\r\nDuring Execution, Model Listeners and Application Listeners are invoked.\r\n\r\nThe execution `"
+		},
+		{
+			"kind": "text",
+			"text": "engine"
+		},
+		{
+			"kind": "code",
+			"text": "` is availabe through an API [see API.engine](./docs/api/interfaces/IAPIEngine.md).\r\n\r\n[For more details about Invoking Execution Engine](./docs/invokation.md)\r\n\r\n[For more details about Execution behaviour](./docs/execution.md)\r\n\r\n## Datastore\r\n\r\nAt various stages of execution, instance object with its parts is saved into a datastore (defaults to MongoDB)\r\n\r\nInstances and Items can be queried through an API [see API.data](./docs/api/interfaces/IAPIData.md)\r\n\r\n[For more details about data management](./docs/data.md)\r\n\r\n# User Management and Security\r\n\r\n`"
+		},
+		{
+			"kind": "text",
+			"text": "bpmn-server"
+		},
+		{
+			"kind": "code",
+			"text": "` is relying on the front-end applicaton to authenticate users and to pass user information through the API.\r\n1. Model designer/developr can define assignee, candidateUsers, candidateUserGroups as static string or JavaScript expressions\r\n\r\n2. Application fron-end need to pass the implementation of `"
+		},
+		{
+			"kind": "text",
+			"text": "userService' \r\n  \r\n3. "
+		},
+		{
+			"kind": "code",
+			"text": "`bpmnServer`"
+		},
+		{
+			"kind": "text",
+			"text": " will enforce security rules based on the current user passed by the application\r\n\r\n"
+		},
+		{
+			"kind": "code",
+			"text": "`bpmn-web`"
+		},
+		{
+			"kind": "text",
+			"text": " Demo Application , provides a complete implementation of users management using Passport and MongoDB.\r\n\r\n[For more details about security](./docs/security.md)\r\n\r\n# Demo Web Application\r\n\r\n<details>\r\n<summary>\r\nA Demo Web application "
+		},
+		{
+			"kind": "code",
+			"text": "`bpmn-web`"
+		},
+		{
+			"kind": "text",
+			"text": " provides full front-end along with security features to demonstrate and test the capabilities of "
+		},
+		{
+			"kind": "code",
+			"text": "`bpmn-server`"
+		},
+		{
+			"kind": "text",
+			"text": ".\r\n</summary>\r\n\r\nThe web app provides:\r\n- Presistent Modeling tool, using bpmn.io \r\n- Model property panel supporting all features of "
+		},
+		{
+			"kind": "code",
+			"text": "`bpmn-server`"
+		},
+		{
+			"kind": "text",
+			"text": " , no need to edit bpmn file\r\n- Execution with input form for defined fields\r\n\r\n![](./docs/images/inputFields.png)\r\n\r\n- List of outstanding/recent tasks and workflow\r\n- Viewing of "
+		},
+		{
+			"kind": "code",
+			"text": "`instance`"
+		},
+		{
+			"kind": "text",
+			"text": " details\r\n\r\n![](./docs/images/instance-details1.png)\r\n\r\n- View of Model specification\r\n![](./docs/images/instance-details2.png)\r\n\r\n</details>\r\n\r\n# Full Demo Web Application\r\n\r\nWe Provide a full demo @ https://bpmn.omniworkflow.com\r\n\r\n# Installation\r\n\r\nThis package requires Node.js and an access to MongoDB ()\r\nif you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas) or can be [installed locally](https://www.mongodb.com/docs/manual/installation/)\r\n\r\n### 1. git clone\r\n"
+		},
+		{
+			"kind": "code",
+			"text": "```sh\r\n> git clone https://github.com/bpmnServer/bpmn-web.git\r\n```"
+		},
+		{
+			"kind": "text",
+			"text": "\r\n### 2. install packages\r\n"
+		},
+		{
+			"kind": "code",
+			"text": "```\r\n> npm install\r\n``````\r\n### 3. setup the app\r\n```"
+		},
+		{
+			"kind": "text",
+			"text": "\r\n> npm run setup\r\n"
+		},
+		{
+			"kind": "code",
+			"text": "```\r\n \r\nEdit .env file to have MongoDB point to your server or free cloud account\r\n\r\n```"
+		},
+		{
+			"kind": "text",
+			"text": "env\r\n# MongoDB Settings\r\nMONGO_DB_URL=mongodb://0.0.0.0:27017/bpmn\r\n#\r\n"
+		},
+		{
+			"kind": "code",
+			"text": "```\r\n- Run Setup again to create db objects\r\n\r\n```"
+		},
+		{
+			"kind": "text",
+			"text": "sh\r\n> npm run setup\r\n"
+		},
+		{
+			"kind": "code",
+			"text": "```\r\n\r\nYour installation is now complete.\r\n\r\n### 4. Start server\r\n\r\n```"
+		},
+		{
+			"kind": "text",
+			"text": "sh\r\n> npm run start\r\n"
+		},
+		{
+			"kind": "code",
+			"text": "```\r\n\r\nConsole will display:\r\n\r\n```"
+		},
+		{
+			"kind": "text",
+			"text": "text\r\nbpmn-server WebApp.ts version 1.4.0\r\nMongoDB URL mongodb://0.0.0.0:27017/bpmn\r\ndb connection open\r\n\r\nApp is running at http://localhost:3000 in development mode\r\n  Press CTRL-C to stop\r\n"
+		},
+		{
+			"kind": "code",
+			"text": "```\r\n\r\nUse your browser to view the bpmn-server running\r\n\r\n## Docker installation\r\n<details>\r\n<summary>\r\nTo install MongoDB, bpmn-server and bpmn-web in on a docker container\r\n</summary>\r\n\r\n#### 1. Create a folder , cd to folder\r\n#### 2. Create a `docker-compose.yml` as follows:\r\n```"
+		},
+		{
+			"kind": "text",
+			"text": "\r\nversion: \"3.7\"\r\nname: bpmn-server\r\nservices:\r\n bpmn-web:\r\n    image: ralphhanna/bpmn-web\r\n    command: sh -c \"\r\n        npm run setup &&\r\n        npm run start\"\r\n    ports:\r\n      - 3000:3000\r\n    volumes:\r\n      - 'app:/app'      \r\n    depends_on:\r\n      - mongo      \r\n mongo:\r\n   image: mongo\r\n   ports:\r\n     - 27017:27017\r\n   volumes:\r\n     - mongodb:/data/db\r\nvolumes:\r\n  mongodb:\r\n    driver: local\r\n    driver_opts:\r\n      type: 'none'\r\n      o: 'bind'\r\n      device: './mongodb_volume'    \r\n  app:\r\n    driver: local\r\n    driver_opts:\r\n      type: 'none'\r\n      o: 'bind'\r\n      device: './bpmn_server_volume'    \r\n\r\n"
+		},
+		{
+			"kind": "code",
+			"text": "```\r\n#### 3. start the container `docker compose up -d`\r\n\r\n</details>\r\n\r\n## Command Line Interface\r\n<details>\r\n<summary>\r\nbpmnServer provide some basic functionalities using CLI\r\n</summary>\r\n\r\n```"
+		},
+		{
+			"kind": "text",
+			"text": "sh\r\n>npm run cli\r\n\r\n\r\nserver started..\r\nCommands:\r\n        q       to quit\r\n        s       start process\r\n        lo      list outstanding items\r\n        li      list items\r\n        l       list instances for a process\r\n        di      display Instance information\r\n        i       Invoke Task\r\n        sgl     Signal Task\r\n        msg     Message Task\r\n        d       delete instnaces\r\n        lm      List of Models\r\n        lme     List of Models\r\n        ck      Check locked instnaces\r\n        re      Recover hung processes\r\n        lu      List Users\r\n        spw     Set User Password\r\n        ?       repeat this list\r\nEnter Command, q to quit, or ? to list commands\r\n>\r\n"
+		},
+		{
+			"kind": "code",
+			"text": "```\r\n\r\n</details>\r\n\r\n## to update to latest release\r\n\r\n```"
+		},
+		{
+			"kind": "text",
+			"text": "sh\r\n> npm update bpmn-server\r\n"
+		},
+		{
+			"kind": "code",
+			"text": "```\r\n# Application Integration\r\n\r\n`bpmn-server` is intended to be integrated into your application [see](./docs/customization.md)\r\n\r\n# Documentation\r\n\r\n- [Invoking Workflows](./docs/invokation.md) \r\n- [Execution](./docs/execution.md) \r\n- [Scripting](./docs/scripting.md) \r\n- [Security](./docs/security.md)\r\n- [Data](./docs/data.md)\r\n  -  [Input/Output](./docs/data#input-output-data.md)\r\n  -  [Data Query](./docs/data#dataQuery.md) \r\n- [Examples](./docs/examples.md)\r\n- [API Summary](./docs/api-summary.md)\r\n- [API](./docs/api) \r\n- [Setup](./docs/setup.md) \r\n- [Application Integration](./docs/customization.md) \r\n\r\n# License\r\n\r\nThis project is licensed under the terms of the MIT license.\r\n\r\n# Acknowledgments\r\n\r\nThe **bpmn-server** resides upon the excellent library [bpmn-io/bpmn-moddle](https://github.com/bpmn-io/bpmn-moddle) developed by [bpmn.io](http://bpmn.io/)\r\n\r\nThe **bpmn-server** is inspired by the library [bpmn-engine](https://github.com/paed01/bpmn-engine)"
+		}
+	],
+	"symbolIdMap": {}
+}

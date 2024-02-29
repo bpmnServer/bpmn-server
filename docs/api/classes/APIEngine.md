@@ -70,7 +70,7 @@ APIComponent.constructor
 
 #### Defined in
 
-[API/API.ts:24](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/API/API.ts#L24)
+[API/API.ts:24](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L24)
 
 ## Properties
 
@@ -84,7 +84,7 @@ APIComponent.api
 
 #### Defined in
 
-[API/API.ts:22](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/API/API.ts#L22)
+[API/API.ts:22](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L22)
 
 ## Accessors
 
@@ -102,7 +102,7 @@ APIComponent.server
 
 #### Defined in
 
-[API/API.ts:27](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/API/API.ts#L27)
+[API/API.ts:27](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L27)
 
 ## Methods
 
@@ -114,12 +114,12 @@ start a new Instance of specified model
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `name` | `any` |
-| `data` | `Object` |
-| `user` | [`ISecureUser`](../interfaces/ISecureUser.md) |
-| `options` | `Object` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `name` | `any` | name of the model to start. |
+| `data` | `Object` | - |
+| `user` | [`ISecureUser`](../interfaces/ISecureUser.md) | user object {} |
+| `options` | `Object` | - |
 
 #### Returns
 
@@ -131,7 +131,7 @@ start a new Instance of specified model
 
 #### Defined in
 
-[API/API.ts:155](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/API/API.ts#L155)
+[API/API.ts:164](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L164)
 
 ___
 
@@ -160,7 +160,7 @@ continue with the execution of a particular item that is in a wait state, typica
 
 #### Defined in
 
-[API/API.ts:159](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/API/API.ts#L159)
+[API/API.ts:168](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L168)
 
 ___
 
@@ -169,6 +169,7 @@ ___
 ▸ **assign**(`query`, `data`, `assignment`, `user`, `options?`): `Promise`\<[`IExecution`](../interfaces/IExecution.md)\>
 
 provide assignment data to a user task
+Also, updates item data
 
 #### Parameters
 
@@ -190,7 +191,7 @@ provide assignment data to a user task
 
 #### Defined in
 
-[API/API.ts:164](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/API/API.ts#L164)
+[API/API.ts:173](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L173)
 
 ___
 
@@ -220,7 +221,7 @@ throw a message with an id, system will identify receiving item
 
 #### Defined in
 
-[API/API.ts:168](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/API/API.ts#L168)
+[API/API.ts:177](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L177)
 
 ___
 
@@ -250,7 +251,7 @@ throw a signal with an id, system will identify receiving item(s)
 
 #### Defined in
 
-[API/API.ts:171](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/API/API.ts#L171)
+[API/API.ts:180](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L180)
 
 ___
 
@@ -280,4 +281,4 @@ start a second event node (in a subprocess) for a running instance
 
 #### Defined in
 
-[API/API.ts:174](https://github.com/bpmnServer/bpmn-server/blob/d8a5b7d/src/API/API.ts#L174)
+[API/API.ts:183](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L183)
