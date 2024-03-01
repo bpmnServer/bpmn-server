@@ -279,6 +279,30 @@ class Execution extends ServerComponent implements IExecution {
 
         this.log('..restarting at :' + startNodeId);
 
+        // check if instance has ended
+        if (this.instance.status!==EXECUTION_STATUS.end)
+        {
+            this.error("***ERROR*** restart must be for an instance with end status, current instance has status of"+this.instance.status);
+        }
+        // check if valid node
+        /*
+        let items=this.getItems();
+        items.forEach(it=>{
+            if (it.elementId == startNodeId)
+                {
+                    let p='';
+                    if (it.token.parentToken)
+                        p=it.token.parentToken.id;
+                    console.log('it',it.token.type,p);
+                    if (it.token.parentToken)
+                        {
+                            this.report();
+                            
+                            this.error("***Error*** Node:"+startNodeId+" not valid for a restart, it has a parent item use: "+it.token.parentToken.firstItem.elementId);
+                        }
+                }
+        });
+        */
         let token = await Token.startNewToken(TOKEN_TYPE.Primary,this, startNode, null, null, null, null,inputData,true);
 
         await token.execute(inputData);
@@ -288,6 +312,7 @@ class Execution extends ServerComponent implements IExecution {
         await Promise.all(this.promises);
         await this.save();
         this.log('Execution('+this.name+').signalItem: finished!');
+        
 
         return this;
     }

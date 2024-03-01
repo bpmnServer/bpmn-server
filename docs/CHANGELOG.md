@@ -17,6 +17,16 @@ and here
 - Add: ```get(query:any ,user: ISecureUser): Promise<object[]>```  returns full model data, including documentation
 - Change: ```getList(..)``` returns only names
 ### API engine
+Challenges with `restart`:
+    a restart create new flow (token) starting at startPoint, so if there is downstream dependency on other tokens, it will not be valid.
+    therefore, restart can only be performed on root nodes
+
+Alternatively, restore the instance to a particular state, and recontinue
+
+  save state at every point, state:
+      Key: itemId,
+      Data, tokens and Items, loops
+
 - Add: ```   restart(instanceQuery:object, startNodeId: string, data:any,user?:ISecureUser, options?:IEngineOptions) :Promise<IExecution>``` 
     restarting an already completed instance at a particular node
  

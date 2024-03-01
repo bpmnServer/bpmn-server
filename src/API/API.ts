@@ -73,7 +73,8 @@ class APIComponent {
 */
 export interface IEngineOptions { 
         startNodeId?; 
-        noWait?;
+        noWait?:boolean;
+        recover?:boolean;
         [otherOptions: string]: unknown;
     }
 
