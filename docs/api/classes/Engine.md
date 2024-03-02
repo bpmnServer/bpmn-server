@@ -39,6 +39,7 @@ super class for various objects that are part of the server
 ### Methods
 
 - [start](Engine.md#start)
+- [restart](Engine.md#restart)
 - [get](Engine.md#get)
 - [lock](Engine.md#lock)
 - [release](Engine.md#release)
@@ -73,7 +74,7 @@ super class for various objects that are part of the server
 
 #### Defined in
 
-[server/Engine.ts:12](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/Engine.ts#L12)
+[server/Engine.ts:12](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/Engine.ts#L12)
 
 ## Properties
 
@@ -87,7 +88,7 @@ super class for various objects that are part of the server
 
 #### Defined in
 
-[server/ServerComponent.ts:9](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/ServerComponent.ts#L9)
+[server/ServerComponent.ts:9](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/ServerComponent.ts#L9)
 
 ## Accessors
 
@@ -105,7 +106,7 @@ ServerComponent.configuration
 
 #### Defined in
 
-[server/ServerComponent.ts:14](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/ServerComponent.ts#L14)
+[server/ServerComponent.ts:14](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/ServerComponent.ts#L14)
 
 ___
 
@@ -123,7 +124,7 @@ ServerComponent.logger
 
 #### Defined in
 
-[server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/ServerComponent.ts#L15)
+[server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/ServerComponent.ts#L15)
 
 ___
 
@@ -141,7 +142,7 @@ ServerComponent.cron
 
 #### Defined in
 
-[server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/ServerComponent.ts#L16)
+[server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/ServerComponent.ts#L16)
 
 ___
 
@@ -159,7 +160,7 @@ ServerComponent.cache
 
 #### Defined in
 
-[server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/ServerComponent.ts#L17)
+[server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/ServerComponent.ts#L17)
 
 ___
 
@@ -177,7 +178,7 @@ ServerComponent.appDelegate
 
 #### Defined in
 
-[server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/ServerComponent.ts#L18)
+[server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/ServerComponent.ts#L18)
 
 ___
 
@@ -195,7 +196,7 @@ ServerComponent.engine
 
 #### Defined in
 
-[server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/ServerComponent.ts#L19)
+[server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/ServerComponent.ts#L19)
 
 ___
 
@@ -213,7 +214,7 @@ ServerComponent.dataStore
 
 #### Defined in
 
-[server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/ServerComponent.ts#L20)
+[server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/ServerComponent.ts#L20)
 
 ___
 
@@ -231,7 +232,7 @@ ServerComponent.definitions
 
 #### Defined in
 
-[server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/ServerComponent.ts#L21)
+[server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/ServerComponent.ts#L21)
 
 ___
 
@@ -249,7 +250,7 @@ ServerComponent.listener
 
 #### Defined in
 
-[server/ServerComponent.ts:22](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/ServerComponent.ts#L22)
+[server/ServerComponent.ts:22](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/ServerComponent.ts#L22)
 
 ## Methods
 
@@ -279,7 +280,35 @@ loads a definitions  and start execution
 
 #### Defined in
 
-[server/Engine.ts:23](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/Engine.ts#L23)
+[server/Engine.ts:23](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/Engine.ts#L23)
+
+___
+
+### restart
+
+▸ **restart**(`instanceId`, `itemId`, `data`, `userName`, `options?`): `Promise`\<[`Execution`](Execution.md)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `instanceId` | `any` |
+| `itemId` | `any` |
+| `data` | `any` |
+| `userName` | `any` |
+| `options` | `Object` |
+
+#### Returns
+
+`Promise`\<[`Execution`](Execution.md)\>
+
+#### Implementation of
+
+[IEngine](../interfaces/IEngine.md).[restart](../interfaces/IEngine.md#restart)
+
+#### Defined in
+
+[server/Engine.ts:73](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/Engine.ts#L73)
 
 ___
 
@@ -307,7 +336,7 @@ this will also resume execution
 
 #### Defined in
 
-[server/Engine.ts:88](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/Engine.ts#L88)
+[server/Engine.ts:113](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/Engine.ts#L113)
 
 ___
 
@@ -329,7 +358,7 @@ lock instance
 
 #### Defined in
 
-[server/Engine.ts:98](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/Engine.ts#L98)
+[server/Engine.ts:123](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/Engine.ts#L123)
 
 ___
 
@@ -351,13 +380,13 @@ release instance lock
 
 #### Defined in
 
-[server/Engine.ts:107](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/Engine.ts#L107)
+[server/Engine.ts:132](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/Engine.ts#L132)
 
 ___
 
 ### restore
 
-▸ **restore**(`instanceId`): `Promise`\<[`Execution`](Execution.md)\>
+▸ **restore**(`instanceId`, `itemId?`): `Promise`\<[`Execution`](Execution.md)\>
 
 *
 Loads instance into memory for purpose of execution
@@ -366,9 +395,10 @@ check if in cache
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `instanceId` | `any` |
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `instanceId` | `any` | `undefined` |
+| `itemId` | `any` | `null` |
 
 #### Returns
 
@@ -376,7 +406,7 @@ check if in cache
 
 #### Defined in
 
-[server/Engine.ts:131](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/Engine.ts#L131)
+[server/Engine.ts:156](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/Engine.ts#L156)
 
 ___
 
@@ -397,7 +427,7 @@ ___
 
 #### Defined in
 
-[server/Engine.ts:163](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/Engine.ts#L163)
+[server/Engine.ts:188](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/Engine.ts#L188)
 
 ___
 
@@ -430,7 +460,7 @@ can modify data or assignment or both
 
 #### Defined in
 
-[server/Engine.ts:176](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/Engine.ts#L176)
+[server/Engine.ts:201](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/Engine.ts#L201)
 
 ___
 
@@ -469,7 +499,7 @@ instance,task	{instanceId: instanceId, elementId: value }
 
 #### Defined in
 
-[server/Engine.ts:221](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/Engine.ts#L221)
+[server/Engine.ts:246](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/Engine.ts#L246)
 
 ___
 
@@ -498,13 +528,13 @@ Repeat Timers need to create new Item
 
 #### Defined in
 
-[server/Engine.ts:282](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/Engine.ts#L282)
+[server/Engine.ts:307](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/Engine.ts#L307)
 
 ___
 
 ### startEvent
 
-▸ **startEvent**(`instanceId`, `elementId`, `data?`): `Promise`\<[`Execution`](Execution.md)\>
+▸ **startEvent**(`instanceId`, `elementId`, `data?`, `userName?`, `options?`): `Promise`\<[`Execution`](Execution.md)\>
 
 Invoking an event (usually start event of a secondary process) against an existing instance
 or
@@ -517,11 +547,13 @@ Invoking a start event (of a secondary process) against an existing instance
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `instanceId` | `any` |
-| `elementId` | `any` |
-| `data` | `Object` |
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `instanceId` | `any` | `undefined` |
+| `elementId` | `any` | `undefined` |
+| `data` | `Object` | `{}` |
+| `userName` | `string` | `null` |
+| `options` | `Object` | `{}` |
 
 #### Returns
 
@@ -533,7 +565,7 @@ Invoking a start event (of a secondary process) against an existing instance
 
 #### Defined in
 
-[server/Engine.ts:319](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/Engine.ts#L319)
+[server/Engine.ts:344](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/Engine.ts#L344)
 
 ___
 
@@ -566,7 +598,7 @@ that can be againt a running instance or it may start a new instance
 
 #### Defined in
 
-[server/Engine.ts:343](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/Engine.ts#L343)
+[server/Engine.ts:366](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/Engine.ts#L366)
 
 ___
 
@@ -599,4 +631,4 @@ that can be againt a running instance or it may start a new instance
 
 #### Defined in
 
-[server/Engine.ts:400](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/server/Engine.ts#L400)
+[server/Engine.ts:423](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/server/Engine.ts#L423)

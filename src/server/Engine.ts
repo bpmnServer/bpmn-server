@@ -70,19 +70,17 @@ class Engine extends ServerComponent implements IEngine{
 		
 	}
 
-
-	public async restart(instanceQuery:object, startNodeId: string, data:any,userName, options={}) :Promise<Execution>  {
+	public async restart(instanceId,itemId, data:any,userName, options={}) :Promise<Execution>  {
 	
 		this.logger.log(`Action:engine.restart`);
-		this.logger.log(instanceQuery);
 
 		try {
 
-			const instance = await this.server.dataStore.findInstance(instanceQuery);
+			const instance = await this.server.dataStore.findInstance({id:instanceId});
 
-			const execution = await this.restore(instance.id);
+			const execution:Execution = await this.restore(instance.id,itemId);
 
-			await execution.restart(startNodeId, data,userName, options);
+			await execution.restart(itemId, data,userName, options);
 
 			await this.release(execution);
 
@@ -155,7 +153,7 @@ class Engine extends ServerComponent implements IEngine{
 		return ret;
 	}
 	 */
-	private async restore(instanceId): Promise<Execution> {
+	private async restore(instanceId,itemId=null): Promise<Execution> {
 
 		// need to load instance first
 		let execution;
@@ -170,7 +168,7 @@ class Engine extends ServerComponent implements IEngine{
 			execution = live;
 		}
 		else {
-			execution = await Execution.restore(this.server,instance);
+			execution = await Execution.restore(this.server,instance,itemId);
 
 			execution.isLocked = true;
 			/* new dataStore for every execution to be monitored 

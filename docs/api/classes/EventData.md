@@ -30,6 +30,7 @@
 - [lane](EventData.md#lane)
 - [candidateGroups](EventData.md#candidategroups)
 - [candidateUsers](EventData.md#candidateusers)
+- [documentation](EventData.md#documentation)
 
 ## Constructors
 
@@ -53,7 +54,7 @@
 
 #### Defined in
 
-[datastore/ModelsData.ts:83](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L83)
+[datastore/ModelsData.ts:98](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L98)
 
 ___
 
@@ -67,7 +68,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:84](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L84)
+[datastore/ModelsData.ts:99](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L99)
 
 ___
 
@@ -81,7 +82,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:85](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L85)
+[datastore/ModelsData.ts:100](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L100)
 
 ___
 
@@ -95,7 +96,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:86](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L86)
+[datastore/ModelsData.ts:101](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L101)
 
 ___
 
@@ -109,7 +110,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:87](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L87)
+[datastore/ModelsData.ts:102](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L102)
 
 ___
 
@@ -123,7 +124,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:88](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L88)
+[datastore/ModelsData.ts:103](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L103)
 
 ___
 
@@ -137,7 +138,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:89](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L89)
+[datastore/ModelsData.ts:104](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L104)
 
 ___
 
@@ -151,7 +152,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:91](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L91)
+[datastore/ModelsData.ts:106](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L106)
 
 ___
 
@@ -165,7 +166,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:92](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L92)
+[datastore/ModelsData.ts:107](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L107)
 
 ___
 
@@ -179,7 +180,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:93](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L93)
+[datastore/ModelsData.ts:108](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L108)
 
 ___
 
@@ -193,7 +194,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:94](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L94)
+[datastore/ModelsData.ts:109](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L109)
 
 ___
 
@@ -207,7 +208,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:95](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L95)
+[datastore/ModelsData.ts:110](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L110)
 
 ___
 
@@ -221,7 +222,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:96](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L96)
+[datastore/ModelsData.ts:111](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L111)
 
 ___
 
@@ -235,7 +236,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:97](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L97)
+[datastore/ModelsData.ts:112](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L112)
 
 ___
 
@@ -249,7 +250,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:98](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L98)
+[datastore/ModelsData.ts:113](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L113)
 
 ___
 
@@ -263,4 +264,14 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:99](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L99)
+[datastore/ModelsData.ts:114](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L114)
+
+___
+
+### documentation
+
+• **documentation**: `any`
+
+#### Defined in
+
+[datastore/ModelsData.ts:115](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L115)

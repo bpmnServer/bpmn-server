@@ -2,19 +2,6 @@
 
 # Interface: IAPIEngine
 
-common parameters:
-
-- query:      MongoDB query to locate the target instance or item
-
-- data:       input Data 
-
-- user:       an instance of ISecureUser object 
-
-- options:    various options, this is an open object that is based through the run-time
-
-Returns IExecution
-containing the instance and the results of the call
-
 ## Implemented by
 
 - [`APIEngine`](../classes/APIEngine.md)
@@ -29,6 +16,7 @@ containing the instance and the results of the call
 - [throwMessage](IAPIEngine.md#throwmessage)
 - [throwSignal](IAPIEngine.md#throwsignal)
 - [startEvent](IAPIEngine.md#startevent)
+- [restart](IAPIEngine.md#restart)
 
 ## Methods
 
@@ -45,7 +33,7 @@ start a new Instance of specified model
 | `modelName` | `any` | name of the model to start. |
 | `data` | `Object` | - |
 | `user` | [`ISecureUser`](ISecureUser.md) | user object {} |
-| `options?` | `Object` | - |
+| `options?` | [`IEngineOptions`](IEngineOptions.md) | - |
 
 #### Returns
 
@@ -53,13 +41,13 @@ start a new Instance of specified model
 
 #### Defined in
 
-[API/API.ts:55](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L55)
+[API/API.ts:90](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L90)
 
 ___
 
 ### invoke
 
-▸ **invoke**(`query`, `data`, `user`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
+▸ **invoke**(`query`, `data`, `user?`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
 
 continue with the execution of a particular item that is in a wait state, typically a user task
 
@@ -69,8 +57,8 @@ continue with the execution of a particular item that is in a wait state, typica
 | :------ | :------ |
 | `query` | `any` |
 | `data` | `Object` |
-| `user` | [`ISecureUser`](ISecureUser.md) |
-| `options?` | `Object` |
+| `user?` | [`ISecureUser`](ISecureUser.md) |
+| `options?` | [`IEngineOptions`](IEngineOptions.md) |
 
 #### Returns
 
@@ -78,13 +66,13 @@ continue with the execution of a particular item that is in a wait state, typica
 
 #### Defined in
 
-[API/API.ts:62](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L62)
+[API/API.ts:97](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L97)
 
 ___
 
 ### assign
 
-▸ **assign**(`query`, `data`, `assignment`, `user`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
+▸ **assign**(`query`, `data`, `assignment`, `user?`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
 
 provide assignment data to a user task
 Also, updates item data
@@ -96,8 +84,8 @@ Also, updates item data
 | `query` | `any` |
 | `data` | `any` |
 | `assignment` | `any` |
-| `user` | [`ISecureUser`](ISecureUser.md) |
-| `options?` | `Object` |
+| `user?` | [`ISecureUser`](ISecureUser.md) |
+| `options?` | [`IEngineOptions`](IEngineOptions.md) |
 
 #### Returns
 
@@ -105,13 +93,13 @@ Also, updates item data
 
 #### Defined in
 
-[API/API.ts:67](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L67)
+[API/API.ts:102](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L102)
 
 ___
 
 ### throwMessage
 
-▸ **throwMessage**(`messageId`, `data`, `messageMatchingKey`, `user`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
+▸ **throwMessage**(`messageId`, `data`, `messageMatchingKey`, `user?`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
 
 throw a message with an id, system will identify receiving item
 
@@ -122,8 +110,8 @@ throw a message with an id, system will identify receiving item
 | `messageId` | `any` |
 | `data` | `any` |
 | `messageMatchingKey` | `any` |
-| `user` | [`ISecureUser`](ISecureUser.md) |
-| `options?` | `Object` |
+| `user?` | [`ISecureUser`](ISecureUser.md) |
+| `options?` | [`IEngineOptions`](IEngineOptions.md) |
 
 #### Returns
 
@@ -131,13 +119,13 @@ throw a message with an id, system will identify receiving item
 
 #### Defined in
 
-[API/API.ts:71](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L71)
+[API/API.ts:106](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L106)
 
 ___
 
 ### throwSignal
 
-▸ **throwSignal**(`signalId`, `data`, `messageMatchingKey`, `user`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
+▸ **throwSignal**(`signalId`, `data`, `messageMatchingKey`, `user?`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
 
 throw a signal with an id, system will identify receiving item(s)
 
@@ -148,8 +136,8 @@ throw a signal with an id, system will identify receiving item(s)
 | `signalId` | `any` |
 | `data` | `any` |
 | `messageMatchingKey` | `any` |
-| `user` | [`ISecureUser`](ISecureUser.md) |
-| `options?` | `Object` |
+| `user?` | [`ISecureUser`](ISecureUser.md) |
+| `options?` | [`IEngineOptions`](IEngineOptions.md) |
 
 #### Returns
 
@@ -157,13 +145,13 @@ throw a signal with an id, system will identify receiving item(s)
 
 #### Defined in
 
-[API/API.ts:75](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L75)
+[API/API.ts:110](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L110)
 
 ___
 
 ### startEvent
 
-▸ **startEvent**(`query`, `elementId`, `data`, `user`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
+▸ **startEvent**(`query`, `elementId`, `data`, `user?`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
 
 start a second event node (in a subprocess) for a running instance
 
@@ -174,8 +162,8 @@ start a second event node (in a subprocess) for a running instance
 | `query` | `any` |
 | `elementId` | `any` |
 | `data` | `Object` |
-| `user` | [`ISecureUser`](ISecureUser.md) |
-| `options?` | `Object` |
+| `user?` | [`ISecureUser`](ISecureUser.md) |
+| `options?` | [`IEngineOptions`](IEngineOptions.md) |
 
 #### Returns
 
@@ -183,4 +171,32 @@ start a second event node (in a subprocess) for a running instance
 
 #### Defined in
 
-[API/API.ts:79](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L79)
+[API/API.ts:114](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L114)
+
+___
+
+### restart
+
+▸ **restart**(`instanceId`, `itemId`, `data`, `userName`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
+
+restarting an already completed instance at a particular node
+this function requires `dataStore.enableSavePoints` to be true in configuration.ts
+this add a savePoint for each item, allowing you to select that item to restore it
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `instanceId` | `any` |
+| `itemId` | `any` |
+| `data` | `any` |
+| `userName` | `any` |
+| `options?` | `any` |
+
+#### Returns
+
+`Promise`\<[`IExecution`](IExecution.md)\>
+
+#### Defined in
+
+[API/API.ts:129](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L129)

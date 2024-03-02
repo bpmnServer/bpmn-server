@@ -260,62 +260,38 @@ class Execution extends ServerComponent implements IExecution {
      * 
      * restarting an already completed instance at a particular node
      *      
-     * @param startNodeId
+     * @param itemId
      * @param inputData
      * 
      */
-    public async restart(startNodeId, inputData:any,userName, options={}) :Promise<IExecution>  {
 
-        this.log('Execution('+this.name+').restart: startNodeId=' + startNodeId + ' data '+JSON.stringify(inputData));
-        this.operation = 'signal';
-        this.options=options;
-        this.userName=userName;
+public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecution>  {
 
-        let startNode = this.getNodeById(startNodeId);
+    this.log('Execution('+this.name+').restart: from item: ' + itemId+ ' data '+JSON.stringify(inputData));
+    this.operation = 'signal';
+    this.options=options;
+    this.userName=userName;
 
-        this.servicesProvider = await this.appDelegate.getServicesProvider();        
+    this.log('..restarting at :' + itemId);
 
-        await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoke);
+    // check if instance has ended
+    if (this.instance.status!==EXECUTION_STATUS.end)
+    {
+        this.error("***ERROR*** restart must be for an instance with end status, current instance has status of"+this.instance.status);
+    }
 
-        this.log('..restarting at :' + startNodeId);
-
-        // check if instance has ended
-        if (this.instance.status!==EXECUTION_STATUS.end)
-        {
-            this.error("***ERROR*** restart must be for an instance with end status, current instance has status of"+this.instance.status);
-        }
-        // check if valid node
-        /*
-        let items=this.getItems();
-        items.forEach(it=>{
-            if (it.elementId == startNodeId)
-                {
-                    let p='';
-                    if (it.token.parentToken)
-                        p=it.token.parentToken.id;
-                    console.log('it',it.token.type,p);
-                    if (it.token.parentToken)
-                        {
-                            this.report();
-                            
-                            this.error("***Error*** Node:"+startNodeId+" not valid for a restart, it has a parent item use: "+it.token.parentToken.firstItem.elementId);
-                        }
-                }
-        });
-        */
-        let token = await Token.startNewToken(TOKEN_TYPE.Primary,this, startNode, null, null, null, null,inputData,true);
-
-        await token.execute(inputData);
 
         this.report();
 
         await Promise.all(this.promises);
         await this.save();
-        this.log('Execution('+this.name+').signalItem: finished!');
-        
+        this.log('Execution('+this.name+').restart: finished!');
 
-        return this;
-    }
+
+//    let ret = await this.signalItem(itemId,inputData,userName,options);
+    
+    return this;
+}
 
 
     public async signalEvent(executionId, inputData:any,userName,options={}) :Promise<IExecution> {
@@ -493,8 +469,22 @@ class Execution extends ServerComponent implements IExecution {
      * @param state
 
      */
-    static async restore(server,state: IInstanceData): Promise<Execution> {
+    static async restore(server,state: IInstanceData,itemId=null): Promise<Execution> {
 
+        let stateTokens=state.tokens;
+        let stateItems=state.items;
+        let stateLoops=state.loops;
+
+        if (itemId!==null) {
+            let savePoint=state['savePoints'][itemId];
+            if (savePoint) {
+                stateTokens=savePoint.tokens||[];
+                stateItems=savePoint.items||[];
+                stateLoops=savePoint.loops||[];
+            }
+            else
+                server.logger.error("***Error*** No savePoint found for item "+itemId);
+        }
         const source = state.source;
         const execution = new Execution(server, state.name, source,state);
 
@@ -503,7 +493,7 @@ class Execution extends ServerComponent implements IExecution {
 
         const tokenLoops = [];
         const tokens = new Map();
-        state.tokens.forEach(t => {
+        stateTokens.forEach(t => {
             const token = Token.load(execution, t);
             if (t.loopId)
                 tokenLoops.push({ id: t.id, loopId: t.loopId });
@@ -512,7 +502,7 @@ class Execution extends ServerComponent implements IExecution {
         });
 
         const loops = new Map();
-        state.loops.forEach(l => {
+        stateLoops.forEach(l => {
             l.execution = execution;
             const loop = Loop.load(execution, l);
             loops.set(loop.id, loop);
@@ -526,7 +516,7 @@ class Execution extends ServerComponent implements IExecution {
 
         // items
         const items = [];
-        state.items.forEach(i => {
+        stateItems.forEach(i => {
             const token = execution.getToken(i.tokenId);
             const item = Item.load(execution, i, token);
             token.path.push(item);
@@ -535,7 +525,7 @@ class Execution extends ServerComponent implements IExecution {
 
         // token.originItem
 
-        state.tokens.forEach(t => {
+        stateTokens.forEach(t => {
             const token = execution.getToken(t.id);
             if (t.originItem)
                 items.forEach(it => {

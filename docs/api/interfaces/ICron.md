@@ -32,7 +32,7 @@
 
 #### Defined in
 
-[interfaces/server.ts:119](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/server.ts#L119)
+[interfaces/server.ts:121](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/interfaces/server.ts#L121)
 
 ___
 
@@ -46,7 +46,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:120](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/server.ts#L120)
+[interfaces/server.ts:122](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/interfaces/server.ts#L122)
 
 ___
 
@@ -60,4 +60,4 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:121](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/interfaces/server.ts#L121)
+[interfaces/server.ts:123](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/interfaces/server.ts#L123)

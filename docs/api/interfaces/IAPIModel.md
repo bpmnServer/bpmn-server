@@ -12,6 +12,7 @@ common parameters:
 
 ### Methods
 
+- [get](IAPIModel.md#get)
 - [save](IAPIModel.md#save)
 - [list](IAPIModel.md#list)
 - [findEvents](IAPIModel.md#findevents)
@@ -24,9 +25,32 @@ common parameters:
 
 ## Methods
 
+### get
+
+▸ **get**(`query`, `user`): `Promise`\<`object`[]\>
+
+retrieve Model data
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
+| `user` | [`ISecureUser`](ISecureUser.md) |
+
+#### Returns
+
+`Promise`\<`object`[]\>
+
+#### Defined in
+
+[API/API.ts:174](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L174)
+
+___
+
 ### save
 
-▸ **save**(`name`, `source`, `svg`, `user`): `any`
+▸ **save**(`name`, `source`, `svg`, `user?`): `any`
 
 save a model to the modelStore
 
@@ -37,7 +61,7 @@ save a model to the modelStore
 | `name` | `any` |
 | `source` | `any` |
 | `svg` | `any` |
-| `user` | [`ISecureUser`](ISecureUser.md) |
+| `user?` | [`ISecureUser`](ISecureUser.md) |
 
 #### Returns
 
@@ -45,7 +69,7 @@ save a model to the modelStore
 
 #### Defined in
 
-[API/API.ts:122](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L122)
+[API/API.ts:181](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L181)
 
 ___
 
@@ -68,13 +92,13 @@ list all models authorized to the user
 
 #### Defined in
 
-[API/API.ts:126](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L126)
+[API/API.ts:185](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L185)
 
 ___
 
 ### findEvents
 
-▸ **findEvents**(`query`, `user`): `any`
+▸ **findEvents**(`query`, `user?`): `any`
 
 returns Model Events (like timers) for authorized to the user and based on specifid query
 
@@ -83,7 +107,7 @@ returns Model Events (like timers) for authorized to the user and based on speci
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
-| `user` | [`ISecureUser`](ISecureUser.md) |
+| `user?` | [`ISecureUser`](ISecureUser.md) |
 
 #### Returns
 
@@ -91,13 +115,13 @@ returns Model Events (like timers) for authorized to the user and based on speci
 
 #### Defined in
 
-[API/API.ts:131](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L131)
+[API/API.ts:190](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L190)
 
 ___
 
 ### findStartEvents
 
-▸ **findStartEvents**(`query`, `user`): `any`
+▸ **findStartEvents**(`query`, `user?`): `any`
 
 returns Model Start Events for authorized to the user and based on specifid query
 
@@ -106,7 +130,7 @@ returns Model Start Events for authorized to the user and based on specifid quer
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
-| `user` | [`ISecureUser`](ISecureUser.md) |
+| `user?` | [`ISecureUser`](ISecureUser.md) |
 
 #### Returns
 
@@ -114,13 +138,13 @@ returns Model Start Events for authorized to the user and based on specifid quer
 
 #### Defined in
 
-[API/API.ts:136](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L136)
+[API/API.ts:195](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L195)
 
 ___
 
 ### delete
 
-▸ **delete**(`name`, `user`): `any`
+▸ **delete**(`name`, `user?`): `any`
 
 delete the specified model
 
@@ -129,7 +153,7 @@ delete the specified model
 | Name | Type |
 | :------ | :------ |
 | `name` | `any` |
-| `user` | [`ISecureUser`](ISecureUser.md) |
+| `user?` | [`ISecureUser`](ISecureUser.md) |
 
 #### Returns
 
@@ -137,13 +161,13 @@ delete the specified model
 
 #### Defined in
 
-[API/API.ts:141](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L141)
+[API/API.ts:200](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L200)
 
 ___
 
 ### rename
 
-▸ **rename**(`name`, `newName`, `user`): `any`
+▸ **rename**(`name`, `newName`, `user?`): `any`
 
 delete the specified model
 
@@ -153,7 +177,7 @@ delete the specified model
 | :------ | :------ |
 | `name` | `any` |
 | `newName` | `any` |
-| `user` | [`ISecureUser`](ISecureUser.md) |
+| `user?` | [`ISecureUser`](ISecureUser.md) |
 
 #### Returns
 
@@ -161,13 +185,13 @@ delete the specified model
 
 #### Defined in
 
-[API/API.ts:145](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L145)
+[API/API.ts:204](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L204)
 
 ___
 
 ### getSource
 
-▸ **getSource**(`name`, `user`): `any`
+▸ **getSource**(`name`, `user?`): `any`
 
 returns the bpmn (xml) for the model
 
@@ -176,7 +200,7 @@ returns the bpmn (xml) for the model
 | Name | Type |
 | :------ | :------ |
 | `name` | `any` |
-| `user` | [`ISecureUser`](ISecureUser.md) |
+| `user?` | [`ISecureUser`](ISecureUser.md) |
 
 #### Returns
 
@@ -184,13 +208,13 @@ returns the bpmn (xml) for the model
 
 #### Defined in
 
-[API/API.ts:149](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L149)
+[API/API.ts:208](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L208)
 
 ___
 
 ### load
 
-▸ **load**(`name`, `user`): `any`
+▸ **load**(`name`, `user?`): `any`
 
 load a model
 
@@ -199,7 +223,7 @@ load a model
 | Name | Type |
 | :------ | :------ |
 | `name` | `any` |
-| `user` | [`ISecureUser`](ISecureUser.md) |
+| `user?` | [`ISecureUser`](ISecureUser.md) |
 
 #### Returns
 
@@ -207,13 +231,13 @@ load a model
 
 #### Defined in
 
-[API/API.ts:153](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L153)
+[API/API.ts:212](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L212)
 
 ___
 
 ### export
 
-▸ **export**(`query`, `folder`, `user`): `any`
+▸ **export**(`query`, `folder`, `user?`): `any`
 
 Exports the specified models based on a query to a folder
 
@@ -223,7 +247,7 @@ Exports the specified models based on a query to a folder
 | :------ | :------ |
 | `query` | `any` |
 | `folder` | `any` |
-| `user` | [`ISecureUser`](ISecureUser.md) |
+| `user?` | [`ISecureUser`](ISecureUser.md) |
 
 #### Returns
 
@@ -231,4 +255,4 @@ Exports the specified models based on a query to a folder
 
 #### Defined in
 
-[API/API.ts:157](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L157)
+[API/API.ts:216](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L216)

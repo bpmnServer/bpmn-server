@@ -24,6 +24,8 @@
 
 ### Methods
 
+- [getUser](APIModel.md#getuser)
+- [get](APIModel.md#get)
 - [save](APIModel.md#save)
 - [list](APIModel.md#list)
 - [findEvents](APIModel.md#findevents)
@@ -56,7 +58,7 @@ APIComponent.constructor
 
 #### Defined in
 
-[API/API.ts:24](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L24)
+[API/API.ts:44](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L44)
 
 ## Properties
 
@@ -70,7 +72,7 @@ APIComponent.api
 
 #### Defined in
 
-[API/API.ts:22](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L22)
+[API/API.ts:42](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L42)
 
 ## Accessors
 
@@ -88,13 +90,58 @@ APIComponent.server
 
 #### Defined in
 
-[API/API.ts:27](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L27)
+[API/API.ts:47](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L47)
 
 ## Methods
 
+### getUser
+
+▸ **getUser**(`user`): `any`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `user` | `any` |
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+APIComponent.getUser
+
+#### Defined in
+
+[API/API.ts:50](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L50)
+
+___
+
+### get
+
+▸ **get**(`query`, `user`): `Promise`\<`object`[]\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
+| `user` | [`ISecureUser`](../interfaces/ISecureUser.md) |
+
+#### Returns
+
+`Promise`\<`object`[]\>
+
+#### Defined in
+
+[API/API.ts:285](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L285)
+
+___
+
 ### save
 
-▸ **save**(`name`, `source`, `svg`, `user`): `Promise`\<`boolean`\>
+▸ **save**(`name`, `source`, `svg`, `user?`): `Promise`\<`boolean`\>
 
 #### Parameters
 
@@ -103,7 +150,7 @@ APIComponent.server
 | `name` | `any` |
 | `source` | `any` |
 | `svg` | `any` |
-| `user` | [`ISecureUser`](../interfaces/ISecureUser.md) |
+| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
 
 #### Returns
 
@@ -111,20 +158,20 @@ APIComponent.server
 
 #### Defined in
 
-[API/API.ts:216](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L216)
+[API/API.ts:296](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L296)
 
 ___
 
 ### list
 
-▸ **list**(`query`, `user`): `Promise`\<`string`[]\>
+▸ **list**(`query`, `user?`): `Promise`\<`string`[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
-| `user` | [`ISecureUser`](../interfaces/ISecureUser.md) |
+| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
 
 #### Returns
 
@@ -132,20 +179,20 @@ ___
 
 #### Defined in
 
-[API/API.ts:223](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L223)
+[API/API.ts:304](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L304)
 
 ___
 
 ### findEvents
 
-▸ **findEvents**(`query`, `user`): `Promise`\<`any`[]\>
+▸ **findEvents**(`query`, `user?`): `Promise`\<`any`[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
-| `user` | [`ISecureUser`](../interfaces/ISecureUser.md) |
+| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
 
 #### Returns
 
@@ -153,20 +200,20 @@ ___
 
 #### Defined in
 
-[API/API.ts:229](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L229)
+[API/API.ts:311](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L311)
 
 ___
 
 ### findStartEvents
 
-▸ **findStartEvents**(`query`, `user`): `Promise`\<`any`[]\>
+▸ **findStartEvents**(`query`, `user?`): `Promise`\<`any`[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
-| `user` | [`ISecureUser`](../interfaces/ISecureUser.md) |
+| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
 
 #### Returns
 
@@ -174,20 +221,20 @@ ___
 
 #### Defined in
 
-[API/API.ts:233](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L233)
+[API/API.ts:316](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L316)
 
 ___
 
 ### delete
 
-▸ **delete**(`name`, `user`): `Promise`\<``false`` \| `void`\>
+▸ **delete**(`name`, `user?`): `Promise`\<``false`` \| `void`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `name` | `any` |
-| `user` | [`ISecureUser`](../interfaces/ISecureUser.md) |
+| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
 
 #### Returns
 
@@ -195,13 +242,13 @@ ___
 
 #### Defined in
 
-[API/API.ts:238](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L238)
+[API/API.ts:323](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L323)
 
 ___
 
 ### rename
 
-▸ **rename**(`name`, `newName`, `user`): `Promise`\<`boolean`\>
+▸ **rename**(`name`, `newName`, `user?`): `Promise`\<`boolean`\>
 
 #### Parameters
 
@@ -209,7 +256,7 @@ ___
 | :------ | :------ |
 | `name` | `any` |
 | `newName` | `any` |
-| `user` | [`ISecureUser`](../interfaces/ISecureUser.md) |
+| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
 
 #### Returns
 
@@ -217,20 +264,20 @@ ___
 
 #### Defined in
 
-[API/API.ts:243](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L243)
+[API/API.ts:328](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L328)
 
 ___
 
 ### getSource
 
-▸ **getSource**(`name`, `user`): `Promise`\<`string`\>
+▸ **getSource**(`name`, `user?`): `Promise`\<`string`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `name` | `any` |
-| `user` | [`ISecureUser`](../interfaces/ISecureUser.md) |
+| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
 
 #### Returns
 
@@ -238,20 +285,20 @@ ___
 
 #### Defined in
 
-[API/API.ts:248](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L248)
+[API/API.ts:335](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L335)
 
 ___
 
 ### load
 
-▸ **load**(`name`, `user`): `Promise`\<[`IDefinition`](../interfaces/IDefinition.md)\>
+▸ **load**(`name`, `user?`): `Promise`\<[`IDefinition`](../interfaces/IDefinition.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `name` | `any` |
-| `user` | [`ISecureUser`](../interfaces/ISecureUser.md) |
+| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
 
 #### Returns
 
@@ -259,13 +306,13 @@ ___
 
 #### Defined in
 
-[API/API.ts:251](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L251)
+[API/API.ts:338](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L338)
 
 ___
 
 ### export
 
-▸ **export**(`query`, `folder`, `user`): `Promise`\<`void`\>
+▸ **export**(`query`, `folder`, `user?`): `Promise`\<`void`\>
 
 #### Parameters
 
@@ -273,7 +320,7 @@ ___
 | :------ | :------ |
 | `query` | `any` |
 | `folder` | `any` |
-| `user` | [`ISecureUser`](../interfaces/ISecureUser.md) |
+| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
 
 #### Returns
 
@@ -281,4 +328,4 @@ ___
 
 #### Defined in
 
-[API/API.ts:254](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L254)
+[API/API.ts:341](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L341)

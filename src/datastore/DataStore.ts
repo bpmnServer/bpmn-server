@@ -29,6 +29,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 	inSaving = false;
 	promises = [];
 	locker;
+	enableSavePoints=false;
 
 	constructor(server: IBPMNServer) {
 		super(server);
@@ -90,39 +91,46 @@ class DataStore extends ServerComponent  implements IDataStore {
 	private async saveInstance(instance,options={}) {
 //		this.logger.log("Saving...");
 
+		let saveObject=
+			{	version: instance.version,endedAt: instance.endedAt, status: instance.status, saved: instance.saved,
+				tokens: instance.tokens, items: instance.items, loops: instance.loops,
+				logs: instance.logs, data: instance.data 
+			};
 
-		//var json = JSON.stringify(instance.state, null, 2);
-		const tokensCount = instance.tokens.length;
-		let itemsCount = instance.items.length;
+		if (instance.version==null) 
+			instance.version =0;
+		else 
+			instance.version++;
+
+		if (this.enableSavePoints) {
+			let lastItem=instance.items[instance.items.length-1].id;
+
+			let savePoint={id:lastItem,items:instance.items,loop:instance.loops,tokens:instance.tokens,data:instance.data}
+	
+			if (!instance['savePoints'])
+				instance['savePoints']={};
+			
+			instance['savePoints'][lastItem]=savePoint;
+
+			saveObject['savePoints']=instance['savePoints'];
+		}
 
 		var recs;
 		if (!instance.saved) {
 			instance.saved = new Date();
-			instance.version =0;
 
-			//this.promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]));
-			//this.promises.push(this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]));
 			await this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]);
 
-//			this.logger.log("inserting instance");
 		}
 		else {
+
 			this.promises.push(this.db.update(this.dbConfiguration.db, Instance_collection,
 				{ id: instance.id },
 				{
-					$set:
-					{	version: instance.version,endedAt: instance.endedAt, status: instance.status, saved: instance.saved,
-						tokens: instance.tokens, items: instance.items, loops: instance.loops,
-						logs: instance.logs, data: instance.data
-					}
+					$set: saveObject
 				}));
 
-//			this.logger.log("updating instance");
 		}
-		/*t fileName = instance.name + '_' + DataStore.seq++ + '.state';
-		await fs.writeFile(fileName, JSON.stringify(instance), function (err) {
-			if (err) throw err;
-		});*/
 
 		await Promise.all(this.promises);
 		this.logger.log('..DataStore:saving Complete');
@@ -174,6 +182,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		}
 
     }
+
 	async findInstances(query, option: 'summary' | 'full' | any = 'summary'): Promise<IInstanceData[]>{
 
 		let projection;
@@ -225,10 +234,10 @@ class DataStore extends ServerComponent  implements IDataStore {
 		return items;
 	}
 
-
 	async deleteInstances(query) {
 
 		await this.cache.shutdown();
+		
 		return await this.db.remove(this.dbConfiguration.db, Instance_collection, query );
 
 	}

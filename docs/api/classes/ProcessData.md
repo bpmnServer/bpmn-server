@@ -16,6 +16,7 @@
 
 - [id](ProcessData.md#id)
 - [name](ProcessData.md#name)
+- [documentation](ProcessData.md#documentation)
 - [isExecutable](ProcessData.md#isexecutable)
 
 ## Constructors
@@ -40,7 +41,7 @@
 
 #### Defined in
 
-[datastore/ModelsData.ts:78](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L78)
+[datastore/ModelsData.ts:92](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L92)
 
 ___
 
@@ -54,7 +55,17 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:79](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L79)
+[datastore/ModelsData.ts:93](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L93)
+
+___
+
+### documentation
+
+• **documentation**: `any`
+
+#### Defined in
+
+[datastore/ModelsData.ts:94](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L94)
 
 ___
 
@@ -68,4 +79,4 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:80](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L80)
+[datastore/ModelsData.ts:95](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L95)

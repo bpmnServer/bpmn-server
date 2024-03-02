@@ -39,13 +39,13 @@ api.data.getPendingUserTasks({"item.assignee":user.userName});
 
 #### Defined in
 
-[API/API.ts:94](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L94)
+[API/API.ts:146](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L146)
 
 ___
 
 ### findItems
 
-▸ **findItems**(`query`, `user`): `Promise`\<[`IItemData`](IItemData.md)[]\>
+▸ **findItems**(`query`, `user?`): `Promise`\<[`IItemData`](IItemData.md)[]\>
 
 returns list of `item`s
 
@@ -54,7 +54,7 @@ returns list of `item`s
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
-| `user` | [`ISecureUser`](ISecureUser.md) |
+| `user?` | [`ISecureUser`](ISecureUser.md) |
 
 #### Returns
 
@@ -62,20 +62,20 @@ returns list of `item`s
 
 #### Defined in
 
-[API/API.ts:98](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L98)
+[API/API.ts:150](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L150)
 
 ___
 
 ### findItem
 
-▸ **findItem**(`query`, `user`): `Promise`\<[`IItemData`](IItemData.md)\>
+▸ **findItem**(`query`, `user?`): `Promise`\<[`IItemData`](IItemData.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
-| `user` | [`ISecureUser`](ISecureUser.md) |
+| `user?` | [`ISecureUser`](ISecureUser.md) |
 
 #### Returns
 
@@ -83,13 +83,13 @@ ___
 
 #### Defined in
 
-[API/API.ts:99](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L99)
+[API/API.ts:151](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L151)
 
 ___
 
 ### findInstances
 
-▸ **findInstances**(`query`, `user`, `options`): `Promise`\<[`IInstanceData`](IInstanceData.md)[]\>
+▸ **findInstances**(`query`, `user?`, `options?`): `Promise`\<[`IInstanceData`](IInstanceData.md)[]\>
 
 returns list of `instance`s
 
@@ -98,8 +98,8 @@ returns list of `instance`s
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
-| `user` | [`ISecureUser`](ISecureUser.md) |
-| `options` | `any` |
+| `user?` | [`ISecureUser`](ISecureUser.md) |
+| `options?` | `any` |
 
 #### Returns
 
@@ -107,13 +107,13 @@ returns list of `instance`s
 
 #### Defined in
 
-[API/API.ts:103](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L103)
+[API/API.ts:155](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L155)
 
 ___
 
 ### deleteInstances
 
-▸ **deleteInstances**(`query`, `user`): `any`
+▸ **deleteInstances**(`query`, `user?`): `any`
 
 deletes the `instance`s
 
@@ -122,7 +122,7 @@ deletes the `instance`s
 | Name | Type |
 | :------ | :------ |
 | `query` | `any` |
-| `user` | [`ISecureUser`](ISecureUser.md) |
+| `user?` | [`ISecureUser`](ISecureUser.md) |
 
 #### Returns
 
@@ -130,4 +130,4 @@ deletes the `instance`s
 
 #### Defined in
 
-[API/API.ts:107](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L107)
+[API/API.ts:159](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L159)

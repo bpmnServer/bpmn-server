@@ -9,7 +9,7 @@ class InstanceObject implements IInstanceData {
     id;
     name;
     status : EXECUTION_STATUS;
-    version;
+    version=null;
     startedAt;
     endedAt;
     saved;

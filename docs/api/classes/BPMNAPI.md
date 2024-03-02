@@ -2,6 +2,24 @@
 
 # Class: BPMNAPI
 
+root object to api
+
+ to create:
+
+ api=new BPMNAPI(new BPMNServer(...));
+
+ to use:
+
+ api.engine  to access engine functions (start,invoke..)
+ api.data    to access dataStore functions (find.. delete)
+ api.model   to access Model functions (list,save,export..)
+
+ api cli:
+ >api engine start       --name 'Buy Used Car'   --data caseId 1003
+ >api engine invoke      --query name 'Buy Used Car' items.status wait name 'Buy'     --data carModel 'Mazda 3'
+ >api data   findItems   --query name 'Buy Used Car' items.status wait
+ >api model  list
+
 ## Table of contents
 
 ### Constructors
@@ -14,6 +32,7 @@
 - [engine](BPMNAPI.md#engine)
 - [data](BPMNAPI.md#data)
 - [model](BPMNAPI.md#model)
+- [defaultUser](BPMNAPI.md#defaultuser)
 
 ## Constructors
 
@@ -33,7 +52,7 @@
 
 #### Defined in
 
-[API/API.ts:14](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L14)
+[API/API.ts:34](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L34)
 
 ## Properties
 
@@ -43,7 +62,7 @@
 
 #### Defined in
 
-[API/API.ts:9](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L9)
+[API/API.ts:28](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L28)
 
 ___
 
@@ -53,7 +72,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:10](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L10)
+[API/API.ts:29](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L29)
 
 ___
 
@@ -63,7 +82,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:11](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L11)
+[API/API.ts:30](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L30)
 
 ___
 
@@ -73,4 +92,14 @@ ___
 
 #### Defined in
 
-[API/API.ts:12](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/API/API.ts#L12)
+[API/API.ts:31](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L31)
+
+___
+
+### defaultUser
+
+• **defaultUser**: [`ISecureUser`](../interfaces/ISecureUser.md)
+
+#### Defined in
+
+[API/API.ts:32](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L32)

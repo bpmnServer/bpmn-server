@@ -117,14 +117,17 @@ export interface IAPIEngine {
 /**
  * 
  * restarting an already completed instance at a particular node
+ * this function requires `dataStore.enableSavePoints` to be true in configuration.ts
+ * this add a savePoint for each item, allowing you to select that item to restore it
+ *
  *      
- * @param instanceQuery
- * @param startNodeId
+ * @param instanceId
+ * @param itemId
  * @param inputData
  * 
  */
+    restart(instanceId,itemId, data:any,userName, options?) :Promise<IExecution>;
 
-   restart(instanceQuery:object, startNodeId: string, data:any,user?:ISecureUser, options?:IEngineOptions) :Promise<IExecution>;
 
 }
 
@@ -240,8 +243,8 @@ class APIEngine extends APIComponent implements IAPIEngine {
     public async startEvent(query, elementId, data = {}, user?: ISecureUser, options:IEngineOptions = {}): Promise<IExecution> {
         return await this.server.engine.startEvent(query, elementId, data,user.userName,options);
     }
-    public async restart(instanceQuery:object, startNodeId: string, data:any,user:ISecureUser, options={}) :Promise<IExecution>  {
-        return await this.server.engine.restart(instanceQuery, startNodeId, data,user.userName, options);
+    public async restart(instanceId,itemId, data:any,user:ISecureUser, options={}) :Promise<IExecution>  {
+        return await this.server.engine.restart(instanceId, itemId, data,user.userName, options);
 
     }
 

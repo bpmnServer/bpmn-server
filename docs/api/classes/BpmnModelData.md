@@ -47,7 +47,7 @@
 
 #### Defined in
 
-[datastore/ModelsData.ts:18](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L18)
+[datastore/ModelsData.ts:18](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L18)
 
 ## Properties
 
@@ -61,7 +61,7 @@
 
 #### Defined in
 
-[datastore/ModelsData.ts:12](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L12)
+[datastore/ModelsData.ts:12](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L12)
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:13](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L13)
+[datastore/ModelsData.ts:13](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L13)
 
 ___
 
@@ -89,7 +89,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:14](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L14)
+[datastore/ModelsData.ts:14](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L14)
 
 ___
 
@@ -103,7 +103,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:15](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L15)
+[datastore/ModelsData.ts:15](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L15)
 
 ___
 
@@ -117,7 +117,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:16](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L16)
+[datastore/ModelsData.ts:16](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L16)
 
 ___
 
@@ -131,7 +131,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:17](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L17)
+[datastore/ModelsData.ts:17](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L17)
 
 ## Methods
 
@@ -151,4 +151,4 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:30](https://github.com/bpmnServer/bpmn-server/blob/a424360/src/datastore/ModelsData.ts#L30)
+[datastore/ModelsData.ts:30](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/datastore/ModelsData.ts#L30)
