@@ -121,12 +121,11 @@ export interface IAPIEngine {
  * this add a savePoint for each item, allowing you to select that item to restore it
  *
  *      
- * @param instanceId
- * @param itemId
+ * @param itemQuery - Query to find a single item
  * @param inputData
  * 
  */
-    restart(instanceId,itemId, data:any,userName, options?) :Promise<IExecution>;
+    restart(itemQuery, data:any,userName, options?) :Promise<IExecution>;
 
 
 }
@@ -243,8 +242,8 @@ class APIEngine extends APIComponent implements IAPIEngine {
     public async startEvent(query, elementId, data = {}, user?: ISecureUser, options:IEngineOptions = {}): Promise<IExecution> {
         return await this.server.engine.startEvent(query, elementId, data,user.userName,options);
     }
-    public async restart(instanceId,itemId, data:any,user:ISecureUser, options={}) :Promise<IExecution>  {
-        return await this.server.engine.restart(instanceId, itemId, data,user.userName, options);
+    public async restart(itemQuery, data:any,user:ISecureUser, options={}) :Promise<IExecution>  {
+        return await this.server.engine.restart(itemQuery, data,user.userName, options);
 
     }
 

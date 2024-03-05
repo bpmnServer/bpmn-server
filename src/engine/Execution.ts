@@ -280,15 +280,8 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
         this.error("***ERROR*** restart must be for an instance with end status, current instance has status of"+this.instance.status);
     }
 
-
-        this.report();
-
-        await Promise.all(this.promises);
-        await this.save();
-        this.log('Execution('+this.name+').restart: finished!');
-
-
-//    let ret = await this.signalItem(itemId,inputData,userName,options);
+    await this.signalItem(itemId,inputData,userName,{restart:true});
+    this.log('Execution('+this.name+').restart: finished!');
     
     return this;
 }
@@ -464,6 +457,22 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
         
         return this.instance;
     }
+    private static findSavePoint(state,itemId) {
+        let sps=state['savePoints'];
+
+        for (let key in sps)
+        {
+            let sp=sps[key];
+            for(let j=0;j<sp.items.length;j++) {
+                let it=sp.items[j];
+                console.log('it:',it.id);
+                if (it.id==itemId)
+                    return sp;
+            }
+        }
+        return null;
+
+    }
     /**
      *  re-enstate the execution from db
      * @param state
@@ -476,7 +485,7 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
         let stateLoops=state.loops;
 
         if (itemId!==null) {
-            let savePoint=state['savePoints'][itemId];
+            let savePoint=Execution.findSavePoint(state,itemId);
             if (savePoint) {
                 stateTokens=savePoint.tokens||[];
                 stateItems=savePoint.items||[];

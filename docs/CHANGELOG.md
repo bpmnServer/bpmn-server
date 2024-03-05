@@ -18,7 +18,7 @@ and here
 - Change: ```getList(..)``` returns only names
 ### API engine
 
-- Add: ```   restart(instanceQuery:object, startNodeId: string, data:any,user?:ISecureUser, options?:IEngineOptions) :Promise<IExecution>``` 
+- Add: ```   restart(itemQuery, data:any,user:ISecureUser, options?:IEngineOptions) :Promise<IExecution>``` 
     restarting an already completed instance at a particular node
  
 
@@ -31,7 +31,7 @@ and here
 - Added Docusaruas
 - Configuration.ts: - Added UserService
 - AppServices.ts is the location for all services
-- Logger: added info to summarize actions
+- Logger: added `info` to summarize actions
 - Support TaskListener 
 - Input/Output Variables now supports multiple types
 - Timer: now supports timeDate type and repeat

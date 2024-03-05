@@ -384,6 +384,9 @@ class Token implements IToken {
     async signal(data,options={}) {
         // check if valid node and valid status
         // find the item
+        let restart=false
+        if (options['restart'])
+            restart=options['restart'];
         let recover=false;
         if (options['recover'])
             recover=options['recover'];
@@ -393,7 +396,16 @@ class Token implements IToken {
         this.log('Token('+this.id +').signal: invoking '+this.currentNode.id+' '+this.currentNode.type+' with data='+JSON.stringify(data));
 
         await this.currentNode.setInput(item, data);
-        if (item.status == ITEM_STATUS.wait || recover) {// || item.type=='bpmn:SubProcess') {
+        if (restart) { // case when in restart mode  
+            if (item.status==ITEM_STATUS.wait)
+                return;
+            const ret = await this.currentNode.run(item);
+
+
+            let result = await this.currentNode.continue(item);
+            result =await this.goNext();
+            }  
+        else if (item.status == ITEM_STATUS.wait || recover) {// || item.type=='bpmn:SubProcess') {
 
             await item.node.validate(item);
 

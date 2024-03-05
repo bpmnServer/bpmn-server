@@ -63,24 +63,25 @@ class Engine extends ServerComponent implements IEngine{
 			return this.logger.error(exc);
 		}
 		finally {
-			if (execution.isLocked)
+			if (execution && execution.isLocked)
 				await this.release(execution);
-			execution.isLocked=false;
 		}
 		
 	}
 
-	public async restart(instanceId,itemId, data:any,userName, options={}) :Promise<Execution>  {
+	public async restart(itemQuery, data:any,userName, options={}) :Promise<Execution>  {
 	
 		this.logger.log(`Action:engine.restart`);
+		let execution;
 
 		try {
+			const item = await this.server.dataStore.findItem(itemQuery);
 
-			const instance = await this.server.dataStore.findInstance({id:instanceId});
+			const instance = await this.server.dataStore.findInstance({id:item.instanceId});
 
-			const execution:Execution = await this.restore(instance.id,itemId);
+			execution= await this.restore(instance.id,item.id);
 
-			await execution.restart(itemId, data,userName, options);
+			await execution.restart(item.id, data,userName, options);
 
 			await this.release(execution);
 
@@ -88,8 +89,12 @@ class Engine extends ServerComponent implements IEngine{
 		}
 		catch (exc) {
 			return this.logger.error(exc);
-
 		}
+		finally {
+			if (execution && execution.isLocked)
+				await this.release(execution);
+		}
+		
 			
 	}
 	
@@ -202,6 +207,7 @@ class Engine extends ServerComponent implements IEngine{
 		
 		this.logger.log(`Action:engine.assign`);
 		this.logger.log(itemQuery);
+		let execution;
 
 		try {
 
@@ -214,7 +220,7 @@ class Engine extends ServerComponent implements IEngine{
 				this.logger.error("query produced no items for "+JSON.stringify(itemQuery));
 			}
 
-			const execution = await this.restore(item.instanceId);
+			execution = await this.restore(item.instanceId);
 
 			execution.worker = execution.assign(item.id, data, assignment, userName,options);
 
@@ -226,6 +232,11 @@ class Engine extends ServerComponent implements IEngine{
 			return this.logger.error(exc);
 
 		}
+		finally {
+			if (execution && execution.isLocked)
+				await this.release(execution);
+		}
+
 	}
 	/**
      * Continue an existing item that is in a wait state
@@ -247,6 +258,7 @@ class Engine extends ServerComponent implements IEngine{
 
 		this.logger.log(`Action:engine.invoke`);
 		this.logger.log(itemQuery);
+		let execution;
 
 		try {
 
@@ -263,7 +275,7 @@ class Engine extends ServerComponent implements IEngine{
 				this.logger.log(`*****Item status is not in wait state ${item.status} ${item.elementId}-${item.processName}`)
                     //this.logger.error(`Item status is not in wait state`);
             }
-			const execution = await this.restore(item.instanceId);
+			execution = await this.restore(item.instanceId);
 
 			execution.worker = execution.signalItem(item.id, data,userName,options);
 
@@ -290,11 +302,17 @@ class Engine extends ServerComponent implements IEngine{
 					throw exc;
 			}
 
-
-		}
+			finally {
+				if (execution && execution.isLocked)
+					await this.release(execution);
+			}
+			}
 		catch (exc) {
 			return this.logger.error(exc);
-
+		}
+		finally {
+			if (execution && execution.isLocked)
+				await this.release(execution);
 		}
 	}
 	/**
@@ -308,10 +326,11 @@ class Engine extends ServerComponent implements IEngine{
 
 		// need to load instance first
 		this.logger.log('startRepeatTimeEvent');
+		let execution;
 
 		try {
 
-			const execution= await this.restore(instanceId);
+			execution= await this.restore(instanceId);
 
 			await execution.signalRepeatTimerEvent(instanceId,prevItem,data,options);
 
@@ -324,6 +343,10 @@ class Engine extends ServerComponent implements IEngine{
 		catch (exc) {
 			return this.logger.error(exc);
 
+		}
+		finally {
+			if (execution && execution.isLocked)
+				await this.release(execution);
 		}
 	}
 	/**
@@ -345,10 +368,11 @@ class Engine extends ServerComponent implements IEngine{
 
 		// need to load instance first
 		this.logger.log('serverinvokeSignal');
+		let execution;
 
 		try {
 
-			const execution= await this.restore(instanceId);
+			execution= await this.restore(instanceId);
 
 			await execution.signalEvent(elementId, data,userName,options);
 
@@ -362,6 +386,11 @@ class Engine extends ServerComponent implements IEngine{
 			return this.logger.error(exc);
 
 		}
+		finally {
+			if (execution && execution.isLocked)
+				await this.release(execution);
+		}
+
 	}
 	async throwMessage(messageId, data = {}, matchingQuery = {}): Promise<Execution> {
 

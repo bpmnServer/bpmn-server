@@ -111,7 +111,7 @@ interface IEngine {
     //signal(messageId: any, matchingKey: any, data?: {}): Promise<IExecution>;
     throwMessage(messageId, data: {}, matchingQuery: {}): Promise<IExecution>;
     throwSignal(signalId, data: {}, matchingQuery: {});
-    restart(instanceId,itemId, data:any,userName, options) :Promise<IExecution>;
+    restart(itemQuery, data:any,userName, options) :Promise<IExecution>;
 
 
 }

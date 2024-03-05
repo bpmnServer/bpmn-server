@@ -27,7 +27,7 @@ class CancelEventBehaviour extends Behaviour {
     }
 
     describe() {
-            return ['CancelTransaction', ``];
+            return [['CancelTransaction', ``]];
     }
 }
 class CompensateEventBehaviour extends Behaviour {
@@ -68,7 +68,7 @@ class CompensateEventBehaviour extends Behaviour {
             return this.definition['activityRef']['id'];
     }
     describe() {
-            return ['Compensate', ``];
+            return [['Compensate', ``]];
     }
 }
 
