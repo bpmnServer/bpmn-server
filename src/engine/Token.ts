@@ -51,7 +51,7 @@ import { IToken, IExecution, IItem } from '../interfaces/engine';
 // ---------------------------------------------
 enum TOKEN_TYPE {
     Primary = 'Primary', SubProcess = 'SubProcess', Instance = 'Instance', Diverge = 'Diverge',
-    EventSubProcess='EventSubProces', BoundaryEvent ='BoundaryEvent'
+    EventSubProcess='EventSubProces', BoundaryEvent ='BoundaryEvent' ,AdHoc ='AdHoc'
 }
 // ---------------------------------------------
 class Token implements IToken {
@@ -446,7 +446,7 @@ class Token implements IToken {
         const children = this.childrenTokens;
         for (i = 0; i < children.length; i++) {
             const child = children[i];
-            if (child.type == TOKEN_TYPE.EventSubProcess) {
+            if (child.type == TOKEN_TYPE.EventSubProcess || child.type==TOKEN_TYPE.AdHoc) {
                 await child.terminate();
             }
         }

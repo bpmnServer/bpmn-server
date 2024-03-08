@@ -249,6 +249,111 @@ class SubProcess extends Node {
     }
 }
 /**
+ * ad hoc behaviour:
+ *  on `start of subprocess`:
+ *      all nodes without in-flow will be started; user-tasks, timers, script/service tasks etc.
+ *  on `end of subprocess`:
+ *      all nodes that didn't finish, will be terminated
+ *  To `end subprocess`:
+ *  1.  any node can have flow to `end-event`
+ *  2.  model can have an Exclusive-Gateway to terminate the subprocess at particular point
+ *  3   a signal or message can be sent by a script
+ */
+class AdHocSubProcess extends Node {
+    childProcess: Process;
+    get requiresWait() { return true; }
+    get canBeInvoked() { return false; }
+
+    async start(item): Promise<NODE_ACTION> {
+
+
+
+        const token = item.token;
+
+        token.log('..executing a sub process item:' + item.id );
+
+        let nodes=this.getAdHocNodes();
+        const startNode = nodes[0];
+
+        item.status = ITEM_STATUS.wait;
+
+        const newToken = await Token.startNewToken(TOKEN_TYPE.SubProcess, token.execution,
+                startNode, this.id, token, item, null, null, true);
+
+        await this.childProcess.start(token.execution,newToken);
+
+        await this.startBoundaryEvents(item, newToken);
+        await newToken.execute(null);
+
+        let first=true;
+        nodes.forEach(node=>{
+            if (first)
+                first=false;
+            else {
+                console.log('child node',node.id,node.type,'in bounds',node.inbounds.length);
+                Token.startNewToken(TOKEN_TYPE.AdHoc, token.execution,node, this.id, newToken, item, null, null, false);
+    //            const newToken = Token.startNewToken(TOKEN_TYPE.SubProcess, token.execution,node, this.id, token, item, null, null, true);
+    
+            }
+  
+        });
+
+
+        return NODE_ACTION.wait;
+    
+    }
+    async end(item) {
+        return;
+        const children=item.token.getChildrenTokens();
+        console.log('end of adhoc proc',children);
+        children.forEach(tok=>{
+            if (tok.type==TOKEN_TYPE.AdHoc)
+                tok.end(true);
+        });
+    }
+    getAdHocNodes() {
+        const nodes = this.childProcess.childrenNodes;
+
+        const adHocs=[];
+
+        nodes.forEach(node=>{
+            switch(node.type) {
+                case BPMN_TYPE.EndEvent:
+                case BPMN_TYPE.SequenceFlow:
+                    break;
+                default:
+                    if (node.inbounds.length==0)
+                        adHocs.push(node);
+                    break;
+            }
+        });
+        return adHocs;
+    }
+    async run(item):Promise<any> {
+
+        const token = item.token;
+
+        const nodes = this.getAdHocNodes();
+
+/* to do  
+
+        item.status = ITEM_STATUS.wait;
+
+ 
+        await this.childProcess.start(token.execution,newToken);
+
+        await this.startBoundaryEvents(item, newToken);
+        await newToken.execute(null);
+
+        if (item.status == ITEM_STATUS.wait)
+            return NODE_ACTION.wait;
+        else
+            return NODE_ACTION.continue;
+    */
+        }
+}
+
+/**
  * 
  * <callActivity id="callCheckCreditProcess" name="Check credit" calledElement="checkCreditProcess" />
  * 
@@ -308,4 +413,4 @@ class CallActivity extends Node {
 }
 
 
-export {  UserTask, ScriptTask, ServiceTask, BusinessRuleTask, SendTask, ReceiveTask, SubProcess , CallActivity }
+export {  UserTask, ScriptTask, ServiceTask, BusinessRuleTask, SendTask, ReceiveTask, SubProcess , CallActivity , AdHocSubProcess }

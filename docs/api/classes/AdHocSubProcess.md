@@ -1,90 +1,91 @@
-[bpmn-server](../readme.md) / SendTask
+[bpmn-server](../readme.md) / AdHocSubProcess
 
-# Class: SendTask
+# Class: AdHocSubProcess
 
-```ts
-     foo[method]();
-     
-     await this.token.appDelegate[serviceName](data);
-     
-     
-     service signature:
-             output= service (input,context)
-```
+ad hoc behaviour:
+ on `start of subprocess`:
+     all nodes without in-flow will be started; user-tasks, timers, script/service tasks etc.
+ on `end of subprocess`:
+     all nodes that didn't finish, will be terminated
+ To `end subprocess`:
+ 1.  any node can have flow to `end-event`
+ 2.  model can have an Exclusive-Gateway to terminate the subprocess at particular point
+ 3   a signal or message can be sent by a script
 
 ## Hierarchy
 
-- [`ServiceTask`](ServiceTask.md)
+- [`Node`](Node.md)
 
-  ↳ **`SendTask`**
+  ↳ **`AdHocSubProcess`**
 
 ## Table of contents
 
 ### Constructors
 
-- [constructor](SendTask.md#constructor)
+- [constructor](AdHocSubProcess.md#constructor)
 
 ### Properties
 
-- [id](SendTask.md#id)
-- [type](SendTask.md#type)
-- [subType](SendTask.md#subtype)
-- [behaviours](SendTask.md#behaviours)
-- [isFlow](SendTask.md#isflow)
-- [lane](SendTask.md#lane)
-- [name](SendTask.md#name)
-- [process](SendTask.md#process)
-- [def](SendTask.md#def)
-- [outbounds](SendTask.md#outbounds)
-- [inbounds](SendTask.md#inbounds)
-- [attachments](SendTask.md#attachments)
-- [attachedTo](SendTask.md#attachedto)
-- [messageId](SendTask.md#messageid)
-- [signalId](SendTask.md#signalid)
-- [initiator](SendTask.md#initiator)
-- [assignee](SendTask.md#assignee)
-- [candidateGroups](SendTask.md#candidategroups)
-- [candidateUsers](SendTask.md#candidateusers)
-- [scripts](SendTask.md#scripts)
+- [id](AdHocSubProcess.md#id)
+- [type](AdHocSubProcess.md#type)
+- [subType](AdHocSubProcess.md#subtype)
+- [behaviours](AdHocSubProcess.md#behaviours)
+- [isFlow](AdHocSubProcess.md#isflow)
+- [lane](AdHocSubProcess.md#lane)
+- [name](AdHocSubProcess.md#name)
+- [process](AdHocSubProcess.md#process)
+- [def](AdHocSubProcess.md#def)
+- [outbounds](AdHocSubProcess.md#outbounds)
+- [inbounds](AdHocSubProcess.md#inbounds)
+- [attachments](AdHocSubProcess.md#attachments)
+- [attachedTo](AdHocSubProcess.md#attachedto)
+- [messageId](AdHocSubProcess.md#messageid)
+- [signalId](AdHocSubProcess.md#signalid)
+- [initiator](AdHocSubProcess.md#initiator)
+- [assignee](AdHocSubProcess.md#assignee)
+- [candidateGroups](AdHocSubProcess.md#candidategroups)
+- [candidateUsers](AdHocSubProcess.md#candidateusers)
+- [scripts](AdHocSubProcess.md#scripts)
+- [childProcess](AdHocSubProcess.md#childprocess)
 
 ### Accessors
 
-- [processId](SendTask.md#processid)
-- [requiresWait](SendTask.md#requireswait)
-- [canBeInvoked](SendTask.md#canbeinvoked)
-- [serviceName](SendTask.md#servicename)
-- [isCatching](SendTask.md#iscatching)
+- [processId](AdHocSubProcess.md#processid)
+- [isCatching](AdHocSubProcess.md#iscatching)
+- [requiresWait](AdHocSubProcess.md#requireswait)
+- [canBeInvoked](AdHocSubProcess.md#canbeinvoked)
 
 ### Methods
 
-- [restored](SendTask.md#restored)
-- [hasBehaviour](SendTask.md#hasbehaviour)
-- [getBehaviour](SendTask.md#getbehaviour)
-- [addBehaviour](SendTask.md#addbehaviour)
-- [validate](SendTask.md#validate)
-- [doEvent](SendTask.md#doevent)
-- [setInput](SendTask.md#setinput)
-- [getInput](SendTask.md#getinput)
-- [getOutput](SendTask.md#getoutput)
-- [enter](SendTask.md#enter)
-- [execute](SendTask.md#execute)
-- [continue](SendTask.md#continue)
-- [start](SendTask.md#start)
-- [cancelEBG](SendTask.md#cancelebg)
-- [cancelBoundaryEvents](SendTask.md#cancelboundaryevents)
-- [end](SendTask.md#end)
-- [resume](SendTask.md#resume)
-- [init](SendTask.md#init)
-- [getOutbounds](SendTask.md#getoutbounds)
-- [startBoundaryEvents](SendTask.md#startboundaryevents)
-- [run](SendTask.md#run)
-- [describe](SendTask.md#describe)
+- [restored](AdHocSubProcess.md#restored)
+- [hasBehaviour](AdHocSubProcess.md#hasbehaviour)
+- [getBehaviour](AdHocSubProcess.md#getbehaviour)
+- [addBehaviour](AdHocSubProcess.md#addbehaviour)
+- [validate](AdHocSubProcess.md#validate)
+- [doEvent](AdHocSubProcess.md#doevent)
+- [setInput](AdHocSubProcess.md#setinput)
+- [getInput](AdHocSubProcess.md#getinput)
+- [getOutput](AdHocSubProcess.md#getoutput)
+- [enter](AdHocSubProcess.md#enter)
+- [execute](AdHocSubProcess.md#execute)
+- [continue](AdHocSubProcess.md#continue)
+- [cancelEBG](AdHocSubProcess.md#cancelebg)
+- [cancelBoundaryEvents](AdHocSubProcess.md#cancelboundaryevents)
+- [resume](AdHocSubProcess.md#resume)
+- [init](AdHocSubProcess.md#init)
+- [getOutbounds](AdHocSubProcess.md#getoutbounds)
+- [startBoundaryEvents](AdHocSubProcess.md#startboundaryevents)
+- [describe](AdHocSubProcess.md#describe)
+- [start](AdHocSubProcess.md#start)
+- [end](AdHocSubProcess.md#end)
+- [getAdHocNodes](AdHocSubProcess.md#getadhocnodes)
+- [run](AdHocSubProcess.md#run)
 
 ## Constructors
 
 ### constructor
 
-• **new SendTask**(`id`, `process`, `type`, `def`): [`SendTask`](SendTask.md)
+• **new AdHocSubProcess**(`id`, `process`, `type`, `def`): [`AdHocSubProcess`](AdHocSubProcess.md)
 
 #### Parameters
 
@@ -97,11 +98,11 @@
 
 #### Returns
 
-[`SendTask`](SendTask.md)
+[`AdHocSubProcess`](AdHocSubProcess.md)
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[constructor](ServiceTask.md#constructor)
+[Node](Node.md).[constructor](Node.md#constructor)
 
 #### Defined in
 
@@ -115,7 +116,7 @@
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[id](ServiceTask.md#id)
+[Node](Node.md).[id](Node.md#id)
 
 #### Defined in
 
@@ -129,7 +130,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[type](ServiceTask.md#type)
+[Node](Node.md).[type](Node.md#type)
 
 #### Defined in
 
@@ -143,7 +144,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[subType](ServiceTask.md#subtype)
+[Node](Node.md).[subType](Node.md#subtype)
 
 #### Defined in
 
@@ -157,7 +158,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[behaviours](ServiceTask.md#behaviours)
+[Node](Node.md).[behaviours](Node.md#behaviours)
 
 #### Defined in
 
@@ -171,7 +172,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[isFlow](ServiceTask.md#isflow)
+[Node](Node.md).[isFlow](Node.md#isflow)
 
 #### Defined in
 
@@ -185,7 +186,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[lane](ServiceTask.md#lane)
+[Node](Node.md).[lane](Node.md#lane)
 
 #### Defined in
 
@@ -199,7 +200,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[name](ServiceTask.md#name)
+[Node](Node.md).[name](Node.md#name)
 
 #### Defined in
 
@@ -213,7 +214,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[process](ServiceTask.md#process)
+[Node](Node.md).[process](Node.md#process)
 
 #### Defined in
 
@@ -227,7 +228,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[def](ServiceTask.md#def)
+[Node](Node.md).[def](Node.md#def)
 
 #### Defined in
 
@@ -241,7 +242,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[outbounds](ServiceTask.md#outbounds)
+[Node](Node.md).[outbounds](Node.md#outbounds)
 
 #### Defined in
 
@@ -255,7 +256,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[inbounds](ServiceTask.md#inbounds)
+[Node](Node.md).[inbounds](Node.md#inbounds)
 
 #### Defined in
 
@@ -269,7 +270,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[attachments](ServiceTask.md#attachments)
+[Node](Node.md).[attachments](Node.md#attachments)
 
 #### Defined in
 
@@ -283,7 +284,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[attachedTo](ServiceTask.md#attachedto)
+[Node](Node.md).[attachedTo](Node.md#attachedto)
 
 #### Defined in
 
@@ -297,7 +298,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[messageId](ServiceTask.md#messageid)
+[Node](Node.md).[messageId](Node.md#messageid)
 
 #### Defined in
 
@@ -311,7 +312,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[signalId](ServiceTask.md#signalid)
+[Node](Node.md).[signalId](Node.md#signalid)
 
 #### Defined in
 
@@ -325,7 +326,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[initiator](ServiceTask.md#initiator)
+[Node](Node.md).[initiator](Node.md#initiator)
 
 #### Defined in
 
@@ -339,7 +340,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[assignee](ServiceTask.md#assignee)
+[Node](Node.md).[assignee](Node.md#assignee)
 
 #### Defined in
 
@@ -353,7 +354,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[candidateGroups](ServiceTask.md#candidategroups)
+[Node](Node.md).[candidateGroups](Node.md#candidategroups)
 
 #### Defined in
 
@@ -367,7 +368,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[candidateUsers](ServiceTask.md#candidateusers)
+[Node](Node.md).[candidateUsers](Node.md#candidateusers)
 
 #### Defined in
 
@@ -381,11 +382,21 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[scripts](ServiceTask.md#scripts)
+[Node](Node.md).[scripts](Node.md#scripts)
 
 #### Defined in
 
 [elements/Node.ts:26](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Node.ts#L26)
+
+___
+
+### childProcess
+
+• **childProcess**: [`Process`](Process.md)
+
+#### Defined in
+
+[elements/Tasks.ts:263](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Tasks.ts#L263)
 
 ## Accessors
 
@@ -399,65 +410,11 @@ ___
 
 #### Inherited from
 
-ServiceTask.processId
+Node.processId
 
 #### Defined in
 
 [elements/Node.ts:27](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Node.ts#L27)
-
-___
-
-### requiresWait
-
-• `get` **requiresWait**(): `boolean`
-
-#### Returns
-
-`boolean`
-
-#### Inherited from
-
-ServiceTask.requiresWait
-
-#### Defined in
-
-[elements/Node.ts:123](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Node.ts#L123)
-
-___
-
-### canBeInvoked
-
-• `get` **canBeInvoked**(): `boolean`
-
-#### Returns
-
-`boolean`
-
-#### Inherited from
-
-ServiceTask.canBeInvoked
-
-#### Defined in
-
-[elements/Node.ts:128](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Node.ts#L128)
-
-___
-
-### serviceName
-
-• `get` **serviceName**(): `any`
-
-#### Returns
-
-`any`
-
-#### Inherited from
-
-ServiceTask.serviceName
-
-#### Defined in
-
-[elements/Tasks.ts:38](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Tasks.ts#L38)
 
 ___
 
@@ -469,13 +426,49 @@ ___
 
 `boolean`
 
-#### Overrides
+#### Inherited from
 
-ServiceTask.isCatching
+Node.isCatching
 
 #### Defined in
 
-[elements/Tasks.ts:135](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Tasks.ts#L135)
+[elements/Node.ts:130](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Node.ts#L130)
+
+___
+
+### requiresWait
+
+• `get` **requiresWait**(): `boolean`
+
+#### Returns
+
+`boolean`
+
+#### Overrides
+
+Node.requiresWait
+
+#### Defined in
+
+[elements/Tasks.ts:264](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Tasks.ts#L264)
+
+___
+
+### canBeInvoked
+
+• `get` **canBeInvoked**(): `boolean`
+
+#### Returns
+
+`boolean`
+
+#### Overrides
+
+Node.canBeInvoked
+
+#### Defined in
+
+[elements/Tasks.ts:265](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Tasks.ts#L265)
 
 ## Methods
 
@@ -495,7 +488,7 @@ ServiceTask.isCatching
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[restored](ServiceTask.md#restored)
+[Node](Node.md).[restored](Node.md#restored)
 
 #### Defined in
 
@@ -522,7 +515,7 @@ respond by providing behaviour attributes beyond item and node information
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[hasBehaviour](ServiceTask.md#hasbehaviour)
+[Node](Node.md).[hasBehaviour](Node.md#hasbehaviour)
 
 #### Defined in
 
@@ -546,7 +539,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[getBehaviour](ServiceTask.md#getbehaviour)
+[Node](Node.md).[getBehaviour](Node.md#getbehaviour)
 
 #### Defined in
 
@@ -571,7 +564,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[addBehaviour](ServiceTask.md#addbehaviour)
+[Node](Node.md).[addBehaviour](Node.md#addbehaviour)
 
 #### Defined in
 
@@ -595,7 +588,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[validate](ServiceTask.md#validate)
+[Node](Node.md).[validate](Node.md#validate)
 
 #### Defined in
 
@@ -621,7 +614,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[doEvent](ServiceTask.md#doevent)
+[Node](Node.md).[doEvent](Node.md#doevent)
 
 #### Defined in
 
@@ -650,7 +643,7 @@ todo
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[setInput](ServiceTask.md#setinput)
+[Node](Node.md).[setInput](Node.md#setinput)
 
 #### Defined in
 
@@ -675,7 +668,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[getInput](ServiceTask.md#getinput)
+[Node](Node.md).[getInput](Node.md#getinput)
 
 #### Defined in
 
@@ -702,7 +695,7 @@ todo
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[getOutput](ServiceTask.md#getoutput)
+[Node](Node.md).[getOutput](Node.md#getoutput)
 
 #### Defined in
 
@@ -726,7 +719,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[enter](ServiceTask.md#enter)
+[Node](Node.md).[enter](Node.md#enter)
 
 #### Defined in
 
@@ -758,7 +751,7 @@ considerations: the following are handled by Token
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[execute](ServiceTask.md#execute)
+[Node](Node.md).[execute](Node.md#execute)
 
 #### Defined in
 
@@ -782,35 +775,11 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[continue](ServiceTask.md#continue)
+[Node](Node.md).[continue](Node.md#continue)
 
 #### Defined in
 
 [elements/Node.ts:213](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Node.ts#L213)
-
-___
-
-### start
-
-▸ **start**(`item`): `Promise`\<[`NODE_ACTION`](../enums/NODE_ACTION.md)\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `item` | [`Item`](Item.md) |
-
-#### Returns
-
-`Promise`\<[`NODE_ACTION`](../enums/NODE_ACTION.md)\>
-
-#### Inherited from
-
-[ServiceTask](ServiceTask.md).[start](ServiceTask.md#start)
-
-#### Defined in
-
-[elements/Node.ts:218](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Node.ts#L218)
 
 ___
 
@@ -830,7 +799,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[cancelEBG](ServiceTask.md#cancelebg)
+[Node](Node.md).[cancelEBG](Node.md#cancelebg)
 
 #### Defined in
 
@@ -854,36 +823,11 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[cancelBoundaryEvents](ServiceTask.md#cancelboundaryevents)
+[Node](Node.md).[cancelBoundaryEvents](Node.md#cancelboundaryevents)
 
 #### Defined in
 
 [elements/Node.ts:240](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Node.ts#L240)
-
-___
-
-### end
-
-▸ **end**(`item`, `cancel?`): `Promise`\<`void`\>
-
-#### Parameters
-
-| Name | Type | Default value |
-| :------ | :------ | :------ |
-| `item` | [`Item`](Item.md) | `undefined` |
-| `cancel` | `Boolean` | `false` |
-
-#### Returns
-
-`Promise`\<`void`\>
-
-#### Inherited from
-
-[ServiceTask](ServiceTask.md).[end](ServiceTask.md#end)
-
-#### Defined in
-
-[elements/Node.ts:273](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Node.ts#L273)
 
 ___
 
@@ -906,7 +850,7 @@ different than init, which is called for all items
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[resume](ServiceTask.md#resume)
+[Node](Node.md).[resume](Node.md#resume)
 
 #### Defined in
 
@@ -930,7 +874,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[init](ServiceTask.md#init)
+[Node](Node.md).[init](Node.md#init)
 
 #### Defined in
 
@@ -954,7 +898,7 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[getOutbounds](ServiceTask.md#getoutbounds)
+[Node](Node.md).[getOutbounds](Node.md#getoutbounds)
 
 #### Defined in
 
@@ -979,35 +923,11 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[startBoundaryEvents](ServiceTask.md#startboundaryevents)
+[Node](Node.md).[startBoundaryEvents](Node.md#startboundaryevents)
 
 #### Defined in
 
 [elements/Node.ts:335](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Node.ts#L335)
-
-___
-
-### run
-
-▸ **run**(`item`): `Promise`\<[`NODE_ACTION`](../enums/NODE_ACTION.md)\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `item` | `any` |
-
-#### Returns
-
-`Promise`\<[`NODE_ACTION`](../enums/NODE_ACTION.md)\>
-
-#### Inherited from
-
-[ServiceTask](ServiceTask.md).[run](ServiceTask.md#run)
-
-#### Defined in
-
-[elements/Tasks.ts:47](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Tasks.ts#L47)
 
 ___
 
@@ -1021,8 +941,94 @@ ___
 
 #### Inherited from
 
-[ServiceTask](ServiceTask.md).[describe](ServiceTask.md#describe)
+[Node](Node.md).[describe](Node.md#describe)
 
 #### Defined in
 
-[elements/Tasks.ts:94](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Tasks.ts#L94)
+[elements/Node.ts:346](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Node.ts#L346)
+
+___
+
+### start
+
+▸ **start**(`item`): `Promise`\<[`NODE_ACTION`](../enums/NODE_ACTION.md)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | `any` |
+
+#### Returns
+
+`Promise`\<[`NODE_ACTION`](../enums/NODE_ACTION.md)\>
+
+#### Overrides
+
+[Node](Node.md).[start](Node.md#start)
+
+#### Defined in
+
+[elements/Tasks.ts:267](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Tasks.ts#L267)
+
+___
+
+### end
+
+▸ **end**(`item`): `Promise`\<`void`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | `any` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Overrides
+
+[Node](Node.md).[end](Node.md#end)
+
+#### Defined in
+
+[elements/Tasks.ts:305](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Tasks.ts#L305)
+
+___
+
+### getAdHocNodes
+
+▸ **getAdHocNodes**(): `any`[]
+
+#### Returns
+
+`any`[]
+
+#### Defined in
+
+[elements/Tasks.ts:314](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Tasks.ts#L314)
+
+___
+
+### run
+
+▸ **run**(`item`): `Promise`\<`any`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | `any` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+#### Overrides
+
+[Node](Node.md).[run](Node.md#run)
+
+#### Defined in
+
+[elements/Tasks.ts:332](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/elements/Tasks.ts#L332)

@@ -30,7 +30,7 @@ class ScriptBehaviour extends Behaviour {
     scripts: string[] ;
     init() {
         this.scripts = [];
-        var scrs = this.definition['$children'];
+        var scrs = this.definition['$children']||[];
         for (var i = 0; i < scrs.length; i++) {
             var scr = scrs[i];
             this.scripts.push(scr.$body);

@@ -52,7 +52,7 @@ root object to api
 
 #### Defined in
 
-[API/API.ts:34](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L34)
+[API/API.ts:34](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L34)
 
 ## Properties
 
@@ -62,7 +62,7 @@ root object to api
 
 #### Defined in
 
-[API/API.ts:28](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L28)
+[API/API.ts:28](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L28)
 
 ___
 
@@ -72,7 +72,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:29](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L29)
+[API/API.ts:29](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L29)
 
 ___
 
@@ -82,7 +82,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:30](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L30)
+[API/API.ts:30](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L30)
 
 ___
 
@@ -92,7 +92,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:31](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L31)
+[API/API.ts:31](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L31)
 
 ___
 
@@ -102,4 +102,4 @@ ___
 
 #### Defined in
 
-[API/API.ts:32](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L32)
+[API/API.ts:32](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L32)

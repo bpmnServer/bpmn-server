@@ -44,7 +44,7 @@ loads a definitions  and start execution
 
 #### Defined in
 
-[interfaces/server.ts:40](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/interfaces/server.ts#L40)
+[interfaces/server.ts:40](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/server.ts#L40)
 
 ___
 
@@ -68,7 +68,7 @@ this will also resume execution
 
 #### Defined in
 
-[interfaces/server.ts:58](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/interfaces/server.ts#L58)
+[interfaces/server.ts:58](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/server.ts#L58)
 
 ___
 
@@ -103,7 +103,7 @@ instance,task	{instanceId: instanceId, elementId: value }
 
 #### Defined in
 
-[interfaces/server.ts:75](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/interfaces/server.ts#L75)
+[interfaces/server.ts:75](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/server.ts#L75)
 
 ___
 
@@ -127,7 +127,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:77](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/interfaces/server.ts#L77)
+[interfaces/server.ts:77](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/server.ts#L77)
 
 ___
 
@@ -150,7 +150,7 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:80](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/interfaces/server.ts#L80)
+[interfaces/server.ts:80](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/server.ts#L80)
 
 ___
 
@@ -183,7 +183,7 @@ Invoking a start event (of a secondary process) against an existing instance
 
 #### Defined in
 
-[interfaces/server.ts:98](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/interfaces/server.ts#L98)
+[interfaces/server.ts:98](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/server.ts#L98)
 
 ___
 
@@ -212,7 +212,7 @@ that can be againt a running instance or it may start a new instance
 
 #### Defined in
 
-[interfaces/server.ts:112](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/interfaces/server.ts#L112)
+[interfaces/server.ts:112](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/server.ts#L112)
 
 ___
 
@@ -234,20 +234,19 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:113](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/interfaces/server.ts#L113)
+[interfaces/server.ts:113](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/server.ts#L113)
 
 ___
 
 ### restart
 
-▸ **restart**(`instanceId`, `itemId`, `data`, `userName`, `options`): `Promise`\<[`IExecution`](IExecution.md)\>
+▸ **restart**(`itemQuery`, `data`, `userName`, `options`): `Promise`\<[`IExecution`](IExecution.md)\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `instanceId` | `any` |
-| `itemId` | `any` |
+| `itemQuery` | `any` |
 | `data` | `any` |
 | `userName` | `any` |
 | `options` | `any` |
@@ -258,4 +257,4 @@ ___
 
 #### Defined in
 
-[interfaces/server.ts:114](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/interfaces/server.ts#L114)
+[interfaces/server.ts:114](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/server.ts#L114)

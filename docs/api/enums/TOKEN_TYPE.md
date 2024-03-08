@@ -12,6 +12,7 @@
 - [Diverge](TOKEN_TYPE.md#diverge)
 - [EventSubProcess](TOKEN_TYPE.md#eventsubprocess)
 - [BoundaryEvent](TOKEN_TYPE.md#boundaryevent)
+- [AdHoc](TOKEN_TYPE.md#adhoc)
 
 ## Enumeration Members
 
@@ -21,7 +22,7 @@
 
 #### Defined in
 
-[engine/Token.ts:53](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/engine/Token.ts#L53)
+[engine/Token.ts:53](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Token.ts#L53)
 
 ___
 
@@ -31,7 +32,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:53](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/engine/Token.ts#L53)
+[engine/Token.ts:53](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Token.ts#L53)
 
 ___
 
@@ -41,7 +42,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:53](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/engine/Token.ts#L53)
+[engine/Token.ts:53](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Token.ts#L53)
 
 ___
 
@@ -51,7 +52,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:53](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/engine/Token.ts#L53)
+[engine/Token.ts:53](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Token.ts#L53)
 
 ___
 
@@ -61,7 +62,7 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:54](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/engine/Token.ts#L54)
+[engine/Token.ts:54](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Token.ts#L54)
 
 ___
 
@@ -71,4 +72,14 @@ ___
 
 #### Defined in
 
-[engine/Token.ts:54](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/engine/Token.ts#L54)
+[engine/Token.ts:54](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Token.ts#L54)
+
+___
+
+### AdHoc
+
+• **AdHoc** = ``"AdHoc"``
+
+#### Defined in
+
+[engine/Token.ts:54](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Token.ts#L54)

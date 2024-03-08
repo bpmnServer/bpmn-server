@@ -55,7 +55,7 @@
 
 #### Defined in
 
-[API/SecureUser.ts:40](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L40)
+[API/SecureUser.ts:40](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L40)
 
 ## Properties
 
@@ -69,7 +69,7 @@
 
 #### Defined in
 
-[API/SecureUser.ts:36](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L36)
+[API/SecureUser.ts:36](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L36)
 
 ___
 
@@ -83,7 +83,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:37](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L37)
+[API/SecureUser.ts:37](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L37)
 
 ___
 
@@ -97,7 +97,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:38](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L38)
+[API/SecureUser.ts:38](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L38)
 
 ___
 
@@ -111,7 +111,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:39](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L39)
+[API/SecureUser.ts:39](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L39)
 
 ## Methods
 
@@ -125,7 +125,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:53](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L53)
+[API/SecureUser.ts:53](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L53)
 
 ___
 
@@ -143,7 +143,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:56](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L56)
+[API/SecureUser.ts:56](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L56)
 
 ___
 
@@ -161,7 +161,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:61](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L61)
+[API/SecureUser.ts:61](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L61)
 
 ___
 
@@ -185,7 +185,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:66](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L66)
+[API/SecureUser.ts:66](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L66)
 
 ___
 
@@ -213,7 +213,7 @@ query
 
 #### Defined in
 
-[API/SecureUser.ts:76](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L76)
+[API/SecureUser.ts:76](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L76)
 
 ___
 
@@ -241,7 +241,7 @@ query
 
 #### Defined in
 
-[API/SecureUser.ts:115](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L115)
+[API/SecureUser.ts:115](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L115)
 
 ___
 
@@ -269,7 +269,7 @@ query
 
 #### Defined in
 
-[API/SecureUser.ts:127](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L127)
+[API/SecureUser.ts:127](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L127)
 
 ___
 
@@ -297,7 +297,7 @@ query
 
 #### Defined in
 
-[API/SecureUser.ts:149](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L149)
+[API/SecureUser.ts:149](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L149)
 
 ___
 
@@ -325,7 +325,7 @@ query
 
 #### Defined in
 
-[API/SecureUser.ts:160](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L160)
+[API/SecureUser.ts:160](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L160)
 
 ___
 
@@ -349,7 +349,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:170](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L170)
+[API/SecureUser.ts:170](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L170)
 
 ___
 
@@ -373,7 +373,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:178](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L178)
+[API/SecureUser.ts:178](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L178)
 
 ___
 
@@ -401,7 +401,7 @@ query
 
 #### Defined in
 
-[API/SecureUser.ts:189](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L189)
+[API/SecureUser.ts:189](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L189)
 
 ___
 
@@ -425,7 +425,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:192](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L192)
+[API/SecureUser.ts:192](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L192)
 
 ___
 
@@ -449,7 +449,7 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:201](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L201)
+[API/SecureUser.ts:201](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L201)
 
 ___
 
@@ -475,4 +475,4 @@ ___
 
 #### Defined in
 
-[API/SecureUser.ts:228](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/SecureUser.ts#L228)
+[API/SecureUser.ts:228](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L228)

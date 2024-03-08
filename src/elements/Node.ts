@@ -7,6 +7,7 @@ import { BPMN_TYPE } from '../interfaces/Enums';
 import { BehaviourLoader } from './behaviours/BehaviourLoader';
 import { ScriptHandler } from '../';
 
+
 // ---------------------------------------------
 class Node extends Element {
     name;
@@ -243,7 +244,7 @@ class Node extends Element {
             let boundaryEvent = this.attachments[i];
             item.token.log('        boundaryEvent:'+boundaryEvent.id);
             let childrenTokens;
-            if (this.type==BPMN_TYPE.SubProcess) // subprocess
+            if (this.type==BPMN_TYPE.SubProcess || this.type==BPMN_TYPE.AdHocSubProcess) // subprocess
             {
                 //find the subprocess token
                 item.token.execution.tokens.forEach(tok =>
@@ -251,7 +252,7 @@ class Node extends Element {
                     if (tok.originItem)
                     {
                        //item.token.log('--check token :'+tok.id+' ' +tok.originItem.id+' '+item.id);
-                        if (tok.originItem.id == item.id && tok.type==TOKEN_TYPE.SubProcess)
+                        if (tok.originItem.id == item.id &&  tok.type==TOKEN_TYPE.SubProcess)
                             childrenTokens = tok.getChildrenTokens();
                     }
                 });

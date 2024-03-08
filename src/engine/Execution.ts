@@ -314,6 +314,7 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
              
         else 
             {
+            //  checking for node
             let node;
                  // check for startEvent of a secondary process
                 const startedNodeId = this.tokens.get(0).path[0].elementId;
@@ -321,34 +322,48 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
                 if (options['restart'] && options['restart']==true )
                     restart=true;
 
+                if (this.instance.status==EXECUTION_STATUS.end && restart==false)
+                    this.error('*** ERROR **** can not start a completed process');
+
                 this.definition.processes.forEach(proc => {
-                    let startNodeId = proc.getStartNode().id;
+
+                    let starts=proc.getStartNodes();
+                    starts.forEach(start=>{
+                        if (start.id !== startedNodeId &&
+                            start.id == executionId)
+                        {
+                            node = this.getNodeById(executionId);
+                            this.log('..starting at :' + executionId,this.instance.status);
+                        }                        
+
+                    });
+
+/*                    let startNodeId = proc.getStartNode().id;
                     if (startNodeId !== startedNodeId) {
                         this.log(`checking for valid other start node: ${startNodeId} is possible`);
                         if (startNodeId == executionId) {
                             // ok we will start new token for this
                             node = this.getNodeById(executionId);
-                            if (this.instance.status==EXECUTION_STATUS.end && restart==false)
-                                this.error('*** ERROR **** can not start a completed process');
                             this.log('..starting at :' + executionId,this.instance.status);
                         }
-                    }
+                    } */
+
+
                 });
 
-            if (node) {
-                let token = await Token.startNewToken(TOKEN_TYPE.Primary,this, node, null, null, null,null, inputData);
-            }
-            else { //Error 
-                this.getItems().forEach(i => {
-                    if (i.id==executionId)
-                    {
-                    console.log(`** trying to execute item ${i.id} - ${i.node.id} token ${i.token.id} currentItem ${i.token.currentItem.id}- token current ${i.token.currentNode.id} - token status ${i.token.status}`);
-                    }
-                });
-                this.error("*** ERROR *** task id not valid:" + executionId);
-            }
+                if (node) {
+                    let token = await Token.startNewToken(TOKEN_TYPE.Primary,this, node, null, null, null,null, inputData);
+                }
+                else { //Error 
+                    this.getItems().forEach(i => {
+                        if (i.id==executionId)
+                        {
+                        console.log(`** trying to execute item ${i.id} - ${i.node.id} token ${i.token.id} currentItem ${i.token.currentItem.id}- token current ${i.token.currentNode.id} - token status ${i.token.status}`);
+                        }
+                    });
+                    this.error("*** ERROR *** task id not valid:" + executionId);
+                }
         }
-
 
         this.log('Execution('+this.name+').signal: returning .. waiting for promises status:' + this.instance.status + " id: " + executionId);
         await Promise.all(this.promises);
@@ -465,7 +480,6 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
             let sp=sps[key];
             for(let j=0;j<sp.items.length;j++) {
                 let it=sp.items[j];
-                console.log('it:',it.id);
                 if (it.id==itemId)
                     return sp;
             }

@@ -58,7 +58,7 @@ APIComponent.constructor
 
 #### Defined in
 
-[API/API.ts:44](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L44)
+[API/API.ts:44](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L44)
 
 ## Properties
 
@@ -72,7 +72,7 @@ APIComponent.api
 
 #### Defined in
 
-[API/API.ts:42](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L42)
+[API/API.ts:42](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L42)
 
 ## Accessors
 
@@ -90,7 +90,7 @@ APIComponent.server
 
 #### Defined in
 
-[API/API.ts:47](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L47)
+[API/API.ts:47](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L47)
 
 ## Methods
 
@@ -114,7 +114,7 @@ APIComponent.getUser
 
 #### Defined in
 
-[API/API.ts:50](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L50)
+[API/API.ts:50](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L50)
 
 ___
 
@@ -135,7 +135,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:285](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L285)
+[API/API.ts:284](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L284)
 
 ___
 
@@ -158,7 +158,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:296](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L296)
+[API/API.ts:295](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L295)
 
 ___
 
@@ -179,7 +179,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:304](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L304)
+[API/API.ts:303](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L303)
 
 ___
 
@@ -200,7 +200,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:311](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L311)
+[API/API.ts:310](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L310)
 
 ___
 
@@ -221,7 +221,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:316](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L316)
+[API/API.ts:315](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L315)
 
 ___
 
@@ -242,7 +242,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:323](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L323)
+[API/API.ts:322](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L322)
 
 ___
 
@@ -264,7 +264,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:328](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L328)
+[API/API.ts:327](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L327)
 
 ___
 
@@ -285,7 +285,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:335](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L335)
+[API/API.ts:334](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L334)
 
 ___
 
@@ -306,7 +306,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:338](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L338)
+[API/API.ts:337](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L337)
 
 ___
 
@@ -328,4 +328,4 @@ ___
 
 #### Defined in
 
-[API/API.ts:341](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L341)
+[API/API.ts:340](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L340)

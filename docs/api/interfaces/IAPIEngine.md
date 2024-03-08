@@ -41,7 +41,7 @@ start a new Instance of specified model
 
 #### Defined in
 
-[API/API.ts:90](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L90)
+[API/API.ts:90](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L90)
 
 ___
 
@@ -66,7 +66,7 @@ continue with the execution of a particular item that is in a wait state, typica
 
 #### Defined in
 
-[API/API.ts:97](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L97)
+[API/API.ts:97](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L97)
 
 ___
 
@@ -93,7 +93,7 @@ Also, updates item data
 
 #### Defined in
 
-[API/API.ts:102](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L102)
+[API/API.ts:102](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L102)
 
 ___
 
@@ -119,7 +119,7 @@ throw a message with an id, system will identify receiving item
 
 #### Defined in
 
-[API/API.ts:106](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L106)
+[API/API.ts:106](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L106)
 
 ___
 
@@ -145,7 +145,7 @@ throw a signal with an id, system will identify receiving item(s)
 
 #### Defined in
 
-[API/API.ts:110](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L110)
+[API/API.ts:110](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L110)
 
 ___
 
@@ -171,13 +171,13 @@ start a second event node (in a subprocess) for a running instance
 
 #### Defined in
 
-[API/API.ts:114](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L114)
+[API/API.ts:114](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L114)
 
 ___
 
 ### restart
 
-▸ **restart**(`instanceId`, `itemId`, `data`, `userName`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
+▸ **restart**(`itemQuery`, `data`, `userName`, `options?`): `Promise`\<[`IExecution`](IExecution.md)\>
 
 restarting an already completed instance at a particular node
 this function requires `dataStore.enableSavePoints` to be true in configuration.ts
@@ -185,13 +185,12 @@ this add a savePoint for each item, allowing you to select that item to restore 
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `instanceId` | `any` |
-| `itemId` | `any` |
-| `data` | `any` |
-| `userName` | `any` |
-| `options?` | `any` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `itemQuery` | `any` | Query to find a single item |
+| `data` | `any` | - |
+| `userName` | `any` | - |
+| `options?` | `any` | - |
 
 #### Returns
 
@@ -199,4 +198,4 @@ this add a savePoint for each item, allowing you to select that item to restore 
 
 #### Defined in
 
-[API/API.ts:129](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L129)
+[API/API.ts:128](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L128)

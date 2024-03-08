@@ -6,11 +6,29 @@ In general Application Security deals with the following topics:
 
 # User Identification and Authentication
 
-BPMNServer does not provide user identification and authentication component, but relies on the calling application to authenticate the user.
+BPMNServer does not provide user identification and authentication component, but relies on the calling application to authenticate the user. The companion package BPMN-web provides full authentication and identification as a mere demo.
 
-Remote calls rely on apiKey to be passed along with the userId
+### Web App Requirement for Authentication
 
-### Web
+WebApp has to implement 
+
+#### /WorkflowApp/Configuration.ts
+```ts
+		userService: function (server) {
+			return new CustomUserService(server);
+		}
+		
+```
+Where CustomUserService implement the interface `IUserService
+```ts
+interface IUserService {
+    findUsers(query: any): any;
+    addUser(userName: any, email: any, password: any, userGroups: any): any;
+    setPassword(userName: any, password: any): any;
+    install(): any;
+}
+```
+### Web App example/ Server Side Scripts
 ```ts
 
     const user1 =new SecureUser({ userName: 'user1', userGroups: ['Owner', 'Others']});
@@ -111,6 +129,11 @@ An application can prove a UI to allow users to assign tasks to others, this can
 
 ## Security Rules:
 
+To enable security Rules, you have to edit `.env'
+```
+ENFORCE_SECURITY=true
+
+```
 ### Security Rules are by-passed if
 
 -a. User is and Admin or System

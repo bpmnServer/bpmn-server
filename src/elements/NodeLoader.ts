@@ -1,10 +1,10 @@
-import { Node } from './Node';
+import { Node  } from './';
 import { BPMN_TYPE } from '../interfaces/Enums';
 
 import {
     UserTask, ScriptTask, ServiceTask, SendTask, ReceiveTask, BusinessRuleTask,
     Gateway, EventBasedGateway, XORGateway , 
-    Event, CatchEvent, ThrowEvent, EndEvent , SubProcess, BoundaryEvent, CallActivity, StartEvent
+    Event, CatchEvent, ThrowEvent, EndEvent , SubProcess, AdHocSubProcess,BoundaryEvent, CallActivity, StartEvent
 } from '.';
 
 
@@ -34,7 +34,10 @@ class NodeLoader {
             case BPMN_TYPE.SubProcess:
                 return new SubProcess(el.id, process, el.$type, el);
                 break;
-            case BPMN_TYPE.ParallelGateway:
+            case BPMN_TYPE.AdHocSubProcess:
+                return new AdHocSubProcess(el.id, process, el.$type, el);
+                break;
+                case BPMN_TYPE.ParallelGateway:
                 return new Gateway(el.id, process, el.$type, el);
                 break;
             case BPMN_TYPE.EventBasedGateway:

@@ -59,7 +59,7 @@ APIComponent.constructor
 
 #### Defined in
 
-[API/API.ts:44](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L44)
+[API/API.ts:44](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L44)
 
 ## Properties
 
@@ -73,7 +73,7 @@ APIComponent.api
 
 #### Defined in
 
-[API/API.ts:42](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L42)
+[API/API.ts:42](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L42)
 
 ## Accessors
 
@@ -91,7 +91,7 @@ APIComponent.server
 
 #### Defined in
 
-[API/API.ts:47](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L47)
+[API/API.ts:47](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L47)
 
 ## Methods
 
@@ -115,7 +115,7 @@ APIComponent.getUser
 
 #### Defined in
 
-[API/API.ts:50](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L50)
+[API/API.ts:50](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L50)
 
 ___
 
@@ -144,7 +144,7 @@ start a new Instance of specified model
 
 #### Defined in
 
-[API/API.ts:222](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L222)
+[API/API.ts:221](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L221)
 
 ___
 
@@ -173,7 +173,7 @@ continue with the execution of a particular item that is in a wait state, typica
 
 #### Defined in
 
-[API/API.ts:226](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L226)
+[API/API.ts:225](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L225)
 
 ___
 
@@ -204,7 +204,7 @@ Also, updates item data
 
 #### Defined in
 
-[API/API.ts:232](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L232)
+[API/API.ts:231](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L231)
 
 ___
 
@@ -234,7 +234,7 @@ throw a message with an id, system will identify receiving item
 
 #### Defined in
 
-[API/API.ts:237](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L237)
+[API/API.ts:236](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L236)
 
 ___
 
@@ -264,7 +264,7 @@ throw a signal with an id, system will identify receiving item(s)
 
 #### Defined in
 
-[API/API.ts:240](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L240)
+[API/API.ts:239](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L239)
 
 ___
 
@@ -294,13 +294,13 @@ start a second event node (in a subprocess) for a running instance
 
 #### Defined in
 
-[API/API.ts:243](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L243)
+[API/API.ts:242](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L242)
 
 ___
 
 ### restart
 
-▸ **restart**(`instanceId`, `itemId`, `data`, `user`, `options?`): `Promise`\<[`IExecution`](../interfaces/IExecution.md)\>
+▸ **restart**(`itemQuery`, `data`, `user`, `options?`): `Promise`\<[`IExecution`](../interfaces/IExecution.md)\>
 
 restarting an already completed instance at a particular node
 this function requires `dataStore.enableSavePoints` to be true in configuration.ts
@@ -308,13 +308,12 @@ this add a savePoint for each item, allowing you to select that item to restore 
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `instanceId` | `any` |
-| `itemId` | `any` |
-| `data` | `any` |
-| `user` | [`ISecureUser`](../interfaces/ISecureUser.md) |
-| `options` | `Object` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `itemQuery` | `any` | Query to find a single item |
+| `data` | `any` | - |
+| `user` | [`ISecureUser`](../interfaces/ISecureUser.md) | - |
+| `options` | `Object` | - |
 
 #### Returns
 
@@ -326,4 +325,4 @@ this add a savePoint for each item, allowing you to select that item to restore 
 
 #### Defined in
 
-[API/API.ts:246](https://github.com/bpmnServer/bpmn-server/blob/76c4fe0/src/API/API.ts#L246)
+[API/API.ts:245](https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/API.ts#L245)

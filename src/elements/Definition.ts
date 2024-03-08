@@ -11,7 +11,7 @@ import { BPMN_TYPE } from './NodeLoader';
 import { IDefinition } from '../interfaces/elements';
 import { BPMNServer } from '../server/BPMNServer';
 import { NODE_SUBTYPE, EXECUTION_EVENT } from '../interfaces';
-import { Transaction, SubProcess } from '.';
+import { Transaction, SubProcess , AdHocSubProcess } from '.';
 
 const fs = require('fs');
 
@@ -67,6 +67,13 @@ class Definition implements IDefinition{
             let node;
             if (el.$type == 'bpmn:SubProcess') { // subprocess
                 node = new SubProcess(el.id, process, el.$type, el);
+
+                node.childProcess = this.loadProcess(definition, el,process);
+                if (el.triggeredByEvent)
+                    eventSubProcesses.push(node.childProcess);
+            }
+            else if (el.$type == BPMN_TYPE.AdHocSubProcess) { // subprocess
+                node = new AdHocSubProcess(el.id, process, el.$type, el);
 
                 node.childProcess = this.loadProcess(definition, el,process);
                 if (el.triggeredByEvent)

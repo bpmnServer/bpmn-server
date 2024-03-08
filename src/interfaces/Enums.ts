@@ -7,6 +7,7 @@ enum BPMN_TYPE {
     ReceiveTask = 'bpmn:ReceiveTask',
     BusinessRuleTask = 'bpmn:BusinessRuleTask',
     SubProcess = 'bpmn:SubProcess',
+    AdHocSubProcess ='bpmn:AdHocSubProcess',
     ParallelGateway = 'bpmn:ParallelGateway',
     EventBasedGateway = 'bpmn:EventBasedGateway',
     InclusiveGateway = 'bpmn:InclusiveGateway',
