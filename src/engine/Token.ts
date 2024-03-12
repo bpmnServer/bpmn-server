@@ -437,8 +437,10 @@ class Token implements IToken {
         this.status = TOKEN_STATUS.end;
         await this.currentNode.end(this.currentItem,cancel);
         this.execution.tokenEnded(this);
+
         // check if subprocess then continue parent
         if (this.type==TOKEN_TYPE.SubProcess) {
+            this.currentItem.status= ITEM_STATUS.end;
             this.log('..subprocess token has ended');
             await this.parentToken.signal(null);
         }
