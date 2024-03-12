@@ -13,6 +13,8 @@ Since workflow require a User Interface, a web-app is required as front-end to i
 
 To Invoke a process from your code:
 
+API provides a security layer on top of the engine,See [Security](./security.md) for more details.
+
 
 ```ts
     const api = new BPMNAPI(new BPMNServer(configuration,new Logger({ toConsole: false}),{cron:false}));
@@ -32,7 +34,7 @@ The above code uses `SystemUser`, to define another user:
     const user1 =new SecureUser({ userName: 'user1', userGroups: ['Owner', 'Others']});
     
 ```
-In real applications, you get userName and userGroups from you application UserAccess.
+In real applications, you get userName and userGroups from you application UserAccess. 
 
 ## [Invoking Remotely Using WebServices](./examples/BuyCar-Remote.md)
 

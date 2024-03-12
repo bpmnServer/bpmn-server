@@ -25,15 +25,23 @@ Models are saved by `bpmn-server` and can be queried [see API.model](api/interfa
 ## Execution
 `bpmn-server` is primiraly an execution engine for bpmn models.
 
-Everytime a model is executed (started), an `instance` is created, and for each `element` that is executed it creates an `item' 
 
 Execution is based on the model logic that is enhanced by various extensions that allow scripting and access to your application.
 
 During Execution, Model Listeners and Application Listeners are invoked.
 
-The execution `engine` is availabe through an API [see API.engine](api/interfaces/IAPIEngine.md).
+Everytime a model is executed (started), an `instance` is created, and for each `element` that is executed it creates an `item' 
+
+
+### Invoking Execution Engine
+
+You can communicate with the the execution `engine' through an API [see API.engine](api/interfaces/IAPIEngine.md)
+ to `start` a Workflow or to `continue` executin of an Item, etc.
 
 [For more details about Invoking Execution Engine](invokation.md)
+
+### Execution logic and scripting
+During Execution of the work bpmn-server can invoke custom scripts at various event or call back your business application
 
 [For more details about Execution behaviour](execution.md)
 

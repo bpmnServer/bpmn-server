@@ -1,6 +1,6 @@
 import {
     IExecution, IItem, NODE_ACTION, FLOW_ACTION, IModelsDatastore,
-    IDataStore, ICacheManager,IUserService
+    IDataStore, ICacheManager
 } from '../';
 
 
@@ -18,8 +18,7 @@ interface IConfiguration
     definitions(server): IModelsDatastore,
     appDelegate(server): IAppDelegate,
     dataStore(server): IDataStore,
-    cacheManager(server): ICacheManager,
-    userService(server): IUserService
+    cacheManager(server): ICacheManager
 }
 
 interface IDatabaseConfigurationBase {

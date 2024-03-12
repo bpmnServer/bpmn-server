@@ -1,6 +1,6 @@
 import { IExecution , ILogger , IItem, IItemData , IDefinition, IConfiguration, IAppDelegate, IDataStore,IModelsDatastore } from '../';
 import { EventEmitter } from 'events';
-import { IUserService } from './User';
+
 
 
 interface IBPMNServer {
@@ -14,7 +14,7 @@ interface IBPMNServer {
     dataStore: IDataStore;
     cache: ICacheManager;
     cron: ICron;
-    userService: IUserService;
+
 }
 
 interface IServerComponent {

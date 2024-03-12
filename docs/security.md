@@ -8,25 +8,6 @@ In general Application Security deals with the following topics:
 
 BPMNServer does not provide user identification and authentication component, but relies on the calling application to authenticate the user. The companion package BPMN-web provides full authentication and identification as a mere demo.
 
-### Web App Requirement for Authentication
-
-WebApp has to implement 
-
-#### /WorkflowApp/Configuration.ts
-```ts
-		userService: function (server) {
-			return new CustomUserService(server);
-		}
-		
-```
-Where CustomUserService implement the interface `IUserService
-```ts
-interface IUserService {
-    findUsers(query: any): any;
-    addUser(userName: any, email: any, password: any, userGroups: any): any;
-    setPassword(userName: any, password: any): any;
-    install(): any;
-}
 ```
 ### Web App example/ Server Side Scripts
 ```ts

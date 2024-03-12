@@ -31,9 +31,6 @@ class Configuration implements IConfiguration {
 	cacheManager(server) {
 		return new NoCacheManager(server);
 	}
-	userService(server) {
-		return null;	// to be assigned by front-end
-	}
 
 
 	constructor({
@@ -41,7 +38,7 @@ class Configuration implements IConfiguration {
 		logger,
 		definitions,
 		appDelegate,
-		dataStore,cacheManager,userService}) {
+		dataStore,cacheManager}) {
 		this.definitionsPath = definitionsPath;
 		this.templatesPath = templatesPath;
 		this.timers = timers;
@@ -52,7 +49,7 @@ class Configuration implements IConfiguration {
 		this.appDelegate = appDelegate;
 		this.dataStore = dataStore;
 		this.cacheManager = cacheManager;
-		this.userService = userService;
+	
 	}
 
 }
@@ -86,9 +83,6 @@ var defaultConfiguration = new Configuration(
 		},
 		cacheManager: function (server) {
 			return new NoCacheManager(server);
-		}, 
-		userService: function (server) {
-			return null;
 		}
 
 	});

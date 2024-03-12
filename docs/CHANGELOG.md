@@ -12,6 +12,10 @@ and here
 
 ### Changed
 -->
+## Release 2.1.5  -- 2024-03
+- Add support to ad-hoc subprocesses
+- Removed reference to UserService from back-end, kept in front-end only
+
 ## Release 2.1.0  -- 2024-03
 ### API model:
 - Add: ```get(query:any ,user: ISecureUser): Promise<object[]>```  returns full model data, including documentation
