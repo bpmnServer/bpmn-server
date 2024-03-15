@@ -58,7 +58,7 @@ class Token implements IToken {
     id;
     type: TOKEN_TYPE;
     execution: IExecution;
-    dataPath: string;
+    _dataPath: string;
     startNodeId;
     parentToken?: Token;
 //    branchNode?: Node;
@@ -71,6 +71,10 @@ class Token implements IToken {
     input: {};
     output: {};
     messageMatchingKey: {};
+    itemsKey; // for loop items
+    get dataPath(): any {
+        return this._dataPath;
+    }
 
     get data():any {
         return this.execution.getData(this.dataPath);
@@ -115,10 +119,11 @@ class Token implements IToken {
     constructor(type: TOKEN_TYPE, execution: Execution, startNode: Node, dataPath? ,parentToken?: Token, originItem?: Item) {
         this.execution = execution;
         this.type = type;
+
         if (dataPath)
-            this.dataPath = dataPath;
+            this._dataPath = dataPath;
         else
-            this.dataPath = '';
+            this._dataPath = '';
 
         this.startNodeId = startNode.id;
         this.currentNode = startNode;
@@ -139,8 +144,23 @@ class Token implements IToken {
      * @param data
      */
     static async startNewToken(type: TOKEN_TYPE, execution, startNode, dataPath, parentToken: Token,
-        originItem: Item, loop: Loop, data = null, noExecute = false) {
-        const token = new Token(type,execution,  startNode ,dataPath, parentToken, originItem);
+        originItem: Item, loop: Loop, data = null, noExecute = false, itemsKey=null) {
+
+            const token = new Token(type,execution,  startNode ,dataPath, parentToken, originItem);
+        
+        if (parentToken && parentToken.itemsKey)
+            token.itemsKey=parentToken.itemsKey;
+        
+        if (itemsKey) {
+            if (token.itemsKey)
+                token.itemsKey+='.';
+            else 
+                token.itemsKey='';
+            token.itemsKey+=itemsKey;
+        }
+            
+
+
         token.log('Token(*).startNewToken:  starting new Token with id='+token.id+' start node='+startNode.id);
 
         token.loop = loop;
@@ -160,9 +180,9 @@ class Token implements IToken {
             loopId = this.loop.id;
 
         return {
-            id: this.id, type: this.type, status: this.status, dataPath: this.dataPath, loopId,
+            id: this.id, type: this.type, status: this.status, dataPath: this._dataPath, loopId,
             parentToken, originItem, startNodeId: this.startNodeId,
-            currentNode: this.currentNode.id
+            currentNode: this.currentNode.id , itemsKey: this.itemsKey
         };
     }
     static load(execution: Execution , da :any ) : Token {
@@ -175,6 +195,7 @@ class Token implements IToken {
         token.startNodeId = da.startNodeId;
         token.currentNode = currentNode;
         token.status = da.status;
+        token.itemsKey=da.itemsKey;
         token.path = [];
         return token;
     }

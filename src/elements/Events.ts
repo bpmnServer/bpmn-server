@@ -116,11 +116,7 @@ class EndEvent extends Event {
         let subProcessToken=item.token.getSubProcessToken();
         if (subProcessToken && item.status !== ITEM_STATUS.end)
         {
-            console.log('subprocess token',subProcessToken.id,subProcessToken.originItem.node.id,subProcessToken.firstItem.node.id);
-//            subProcessToken.originItem.status= ITEM_STATUS.end;
             await subProcessToken.end();
-            //await subProcessToken.parentToken.signal({});
-    
         }
         
         return super.end(item);

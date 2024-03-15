@@ -1,3 +1,4 @@
+import { DataHandler } from '../engine';
 import { Execution } from '../engine/Execution';
 import { IDataStore, IBPMNServer, IInstanceData, IItemData } from '../interfaces';
 
@@ -68,14 +69,21 @@ class DataStore extends ServerComponent  implements IDataStore {
 	private getItemsFromInstances(instances, condition = null,trans=null) {
 		const items = [];
 		instances.forEach(instance => {
+			console.log(instance.tokens);
 			instance.items.forEach(i => {
 				let pass = true;
 				if (trans)
 					pass = trans.filterItem(i, condition);
 
 				if (pass) {
+					let data;
+					let dp=instance.tokens[i.tokenId].dataPath;
+					if (dp!=='')
+						data=DataHandler.getData(instance.data,dp);
+					else 
+						data=instance.data
 					i['processName'] = instance.name;
-					i['data'] = instance.data;
+					i['data'] = data;
 					i['instanceId'] = instance.id;
 					i['instanceVersion'] = instance.version;
 					items.push(i);
@@ -225,7 +233,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		// let us rebuild the query form {status: value} to >  "tokens.items.status": "wait" 
 		const trans = new QueryTranslator('items');
 		const result = trans.translateCriteria(query);
-		const projection = { id: 1, data: 1, name: 1, "items": 1 };
+		const projection = { id: 1, data: 1, name: 1, version:1, "items": 1 , "tokens":1};
 		var records = await this.db.find(this.dbConfiguration.db, Instance_collection, result, projection);
 		// console.log('...find items for query:', query, " translated to :", JSON.stringify(result),  " recs:" , records.length)
 

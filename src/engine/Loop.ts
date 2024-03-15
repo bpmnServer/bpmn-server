@@ -26,6 +26,7 @@ class Loop {
             this.items = dataObject.items;
             this.completed = dataObject.completed;
             this.sequence = dataObject.sequence;
+            this.definition = node.getBehaviour(Behaviour_names.LoopCharacteristics);
         }
         else {
             this.id = token.execution.getNewId('loop');
@@ -33,7 +34,11 @@ class Loop {
             this.completed = 0;
             this.sequence = 0;
             const coll = this.definition.collection;
-            this.dataPath = token.dataPath + '.' + this.node.id + '[]';
+            if (token.dataPath!=='')
+                this.dataPath = token.dataPath + '.' + this.node.id;
+            else
+                this.dataPath = this.node.id;
+
             if (coll) {
                 token.log('loop collection:' + coll);
                 this.items = ScriptHandler.evaluateExpression(token, coll);
@@ -45,7 +50,7 @@ class Loop {
     save() {
         return {
             id: this.id, nodeId: this.node.id, ownerTokenId: this.ownerToken.id, dataPath: this.dataPath,
-//            items: this.items,
+            items: this.items,
             completed: this.completed, sequence: this.sequence
         };
     }
@@ -56,6 +61,7 @@ class Loop {
         let loop = new Loop(node, ownerToken, dataObject);
         loop.dataPath = dataObject.dataPath;
         loop.sequence = dataObject.sequence;
+        loop.items=dataObject.items;
         return loop;
 
     }
@@ -71,12 +77,11 @@ class Loop {
         else
             return null;
     }
-
     static async checkStart(token) {
         // loop
         const loopDefinition = token.currentNode.getBehaviour(Behaviour_names.LoopCharacteristics);
         if (loopDefinition) {
-            if (loopDefinition.isSequential()) {
+                if (loopDefinition.isSequential()) {
                 // are we starting a new loop or continueing in an exiting one?
                 if (token.loop) // already assigned a loop
                     return true; // go ahead and execute
@@ -84,9 +89,9 @@ class Loop {
 
                 let seq = loop.getNext();
                 let data = {};
-                data[loop.getKeyName()] = seq;
-                let newToken = await Token.startNewToken(TOKEN_TYPE.Instance,token.execution, token.currentNode, loop.dataPath+'.'+seq, token, token.currentItem, loop, data);
 
+                let newToken = await Token.startNewToken(TOKEN_TYPE.Instance,token.execution, token.currentNode, 
+                        loop.dataPath+'.'+seq, token, token.currentItem, loop, data,false,seq);
 
                 return false; // launching new token; stop this one
 
@@ -102,8 +107,9 @@ class Loop {
 
                     let seq = loop.getNext();
                     let data = {};
-                    data[loop.getKeyName()] = seq;
-                    let newToken = await Token.startNewToken(TOKEN_TYPE.Instance, token.execution, token.currentNode, loop.dataPath + '.' + seq, token, token.currentItem, loop, data);
+ 
+                    let newToken = await Token.startNewToken(TOKEN_TYPE.Instance, token.execution, token.currentNode, 
+                            loop.dataPath + '.' + seq, token, token.currentItem, loop, data,false,seq);
                 }
                 catch (exc) {
                     console.log(exc);
@@ -123,8 +129,12 @@ class Loop {
                     for (seq = 0; seq < loop.items.length; seq++) {
                         let entry = loop.items[seq];
                         let data = {};
-                        data[loop.getKeyName()] = entry;
-                        let newToken = await Token.startNewToken(TOKEN_TYPE.Instance, token.execution, token.currentNode, loop.dataPath + '.' + seq, token, token.currentItem, loop, data);
+/*old                        data[loop.getKeyName()] = entry;
+                        let newToken = await Token.startNewToken(TOKEN_TYPE.Instance, token.execution, token.currentNode, loop.dataPath + '.' + seq, token, token.currentItem, loop, data,true);
+*/
+
+                        let newToken = await Token.startNewToken(TOKEN_TYPE.Instance, token.execution, token.currentNode,
+                             loop.dataPath+'.'+entry , token, token.currentItem, loop, data,false,entry);
                     }
                 }
                 else {
@@ -151,11 +161,15 @@ class Loop {
                     return false;
                 }
                 else {
+                    
                     token.end();
                     let seq = token.loop.getNext();
                     let data = {};
-                    data[token.loop.getKeyName()] = seq;
-                    let newToken = await Token.startNewToken(TOKEN_TYPE.Instance,token.execution, token.currentNode, token.loop.dataPath, token, token.currentItem, token.loop, data);
+  
+                    //token=token.parentToken;
+                    let newToken = await Token.startNewToken(TOKEN_TYPE.Instance, token.execution, token.currentNode, 
+                            token.loop.dataPath + '.' + seq, token.parentToken, token.parentToken.currentItem, token.loop, data,false,seq);
+//                let newToken = await Token.startNewToken(TOKEN_TYPE.Instance,token.execution, token.currentNode, token.loop.dataPath, token, token.currentItem, token.loop, data);
 
                     return false;
                 }

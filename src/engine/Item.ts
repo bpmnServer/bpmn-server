@@ -6,7 +6,7 @@ import { Token } from "./Token";
 
 class Item implements IItem {
     id;                 
-    itemKey: string;
+    itemKey: string; // Used for multi-instance
     element: Element;   
     token : Token;      
     seq;
@@ -59,6 +59,9 @@ class Item implements IItem {
         this.token = token;
         this.status = status;
         this.userName = token.execution.userName;
+
+        this.itemKey=token.itemsKey;//token.dataPath;
+
 
     }
     save() : IItemData {

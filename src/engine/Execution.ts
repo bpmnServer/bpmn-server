@@ -6,7 +6,7 @@ import { Token, TOKEN_TYPE  } from './Token';
 import { Loop} from './Loop';
 import { Element, Node, Flow , Definition, CallActivity, Process } from '../elements/'
 import { EXECUTION_EVENT, NODE_ACTION, FLOW_ACTION, TOKEN_STATUS, EXECUTION_STATUS, ITEM_STATUS, IDefinition } from '../';
-import { IInstanceData, IBPMNServer, IExecution, IAppDelegate , DefaultAppDelegate } from '../';
+import { IInstanceData, IBPMNServer, IExecution, IAppDelegate , DefaultAppDelegate , DataHandler } from '../';
 import { EventEmitter } from 'events';
 import { BPMNServer, ServerComponent } from '../server';
 import { InstanceObject } from './Model';
@@ -338,15 +338,7 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
 
                     });
 
-/*                    let startNodeId = proc.getStartNode().id;
-                    if (startNodeId !== startedNodeId) {
-                        this.log(`checking for valid other start node: ${startNodeId} is possible`);
-                        if (startNodeId == executionId) {
-                            // ok we will start new token for this
-                            node = this.getNodeById(executionId);
-                            this.log('..starting at :' + executionId,this.instance.status);
-                        }
-                    } */
+
 
 
                 });
@@ -518,7 +510,7 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
         const tokens = new Map();
         stateTokens.forEach(t => {
             const token = Token.load(execution, t);
-            if (t.loopId)
+            if (t.loopId!==null)
                 tokenLoops.push({ id: t.id, loopId: t.loopId });
             execution.tokens.set(token.id, token);
             tokens.set(token.id, token);
@@ -533,7 +525,7 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
 
         tokenLoops.forEach(tl => {
             const token = tokens.get(tl.id);
-            const loop = loops.get(tl.loopid);
+            const loop = loops.get(tl.loopId);
             token.loop = loop;
         });
 
@@ -645,81 +637,15 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
         this.instance.logs.push(msg);
         this.logger.error(msg);
     }
-    // Data Handling 
-    /*
-     * renamed from applyInput to appendData
-     */
-    appendData(inputData,item, dataPath = null,assignment=null) {
-        let asArray = false;
+    appendData(inputData: any,item:Item, dataPath?: any,assignment?:any): void {
+    
+        DataHandler.appendData(this.instance.data,inputData,item,dataPath,assignment);
 
-        if (Array.isArray(inputData))
-            asArray = true;
-
-        if (dataPath && dataPath.endsWith('[]')) {
-            asArray = true;
-        }
-
-        let target = this.getAndCreateData(dataPath, asArray);
-
-        if (!target) {
-            this.error("*** Error *** target is not defined");
-            return;
-        }
-
-        if (inputData) {
-            if (asArray) {
-                target.push(inputData);
-            }
-            else {
-                Object.keys(inputData).forEach(key => {
-                    const val = inputData[key];
-                    if (key.startsWith('vars.')) {
-                        delete inputData[key];
-                        if (item)
-                            item.vars[key.substring(5)] = val;
-                    }
-                    else
-                        target[key] = val;
-                });
-            }
-        }
     }
-
     getData(dataPath) {
-        let target = this.instance.data;
-
-        if (dataPath) {
-            dataPath.split('.').forEach(de => {
-                // strip off []
-                de=de.replace('[]', '');
-                if (de != '')
-                    target = target[de];
-            });
-        }
-        return target;
-    }
-    getAndCreateData(dataPath, asArray = false) {
-
-        let target = this.instance.data;
-
-        if (dataPath) {
-            dataPath.split('.').forEach(de => {
-                if (de != '') {
-                    de = de.replace('[]', '');
-                    if (!target[de]) {
-                        if (asArray) 
-                                target[de] = [];
-                        else 
-                                target[de] = {};
-                    }
-                    target = target[de];
-
-                }
-            });
-        }
-        return target;
+        return DataHandler.getData(this.instance.data,dataPath);
     }
 }
-// ---------------------------------------------
+    
 
 export { Execution }

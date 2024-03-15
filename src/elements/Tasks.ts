@@ -234,8 +234,18 @@ class SubProcess extends Node {
 
         item.status = ITEM_STATUS.wait;
 
+        let dp;
+        // check if am also a loop
+        let isLoop=false;
+        if (token.loop && token.path.length==1)
+            dp=token.dataPath
+        else if (token.dataPath!=='')
+            dp=token.dataPath+'.'+this.id;
+        else
+            dp=this.id;
+
         const newToken = await Token.startNewToken(TOKEN_TYPE.SubProcess, token.execution,
-                startNode, this.id, token, item, null, null, true);
+                startNode, dp, token, item, null, null, true);
 
         await this.childProcess.start(token.execution,newToken);
 
@@ -331,26 +341,7 @@ class AdHocSubProcess extends Node {
     }
     async run(item):Promise<any> {
 
-        const token = item.token;
-
-        const nodes = this.getAdHocNodes();
-
-/* to do  
-
-        item.status = ITEM_STATUS.wait;
-
- 
-        await this.childProcess.start(token.execution,newToken);
-
-        await this.startBoundaryEvents(item, newToken);
-        await newToken.execute(null);
-
-        if (item.status == ITEM_STATUS.wait)
-            return NODE_ACTION.wait;
-        else
-            return NODE_ACTION.continue;
-    */
-        }
+    }
 }
 
 /**

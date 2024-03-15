@@ -15,6 +15,11 @@ and here
 ## Release 2.1.5  -- 2024-03
 - Add support to ad-hoc subprocesses
 - Removed reference to UserService from back-end, kept in front-end only
+- Fixed bug with subprocess not ending correctly
+### Loop Changes:
+- Change itemKey to contain entire dataPath
+- Change Data Structure for loop from Array to Object
+- Fixed bug with loop info not loaded on restore
 
 ## Release 2.1.0  -- 2024-03
 ### API model:

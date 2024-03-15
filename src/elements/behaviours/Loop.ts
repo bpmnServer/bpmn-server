@@ -31,8 +31,8 @@ class LoopBehaviour extends Behaviour {
     }
 
     isSequential() {
-        if (this.node.def.isSequential)
-            return this.node.def.isSequential;
+        if (this.node.def.loopCharacteristics.isSequential)
+            return this.node.def.loopCharacteristics.isSequential;
         else
             return false;
     }
