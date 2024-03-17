@@ -364,18 +364,6 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
 
         return this;
 
-
-        await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoked);
-
-        this.log('Execution('+this.name+').signal: returned process  status:' + this.instance.status + " id: " + executionId);
-
-        this.report();
-
-
-        await this.save();
-        this.log('Execution('+this.name+').signal: finished!');
-
-        return this;
     }
 
 

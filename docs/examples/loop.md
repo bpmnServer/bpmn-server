@@ -25,10 +25,9 @@ We will use an example to illustrate the use of loops:
 
 ## Data structure
 
-- Ability to store unique data elements for each item (occurance of the loop-node combination)
-- Ability to access various items along wih the data
+- Each loop instance stores its own unique data elements, for subProcess loops data is shared among all node items inside the subprocess
 
-So the data structure has the following:
+So the data structure looks like:
 >Loop name
 >>Key
 >>>data
@@ -51,15 +50,25 @@ department: {
     }
   }
 ```
+Any node inside the loop will share same data, so inside 'HR' 
+```js
+  console.log(item.data.vote,'for ',item.itemKey);
+```
+Will produce: `100 for HR`.
+
+However, `Summarize Votes` task is outside the subprocess and at the root, so it has the instance data structure
 So once you have access to instance data:
 ```ts
-  console.log('HR Vote:',instance.data.department["HR"]);
+  Object.keys(item.data.department).forEach(key=>{
+    console.log('Vote for:',key,item.data.department[key]['vote']);
 
-HR Vote: {
-  scriptLog: 'added by script event,key:HR',
-  votedBy: 'HR-User',
-  vote: 100
-}
+  });
+```
+will produce:
+```
+Vote for: IT 100
+Vote for: HR 85
+Vote for: Billing 80
 ```
 ## Data Search
 

@@ -229,6 +229,10 @@ Enter Command, q to quit, or ? to list commands
 
 </details>
 
+## Postman 
+
+Postman Collection to invoke bpmn-server API [is available here](https://documenter.getpostman.com/view/11781516/Szzn7wsm)
+
 ## to update to latest release
 
 ```sh
