@@ -19,6 +19,7 @@ interface IDataStore {
     findItems(query: any): Promise<IItemData[]>;
     deleteInstances(query?: any): Promise<void>;
     install(); 
+    archive(query);
 }
 
 interface IModelsDatastore {

@@ -14,9 +14,9 @@ const fs = require('fs');
 const MongoDB = require('./MongoDB').MongoDB;
 
 
-const Instance_collection = 'wf_instances';
-const Locks_collection = 'wf_locks';
-const Events_collection = 'wf_events';
+export const Instance_collection = 'wf_instances';
+export const Locks_collection = 'wf_locks';
+export const Archive_collection = 'wf_archives';
 
 
 class DataStore extends ServerComponent  implements IDataStore {
@@ -69,7 +69,6 @@ class DataStore extends ServerComponent  implements IDataStore {
 	private getItemsFromInstances(instances, condition = null,trans=null) {
 		const items = [];
 		instances.forEach(instance => {
-			console.log(instance.tokens);
 			instance.items.forEach(i => {
 				let pass = true;
 				if (trans)
@@ -261,7 +260,21 @@ class DataStore extends ServerComponent  implements IDataStore {
 		await this.db.createIndex(this.dbConfiguration.db, Instance_collection, { "items.id": 1 });
 		await this.db.createIndex(this.dbConfiguration.db, Locks_collection, { id: 1 }, { unique: true });
 	}
-	// LOCKS
+	
+	async archive(query) {
+		
+        let docs=await this.db.find(this.dbConfiguration.db,Instance_collection,query,{});
+
+		if (docs.length>0)
+			{
+				await this.db.insert(this.dbConfiguration.db, Archive_collection, docs);
+
+				await this.deleteInstances(query);
+			}
+
+
+		console.log('total of ',docs.length,' archived');
+	}
 }
 
 export { DataStore };

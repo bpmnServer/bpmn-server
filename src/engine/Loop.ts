@@ -191,7 +191,11 @@ class Loop {
                 token.end();
                 if (token.loop.completed == token.loop.items.length) {
                     // need to converge here ;
-                    await token.parentToken.goNext();
+                    let parent=token.parentToken;
+                    if(parent.currentItem)
+                        await parent.goNext();
+                    else
+                        await parent.parentToken.goNext();
                 }
                 return false; // no further action
 

@@ -19,9 +19,21 @@ class MongoDB {
     client;
     dbConfig;
     logger;
+    operation;
     constructor(dbConfig,logger) {
         this.dbConfig = dbConfig;
         this.logger = logger;
+        
+    }
+    profilerStart(operation) {
+        if (process.env.ENABLE_PROFILER === 'true')
+            console.time(operation);
+        this.operation=operation;
+    }
+    profilerEnd() {
+        if (process.env.ENABLE_PROFILER === 'true')
+            console.timeEnd(this.operation);
+
     }
     async getClient() {
 
@@ -36,13 +48,16 @@ class MongoDB {
 
         const db = client.db(dbName);
         const collection = db.collection(collName);
+        const self=this;
 
         return new Promise(function (resolve, reject) {
 
             // Use connect method to connect to the Server
 
             let cursor;
+            self.profilerStart('>mongo.find:'+collName);
             cursor = collection.find(qry).project(projection);
+            self.profilerEnd();
             cursor.toArray(function (err, docs) {
                 // Do async job
                 if (err) {
@@ -93,7 +108,9 @@ class MongoDB {
         let self = this;
         return new Promise(function (resolve, reject) {
 
+            self.profilerStart('>mongo.insert:'+collName);
             collection.insertMany(docs, function (err, result) {
+                self.profilerEnd();
                 if (err) {
                     reject(err);
                 } else {
@@ -117,8 +134,11 @@ class MongoDB {
         let self = this;
         return new Promise(function (resolve, reject) {
 
+            self.profilerStart('>mongo.update:'+collName);
             collection.updateOne(query, updateObject, options, 
                 function (err, result) {
+                self.profilerEnd();
+
                 if (err) {
                     reject(err);
                 } else {
@@ -139,8 +159,10 @@ class MongoDB {
         let self = this;
         return new Promise(function (resolve, reject) {
 
+            self.profilerStart('>mongo.update:'+collName);
             collection.update(query, updateObject, options,
                 function (err, result) {
+                    self.profilerEnd();
                     if (err) {
                         reject(err);
                     } else {
@@ -163,9 +185,11 @@ class MongoDB {
         let self = this;
         return new Promise(function (resolve, reject) {
 
-
+            self.profilerStart('>mongo.remove:'+collName);
             collection.deleteMany(query,
                 function (err, result) {
+                    self.profilerEnd();
+
                     if (err) {
                         self.logger.log("error " + err);
                         reject(err);

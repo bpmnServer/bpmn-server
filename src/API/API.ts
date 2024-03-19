@@ -48,7 +48,6 @@ class APIComponent {
         return this.api.server;
     }
     getUser(user) {
-        console.log('user 1',user);
         if (!user)
             return this.api.defaultUser;
         else

@@ -1,0 +1,18 @@
+site_name:  bpmn-server
+theme:
+  name: readthedocs
+markdown_extensions:
+  - toc:
+      permalink: "#"
+nav: 
+- Overview:  /
+- 'Invoking Workflows': invokation.md 
+- 'Execution': execution.md
+- 'Scripting': scripting.md
+- 'Security': security.md
+- 'Data': data.md 
+- 'Examples': examples.md 
+- 'API Summary': api_summary.md
+- 'API': api/
+- 'Setup': setup.md 
+- 'Application Integration': customization.md 

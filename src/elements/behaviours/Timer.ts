@@ -183,7 +183,7 @@ class TimerBehaviour extends Behaviour {
         // check for repeat
         if (this.timeCycle) {
 
-console.log('repeating ',item.timerCount);
+//console.log('repeating ',item.timerCount);
 
             if (timer.repeat > item.timerCount) {
 

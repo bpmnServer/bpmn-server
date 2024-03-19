@@ -166,7 +166,7 @@ class Cron  extends ServerComponent implements ICron {
 				}
 			}
 			catch (exc) {
-				console.log(exc);
+				console.log(exc,'expression',expression);
 				return null;
             }
 

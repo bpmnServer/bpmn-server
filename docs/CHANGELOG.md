@@ -12,6 +12,11 @@ and here
 
 ### Changed
 -->
+## Release 2.1.6  -- 2024-03
+### Added
+- .env.ENABLE_PROFILER will display MONGODB timing on console
+- server.dataStore.archive(query)
+
 ## Release 2.1.5  -- 2024-03
 - Add support to ad-hoc subprocesses
 - Removed reference to UserService from back-end, kept in front-end only
