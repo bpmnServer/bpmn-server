@@ -4,15 +4,15 @@ theme:
 markdown_extensions:
   - toc:
       permalink: "#"
-nav: 
-- Overview:  /
+nav:  
+- Overview:  index.md
 - 'Invoking Workflows': invokation.md 
 - 'Execution': execution.md
 - 'Scripting': scripting.md
 - 'Security': security.md
 - 'Data': data.md 
 - 'Examples': examples.md 
-- 'API Summary': api_summary.md
-- 'API': api/
+- 'API Summary': api-summary.md
+- 'API': api/readme.md
 - 'Setup': setup.md 
 - 'Application Integration': customization.md 

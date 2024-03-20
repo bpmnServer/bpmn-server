@@ -151,7 +151,7 @@ class Loop {
     }
     static async checkNext(token: Token) {
 
-        if (token.loop) {
+        if (token.loop && token.currentNode.id==token.loop.node.id) {
             if (token.loop.isSequential()) {
                 if (token.loop.isDone()) {
 

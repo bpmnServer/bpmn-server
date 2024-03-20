@@ -58,7 +58,7 @@ class Token implements IToken {
     id;
     type: TOKEN_TYPE;
     execution: IExecution;
-    _dataPath: string;
+    dataPath: string;
     startNodeId;
     parentToken?: Token;
 //    branchNode?: Node;
@@ -72,9 +72,6 @@ class Token implements IToken {
     output: {};
     messageMatchingKey: {};
     itemsKey; // for loop items
-    get dataPath(): any {
-        return this._dataPath;
-    }
 
     get data():any {
         return this.execution.getData(this.dataPath);
@@ -121,9 +118,11 @@ class Token implements IToken {
         this.type = type;
 
         if (dataPath)
-            this._dataPath = dataPath;
+            this.dataPath = dataPath;
+        else if (parentToken)
+            this.dataPath=parentToken.dataPath;
         else
-            this._dataPath = '';
+            this.dataPath='';
 
         this.startNodeId = startNode.id;
         this.currentNode = startNode;
@@ -132,6 +131,7 @@ class Token implements IToken {
         this.id = execution.getNewId('token');
         this.processId = startNode.processId;
         this.path = [];
+        
     }
     /**
      * 
@@ -158,12 +158,16 @@ class Token implements IToken {
                 token.itemsKey='';
             token.itemsKey+=itemsKey;
         }
-            
+        if (loop)
+            token.loop = loop;
+        else if (parentToken)
+            token.loop=parentToken.loop;            
 
 
         token.log('Token(*).startNewToken:  starting new Token with id='+token.id+' start node='+startNode.id);
 
-        token.loop = loop;
+
+
         execution.tokens.set(token.id, token);
         token.appendData(data, originItem);
         if (noExecute==false)
@@ -180,7 +184,7 @@ class Token implements IToken {
             loopId = this.loop.id;
 
         return {
-            id: this.id, type: this.type, status: this.status, dataPath: this._dataPath, loopId,
+            id: this.id, type: this.type, status: this.status, dataPath: this.dataPath, loopId,
             parentToken, originItem, startNodeId: this.startNodeId,
             currentNode: this.currentNode.id , itemsKey: this.itemsKey
         };
