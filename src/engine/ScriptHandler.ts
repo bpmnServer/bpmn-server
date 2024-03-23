@@ -106,8 +106,10 @@ class ScriptHandler {
         return result;
 		*/
         try {
+           script = script.replace('#','')    //remove symbol '#'
+	    //require return
             var js = ScriptHandler.getJSvars(scope) + `
-                  ${script};`;
+                  return ${script};`;
             result = Function(js).bind(scope)();
 			
 			if (result instanceof Promise)
