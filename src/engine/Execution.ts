@@ -279,6 +279,9 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
     {
         this.error("***ERROR*** restart must be for an instance with end status, current instance has status of"+this.instance.status);
     }
+    
+    this.instance.status=EXECUTION_STATUS.running;
+    this.instance.endedAt=null;
 
     await this.signalItem(itemId,inputData,userName,{restart:true});
     this.log('Execution('+this.name+').restart: finished!');
