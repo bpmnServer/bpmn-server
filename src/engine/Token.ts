@@ -268,9 +268,6 @@ class Token implements IToken {
             return;
             
         }
-        if (!await this.preExecute())  
-            return; // loop logic will take care of it
-
         let ret;
         const item = new Item(this.currentNode, this);
         if (input)
@@ -280,9 +277,12 @@ class Token implements IToken {
 
         if (input)
             await this.currentNode.setInput(item,input);
-            
 
+        if (!await this.preExecute())  
+            return; // loop logic will take care of it
+    
         this.log('Token('+this.id +').execute: executing currentNodeId='+ this.currentNode.id);
+
 
         ret = await this.currentNode.execute(item);
 /*

@@ -1,8 +1,9 @@
 import { Token, TOKEN_TYPE } from './Token';
-import { Node, LoopBehaviour, Behaviour_names } from '../elements/';
+import { Node, LoopBehaviour, Behaviour_names, BPMN_TYPE } from '../elements/';
 
 import { Execution } from './Execution';
 import { ScriptHandler } from '.';
+import { ITEM_STATUS } from '../interfaces';
 
 class Loop {
     id;
@@ -123,19 +124,29 @@ class Loop {
                 // launch as many tokens as needed
                 if (token.loop) // already assigned a loop
                     return true; // go ahead and execute
+//                token.currentNode.type=null;
                 let loop = new Loop(token.currentNode, token);
                 let seq;
                 if (loop.items) {
+                    let tokens=[];
                     for (seq = 0; seq < loop.items.length; seq++) {
                         let entry = loop.items[seq];
                         let data = {};
 /*old                        data[loop.getKeyName()] = entry;
                         let newToken = await Token.startNewToken(TOKEN_TYPE.Instance, token.execution, token.currentNode, loop.dataPath + '.' + seq, token, token.currentItem, loop, data,true);
 */
-
                         let newToken = await Token.startNewToken(TOKEN_TYPE.Instance, token.execution, token.currentNode,
-                             loop.dataPath+'.'+entry , token, token.currentItem, loop, data,false,entry);
+                             loop.dataPath+'.'+entry , token, token.currentItem, loop, data,true,entry);
+                        tokens.push(newToken);
+
+                        token.log('created token '+newToken.id+' for ' + entry);
+
                     }
+                    for(let i=0;i<tokens.length;i++)
+                    {
+                        await tokens[i].execute();
+                    }
+
                 }
                 else {
                     token.error("loop has no items");
@@ -157,6 +168,7 @@ class Loop {
 
                     // need to converge here ;
                     token.end();
+                    token.parentToken.currentItem.status=ITEM_STATUS.end;
                     await token.parentToken.goNext();
                     return false;
                 }
@@ -187,15 +199,30 @@ class Loop {
 
             }
             else { // parallel 
-                token.loop.completed++;
                 token.end();
+                token.loop.completed++;
                 if (token.loop.completed == token.loop.items.length) {
                     // need to converge here ;
+//                    token.parentToken.currentItem=token.currentItem
+                        //token.parentToken.path.push(token.currentItem);
+                        token.parentToken.currentItem.status=ITEM_STATUS.end;
+                        await token.parentToken.goNext();
+                    return false;
+                    if (token.currentNode.type==BPMN_TYPE.SubProcess) {
+                        const children = token.childrenTokens;
+                        for (let i = 0; i < children.length; i++) {
+                            const child = children[i];
+                            if (child.type == TOKEN_TYPE.SubProcess) {
+                                child.signal({});
+                            }
+                        }
+                    }/*
                     let parent=token.parentToken;
                     if(parent.currentItem)
                         await parent.goNext();
                     else
-                        await parent.parentToken.goNext();
+                        await parent.parentToken.goNext(); */
+                    return false;
                 }
                 return false; // no further action
 
