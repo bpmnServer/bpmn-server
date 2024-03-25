@@ -27,11 +27,9 @@
 ## Service Task
 In Process definition (.bpmn file), use `implementation` attribute to define name of JavaScript/TypeScript Method to perform the Task:
 
-<table class="docs" class="docs"><tr><td class="docs">
 
 ![Using Modeler](./images/bb-service.PNG)
 
-</td><td class="docs">
 
 ```xml
     <bpmn:serviceTask id="serviceTask" name="Service Task" implementation="service1">
@@ -50,15 +48,12 @@ class AppServices {
 }
 
 ```
-</td></tr></table>
 
 ## Script Task
 
-<table class="docs"><tr><td class="docs">
 
 ![Using Modeler](images/bb-script.PNG)
 
-</td><td class="docs">
 
 ```xml
     <bpmn2:scriptTask id="Activity_06typtl" name="script" scriptFormat="JavaScript">
@@ -69,16 +64,13 @@ class AppServices {
  ..
     </bpmn2:scriptTask>
 ```
-</td></tr></table>
 
 
 ## Conditional Flow
 
-<table class="docs"><tr><td class="docs">
 
 ![Using Modeler](images/bb-conditional-flow.PNG)
 
-</td><td class="docs">
 
 ```xml
 
@@ -91,15 +83,12 @@ class AppServices {
 
 ```
 
-</td></tr></table>
 
 ## Form Input Fields
 
-<table class="docs"><tr><td class="docs">
 
 ![Using Modeler](images/bb-form.PNG)
 
-</td><td class="docs">
 
 ```xml
     <bpmn:userTask id="task_Buy" name="Buy">
@@ -114,15 +103,12 @@ class AppServices {
 
 ```
 
-</td></tr></table>
 
 ## Multiple Start Event
 
-<table class="docs"><tr><td class="docs">
 
 ![Image description](examples/invoice-start.png)
 
-</td><td class="docs">
 
 When a definition/process has multiple start node, you need to specify the start node when starting the process:
 
@@ -136,7 +122,7 @@ From API:
     response = await api.engine.start('invoice', 
         { reminderCounter: 0, caseId: caseId}, user, {startNodeId:'StartEvent_AP'});
 ```
-</td></tr></table>
+
 ## Business Rule Task
 
 BPMN-Server supports Business Rules implemented through DMN-Engine
@@ -157,12 +143,9 @@ Scripts can be added to listen to two events:
 - Start before the Task is executed
 - End after the task is executed
 
-<table class="docs"><tr><td class="docs">
-
 
 ![Using Modeler](images/bb-event-scripts.PNG)
 
-</td><td class="docs">
 
 In this example we are adding a script to bpmn:startEvent
 
@@ -189,16 +172,13 @@ In this example we are adding a script to bpmn:startEvent
 
    
 ```
-</td></tr></table>
 
 
 ## Timer Event
 
-<table class="docs"><tr><td class="docs">
 
 ![Using Modeler](images/bb-timer.PNG)
 
-</td><td class="docs">
 
 ```xml
     <bpmn:intermediateCatchEvent id="Event_timer">
@@ -210,15 +190,12 @@ In this example we are adding a script to bpmn:startEvent
     </bpmn:intermediateCatchEvent>
 ```
 More on [timers](timers.md)
-</td></tr></table>
 
 ## Multi-instances Tasks 
 
-<table class="docs"><tr><td class="docs">
 
 ![Using Modeler](images/bb-multi-instance.PNG)
 
-</td><td class="docs">
 
 ```xml
     <bpmn:scriptTask id="scriptTask" name="Script Task">
@@ -230,15 +207,12 @@ More on [timers](timers.md)
     </bpmn:scriptTask>
 ```
 For Multi-instance data handling [see](data.md)
-</td></tr></table>
 
 ## Call Process
 
-<table class="docs"><tr><td class="docs">
 
 ![Using Modeler](images/bb-call.PNG)
 
-</td><td class="docs">
 
 ```xml
     <bpmn:callActivity id="activity_call" name="Call Task" calledElement="loop">
@@ -248,7 +222,6 @@ For Multi-instance data handling [see](data.md)
 ```
 In the above example 'loop' is the name of process to be called.
 
-</td></tr></table>
 
 
 ## Throwing and Cathcing Messages
@@ -321,4 +294,4 @@ Howerver, the challenge here is that make sure the message is sent to the specif
 ## [Gateway](./examples/gateway.md)
 ## [Event Based Gateway ](./examples/gateway.md)
 ## [Boundary Events](./examples/boundary-events.md)
-## [UserTask Assignment](userAssignment.md)
+## [UserTask Assignment](security.md)

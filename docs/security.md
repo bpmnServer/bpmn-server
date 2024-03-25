@@ -1,15 +1,18 @@
 # Security 
 In general Application Security deals with the following topics:
+
 - [User Identification and Authentication](#User-Identificaiton-and-authentication)
+
 - [Access Control Rules](#Access-Control-rules)
+
 - [Access Rules Enfocement](#access-control-enforcement)
 
 # User Identification and Authentication
 
 BPMNServer does not provide user identification and authentication component, but relies on the calling application to authenticate the user. The companion package BPMN-web provides full authentication and identification as a mere demo.
 
-```
 ### Web App example/ Server Side Scripts
+
 ```ts
 
     const user1 =new SecureUser({ userName: 'user1', userGroups: ['Owner', 'Others']});
@@ -85,8 +88,12 @@ BPMNServer allows you to define pools and using the pool name as userGroup
 At the start of the userTask the designer values are evaluated into the instance item.
 
 These fields can accept the following:
+
 - A string value
+
 - JavaScript expression `$(this.data.requester)`
+
+- JavaScript Async function call `$(return services.getSupervisorUser(this.data.requester))`
 
 ![image](https://github.com/ralphhanna/bpmn-server/assets/11893416/88299e86-dd9d-4fb0-9324-9209904ef881)
 

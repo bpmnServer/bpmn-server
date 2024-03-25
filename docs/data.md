@@ -53,9 +53,6 @@ All of the above all available during process execution and event listeners.
 
 The instance object is similar to: 
 
-
-<table> <tr><td> 
-
 ```json
 instance: {
   id;
@@ -73,11 +70,8 @@ instance: {
   }
 ```
 
-</td><td>
-
 ![MongDB Collection](images/mongo-instance-sample.png)
 
-</td></tr></table>
 
 
 

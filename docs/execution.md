@@ -117,10 +117,7 @@ Validation Scripts can return an error as such:
 ```
     return {error:'Invalid input'};
 ```
-or:
-```
-    execution.validationError('invalid input');
-```
+
 As a result execution will raise an exception and the command will fail.
 
 ## BPMN Errors
@@ -134,10 +131,9 @@ The current item status will be `error` and execution will continue at the Error
 
 ## Throwing Exceptions
 ```
-    execution.throwExceptions('exception code',actionToTake);
-
+    new error('error message');
 ```
 
 This will raise an Excption, stop workflow execution and save the instance datatake action
 
-The item executing will have a status of 'error' 
+

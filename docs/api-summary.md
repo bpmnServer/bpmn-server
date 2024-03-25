@@ -1,4 +1,4 @@
-[bpmn-server](api/readme)
+[bpmn-server](./api/readme.md)
 
 # API Summary [Full Listing](/api/readme)
 
@@ -6,9 +6,9 @@
 
 Service layer API, supporting access control has the following componets
 
-- [engine](api/interfaces/IAPIEngine) BPMN Execution Engine
-- [data](api/interfaces/IAPIData) Provides access to the BPMN datastore for instances
-- [model](api/interfaces/IAPIModel) Provides access to BPMN models
+- [engine](./api/interfaces/IAPIEngine.md) BPMN Execution Engine
+- [data](./api/interfaces/IAPIData.md) Provides access to the BPMN datastore for instances
+- [model](./api/interfaces/IAPIModel.md) Provides access to BPMN models
 
 To access the service layer API:
 ```ts
