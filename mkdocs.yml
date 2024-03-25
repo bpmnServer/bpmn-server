@@ -1,6 +1,9 @@
 site_name:  bpmn-server
+doc_dir: docs
+site_dir: .
 theme:
   name: readthedocs
+use_directory_urls: true
 markdown_extensions:
   - toc:
       permalink: "#"

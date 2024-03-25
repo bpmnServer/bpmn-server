@@ -145,7 +145,7 @@ At the start of the userTask the designer values are evaluated into the instance
 These fields can accept the following:
 - A string value
 - JavaScript expression `$(this.data.requester)`
-- JavaScript Async function call `#(services.getSupervisorUser(this.data.requester))`
+- JavaScript Async function call `$(return services.getSupervisorUser(this.data.requester))`
 
 The last calls a services function:
 ```ts

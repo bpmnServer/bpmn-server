@@ -169,7 +169,7 @@ class Gateway extends Node {
                     return NODE_ACTION.wait;
                 }
             }
-            else {
+            else if (item.token.type==TOKEN_TYPE.Diverge){
                 // No pending tokens
                 let parentToken = item.token.parentToken;
                 let convergingGatewayCurrentNode = item.token.currentNode;

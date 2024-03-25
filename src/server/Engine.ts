@@ -43,7 +43,7 @@ class Engine extends ServerComponent implements IEngine{
 			await this.lock(execution.id);
 			execution.isLocked = true;
 
-			execution.worker = execution.execute(startNodeId, data, options);
+			execution.worker = execution.execute(startNodeId, this.sanitizeData(data), options);
 
 			if (options['noWait'] == true) {
 					execution.worker.then(obj=>{ 
@@ -81,7 +81,7 @@ class Engine extends ServerComponent implements IEngine{
 
 			execution= await this.restore(instance.id,item.id);
 
-			await execution.restart(item.id, data,userName, options);
+			await execution.restart(item.id, this.sanitizeData(data),userName, options);
 
 			await this.release(execution);
 
@@ -222,7 +222,7 @@ class Engine extends ServerComponent implements IEngine{
 
 			execution = await this.restore(item.instanceId);
 
-			execution.worker = execution.assign(item.id, data, assignment, userName,options);
+			execution.worker = execution.assign(item.id, this.sanitizeData(data), assignment, userName,options);
 
 			await this.release(execution);
 
@@ -277,7 +277,7 @@ class Engine extends ServerComponent implements IEngine{
             }
 			execution = await this.restore(item.instanceId);
 
-			execution.worker = execution.signalItem(item.id, data,userName,options);
+			execution.worker = execution.signalItem(item.id, this.sanitizeData(data),userName,options);
 
 			try {
 				if (options['noWait'] == true) {
@@ -332,7 +332,7 @@ class Engine extends ServerComponent implements IEngine{
 
 			execution= await this.restore(instanceId);
 
-			await execution.signalRepeatTimerEvent(instanceId,prevItem,data,options);
+			await execution.signalRepeatTimerEvent(instanceId,prevItem,this.sanitizeData(data),options);
 
 			await this.release(execution);
 
@@ -374,7 +374,7 @@ class Engine extends ServerComponent implements IEngine{
 
 			execution= await this.restore(instanceId);
 
-			await execution.signalEvent(elementId, data,userName,options);
+			await execution.signalEvent(elementId, this.sanitizeData(data),userName,options);
 
 			await this.release(execution);
 
@@ -394,7 +394,7 @@ class Engine extends ServerComponent implements IEngine{
 	}
 	async throwMessage(messageId, data = {}, matchingQuery = {}): Promise<Execution> {
 
-		this.logger.log('..Action:engine.throwMessage ', messageId,data,matchingQuery);
+		this.logger.log('..Action:engine.throwMessage ', messageId,this.sanitizeData(data),matchingQuery);
 
 		if (!messageId)
 			return null;
@@ -427,7 +427,7 @@ class Engine extends ServerComponent implements IEngine{
 			this.logger.log(`Throw Signal ${messageId} found target: ${item.processName} ${item.id}`);
 
 			this.logger.log('..Action:engine.throwMessage found target ', item.processName, item.id);
-			return await this.invoke({ "items.id": item.id }, data);
+			return await this.invoke({ "items.id": item.id }, this.sanitizeData(data));
 		}
 		else {
 			this.logger.log('** engine.throwMessage failed to find a target for ',JSON.stringify(itemsQuery));
@@ -451,7 +451,7 @@ class Engine extends ServerComponent implements IEngine{
 	 */
 	async throwSignal(signalId, data = {}, matchingQuery = {} ) {
 
-		this.logger.log('..Action:engine.Throw Signal ',signalId,data,matchingQuery);
+		this.logger.log('..Action:engine.Throw Signal ',signalId,this.sanitizeData(data),matchingQuery);
 
 		var instances = [];
 		if (!signalId)
@@ -466,7 +466,7 @@ class Engine extends ServerComponent implements IEngine{
 				let event = events[i];
 				this.logger.log('..Action:engine.Throw Signal found target', event.modelName, data, event.elementId);
 				
-				var res = await this.start(event.modelName, data, event.elementId, null);
+				var res = await this.start(event.modelName, this.sanitizeData(data), event.elementId, null);
 				this.logger.log('Signal end data',res.instance.data)
 				instances.push(res.instance.id);
 			}
@@ -490,15 +490,16 @@ class Engine extends ServerComponent implements IEngine{
 				let item = items[i];
 //				console.log(`Throw Signal ${signalId} found target: ${item.processName} ${item.id}`);
 				this.logger.log('..Action:engine.Throw Signal found target', item.processName,item.id );
-				var res=await this.invoke({ "items.id": item.id }, data);
+				var res=await this.invoke({ "items.id": item.id }, this.sanitizeData(data));
 				instances.push(res.instance.id);
             }
 		}
 		return instances;
 	}
 
-
-
+	sanitizeData(data) {
+		return JSON.parse(JSON.stringify(data));
+	}
 }
 
 

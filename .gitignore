@@ -1,6 +1,7 @@
 ﻿.env
 /node_modules
 /obj
+/site
 *.log
 *.cmd
 *.sln
@@ -8,6 +9,7 @@
 *.njsproj.user
 *.txt
 *.bak
+tsconfig.tsbuildinfo
 /bin
 *.tgz
 # Transpiled JavaScript files from Typescript
