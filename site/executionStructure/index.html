@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>executionStructure - bpmn-server</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "executionStructure";
+        var mkdocs_page_input_path = "executionStructure.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> bpmn-server
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Overview</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../invokation/">Invoking Workflows</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../execution/">Execution</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../scripting/">Scripting</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../security/">Security</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../data/">Data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../examples/">Examples</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../api-summary/">API Summary</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../api/readme/">API</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../setup/">Setup</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../customization/">Application Integration</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">bpmn-server</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">executionStructure</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <pre><code>Execution                       Execution
+</code></pre>
+<p><strong><em>_</em></strong><strong><em>_</em></strong><strong><em>_</em></strong>__             <strong><em>_</em></strong><strong><em>_</em>
+Item 1   2        3                   3     4
+S   E S     E S       W             C   E S    E
+</strong><strong><em> </em></strong><strong><em>_ </em></strong><strong><em>_</em>_             </strong><strong><em> </em></strong>___
+    V       V         V                 V      V</p>
+<p>log 
+                    Instance</p>
+<hr />
+<ol>
+<li>
+<p>Server 
+    created once and has the life of the entire Node process</p>
+</li>
+<li>
+<p>Execution 
+is created for every API call has the life of the call
+has an instance of logger</p>
+</li>
+<li>
+<p>Save is performed at end of every node execution (end or wait)</p>
+</li>
+<li>
+<p>Execution locks the instance, only one execution at a time for a given instance to avoid conflict</p>
+</li>
+</ol>
+<p>call sequence</p>
+<h2 id="execution">Execution:<a class="headerlink" href="#execution" title="Permanent link">#</a></h2>
+<p>1 engine.start()</p>
+<pre><code>    const execution = new Execution(this.server,name, source);
+
+    const newDataStore =new DataStore(this.server);
+    this.server.dataStore = newDataStore;
+
+    newDataStore.monitorExecution(execution);
+    this.cache.add(execution);
+
+    execution.worker = execution.execute(startNodeId, data, options);
+</code></pre>
+<p>2 execution.execute</p>
+<pre><code class="language-ts">  public async execute(startNodeId = null, inputData = {}, options = {}) {
+
+        await this.definition.load();
+
+        this.process = startNode.process;
+
+        let token = await Token.startNewToken(TOKEN_TYPE.Primary,this, startNode, null, null, null, null,null,true);
+
+        const proc = startNode.process;
+
+        await proc.start(this, token);
+        await token.execute(null);
+
+        await Promise.all(this.promises);
+</code></pre>
+<ol>
+<li>process</li>
+</ol>
+<pre><code class="language-ts">/**
+     * Notify process that it started
+     * */
+    async start(execution: Execution,parentToken) {
+        this.subProcessEvents = [];
+        const events = [];
+        this.eventSubProcesses.forEach(p =&gt; {
+            p.getStartNodes().forEach(st =&gt; {
+                events.push(st);
+            });
+        });
+        let i;
+        for (i = 0; i &lt; events.length; i++) {
+            const st = events[i];
+            execution.log('..starting event start subporcess ' + st.id)
+            const newToken = await Token.startNewToken(TOKEN_TYPE.EventSubProcess,execution, st, null, parentToken, null, null);
+            this.subProcessEvents.push(newToken.currentItem);
+        }
+    }
+</code></pre>
+<ol>
+<li>Token.execute</li>
+</ol>
+<pre><code class="language-ts">        new item
+        ret=node.execute(item)
+        if (ret)
+            wait:
+            terminate:
+            error:
+            cancel:
+        goNext();
+</code></pre>
+<ol>
+<li>Node.execute</li>
+</ol>
+<pre><code class="language-ts">
+        this.enter(item);   // no choice
+        let ret =await this.start(item);
+
+
+        if (ret == NODE_ACTION.error || ret == NODE_ACTION.abort)
+            return ret;
+        else if (ret ==NODE_ACTION.wait) {
+            await this.doEvent(item, EXECUTION_EVENT.node_wait, ITEM_STATUS.wait);
+            return ret;
+        }
+
+
+        ret = await this.run(item);
+        switch (ret) {
+            case NODE_ACTION.error:
+                return ret;
+                break;
+            case NODE_ACTION.abort:
+                return ret;
+                break;
+        }
+
+        return await this.continue(item);
+
+    }
+    /*
+     *  called by execute or by token.invoke to continue work already started
+     */
+    async continue(item: Item) {
+
+        await this.end(item);
+        return;
+    }
+    async end(item: Item) {
+
+        await  this.cancelBoundaryEvents(item);
+
+        let i;
+        for (i = 0; i &lt; this.outbounds.length; i++) {
+            let flow = this.outbounds[i];
+                if (flow.type == BPMN_TYPE.MessageFlow) {
+                    let flowItem = new Item(flow, item.token);
+                    await flow.execute(flowItem);
+                }
+        }
+
+        if (item.status == ITEM_STATUS.end)
+            return;
+        item.endedAt = new Date().toISOString();;
+        this.behaviours.forEach(async function (b) { await b.end(item); });
+        await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end);
+        this.behaviours.forEach(async function (b) { await b.exit(item); });
+
+    }
+
+</code></pre>
+<h2 id="terminate">terminate:<a class="headerlink" href="#terminate" title="Permanent link">#</a></h2>
+<p>is called by 
+    Terminate End Event
+    Error Event
+    Cancel Event (for Transaction)</p>
+<p>Steps:
+1.  Scope is current process or sub-process and all it's children processes
+2.  Establish event handlers (for Error/Cancel)
+3.  wait for all running tokens to complete
+4.  terminate/cancel/void all nodes in wait except handlers
+5.  invoke handlers</p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Examples - bpmn-server</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Examples";
+        var mkdocs_page_input_path = "examples.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> bpmn-server
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Overview</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../invokation/">Invoking Workflows</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../execution/">Execution</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../scripting/">Scripting</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../security/">Security</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../data/">Data</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Examples</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#service-task">Service Task</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#script-task">Script Task</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#conditional-flow">Conditional Flow</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#form-input-fields">Form Input Fields</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#multiple-start-event">Multiple Start Event</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#business-rule-task">Business Rule Task</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#script-extensions">Script Extensions</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#timer-event">Timer Event</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#multi-instances-tasks">Multi-instances Tasks</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#call-process">Call Process</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#throwing-and-cathcing-messages">Throwing and Cathcing Messages</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-throw-a-message-with-data">1 Throw a message with data</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-catch-a-message-with-data">2 Catch a message with data</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3-throw-a-message-with-data-and-a-key">3 Throw a message with data and a Key</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#input-and-output-data-handling">Input and Output Data Handling</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#gateway">Gateway</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#event-based-gateway">Event Based Gateway</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#boundary-events">Boundary Events</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#usertask-assignment">UserTask Assignment</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../api-summary/">API Summary</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../api/readme/">API</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../setup/">Setup</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../customization/">Application Integration</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">bpmn-server</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Examples</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="features-by-examples">Features by Examples<a class="headerlink" href="#features-by-examples" title="Permanent link">#</a></h1>
+<!-- toc -->
+
+<ul>
+<li><a href="#service-task">Service Task</a></li>
+<li><a href="#script-task">Script Task</a></li>
+<li><a href="#conditional-flow">Conditional Flow</a></li>
+<li><a href="#form-input-fields">Form Input Fields</a></li>
+<li><a href="#multiple-start-event">Multiple Start Event</a></li>
+<li><a href="#business-rule-task">Business Rule Task</a></li>
+<li><a href="#script-extensions">Script Extensions</a></li>
+<li><a href="#timer-event">Timer Event</a></li>
+<li><a href="#multi-instances-tasks">Multi-instances Tasks</a></li>
+<li><a href="#call-process">Call Process</a></li>
+<li><a href="#throwing-and-cathcing-messages">Throwing and Cathcing Messages</a></li>
+<li><a href="#1-throw-a-message-with-data">1 Throw a message with data</a></li>
+<li><a href="#2-catch-a-message-with-data">2 Catch a message with data</a></li>
+<li><a href="#3-throw-a-message-with-data-and-a-key">3 Throw a message with data and a Key</a></li>
+<li><a href="#input-and-output-data-handling">Input and Output Data Handling</a></li>
+<li><a href="#gatewayexamplesgatewaymd">Gateway</a></li>
+<li><a href="#event-based-gateway-examplesgatewaymd">Event Based Gateway</a></li>
+<li><a href="#boundary-eventsexamplesboundary-eventsmd">Boundary Events</a></li>
+<li><a href="#usertask-assignmentuserassignmentmd">UserTask Assignment</a></li>
+</ul>
+<!-- tocstop -->
+
+<h2 id="service-task">Service Task<a class="headerlink" href="#service-task" title="Permanent link">#</a></h2>
+<p>In Process definition (.bpmn file), use <code>implementation</code> attribute to define name of JavaScript/TypeScript Method to perform the Task:</p>
+<p><img alt="Using Modeler" src="../images/bb-service.PNG" /></p>
+<pre><code class="language-xml">    &lt;bpmn:serviceTask id=&quot;serviceTask&quot; name=&quot;Service Task&quot; implementation=&quot;service1&quot;&gt;
+    ...
+    &lt;/bpmn:serviceTask&gt;
+</code></pre>
+<pre><code class="language-ts">class AppServices {
+
+    async service1(item,input) {
+        seq++;
+        await delay(3000 -(seq * 100) , 'test');
+        item.log(&quot;SERVICE 1&quot; + item.token.currentNode.id);
+    }
+}
+
+</code></pre>
+<h2 id="script-task">Script Task<a class="headerlink" href="#script-task" title="Permanent link">#</a></h2>
+<p><img alt="Using Modeler" src="../images/bb-script.PNG" /></p>
+<pre><code class="language-xml">    &lt;bpmn2:scriptTask id=&quot;Activity_06typtl&quot; name=&quot;script&quot; scriptFormat=&quot;JavaScript&quot;&gt;
+      &lt;bpmn2:script&gt;
+
+       this.log('testing from &amp;lt;testing&amp;gt; the inside: '+data.loopKey);
+      &lt;/bpmn2:script&gt;
+ ..
+    &lt;/bpmn2:scriptTask&gt;
+</code></pre>
+<h2 id="conditional-flow">Conditional Flow<a class="headerlink" href="#conditional-flow" title="Permanent link">#</a></h2>
+<p><img alt="Using Modeler" src="../images/bb-conditional-flow.PNG" /></p>
+<pre><code class="language-xml">
+  &lt;bpmn:sequenceFlow&gt;    
+
+   &lt;bpmn:conditionExpression xsi:type=&quot;bpmn:tFormalExpression&quot; language=&quot;JavaScript&quot;&gt;
+      (data.needsCleaning==&quot;Yes&quot;)
+   &lt;/bpmn:conditionExpression&gt;
+  ..
+
+</code></pre>
+<h2 id="form-input-fields">Form Input Fields<a class="headerlink" href="#form-input-fields" title="Permanent link">#</a></h2>
+<p><img alt="Using Modeler" src="../images/bb-form.PNG" /></p>
+<pre><code class="language-xml">    &lt;bpmn:userTask id=&quot;task_Buy&quot; name=&quot;Buy&quot;&gt;
+      &lt;bpmn:extensionElements&gt;
+        &lt;camunda:formData&gt;
+          &lt;camunda:formField id=&quot;needsRepairs&quot; label=&quot;Repairs Required?&quot; type=&quot;boolean&quot; /&gt;
+          &lt;camunda:formField id=&quot;needsCleaning&quot; label=&quot;Cleaning Required?&quot; type=&quot;boolean&quot; /&gt;
+        &lt;/camunda:formData&gt;
+      &lt;/bpmn:extensionElements&gt;
+        ...
+    &lt;/bpmn:userTask&gt;    
+
+</code></pre>
+<h2 id="multiple-start-event">Multiple Start Event<a class="headerlink" href="#multiple-start-event" title="Permanent link">#</a></h2>
+<p><img alt="Image description" src="invoice-start.png" /></p>
+<p>When a definition/process has multiple start node, you need to specify the start node when starting the process:</p>
+<p>From the Web UI:</p>
+<p><img alt="Image description" src="invoice-start-prompt.png" /></p>
+<p>From API:</p>
+<pre><code class="language-ts">
+    response = await api.engine.start('invoice', 
+        { reminderCounter: 0, caseId: caseId}, user, {startNodeId:'StartEvent_AP'});
+</code></pre>
+<h2 id="business-rule-task">Business Rule Task<a class="headerlink" href="#business-rule-task" title="Permanent link">#</a></h2>
+<p>BPMN-Server supports Business Rules implemented through DMN-Engine
+Business Rules can be defined as a Decision Table as in this example:</p>
+<p><img alt="Vacation Decision Table" src="VacationDecisionTable.PNG" /></p>
+<p>Decision Table is called through </p>
+<pre><code class="language-ts">    &lt;bpmn2:businessRuleTask id=&quot;Task_1lcamp6&quot; name=&quot;Vacation&quot;  camunda:decisionRef=&quot;Vacation&quot;&gt;
+</code></pre>
+<p>This will load the file 'Vacation.json' form the Processes folder as defined in configuration.js</p>
+<h2 id="script-extensions">Script Extensions<a class="headerlink" href="#script-extensions" title="Permanent link">#</a></h2>
+<p>Scripts can be added to listen to two events:
+- Start before the Task is executed
+- End after the task is executed</p>
+<p><img alt="Using Modeler" src="../images/bb-event-scripts.PNG" /></p>
+<p>In this example we are adding a script to bpmn:startEvent</p>
+<pre><code class="language-xml">    &lt;bpmn2:extensionElements&gt;
+      &lt;camunda:executionListener event=&quot;start&quot;&gt;
+        &lt;camunda:script scriptFormat=&quot;JavaScript&quot;&gt;
+
+           console.log(&quot;This is the start event&quot;);
+          data.records=[1,2,3];
+          console.log(data);
+
+        &lt;/camunda:script&gt;
+      &lt;/camunda:executionListener&gt;
+      &lt;camunda:executionListener event=&quot;end&quot;&gt;
+        &lt;camunda:script scriptFormat=&quot;JavaScript&quot;&gt;
+
+          console.log(&quot;This is the end event&quot;);          
+
+
+          &lt;/camunda:script&gt;
+      &lt;/camunda:executionListener&gt;
+    &lt;/bpmn2:extensionElements&gt;
+
+
+</code></pre>
+<h2 id="timer-event">Timer Event<a class="headerlink" href="#timer-event" title="Permanent link">#</a></h2>
+<p><img alt="Using Modeler" src="../images/bb-timer.PNG" /></p>
+<pre><code class="language-xml">    &lt;bpmn:intermediateCatchEvent id=&quot;Event_timer&quot;&gt;
+      &lt;bpmn:incoming&gt;Flow_1sg7v2d&lt;/bpmn:incoming&gt;
+      &lt;bpmn:outgoing&gt;Flow_1nku8og&lt;/bpmn:outgoing&gt;
+      &lt;bpmn:timerEventDefinition id=&quot;TimerEventDefinition_07xu06a&quot;&gt;
+        &lt;bpmn:timeDuration xsi:type=&quot;bpmn:tExpression&quot;&gt;PT2S&lt;/bpmn:timeDuration&gt;
+      &lt;/bpmn:timerEventDefinition&gt;
+    &lt;/bpmn:intermediateCatchEvent&gt;
+</code></pre>
+<p>More on <a href="../timers/">timers</a></p>
+<h2 id="multi-instances-tasks">Multi-instances Tasks<a class="headerlink" href="#multi-instances-tasks" title="Permanent link">#</a></h2>
+<p><img alt="Using Modeler" src="../images/bb-multi-instance.PNG" /></p>
+<pre><code class="language-xml">    &lt;bpmn:scriptTask id=&quot;scriptTask&quot; name=&quot;Script Task&quot;&gt;
+      &lt;bpmn:incoming&gt;Flow_159xzcz&lt;/bpmn:incoming&gt;
+      &lt;bpmn:outgoing&gt;Flow_0t7z2os&lt;/bpmn:outgoing&gt;
+      &lt;bpmn:multiInstanceLoopCharacteristics isSequential=&quot;true&quot; 
+        camunda:collection=&quot;$(data.records)&quot; /&gt;
+      &lt;bpmn:script&gt;&lt;![CDATA[this.log('testing from the inside: '+data.loopKey);]]&gt;&lt;/bpmn:script&gt;
+    &lt;/bpmn:scriptTask&gt;
+</code></pre>
+<p>For Multi-instance data handling <a href="../data/">see</a></p>
+<h2 id="call-process">Call Process<a class="headerlink" href="#call-process" title="Permanent link">#</a></h2>
+<p><img alt="Using Modeler" src="../images/bb-call.PNG" /></p>
+<pre><code class="language-xml">    &lt;bpmn:callActivity id=&quot;activity_call&quot; name=&quot;Call Task&quot; calledElement=&quot;loop&quot;&gt;
+    ...
+    &lt;/bpmn:callActivity&gt;
+
+</code></pre>
+<p>In the above example 'loop' is the name of process to be called.</p>
+<h2 id="throwing-and-cathcing-messages">Throwing and Cathcing Messages<a class="headerlink" href="#throwing-and-cathcing-messages" title="Permanent link">#</a></h2>
+<p>In this example, we will demonstrate how can two seperate processes communicate through "Messages"</p>
+<p><img alt="Using Modeler" src="../images/bb-message.PNG" /></p>
+<h3 id="1-throw-a-message-with-data">1 Throw a message with data<a class="headerlink" href="#1-throw-a-message-with-data" title="Permanent link">#</a></h3>
+<p>When a process throw a message, bpmn-server checks if there is another process that can catch this message before dispatching it to AppDelegate.</p>
+<pre><code class="language-xml">    &lt;bpmn2:intermediateThrowEvent id=&quot;throw_msg1&quot; name=&quot;msg1&quot;&gt;
+      &lt;bpmn2:messageEventDefinition id=&quot;messageEventDef1&quot; messageRef=&quot;Msg1&quot; /&gt;
+      &lt;bpmn2:extensionElements&gt;
+        &lt;camunda:script event=&quot;start&quot;&gt;&lt;![CDATA[
+        input.caseId= data.caseId;
+        this.messageMatchingKey={'data.caseId': data.caseId };
+        ]]&gt;&lt;/camunda:script&gt;
+      &lt;/bpmn2:extensionElements&gt;
+      ...
+    &lt;/bpmn2:intermediateThrowEvent&gt;
+</code></pre>
+<p>The above will through a messsage as follows:
+- Message Id:             <code>Msg1</code>
+- Message Output:         <code>caseId: &lt;someValue&gt;</code></p>
+<h3 id="2-catch-a-message-with-data">2 Catch a message with data<a class="headerlink" href="#2-catch-a-message-with-data" title="Permanent link">#</a></h3>
+<p>The second process defines a start event to catch the message <code>Msg1</code></p>
+<pre><code class="language-xml">    &lt;bpmn2:startEvent id=&quot;StartEvent_1w66wpl&quot; name=&quot;msg1&quot;&gt;
+      ...
+      &lt;bpmn2:messageEventDefinition id=&quot;messageEventDef4&quot; messageRef=&quot;Msg1&quot; /&gt;
+    &lt;/bpmn2:startEvent&gt;
+
+</code></pre>
+<p>Therefore, the system will create a new instance of the second process and assign the Message output data, namely, the caseId</p>
+<h3 id="3-throw-a-message-with-data-and-a-key">3 Throw a message with data and a Key<a class="headerlink" href="#3-throw-a-message-with-data-and-a-key" title="Permanent link">#</a></h3>
+<p>In addition, the second process sends a confirmation message <code>Confirm1</code> to the first process</p>
+<pre><code class="language-xml">    &lt;bpmn2:intermediateThrowEvent id=&quot;throw_confirm1&quot; name=&quot;confirm1&quot;&gt;
+      &lt;bpmn2:messageEventDefinition id=&quot;messageEventDef2&quot; messageRef=&quot;Confirm1&quot; /&gt;
+      &lt;bpmn2:extensionElements&gt;
+        &lt;camunda:script event=&quot;transformOutput&quot;&gt;&lt;![CDATA[
+
+        this.output.confirm=true;
+        this.context.messageMatchingKey={'data.caseId': this.token.data.caseId };
+
+        ]]&gt;&lt;/camunda:script&gt;
+      &lt;/bpmn2:extensionElements&gt;
+        ...
+    &lt;/bpmn2:intermediateThrowEvent&gt;
+</code></pre>
+<p>Howerver, the challenge here is that make sure the message is sent to the specific instance, that is where the Matching key is used
+- Message Id:             <code>Confirm1</code>
+- Message Output:         <code>confirm: true</code>
+- Message Matching Keyt:   'data.caseId': this.token.data.caseId </p>
+<pre><code class="language-ts"></code></pre>
+<p><img alt="Image description" src="msg-throw-catch.png" /></p>
+<h2 id="input-and-output-data-handling">Input and Output Data Handling<a class="headerlink" href="#input-and-output-data-handling" title="Permanent link">#</a></h2>
+<p><a href="../data/#Input-Output_Data">this for details</a></p>
+<h2 id="gateway"><a href="gateway/">Gateway</a><a class="headerlink" href="#gateway" title="Permanent link">#</a></h2>
+<h2 id="event-based-gateway"><a href="gateway/">Event Based Gateway </a><a class="headerlink" href="#event-based-gateway" title="Permanent link">#</a></h2>
+<h2 id="boundary-events"><a href="boundary-events/">Boundary Events</a><a class="headerlink" href="#boundary-events" title="Permanent link">#</a></h2>
+<h2 id="usertask-assignment"><a href="../security/">UserTask Assignment</a><a class="headerlink" href="#usertask-assignment" title="Permanent link">#</a></h2>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../data/" class="btn btn-neutral float-left" title="Data"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../api-summary/" class="btn btn-neutral float-right" title="API Summary">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../data/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../api-summary/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
