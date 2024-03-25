@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Security - bpmn-server</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Security";
+        var mkdocs_page_input_path = "security.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> bpmn-server
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Overview</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../invokation/">Invoking Workflows</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../execution/">Execution</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../scripting/">Scripting</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Security</a>
+    <ul class="current">
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../data/">Data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../examples/">Examples</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../api-summary/">API Summary</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../api/readme/">API</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../setup/">Setup</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../customization/">Application Integration</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">bpmn-server</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Security</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="security">Security<a class="headerlink" href="#security" title="Permanent link">#</a></h1>
+<p>In general Application Security deals with the following topics:</p>
+<ul>
+<li>
+<p><a href="#User-Identificaiton-and-authentication">User Identification and Authentication</a></p>
+</li>
+<li>
+<p><a href="#Access-Control-rules">Access Control Rules</a></p>
+</li>
+<li>
+<p><a href="#access-control-enforcement">Access Rules Enfocement</a></p>
+</li>
+</ul>
+<h1 id="user-identification-and-authentication">User Identification and Authentication<a class="headerlink" href="#user-identification-and-authentication" title="Permanent link">#</a></h1>
+<p>BPMNServer does not provide user identification and authentication component, but relies on the calling application to authenticate the user. The companion package BPMN-web provides full authentication and identification as a mere demo.</p>
+<h3 id="web-app-example-server-side-scripts">Web App example/ Server Side Scripts<a class="headerlink" href="#web-app-example-server-side-scripts" title="Permanent link">#</a></h3>
+<pre><code class="language-ts">
+    const user1 =new SecureUser({ userName: 'user1', userGroups: ['Owner', 'Others']});
+
+
+    await api.engine.start(modelName,data,{},user1,options);  
+
+</code></pre>
+<h3 id="webapirest">WebAPI/REST<a class="headerlink" href="#webapirest" title="Permanent link">#</a></h3>
+<pre><code>Since WebAPP is already authenticated by **APIKey** is trusted to pass user object
+</code></pre>
+<pre><code class="language-ts">
+    // get api-key from header
+    // url/engine/start
+
+    await api.engine.start(processName,data,user,options);  
+
+</code></pre>
+<h2 id="using-bpmnclient-as-a-service">Using BPMNClient as a service<a class="headerlink" href="#using-bpmnclient-as-a-service" title="Permanent link">#</a></h2>
+<pre><code class="language-ts">
+    const client= new BPMNClient(url,apiKey);
+    // userId is passed here bypassing authentication, assuming user is already authenticated
+
+    // await server.engine.start(processName,data,startNode,userId,options);  
+    let response = await server.engine.start('Buy Used Car', { caseId: 1050 },null,'user1');
+
+    //await  server.engine.invoke(query, data, userId);
+
+    response = await server.engine.invoke({id: response.id , &quot;items.elementId&quot;: 'task_Buy' },{},'user1');
+
+</code></pre>
+<h2 id="access-control-rules">Access Control Rules<a class="headerlink" href="#access-control-rules" title="Permanent link">#</a></h2>
+<p>bpmn along with Camunda Extensions, provide adequate means of defining access Rules:</p>
+<h3 id="task-assignment">Task Assignment<a class="headerlink" href="#task-assignment" title="Permanent link">#</a></h3>
+<p>The following properties can be defined for each <code>User Task</code></p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>assignee</td>
+<td>defines the userName to perform the task</td>
+</tr>
+<tr>
+<td>candidateUser</td>
+<td>defines potential users that can perform the task</td>
+</tr>
+<tr>
+<td>candidateGroups</td>
+<td>defines potential userGroups whose members can perform the task</td>
+</tr>
+<tr>
+<td>dueDate</td>
+<td>Date the task is due</td>
+</tr>
+<tr>
+<td>followUpDAte</td>
+<td>Date to followup</td>
+</tr>
+<tr>
+<td>priority</td>
+<td>Task periority</td>
+</tr>
+</tbody>
+</table>
+<p>Values provided in the model editor, can be static string or an <a href="../scripting/#ModelExpressions">Model Expressions</a></p>
+<h4 id="process-initiator">Process Initiator<a class="headerlink" href="#process-initiator" title="Permanent link">#</a></h4>
+<p>You can define the variable name for the instance initiator </p>
+<p><img alt="BPMN Editor Initiator" src="../images/initiator.PNG" /></p>
+<p>This will assign the userId of that started the process</p>
+<pre><code>    console.log(data.starterUserId)
+</code></pre>
+<h2 id="pool-as-a-role">Pool as a role<a class="headerlink" href="#pool-as-a-role" title="Permanent link">#</a></h2>
+<p>BPMNServer allows you to define pools and using the pool name as userGroup</p>
+<h3 id="bpmn-editor">BPMN Editor<a class="headerlink" href="#bpmn-editor" title="Permanent link">#</a></h3>
+<p><img alt="BPMN Editor Assignee" src="../images/Assignee1.PNG" /></p>
+<p>At the start of the userTask the designer values are evaluated into the instance item.</p>
+<p>These fields can accept the following:</p>
+<ul>
+<li>
+<p>A string value</p>
+</li>
+<li>
+<p>JavaScript expression <code>$(this.data.requester)</code></p>
+</li>
+<li>
+<p>JavaScript Async function call <code>$(return services.getSupervisorUser(this.data.requester))</code></p>
+</li>
+</ul>
+<p><img alt="image" src="https://github.com/ralphhanna/bpmn-server/assets/11893416/88299e86-dd9d-4fb0-9324-9209904ef881" /></p>
+<p>For example: variable data.dueDate is copied into item.dueDate </p>
+<h2 id="manual-assignment">Manual Assignment<a class="headerlink" href="#manual-assignment" title="Permanent link">#</a></h2>
+<p>An application can prove a UI to allow users to assign tasks to others, this can be done throught the 'assign' method:</p>
+<pre><code>
+    const assignment = {assignee: 'user3', candidateUsers: ['user4','user5'],dueDate: new Date()};
+    const newData={var1:650};
+
+
+    response = await server.engine.assign({id: response.id , &quot;items.elementId&quot;: 'task_Buy' },newData,userId,assignment);
+</code></pre>
+<h1 id="access-control-enforcement">Access Control Enforcement<a class="headerlink" href="#access-control-enforcement" title="Permanent link">#</a></h1>
+<h2 id="security-rules">Security Rules:<a class="headerlink" href="#security-rules" title="Permanent link">#</a></h2>
+<p>To enable security Rules, you have to edit `.env'</p>
+<pre><code>ENFORCE_SECURITY=true
+
+</code></pre>
+<h3 id="security-rules-are-by-passed-if">Security Rules are by-passed if<a class="headerlink" href="#security-rules-are-by-passed-if" title="Permanent link">#</a></h3>
+<p>-a. User is and Admin or System</p>
+<p>-b. <code>.env</code> <code>REQUIRE_AUTHENTICATION === 'false' || process.env.ENFORCE_SECURITY</code></p>
+<h3 id="user-can-viewassign-item-if">User can View/Assign Item if:<a class="headerlink" href="#user-can-viewassign-item-if" title="Permanent link">#</a></h3>
+<p>-1. Item has no restrictions if (Assignee==null and CandidateUsers == null and CandidateGroups==null)</p>
+<p>-2. User has a group indicated in item.CandidateGroups </p>
+<h3 id="user-can-execute-item-if">User can Execute Item if:<a class="headerlink" href="#user-can-execute-item-if" title="Permanent link">#</a></h3>
+<p>-1. User is the Assignee</p>
+<h3 id="scenarios">Scenarios:<a class="headerlink" href="#scenarios" title="Permanent link">#</a></h3>
+<p>-1. User is Assignee</p>
+<p>--  Can Invoke/Complete Task</p>
+<p>--  Can Assign to another User</p>
+<p>-2. User is not Assignee but Can View (see rules above)</p>
+<p>-- Can Assign Task to either another user or self (Take Task)</p>
+<p>-- Then User can Invoke Task</p>
+<h2 id="searching-for-assignment-data">Searching for Assignment Data<a class="headerlink" href="#searching-for-assignment-data" title="Permanent link">#</a></h2>
+<p><code>api.data</code> provides a method <a href="../api/interfaces/IAPIData/#getpendingusertasks">api.data.getPendingUserTasks</a> that User Task that a User has access to.</p>
+<p>Alternativly, to search for specific items for a particular user or group:</p>
+<pre><code>
+    var res = await server.dataStore.findItems(
+        {
+            &quot;items.status&quot;: &quot;wait&quot;, &quot;items.elementId&quot;: &quot;task_Buy&quot;,
+            &quot;$or&quot;: [
+                {&quot;items.candidateUsers&quot;:&quot;user5&quot;},
+                {&quot;items.candidateGroups&quot;:&quot;group1&quot;},
+                {&quot;items.candidateGroups&quot;:&quot;group2&quot;},
+                ]
+
+        }
+    );
+</code></pre>
+<p>The above will return all items Buy Tasks in wait state assigned to 'user5' or 'group1' or 'group2'</p>
+<p>If you have selected to enforce Security Rules, the above will by automatically done for you.</p>
+<p>-- check following if covered here</p>
+<h3 id="demo-application-authentication-and-security">Demo Application Authentication and Security<a class="headerlink" href="#demo-application-authentication-and-security" title="Permanent link">#</a></h3>
+<p>Default installation, disables <code>User Authentication</code> and <code>Security Rules</code>
+To enable them, edit the .env file </p>
+<pre><code># -- Security Setting
+# if true, would direct users to login page, requires registration
+# valid values: true    flase
+# set to false if you just want to run in DEV environment
+REQUIRE_AUTHENTICATION=false
+ENFORCE_SECURITY=false
+</code></pre>
+<p>To:</p>
+<pre><code>REQUIRE_AUTHENTICATION=true
+ENFORCE_SECURITY=true
+</code></pre>
+<p>This will utilize <code>passportjs</code> for security</p>
+<h2 id="handling-access-control">Handling Access Control<a class="headerlink" href="#handling-access-control" title="Permanent link">#</a></h2>
+<p>Here is a typical flow of a Process:</p>
+<ol>
+<li>User1 will <code>Start</code> Process <code>Request Vacation</code></li>
+<li>System will store the initiator as <code>item.data.requester='User1'</code> </li>
+<li>Since Task Request has <code>assignee=item.data.requester</code> only <code>User1</code> can invoke this task</li>
+<li>Once Task Request is completed by User1 , Task Approve will be created.</li>
+<li><code>Task Approve</code> Need to be assigned to the requester supervisor
+    A Javascript event trigger on `start' will determine the supervisor userName and assign it the task</li>
+</ol>
+<pre><code class="language-ts">    item.assignee=appServices.getSupervisor(item.data.requester);
+</code></pre>
+<pre><code>Assuming appServices class contain such an async method that my call MongoDB
+Alternatively; in the model editor 
+    `assignee` field `$(appServices.getSupervisor(this.data.requester))`
+</code></pre>
+<ol>
+<li>To <code>Notify</code> the supervisor user, a JS trigger will invoke <code>notify</code> function</li>
+</ol>
+<h3 id="filtering-data-for-security">Filtering data for Security:<a class="headerlink" href="#filtering-data-for-security" title="Permanent link">#</a></h3>
+<pre><code class="language-ts">    let pending = await bpmnAPI.data.findItems({ &quot;items.status&quot;: 'wait', &quot;items.type&quot;: 'bpmn:UserTask' }, user); 
+</code></pre>
+<p>or</p>
+<pre><code class="language-ts">    let pending = await bpmnAPI.data.getPendingTasks({}, user); 
+
+</code></pre>
+<p>will return all pending tasks that the user is <strong>AUTHORIZED TO SEE</strong> 
+To See only Tasks Assigned to User</p>
+<pre><code class="language-ts">    let pending = await bpmnAPI.data.getPendingTasks({'items.assignee':user.userName},user); 
+</code></pre>
+<p>or you can use filter for the items to check <code>item.assignee</code></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../scripting/" class="btn btn-neutral float-left" title="Scripting"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../data/" class="btn btn-neutral float-right" title="Data">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../scripting/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../data/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

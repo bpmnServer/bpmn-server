@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>bpmn-server</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Overview";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> bpmn-server
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href=".">Overview</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#modeling">Modeling</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#execution">Execution</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#invoking-execution-engine">Invoking Execution Engine</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#execution-logic-and-scripting">Execution logic and scripting</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#datastore">Datastore</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#user-management-and-security">User Management and Security</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="invokation/">Invoking Workflows</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="execution/">Execution</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="scripting/">Scripting</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="security/">Security</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="data/">Data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="examples/">Examples</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="api-summary/">API Summary</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="api/readme/">API</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="setup/">Setup</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="customization/">Application Integration</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">bpmn-server</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Overview</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">#</a></h1>
+<p><code>bpmn-server</code> provides a Workflow component based on <strong>Business Process Model and Notation</strong> that can be easily integrated into your application.</p>
+<p>As workflow application can outlive Node.js applications, <code>bpmn-server</code> has out-of-the-box state presistence and variables, with concurrency across Node.js cluster and process instances
+to make them ideal platform to do long running business processes, durable services or scheduled backgound tasks.</p>
+<p>bpmnServer has multiple packages working with <code>bpmn-server</code></p>
+<ul>
+<li>bpmn-web </li>
+</ul>
+<p>A web application support all functions of a typical workflow application, in addition <strong>Modeling and Admin tools</strong></p>
+<ul>
+<li>bpmn-client</li>
+</ul>
+<p>A light weight library to provide remote connections to a <code>bpmn-server</code> through <strong>API</strong></p>
+<h2 id="modeling">Modeling<a class="headerlink" href="#modeling" title="Permanent link">#</a></h2>
+<p><code>bpmn-web</code> provides a modeling tool based on <code>bpmn.io</code> with customized property panel, no need to edit bpmn files</p>
+<p><img alt="" src="images/Modeler.png" /></p>
+<p><code>bpmn</code> models can also be imported from other tools.</p>
+<p>Typically your application has multiple bpmn models, a model is represented in a bpmn definition (xml).</p>
+<p>Each Model is made of various elements, an <code>element</code> can be a <code>node</code> in the diagram (events/tasks/gateway) or a  <code>flow</code></p>
+<p>Models are saved by <code>bpmn-server</code> and can be queried <a href="api/interfaces/IAPIModel/">see API.model</a></p>
+<p><code>bpmn-server</code> support all bpmn 2.0 elements <a href="examples/">see Modeling Support</a></p>
+<h2 id="execution">Execution<a class="headerlink" href="#execution" title="Permanent link">#</a></h2>
+<p><code>bpmn-server</code> is primiraly an execution engine for bpmn models.</p>
+<p>Execution is based on the model logic that is enhanced by various extensions that allow scripting and access to your application.</p>
+<p>During Execution, Model Listeners and Application Listeners are invoked.</p>
+<p>Everytime a model is executed (started), an <code>instance</code> is created, and for each <code>element</code> that is executed it creates an `item' </p>
+<h3 id="invoking-execution-engine">Invoking Execution Engine<a class="headerlink" href="#invoking-execution-engine" title="Permanent link">#</a></h3>
+<p>You can communicate with the the execution <code>engine' through an API [see API.engine](api/interfaces/IAPIEngine.md)
+ to</code>start<code>a Workflow or to</code>continue` executin of an Item, etc.</p>
+<p><a href="invokation/">For more details about Invoking Execution Engine</a></p>
+<h3 id="execution-logic-and-scripting">Execution logic and scripting<a class="headerlink" href="#execution-logic-and-scripting" title="Permanent link">#</a></h3>
+<p>During Execution of the work bpmn-server can invoke custom scripts at various event or call back your business application</p>
+<p><a href="execution/">For more details about Execution behaviour</a></p>
+<h2 id="datastore">Datastore<a class="headerlink" href="#datastore" title="Permanent link">#</a></h2>
+<p>At various stages of execution, instance object with its parts is saved into a datastore (defaults to MongoDB)</p>
+<p>Instances and Items can be queried through an API <a href="api/interfaces/IAPIData/">see API.data</a></p>
+<p><a href="data/">For more details about data management</a></p>
+<h2 id="user-management-and-security">User Management and Security<a class="headerlink" href="#user-management-and-security" title="Permanent link">#</a></h2>
+<p><code>bpmn-server</code> is relying on the front-end applicaton to authenticate users and to pass user information through the API.</p>
+<ol>
+<li>
+<p>Model designer/developr can define assignee, candidateUsers, candidateUserGroups as static string or JavaScript expressions</p>
+</li>
+<li>
+<p>Application fron-end need to pass the implementation of `userService' </p>
+</li>
+<li>
+<p><code>bpmnServer</code> will enforce security rules based on the current user passed by the application</p>
+</li>
+</ol>
+<p><code>bpmn-web</code> Demo Application , provides a complete implementation of users management using Passport and MongoDB.</p>
+<p><a href="security/">For more details about security</a></p>
+<h1 id="demo-web-application">Demo Web Application<a class="headerlink" href="#demo-web-application" title="Permanent link">#</a></h1>
+<p>A Demo Web application <code>bpmn-web</code> provides full front-end along with security features to demonstrate and test the capabilities of <code>bpmn-server</code>.</p>
+<p>The web app provides:
+- Presistent Modeling tool, using bpmn.io 
+- Model property panel supporting all features of <code>bpmn-server</code> , no need to edit bpmn file
+- Execution with input form for defined fields</p>
+<p><img alt="" src="images/inputFields.png" /></p>
+<ul>
+<li>List of outstanding/recent tasks and workflow</li>
+<li>Viewing of <code>instance</code> details</li>
+</ul>
+<p><img alt="" src="images/instance-details1.png" /></p>
+<ul>
+<li>View of Model specification
+<img alt="" src="images/instance-details2.png" /></li>
+</ul>
+<h1 id="full-demo-web-application">Full Demo Web Application<a class="headerlink" href="#full-demo-web-application" title="Permanent link">#</a></h1>
+<p>We Provide a full demo @ https://bpmn.omniworkflow.com</p>
+<h1 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">#</a></h1>
+<p>This package requires Node.js and an access to MongoDB ()
+if you don't have MongoDB already installed you can <a href="http://bit.ly/cyd-atlas">create a free cloud account here</a> or can be <a href="https://www.mongodb.com/docs/manual/installation/">installed locally</a></p>
+<ul>
+<li>git clone</li>
+</ul>
+<pre><code class="language-sh">&gt; git clone https://github.com/bpmnServer/bpmn-web.git
+</code></pre>
+<ul>
+<li>install packages</li>
+</ul>
+<pre><code class="language-sh">&gt; npm install
+</code></pre>
+<ul>
+<li>setup the app</li>
+</ul>
+<pre><code class="language-sh">&gt; npm run setup
+</code></pre>
+<ul>
+<li>Edit .env file to have MongoDB point to your server or free cloud account</li>
+</ul>
+<pre><code class="language-sh"># MongoDB Settings
+MONGO_DB_URL=mongodb://0.0.0.0:27017/bpmn
+#
+</code></pre>
+<ul>
+<li>Run Setup again to create db objects</li>
+</ul>
+<pre><code class="language-sh">&gt; npm run setup
+</code></pre>
+<p>Your installation is now complete.</p>
+<ul>
+<li>Start server</li>
+</ul>
+<pre><code class="language-sh">&gt; npm run start
+</code></pre>
+<p>Console will display:</p>
+<pre><code class="language-text">bpmn-server WebApp.ts version 1.4.0
+MongoDB URL mongodb://0.0.0.0:27017/bpmn
+db connection open
+
+App is running at http://localhost:3000 in development mode
+  Press CTRL-C to stop
+</code></pre>
+<p>Use your browser to view the bpmn-server running</p>
+<h2 id="docker-installation">Docker installation<a class="headerlink" href="#docker-installation" title="Permanent link">#</a></h2>
+<details>
+
+<summary>
+
+To install MongoDB, bpmn-server and bpmn-web in on a docker container
+
+</summary>
+
+### 1. Create a folder , cd to folder
+
+### 2. Create a `docker-compose.yml` as follows:
+
+
+<pre><code>version: &quot;3.7&quot;
+name: bpmn-server
+services:
+ bpmn-web:
+    image: ralphhanna/bpmn-web
+    command: sh -c &quot;
+        npm run setup &amp;&amp;
+        npm run start&quot;
+    ports:
+      - 3000:3000
+    volumes:
+      - 'app:/app'      
+    depends_on:
+      - mongo      
+ mongo:
+   image: mongo
+   ports:
+     - 27017:27017
+   volumes:
+     - mongodb:/data/db
+volumes:
+  mongodb:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './mongodb_volume'    
+  app:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './bpmn_server_volume'    
+
+</code></pre>
+
+
+### 3. start the container `docker compose up -d`
+
+</details>
+
+<h3 id="command-line-interface">Command Line Interface<a class="headerlink" href="#command-line-interface" title="Permanent link">#</a></h3>
+<details>
+<summary>
+bpmnServer provide some basic functionalities using CLI
+
+</summary>
+
+
+<pre><code class="language-sh">&gt;npm run cli
+
+
+server started..
+Commands:
+        q       to quit
+        s       start process
+        lo      list outstanding items
+        li      list items
+        l       list instances for a process
+        di      display Instance information
+        i       Invoke Task
+        sgl     Signal Task
+        msg     Message Task
+        d       delete instnaces
+        lm      List of Models
+        lme     List of Models
+        ck      Check locked instnaces
+        re      Recover hung processes
+        lu      List Users
+        spw     Set User Password
+        ?       repeat this list
+Enter Command, q to quit, or ? to list commands
+&gt;
+</code></pre>
+
+
+</details>
+
+<h3 id="postman">Postman<a class="headerlink" href="#postman" title="Permanent link">#</a></h3>
+<p>Postman Collection to invoke bpmn-server API <a href="https://documenter.getpostman.com/view/11781516/Szzn7wsm">is available here</a></p>
+<h2 id="to-update-to-latest-release">to update to latest release<a class="headerlink" href="#to-update-to-latest-release" title="Permanent link">#</a></h2>
+<pre><code class="language-sh">&gt; npm update bpmn-server
+</code></pre>
+<h1 id="application-integration">Application Integration<a class="headerlink" href="#application-integration" title="Permanent link">#</a></h1>
+<p><code>bpmn-server</code> is intended to be integrated into your application <a href="customization/">see</a></p>
+<h1 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">#</a></h1>
+<ul>
+<li><a href="invokation/">Invoking Workflows</a> </li>
+<li><a href="execution/">Execution</a> </li>
+<li><a href="scripting/">Scripting</a> </li>
+<li><a href="security/">Security</a></li>
+<li><a href="data/">Data</a></li>
+<li><a href="data#input-output-data.md">Input/Output</a></li>
+<li><a href="data#dataQuery.md">Data Query</a> </li>
+<li><a href="examples/">Examples</a></li>
+<li><a href="api-summary/">API Summary</a></li>
+<li><a href="api">API</a> </li>
+<li><a href="setup/">Setup</a> </li>
+<li><a href="customization/">Application Integration</a> </li>
+</ul>
+<h1 id="license">License<a class="headerlink" href="#license" title="Permanent link">#</a></h1>
+<p>This project is licensed under the terms of the MIT license.</p>
+<h1 id="acknowledgments">Acknowledgments<a class="headerlink" href="#acknowledgments" title="Permanent link">#</a></h1>
+<p>The <strong>bpmn-server</strong> resides upon the excellent library <a href="https://github.com/bpmn-io/bpmn-moddle">bpmn-io/bpmn-moddle</a> developed by <a href="http://bpmn.io/">bpmn.io</a></p>
+<p>The <strong>bpmn-server</strong> is inspired by the library <a href="https://github.com/paed01/bpmn-engine">bpmn-engine</a></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="invokation/" class="btn btn-neutral float-right" title="Invoking Workflows">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+      <span><a href="invokation/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.5.3
+Build Date UTC : 2024-03-25 18:51:48.601692+00:00
+-->

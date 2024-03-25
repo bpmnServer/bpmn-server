@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Bpmn changes - bpmn-server</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Bpmn changes";
+        var mkdocs_page_input_path = "bpmn-changes.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> bpmn-server
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Overview</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../invokation/">Invoking Workflows</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../execution/">Execution</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../scripting/">Scripting</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../security/">Security</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../data/">Data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../examples/">Examples</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../api-summary/">API Summary</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../api/readme/">API</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../setup/">Setup</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../customization/">Application Integration</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">bpmn-server</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Bpmn changes</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <pre><code>/// Old
+/// -------------------------------------------------------
+/// New
+</code></pre>
+<h3 id="service-task">Service Task<a class="headerlink" href="#service-task" title="Permanent link">#</a></h3>
+<p>In Process definition (.bpmn file), use <code>implementation</code> attribute to define name of JavaScript/TypeScript Method to perform the Task:</p>
+<pre><code class="language-ts">&lt;bpmn:serviceTask id=&quot;serviceTask&quot; name=&quot;Service Task&quot; implementation=&quot;service1&quot;&gt;
+  ...
+&lt;/bpmn:serviceTask&gt;
+</code></pre>
+<pre><code class="language-ts">
+</code></pre>
+<h3 id="script-task">Script Task<a class="headerlink" href="#script-task" title="Permanent link">#</a></h3>
+<pre><code class="language-ts">    &lt;bpmn:scriptTask id=&quot;scriptTask&quot; name=&quot;Script Task&quot;&gt;
+      &lt;bpmn:script&gt;&lt;![CDATA[
+
+        this.log('testing from the inside: '+this.data.loopKey);
+
+        ]]&gt;&lt;/bpmn:script&gt;
+    ..
+    &lt;/bpmn:scriptTask&gt;
+/// Old
+/// -------------------------------------------------------
+/// New
+      &lt;bpmn2:script&gt;
+        this.log('testing from &amp;lt;testing&amp;gt; the inside: '+this.data.loopKey);
+      &lt;/bpmn2:script&gt;
+</code></pre>
+<h3 id="conditional-flow">Conditional Flow<a class="headerlink" href="#conditional-flow" title="Permanent link">#</a></h3>
+<pre><code class="language-ts">      &lt;bpmn:conditionExpression xsi:type=&quot;bpmn:tExpression&quot;&gt;&lt;![CDATA[
+      (this.needsCleaning==&quot;Yes&quot;)
+      ]]&gt;
+&lt;/bpmn:conditionExpression&gt;
+    &lt;/bpmn:sequenceFlow&gt;
+
+/// Old
+/// -------------------------------------------------------
+/// New
+    &lt;bpmn2:conditionExpression xsi:type=&quot;bpmn2:tFormalExpression&quot; language=&quot;JavaScript&quot;&gt;
+        this.log('testing from the inside: '+this.data.loopKey);
+    &lt;/bpmn2:conditionExpression&gt;
+
+
+</code></pre>
+<h3 id="input-fields">Input Fields<a class="headerlink" href="#input-fields" title="Permanent link">#</a></h3>
+<pre><code class="language-ts">    &lt;bpmn:userTask id=&quot;task_Buy&quot; name=&quot;Buy&quot;&gt;
+      &lt;bpmn:extensionElements&gt;
+        &lt;camunda:formData&gt;
+          &lt;camunda:formField id=&quot;needsRepairs&quot; label=&quot;Repairs Required?&quot; type=&quot;boolean&quot; /&gt;
+          &lt;camunda:formField id=&quot;needsCleaning&quot; label=&quot;Cleaning Required?&quot; type=&quot;boolean&quot; /&gt;
+        &lt;/camunda:formData&gt;
+      &lt;/bpmn:extensionElements&gt;
+
+        ...
+    &lt;/bpmn:userTask&gt;
+/// Old
+/// -------------------------------------------------------
+/// New
+      &lt;bpmn2:extensionElements&gt;
+        &lt;camunda:formData&gt;
+          &lt;camunda:formField id=&quot;FormField_12m93d7&quot; label=&quot;needsRepairs&quot; type=&quot;boolean&quot; /&gt;
+          &lt;camunda:formField id=&quot;FormField_1n345m9&quot; label=&quot;NeedsCleaning&quot; type=&quot;boolean&quot; /&gt;
+        &lt;/camunda:formData&gt;
+      &lt;/bpmn2:extensionElements&gt;
+
+### Business Rule Task
+
+Decision Table is called through
+```ts
+    &lt;bpmn2:businessRuleTask id=&quot;Task_1lcamp6&quot; name=&quot;Vacation&quot;  camunda:decisionRef=&quot;Vacation&quot;&gt;
+</code></pre>
+<p>This will load the file 'Vacation.json' form the Processes folder as defined in configuration.js</p>
+<h3 id="script-extensions">Script Extensions<a class="headerlink" href="#script-extensions" title="Permanent link">#</a></h3>
+<p>Script Extensions are supported in release 1.1 and later, allowing you to add a script to any node.</p>
+<p>In this example we are adding a script to bpmn:startEvent</p>
+<pre><code class="language-ts">
+    &lt;bpmn:startEvent id=&quot;StartEvent_1ohx91b&quot;&gt;
+      &lt;bpmn:extensionElements&gt;
+        &lt;camunda:script event=&quot;start&quot;&gt;&lt;![CDATA[
+        console.log(&quot;This is the start event&quot;);
+          this.applyInput({records:[1,2,3]});
+          console.log(this.data);
+          console.log(&quot;This is the start event&quot;);]]&gt;&lt;/camunda:script&gt;
+      &lt;/bpmn:extensionElements&gt;
+      &lt;bpmn:outgoing&gt;Flow_18xinq3&lt;/bpmn:outgoing&gt;
+    &lt;/bpmn:startEvent&gt;
+
+</code></pre>
+<p>/// Old
+/// -------------------------------------------------------
+/// New - fixed , tested (loop)</p>
+<pre><code>  &lt;bpmn2:extensionElements&gt;
+    &lt;camunda:executionListener event="start"&gt;
+      &lt;camunda:script scriptFormat="JavaScript"&gt;
+        script1
+      &lt;/camunda:script&gt;
+    &lt;/camunda:executionListener&gt;
+    &lt;camunda:executionListener event="end"&gt;
+      &lt;camunda:script scriptFormat="JavaScript"&gt;
+        script2
+        &lt;/camunda:script&gt;
+    &lt;/camunda:executionListener&gt;
+  &lt;/bpmn2:extensionElements&gt;
+</code></pre>
+<h3 id="timer-event">Timer Event<a class="headerlink" href="#timer-event" title="Permanent link">#</a></h3>
+<pre><code class="language-ts">    &lt;bpmn:intermediateCatchEvent id=&quot;Event_timer&quot;&gt;
+      &lt;bpmn:incoming&gt;Flow_1sg7v2d&lt;/bpmn:incoming&gt;
+      &lt;bpmn:outgoing&gt;Flow_1nku8og&lt;/bpmn:outgoing&gt;
+      &lt;bpmn:timerEventDefinition id=&quot;TimerEventDefinition_07xu06a&quot;&gt;
+        &lt;bpmn:timeDuration xsi:type=&quot;bpmn:tExpression&quot;&gt;PT2S&lt;/bpmn:timeDuration&gt;
+      &lt;/bpmn:timerEventDefinition&gt;
+    &lt;/bpmn:intermediateCatchEvent&gt;
+
+
+
+More on [timers](./timers.md)
+### Multi-instances Tasks
+
+```ts
+    &lt;bpmn:scriptTask id=&quot;scriptTask&quot; name=&quot;Script Task&quot;&gt;
+      &lt;bpmn:incoming&gt;Flow_159xzcz&lt;/bpmn:incoming&gt;
+      &lt;bpmn:outgoing&gt;Flow_0t7z2os&lt;/bpmn:outgoing&gt;
+      &lt;bpmn:multiInstanceLoopCharacteristics isSequential=&quot;true&quot; camunda:collection=&quot;(this.records)&quot; /&gt;
+      &lt;bpmn:script&gt;&lt;![CDATA[this.token.log('testing from the inside: '+this.token.data.loopKey);]]&gt;&lt;/bpmn:script&gt;
+    &lt;/bpmn:scriptTask&gt;
+</code></pre>
+<h3 id="input-output">Input-Output<a class="headerlink" href="#input-output" title="Permanent link">#</a></h3>
+<pre><code class="language-xml">    /// to do
+    /// ------
+      &lt;bpmn2:extensionElements&gt;
+        &lt;camunda:inputOutput&gt;
+            &lt;camunda:inputParameter name=&quot;Input_1&quot;&gt;
+                'someText'+data.var1
+            &lt;/camunda:inputParameter&gt;
+            &lt;camunda:outputParameter name=&quot;out1&quot;&gt;
+                jsFunct(data.var1)+'myText'
+            &lt;/camunda:outputParameter&gt;
+        &lt;/camunda:inputOutput&gt;
+      &lt;/bpmn2:extensionElements&gt;
+
+
+      &lt;bpmn2:extensionElements&gt;
+        &lt;camunda:executionListener event=&quot;start&quot;&gt;
+          &lt;camunda:script scriptFormat=&quot;JavaScript&quot;&gt;
+            // preparing input for Service Call
+            input.variable1=data.myVar1
+            // now service call will be called as such
+            //      output=service(input values)
+          &lt;/camunda:script&gt;
+        &lt;/camunda:executionListener&gt;
+        &lt;camunda:executionListener event=&quot;end&quot;&gt;
+          &lt;camunda:script scriptFormat=&quot;JavaScript&quot;&gt;
+            // processing output from Service Call
+            data.myVar2=output.variable2
+          &lt;/camunda:script&gt;
+        &lt;/camunda:executionListener&gt;
+</code></pre>
+<h3 id="call-process">Call Process<a class="headerlink" href="#call-process" title="Permanent link">#</a></h3>
+<pre><code class="language-ts">&lt;bpmn:callActivity id=&quot;activity_call&quot; name=&quot;Call Task&quot; calledElement=&quot;loop&quot;&gt;
+  ...
+&lt;/bpmn:callActivity&gt;
+</code></pre>
+<p>In the above example 'loop' is the name of process to be called.</p>
+<h3 id="throwing-and-cathcing-messages">Throwing and Cathcing Messages<a class="headerlink" href="#throwing-and-cathcing-messages" title="Permanent link">#</a></h3>
+<p>In this example, we will demonstrate how can two seperate processes communicate through "Messages"</p>
+<h4 id="1-throw-a-message-with-data">1 Throw a message with data<a class="headerlink" href="#1-throw-a-message-with-data" title="Permanent link">#</a></h4>
+<p>When a process throw a message, bpmn-server checks if there is another process that can catch this message before dispatching it to AppDelegate.</p>
+<pre><code class="language-xml">    &lt;bpmn2:intermediateThrowEvent id=&quot;throw_msg1&quot; name=&quot;msg1&quot;&gt;
+      &lt;bpmn2:messageEventDefinition id=&quot;messageEventDef1&quot; messageRef=&quot;Msg1&quot; /&gt;
+      &lt;bpmn2:extensionElements&gt;
+        &lt;camunda:script event=&quot;transformOutput&quot;&gt;&lt;![CDATA[
+        this.context.response.output={caseId: this.token.data.caseId};
+        this.context.response.messageMatchingKey={'data.caseId': this.token.data.caseId };
+        ]]&gt;&lt;/camunda:script&gt;
+      &lt;/bpmn2:extensionElements&gt;
+      ...
+    &lt;/bpmn2:intermediateThrowEvent&gt;
+</code></pre>
+<p>The above will through a messsage as follows:</p>
+<ul>
+<li>Message Id: <code>Msg1</code></li>
+<li>Message Output: <code>caseId: &lt;someValue&gt;</code></li>
+</ul>
+<h4 id="2-catch-a-message-with-data">2 Catch a message with data<a class="headerlink" href="#2-catch-a-message-with-data" title="Permanent link">#</a></h4>
+<p>The second process defines a start event to catch the message <code>Msg1</code></p>
+<pre><code class="language-ts">&lt;bpmn2:startEvent id=&quot;StartEvent_1w66wpl&quot; name=&quot;msg1&quot;&gt;
+  ...
+  &lt;bpmn2:messageEventDefinition id=&quot;messageEventDef4&quot; messageRef=&quot;Msg1&quot; /&gt;
+&lt;/bpmn2:startEvent&gt;
+</code></pre>
+<p>Therefore, the system will create a new instance of the second process and assign the Message output data, namely, the caseId</p>
+<h4 id="3-throw-a-message-with-data-and-a-key">3 Throw a message with data and a Key<a class="headerlink" href="#3-throw-a-message-with-data-and-a-key" title="Permanent link">#</a></h4>
+<p>In addition, the second process sends a confirmation message <code>Confirm1</code> to the first process</p>
+<pre><code class="language-ts">    &lt;bpmn2:intermediateThrowEvent id=&quot;throw_confirm1&quot; name=&quot;confirm1&quot;&gt;
+      &lt;bpmn2:messageEventDefinition id=&quot;messageEventDef2&quot; messageRef=&quot;Confirm1&quot; /&gt;
+      &lt;bpmn2:extensionElements&gt;
+        &lt;camunda:script event=&quot;transformOutput&quot;&gt;&lt;![CDATA[
+        this.context.response.output={confirm: true};
+        this.context.response.messageMatchingKey={'data.caseId': this.token.data.caseId };
+        ]]&gt;&lt;/camunda:script&gt;
+      &lt;/bpmn2:extensionElements&gt;
+        ...
+    &lt;/bpmn2:intermediateThrowEvent&gt;
+</code></pre>
+<p>Howerver, the challenge here is that make sure the message is sent to the specific instance, that is where the Matching key is used</p>
+<ul>
+<li>Message Id: <code>Confirm1</code></li>
+<li>Message Output: <code>confirm: true</code></li>
+<li>Message Matching Keyt: 'data.caseId': this.token.data.caseId</li>
+</ul>
+<pre><code class="language-ts">
+</code></pre>
+<p><img alt="Image description" src="../examples/msg-throw-catch.png" /></p>
+<h3 id="input-and-output-data-handling">Input and Output Data Handling<a class="headerlink" href="#input-and-output-data-handling" title="Permanent link">#</a></h3>
+<pre><code class="language-ts">    &lt;bpmn2:serviceTask id=&quot;Task_1gpov6r&quot; name=&quot;add&quot; implementation=&quot;add&quot;&gt;
+
+      &lt;bpmn2:extensionElements&gt;
+        &lt;camunda:script event=&quot;transformOutput&quot;&gt;&lt;![CDATA[
+        this.context.response.output={v1: this.data.v1 , v2: this.data.v2};
+        ]]&gt;&lt;/camunda:script&gt;
+        &lt;camunda:script event=&quot;transformInput&quot;&gt;&lt;![CDATA[
+        this.data.result=this.context.response.input;
+        ]]&gt;&lt;/camunda:script&gt;
+      &lt;/bpmn2:extensionElements&gt;
+
+      &lt;bpmn2:incoming&gt;SequenceFlow_0cr3d6e&lt;/bpmn2:incoming&gt;
+      &lt;bpmn2:outgoing&gt;SequenceFlow_1kdq5qw&lt;/bpmn2:outgoing&gt;
+    &lt;/bpmn2:serviceTask&gt;
+</code></pre>
+<p>AppDelegate.ts has a service:</p>
+<pre><code class="language-ts">    async add({ v1, v2 }) {
+        console.log(&quot;Add Service&quot;);
+        console.log(v1, v2);
+        return v1 + v2;
+    }
+</code></pre>
+<pre><code>To test the above:
+</code></pre>
+<pre><code class="language-ts">const server = new BPMNServer(configuration, logger, { cron: false });
+let response = await server.engine.start('serviceTask', { v1: 1, v2: 2 });
+console.log(response.instance.data);
+</code></pre>
+<p>Output:</p>
+<pre><code class="language-json">{ v1: 1, v2: 2, result: 3 }
+</code></pre>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

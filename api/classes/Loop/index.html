@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Loop - bpmn-server</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Loop";
+        var mkdocs_page_input_path = "api\\classes\\Loop.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> bpmn-server
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Overview</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../invokation/">Invoking Workflows</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../execution/">Execution</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../scripting/">Scripting</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../security/">Security</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../data/">Data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../examples/">Examples</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../api-summary/">API Summary</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../readme/">API</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../setup/">Setup</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../customization/">Application Integration</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">bpmn-server</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Loop</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <p><a href="../../readme/">bpmn-server</a> / Loop</p>
+<h1 id="class-loop">Class: Loop<a class="headerlink" href="#class-loop" title="Permanent link">#</a></h1>
+<h2 id="table-of-contents">Table of contents<a class="headerlink" href="#table-of-contents" title="Permanent link">#</a></h2>
+<h3 id="constructors">Constructors<a class="headerlink" href="#constructors" title="Permanent link">#</a></h3>
+<ul>
+<li><a href="./#constructor">constructor</a></li>
+</ul>
+<h3 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link">#</a></h3>
+<ul>
+<li><a href="./#id">id</a></li>
+<li><a href="./#node">node</a></li>
+<li><a href="./#ownertoken">ownerToken</a></li>
+<li><a href="./#definition">definition</a></li>
+<li><a href="./#sequence">sequence</a></li>
+<li><a href="./#datapath">dataPath</a></li>
+<li><a href="./#items">items</a></li>
+<li><a href="./#completed">completed</a></li>
+</ul>
+<h3 id="methods">Methods<a class="headerlink" href="#methods" title="Permanent link">#</a></h3>
+<ul>
+<li><a href="./#issequential">isSequential</a></li>
+<li><a href="./#isstandard">isStandard</a></li>
+<li><a href="./#save">save</a></li>
+<li><a href="./#load">load</a></li>
+<li><a href="./#getkeyname">getKeyName</a></li>
+<li><a href="./#isdone">isDone</a></li>
+<li><a href="./#getnext">getNext</a></li>
+<li><a href="./#checkstart">checkStart</a></li>
+<li><a href="./#checknext">checkNext</a></li>
+</ul>
+<h2 id="constructors_1">Constructors<a class="headerlink" href="#constructors_1" title="Permanent link">#</a></h2>
+<h3 id="constructor">constructor<a class="headerlink" href="#constructor" title="Permanent link">#</a></h3>
+<p>• <strong>new Loop</strong>(<code>node</code>, <code>token</code>, <code>dataObject?</code>): <a href="./"><code>Loop</code></a></p>
+<h4 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>node</code></td>
+<td style="text-align: left;"><a href="../Node/"><code>Node</code></a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>token</code></td>
+<td style="text-align: left;"><a href="../Token/"><code>Token</code></a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>dataObject?</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns">Returns<a class="headerlink" href="#returns" title="Permanent link">#</a></h4>
+<p><a href="./"><code>Loop</code></a></p>
+<h4 id="defined-in">Defined in<a class="headerlink" href="#defined-in" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Loop.ts#L19">engine/Loop.ts:19</a></p>
+<h2 id="properties_1">Properties<a class="headerlink" href="#properties_1" title="Permanent link">#</a></h2>
+<h3 id="id">id<a class="headerlink" href="#id" title="Permanent link">#</a></h3>
+<p>• <strong>id</strong>: <code>any</code></p>
+<h4 id="defined-in_1">Defined in<a class="headerlink" href="#defined-in_1" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Loop.ts#L8">engine/Loop.ts:8</a></p>
+<hr />
+<h3 id="node">node<a class="headerlink" href="#node" title="Permanent link">#</a></h3>
+<p>• <strong>node</strong>: <code>any</code></p>
+<h4 id="defined-in_2">Defined in<a class="headerlink" href="#defined-in_2" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Loop.ts#L9">engine/Loop.ts:9</a></p>
+<hr />
+<h3 id="ownertoken">ownerToken<a class="headerlink" href="#ownertoken" title="Permanent link">#</a></h3>
+<p>• <strong>ownerToken</strong>: <code>any</code></p>
+<h4 id="defined-in_3">Defined in<a class="headerlink" href="#defined-in_3" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Loop.ts#L10">engine/Loop.ts:10</a></p>
+<hr />
+<h3 id="definition">definition<a class="headerlink" href="#definition" title="Permanent link">#</a></h3>
+<p>• <strong>definition</strong>: <a href="../LoopBehaviour/"><code>LoopBehaviour</code></a></p>
+<h4 id="defined-in_4">Defined in<a class="headerlink" href="#defined-in_4" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Loop.ts#L11">engine/Loop.ts:11</a></p>
+<hr />
+<h3 id="sequence">sequence<a class="headerlink" href="#sequence" title="Permanent link">#</a></h3>
+<p>• <strong>sequence</strong>: <code>any</code></p>
+<h4 id="defined-in_5">Defined in<a class="headerlink" href="#defined-in_5" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Loop.ts#L12">engine/Loop.ts:12</a></p>
+<hr />
+<h3 id="datapath">dataPath<a class="headerlink" href="#datapath" title="Permanent link">#</a></h3>
+<p>• <strong>dataPath</strong>: <code>any</code></p>
+<h4 id="defined-in_6">Defined in<a class="headerlink" href="#defined-in_6" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Loop.ts#L13">engine/Loop.ts:13</a></p>
+<hr />
+<h3 id="items">items<a class="headerlink" href="#items" title="Permanent link">#</a></h3>
+<p>• <strong>items</strong>: <code>any</code>[]</p>
+<h4 id="defined-in_7">Defined in<a class="headerlink" href="#defined-in_7" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Loop.ts#L14">engine/Loop.ts:14</a></p>
+<hr />
+<h3 id="completed">completed<a class="headerlink" href="#completed" title="Permanent link">#</a></h3>
+<p>• <strong>completed</strong>: <code>any</code></p>
+<h4 id="defined-in_8">Defined in<a class="headerlink" href="#defined-in_8" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Loop.ts#L15">engine/Loop.ts:15</a></p>
+<h2 id="methods_1">Methods<a class="headerlink" href="#methods_1" title="Permanent link">#</a></h2>
+<h3 id="issequential">isSequential<a class="headerlink" href="#issequential" title="Permanent link">#</a></h3>
+<p>▸ <strong>isSequential</strong>(): <code>any</code></p>
+<h4 id="returns_1">Returns<a class="headerlink" href="#returns_1" title="Permanent link">#</a></h4>
+<p><code>any</code></p>
+<h4 id="defined-in_9">Defined in<a class="headerlink" href="#defined-in_9" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Loop.ts#L16">engine/Loop.ts:16</a></p>
+<hr />
+<h3 id="isstandard">isStandard<a class="headerlink" href="#isstandard" title="Permanent link">#</a></h3>
+<p>▸ <strong>isStandard</strong>(): <code>boolean</code></p>
+<h4 id="returns_2">Returns<a class="headerlink" href="#returns_2" title="Permanent link">#</a></h4>
+<p><code>boolean</code></p>
+<h4 id="defined-in_10">Defined in<a class="headerlink" href="#defined-in_10" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Loop.ts#L17">engine/Loop.ts:17</a></p>
+<hr />
+<h3 id="save">save<a class="headerlink" href="#save" title="Permanent link">#</a></h3>
+<p>▸ <strong>save</strong>(): <code>Object</code></p>
+<h4 id="returns_3">Returns<a class="headerlink" href="#returns_3" title="Permanent link">#</a></h4>
+<p><code>Object</code></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>id</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>nodeId</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ownerTokenId</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>dataPath</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>completed</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>sequence</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_11">Defined in<a class="headerlink" href="#defined-in_11" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Loop.ts#L45">engine/Loop.ts:45</a></p>
+<hr />
+<h3 id="load">load<a class="headerlink" href="#load" title="Permanent link">#</a></h3>
+<p>▸ <strong>load</strong>(<code>execution</code>, <code>dataObject</code>): <a href="./"><code>Loop</code></a></p>
+<h4 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>execution</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>dataObject</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_4">Returns<a class="headerlink" href="#returns_4" title="Permanent link">#</a></h4>
+<p><a href="./"><code>Loop</code></a></p>
+<h4 id="defined-in_12">Defined in<a class="headerlink" href="#defined-in_12" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Loop.ts#L52">engine/Loop.ts:52</a></p>
+<hr />
+<h3 id="getkeyname">getKeyName<a class="headerlink" href="#getkeyname" title="Permanent link">#</a></h3>
+<p>▸ <strong>getKeyName</strong>(): <code>string</code></p>
+<h4 id="returns_5">Returns<a class="headerlink" href="#returns_5" title="Permanent link">#</a></h4>
+<p><code>string</code></p>
+<h4 id="defined-in_13">Defined in<a class="headerlink" href="#defined-in_13" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Loop.ts#L62">engine/Loop.ts:62</a></p>
+<hr />
+<h3 id="isdone">isDone<a class="headerlink" href="#isdone" title="Permanent link">#</a></h3>
+<p>▸ <strong>isDone</strong>(): <code>boolean</code></p>
+<h4 id="returns_6">Returns<a class="headerlink" href="#returns_6" title="Permanent link">#</a></h4>
+<p><code>boolean</code></p>
+<h4 id="defined-in_14">Defined in<a class="headerlink" href="#defined-in_14" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Loop.ts#L65">engine/Loop.ts:65</a></p>
+<hr />
+<h3 id="getnext">getNext<a class="headerlink" href="#getnext" title="Permanent link">#</a></h3>
+<p>▸ <strong>getNext</strong>(): <code>any</code></p>
+<h4 id="returns_7">Returns<a class="headerlink" href="#returns_7" title="Permanent link">#</a></h4>
+<p><code>any</code></p>
+<h4 id="defined-in_15">Defined in<a class="headerlink" href="#defined-in_15" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Loop.ts#L68">engine/Loop.ts:68</a></p>
+<hr />
+<h3 id="checkstart">checkStart<a class="headerlink" href="#checkstart" title="Permanent link">#</a></h3>
+<p>▸ <strong>checkStart</strong>(<code>token</code>): <code>Promise</code>\&lt;<code>boolean</code>&gt;</p>
+<h4 id="parameters_2">Parameters<a class="headerlink" href="#parameters_2" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>token</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_8">Returns<a class="headerlink" href="#returns_8" title="Permanent link">#</a></h4>
+<p><code>Promise</code>\&lt;<code>boolean</code>&gt;</p>
+<h4 id="defined-in_16">Defined in<a class="headerlink" href="#defined-in_16" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Loop.ts#L75">engine/Loop.ts:75</a></p>
+<hr />
+<h3 id="checknext">checkNext<a class="headerlink" href="#checknext" title="Permanent link">#</a></h3>
+<p>▸ <strong>checkNext</strong>(<code>token</code>): <code>Promise</code>\&lt;<code>boolean</code>&gt;</p>
+<h4 id="parameters_3">Parameters<a class="headerlink" href="#parameters_3" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>token</code></td>
+<td style="text-align: left;"><a href="../Token/"><code>Token</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_9">Returns<a class="headerlink" href="#returns_9" title="Permanent link">#</a></h4>
+<p><code>Promise</code>\&lt;<code>boolean</code>&gt;</p>
+<h4 id="defined-in_17">Defined in<a class="headerlink" href="#defined-in_17" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/engine/Loop.ts#L142">engine/Loop.ts:142</a></p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>IExecution - bpmn-server</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "IExecution";
+        var mkdocs_page_input_path = "api\\interfaces\\IExecution.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> bpmn-server
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Overview</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../invokation/">Invoking Workflows</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../execution/">Execution</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../scripting/">Scripting</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../security/">Security</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../data/">Data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../examples/">Examples</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../api-summary/">API Summary</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../readme/">API</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../setup/">Setup</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../customization/">Application Integration</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">bpmn-server</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">IExecution</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <p><a href="../../readme/">bpmn-server</a> / IExecution</p>
+<h1 id="interface-iexecution">Interface: IExecution<a class="headerlink" href="#interface-iexecution" title="Permanent link">#</a></h1>
+<h2 id="hierarchy">Hierarchy<a class="headerlink" href="#hierarchy" title="Permanent link">#</a></h2>
+<ul>
+<li><a href="../IServerComponent/"><code>IServerComponent</code></a></li>
+</ul>
+<p>↳ <strong><code>IExecution</code></strong></p>
+<h2 id="implemented-by">Implemented by<a class="headerlink" href="#implemented-by" title="Permanent link">#</a></h2>
+<ul>
+<li><a href="../../classes/Execution/"><code>Execution</code></a></li>
+</ul>
+<h2 id="table-of-contents">Table of contents<a class="headerlink" href="#table-of-contents" title="Permanent link">#</a></h2>
+<h3 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link">#</a></h3>
+<ul>
+<li><a href="./#instance">instance</a></li>
+<li><a href="./#server">server</a></li>
+<li><a href="./#tokens">tokens</a></li>
+<li><a href="./#definition">definition</a></li>
+<li><a href="./#appdelegate">appDelegate</a></li>
+<li><a href="./#logger">logger</a></li>
+<li><a href="./#process">process</a></li>
+<li><a href="./#promises">promises</a></li>
+<li><a href="./#listener">listener</a></li>
+<li><a href="./#islocked">isLocked</a></li>
+<li><a href="./#errors">errors</a></li>
+<li><a href="./#item">item</a></li>
+<li><a href="./#messagematchingkey">messageMatchingKey</a></li>
+<li><a href="./#worker">worker</a></li>
+<li><a href="./#username">userName</a></li>
+<li><a href="./#id">id</a></li>
+<li><a href="./#status">status</a></li>
+<li><a href="./#options">options</a></li>
+<li><a href="./#name">name</a></li>
+<li><a href="./#uids">uids</a></li>
+<li><a href="./#configuration">configuration</a></li>
+<li><a href="./#cron">cron</a></li>
+<li><a href="./#cache">cache</a></li>
+<li><a href="./#engine">engine</a></li>
+<li><a href="./#datastore">dataStore</a></li>
+<li><a href="./#definitions">definitions</a></li>
+</ul>
+<h3 id="methods">Methods<a class="headerlink" href="#methods" title="Permanent link">#</a></h3>
+<ul>
+<li><a href="./#getnodebyid">getNodeById</a></li>
+<li><a href="./#gettoken">getToken</a></li>
+<li><a href="./#tokenended">tokenEnded</a></li>
+<li><a href="./#getitemsdata">getItemsData</a></li>
+<li><a href="./#save">save</a></li>
+<li><a href="./#end">end</a></li>
+<li><a href="./#stop">stop</a></li>
+<li><a href="./#terminate">terminate</a></li>
+<li><a href="./#execute">execute</a></li>
+<li><a href="./#signalitem">signalItem</a></li>
+<li><a href="./#signalevent">signalEvent</a></li>
+<li><a href="./#signalrepeattimerevent">signalRepeatTimerEvent</a></li>
+<li><a href="./#getitems">getItems</a></li>
+<li><a href="./#getstate">getState</a></li>
+<li><a href="./#restored">restored</a></li>
+<li><a href="./#resume">resume</a></li>
+<li><a href="./#report">report</a></li>
+<li><a href="./#getnewid">getNewId</a></li>
+<li><a href="./#getuuid">getUUID</a></li>
+<li><a href="./#doexecutionevent">doExecutionEvent</a></li>
+<li><a href="./#doitemevent">doItemEvent</a></li>
+<li><a href="./#log">log</a></li>
+<li><a href="./#info">info</a></li>
+<li><a href="./#error">error</a></li>
+<li><a href="./#appenddata">appendData</a></li>
+<li><a href="./#getdata">getData</a></li>
+<li><a href="./#getandcreatedata">getAndCreateData</a></li>
+</ul>
+<h2 id="properties_1">Properties<a class="headerlink" href="#properties_1" title="Permanent link">#</a></h2>
+<h3 id="instance">instance<a class="headerlink" href="#instance" title="Permanent link">#</a></h3>
+<p>• <strong>instance</strong>: <a href="../IInstanceData/"><code>IInstanceData</code></a></p>
+<h4 id="defined-in">Defined in<a class="headerlink" href="#defined-in" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L68">interfaces/engine.ts:68</a></p>
+<hr />
+<h3 id="server">server<a class="headerlink" href="#server" title="Permanent link">#</a></h3>
+<p>• <strong>server</strong>: <a href="../IBPMNServer/"><code>IBPMNServer</code></a></p>
+<h4 id="overrides">Overrides<a class="headerlink" href="#overrides" title="Permanent link">#</a></h4>
+<p><a href="../IServerComponent/">IServerComponent</a>.<a href="../IServerComponent/#server">server</a></p>
+<h4 id="defined-in_1">Defined in<a class="headerlink" href="#defined-in_1" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L69">interfaces/engine.ts:69</a></p>
+<hr />
+<h3 id="tokens">tokens<a class="headerlink" href="#tokens" title="Permanent link">#</a></h3>
+<p>• <strong>tokens</strong>: <code>Map</code>\&lt;<code>any</code>, <a href="../IToken/"><code>IToken</code></a>&gt;</p>
+<h4 id="defined-in_2">Defined in<a class="headerlink" href="#defined-in_2" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L70">interfaces/engine.ts:70</a></p>
+<hr />
+<h3 id="definition">definition<a class="headerlink" href="#definition" title="Permanent link">#</a></h3>
+<p>• <strong>definition</strong>: <a href="../IDefinition/"><code>IDefinition</code></a></p>
+<h4 id="defined-in_3">Defined in<a class="headerlink" href="#defined-in_3" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L71">interfaces/engine.ts:71</a></p>
+<hr />
+<h3 id="appdelegate">appDelegate<a class="headerlink" href="#appdelegate" title="Permanent link">#</a></h3>
+<p>• <strong>appDelegate</strong>: <a href="../IAppDelegate/"><code>IAppDelegate</code></a></p>
+<h4 id="overrides_1">Overrides<a class="headerlink" href="#overrides_1" title="Permanent link">#</a></h4>
+<p><a href="../IServerComponent/">IServerComponent</a>.<a href="../IServerComponent/#appdelegate">appDelegate</a></p>
+<h4 id="defined-in_4">Defined in<a class="headerlink" href="#defined-in_4" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L72">interfaces/engine.ts:72</a></p>
+<hr />
+<h3 id="logger">logger<a class="headerlink" href="#logger" title="Permanent link">#</a></h3>
+<p>• <strong>logger</strong>: <a href="../ILogger/"><code>ILogger</code></a></p>
+<h4 id="overrides_2">Overrides<a class="headerlink" href="#overrides_2" title="Permanent link">#</a></h4>
+<p><a href="../IServerComponent/">IServerComponent</a>.<a href="../IServerComponent/#logger">logger</a></p>
+<h4 id="defined-in_5">Defined in<a class="headerlink" href="#defined-in_5" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L73">interfaces/engine.ts:73</a></p>
+<hr />
+<h3 id="process">process<a class="headerlink" href="#process" title="Permanent link">#</a></h3>
+<p>• <strong>process</strong>: <code>any</code></p>
+<h4 id="defined-in_6">Defined in<a class="headerlink" href="#defined-in_6" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L74">interfaces/engine.ts:74</a></p>
+<hr />
+<h3 id="promises">promises<a class="headerlink" href="#promises" title="Permanent link">#</a></h3>
+<p>• <strong>promises</strong>: <code>any</code></p>
+<h4 id="defined-in_7">Defined in<a class="headerlink" href="#defined-in_7" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L75">interfaces/engine.ts:75</a></p>
+<hr />
+<h3 id="listener">listener<a class="headerlink" href="#listener" title="Permanent link">#</a></h3>
+<p>• <strong>listener</strong>: <code>any</code></p>
+<h4 id="defined-in_8">Defined in<a class="headerlink" href="#defined-in_8" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L76">interfaces/engine.ts:76</a></p>
+<hr />
+<h3 id="islocked">isLocked<a class="headerlink" href="#islocked" title="Permanent link">#</a></h3>
+<p>• <strong>isLocked</strong>: <code>boolean</code></p>
+<h4 id="defined-in_9">Defined in<a class="headerlink" href="#defined-in_9" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L77">interfaces/engine.ts:77</a></p>
+<hr />
+<h3 id="errors">errors<a class="headerlink" href="#errors" title="Permanent link">#</a></h3>
+<p>• <strong>errors</strong>: <code>any</code></p>
+<h4 id="defined-in_10">Defined in<a class="headerlink" href="#defined-in_10" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L79">interfaces/engine.ts:79</a></p>
+<hr />
+<h3 id="item">item<a class="headerlink" href="#item" title="Permanent link">#</a></h3>
+<p>• <strong>item</strong>: <code>any</code></p>
+<h4 id="defined-in_11">Defined in<a class="headerlink" href="#defined-in_11" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L80">interfaces/engine.ts:80</a></p>
+<hr />
+<h3 id="messagematchingkey">messageMatchingKey<a class="headerlink" href="#messagematchingkey" title="Permanent link">#</a></h3>
+<p>• <strong>messageMatchingKey</strong>: <code>any</code></p>
+<h4 id="defined-in_12">Defined in<a class="headerlink" href="#defined-in_12" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L81">interfaces/engine.ts:81</a></p>
+<hr />
+<h3 id="worker">worker<a class="headerlink" href="#worker" title="Permanent link">#</a></h3>
+<p>• <strong>worker</strong>: <code>any</code></p>
+<h4 id="defined-in_13">Defined in<a class="headerlink" href="#defined-in_13" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L82">interfaces/engine.ts:82</a></p>
+<hr />
+<h3 id="username">userName<a class="headerlink" href="#username" title="Permanent link">#</a></h3>
+<p>• <strong>userName</strong>: <code>any</code></p>
+<h4 id="defined-in_14">Defined in<a class="headerlink" href="#defined-in_14" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L83">interfaces/engine.ts:83</a></p>
+<hr />
+<h3 id="id">id<a class="headerlink" href="#id" title="Permanent link">#</a></h3>
+<p>• <strong>id</strong>: <code>any</code></p>
+<h4 id="defined-in_15">Defined in<a class="headerlink" href="#defined-in_15" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L85">interfaces/engine.ts:85</a></p>
+<hr />
+<h3 id="status">status<a class="headerlink" href="#status" title="Permanent link">#</a></h3>
+<p>• <strong>status</strong>: <code>any</code></p>
+<h4 id="defined-in_16">Defined in<a class="headerlink" href="#defined-in_16" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L86">interfaces/engine.ts:86</a></p>
+<hr />
+<h3 id="options">options<a class="headerlink" href="#options" title="Permanent link">#</a></h3>
+<p>• <strong>options</strong>: <code>any</code></p>
+<h4 id="defined-in_17">Defined in<a class="headerlink" href="#defined-in_17" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L87">interfaces/engine.ts:87</a></p>
+<hr />
+<h3 id="name">name<a class="headerlink" href="#name" title="Permanent link">#</a></h3>
+<p>• <strong>name</strong>: <code>any</code></p>
+<h4 id="defined-in_18">Defined in<a class="headerlink" href="#defined-in_18" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L88">interfaces/engine.ts:88</a></p>
+<hr />
+<h3 id="uids">uids<a class="headerlink" href="#uids" title="Permanent link">#</a></h3>
+<p>• <strong>uids</strong>: <code>Object</code></p>
+<h4 id="defined-in_19">Defined in<a class="headerlink" href="#defined-in_19" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L122">interfaces/engine.ts:122</a></p>
+<hr />
+<h3 id="configuration">configuration<a class="headerlink" href="#configuration" title="Permanent link">#</a></h3>
+<p>• <strong>configuration</strong>: <a href="../IConfiguration/"><code>IConfiguration</code></a></p>
+<h4 id="inherited-from">Inherited from<a class="headerlink" href="#inherited-from" title="Permanent link">#</a></h4>
+<p><a href="../IServerComponent/">IServerComponent</a>.<a href="../IServerComponent/#configuration">configuration</a></p>
+<h4 id="defined-in_20">Defined in<a class="headerlink" href="#defined-in_20" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/server.ts#L22">interfaces/server.ts:22</a></p>
+<hr />
+<h3 id="cron">cron<a class="headerlink" href="#cron" title="Permanent link">#</a></h3>
+<p>• <strong>cron</strong>: <code>any</code></p>
+<h4 id="inherited-from_1">Inherited from<a class="headerlink" href="#inherited-from_1" title="Permanent link">#</a></h4>
+<p><a href="../IServerComponent/">IServerComponent</a>.<a href="../IServerComponent/#cron">cron</a></p>
+<h4 id="defined-in_21">Defined in<a class="headerlink" href="#defined-in_21" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/server.ts#L24">interfaces/server.ts:24</a></p>
+<hr />
+<h3 id="cache">cache<a class="headerlink" href="#cache" title="Permanent link">#</a></h3>
+<p>• <strong>cache</strong>: <code>any</code></p>
+<h4 id="inherited-from_2">Inherited from<a class="headerlink" href="#inherited-from_2" title="Permanent link">#</a></h4>
+<p><a href="../IServerComponent/">IServerComponent</a>.<a href="../IServerComponent/#cache">cache</a></p>
+<h4 id="defined-in_22">Defined in<a class="headerlink" href="#defined-in_22" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/server.ts#L25">interfaces/server.ts:25</a></p>
+<hr />
+<h3 id="engine">engine<a class="headerlink" href="#engine" title="Permanent link">#</a></h3>
+<p>• <strong>engine</strong>: <code>any</code></p>
+<h4 id="inherited-from_3">Inherited from<a class="headerlink" href="#inherited-from_3" title="Permanent link">#</a></h4>
+<p><a href="../IServerComponent/">IServerComponent</a>.<a href="../IServerComponent/#engine">engine</a></p>
+<h4 id="defined-in_23">Defined in<a class="headerlink" href="#defined-in_23" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/server.ts#L27">interfaces/server.ts:27</a></p>
+<hr />
+<h3 id="datastore">dataStore<a class="headerlink" href="#datastore" title="Permanent link">#</a></h3>
+<p>• <strong>dataStore</strong>: <a href="../IDataStore/"><code>IDataStore</code></a></p>
+<h4 id="inherited-from_4">Inherited from<a class="headerlink" href="#inherited-from_4" title="Permanent link">#</a></h4>
+<p><a href="../IServerComponent/">IServerComponent</a>.<a href="../IServerComponent/#datastore">dataStore</a></p>
+<h4 id="defined-in_24">Defined in<a class="headerlink" href="#defined-in_24" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/server.ts#L28">interfaces/server.ts:28</a></p>
+<hr />
+<h3 id="definitions">definitions<a class="headerlink" href="#definitions" title="Permanent link">#</a></h3>
+<p>• <strong>definitions</strong>: <code>any</code></p>
+<h4 id="inherited-from_5">Inherited from<a class="headerlink" href="#inherited-from_5" title="Permanent link">#</a></h4>
+<p><a href="../IServerComponent/">IServerComponent</a>.<a href="../IServerComponent/#definitions">definitions</a></p>
+<h4 id="defined-in_25">Defined in<a class="headerlink" href="#defined-in_25" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/server.ts#L29">interfaces/server.ts:29</a></p>
+<h2 id="methods_1">Methods<a class="headerlink" href="#methods_1" title="Permanent link">#</a></h2>
+<h3 id="getnodebyid">getNodeById<a class="headerlink" href="#getnodebyid" title="Permanent link">#</a></h3>
+<p>▸ <strong>getNodeById</strong>(<code>id</code>): <a href="../../classes/Node/"><code>Node</code></a></p>
+<h4 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>id</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns">Returns<a class="headerlink" href="#returns" title="Permanent link">#</a></h4>
+<p><a href="../../classes/Node/"><code>Node</code></a></p>
+<h4 id="defined-in_26">Defined in<a class="headerlink" href="#defined-in_26" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L90">interfaces/engine.ts:90</a></p>
+<hr />
+<h3 id="gettoken">getToken<a class="headerlink" href="#gettoken" title="Permanent link">#</a></h3>
+<p>▸ <strong>getToken</strong>(<code>id</code>): <a href="../IToken/"><code>IToken</code></a></p>
+<h4 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>id</code></td>
+<td style="text-align: left;"><code>number</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_1">Returns<a class="headerlink" href="#returns_1" title="Permanent link">#</a></h4>
+<p><a href="../IToken/"><code>IToken</code></a></p>
+<h4 id="defined-in_27">Defined in<a class="headerlink" href="#defined-in_27" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L91">interfaces/engine.ts:91</a></p>
+<hr />
+<h3 id="tokenended">tokenEnded<a class="headerlink" href="#tokenended" title="Permanent link">#</a></h3>
+<p>▸ <strong>tokenEnded</strong>(<code>token</code>): <code>void</code></p>
+<h4 id="parameters_2">Parameters<a class="headerlink" href="#parameters_2" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>token</code></td>
+<td style="text-align: left;"><a href="../IToken/"><code>IToken</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_2">Returns<a class="headerlink" href="#returns_2" title="Permanent link">#</a></h4>
+<p><code>void</code></p>
+<h4 id="defined-in_28">Defined in<a class="headerlink" href="#defined-in_28" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L92">interfaces/engine.ts:92</a></p>
+<hr />
+<h3 id="getitemsdata">getItemsData<a class="headerlink" href="#getitemsdata" title="Permanent link">#</a></h3>
+<p>▸ <strong>getItemsData</strong>(): <a href="../IItemData/"><code>IItemData</code></a>[]</p>
+<h4 id="returns_3">Returns<a class="headerlink" href="#returns_3" title="Permanent link">#</a></h4>
+<p><a href="../IItemData/"><code>IItemData</code></a>[]</p>
+<h4 id="defined-in_29">Defined in<a class="headerlink" href="#defined-in_29" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L93">interfaces/engine.ts:93</a></p>
+<hr />
+<h3 id="save">save<a class="headerlink" href="#save" title="Permanent link">#</a></h3>
+<p>▸ <strong>save</strong>(): <code>Promise</code>\&lt;<code>void</code>&gt;</p>
+<h4 id="returns_4">Returns<a class="headerlink" href="#returns_4" title="Permanent link">#</a></h4>
+<p><code>Promise</code>\&lt;<code>void</code>&gt;</p>
+<h4 id="defined-in_30">Defined in<a class="headerlink" href="#defined-in_30" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L94">interfaces/engine.ts:94</a></p>
+<hr />
+<h3 id="end">end<a class="headerlink" href="#end" title="Permanent link">#</a></h3>
+<p>▸ <strong>end</strong>(): <code>Promise</code>\&lt;<code>void</code>&gt;</p>
+<h4 id="returns_5">Returns<a class="headerlink" href="#returns_5" title="Permanent link">#</a></h4>
+<p><code>Promise</code>\&lt;<code>void</code>&gt;</p>
+<h4 id="defined-in_31">Defined in<a class="headerlink" href="#defined-in_31" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L95">interfaces/engine.ts:95</a></p>
+<hr />
+<h3 id="stop">stop<a class="headerlink" href="#stop" title="Permanent link">#</a></h3>
+<p>▸ <strong>stop</strong>(): <code>void</code></p>
+<p>causes the execution to stop from running any further</p>
+<h4 id="returns_6">Returns<a class="headerlink" href="#returns_6" title="Permanent link">#</a></h4>
+<p><code>void</code></p>
+<h4 id="defined-in_32">Defined in<a class="headerlink" href="#defined-in_32" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L100">interfaces/engine.ts:100</a></p>
+<hr />
+<h3 id="terminate">terminate<a class="headerlink" href="#terminate" title="Permanent link">#</a></h3>
+<p>▸ <strong>terminate</strong>(): <code>void</code></p>
+<h4 id="returns_7">Returns<a class="headerlink" href="#returns_7" title="Permanent link">#</a></h4>
+<p><code>void</code></p>
+<h4 id="defined-in_33">Defined in<a class="headerlink" href="#defined-in_33" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L101">interfaces/engine.ts:101</a></p>
+<hr />
+<h3 id="execute">execute<a class="headerlink" href="#execute" title="Permanent link">#</a></h3>
+<p>▸ <strong>execute</strong>(<code>startNodeId?</code>, <code>inputData?</code>): <code>Promise</code>\&lt;<code>void</code>&gt;</p>
+<h4 id="parameters_3">Parameters<a class="headerlink" href="#parameters_3" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>startNodeId?</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>inputData?</code></td>
+<td style="text-align: left;"><code>Object</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_8">Returns<a class="headerlink" href="#returns_8" title="Permanent link">#</a></h4>
+<p><code>Promise</code>\&lt;<code>void</code>&gt;</p>
+<h4 id="defined-in_34">Defined in<a class="headerlink" href="#defined-in_34" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L102">interfaces/engine.ts:102</a></p>
+<hr />
+<h3 id="signalitem">signalItem<a class="headerlink" href="#signalitem" title="Permanent link">#</a></h3>
+<p>▸ <strong>signalItem</strong>(<code>executionId</code>, <code>inputData</code>, <code>options?</code>): <code>Promise</code>\&lt;<a href="./"><code>IExecution</code></a>&gt;</p>
+<p>invoke scenarios:
+     itemId
+     elementId   - but only one is active
+     elementId   - for a startEvent in a secondary process</p>
+<h4 id="parameters_4">Parameters<a class="headerlink" href="#parameters_4" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>executionId</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>inputData</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>options?</code></td>
+<td style="text-align: left;"><code>Object</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_9">Returns<a class="headerlink" href="#returns_9" title="Permanent link">#</a></h4>
+<p><code>Promise</code>\&lt;<a href="./"><code>IExecution</code></a>&gt;</p>
+<h4 id="defined-in_35">Defined in<a class="headerlink" href="#defined-in_35" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L113">interfaces/engine.ts:113</a></p>
+<hr />
+<h3 id="signalevent">signalEvent<a class="headerlink" href="#signalevent" title="Permanent link">#</a></h3>
+<p>▸ <strong>signalEvent</strong>(<code>executionId</code>, <code>inputData</code>, <code>options?</code>): <code>Promise</code>\&lt;<a href="./"><code>IExecution</code></a>&gt;</p>
+<h4 id="parameters_5">Parameters<a class="headerlink" href="#parameters_5" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>executionId</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>inputData</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>options?</code></td>
+<td style="text-align: left;"><code>Object</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_10">Returns<a class="headerlink" href="#returns_10" title="Permanent link">#</a></h4>
+<p><code>Promise</code>\&lt;<a href="./"><code>IExecution</code></a>&gt;</p>
+<h4 id="defined-in_36">Defined in<a class="headerlink" href="#defined-in_36" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L114">interfaces/engine.ts:114</a></p>
+<hr />
+<h3 id="signalrepeattimerevent">signalRepeatTimerEvent<a class="headerlink" href="#signalrepeattimerevent" title="Permanent link">#</a></h3>
+<p>▸ <strong>signalRepeatTimerEvent</strong>(<code>executionId</code>, <code>prevItem</code>, <code>inputData</code>, <code>options?</code>): <code>Promise</code>\&lt;<a href="./"><code>IExecution</code></a>&gt;</p>
+<h4 id="parameters_6">Parameters<a class="headerlink" href="#parameters_6" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>executionId</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>prevItem</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>inputData</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>options?</code></td>
+<td style="text-align: left;"><code>Object</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_11">Returns<a class="headerlink" href="#returns_11" title="Permanent link">#</a></h4>
+<p><code>Promise</code>\&lt;<a href="./"><code>IExecution</code></a>&gt;</p>
+<h4 id="defined-in_37">Defined in<a class="headerlink" href="#defined-in_37" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L115">interfaces/engine.ts:115</a></p>
+<hr />
+<h3 id="getitems">getItems<a class="headerlink" href="#getitems" title="Permanent link">#</a></h3>
+<p>▸ <strong>getItems</strong>(<code>query?</code>): <a href="../IItem/"><code>IItem</code></a>[]</p>
+<h4 id="parameters_7">Parameters<a class="headerlink" href="#parameters_7" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>query?</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_12">Returns<a class="headerlink" href="#returns_12" title="Permanent link">#</a></h4>
+<p><a href="../IItem/"><code>IItem</code></a>[]</p>
+<h4 id="defined-in_38">Defined in<a class="headerlink" href="#defined-in_38" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L117">interfaces/engine.ts:117</a></p>
+<hr />
+<h3 id="getstate">getState<a class="headerlink" href="#getstate" title="Permanent link">#</a></h3>
+<p>▸ <strong>getState</strong>(): <a href="../IInstanceData/"><code>IInstanceData</code></a></p>
+<h4 id="returns_13">Returns<a class="headerlink" href="#returns_13" title="Permanent link">#</a></h4>
+<p><a href="../IInstanceData/"><code>IInstanceData</code></a></p>
+<h4 id="defined-in_39">Defined in<a class="headerlink" href="#defined-in_39" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L118">interfaces/engine.ts:118</a></p>
+<hr />
+<h3 id="restored">restored<a class="headerlink" href="#restored" title="Permanent link">#</a></h3>
+<p>▸ <strong>restored</strong>(): <code>void</code></p>
+<h4 id="returns_14">Returns<a class="headerlink" href="#returns_14" title="Permanent link">#</a></h4>
+<p><code>void</code></p>
+<h4 id="defined-in_40">Defined in<a class="headerlink" href="#defined-in_40" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L119">interfaces/engine.ts:119</a></p>
+<hr />
+<h3 id="resume">resume<a class="headerlink" href="#resume" title="Permanent link">#</a></h3>
+<p>▸ <strong>resume</strong>(): <code>void</code></p>
+<h4 id="returns_15">Returns<a class="headerlink" href="#returns_15" title="Permanent link">#</a></h4>
+<p><code>void</code></p>
+<h4 id="defined-in_41">Defined in<a class="headerlink" href="#defined-in_41" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L120">interfaces/engine.ts:120</a></p>
+<hr />
+<h3 id="report">report<a class="headerlink" href="#report" title="Permanent link">#</a></h3>
+<p>▸ <strong>report</strong>(): <code>void</code></p>
+<h4 id="returns_16">Returns<a class="headerlink" href="#returns_16" title="Permanent link">#</a></h4>
+<p><code>void</code></p>
+<h4 id="defined-in_42">Defined in<a class="headerlink" href="#defined-in_42" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L121">interfaces/engine.ts:121</a></p>
+<hr />
+<h3 id="getnewid">getNewId<a class="headerlink" href="#getnewid" title="Permanent link">#</a></h3>
+<p>▸ <strong>getNewId</strong>(<code>scope</code>): <code>number</code></p>
+<h4 id="parameters_8">Parameters<a class="headerlink" href="#parameters_8" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>scope</code></td>
+<td style="text-align: left;"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_17">Returns<a class="headerlink" href="#returns_17" title="Permanent link">#</a></h4>
+<p><code>number</code></p>
+<h4 id="defined-in_43">Defined in<a class="headerlink" href="#defined-in_43" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L123">interfaces/engine.ts:123</a></p>
+<hr />
+<h3 id="getuuid">getUUID<a class="headerlink" href="#getuuid" title="Permanent link">#</a></h3>
+<p>▸ <strong>getUUID</strong>(): <code>any</code></p>
+<h4 id="returns_18">Returns<a class="headerlink" href="#returns_18" title="Permanent link">#</a></h4>
+<p><code>any</code></p>
+<h4 id="defined-in_44">Defined in<a class="headerlink" href="#defined-in_44" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L124">interfaces/engine.ts:124</a></p>
+<hr />
+<h3 id="doexecutionevent">doExecutionEvent<a class="headerlink" href="#doexecutionevent" title="Permanent link">#</a></h3>
+<p>▸ <strong>doExecutionEvent</strong>(<code>process</code>, <code>event</code>): <code>Promise</code>\&lt;<code>any</code>&gt;</p>
+<h4 id="parameters_9">Parameters<a class="headerlink" href="#parameters_9" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>process</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>event</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_19">Returns<a class="headerlink" href="#returns_19" title="Permanent link">#</a></h4>
+<p><code>Promise</code>\&lt;<code>any</code>&gt;</p>
+<h4 id="defined-in_45">Defined in<a class="headerlink" href="#defined-in_45" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L125">interfaces/engine.ts:125</a></p>
+<hr />
+<h3 id="doitemevent">doItemEvent<a class="headerlink" href="#doitemevent" title="Permanent link">#</a></h3>
+<p>▸ <strong>doItemEvent</strong>(<code>item</code>, <code>event</code>): <code>Promise</code>\&lt;<code>any</code>&gt;</p>
+<h4 id="parameters_10">Parameters<a class="headerlink" href="#parameters_10" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>item</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>event</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_20">Returns<a class="headerlink" href="#returns_20" title="Permanent link">#</a></h4>
+<p><code>Promise</code>\&lt;<code>any</code>&gt;</p>
+<h4 id="defined-in_46">Defined in<a class="headerlink" href="#defined-in_46" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L126">interfaces/engine.ts:126</a></p>
+<hr />
+<h3 id="log">log<a class="headerlink" href="#log" title="Permanent link">#</a></h3>
+<p>▸ <strong>log</strong>(<code>...msg</code>): <code>void</code></p>
+<h4 id="parameters_11">Parameters<a class="headerlink" href="#parameters_11" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>...msg</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_21">Returns<a class="headerlink" href="#returns_21" title="Permanent link">#</a></h4>
+<p><code>void</code></p>
+<h4 id="defined-in_47">Defined in<a class="headerlink" href="#defined-in_47" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L127">interfaces/engine.ts:127</a></p>
+<hr />
+<h3 id="info">info<a class="headerlink" href="#info" title="Permanent link">#</a></h3>
+<p>▸ <strong>info</strong>(<code>...msg</code>): <code>void</code></p>
+<h4 id="parameters_12">Parameters<a class="headerlink" href="#parameters_12" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>...msg</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_22">Returns<a class="headerlink" href="#returns_22" title="Permanent link">#</a></h4>
+<p><code>void</code></p>
+<h4 id="defined-in_48">Defined in<a class="headerlink" href="#defined-in_48" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L128">interfaces/engine.ts:128</a></p>
+<hr />
+<h3 id="error">error<a class="headerlink" href="#error" title="Permanent link">#</a></h3>
+<p>▸ <strong>error</strong>(<code>msg</code>): <code>void</code></p>
+<h4 id="parameters_13">Parameters<a class="headerlink" href="#parameters_13" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>msg</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_23">Returns<a class="headerlink" href="#returns_23" title="Permanent link">#</a></h4>
+<p><code>void</code></p>
+<h4 id="defined-in_49">Defined in<a class="headerlink" href="#defined-in_49" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L129">interfaces/engine.ts:129</a></p>
+<hr />
+<h3 id="appenddata">appendData<a class="headerlink" href="#appenddata" title="Permanent link">#</a></h3>
+<p>▸ <strong>appendData</strong>(<code>inputData</code>, <code>item</code>, <code>dataPath?</code>, <code>assignment?</code>): <code>void</code></p>
+<h4 id="parameters_14">Parameters<a class="headerlink" href="#parameters_14" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>inputData</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>item</code></td>
+<td style="text-align: left;"><a href="../IItem/"><code>IItem</code></a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>dataPath?</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>assignment?</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_24">Returns<a class="headerlink" href="#returns_24" title="Permanent link">#</a></h4>
+<p><code>void</code></p>
+<h4 id="defined-in_50">Defined in<a class="headerlink" href="#defined-in_50" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L130">interfaces/engine.ts:130</a></p>
+<hr />
+<h3 id="getdata">getData<a class="headerlink" href="#getdata" title="Permanent link">#</a></h3>
+<p>▸ <strong>getData</strong>(<code>dataPath</code>): <code>any</code></p>
+<h4 id="parameters_15">Parameters<a class="headerlink" href="#parameters_15" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>dataPath</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_25">Returns<a class="headerlink" href="#returns_25" title="Permanent link">#</a></h4>
+<p><code>any</code></p>
+<h4 id="defined-in_51">Defined in<a class="headerlink" href="#defined-in_51" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L131">interfaces/engine.ts:131</a></p>
+<hr />
+<h3 id="getandcreatedata">getAndCreateData<a class="headerlink" href="#getandcreatedata" title="Permanent link">#</a></h3>
+<p>▸ <strong>getAndCreateData</strong>(<code>dataPath</code>, <code>asArray?</code>): <code>any</code></p>
+<h4 id="parameters_16">Parameters<a class="headerlink" href="#parameters_16" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>dataPath</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>asArray?</code></td>
+<td style="text-align: left;"><code>boolean</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_26">Returns<a class="headerlink" href="#returns_26" title="Permanent link">#</a></h4>
+<p><code>any</code></p>
+<h4 id="defined-in_52">Defined in<a class="headerlink" href="#defined-in_52" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/interfaces/engine.ts#L132">interfaces/engine.ts:132</a></p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

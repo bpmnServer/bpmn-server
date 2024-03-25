@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Error Events: - bpmn-server</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Error Events:";
+        var mkdocs_page_input_path = "examples\\error_events.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> bpmn-server
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Overview</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../invokation/">Invoking Workflows</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../execution/">Execution</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../scripting/">Scripting</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../security/">Security</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../data/">Data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../">Examples</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../api-summary/">API Summary</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../api/readme/">API</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../setup/">Setup</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../customization/">Application Integration</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">bpmn-server</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Error Events:</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="error-events">Error Events:<a class="headerlink" href="#error-events" title="Permanent link">#</a></h1>
+<p><img alt="BPMN Diagram" src="../error_events.png" /></p>
+<h2 id="raising-errors">Raising Errors<a class="headerlink" href="#raising-errors" title="Permanent link">#</a></h2>
+<h3 id="through-an-end-events-of-type-error">Through an End Events of type Error<a class="headerlink" href="#through-an-end-events-of-type-error" title="Permanent link">#</a></h3>
+<pre><code class="language-ts">    &lt;bpmn2:endEvent id=&quot;EmdEvemt_error1&quot; name=&quot;Throw Error 1&quot;&gt;
+      &lt;bpmn2:incoming&gt;SequenceFlow_0plhz17&lt;/bpmn2:incoming&gt;
+      &lt;bpmn2:errorEventDefinition /&gt;
+    &lt;/bpmn2:endEvent&gt;
+</code></pre>
+<h2 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">#</a></h2>
+<ul>
+<li>If there is a Boundary Event to catch, it will be invoked</li>
+<li>else if there a start Event to catch it will be invoked.</li>
+<li>else Default error handling will be processed.</li>
+</ul>
+<p>Example of Boundary Event</p>
+<pre><code>&lt;bpmn2:boundaryEvent id="BoundaryEvent_catchErrors" name="Error Catcher" attachedToRef="Task_1yw3plw"&gt;
+  &lt;bpmn2:outgoing&gt;SequenceFlow_0t9u8g1&lt;/bpmn2:outgoing&gt;
+  &lt;bpmn2:errorEventDefinition /&gt;
+&lt;/bpmn2:boundaryEvent&gt;
+</code></pre>
+<p>Example of Start Event </p>
+<pre><code class="language-ts">    &lt;bpmn2:subProcess id=&quot;SubProcess_0hpeg3q&quot; name=&quot;Event Process&quot; triggeredByEvent=&quot;true&quot;&gt;
+      &lt;bpmn2:sequenceFlow id=&quot;SequenceFlow_1l0v2kk&quot; sourceRef=&quot;StartEvent_catchErrors&quot; targetRef=&quot;Task_10xnxy7&quot; /&gt;
+      &lt;bpmn2:startEvent id=&quot;StartEvent_catchErrors&quot; name=&quot;Error Catcher for Process&quot;&gt;
+        &lt;bpmn2:outgoing&gt;SequenceFlow_1l0v2kk&lt;/bpmn2:outgoing&gt;
+        &lt;bpmn2:errorEventDefinition /&gt;
+      &lt;/bpmn2:startEvent&gt;
+</code></pre>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

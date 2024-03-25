@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Event Based Gateway: - bpmn-server</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Event Based Gateway:";
+        var mkdocs_page_input_path = "examples\\gateway2.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> bpmn-server
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Overview</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../invokation/">Invoking Workflows</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../execution/">Execution</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../scripting/">Scripting</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../security/">Security</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../data/">Data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../">Examples</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../api-summary/">API Summary</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../api/readme/">API</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../setup/">Setup</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../customization/">Application Integration</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">bpmn-server</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Event Based Gateway:</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="event-based-gateway">Event Based Gateway:<a class="headerlink" href="#event-based-gateway" title="Permanent link">#</a></h1>
+<p><img alt="BPMN Diagram" src="../ebg1.png" /></p>
+<p>Event Based Gateway launches all valid outbound flows, but once on event is completed, it must cancel the rest.</p>
+<pre><code class="language-ts">
+const { BPMNServer , DefaultHandler , Logger } = require(&quot;../../&quot;);
+const { configuration } = require('../../configuration');
+
+
+const logger = new Logger({ toConsole: false });
+
+const server = new BPMNServer(configuration, logger);
+
+let name = 'Event Based Gateway';
+
+let process;
+let response;
+let instanceId;
+
+Feature('Event Based Gateway', () =&gt; {
+
+        Scenario('All', () =&gt; {
+
+            Given('Start Process', async () =&gt; {
+                response = await server.engine.start(name, { reminderCounter: 0, caseId: 1005 });
+            });
+            Then('events should fire and wait', () =&gt; {
+
+                expect(response).to.have.property('execution');
+                instanceId = response.execution.id;
+                expect(getItem('timerEvent').status).equals('wait');
+                expect(getItem('messageEvent').status).equals('wait');
+                expect(getItem('Task_receive').status).equals('wait');
+                expect(getItem('event_signal').status).equals('wait');
+
+            });
+</code></pre>
+<p>to visualize the process, let us borrow from the WebApp
+<img alt="BPMN Diagram" src="../ebg2.png" /></p>
+<pre><code>```ts
+        When('we wait a bit for timer to complete', async () =&gt; {
+            server.cron.checkTimers();
+            await delay(3000, 'test');
+
+            // we restore to get latest status; since the timer did some work in the background!
+
+            response = await server.engine.get({ "id": instanceId });
+        });
+
+        Then('after wait - timer should have completed', () =&gt; {
+            expect(getItem('timerEvent').status).equals('end');
+        });
+        and('other events complete as well', () =&gt; {
+            expect(getItem('messageEvent').status).equals('end');
+            expect(getItem('Task_receive').status).equals('end');
+            expect(getItem('event_signal').status).equals('end');
+        });
+
+        and('also reminder task will fire', () =&gt; {
+            expect(getItem('reminder').status).equals('wait');
+        });
+</code></pre>
+<pre><code>again, let us see what it looks like now!
+//![BPMN Diagram](ebg3.png)
+
+    ```ts
+
+            When('we issue reminder', async () =&gt; {
+
+                const query = { id: instanceId ,&quot;items.elementId&quot;: 'reminder' };
+                response=await server.engine.invoke(query, {});
+            });
+
+            and('write log file to' + name + '.log', async () =&gt; {
+              let fileName = __dirname + '/../logs/' + name+ '.log';
+              logger.save(fileName);
+            });
+
+        });
+
+}); 
+async function delay(time) {
+    log(&quot;delaying ... &quot; + time)
+    return new Promise(function (resolve) {
+        setTimeout(function () {
+            log(&quot;delayed is done.&quot;);
+            resolve();
+        }, time);
+    });
+}
+function log(msg) {
+    logger.log(msg);
+}
+function getItem(id)
+{
+    const item = response.items.filter(item =&gt; { return item.elementId == id; })[0]
+    if (!item) {
+        log('item ' + id + ' not found');
+    }
+    return item;
+}
+
+</code></pre>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Change Log - bpmn-server</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Change Log";
+        var mkdocs_page_input_path = "CHANGELOG.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> bpmn-server
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Overview</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../invokation/">Invoking Workflows</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../execution/">Execution</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../scripting/">Scripting</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../security/">Security</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../data/">Data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../examples/">Examples</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../api-summary/">API Summary</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../api/readme/">API</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../setup/">Setup</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../customization/">Application Integration</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">bpmn-server</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Change Log</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="change-log">Change Log<a class="headerlink" href="#change-log" title="Permanent link">#</a></h1>
+<p>All notable changes to this project will be documented in this file.</p>
+<p>The format is based on <a href="http://keepachangelog.com/">Keep a Changelog</a>
+and this project adheres to <a href="http://semver.org/">Semantic Versioning</a>.</p>
+<!---
+your comment goes here
+and here
+## [Unreleased]
+### Added
+
+### Changed
+-->
+<h2 id="release-216-2024-03">Release 2.1.6  -- 2024-03<a class="headerlink" href="#release-216-2024-03" title="Permanent link">#</a></h2>
+<h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">#</a></h3>
+<ul>
+<li>.env.ENABLE_PROFILER will display MONGODB timing on console</li>
+<li>server.dataStore.archive(query)</li>
+</ul>
+<h2 id="release-215-2024-03">Release 2.1.5  -- 2024-03<a class="headerlink" href="#release-215-2024-03" title="Permanent link">#</a></h2>
+<ul>
+<li>Add support to ad-hoc subprocesses</li>
+<li>Removed reference to UserService from back-end, kept in front-end only</li>
+<li>Fixed bug with subprocess not ending correctly</li>
+</ul>
+<h3 id="loop-changes">Loop Changes:<a class="headerlink" href="#loop-changes" title="Permanent link">#</a></h3>
+<ul>
+<li>Change itemKey to contain entire dataPath</li>
+<li>Change Data Structure for loop from Array to Object</li>
+<li>Fixed bug with loop info not loaded on restore</li>
+</ul>
+<h2 id="release-210-2024-03">Release 2.1.0  -- 2024-03<a class="headerlink" href="#release-210-2024-03" title="Permanent link">#</a></h2>
+<h3 id="api-model">API model:<a class="headerlink" href="#api-model" title="Permanent link">#</a></h3>
+<ul>
+<li>Add: <code>get(query:any ,user: ISecureUser): Promise&lt;object[]&gt;</code>  returns full model data, including documentation</li>
+<li>Change: <code>getList(..)</code> returns only names</li>
+</ul>
+<h3 id="api-engine">API engine<a class="headerlink" href="#api-engine" title="Permanent link">#</a></h3>
+<ul>
+<li>Add: <code>restart(itemQuery, data:any,user:ISecureUser, options?:IEngineOptions) :Promise&lt;IExecution&gt;</code> 
+    restarting an already completed instance at a particular node</li>
+</ul>
+<h2 id="release-201-2024-02">Release 2.0.1 -- 2024-02<a class="headerlink" href="#release-201-2024-02" title="Permanent link">#</a></h2>
+<ul>
+<li>Moved webApp as a separate Repo </li>
+<li>Changed install procedure </li>
+<li>Compile src into dist , repos only include src (TS)</li>
+<li>Re-Write docs </li>
+<li>Added Docusaruas</li>
+<li>Configuration.ts: - Added UserService</li>
+<li>AppServices.ts is the location for all services</li>
+<li>Logger: added <code>info</code> to summarize actions</li>
+<li>Support TaskListener </li>
+<li>Input/Output Variables now supports multiple types</li>
+<li>Timer: now supports timeDate type and repeat</li>
+<li>Process: supports script events</li>
+<li>ServiceName can now include child objects</li>
+<li>UserService: added <code>validate</code> Event</li>
+</ul>
+<h2 id="release-150-2023-11">Release 1.5.0 -- 2023-11<a class="headerlink" href="#release-150-2023-11" title="Permanent link">#</a></h2>
+<ul>
+<li>New API</li>
+<li>Added User Authentication for WebApp</li>
+<li>Added User Management; Signup and Admin</li>
+<li>Added Assign function, users can Assign other users to the task</li>
+<li>Improved Users Interface to support above changes </li>
+</ul>
+<h2 id="release-141-2023-10-2">Release 1.4.1 -- 2023-10-2<a class="headerlink" href="#release-141-2023-10-2" title="Permanent link">#</a></h2>
+<ul>
+<li>Added Instance Locking, supporting multiple nodeJS servers running against same MongoDB</li>
+<li>Support lanes as role see <a href="userAssignment.md#Pool-as-a-role">userAssignment</a> </li>
+<li>Improve documentation</li>
+</ul>
+<h2 id="release-140-2023-09-20">Release 1.4.0 -- 2023-09-20<a class="headerlink" href="#release-140-2023-09-20" title="Permanent link">#</a></h2>
+<ul>
+<li>Removes ACL/IAM and relies on the front-end to provide user authentication</li>
+<li>Uses UserTask assignment fields to capture assignment information
+-- Add assignment fields to Item class
+-- see <a href="userAssignment.md">userAssignment</a> for details</li>
+</ul>
+<h2 id="release-1322-2023-05-18">Release 1.3.22 -- 2023-05-18<a class="headerlink" href="#release-1322-2023-05-18" title="Permanent link">#</a></h2>
+<p>-Fixed Issue with DataObject interface 
+-Added item.vars to storage</p>
+<h2 id="release-1321-2023-05-16">Release 1.3.21 -- 2023-05-16<a class="headerlink" href="#release-1321-2023-05-16" title="Permanent link">#</a></h2>
+<p>-Fixed Issue Exclusive Gateway Convergence #87</p>
+<h2 id="release-1318-2023-05-07">Release 1.3.18 -- 2023-05-07<a class="headerlink" href="#release-1318-2023-05-07" title="Permanent link">#</a></h2>
+<ul>
+<li>Fixed Issue # 84 https://github.com/ralphhanna/bpmn-server/issues/84</li>
+<li>Fixed Issue with Input Parameters #85</li>
+<li>Fixed Request to update dependencies #79   </li>
+</ul>
+<h2 id="release-1315-2022-11-20">Release 1.3.15 -- 2022-11-20<a class="headerlink" href="#release-1315-2022-11-20" title="Permanent link">#</a></h2>
+<ul>
+<li>Added to .env
+    definitions_path</li>
+<li>Timer now supports Repeat format R3PT15M</li>
+<li>Fixed bug with gateway converge</li>
+<li>Added the following to API</li>
+<li>definitions/import</li>
+<li>definitions/delete</li>
+<li>definitions/rename</li>
+</ul>
+<h2 id="release-1310-2022-09-20">Release 1.3.10 -- 2022-09-20<a class="headerlink" href="#release-1310-2022-09-20" title="Permanent link">#</a></h2>
+<ul>
+<li>SendTask is working same as Service Task - Issue #58</li>
+<li>Support Repeat Timers using format R3/PT3S</li>
+<li>Improved support for Error Event
+    need to support errorId</li>
+<li>Added Escalation Event Type</li>
+<li>Added Transaction support</li>
+<li>Cancel Transaction</li>
+<li>Compensate Transaction</li>
+<li>Added Color scheme for Activity Status</li>
+</ul>
+<h2 id="release-139-2022-07-09">Release 1.3.9    - 2022-07-09<a class="headerlink" href="#release-139-2022-07-09" title="Permanent link">#</a></h2>
+<ul>
+<li>SendTask now behaves same as ServiceTask</li>
+<li>BoundaryEvents</li>
+<li>Handle interrupting and non-interrupting</li>
+<li>Interrupting cancel the parent task and its flow</li>
+</ul>
+<h2 id="release-138-2022-07-09">Release 1.3.8    - 2022-07-09<a class="headerlink" href="#release-138-2022-07-09" title="Permanent link">#</a></h2>
+<ul>
+<li>Fix errors in throwSignal/throwMessage in bpmn-client</li>
+<li>Fix errors in throwSignal/throwMessage in api <a href="https://github.com/bpmnServer/bpmn-server/issues/52">#52</a></li>
+<li>Fix bug showing instance 'end' while still running when in gateway</li>
+<li>Fix issue with editing element name in property panel <a href="https://github.com/bpmnServer/bpmn-server/issues/54">#54</a></li>
+<li>Include tmp folder in install <a href="https://github.com/bpmnServer/bpmn-server/issues/56">#56</a></li>
+<li>Minor changes to UI - preserve the last process</li>
+</ul>
+<h2 id="release-134-2022-01-09">Release 1.3.4    - 2022-01-09<a class="headerlink" href="#release-134-2022-01-09" title="Permanent link">#</a></h2>
+<p>Fix bugs with Throwing Messages and Signals</p>
+<h2 id="release-133-2022-31-08">Release 1.3.3    - 2022-31-08<a class="headerlink" href="#release-133-2022-31-08" title="Permanent link">#</a></h2>
+<h3 id="issue-41-fixed-configuring-service-task-in-bpmn-properties-panel"><a href="https://github.com/ralphhanna/bpmn-server/issues/41">Issue #41</a> Fixed - configuring service task in BPMN-Properties-Panel<a class="headerlink" href="#issue-41-fixed-configuring-service-task-in-bpmn-properties-panel" title="Permanent link">#</a></h3>
+<p>No need to edit the bpmn file.</p>
+<h3 id="issue-42-fixed-running-engines-after-processes-end"><a href="https://github.com/ralphhanna/bpmn-server/issues/42">Issue #42</a> Fixed - running engines after processes end<a class="headerlink" href="#issue-42-fixed-running-engines-after-processes-end" title="Permanent link">#</a></h3>
+<p>Now engines are removed as they complete</p>
+<h3 id="issue-43-fixed-discrepancy-with-finditems"><a href="https://github.com/ralphhanna/bpmn-server/issues/43">Issue #43</a> Fixed - Discrepancy with findItems<a class="headerlink" href="#issue-43-fixed-discrepancy-with-finditems" title="Permanent link">#</a></h3>
+<p>Now FindItems returns all the items within the instance that meet the condition</p>
+<h2 id="release-132-2022-30-08">Release 1.3.2    - 2022-30-08<a class="headerlink" href="#release-132-2022-30-08" title="Permanent link">#</a></h2>
+<p>Fixed import process error due to old version of connect-busboy</p>
+<h2 id="release-131-2022-30-08">Release 1.3.1    - 2022-30-08<a class="headerlink" href="#release-131-2022-30-08" title="Permanent link">#</a></h2>
+<p>Fixed compile error with updated tsc</p>
+<h2 id="release-130-2022-21-08">Release 1.3.0    - 2022-21-08<a class="headerlink" href="#release-130-2022-21-08" title="Permanent link">#</a></h2>
+<p>This is a major release, requires an upgrade and changes to existing code base.</p>
+<h3 id="support-bpmnjs-properties-panel">Support bpmnjs properties-panel<a class="headerlink" href="#support-bpmnjs-properties-panel" title="Permanent link">#</a></h3>
+<p>Provides a UI to edit bpmn definition, therefore, no longer a need to edit the bpmn file</p>
+<p>In order to provide this, changes to bpmn specification to be more compliant as follows:</p>
+<h4 id="event-script-definition">Event Script definition<a class="headerlink" href="#event-script-definition" title="Permanent link">#</a></h4>
+<ul>
+<li>the only events are: start,end </li>
+<li>old format:</li>
+</ul>
+<pre><code class="language-xml">
+    &lt;bpmn:startEvent id=&quot;StartEvent_1ohx91b&quot;&gt;
+      &lt;bpmn:extensionElements&gt;
+        &lt;camunda:script event=&quot;start&quot;&gt;&lt;![CDATA[
+        console.log(&quot;This is the start event&quot;);
+          this.applyInput({records:[1,2,3]});
+          console.log(this.data);
+          console.log(&quot;This is the start event&quot;);]]&gt;&lt;/camunda:script&gt;
+      &lt;/bpmn:extensionElements&gt;
+      &lt;bpmn:outgoing&gt;Flow_18xinq3&lt;/bpmn:outgoing&gt;
+    &lt;/bpmn:startEvent&gt;
+
+</code></pre>
+<ul>
+<li>New format:</li>
+</ul>
+<pre><code class="language-xml">      &lt;bpmn2:extensionElements&gt;
+        &lt;camunda:executionListener event=&quot;start&quot;&gt;
+          &lt;camunda:script scriptFormat=&quot;JavaScript&quot;&gt;
+            script1
+          &lt;/camunda:script&gt;
+        &lt;/camunda:executionListener&gt;
+        &lt;camunda:executionListener event=&quot;end&quot;&gt;
+          &lt;camunda:script scriptFormat=&quot;JavaScript&quot;&gt;
+            script2
+            &lt;/camunda:script&gt;
+        &lt;/camunda:executionListener&gt;
+      &lt;/bpmn2:extensionElements&gt;
+</code></pre>
+<h4 id="inputoutput-definition">Input/Output Definition<a class="headerlink" href="#inputoutput-definition" title="Permanent link">#</a></h4>
+<p>Handling Input and Output has changed please <a href="../data/#Input-Output_Data">this for details</a></p>
+<h4 id="conditional-flow">Conditional Flow<a class="headerlink" href="#conditional-flow" title="Permanent link">#</a></h4>
+<ul>
+<li>Old Format:</li>
+</ul>
+<pre><code class="language-xml">    &lt;bpmn:conditionExpression xsi:type=&quot;bpmn:tExpression&quot;&gt;
+        &lt;![CDATA[(this.needsCleaning==&quot;Yes&quot;)]]&gt;
+    &lt;/bpmn:conditionExpression&gt;
+</code></pre>
+<ul>
+<li>New Format:</li>
+</ul>
+<pre><code class="language-xml">    &lt;bpmn:conditionExpression xsi:type=&quot;bpmn:tFormalExpression&quot; language=&quot;JavaScript&quot;&gt;
+        (item.data.needsCleaning==&quot;Yes&quot;)
+    &lt;/bpmn:conditionExpression&gt;
+</code></pre>
+<h2 id="release-125-2022-16-08">Release 1.2.5    - 2022-16-08<a class="headerlink" href="#release-125-2022-16-08" title="Permanent link">#</a></h2>
+<p>Added API
+    engine/status</p>
+<h2 id="release-124-2022-08-08">Release 1.2.4    - 2022-08-08<a class="headerlink" href="#release-124-2022-08-08" title="Permanent link">#</a></h2>
+<h3 id="added_1">Added:<a class="headerlink" href="#added_1" title="Permanent link">#</a></h3>
+<ul>
+<li>Access Control Rules </li>
+<li>Client API can specify the userId </li>
+<li>Improved documentation</li>
+</ul>
+<h2 id="release-120-2022-08-08">Release 1.2.0    - 2022-08-08<a class="headerlink" href="#release-120-2022-08-08" title="Permanent link">#</a></h2>
+<p>Added WebAPI calls
+Added Remote access through bpmn-client package
+improved documentation</p>
+<h2 id="release-114-2020-07-21">Release 1.1.4    - 2020-07-21<a class="headerlink" href="#release-114-2020-07-21" title="Permanent link">#</a></h2>
+<h3 id="added_2">Added<a class="headerlink" href="#added_2" title="Permanent link">#</a></h3>
+<ul>
+<li>docs\examples.md add lot more examples</li>
+<li>engine.start(...,options)</li>
+<li>AppDelegate now has serviceProvider class as a separate object</li>
+<li></li>
+</ul>
+<h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">#</a></h3>
+<ul>
+<li>signature to service calls</li>
+<li>old format: service(item);</li>
+<li>new format: return=service(input,executionContext);</li>
+</ul>
+<h3 id="removed">Removed<a class="headerlink" href="#removed" title="Permanent link">#</a></h3>
+<ul>
+<li>server.cron.checktimers();</li>
+</ul>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>SecureUser - bpmn-server</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "SecureUser";
+        var mkdocs_page_input_path = "api\\classes\\SecureUser.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> bpmn-server
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Overview</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../invokation/">Invoking Workflows</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../execution/">Execution</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../scripting/">Scripting</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../security/">Security</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../data/">Data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../examples/">Examples</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../api-summary/">API Summary</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../readme/">API</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../setup/">Setup</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../customization/">Application Integration</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">bpmn-server</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">SecureUser</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <p><a href="../../readme/">bpmn-server</a> / SecureUser</p>
+<h1 id="class-secureuser">Class: SecureUser<a class="headerlink" href="#class-secureuser" title="Permanent link">#</a></h1>
+<h2 id="implements">Implements<a class="headerlink" href="#implements" title="Permanent link">#</a></h2>
+<ul>
+<li><a href="../../interfaces/ISecureUser/"><code>ISecureUser</code></a></li>
+</ul>
+<h2 id="table-of-contents">Table of contents<a class="headerlink" href="#table-of-contents" title="Permanent link">#</a></h2>
+<h3 id="constructors">Constructors<a class="headerlink" href="#constructors" title="Permanent link">#</a></h3>
+<ul>
+<li><a href="./#constructor">constructor</a></li>
+</ul>
+<h3 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link">#</a></h3>
+<ul>
+<li><a href="./#username">userName</a></li>
+<li><a href="./#usergroups">userGroups</a></li>
+<li><a href="./#tenantid">tenantId</a></li>
+<li><a href="./#modelsowner">modelsOwner</a></li>
+</ul>
+<h3 id="methods">Methods<a class="headerlink" href="#methods" title="Permanent link">#</a></h3>
+<ul>
+<li><a href="./#systemuser">SystemUser</a></li>
+<li><a href="./#isadmin">isAdmin</a></li>
+<li><a href="./#issystem">isSystem</a></li>
+<li><a href="./#ingroup">inGroup</a></li>
+<li><a href="./#qualifyinstances">qualifyInstances</a></li>
+<li><a href="./#qualifyitems">qualifyItems</a></li>
+<li><a href="./#qualifystartevents">qualifyStartEvents</a></li>
+<li><a href="./#qualifydeleteinstances">qualifyDeleteInstances</a></li>
+<li><a href="./#qualifymodels">qualifyModels</a></li>
+<li><a href="./#canmodifymodel">canModifyModel</a></li>
+<li><a href="./#candeletemodel">canDeleteModel</a></li>
+<li><a href="./#qualifyviewitems">qualifyViewItems</a></li>
+<li><a href="./#caninvoke">canInvoke</a></li>
+<li><a href="./#canassign">canAssign</a></li>
+<li><a href="./#canstart">canStart</a></li>
+</ul>
+<h2 id="constructors_1">Constructors<a class="headerlink" href="#constructors_1" title="Permanent link">#</a></h2>
+<h3 id="constructor">constructor<a class="headerlink" href="#constructor" title="Permanent link">#</a></h3>
+<p>• <strong>new SecureUser</strong>(<code>params</code>): <a href="./"><code>SecureUser</code></a></p>
+<h4 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>params</code></td>
+<td style="text-align: left;"><a href="../../interfaces/IUserInfo/"><code>IUserInfo</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns">Returns<a class="headerlink" href="#returns" title="Permanent link">#</a></h4>
+<p><a href="./"><code>SecureUser</code></a></p>
+<h4 id="defined-in">Defined in<a class="headerlink" href="#defined-in" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L40">API/SecureUser.ts:40</a></p>
+<h2 id="properties_1">Properties<a class="headerlink" href="#properties_1" title="Permanent link">#</a></h2>
+<h3 id="username">userName<a class="headerlink" href="#username" title="Permanent link">#</a></h3>
+<p>• <strong>userName</strong>: <code>any</code></p>
+<h4 id="implementation-of">Implementation of<a class="headerlink" href="#implementation-of" title="Permanent link">#</a></h4>
+<p><a href="../../interfaces/ISecureUser/">ISecureUser</a>.<a href="../../interfaces/ISecureUser/#username">userName</a></p>
+<h4 id="defined-in_1">Defined in<a class="headerlink" href="#defined-in_1" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L36">API/SecureUser.ts:36</a></p>
+<hr />
+<h3 id="usergroups">userGroups<a class="headerlink" href="#usergroups" title="Permanent link">#</a></h3>
+<p>• <strong>userGroups</strong>: <code>any</code></p>
+<h4 id="implementation-of_1">Implementation of<a class="headerlink" href="#implementation-of_1" title="Permanent link">#</a></h4>
+<p><a href="../../interfaces/ISecureUser/">ISecureUser</a>.<a href="../../interfaces/ISecureUser/#usergroups">userGroups</a></p>
+<h4 id="defined-in_2">Defined in<a class="headerlink" href="#defined-in_2" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L37">API/SecureUser.ts:37</a></p>
+<hr />
+<h3 id="tenantid">tenantId<a class="headerlink" href="#tenantid" title="Permanent link">#</a></h3>
+<p>• <code>Optional</code> <strong>tenantId</strong>: <code>any</code></p>
+<h4 id="implementation-of_2">Implementation of<a class="headerlink" href="#implementation-of_2" title="Permanent link">#</a></h4>
+<p><a href="../../interfaces/ISecureUser/">ISecureUser</a>.<a href="../../interfaces/ISecureUser/#tenantid">tenantId</a></p>
+<h4 id="defined-in_3">Defined in<a class="headerlink" href="#defined-in_3" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L38">API/SecureUser.ts:38</a></p>
+<hr />
+<h3 id="modelsowner">modelsOwner<a class="headerlink" href="#modelsowner" title="Permanent link">#</a></h3>
+<p>• <code>Optional</code> <strong>modelsOwner</strong>: <code>any</code></p>
+<h4 id="implementation-of_3">Implementation of<a class="headerlink" href="#implementation-of_3" title="Permanent link">#</a></h4>
+<p><a href="../../interfaces/ISecureUser/">ISecureUser</a>.<a href="../../interfaces/ISecureUser/#modelsowner">modelsOwner</a></p>
+<h4 id="defined-in_4">Defined in<a class="headerlink" href="#defined-in_4" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L39">API/SecureUser.ts:39</a></p>
+<h2 id="methods_1">Methods<a class="headerlink" href="#methods_1" title="Permanent link">#</a></h2>
+<h3 id="systemuser">SystemUser<a class="headerlink" href="#systemuser" title="Permanent link">#</a></h3>
+<p>▸ <strong>SystemUser</strong>(): <a href="./"><code>SecureUser</code></a></p>
+<h4 id="returns_1">Returns<a class="headerlink" href="#returns_1" title="Permanent link">#</a></h4>
+<p><a href="./"><code>SecureUser</code></a></p>
+<h4 id="defined-in_5">Defined in<a class="headerlink" href="#defined-in_5" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L53">API/SecureUser.ts:53</a></p>
+<hr />
+<h3 id="isadmin">isAdmin<a class="headerlink" href="#isadmin" title="Permanent link">#</a></h3>
+<p>▸ <strong>isAdmin</strong>(): <code>boolean</code></p>
+<h4 id="returns_2">Returns<a class="headerlink" href="#returns_2" title="Permanent link">#</a></h4>
+<p><code>boolean</code></p>
+<h4 id="implementation-of_4">Implementation of<a class="headerlink" href="#implementation-of_4" title="Permanent link">#</a></h4>
+<p><a href="../../interfaces/ISecureUser/">ISecureUser</a>.<a href="../../interfaces/ISecureUser/#isadmin">isAdmin</a></p>
+<h4 id="defined-in_6">Defined in<a class="headerlink" href="#defined-in_6" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L56">API/SecureUser.ts:56</a></p>
+<hr />
+<h3 id="issystem">isSystem<a class="headerlink" href="#issystem" title="Permanent link">#</a></h3>
+<p>▸ <strong>isSystem</strong>(): <code>boolean</code></p>
+<h4 id="returns_3">Returns<a class="headerlink" href="#returns_3" title="Permanent link">#</a></h4>
+<p><code>boolean</code></p>
+<h4 id="implementation-of_5">Implementation of<a class="headerlink" href="#implementation-of_5" title="Permanent link">#</a></h4>
+<p><a href="../../interfaces/ISecureUser/">ISecureUser</a>.<a href="../../interfaces/ISecureUser/#issystem">isSystem</a></p>
+<h4 id="defined-in_7">Defined in<a class="headerlink" href="#defined-in_7" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L61">API/SecureUser.ts:61</a></p>
+<hr />
+<h3 id="ingroup">inGroup<a class="headerlink" href="#ingroup" title="Permanent link">#</a></h3>
+<p>▸ <strong>inGroup</strong>(<code>userGroup</code>): <code>boolean</code></p>
+<h4 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>userGroup</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_4">Returns<a class="headerlink" href="#returns_4" title="Permanent link">#</a></h4>
+<p><code>boolean</code></p>
+<h4 id="implementation-of_6">Implementation of<a class="headerlink" href="#implementation-of_6" title="Permanent link">#</a></h4>
+<p><a href="../../interfaces/ISecureUser/">ISecureUser</a>.<a href="../../interfaces/ISecureUser/#ingroup">inGroup</a></p>
+<h4 id="defined-in_8">Defined in<a class="headerlink" href="#defined-in_8" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L66">API/SecureUser.ts:66</a></p>
+<hr />
+<h3 id="qualifyinstances">qualifyInstances<a class="headerlink" href="#qualifyinstances" title="Permanent link">#</a></h3>
+<p>▸ <strong>qualifyInstances</strong>(<code>query</code>): <code>any</code></p>
+<p>alters the query adding conditions based on security rules</p>
+<h4 id="parameters_2">Parameters<a class="headerlink" href="#parameters_2" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>query</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_5">Returns<a class="headerlink" href="#returns_5" title="Permanent link">#</a></h4>
+<p><code>any</code></p>
+<p>query</p>
+<h4 id="implementation-of_7">Implementation of<a class="headerlink" href="#implementation-of_7" title="Permanent link">#</a></h4>
+<p><a href="../../interfaces/ISecureUser/">ISecureUser</a>.<a href="../../interfaces/ISecureUser/#qualifyinstances">qualifyInstances</a></p>
+<h4 id="defined-in_9">Defined in<a class="headerlink" href="#defined-in_9" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L76">API/SecureUser.ts:76</a></p>
+<hr />
+<h3 id="qualifyitems">qualifyItems<a class="headerlink" href="#qualifyitems" title="Permanent link">#</a></h3>
+<p>▸ <strong>qualifyItems</strong>(<code>query</code>): <code>any</code></p>
+<p>alters the query adding conditions based on security rules</p>
+<h4 id="parameters_3">Parameters<a class="headerlink" href="#parameters_3" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>query</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_6">Returns<a class="headerlink" href="#returns_6" title="Permanent link">#</a></h4>
+<p><code>any</code></p>
+<p>query</p>
+<h4 id="implementation-of_8">Implementation of<a class="headerlink" href="#implementation-of_8" title="Permanent link">#</a></h4>
+<p><a href="../../interfaces/ISecureUser/">ISecureUser</a>.<a href="../../interfaces/ISecureUser/#qualifyitems">qualifyItems</a></p>
+<h4 id="defined-in_10">Defined in<a class="headerlink" href="#defined-in_10" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L115">API/SecureUser.ts:115</a></p>
+<hr />
+<h3 id="qualifystartevents">qualifyStartEvents<a class="headerlink" href="#qualifystartevents" title="Permanent link">#</a></h3>
+<p>▸ <strong>qualifyStartEvents</strong>(<code>query</code>): <code>any</code></p>
+<p>alters the query adding conditions based on security rules</p>
+<h4 id="parameters_4">Parameters<a class="headerlink" href="#parameters_4" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>query</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_7">Returns<a class="headerlink" href="#returns_7" title="Permanent link">#</a></h4>
+<p><code>any</code></p>
+<p>query</p>
+<h4 id="implementation-of_9">Implementation of<a class="headerlink" href="#implementation-of_9" title="Permanent link">#</a></h4>
+<p><a href="../../interfaces/ISecureUser/">ISecureUser</a>.<a href="../../interfaces/ISecureUser/#qualifystartevents">qualifyStartEvents</a></p>
+<h4 id="defined-in_11">Defined in<a class="headerlink" href="#defined-in_11" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L127">API/SecureUser.ts:127</a></p>
+<hr />
+<h3 id="qualifydeleteinstances">qualifyDeleteInstances<a class="headerlink" href="#qualifydeleteinstances" title="Permanent link">#</a></h3>
+<p>▸ <strong>qualifyDeleteInstances</strong>(<code>query</code>): <code>any</code></p>
+<p>alters the query adding conditions based on security rules</p>
+<h4 id="parameters_5">Parameters<a class="headerlink" href="#parameters_5" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>query</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_8">Returns<a class="headerlink" href="#returns_8" title="Permanent link">#</a></h4>
+<p><code>any</code></p>
+<p>query</p>
+<h4 id="implementation-of_10">Implementation of<a class="headerlink" href="#implementation-of_10" title="Permanent link">#</a></h4>
+<p><a href="../../interfaces/ISecureUser/">ISecureUser</a>.<a href="../../interfaces/ISecureUser/#qualifydeleteinstances">qualifyDeleteInstances</a></p>
+<h4 id="defined-in_12">Defined in<a class="headerlink" href="#defined-in_12" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L149">API/SecureUser.ts:149</a></p>
+<hr />
+<h3 id="qualifymodels">qualifyModels<a class="headerlink" href="#qualifymodels" title="Permanent link">#</a></h3>
+<p>▸ <strong>qualifyModels</strong>(<code>query</code>): <code>any</code></p>
+<p>alters the query adding conditions based on security rules</p>
+<h4 id="parameters_6">Parameters<a class="headerlink" href="#parameters_6" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>query</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_9">Returns<a class="headerlink" href="#returns_9" title="Permanent link">#</a></h4>
+<p><code>any</code></p>
+<p>query</p>
+<h4 id="implementation-of_11">Implementation of<a class="headerlink" href="#implementation-of_11" title="Permanent link">#</a></h4>
+<p><a href="../../interfaces/ISecureUser/">ISecureUser</a>.<a href="../../interfaces/ISecureUser/#qualifymodels">qualifyModels</a></p>
+<h4 id="defined-in_13">Defined in<a class="headerlink" href="#defined-in_13" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L160">API/SecureUser.ts:160</a></p>
+<hr />
+<h3 id="canmodifymodel">canModifyModel<a class="headerlink" href="#canmodifymodel" title="Permanent link">#</a></h3>
+<p>▸ <strong>canModifyModel</strong>(<code>name</code>): <code>boolean</code></p>
+<h4 id="parameters_7">Parameters<a class="headerlink" href="#parameters_7" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>name</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_10">Returns<a class="headerlink" href="#returns_10" title="Permanent link">#</a></h4>
+<p><code>boolean</code></p>
+<h4 id="implementation-of_12">Implementation of<a class="headerlink" href="#implementation-of_12" title="Permanent link">#</a></h4>
+<p><a href="../../interfaces/ISecureUser/">ISecureUser</a>.<a href="../../interfaces/ISecureUser/#canmodifymodel">canModifyModel</a></p>
+<h4 id="defined-in_14">Defined in<a class="headerlink" href="#defined-in_14" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L170">API/SecureUser.ts:170</a></p>
+<hr />
+<h3 id="candeletemodel">canDeleteModel<a class="headerlink" href="#candeletemodel" title="Permanent link">#</a></h3>
+<p>▸ <strong>canDeleteModel</strong>(<code>name</code>): <code>boolean</code></p>
+<h4 id="parameters_8">Parameters<a class="headerlink" href="#parameters_8" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>name</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_11">Returns<a class="headerlink" href="#returns_11" title="Permanent link">#</a></h4>
+<p><code>boolean</code></p>
+<h4 id="implementation-of_13">Implementation of<a class="headerlink" href="#implementation-of_13" title="Permanent link">#</a></h4>
+<p><a href="../../interfaces/ISecureUser/">ISecureUser</a>.<a href="../../interfaces/ISecureUser/#candeletemodel">canDeleteModel</a></p>
+<h4 id="defined-in_15">Defined in<a class="headerlink" href="#defined-in_15" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L178">API/SecureUser.ts:178</a></p>
+<hr />
+<h3 id="qualifyviewitems">qualifyViewItems<a class="headerlink" href="#qualifyviewitems" title="Permanent link">#</a></h3>
+<p>▸ <strong>qualifyViewItems</strong>(<code>query</code>): <code>Promise</code>\&lt;<code>void</code>&gt;</p>
+<p>alters the query adding conditions based on security rules</p>
+<h4 id="parameters_9">Parameters<a class="headerlink" href="#parameters_9" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>query</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_12">Returns<a class="headerlink" href="#returns_12" title="Permanent link">#</a></h4>
+<p><code>Promise</code>\&lt;<code>void</code>&gt;</p>
+<p>query</p>
+<h4 id="implementation-of_14">Implementation of<a class="headerlink" href="#implementation-of_14" title="Permanent link">#</a></h4>
+<p><a href="../../interfaces/ISecureUser/">ISecureUser</a>.<a href="../../interfaces/ISecureUser/#qualifyviewitems">qualifyViewItems</a></p>
+<h4 id="defined-in_16">Defined in<a class="headerlink" href="#defined-in_16" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L189">API/SecureUser.ts:189</a></p>
+<hr />
+<h3 id="caninvoke">canInvoke<a class="headerlink" href="#caninvoke" title="Permanent link">#</a></h3>
+<p>▸ <strong>canInvoke</strong>(<code>item</code>): <code>boolean</code></p>
+<h4 id="parameters_10">Parameters<a class="headerlink" href="#parameters_10" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>item</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_13">Returns<a class="headerlink" href="#returns_13" title="Permanent link">#</a></h4>
+<p><code>boolean</code></p>
+<h4 id="implementation-of_15">Implementation of<a class="headerlink" href="#implementation-of_15" title="Permanent link">#</a></h4>
+<p><a href="../../interfaces/ISecureUser/">ISecureUser</a>.<a href="../../interfaces/ISecureUser/#caninvoke">canInvoke</a></p>
+<h4 id="defined-in_17">Defined in<a class="headerlink" href="#defined-in_17" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L192">API/SecureUser.ts:192</a></p>
+<hr />
+<h3 id="canassign">canAssign<a class="headerlink" href="#canassign" title="Permanent link">#</a></h3>
+<p>▸ <strong>canAssign</strong>(<code>item</code>): <code>boolean</code></p>
+<h4 id="parameters_11">Parameters<a class="headerlink" href="#parameters_11" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>item</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_14">Returns<a class="headerlink" href="#returns_14" title="Permanent link">#</a></h4>
+<p><code>boolean</code></p>
+<h4 id="implementation-of_16">Implementation of<a class="headerlink" href="#implementation-of_16" title="Permanent link">#</a></h4>
+<p><a href="../../interfaces/ISecureUser/">ISecureUser</a>.<a href="../../interfaces/ISecureUser/#canassign">canAssign</a></p>
+<h4 id="defined-in_18">Defined in<a class="headerlink" href="#defined-in_18" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L201">API/SecureUser.ts:201</a></p>
+<hr />
+<h3 id="canstart">canStart<a class="headerlink" href="#canstart" title="Permanent link">#</a></h3>
+<p>▸ <strong>canStart</strong>(<code>name</code>, <code>startNodeId</code>, <code>user</code>): <code>Promise</code>\&lt;<code>void</code>&gt;</p>
+<h4 id="parameters_12">Parameters<a class="headerlink" href="#parameters_12" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>name</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>startNodeId</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>user</code></td>
+<td style="text-align: left;"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_15">Returns<a class="headerlink" href="#returns_15" title="Permanent link">#</a></h4>
+<p><code>Promise</code>\&lt;<code>void</code>&gt;</p>
+<h4 id="implementation-of_17">Implementation of<a class="headerlink" href="#implementation-of_17" title="Permanent link">#</a></h4>
+<p><a href="../../interfaces/ISecureUser/">ISecureUser</a>.<a href="../../interfaces/ISecureUser/#canstart">canStart</a></p>
+<h4 id="defined-in_19">Defined in<a class="headerlink" href="#defined-in_19" title="Permanent link">#</a></h4>
+<p><a href="https://github.com/bpmnServer/bpmn-server/blob/4a25965/src/API/SecureUser.ts#L228">API/SecureUser.ts:228</a></p>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

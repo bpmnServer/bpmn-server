@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Scripting - bpmn-server</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Scripting";
+        var mkdocs_page_input_path = "scripting.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> bpmn-server
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Overview</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../invokation/">Invoking Workflows</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../execution/">Execution</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="./">Scripting</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#model-expressionsscripts">Model Expressions/Scripts</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#model-expressions">Model Expressions</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#conditional-flow-examples">conditional flow examples:</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#timers-examples">timers examples:</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#inputoutput">Input/Output</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#assignment-properties">Assignment properties</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#model-listeners">Model Listeners</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#execution-listeners">Execution Listeners</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#task-listeners">Task Listeners</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#application-listener">Application Listener</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../security/">Security</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../data/">Data</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../examples/">Examples</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../api-summary/">API Summary</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../api/readme/">API</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../setup/">Setup</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../customization/">Application Integration</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">bpmn-server</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Scripting</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="scripting">Scripting<a class="headerlink" href="#scripting" title="Permanent link">#</a></h1>
+<!-- toc -->
+
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#model-expressionsscripts">Model Expressions/Scripts</a><ul>
+<li><a href="#model-expressions">Model Expressions</a></li>
+<li><a href="#model-listeners">Model Listeners</a></li>
+</ul>
+</li>
+<li><a href="#execution-listeners">Execution Listeners</a><ul>
+<li><a href="#task-listeners">Task Listeners</a></li>
+</ul>
+</li>
+<li><a href="#application-listener">Application Listener</a></li>
+<li><a href="#scripts-scope-and-variables">Scripts Scope and variables</a></li>
+<li><a href="#item-scope">Item Scope</a></li>
+<li><a href="#execution-scope">Execution Scope</a></li>
+<li><a href="#application-listener">Application Listener</a></li>
+</ul>
+<!-- tocstop -->
+
+<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">#</a></h2>
+<p>Scripting is using NodeJs <code>JavaScript</code> engine.
+scripts have full access to the running working full, as well as your application logic in:
+- AppDelegate class; as a general entry point
+- AppServices class; that responds to Service Tasks
+- AppUtils class; general purpose class to make your scripts more powerfull</p>
+<p>Scripting is used to add logic to your workflow and is achieved by:</p>
+<h2 id="model-expressionsscripts">Model Expressions/Scripts<a class="headerlink" href="#model-expressionsscripts" title="Permanent link">#</a></h2>
+<h3 id="model-expressions">Model Expressions<a class="headerlink" href="#model-expressions" title="Permanent link">#</a></h3>
+<h4 id="conditional-flow-examples">conditional flow examples:<a class="headerlink" href="#conditional-flow-examples" title="Permanent link">#</a></h4>
+<table>
+<tr><td>
+
+![flow-conditin](images/flow-condition.png)
+
+</td><td>
+
+
+
+<pre><code>    data.approval=='Approved'
+  or 
+    (data.approval=='Approved')
+    (this.data.v1 + this.data.v2)
+    (this.data.v1 == this.data.v2)
+    (this.data.v1 + this.data.v2)&gt;0
+    (this.data.v1 + this.data.v2)&lt;4
+
+</code></pre>
+
+
+</td></tr></table>
+
+<h4 id="timers-examples">timers examples:<a class="headerlink" href="#timers-examples" title="Permanent link">#</a></h4>
+<p>For duration timers</p>
+<pre><code>    $appServices.dateAdd(item.dateStarted,10,'days')
+</code></pre>
+<h4 id="inputoutput">Input/Output<a class="headerlink" href="#inputoutput" title="Permanent link">#</a></h4>
+<table>
+<tr><th>Type</th><th>Example Value</th></tr>
+<tr><td>Text/String</td><td>hello</td></tr>
+<tr><td>List</td><td>[ 'str1', 'str2', item.data.myExistingVar ]</td></tr>
+<tr><td>Map</td><td>\{ 'key1':  'val1', 'key2': 'val2' \}</td></tr>
+<tr><td>JavaScript</td><td>data.item.myExistingVar</td></tr>
+<tr><td>JavaScript</td><td>\{ 'key1': 'val1', 'key2': 'val2' , 'key3': [item.data.myExistingVar, 'hello'], 'key4': \{ 'ikey5': item.data.myExistingVar\}\}</td></tr>
+</table>
+
+<h4 id="assignment-properties">Assignment properties<a class="headerlink" href="#assignment-properties" title="Permanent link">#</a></h4>
+<p>User Task Assignment properties can be JavaScript expression, in this case they must start with '$'</p>
+<p>For example:</p>
+<p><code>assignee</code>  <code>$(this.data.requester)</code></p>
+<h3 id="model-listeners">Model Listeners<a class="headerlink" href="#model-listeners" title="Permanent link">#</a></h3>
+<p>Inside your model, you can attach Listeners to various nodes as <code>JavaScript Listeners</code></p>
+<p>These are similar to expressions above but can invoke async functions and can include more complete Javascript</p>
+<p>No syntax required for these scripts</p>
+<h4 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">#</a></h4>
+<pre><code>    let userManager=await appServices.retrieveManagerForUser(item.userName);
+
+    data.manager=userManager;
+
+    if (data.var1&gt;5) {
+        data.message='any text here';
+    }
+</code></pre>
+<h2 id="execution-listeners">Execution Listeners<a class="headerlink" href="#execution-listeners" title="Permanent link">#</a></h2>
+<p>These are for all node types and processes</p>
+<table>
+<tr><td>
+
+
+| event        |       Description        |
+|-------------  |-------------   |
+| start   |   is fired at the start of item execution|
+| end   |     is fired at the end of item execution|
+
+
+Also at the process level, start and end are triggered
+
+</td><td>
+
+![flow-conditin](images/execution%20listener.png)
+
+
+</td></tr></table>
+
+<h3 id="task-listeners">Task Listeners<a class="headerlink" href="#task-listeners" title="Permanent link">#</a></h3>
+<details>
+<summary>
+These are for User Tasks only
+</summary>
+
+| event        |       Description        |
+|-------------  |-------------   |
+| assign   |   invoked after `assign` command is issued |
+| validate  |invoked after `assign` or `invoke`  command is issued|
+
+`validate` scripts have a special handling, that they can stop execution by raising errors, to return errors to the execution:
+
+<pre><code>    // do some checking here
+    return {error:'Not a valid Input'};
+
+</code></pre>
+
+As a result execution will raise an exception and the command will fail.
+
+</details>
+
+<h2 id="application-listener">Application Listener<a class="headerlink" href="#application-listener" title="Permanent link">#</a></h2>
+<p>You can place a listener in your application delegate or your execution scripts class to listen to all events
+Example:</p>
+<pre><code>    const api = new BPMNAPI(new BPMNServer(configuration,new Logger({ toConsole: false}),{cron:false}));
+
+    let options= {option1:1234}; //,option2:SystemUser};
+
+    api.server.listener.on('all', async function ({ context, event, }) {
+        if (event=='process.restored')
+            {
+            context.options=options;
+            context.options['restored']=true;
+            }
+        if (event.startsWith('process.'))
+            console.log('---Event: --&gt;' + event , context.options);
+        else 
+            console.log('---Event: --&gt;'+event, 'item:',context.item.elementId,context.options );
+    });
+
+</code></pre>
+<h1 id="scripts-scope-and-variables">Scripts Scope and variables<a class="headerlink" href="#scripts-scope-and-variables" title="Permanent link">#</a></h1>
+<h2 id="item-scope">Item Scope<a class="headerlink" href="#item-scope" title="Permanent link">#</a></h2>
+<p>Items Expressions and Listeners have the following variables</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>item</td>
+<td>reference the current item</td>
+</tr>
+<tr>
+<td>this</td>
+<td>same as item</td>
+</tr>
+<tr>
+<td>data</td>
+<td>item data object</td>
+</tr>
+<tr>
+<td>input</td>
+<td>item input</td>
+</tr>
+<tr>
+<td>output</td>
+<td>item output</td>
+</tr>
+<tr>
+<td>appDelegate</td>
+<td>reference to appDelegate object</td>
+</tr>
+<tr>
+<td>appServices</td>
+<td>reference to appServices object</td>
+</tr>
+<tr>
+<td>appUtils</td>
+<td>reference to appUtils object</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Common Item properties:</li>
+</ul>
+<pre><code>    id;                 
+    options;
+    context;    //execution options
+    elementId;  // Model Node Id
+</code></pre>
+<ul>
+<li>Item methods </li>
+</ul>
+<pre><code>    log(msg)        // issues a log message into the logger
+    info(msg)       // issues an information message
+</code></pre>
+<ul>
+<li>Execution (context) properties</li>
+</ul>
+<pre><code>    instance: InstanceObject;
+    tokens = new Map();
+    definition: IDefinition;
+    process : Process;
+    item;
+    messageMatchingKey;
+    userName;
+    servicesProvider;
+    options;
+    operation;
+</code></pre>
+<h2 id="execution-scope">Execution Scope<a class="headerlink" href="#execution-scope" title="Permanent link">#</a></h2>
+<p>Expressions and Listeners have the following variables</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>this</td>
+<td>refers to execution object</td>
+</tr>
+<tr>
+<td>appDelegate</td>
+<td>reference to appDelegate object</td>
+</tr>
+<tr>
+<td>appServices</td>
+<td>reference to appServices object</td>
+</tr>
+<tr>
+<td>appUtils</td>
+<td>reference to appUtils object</td>
+</tr>
+</tbody>
+</table>
+<h2 id="application-listener_1">Application Listener<a class="headerlink" href="#application-listener_1" title="Permanent link">#</a></h2>
+<p>You can place a listener in your application delegate or your execution scripts class to listen to all events
+Example:</p>
+<pre><code>    const api = new BPMNAPI(new BPMNServer(configuration,new Logger({ toConsole: false}),{cron:false}));
+
+    let options= {option1:1234}; //,option2:SystemUser};
+
+    api.server.listener.on('all', async function ({ context, event, }) {
+        if (event=='process.restored')
+            {
+            context.options=options;
+            context.options['restored']=true;
+            }
+        if (event.startsWith('process.'))
+            console.log('---Event: --&gt;' + event , context.options);
+        else 
+            console.log('---Event: --&gt;'+event, 'item:',context.item.elementId,context.options );
+    });
+
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../execution/" class="btn btn-neutral float-left" title="Execution"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../security/" class="btn btn-neutral float-right" title="Security">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../execution/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../security/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
