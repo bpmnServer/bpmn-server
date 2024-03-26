@@ -1,4 +1,4 @@
-# Overview
+# bpmn-server Overview
 
 `bpmn-server` provides a Workflow component based on **Business Process Model and Notation** that can be easily integrated into your application.
 
@@ -265,11 +265,11 @@ Postman Collection to invoke bpmn-server API [is available here](https://documen
 - [Scripting](scripting.md) 
 - [Security](security.md)
 - [Data](data.md)
-  -  [Input/Output](data#input-output-data.md)
-  -  [Data Query](data#dataQuery.md) 
+  -  [Input/Output](data.md#input-output-data)
+  -  [Data Query](data.md#dataQuery) 
 - [Examples](examples.md)
 - [API Summary](api-summary.md)
-- [API](api) 
+- [API](api/readme.md) 
 - [Setup](setup.md) 
 - [Application Integration](customization.md) 
 

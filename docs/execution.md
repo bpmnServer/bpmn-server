@@ -12,7 +12,7 @@ Process Execution is performed based on BPMN 2.0 standards providing access to t
 
 See [more about scripts](scripting.md)
 
-The execution `engine` is availabe through an API [see API.engine](api/interfaces/IAPIEngine).
+The execution `engine` is availabe through an API [see API.engine](api/interfaces/IAPIEngine.md).
 ## Starting a Process
 For more details about scenarios of Invoking Execution Engine [Engine Invokation](invokation.md)
 

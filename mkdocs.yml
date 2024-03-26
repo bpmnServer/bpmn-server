@@ -1,6 +1,6 @@
 site_name:  bpmn-server
 docs_dir: docs
-site_dir: site
+site_dir: ../../site
 theme:
   name: readthedocs
 use_directory_urls: true
