@@ -18,9 +18,9 @@ Typically your application has multiple bpmn models, a model is represented in a
 
 Each Model is made of various elements, an `element` can be a `node` in the diagram (events/tasks/gateway) or a  `flow`
 
-Models are saved by `bpmn-server` and can be queried [see API.model](./docs/api/interfaces/IAPIModel.md)
+Models are saved by `bpmn-server` and can be queried [see API.model](https://bpmnserver.github.io/bpmn-server/api/interfaces/IAPIModel)
 
-`bpmn-server` support all bpmn 2.0 elements [see Modeling Support](./docs/examples.md)
+`bpmn-server` support all bpmn 2.0 elements [see Modeling Support](https://bpmnserver.github.io/bpmn-server/examples)
 
 ## Execution
 `bpmn-server` is primiraly an execution engine for bpmn models.
@@ -31,19 +31,19 @@ Execution is based on the model logic that is enhanced by various extensions tha
 
 During Execution, Model Listeners and Application Listeners are invoked.
 
-The execution `engine` is availabe through an API [see API.engine](./docs/api/interfaces/IAPIEngine.md).
+The execution `engine` is availabe through an API [see API.engine](https://bpmnserver.github.io/bpmn-server/api/interfaces/IAPIEngine).
 
-[For more details about Invoking Execution Engine](./docs/invokation.md)
+[For more details about Invoking Execution Engine](https://bpmnserver.github.io/bpmn-server/invokation)
 
-[For more details about Execution behaviour](./docs/execution.md)
+[For more details about Execution behaviour](https://bpmnserver.github.io/bpmn-server/execution)
 
 ## Datastore
 
 At various stages of execution, instance object with its parts is saved into a datastore (defaults to MongoDB)
 
-Instances and Items can be queried through an API [see API.data](./docs/api/interfaces/IAPIData.md)
+Instances and Items can be queried through an API [see API.data](https://bpmnserver.github.io/bpmn-server/api/interfaces/IAPIData)
 
-[For more details about data management](./docs/data.md)
+[For more details about data management](https://bpmnserver.github.io/bpmn-server/data)
 
 # User Management and Security
 
@@ -56,7 +56,7 @@ Instances and Items can be queried through an API [see API.data](./docs/api/inte
 
 `bpmn-web` Demo Application , provides a complete implementation of users management using Passport and MongoDB.
 
-[For more details about security](./docs/security.md)
+[For more details about security](https://bpmnserver.github.io/bpmn-server/security)
 
 # Demo Web Application
 
@@ -228,22 +228,22 @@ Enter Command, q to quit, or ? to list commands
 ```
 # Application Integration
 
-`bpmn-server` is intended to be integrated into your application [see](./docs/customization.md)
+`bpmn-server` is intended to be integrated into your application [see](https://bpmnserver.github.io/bpmn-server/customization)
 
 # Documentation
 
-- [Invoking Workflows](./docs/invokation.md) 
-- [Execution](./docs/execution.md) 
-- [Scripting](./docs/scripting.md) 
-- [Security](./docs/security.md)
-- [Data](./docs/data.md)
-  -  [Input/Output](./docs/data#input-output-data.md)
-  -  [Data Query](./docs/data#dataQuery.md) 
-- [Examples](./docs/examples.md)
-- [API Summary](./docs/api-summary.md)
-- [API](./docs/api) 
-- [Setup](./docs/setup.md) 
-- [Application Integration](./docs/customization.md) 
+- [Invoking Workflows](https://bpmnserver.github.io/bpmn-server/invokation) 
+- [Execution](https://bpmnserver.github.io/bpmn-server/execution) 
+- [Scripting](https://bpmnserver.github.io/bpmn-server/scripting) 
+- [Security](https://bpmnserver.github.io/bpmn-server/security)
+- [Data](https://bpmnserver.github.io/bpmn-server/data)
+  -  [Input/Output](https://bpmnserver.github.io/bpmn-server/data#input-output-data)
+  -  [Data Query](https://bpmnserver.github.io/bpmn-server/data#dataQuery) 
+- [Examples](https://bpmnserver.github.io/bpmn-server/examples)
+- [API Summary](https://bpmnserver.github.io/bpmn-server/api-summary)
+- [API](https://bpmnserver.github.io/bpmn-server/api) 
+- [Setup](https://bpmnserver.github.io/bpmn-server/setup) 
+- [Application Integration](https://bpmnserver.github.io/bpmn-server/customization) 
 
 # License
 
