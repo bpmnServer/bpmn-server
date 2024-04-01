@@ -7,6 +7,10 @@ import { NODE_ACTION } from "../../interfaces";
 
 
 class EscalationEventBehaviour extends Behaviour {
+    constructor(node,def) {
+        super(node,def);
+
+    }
     init() {
         this.node.subType = NODE_SUBTYPE.escalation;
 
@@ -19,7 +23,7 @@ class EscalationEventBehaviour extends Behaviour {
         else {  // throw a message
             item.log("Error Event is throwing an error");
 
-            item.token.processEscalation();
+            await item.token.processEscalation(this.escalationId);
             return NODE_ACTION.continue;
 
         }
@@ -27,8 +31,12 @@ class EscalationEventBehaviour extends Behaviour {
     }
 
     get escalationId() {
-        if (this.definition['escalatonRef'])
-            return this.definition['escalationRef']['id'];
+        let ref=this.definition['bpmn:escalationRef'];
+        if (ref)
+            {
+                return ref['escalationCode'];
+            }
+
     }
     describe() {
         if (this.node.isCatching) 

@@ -216,20 +216,24 @@ class Gateway extends Node {
                     // -------------------------------------------------------------------------------------------------
                     oldCurrentToken.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: ending current child token ' + oldCurrentToken.id);
                     oldCurrentToken.currentItem.status = ITEM_STATUS.end;
-                    //await convergingGatewayCurrentNode.end(item);
-                    //await oldCurrentToken.end();
-
-                    //if (oldCurrentToken.type==TOKEN_TYPE.Diverge)
-                        await oldCurrentToken.terminate();
+                    await oldCurrentToken.terminate();
                 
-
                     item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: all token terminate return NODE_ACTION.end');
                     return NODE_ACTION.end;
                 }
             }
+            else { // there are still pending tokens need to be cancelled or ended
+                result.waitingTokens.forEach(async t => {
+                    item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: ..converging ending token ' + t.id);
+                    item.token.log("..converging ending token #" + t.id);
+                    t.currentItem.status = ITEM_STATUS.end;
+                    await t.end();
+                    //await t.terminate();
+               });
+               return NODE_ACTION.continue;
         }
-        //else
-            return NODE_ACTION.continue;
+
+        }
     }
 
     

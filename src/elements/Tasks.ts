@@ -18,7 +18,13 @@ class ScriptTask extends Node {
         if (this.def.script) {
             item.token.log('executing script task');
             item.token.log(this.def.script);
-            await ScriptHandler.executeScript(item, this.def.script);
+            let ret=await ScriptHandler.executeScript(item, this.def.script);
+            if (ret && ret.escalation) {
+                await item.token.processEscalation(ret.escalation);
+            }
+            if (ret && ret.bpmnError) {
+                await item.token.processError(ret.bpmnError);
+            }
         }
         return NODE_ACTION.end;
     }
@@ -83,6 +89,14 @@ class ServiceTask extends Node {
         item.output = ret;
         item.log('service '+ this.serviceName+' completed-output:' + ret + item.output);
         // await item.node.setInput(item,ret);
+
+        if (ret && ret.escalation) {
+            await item.token.processEscalation(ret.escalation);
+        }
+        if (ret && ret.bpmnError) {
+            await item.token.processError(ret.bpmnError);
+        }
+
 
         if (item.context.action && item.context.action == NODE_ACTION.wait) {
 

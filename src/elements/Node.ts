@@ -74,6 +74,7 @@ class Node extends Element {
         }
         const ret1 = await item.token.execution.doItemEvent(item, event);
         rets.push(ret1);
+        item.token.log('Node('+this.name+'|'+this.id+').doEvent: executing script for event:' + event + ' ended');
         return rets;
 
     }
@@ -185,7 +186,7 @@ class Node extends Element {
         //  4   run  perform the work
         //  --------
         //  Save before performing the work
-        await item.token.execution.save();
+      //  await item.token.execution.save();
         item.token.log('Node('+this.name+'|'+this.id+').execute: execute run ...token:'+item.token.id);
         //item.token.log('..>run ' + this.id);
 
@@ -264,7 +265,7 @@ class Node extends Element {
                 let token = childrenTokens[t];
                 item.token.log('     childToken:'+token.id+' startnode:'+token.startNodeId+' status:'+token.currentItem.status);
                 if (token.startNodeId == boundaryEvent.id) {
-                    if (token.currentItem.status != ITEM_STATUS.end)
+                    if (token.firstItem.status != ITEM_STATUS.end)
                         await token.terminate();
                 }
             }

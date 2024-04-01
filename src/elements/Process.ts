@@ -6,6 +6,7 @@ import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, S
 import { Item } from '../engine/Item';
 import { Node, Definition } from '.';
 import { IExecution, NODE_SUBTYPE } from '../interfaces';
+import { exec } from 'child_process';
 
 
 class Process {
@@ -47,7 +48,9 @@ class Process {
         for (i = 0; i < events.length; i++) {
             const st = events[i];
             execution.log('..starting event start subporcess ' + st.id)
-            const newToken = await Token.startNewToken(TOKEN_TYPE.EventSubProcess,execution, st, null, parentToken, null, null);
+            if (parentToken && parentToken.id==0) 
+                parentToken=null;
+            const newToken = await Token.startNewToken(TOKEN_TYPE.EventSubProcess,execution, st, null, parentToken , null, null);
             this.subProcessEvents.push(newToken.currentItem);
         }
     }
@@ -55,14 +58,25 @@ class Process {
      * Notify process that it ended
      * */
     async end(execution:IExecution) {
+        if (execution['ending'])
+            return;
+        execution['ending']=true;
         this.doEvent(execution, 'end');
-        /* removed; already done by token
         let i;
+        /* does not work because subProcessEvents is not saved 
         for (i = 0; i < this.subProcessEvents.length;i++) {
             const event = this.subProcessEvents[i];
             await event.token.terminate();
+        } */
+        let tks=[];
+        execution.tokens.forEach(tk=>{
+            if (tk.type==TOKEN_TYPE.EventSubProcess && tk.parentToken == null)
+                tks.push(tk);
+        });
+        for(i=0;i<tks.length;i++) {
+            await tks[i].terminate();
         }
-        */
+        delete execution['ending'];
     }
     public getStartNode(userInvokable = false) {
         return this.getStartNodes(userInvokable)[0];

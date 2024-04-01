@@ -18,15 +18,18 @@ class ErrorEventBehaviour extends Behaviour {
         }
         else {  // throw a message
             item.log("Error Event is throwing an error");
-            
+            await item.token.processError(this.errorId);
             return NODE_ACTION.error;
         }
 
     }
 
     get errorId() {
-        if (this.definition['errorRef'])
-            return this.definition['errorRef']['id'];
+        let ref=this.definition['bpmn:errorRef'] || this.definition['errorRef'];
+        if (ref)
+            {
+                return ref['errorCode'];
+            }
     }
     describe() {
         if (this.node.isCatching) 

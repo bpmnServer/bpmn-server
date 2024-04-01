@@ -12,6 +12,16 @@ and here
 
 ### Changed
 -->
+
+## Release 2.1.10  -- 2024-03
+- Now support escalation and error code in defining the catchEvent
+- Added return { bpmnError:'code'}
+- Added return {  escalation:'code'}
+- Added process.exception event
+- Added data sanitanizer 
+- Fixed bug with gateway, added test scenario
+- Fixed bug with loop and subprocess, loop and subprocess have own item now 
+- Moved docs to mkDocs host at github.io
 ## Release 2.1.6  -- 2024-03
 ### Added
 - .env.ENABLE_PROFILER will display MONGODB timing on console

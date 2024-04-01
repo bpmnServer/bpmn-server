@@ -242,7 +242,8 @@ references:
                 var eventDef;
                 if (ref.element.id) {
                     eventDef = definition.elementsById[ref.element.id];
-                    eventDef[ref.property] = ref.id;
+                    let refDef=definition.elementsById[ref.id];
+                    eventDef[ref.property] = refDef;
                 }
                 else
                     eventDef = definition.elementsById[ref.id];

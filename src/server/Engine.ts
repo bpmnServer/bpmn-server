@@ -1,7 +1,7 @@
 
 import { Execution } from '../';
 import { ServerComponent } from '../server/ServerComponent';
-import { IEngine} from "../interfaces";
+import { EXECUTION_EVENT, IEngine} from "../interfaces";
 
 import { DataStore } from '../datastore';
 
@@ -43,24 +43,24 @@ class Engine extends ServerComponent implements IEngine{
 			await this.lock(execution.id);
 			execution.isLocked = true;
 
-			execution.worker = execution.execute(startNodeId, this.sanitizeData(data), options);
 
 			if (options['noWait'] == true) {
-					execution.worker.then(obj=>{ 
+				execution.worker = execution.execute(startNodeId, this.sanitizeData(data), options);
+				execution.worker.then(obj=>{ 
 						this.logger.log('after worker is done releasing ..'+execution.instance.id);
 						this.release(execution);
 						});
 				return execution;
 			}
 			else {
-				const waiter = await execution.worker;
+				const waiter = await execution.execute(startNodeId, this.sanitizeData(data), options);
 				await this.release(execution);
 				this.logger.log(`.engine.start ended for ${name}`);
 				return execution;
 			}
 		}
 		catch(exc) {
-			return this.logger.error(exc);
+			return await this.exception(exc,execution); 
 		}
 		finally {
 			if (execution && execution.isLocked)
@@ -88,7 +88,7 @@ class Engine extends ServerComponent implements IEngine{
 			return execution;
 		}
 		catch (exc) {
-			return this.logger.error(exc);
+			return await this.exception(exc,execution); 
 		}
 		finally {
 			if (execution && execution.isLocked)
@@ -229,7 +229,7 @@ class Engine extends ServerComponent implements IEngine{
 			return execution;
 		}
 		catch (exc) {
-			return this.logger.error(exc);
+			return await this.exception(exc,execution); 
 
 		}
 		finally {
@@ -308,7 +308,7 @@ class Engine extends ServerComponent implements IEngine{
 			}
 			}
 		catch (exc) {
-			return this.logger.error(exc);
+			return await this.exception(exc,execution); 
 		}
 		finally {
 			if (execution && execution.isLocked)
@@ -341,7 +341,7 @@ class Engine extends ServerComponent implements IEngine{
 			return execution;
 		}
 		catch (exc) {
-			return this.logger.error(exc);
+			return await this.exception(exc,execution); 
 
 		}
 		finally {
@@ -383,7 +383,7 @@ class Engine extends ServerComponent implements IEngine{
 			return execution;
 		}
 		catch (exc) {
-			return this.logger.error(exc);
+			return await this.exception(exc,execution); 
 
 		}
 		finally {
@@ -496,8 +496,15 @@ class Engine extends ServerComponent implements IEngine{
 		}
 		return instances;
 	}
+	private async exception(exc,execution) {
 
-	sanitizeData(data) {
+		if (execution)
+			await execution.doExecutionEvent(execution,EXECUTION_EVENT.process_exception);
+
+		return this.logger.error(exc);
+
+	}
+	private sanitizeData(data) {
 		return JSON.parse(JSON.stringify(data));
 	}
 }

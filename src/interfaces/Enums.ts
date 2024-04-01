@@ -58,6 +58,7 @@ enum EXECUTION_EVENT {
     process_wait = 'process.wait',
     process_end = 'process.end',
     process_terminated = 'process.terminated',
+    process_exception = 'process.exception',
     token_start = 'token.start',
     token_wait = 'token.wait',
     token_end = 'token.end',

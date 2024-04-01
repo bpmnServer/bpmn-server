@@ -111,7 +111,7 @@ Scripts and Services can impact workflow in the following manners:
 - Service Tasks and Script Tasks, receive input and return output
 - Scripts and Service Task can raise Errors and Exceptions
 
-# Raisng Errors and Exceptions
+# Raisng Errors , Escalations and Exceptions
 ## Validation Scripts
 Validation Scripts can return an error as such:
 ```
@@ -124,7 +124,12 @@ As a result execution will raise an exception and the command will fail.
 
 All Scripts and Services can Raise `BPMN Errors`, to be handled by the appropriate Error node
 ```
-    execution.throwError('error code');
+    return {bpmnError:'error code'};
+
+```
+All Scripts and Services can Raise `BPMN Escalation`, to be handled by the appropriate Catch Escalation Event
+```
+    return {escalation:'escalation code'};
 
 ```
 The current item status will be `error` and execution will continue at the Error node.

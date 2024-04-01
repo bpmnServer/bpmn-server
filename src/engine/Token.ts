@@ -3,7 +3,7 @@ import { Logger } from '../common/Logger';
 const fs = require('fs');
 
 import { Execution } from './Execution';
-import { SubProcess ,  LoopBehaviour , Element, Node, Flow } from '../elements/'
+import { SubProcess ,  LoopBehaviour , Element, Node, Flow, Behaviour_names } from '../elements/'
 import { EXECUTION_EVENT , NODE_ACTION , FLOW_ACTION, TOKEN_STATUS, EXECUTION_STATUS,  ITEM_STATUS, INode, NODE_SUBTYPE} from '../';
 import { EventEmitter } from 'events';
 import { Loop } from './Loop';
@@ -255,7 +255,9 @@ class Token implements IToken {
 
     }
     /**
-     * this is the primary exectuion method for a token
+     * this is the primary exectuion method for a token, it executes from current node till:
+     *      a node hits a wait
+     * 
      * Pre-Conditions:
      *      currentNode is set 
      *      status!= end
@@ -268,6 +270,8 @@ class Token implements IToken {
             return;
             
         }
+        this.status=TOKEN_STATUS.running;
+
         let ret;
         const item = new Item(this.currentNode, this);
         if (input)
@@ -305,7 +309,7 @@ class Token implements IToken {
 
         }
         else if (ret == NODE_ACTION.error) {
-            await this.processError();
+            // await this.processError(); done by the event with code
         }
         else if (ret == NODE_ACTION.abort) {
             this.execution.terminate();
@@ -322,24 +326,9 @@ class Token implements IToken {
         return result;
 
     }
-    async processError() {
+    async processError(errorCode=null) {
 
-        let errorHandlerToken = null;
-        // two types of error handlers
-        //  1.  eventSubProcess 
-        //  2.  boundaryEvents  
-        let contextItem: Item = this.currentItem;
-        let contextToken: Token = this;
-
-        while (contextToken && errorHandlerToken == null) {
-            contextToken.childrenTokens.forEach(ct => {
-                if ((ct.type == TOKEN_TYPE.EventSubProcess || ct.type == TOKEN_TYPE.BoundaryEvent)
-                    && ct.currentNode.subType == NODE_SUBTYPE.error) {
-                    errorHandlerToken = ct;
-                }
-            });
-            contextToken = contextToken.parentToken;
-        }
+        let errorHandlerToken = this.getScopeCatchEvent('error',errorCode);
         if (errorHandlerToken) {
             await errorHandlerToken.signal(null);
             this.currentItem.status = ITEM_STATUS.end;
@@ -347,29 +336,80 @@ class Token implements IToken {
         }
         else {
             this.log("Aborting due to error")
-            this.execution.terminate();
+            await this.execution.terminate();
             return;
         }
 
     }
-    async processEscalation () {
-
+    getScopeCatchEvent(type:'error'|'escalation',code) {
+        
+        let contextItem: Item = this.currentItem;
+        let contextToken: Token = this;
+        let handlingEventTokens=[];
         let errorHandlerToken = null;
+        let tokens=[];
+        try {
+
+        
         // two types of error handlers
         //  1.  eventSubProcess 
         //  2.  boundaryEvents  
-        let contextItem: Item = this.currentItem;
-        let contextToken: Token = this;
-
+        let bhName=Behaviour_names.ErrorEventDefinition;
+        let propertyName='errorId';
+        let nodeSubType=NODE_SUBTYPE.error;
+        if (type=='escalation')
+        {
+            bhName=Behaviour_names.EscalationEventDefinition;
+            propertyName='escalationId';
+            nodeSubType=NODE_SUBTYPE.escalation
+        }
         while (contextToken && errorHandlerToken == null) {
             contextToken.childrenTokens.forEach(ct => {
                 if ((ct.type == TOKEN_TYPE.EventSubProcess || ct.type == TOKEN_TYPE.BoundaryEvent)
-                    && ct.currentNode.subType == NODE_SUBTYPE.escalation) {
-                    errorHandlerToken = ct;
+                    && ct.currentNode.subType == nodeSubType) {
+
+                    tokens.push(ct);
                 }
             });
             contextToken = contextToken.parentToken;
         }
+        this.execution.tokens.forEach(ct=>{
+            if (ct.type == TOKEN_TYPE.EventSubProcess)
+                tokens.push(ct);
+        });
+        let handlingCodeEventToken=null;
+        let handlingAllEventToken=null;
+
+
+        tokens.forEach(ct=>{
+            let escl=ct.currentNode.getBehaviour(bhName);
+            if (escl)
+            {
+                let cd=escl[propertyName];
+
+                if (cd==code && handlingCodeEventToken==null)
+                    handlingCodeEventToken=ct;
+                else if (!cd && handlingAllEventToken==null)
+                    handlingAllEventToken=ct;
+    
+            }
+
+        });
+
+        if (handlingCodeEventToken)
+            return handlingCodeEventToken;
+        else
+            return handlingAllEventToken;
+    }
+    catch (exc) {
+        console.log(exc);
+        return null;
+    }
+
+    }
+    async processEscalation (escalationCode) {
+
+        let errorHandlerToken = this.getScopeCatchEvent('escalation',escalationCode);
         if (errorHandlerToken) {
             await errorHandlerToken.signal(null);
         }
@@ -421,6 +461,7 @@ class Token implements IToken {
         this.log('Token('+this.id +').signal: invoking '+this.currentNode.id+' '+this.currentNode.type+' with data='+JSON.stringify(data));
 
         await this.currentNode.setInput(item, data);
+        
         if (restart) { // case when in restart mode  
             if (item.status==ITEM_STATUS.wait)
                 return;

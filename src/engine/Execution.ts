@@ -81,7 +81,12 @@ class Execution extends ServerComponent implements IExecution {
     }
     public tokenEnded(token: Token) {
         let active = 0;
-        this.tokens.forEach(t => { if (t.status != TOKEN_STATUS.end && t.status != TOKEN_STATUS.terminated) active++ });
+        this.tokens.forEach(t => { 
+            if (t.status != TOKEN_STATUS.end 
+                && t.status != TOKEN_STATUS.terminated
+                && t.type !==TOKEN_TYPE.EventSubProcess) 
+                active++ 
+        });
 
         if (active == 0) {
             this.end();
@@ -95,6 +100,7 @@ class Execution extends ServerComponent implements IExecution {
         if (this.instance.parentItemId) {
             CallActivity.executionEnded(this);
         }
+        await this.process.end(this);
         await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_end);
     }
     /**
@@ -224,6 +230,10 @@ class Execution extends ServerComponent implements IExecution {
 
         this.servicesProvider = await this.appDelegate.getServicesProvider();        
 
+        // get process
+        let firstToken=this.tokens.get(0);
+        this.process=firstToken.path[0].node.process;
+        //
         this.appDelegate.executionStarted(this);
         await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoke);
 
@@ -236,7 +246,9 @@ class Execution extends ServerComponent implements IExecution {
 
         if (token) {
             this.log('Execution('+this.name+').signal: .. launching a token signal');
+
             let result=await token.signal(inputData,options);
+            
             this.log('Execution('+this.name+').signalItem: .. signal token is done');
         }   
              
@@ -399,9 +411,9 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
 
         return this;
     }
-
     async save() {
         // save here :
+ 
         this.log(`..Saving instance ${this.instance.id}`+JSON.stringify(this.instance.data));
         
         const state = this.getState();
