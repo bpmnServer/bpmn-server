@@ -216,7 +216,7 @@ Error Message: Error: Validation failed with error:Not a valid value
 - Change workflow Data
 - Service Tasks and Script Tasks, receive input and return output
 - Scripts and Service Task can raise Errors and Exceptions</p>
-<h1 id="raisng-errors-and-exceptions">Raisng Errors and Exceptions<a class="headerlink" href="#raisng-errors-and-exceptions" title="Permanent link">#</a></h1>
+<h1 id="raisng-errors-escalations-and-exceptions">Raisng Errors , Escalations and Exceptions<a class="headerlink" href="#raisng-errors-escalations-and-exceptions" title="Permanent link">#</a></h1>
 <h2 id="validation-scripts">Validation Scripts<a class="headerlink" href="#validation-scripts" title="Permanent link">#</a></h2>
 <p>Validation Scripts can return an error as such:</p>
 <pre><code>    return {error:'Invalid input'};
@@ -224,7 +224,11 @@ Error Message: Error: Validation failed with error:Not a valid value
 <p>As a result execution will raise an exception and the command will fail.</p>
 <h2 id="bpmn-errors">BPMN Errors<a class="headerlink" href="#bpmn-errors" title="Permanent link">#</a></h2>
 <p>All Scripts and Services can Raise <code>BPMN Errors</code>, to be handled by the appropriate Error node</p>
-<pre><code>    execution.throwError('error code');
+<pre><code>    return {bpmnError:'error code'};
+
+</code></pre>
+<p>All Scripts and Services can Raise <code>BPMN Escalation</code>, to be handled by the appropriate Catch Escalation Event</p>
+<pre><code>    return {escalation:'escalation code'};
 
 </code></pre>
 <p>The current item status will be <code>error</code> and execution will continue at the Error node.</p>
