@@ -1,4 +1,4 @@
-# Boundary Event:
+# Boundary Events:
 
 - Boundary Events start with the owner Activity
 - Are cancelled when the the owner activity is completed
@@ -139,3 +139,4 @@ function getItem(id)
 {
     return response.items.filter(item => { return item.elementId == id; })[0];
 }
+```

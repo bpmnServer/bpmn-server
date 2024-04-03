@@ -1,7 +1,5 @@
 # Setting up your Application
 
-## Adding methods to AppServices
+## Install bpmn-web  and bpmn-server
 
-## Adding a Service Task
-
-## Execute the Model
+## Initialize data

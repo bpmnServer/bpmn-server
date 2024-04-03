@@ -73,9 +73,7 @@ instance: {
 ![MongDB Collection](images/mongo-instance-sample.png)
 
 
-
-
-# instance.data Scope
+### instance.data Scope
 
 The entire execution will have one data scope object, shared among all nodes, except the following will have own item part of the data object
 
@@ -89,8 +87,7 @@ However, for SubProcess and Loop elements a seperate scope
 ![Image description](images/Data_scripts_services_model.PNG)
 ![Image description](images/Data_scripts_services.PNG)
 
-# Data Query
-
+## Data Query
 
 The syntax follows MongoDB standards.
 
@@ -100,7 +97,7 @@ the query syntax must be
 - data attributes are qualified by `data.\<attributeName\>`
 
 
-## Item Query
+### Item Query
 
 | example                                                        | will retrieve                              |
 | -------------------------------------------------------------- | ------------------------------------------ |
@@ -112,8 +109,8 @@ the query syntax must be
 | `{"items.status": "wait" , "items.elementId": "task_Buy" }`    | find all items that has "wait" status      |
 
 ```ts
-query = { 'items.id': item.id };
-items = await api.data.findItems(query);
+
+items = await api.data.findItems({ "items.id": item.id  , "items.status": "wait"});
 ```
 `findItems` performs the following 
 - Adds security conditions
@@ -131,7 +128,7 @@ As an example if the api calls
  -  returns on instance with several items
  -  it filters the items and returns only the 1 item as required
 
-## Instance Query
+### Instance Query
 
 Instance Queries are similar to Items Query but return entire Instances with all the items
 
@@ -151,8 +148,7 @@ instances = await api.data.findInstances({ 'items.id': item.id });
 instances = await api.data.findInstances({ 'data.caseId': 3030 });
 ```
 
-
-# Input-Output Data
+## Input-Output Data
 
 Input and output is used in the following scenarios:
 
@@ -163,7 +159,7 @@ Input and output is used in the following scenarios:
 - Catch Message/Signal (output)
 - User Task (input)
 
-## Input/Output using Scripts
+### Input/Output using Scripts
 
 | variable        | description                                                         |
 | --------------- | ------------------------------------------------------------------- |
@@ -193,7 +189,7 @@ Input and output is used in the following scenarios:
 
 ```
 
-## Input/Output using Camunda Extension of Input/Output Parameter
+### Input/Output using Camunda Extension of Input/Output Parameter
 
 ```xml
     <bpmn2:serviceTask id="Task_0xh2iwa" name="service1" implementation="service1">

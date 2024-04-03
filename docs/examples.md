@@ -1,29 +1,5 @@
 # Features by Examples
 
-<!-- toc -->
-
-- [Service Task](#service-task)
-- [Script Task](#script-task)
-- [Conditional Flow](#conditional-flow)
-- [Form Input Fields](#form-input-fields)
-- [Multiple Start Event](#multiple-start-event)
-- [Business Rule Task](#business-rule-task)
-- [Script Extensions](#script-extensions)
-- [Timer Event](#timer-event)
-- [Multi-instances Tasks](#multi-instances-tasks)
-- [Call Process](#call-process)
-- [Throwing and Cathcing Messages](#throwing-and-cathcing-messages)
-  - [1 Throw a message with data](#1-throw-a-message-with-data)
-  - [2 Catch a message with data](#2-catch-a-message-with-data)
-  - [3 Throw a message with data and a Key](#3-throw-a-message-with-data-and-a-key)
-- [Input and Output Data Handling](#input-and-output-data-handling)
-- [Gateway](#gatewayexamplesgatewaymd)
-- [Event Based Gateway](#event-based-gateway-examplesgatewaymd)
-- [Boundary Events](#boundary-eventsexamplesboundary-eventsmd)
-- [UserTask Assignment](#usertask-assignmentuserassignmentmd)
-
-<!-- tocstop -->
-
 ## Service Task
 In Process definition (.bpmn file), use `implementation` attribute to define name of JavaScript/TypeScript Method to perform the Task:
 
@@ -290,8 +266,3 @@ Howerver, the challenge here is that make sure the message is sent to the specif
 ## Input and Output Data Handling
 
 [this for details](data.md#Input-Output_Data)
-
-## [Gateway](./examples/gateway.md)
-## [Event Based Gateway ](./examples/gateway.md)
-## [Boundary Events](./examples/boundary-events.md)
-## [UserTask Assignment](security.md)

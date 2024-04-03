@@ -76,7 +76,7 @@ Instances and Items can be queried through an API [see API.data](api/interfaces/
 
 [For more details about security](security.md)
 
-# Demo Web Application
+## Demo Web Application
 
 A Demo Web application `bpmn-web` provides full front-end along with security features to demonstrate and test the capabilities of `bpmn-server`.
 
@@ -96,12 +96,13 @@ The web app provides:
 ![](images/instance-details2.png)
 
 
-# Full Demo Web Application
+## Full Demo Web Application
 
 We Provide a full demo @ https://bpmn.omniworkflow.com
 
-# Installation
+## Installation
 
+### Local Install
 This package requires Node.js and an access to MongoDB ()
 if you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas) or can be [installed locally](https://www.mongodb.com/docs/manual/installation/)
 
@@ -152,7 +153,7 @@ App is running at http://localhost:3000 in development mode
 
 Use your browser to view the bpmn-server running
 
-## Docker installation
+### Docker installation
 
 <details>
 
@@ -162,9 +163,9 @@ To install MongoDB, bpmn-server and bpmn-web in on a docker container
 
 </summary>
 
-### 1. Create a folder , cd to folder
+#### 1. Create a folder , cd to folder
 
-### 2. Create a `docker-compose.yml` as follows:
+#### 2. Create a `docker-compose.yml` as follows:
 
 ```
 version: "3.7"
@@ -203,7 +204,7 @@ volumes:
 
 ```
 
-### 3. start the container `docker compose up -d`
+#### 3. start the container `docker compose up -d`
 
 </details>
 
@@ -243,22 +244,21 @@ Enter Command, q to quit, or ? to list commands
 ```
 
 </details>
+### Remote Client Install
 
+[This is a light-weight package to allow remote access to bpmn-server](./bpmn-client.md)
 
 ### Postman 
 
 Postman Collection to invoke bpmn-server API [is available here](https://documenter.getpostman.com/view/11781516/Szzn7wsm)
 
-## to update to latest release
+### to update to latest release
 
 ```sh
 > npm update bpmn-server
 ```
-# Application Integration
 
-`bpmn-server` is intended to be integrated into your application [see](customization.md)
-
-# Documentation
+## Documentation
 
 - [Invoking Workflows](invokation.md) 
 - [Execution](execution.md) 
