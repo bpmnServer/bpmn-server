@@ -359,6 +359,11 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
                 });
 
                 if (node) {
+                    if (restart)
+                    {
+                        this.instance.status=EXECUTION_STATUS.running;
+                        this.instance.endedAt=null;
+                    }
                     let token = await Token.startNewToken(TOKEN_TYPE.Primary,this, node, null, null, null,null, inputData);
                 }
                 else { //Error 
