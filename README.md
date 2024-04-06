@@ -18,9 +18,9 @@ Typically your application has multiple bpmn models, a model is represented in a
 
 Each Model is made of various elements, an `element` can be a `node` in the diagram (events/tasks/gateway) or a  `flow`
 
-Models are saved by `bpmn-server` and can be queried [see API.model](https://bpmnserver.github.io/bpmn-server/api/interfaces/IAPIModel)
+Models are saved by `bpmn-server` and can be queried [see API.model](https://bpmnserver.github.io/docs/api/interfaces/IAPIModel)
 
-`bpmn-server` support all bpmn 2.0 elements [see Modeling Support](https://bpmnserver.github.io/bpmn-server/examples)
+`bpmn-server` support all bpmn 2.0 elements [see Modeling Support](https://bpmnserver.github.io/docs/examples)
 
 ## Execution
 `bpmn-server` is primiraly an execution engine for bpmn models.
@@ -31,19 +31,19 @@ Execution is based on the model logic that is enhanced by various extensions tha
 
 During Execution, Model Listeners and Application Listeners are invoked.
 
-The execution `engine` is availabe through an API [see API.engine](https://bpmnserver.github.io/bpmn-server/api/interfaces/IAPIEngine).
+The execution `engine` is availabe through an API [see API.engine](https://bpmnserver.github.io/docs/api/interfaces/IAPIEngine).
 
-[For more details about Invoking Execution Engine](https://bpmnserver.github.io/bpmn-server/invokation)
+[For more details about Invoking Execution Engine](https://bpmnserver.github.io/docs/invokation)
 
-[For more details about Execution behaviour](https://bpmnserver.github.io/bpmn-server/execution)
+[For more details about Execution behaviour](https://bpmnserver.github.io/docs/execution)
 
 ## Datastore
 
 At various stages of execution, instance object with its parts is saved into a datastore (defaults to MongoDB)
 
-Instances and Items can be queried through an API [see API.data](https://bpmnserver.github.io/bpmn-server/api/interfaces/IAPIData)
+Instances and Items can be queried through an API [see API.data](https://bpmnserver.github.io/docs/api/interfaces/IAPIData)
 
-[For more details about data management](https://bpmnserver.github.io/bpmn-server/data)
+[For more details about data management](https://bpmnserver.github.io/docs/data)
 
 # User Management and Security
 
@@ -56,7 +56,7 @@ Instances and Items can be queried through an API [see API.data](https://bpmnser
 
 `bpmn-web` Demo Application , provides a complete implementation of users management using Passport and MongoDB.
 
-[For more details about security](https://bpmnserver.github.io/bpmn-server/security)
+[For more details about security](https://bpmnserver.github.io/docs/security)
 
 # Demo Web Application
 
@@ -228,22 +228,22 @@ Enter Command, q to quit, or ? to list commands
 ```
 # Application Integration
 
-`bpmn-server` is intended to be integrated into your application [see](https://bpmnserver.github.io/bpmn-server/customization)
+`bpmn-server` is intended to be integrated into your application [see](https://bpmnserver.github.io/docs/customization)
 
 # Documentation
 
-- [Invoking Workflows](https://bpmnserver.github.io/bpmn-server/invokation) 
-- [Execution](https://bpmnserver.github.io/bpmn-server/execution) 
-- [Scripting](https://bpmnserver.github.io/bpmn-server/scripting) 
-- [Security](https://bpmnserver.github.io/bpmn-server/security)
-- [Data](https://bpmnserver.github.io/bpmn-server/data)
-  -  [Input/Output](https://bpmnserver.github.io/bpmn-server/data#input-output-data)
-  -  [Data Query](https://bpmnserver.github.io/bpmn-server/data#dataQuery) 
-- [Examples](https://bpmnserver.github.io/bpmn-server/examples)
-- [API Summary](https://bpmnserver.github.io/bpmn-server/api-summary)
-- [API](https://bpmnserver.github.io/bpmn-server/api) 
-- [Setup](https://bpmnserver.github.io/bpmn-server/setup) 
-- [Application Integration](https://bpmnserver.github.io/bpmn-server/customization) 
+- [Invoking Workflows](https://bpmnserver.github.io/docs/invokation) 
+- [Execution](https://bpmnserver.github.io/docs/execution) 
+- [Scripting](https://bpmnserver.github.io/docs/scripting) 
+- [Security](https://bpmnserver.github.io/docs/security)
+- [Data](https://bpmnserver.github.io/docs/data)
+  -  [Input/Output](https://bpmnserver.github.io/docs/data#input-output-data)
+  -  [Data Query](https://bpmnserver.github.io/docs/data#dataQuery) 
+- [Examples](https://bpmnserver.github.io/docs/examples)
+- [API Summary](https://bpmnserver.github.io/docs/api-summary)
+- [API](https://bpmnserver.github.io/docs/api) 
+- [Setup](https://bpmnserver.github.io/docs/setup) 
+- [Application Integration](https://bpmnserver.github.io/docs/customization) 
 
 # License
 
