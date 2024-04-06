@@ -6,13 +6,7 @@
   "scripts": {
     "build": "tsc --build",
     "clean": "rimraf dist",
-    "toc": "node src/scripts/generate-toc docs/examples.md,docs/scripting.md,docs/data.md",
-    "docs:build": "mkdocs build",
-    "docs:start": "mkdocs serve",
-    "docs:deploy": "mkdocs gh-deploy",
-    "docs:generate": "npm run _docs:generate:copy && npm run _docs:generate:api",
-    "_docs:generate:api": "rimraf docs/api && typedoc --options typedoc.json",
-    "_docs:generate:copy": "ts-node src/scripts/copy-readme.ts"
+    "docs:api": "rimraf ../docs/docs/api && typedoc --options typedoc.json"
   },
   "repository": {
     "type": "git",
