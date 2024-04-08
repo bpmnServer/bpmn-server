@@ -222,7 +222,7 @@ class Token implements IToken {
         });
     }
     getSubProcessToken() : Token {
-        if (this.type==TOKEN_TYPE.SubProcess)
+        if (this.type==TOKEN_TYPE.SubProcess || this.type==TOKEN_TYPE.AdHoc)
             return this;
         else if (this.parentToken == null)
             return null;
@@ -505,7 +505,7 @@ class Token implements IToken {
         this.execution.tokenEnded(this);
 
         // check if subprocess then continue parent
-        if (this.type==TOKEN_TYPE.SubProcess) {
+        if (this.type==TOKEN_TYPE.SubProcess || this.type==TOKEN_TYPE.AdHoc) {
             this.currentItem.status= ITEM_STATUS.end;
             this.log('..subprocess token has ended');
             await this.parentToken.signal(null);
@@ -600,7 +600,7 @@ class Token implements IToken {
         await Promise.all(promises);
         this.log('Token('+this.id +').goNext(): is done currentNodeId='+this.currentNode.id);
     }
-    log(msg) {
+    log(...msg) {
         this.execution.log(msg);
     }
     info(msg) {

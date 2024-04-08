@@ -26,7 +26,7 @@ class Item implements IItem {
 
     
     status: ITEM_STATUS;
-    log(msg) { return this.token.log(msg); }
+    log(...msg) { return this.token.log(msg); }
     get data() { return this.token.data; }
     set data(val) { this.token.appendData(val,this); }
     setData(val) { this.token.appendData(val,this); }

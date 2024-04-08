@@ -68,6 +68,14 @@ class Logger implements ILogger {
                 var cls = val.constructor.name;
                 if (cls === 'String')
                     out += val;
+                else if (cls === 'Array' && val.length==1)
+                    {
+                        if (val[0].constructor.name==='Array')
+                            out += JSON.stringify(val[0]);
+                        else 
+                            out +=val[0];
+
+                    }
                 else
                     out += cls + " " + JSON.stringify(val, null, 2);
             }
