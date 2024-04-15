@@ -22,6 +22,7 @@ class Loop {
         this.node = node;
         this.ownerToken = token;
 
+        this.id = token.execution.getNewId('loop');
         if (dataObject) {
             this.id = dataObject.id;
             this.items = dataObject.items;
@@ -30,7 +31,6 @@ class Loop {
             this.definition = node.getBehaviour(Behaviour_names.LoopCharacteristics);
         }
         else {
-            this.id = token.execution.getNewId('loop');
             this.definition = node.getBehaviour(Behaviour_names.LoopCharacteristics);
             this.completed = 0;
             this.sequence = 0;
@@ -122,8 +122,11 @@ class Loop {
             }
             else { // parallel 
                 // launch as many tokens as needed
-                if (token.loop) // already assigned a loop
-                    return true; // go ahead and execute
+                if (token.loop && token.loop.node.id == token.currentNode.id) // already assigned a loop
+                    {
+                        return true; // go ahead and execute
+                    }
+
 //                token.currentNode.type=null;
                 let loop = new Loop(token.currentNode, token);
                 let seq;

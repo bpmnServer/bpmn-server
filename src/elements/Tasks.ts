@@ -326,8 +326,8 @@ class AdHocSubProcess extends Node {
         return NODE_ACTION.wait;
     
     }
-    async end(item) {
-        return;
+    async end(item,cancel) {
+        return super.end(item,cancel);
         const children=item.token.getChildrenTokens();
         console.log('end of adhoc proc',children);
         children.forEach(tok=>{
@@ -354,6 +354,7 @@ class AdHocSubProcess extends Node {
         return adHocs;
     }
     async run(item):Promise<any> {
+        return super.run(item);
 
     }
 }
