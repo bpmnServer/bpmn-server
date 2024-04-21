@@ -1,3 +1,4 @@
+import { Transaction } from "../elements";
 
 enum BPMN_TYPE {
     UserTask = 'bpmn:UserTask',
@@ -19,7 +20,8 @@ enum BPMN_TYPE {
     EndEvent = 'bpmn:EndEvent',
     SequenceFlow = 'bpmn:SequenceFlow',
     MessageFlow = 'bpmn:MessageFlow',
-    CallActivity = 'bpmn:CallActivity'
+    CallActivity = 'bpmn:CallActivity',
+    Transaction = 'bpmn:Transaction'
 }
 
 enum NODE_SUBTYPE {

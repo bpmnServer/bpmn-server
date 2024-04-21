@@ -22,16 +22,16 @@ class Loop {
         this.node = node;
         this.ownerToken = token;
 
+        this.id = token.execution.getNewId('loop');
         if (dataObject) {
             this.id = dataObject.id;
             this.items = dataObject.items;
             this.completed = dataObject.completed;
             this.sequence = dataObject.sequence;
-            this.definition = node.getBehaviour(Behaviour_names.LoopCharacteristics);
+            this.definition = node.loopDefinition;
         }
         else {
-            this.id = token.execution.getNewId('loop');
-            this.definition = node.getBehaviour(Behaviour_names.LoopCharacteristics);
+            this.definition = node.loopDefinition;
             this.completed = 0;
             this.sequence = 0;
             const coll = this.definition.collection;
@@ -80,7 +80,7 @@ class Loop {
     }
     static async checkStart(token) {
         // loop
-        const loopDefinition = token.currentNode.getBehaviour(Behaviour_names.LoopCharacteristics);
+        const loopDefinition = token.currentNode.loopDefinition;
         if (loopDefinition) {
                 if (loopDefinition.isSequential()) {
                 // are we starting a new loop or continueing in an exiting one?
@@ -122,8 +122,11 @@ class Loop {
             }
             else { // parallel 
                 // launch as many tokens as needed
-                if (token.loop) // already assigned a loop
-                    return true; // go ahead and execute
+                if (token.loop && token.loop.node.id == token.currentNode.id) // already assigned a loop
+                    {
+                        return true; // go ahead and execute
+                    }
+
 //                token.currentNode.type=null;
                 let loop = new Loop(token.currentNode, token);
                 let seq;
@@ -167,14 +170,15 @@ class Loop {
                 if (token.loop.isDone()) {
 
                     // need to converge here ;
-                    token.end();
-                    token.parentToken.currentItem.status=ITEM_STATUS.end;
+                    await token.end();
+                    //token.parentToken.currentItem.status=ITEM_STATUS.end;
+                    token.parentToken.currentNode.end(token.parentToken.currentItem);
                     await token.parentToken.goNext();
                     return false;
                 }
                 else {
                     
-                    token.end();
+                    await token.end();
                     let seq = token.loop.getNext();
                     let data = {};
   
@@ -190,7 +194,7 @@ class Loop {
             {
 
                 token.loop.completed++;
-                token.end();
+                await token.end();
                 if (token.loop.completed == token.loop.items.length) {
                     // need to converge here ;
                     await token.parentToken.goNext();
@@ -199,13 +203,14 @@ class Loop {
 
             }
             else { // parallel 
-                token.end();
+                await token.end();
                 token.loop.completed++;
                 if (token.loop.completed == token.loop.items.length) {
                     // need to converge here ;
 //                    token.parentToken.currentItem=token.currentItem
                         //token.parentToken.path.push(token.currentItem);
-                        token.parentToken.currentItem.status=ITEM_STATUS.end;
+//                        token.parentToken.currentItem.status=ITEM_STATUS.end;
+                        token.parentToken.currentNode.end(token.parentToken.currentItem);
                         await token.parentToken.goNext();
                     return false;
                     if (token.currentNode.type==BPMN_TYPE.SubProcess) {

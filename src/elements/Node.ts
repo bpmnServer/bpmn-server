@@ -4,7 +4,7 @@ import { Token, TOKEN_TYPE } from '../engine/Token';
 import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, NODE_SUBTYPE} from '../interfaces/Enums';
 import { Item } from '../engine/Item';
 import { BPMN_TYPE } from '../interfaces/Enums';
-import { BehaviourLoader } from './behaviours/BehaviourLoader';
+import { Behaviour_names, BehaviourLoader } from './behaviours/BehaviourLoader';
 import { ScriptHandler } from '../';
 
 
@@ -128,6 +128,10 @@ class Node extends Element {
      */
     get canBeInvoked() { return false; }
 
+    get loopDefinition() {
+        return this.getBehaviour(Behaviour_names.LoopCharacteristics);
+    } 
+
     get isCatching(): boolean { return false; } // catching events and tasks
     /**
      * this is the primary exectuion method for a node
@@ -139,7 +143,7 @@ class Node extends Element {
      *              run method will fire the subprocess invoking a new token and will go into wait
      */
     async execute(item: Item) {
-        item.token.log('Node('+this.name+'|'+this.id+').execute: item=' + item.id+' token:'+item.token.id);
+        item.token.logS('Node('+this.name+'|'+this.id+').execute: item=' + item.id+' token:'+item.token.id);
 
         //  2  enter
         //  --------
@@ -173,14 +177,18 @@ class Node extends Element {
         }
         // check for attachments - boundary events:
 
-        if (ret == NODE_ACTION.error || ret == NODE_ACTION.abort)
+        if (ret == NODE_ACTION.error || ret == NODE_ACTION.abort) {
+            item.token.log('Node('+this.name+'|'+this.id+').execute: start complete ...token:'+item.token.id+' ret:'+ret);
             return ret;
+        }
         else if (ret ==NODE_ACTION.wait) {
             await this.doEvent(item, EXECUTION_EVENT.node_wait, ITEM_STATUS.wait);
+            item.token.log('Node('+this.name+'|'+this.id+').execute: start complete ...token:'+item.token.id+' ret:'+ret);
             return ret;
         }
         else if (ret ==NODE_ACTION.end) {
             await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end);
+            item.token.log('Node('+this.name+'|'+this.id+').execute: start complete ...token:'+item.token.id+' ret:'+ret);
             return ret;
         }
         //  4   run  perform the work
@@ -193,9 +201,11 @@ class Node extends Element {
         ret = await this.run(item);
         switch (ret) {
             case NODE_ACTION.error:
+                item.token.log('Node('+this.name+'|'+this.id+').execute: start complete ...token:'+item.token.id+' ret:'+ret);
                 return ret;
                 break;
             case NODE_ACTION.abort:
+                item.token.log('Node('+this.name+'|'+this.id+').execute: start complete ...token:'+item.token.id+' ret:'+ret);
                 return ret;
                 break;
         }
@@ -203,9 +213,10 @@ class Node extends Element {
         //  --------
         //          end
 
-        item.token.log('Node('+this.name+'|'+this.id+').execute: execute continue...');
 
-        return await this.continue(item);
+        let ret2=await this.continue(item);
+        item.token.logE('Node('+this.name+'|'+this.id+').execute: execute continue...');
+        return ret2;
 
     }
     /*
@@ -245,7 +256,7 @@ class Node extends Element {
             let boundaryEvent = this.attachments[i];
             item.token.log('        boundaryEvent:'+boundaryEvent.id);
             let childrenTokens;
-            if (this.type==BPMN_TYPE.SubProcess || this.type==BPMN_TYPE.AdHocSubProcess) // subprocess
+            if (this.type==BPMN_TYPE.SubProcess || this.type==BPMN_TYPE.AdHocSubProcess || this.type==BPMN_TYPE.Transaction) // subprocess
             {
                 //find the subprocess token
                 item.token.execution.tokens.forEach(tok =>
@@ -272,34 +283,39 @@ class Node extends Element {
         }
     }
     async end(item: Item,cancel:Boolean=false) {
-        item.token.log('Node('+this.name+'|'+this.id+').end: item=' + item.id+ ' cancel:'+cancel + ' attachments:'+this.attachments.length);
+        item.token.logS('Node('+this.name+'|'+this.id+').end: item=' + item.id+ ' cancel:'+cancel + ' attachments:'+this.attachments.length);
+
         /**
          * Rule:    boundary events are canceled when owner task status is 'end'
          * */
-        await this.cancelBoundaryEvents(item);
+        this.behaviours.forEach(async function (b) { await b.end(item); });
+        await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end);
+        item.token.log('Node('+this.name+'|'+this.id+').end: setting item status to end itemId=' + item.id + ' itemStatus=' + item.status + ' cancel: '+cancel+' endedat '+item.endedAt);
+        this.behaviours.forEach(async function (b) { await b.exit(item); });
+        item.token.log('Node(' + this.name + '|' + this.id + ').end: finished');
+
+        let result=await this.cancelBoundaryEvents(item);
+
         if (cancel===false)
             await this.cancelEBG(item);
-        let i;
-        for (i = 0; i < this.outbounds.length; i++) {
-            let flow = this.outbounds[i];
-                if (flow.type == BPMN_TYPE.MessageFlow) {
-                    let flowItem = new Item(flow, item.token);
-                    await flow.execute(flowItem);
-                }
+        
+        {
+            let i;
+            for (i = 0; i < this.outbounds.length; i++) {
+                let flow = this.outbounds[i];
+                    if (flow.type == BPMN_TYPE.MessageFlow) {
+                        let flowItem = new Item(flow, item.token);
+                        await flow.execute(flowItem);
+                    }
+            }
         }
 
         if (cancel)
             item.endedAt = null;
         else
             item.endedAt = new Date();
-
-        if (item.status == ITEM_STATUS.end)
-            return;
-        this.behaviours.forEach(async function (b) { await b.end(item); });
-        await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end);
-        item.token.log('Node('+this.name+'|'+this.id+').end: setting item status to end itemId=' + item.id + ' itemStatus=' + item.status + ' cancel: '+cancel+' endedat '+item.endedAt);
-        this.behaviours.forEach(async function (b) { await b.exit(item); });
-        item.token.log('Node(' + this.name + '|' + this.id + ').end: finished');
+                item.token.logE('Node('+this.name+'|'+this.id+').end: ended item=' + item.id);
+                
     }
     /**
      * is called by the token after an execution resume for every active (in wait) item

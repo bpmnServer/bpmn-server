@@ -76,9 +76,11 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 				if (pass) {
 					let data;
-					let dp=instance.tokens[i.tokenId].dataPath;
-					if (dp!=='')
-						data=DataHandler.getData(instance.data,dp);
+					if (instance.tokens[i.tokenId]) {
+						let dp=instance.tokens[i.tokenId].dataPath;
+						if (dp!=='')
+							data=DataHandler.getData(instance.data,dp);
+					}
 					else 
 						data=instance.data
 					i['processName'] = instance.name;
@@ -196,7 +198,9 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 		if (option == 'summary')
 			projection = { source: 0, logs: 0 };
-		else
+		else if (option['projection'])
+			projection = option['projection'];
+		else 
 			projection = {};
 
 		var records = await this.db.find(this.dbConfiguration.db, Instance_collection, query, projection);

@@ -1,5 +1,5 @@
-import { TimerBehaviour } from ".";
-import { Node } from "..";
+
+
 import { Behaviour } from '.';
 import { Item } from "../../engine/Item";
 import { NODE_SUBTYPE } from "../../";
@@ -23,7 +23,7 @@ class EscalationEventBehaviour extends Behaviour {
         else {  // throw a message
             item.log("Error Event is throwing an error");
 
-            await item.token.processEscalation(this.escalationId);
+            await item.token.processEscalation(this.escalationId,item);
             return NODE_ACTION.continue;
 
         }

@@ -39,7 +39,12 @@ interface IToken {
     };
     resume(): void;
     stop(): void;
-    processError()
+    
+    processError(errorCode,callingEvent);
+    processEscalation(escalationCode,callingEvent);
+    processCancel(callingEvent);
+    
+
     restored(): void;
     getChildrenTokens(): any[];
     preExecute(): Promise<boolean>;
@@ -125,6 +130,8 @@ interface IExecution extends IServerComponent {
     doExecutionEvent(process:any, event: any): Promise<any>;
     doItemEvent(item: any, event: any): Promise<any>;
     log(...msg: any): void;
+    logS(...msg: any): void;
+    logE(...msg: any): void;
     info(...msg: any): void;
     error(msg: any): void;
     appendData(inputData: any,item:IItem, dataPath?: any,assignment?:any): void;

@@ -26,7 +26,7 @@ class Engine extends ServerComponent implements IEngine{
 		userName: string=null,
 		options = {}): Promise<Execution> {
 
-		this.logger.log(`Action:engine.start ${name}`);
+		this.logger.log(`^Action:engine.start ${name}`);
 		
 
 		const definitions = this.definitions;
@@ -71,7 +71,7 @@ class Engine extends ServerComponent implements IEngine{
 
 	public async restart(itemQuery, data:any,userName, options={}) :Promise<Execution>  {
 	
-		this.logger.log(`Action:engine.restart`);
+		this.logger.log(`^Action:engine.restart`);
 		let execution;
 
 		try {
@@ -205,7 +205,7 @@ class Engine extends ServerComponent implements IEngine{
 	 */
 	async assign(itemQuery, data = {}, assignment = {}, userName: string,options= {}): Promise<Execution> {
 		
-		this.logger.log(`Action:engine.assign`);
+		this.logger.log(`^Action:engine.assign`);
 		this.logger.log(itemQuery);
 		let execution;
 
@@ -256,7 +256,7 @@ class Engine extends ServerComponent implements IEngine{
 	 */
 	async invoke(itemQuery, data = {}, userName: string = null, options = {}): Promise<Execution> {
 
-		this.logger.log(`Action:engine.invoke`);
+		this.logger.log(`^Action:engine.invoke`);
 		this.logger.log(itemQuery);
 		let execution;
 
@@ -394,7 +394,7 @@ class Engine extends ServerComponent implements IEngine{
 	}
 	async throwMessage(messageId, data = {}, matchingQuery = {}): Promise<Execution> {
 
-		this.logger.log('..Action:engine.throwMessage ', messageId,this.sanitizeData(data),matchingQuery);
+		this.logger.log('..^Action:engine.throwMessage ', messageId,this.sanitizeData(data),matchingQuery);
 
 		if (!messageId)
 			return null;
@@ -406,9 +406,9 @@ class Engine extends ServerComponent implements IEngine{
 		if (events.length > 0) {
 
 			const event = events[0];
-			this.logger.log('..Action:engine.throwMessage found target event ', event.modelName, JSON.stringify(data), event.elementId, event.elementId);
+			this.logger.log('..^Action:engine.throwMessage found target event ', event.modelName, JSON.stringify(data), event.elementId, event.elementId);
 			let ret = await this.start(event.modelName, data, event.elementId, event.elementId);
-			this.logger.log('..Action:engine.throwMessage ended', event.modelName, JSON.stringify(data), event.elementId, event.elementId);
+			this.logger.log('..^Action:engine.throwMessage ended', event.modelName, JSON.stringify(data), event.elementId, event.elementId);
 			return ret;
 		}
 		let itemsQuery = {};
@@ -426,7 +426,7 @@ class Engine extends ServerComponent implements IEngine{
 			const item = items[0];
 			this.logger.log(`Throw Signal ${messageId} found target: ${item.processName} ${item.id}`);
 
-			this.logger.log('..Action:engine.throwMessage found target ', item.processName, item.id);
+			this.logger.log('..^Action:engine.throwMessage found target ', item.processName, item.id);
 			return await this.invoke({ "items.id": item.id }, this.sanitizeData(data));
 		}
 		else {
@@ -451,7 +451,7 @@ class Engine extends ServerComponent implements IEngine{
 	 */
 	async throwSignal(signalId, data = {}, matchingQuery = {} ) {
 
-		this.logger.log('..Action:engine.Throw Signal ',signalId,this.sanitizeData(data),matchingQuery);
+		this.logger.log('..^Action:engine.Throw Signal ',signalId,this.sanitizeData(data),matchingQuery);
 
 		var instances = [];
 		if (!signalId)
@@ -464,7 +464,7 @@ class Engine extends ServerComponent implements IEngine{
 		if (events.length > 0) {
 			for (var i = 0; i < events.length; i++) {
 				let event = events[i];
-				this.logger.log('..Action:engine.Throw Signal found target', event.modelName, data, event.elementId);
+				this.logger.log('..^Action:engine.Throw Signal found target', event.modelName, data, event.elementId);
 				
 				var res = await this.start(event.modelName, this.sanitizeData(data), event.elementId, null);
 				this.logger.log('Signal end data',res.instance.data)
@@ -489,7 +489,7 @@ class Engine extends ServerComponent implements IEngine{
 			for (var i = 0; i < items.length; i++) {
 				let item = items[i];
 //				console.log(`Throw Signal ${signalId} found target: ${item.processName} ${item.id}`);
-				this.logger.log('..Action:engine.Throw Signal found target', item.processName,item.id );
+				this.logger.log('..^Action:engine.Throw Signal found target', item.processName,item.id );
 				var res=await this.invoke({ "items.id": item.id }, this.sanitizeData(data));
 				instances.push(res.instance.id);
             }

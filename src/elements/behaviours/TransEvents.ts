@@ -2,24 +2,39 @@
 import { Behaviour } from '.';
 import { Item } from "../../engine/Item";
 import { NODE_SUBTYPE } from "../../";
-import { NODE_ACTION } from "../../interfaces";
+import { ITEM_STATUS, NODE_ACTION, TOKEN_STATUS } from "../../interfaces";
 import { Node } from "../Node";
-import { Transaction } from "../";
+import { Event, Transaction } from "../";
 
 class CancelEventBehaviour extends Behaviour {
     init() {
         this.node.subType = NODE_SUBTYPE.cancel;
 
     }
+    async run(item: Item) {
+
+        await Event.terminate(item);
+        //  current token is already terminated in the above logic, we need to restore it
+        item.status=ITEM_STATUS.wait;
+        item.token.status=TOKEN_STATUS.running;
+
+    }    
     async start(item: Item) {
-        item.log("staring an Error Events " + this.node.isCatching);
+        item.log("staring an Cancel Event " + this.node.isCatching);
         if (this.node.isCatching) {
             return NODE_ACTION.wait;
         }
         else {  // throw a message
-            await Transaction.Cancel(item.token.parentToken.currentItem);
+            item.log("Cancel Event is throwing a TransactionCancel");
 
-            item.log("Error Event is throwing an error");
+            let transItem=item.token.parentToken.originItem;
+  
+            await item.token.processCancel(item);      // find the event and invoke it
+            
+            await Transaction.Cancel(transItem);
+            /*transItem.token.status=TOKEN_STATUS.terminated;
+            
+            await transItem.node.end(transItem,true);*/
 
             return NODE_ACTION.error;
         }

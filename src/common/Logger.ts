@@ -10,6 +10,7 @@ class Logger implements ILogger {
     toConsole = true;
     toFile = null;
     callback = null;
+    level=0;
 
     constructor({ toConsole=true, toFile='', callback=null }) {
         this.setOptions({ toConsole, toFile, callback });
@@ -21,8 +22,9 @@ class Logger implements ILogger {
         this.callback = callback;
     }
     msg(message , type='log') {
+        let level=this.level>-1 ? ' '.repeat(this.level):'';
         if (this.toConsole)
-            console.log(message);
+            console.log(level+message);
         if (this.callback) {
             this.callback(message, type);
         }
@@ -30,8 +32,8 @@ class Logger implements ILogger {
         if (this.toFile !== '') {
                 FS.appendFileSync(this.toFile, message);        
         }
-        this.debugMsgs.push({date:new Date(),message, type});
-        return ({date:new Date(),message,type});
+        this.debugMsgs.push({date:new Date(),message, type,level:this.level});
+        return ({date:new Date(),message,type,level:this.level});
     }
     clear() {
 
@@ -53,6 +55,17 @@ class Logger implements ILogger {
     }
     log(...message) {
         return this.msg(this.toString(...message),'log');
+    }
+    logS(...message) {
+        
+        let msg=this.msg(this.toString(...message),'log');
+        this.level++;
+        return msg;
+    }
+    logE(...message) {
+        let msg=this.msg(this.toString(...message),'log');
+        this.level--;
+        return msg;
     }
     toString(...args) {
         var out = '';
@@ -79,6 +92,10 @@ class Logger implements ILogger {
                 else
                     out += cls + " " + JSON.stringify(val, null, 2);
             }
+        }
+        if (out.substring(0,1)=='^') {
+            out=out.substring(1);
+            this.level=0;
         }
         return out;
     }
@@ -123,7 +140,9 @@ class Logger implements ILogger {
                     line = msg.type + ":" + msg.message;
                 else
                     line = msg.message;
-                FS.writeSync(id, line + "\n", null, 'utf8');
+
+                let level=this.level>-1 ? ' '.repeat(this.level):'';
+                FS.writeSync(id,level+line + "\n", null, 'utf8');
             }
 
             FS.closeSync(id );

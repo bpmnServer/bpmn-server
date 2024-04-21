@@ -20,10 +20,10 @@ class ScriptTask extends Node {
             item.token.log(this.def.script);
             let ret=await ScriptHandler.executeScript(item, this.def.script);
             if (ret && ret.escalation) {
-                await item.token.processEscalation(ret.escalation);
+                await item.token.processEscalation(ret.escalation,item);
             }
             if (ret && ret.bpmnError) {
-                await item.token.processError(ret.bpmnError);
+                await item.token.processError(ret.bpmnError,item);
             }
         }
         return NODE_ACTION.end;
@@ -91,10 +91,10 @@ class ServiceTask extends Node {
         // await item.node.setInput(item,ret);
 
         if (ret && ret.escalation) {
-            await item.token.processEscalation(ret.escalation);
+            await item.token.processEscalation(ret.escalation,item);
         }
         if (ret && ret.bpmnError) {
-            await item.token.processError(ret.bpmnError);
+            await item.token.processError(ret.bpmnError,item);
         }
 
 
@@ -160,9 +160,9 @@ class SendTask extends ServiceTask {
 
 class UserTask extends Node {
 
-    async end(item: Item) {
+    async end(item: Item,cancel=false) {
         item.token.info(`Task ${this.name} ended by ${item.token.execution.userName}`);
-        return await super.end(item);
+        return await super.end(item,cancel);
     }
     async start(item: Item): Promise<NODE_ACTION> {
         if (this.def.$attrs)
@@ -315,7 +315,7 @@ class AdHocSubProcess extends Node {
                 first=false;
             else {
                 console.log('child node',node.id,node.type,'in bounds',node.inbounds.length);
-                Token.startNewToken(TOKEN_TYPE.AdHoc, token.execution,node, this.id, newToken, item, null, null, false);
+                Token.startNewToken(TOKEN_TYPE.AdHoc, token.execution,node, this.id, token, item, null, null, false);
     //            const newToken = Token.startNewToken(TOKEN_TYPE.SubProcess, token.execution,node, this.id, token, item, null, null, true);
     
             }
@@ -326,8 +326,8 @@ class AdHocSubProcess extends Node {
         return NODE_ACTION.wait;
     
     }
-    async end(item) {
-        return super.end(item);
+    async end(item,cancel) {
+        return await super.end(item,cancel);
         const children=item.token.getChildrenTokens();
         console.log('end of adhoc proc',children);
         children.forEach(tok=>{
