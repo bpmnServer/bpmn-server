@@ -76,9 +76,11 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 				if (pass) {
 					let data;
-					let dp=instance.tokens[i.tokenId].dataPath;
-					if (dp!=='')
-						data=DataHandler.getData(instance.data,dp);
+					if (instance.tokens[i.tokenId]) {
+						let dp=instance.tokens[i.tokenId].dataPath;
+						if (dp!=='')
+							data=DataHandler.getData(instance.data,dp);
+					}
 					else 
 						data=instance.data
 					i['processName'] = instance.name;
