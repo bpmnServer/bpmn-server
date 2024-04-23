@@ -264,13 +264,16 @@ class Token implements IToken {
      */
     async execute(input) {
 
-        this.log('Token('+this.id +').execute: input'+JSON.stringify(input));
+        this.logS('Token('+this.id +').execute:start input'+JSON.stringify(input));
         if (this.status==TOKEN_STATUS.end) {
-            this.log('Token(' + this.id + ').execute: token status is end: return from execute!!');
+            this.logE('Token(' + this.id + ').execute:end token status is end: return from execute!!');
             return;
             
         }
         this.status=TOKEN_STATUS.running;
+
+        if (!await this.preExecute())  
+            return; // loop logic will take care of it
 
         let ret;
         const item = new Item(this.currentNode, this);
@@ -282,8 +285,8 @@ class Token implements IToken {
         if (input)
             await this.currentNode.setInput(item,input);
 
-        if (!await this.preExecute())  
-            return; // loop logic will take care of it
+//        if (!await this.preExecute())  
+//            return; // loop logic will take care of it
     
         this.log('Token('+this.id +').execute: executing currentNodeId='+ this.currentNode.id);
 
@@ -301,10 +304,10 @@ class Token implements IToken {
 
         }
 */
-        this.log('Token('+this.id +').execute: executing currentNodeId=' + this.currentNode.id+ " item.seq=" +item.seq + " is done!");
 
         if (ret == NODE_ACTION.wait) {
             this.status = TOKEN_STATUS.wait;
+            this.logE('Token('+this.id +').execute:end executing currentNodeId=' + this.currentNode.id+ " item.seq=" +item.seq + " is done!");
             return;     // goto sleep for now will call you by signal
 
         }
@@ -313,26 +316,29 @@ class Token implements IToken {
         }
         else if (ret == NODE_ACTION.abort) {
             this.execution.terminate();
+            this.logE('Token('+this.id +').execute:end executing currentNodeId=' + this.currentNode.id+ " item.seq=" +item.seq + " is done!");
             return;     
 
         }
         else if (ret==NODE_ACTION.end) {
             this.status = TOKEN_STATUS.end;
+            this.logE('Token('+this.id +').execute:end executing currentNodeId=' + this.currentNode.id+ " item.seq=" +item.seq + " is done!");
             return;     
         }
 
         // current Node is now completed 
         const result = await this.goNext();
+        this.logE('Token('+this.id +').execute:end executing currentNodeId=' + this.currentNode.id+ " item.seq=" +item.seq + " is done!");
         return result;
 
     }
-    async processError(errorCode=null) {
+    async processError(errorCode,callingEvent) {
 
         let errorHandlerToken = this.getScopeCatchEvent('error',errorCode);
         if (errorHandlerToken) {
             await errorHandlerToken.signal(null);
             this.currentItem.status = ITEM_STATUS.end;
-            await this.end();
+            await this.end(true);
         }
         else {
             this.log("Aborting due to error")
@@ -341,7 +347,7 @@ class Token implements IToken {
         }
 
     }
-    getScopeCatchEvent(type:'error'|'escalation',code) {
+    getScopeCatchEvent(type:'error'|'escalation'|'cancel',code) {
         
         let contextItem: Item = this.currentItem;
         let contextToken: Token = this;
@@ -363,6 +369,12 @@ class Token implements IToken {
             propertyName='escalationId';
             nodeSubType=NODE_SUBTYPE.escalation
         }
+        else if (type=='cancel')
+        {
+            bhName=Behaviour_names.CancelEventDefinition;
+            propertyName=null;
+            nodeSubType=NODE_SUBTYPE.cancel
+        }
         while (contextToken && errorHandlerToken == null) {
             contextToken.childrenTokens.forEach(ct => {
                 if ((ct.type == TOKEN_TYPE.EventSubProcess || ct.type == TOKEN_TYPE.BoundaryEvent)
@@ -374,16 +386,18 @@ class Token implements IToken {
             contextToken = contextToken.parentToken;
         }
         this.execution.tokens.forEach(ct=>{
-            if (ct.type == TOKEN_TYPE.EventSubProcess)
+            if (ct.type == TOKEN_TYPE.EventSubProcess && ct.currentNode.subType == nodeSubType)
                 tokens.push(ct);
         });
         let handlingCodeEventToken=null;
         let handlingAllEventToken=null;
 
-
+            
         tokens.forEach(ct=>{
             let escl=ct.currentNode.getBehaviour(bhName);
-            if (escl)
+            if (propertyName==null)
+                handlingAllEventToken=ct;
+            else if (escl)
             {
                 let cd=escl[propertyName];
 
@@ -393,6 +407,8 @@ class Token implements IToken {
                     handlingAllEventToken=ct;
     
             }
+            else
+            handlingAllEventToken=ct;
 
         });
 
@@ -407,12 +423,24 @@ class Token implements IToken {
     }
 
     }
-    async processEscalation (escalationCode) {
+    async processCancel(callingEvent) {
 
-        let errorHandlerToken = this.getScopeCatchEvent('escalation',escalationCode);
+        let errorHandlerToken = this.getScopeCatchEvent('cancel',null);
         if (errorHandlerToken) {
             await errorHandlerToken.signal(null);
         }
+
+    }
+    async processEscalation (escalationCode,callingEvent) {
+
+        let errorHandlerToken = this.getScopeCatchEvent('escalation',escalationCode);
+        if (errorHandlerToken) {
+            this.log(`Action:"Escalation",Item:${errorHandlerToken.currentItem.seq},Code:"${escalationCode}",By:${callingEvent.seq}`);
+            this.log({action:"Escalation",Item:errorHandlerToken.currentItem.seq,Code:escalationCode,By:callingEvent.seq});
+            await errorHandlerToken.signal(null);
+        }
+        else
+            this.log({error:"Escalation not found",Item:errorHandlerToken.currentItem.seq,Code:escalationCode,By:callingEvent.seq});
 
     }
     /**
@@ -458,7 +486,7 @@ class Token implements IToken {
 
         const item = this.currentItem;
         //this.log(`..token.signal ${this.currentNode.id} ${this.currentNode.type}`);
-        this.log('Token('+this.id +').signal: invoking '+this.currentNode.id+' '+this.currentNode.type+' with data='+JSON.stringify(data));
+        this.logS('Token('+this.id +').signal: invoking '+this.currentNode.id+' '+this.currentNode.type+' with data='+JSON.stringify(data));
 
         await this.currentNode.setInput(item, data);
         
@@ -484,41 +512,64 @@ class Token implements IToken {
         else
             this.log(`*** ERROR===== invoking item ${this.currentItem.node.id} ${this.currentItem.id} type of  ${this.currentNode.type} with status of ${item.status}`);
 
-        this.log('Token('+this.id +').signal: invoke '+this.currentNode.id+' '+this.currentNode.type+' finished!');
+        this.logE('Token('+this.id +').signal: invoke '+this.currentNode.id+' '+this.currentNode.type+' finished!');
 
     }
     /*
      *  is called to mark this token end
+
+    Child Scenarios:
+        diverge
+        subprocess/trans/adHoc
+        loop
+
      */
 
     async end(cancel:Boolean=false) {
-        this.log('Token('+this.id +').end: currentNode=' + this.currentNode.id +' status='+this.status+' currentItem.status='+this.currentItem.status);
+        this.logS('Token('+this.id +').end: currentNode=' + this.currentNode.id +' status='+this.status+' currentItem.status='+this.currentItem.status);
         if (this.currentItem.status != ITEM_STATUS.end)
             {
             // this.log('..**token ended but item is still '+this.currentItem.status);
             }
-        if (this.status ==TOKEN_STATUS.end)
+        if (this.status ==TOKEN_STATUS.end || this.status==TOKEN_STATUS.terminated)
             return;
 
         this.status = TOKEN_STATUS.end;
         await this.currentNode.end(this.currentItem,cancel);
-        this.execution.tokenEnded(this);
+        await this.execution.tokenEnded(this);
 
         // check if subprocess then continue parent
-        if (this.type==TOKEN_TYPE.SubProcess || this.type==TOKEN_TYPE.AdHoc) {
+        const children = this.childrenTokens;
+        if (this.type==TOKEN_TYPE.SubProcess || this.type==TOKEN_TYPE.AdHoc 
+                || this.type == TOKEN_TYPE.EventSubProcess || this.type == TOKEN_TYPE.Instance) {
+
+            for (let i = 0; i < children.length; i++) {
+                const child = children[i];
+                //if (child.type == TOKEN_TYPE.EventSubProcess || child.type==TOKEN_TYPE.AdHoc || child.type==TOKEN_TYPE.Instance ) 
+                {
+                    await child.terminate();
+                }
+            }
+    
+        }
+        
+            for (let i = 0; i < children.length; i++) {
+                const child = children[i];
+                if (child.type == TOKEN_TYPE.AdHoc) 
+                {
+                    await child.terminate();
+                }
+            }
+    
+        if (this.type==TOKEN_TYPE.SubProcess) {
             this.currentItem.status= ITEM_STATUS.end;
             this.log('..subprocess token has ended');
-            await this.parentToken.signal(null);
+
+            if (cancel==false)
+                await this.parentToken.signal(null);
+
         }
-        let i;
-        const children = this.childrenTokens;
-        for (i = 0; i < children.length; i++) {
-            const child = children[i];
-            if (child.type == TOKEN_TYPE.EventSubProcess || child.type==TOKEN_TYPE.AdHoc) {
-                await child.terminate();
-            }
-        }
-        this.log('Token('+this.id +').end(): finished!');
+        this.logE('Token('+this.id +').end(): finished!');
     }
 
     setCurrentNode(newCurrentNode:Node){
@@ -533,22 +584,31 @@ class Token implements IToken {
      */ 
     async goNext() {
 
+        this.logS('Token('+this.id +').goNext(): currentNodeId=' + this.currentNode.id +' type='+this.currentNode.type+' currentItem.status='+this.currentItem.status);
         if (this.currentItem.status=='wait')
         {
-            this.log('Token('+this.id +').goNext(): currentNodeId=' + this.currentNode.id +' type='+this.currentNode.type+' currentItem.status='+this.currentItem.status);
+            this.logE('Token('+this.id +').goNext(): currentNodeId=' + this.currentNode.id +' type='+this.currentNode.type+' currentItem.status='+this.currentItem.status);
             return;
+        }
+        if (this.status==TOKEN_STATUS.terminated)
+        {
+            this.logE('Token('+this.id +').goNext(): currentNodeId=' + this.currentNode.id +' type='+this.currentNode.type+' status='+this.status+' not going next');
+            return await this.end(true);
         }
         this.log('Token('+this.id +').goNext(): currentNodeId=' + this.currentNode.id +' type='+this.currentNode.type+' currentItem.status='+this.currentItem.status);
         //this.log(`..token.goNext from ${this.currentNode.id} ${this.currentNode.type}`);
 
-        if (!await this.preNext())
+        if (!await this.preNext()) {
+            this.logE('Token('+this.id +').goNext(): no more outbounds - ending this token '+this.id);
             return;
+        }
 
         const outbounds = this.currentNode.getOutbounds(this.currentItem);
 
         if (outbounds.length == 0) {
-            this.log('Token('+this.id +').goNext(): no more outbounds - ending this token '+this.id);
-            return await this.end();
+            await this.end();
+            this.logE('Token('+this.id +').goNext(): no more outbounds - ending this token '+this.id);
+            return;
         }
 
         let thisNode = this.currentNode;
@@ -591,6 +651,7 @@ class Token implements IToken {
                 self.log('Token(' + self.id + ').goNext(): ... currentNodeId(' + self.currentNode.name + '|' + self.currentNode.id + ') processing  Flow(' + flowItem.element.id + ") to " + nextNode.id);
                 if (nextNode) {
                         self.currentNode = nextNode;
+//                        await self.execute(null);
                         promises.push(self.execute(null));
                 }
             });
@@ -598,10 +659,16 @@ class Token implements IToken {
 
         this.log('Token(' + this.id + ').goNext(): waiting for num promises ' + promises.length);
         await Promise.all(promises);
-        this.log('Token('+this.id +').goNext(): is done currentNodeId='+this.currentNode.id);
+        this.logE('Token('+this.id +').goNext(): is done currentNodeId='+this.currentNode.id);
     }
     log(...msg) {
         this.execution.log(msg);
+    }
+    logS(...msg) {
+        this.execution.logS(msg);
+    }
+    logE(...msg) {
+        this.execution.logE(msg);
     }
     info(msg) {
         this.execution.info(msg);

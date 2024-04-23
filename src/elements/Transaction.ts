@@ -19,6 +19,7 @@ class Transaction extends SubProcess {
         super.end(item,cancel);
 
     }
+    get isTransaction() { return true;}
     /**
      * Cancel Transaction
      *  is called by Throw Cancel Event
@@ -30,7 +31,8 @@ class Transaction extends SubProcess {
      */
     static async Cancel(transaction) {
         await Transaction.Compensate(transaction);
-    }
+
+   }
     /**
      * Compensate Transaction
      *  is called by Throw Compensate Event
@@ -41,10 +43,16 @@ class Transaction extends SubProcess {
      * @param item
      */
     static async Compensate(transItem) {
+
+        try {
+
+        if (transItem.node.isTransaction!==true)
+            return;
+        
         let trans = transItem.node as Transaction;
         let items = trans.getItems(transItem);
 
-        console.log("--- Compensating ...",transItem.elementId," found trans items",items.length);
+
         for (let i = 0; i < items.length; i++) {
             let item: Item = items[i];
             //console.log(" checking item ", item.elementId, item.status);
@@ -70,6 +78,11 @@ class Transaction extends SubProcess {
                 }
             }
         }
+        }
+        catch(exc) {
+            console.log(exc);
+        }
+
     }
     getNodes() {
         return this.childProcess.childrenNodes;

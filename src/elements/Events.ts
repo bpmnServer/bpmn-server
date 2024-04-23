@@ -1,8 +1,8 @@
 import { Node } from ".";
 import { Behaviour_names } from "./behaviours";
-import { NODE_ACTION } from "../";
+import { Loop, NODE_ACTION } from "../";
 import { Item } from "../engine/Item";
-import { ITEM_STATUS } from "../interfaces";
+import { ITEM_STATUS, TOKEN_STATUS } from "../interfaces";
 
 class Event extends Node {
 
@@ -31,6 +31,40 @@ class Event extends Node {
     }
     get canBeInvoked() { return true; }
 
+    /**
+     * is called by 
+     *  -   boundaryEvent (intrupting)
+     *  -   Error,Cancel Event
+     *  -   End event (abort)
+     *  
+     * 
+     * @param item the curremt event item 
+     */
+    static async terminate(item) {
+
+        if (!item.token.parentToken)
+            return;
+        item.token.log('BoundaryEvent(' + item.node.id + ').run: isCancelling .. parentToken: '+item.token.parentToken.id);
+        item.token.parentToken.currentItem.status = ITEM_STATUS.end; //force status so it would not run
+        /* fix bug #86
+        */
+        item.status = ITEM_STATUS.end;
+
+        // check for loop:
+        if (item.node.attachedTo.loopDefinition)
+            {   // cancel all items of the loop
+
+                await Loop.cancel(item);
+            }
+        else 
+            {
+                await item.token.parentToken.terminate();
+            }
+        if (item.token.parentToken.originItem && item.token.parentToken.originItem.elementId==item.node.attachedTo.id) { // finding the attached item
+            item.token.parentToken.originItem.node.end(item.token.parentToken.originItem,true);
+        }
+   
+    }    
 }
 
 class CatchEvent extends Event {
@@ -69,24 +103,20 @@ class BoundaryEvent extends Event {
     }
 
     async start(item: Item): Promise<NODE_ACTION> {
-        return super.start(item);
+        return await super.start(item);
     }
     async run(item: Item): Promise<NODE_ACTION> {
 
-        if (item.token.parentToken && (item.token.parentToken.currentItem.status == ITEM_STATUS.end))   // in cancelling mode
-            return;
-        var ret=super.run(item);
-        if (this.isCancelling) {
-             if (!item.token.parentToken)
-                    return;
-            item.token.log('BoundaryEvent(' + this.id + ').run: isCancelling .. parentToken: '+item.token.parentToken.id);
-            item.token.parentToken.currentItem.status = ITEM_STATUS.end; //force status so it would not run
-            /* fix bug #86
-             */
-            item.status = ITEM_STATUS.end;
+        //if (item.token.parentToken && (item.token.parentToken.currentItem.status == ITEM_STATUS.end))   // in cancelling mode
+        //    return;   why would I call run if am cancelling?
+        var ret=await super.run(item);
 
-            await item.token.parentToken.terminate();
+        if (this.isCancelling) {
+            await Event.terminate(item);
+            //  current token is already terminated in the above logic, we need to restore it
+            item.token.status=TOKEN_STATUS.running;
         }
+
         return ret;
     }
 }
@@ -111,15 +141,15 @@ class ThrowEvent extends Event {
 class EndEvent extends Event {
 
     get isCatching(): boolean { return false; } 
-    async end(item: Item) {
+    async end(item: Item,cancel) {
 
         let subProcessToken=item.token.getSubProcessToken();
         if (subProcessToken && item.status !== ITEM_STATUS.end)
         {
-            await subProcessToken.end();
+            await subProcessToken.end(cancel);
         }
         
-        return super.end(item);
+        return super.end(item,cancel);
     }
 }
 class StartEvent extends Event {

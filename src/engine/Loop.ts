@@ -28,10 +28,10 @@ class Loop {
             this.items = dataObject.items;
             this.completed = dataObject.completed;
             this.sequence = dataObject.sequence;
-            this.definition = node.getBehaviour(Behaviour_names.LoopCharacteristics);
+            this.definition = node.loopDefinition;
         }
         else {
-            this.definition = node.getBehaviour(Behaviour_names.LoopCharacteristics);
+            this.definition = node.loopDefinition;
             this.completed = 0;
             this.sequence = 0;
             const coll = this.definition.collection;
@@ -80,14 +80,25 @@ class Loop {
     }
     static async checkStart(token) {
         // loop
-        const loopDefinition = token.currentNode.getBehaviour(Behaviour_names.LoopCharacteristics);
+        const loopDefinition = token.currentNode.loopDefinition;
         if (loopDefinition) {
-                if (loopDefinition.isSequential()) {
-                // are we starting a new loop or continueing in an exiting one?
-                if (token.loop) // already assigned a loop
-                    return true; // go ahead and execute
-                let loop = new Loop(token.currentNode, token);
 
+            if (token.loop && token.loop.node.id == token.currentNode.id) // already assigned a loop
+            {
+                return true; // go ahead and execute
+            }
+
+            /**
+             * an item is already created belonging to current token,
+             *  this item will not be used in the loop
+             */            
+            // token.currentItem.status=ITEM_STATUS.end;
+            let loop = new Loop(token.currentNode, token);
+
+
+            if (loopDefinition.isSequential()) {
+                // are we starting a new loop or continueing in an exiting one?
+    
                 let seq = loop.getNext();
                 let data = {};
 
@@ -100,10 +111,6 @@ class Loop {
             else if (loopDefinition.isStandard()) {
                 token.log("standard loop");
                 // are we starting a new loop or continueing in an exiting one?
-                if (token.loop) // already assigned a loop
-                    return true; // go ahead and execute
-                let loop = new Loop(token.currentNode, token);
-
                 try {
 
                     let seq = loop.getNext();
@@ -122,22 +129,12 @@ class Loop {
             }
             else { // parallel 
                 // launch as many tokens as needed
-                if (token.loop && token.loop.node.id == token.currentNode.id) // already assigned a loop
-                    {
-                        return true; // go ahead and execute
-                    }
-
-//                token.currentNode.type=null;
-                let loop = new Loop(token.currentNode, token);
                 let seq;
                 if (loop.items) {
                     let tokens=[];
                     for (seq = 0; seq < loop.items.length; seq++) {
                         let entry = loop.items[seq];
                         let data = {};
-/*old                        data[loop.getKeyName()] = entry;
-                        let newToken = await Token.startNewToken(TOKEN_TYPE.Instance, token.execution, token.currentNode, loop.dataPath + '.' + seq, token, token.currentItem, loop, data,true);
-*/
                         let newToken = await Token.startNewToken(TOKEN_TYPE.Instance, token.execution, token.currentNode,
                              loop.dataPath+'.'+entry , token, token.currentItem, loop, data,true,entry);
                         tokens.push(newToken);
@@ -163,6 +160,28 @@ class Loop {
         else
             return true; // continue with the normal logic 
     }
+    static async cancel(fromItem) {
+        // cancel all items of the loop
+
+        let currentLoop=fromItem.token.loop.id;
+        let promises=[]
+        let loopFirstToken=null;
+        let tokens=[];
+        fromItem.token.execution.tokens.forEach(t=>{
+            if (t.loop && t.loop.id == currentLoop && t.id !==fromItem.token.id)
+                {
+                    if (loopFirstToken==null)
+                        loopFirstToken=t;
+                    tokens.push(t);
+                }
+        });
+        for(let i=0 ; i < tokens.length;i++) {
+            await tokens[i].terminate();
+        }        // also cancel the original item 
+        await loopFirstToken.parentToken.currentNode.end(loopFirstToken.parentToken.currentItem);
+
+        await Promise.all(promises);
+    }
     static async checkNext(token: Token) {
 
         if (token.loop && token.currentNode.id==token.loop.node.id) {
@@ -170,14 +189,15 @@ class Loop {
                 if (token.loop.isDone()) {
 
                     // need to converge here ;
-                    token.end();
-                    token.parentToken.currentItem.status=ITEM_STATUS.end;
+                    await token.end();
+                    //token.parentToken.currentItem.status=ITEM_STATUS.end;
+                    await token.parentToken.currentNode.end(token.parentToken.currentItem);
                     await token.parentToken.goNext();
                     return false;
                 }
                 else {
                     
-                    token.end();
+                    await token.end();
                     let seq = token.loop.getNext();
                     let data = {};
   
@@ -193,7 +213,7 @@ class Loop {
             {
 
                 token.loop.completed++;
-                token.end();
+                await token.end();
                 if (token.loop.completed == token.loop.items.length) {
                     // need to converge here ;
                     await token.parentToken.goNext();
@@ -202,13 +222,11 @@ class Loop {
 
             }
             else { // parallel 
-                token.end();
+                await token.end();
                 token.loop.completed++;
                 if (token.loop.completed == token.loop.items.length) {
                     // need to converge here ;
-//                    token.parentToken.currentItem=token.currentItem
-                        //token.parentToken.path.push(token.currentItem);
-                        token.parentToken.currentItem.status=ITEM_STATUS.end;
+                        await token.parentToken.currentNode.end(token.parentToken.currentItem);
                         await token.parentToken.goNext();
                     return false;
                     if (token.currentNode.type==BPMN_TYPE.SubProcess) {

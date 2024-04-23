@@ -15,7 +15,7 @@ interface IDataStore {
     }>;
     findItem(query: any): Promise<IItemData>;
     findInstance(query: any, options: any): Promise<IInstanceData>;
-    findInstances(query: any, option: 'summary' | 'full'): Promise<IInstanceData[]>;
+    findInstances(query: any, option: 'summary' | 'full'|any): Promise<IInstanceData[]>;
     findItems(query: any): Promise<IItemData[]>;
     deleteInstances(query?: any): Promise<void>;
     install(); 

@@ -180,7 +180,7 @@ class Gateway extends Node {
                     item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: ..converging ending token ' + t.id);
                     item.token.log("..converging ending token #" + t.id);
                     t.currentItem.status = ITEM_STATUS.end;
-                    await t.end();
+                    await t.end(true);
                     //await t.terminate();
                 });
 
@@ -227,7 +227,7 @@ class Gateway extends Node {
                     item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: ..converging ending token ' + t.id);
                     item.token.log("..converging ending token #" + t.id);
                     t.currentItem.status = ITEM_STATUS.end;
-                    await t.end();
+                    await t.end(true);
                     //await t.terminate();
                });
                return NODE_ACTION.continue;

@@ -126,7 +126,7 @@ class Execution extends ServerComponent implements IExecution {
     }
     public async execute(startNodeId = null, inputData = {}, options = {}) {
 
-        this.log('ACTION:execute:');
+        this.log('^ACTION:execute:');
         this.info('execution started');
         this.operation='execute';
         this.options=options;
@@ -589,22 +589,30 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
             let p='';
             for(var i=0;i<token.path.length;i++)
                 {p+=''+token.path[i].node.id+'->'; }
-            this.log(`..token: ${token.id} - ${token.status} - ${token.type} current: ${token.currentNode.id} from ${branch} child of ${parent} path: ${p} `+JSON.stringify(token.data) );
+            let loop='';
+            if (token.loop)
+                loop=' Loop: '+token.loop.id+' key:'+token.itemsKey;
+            this.log(`..token: ${token.id} - ${token.status} - ${token.type} current: ${token.currentNode.id} from ${branch} child of ${parent} path: ${p} `+loop+' data:'+JSON.stringify(token.data) );
         });
 
         let indx = 0;
         const items = this.getItems();
         for (indx = 0; indx < items.length; indx++) {
             const item = items[indx];
-            const endedAt = (item.endedAt) ? item.endedAt : '-';
-
             if (item.element.type == 'bpmn:SequenceFlow')
                 this.log(`..Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status}`);
             else
-                this.log(`..Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status}  from ${item.startedAt} to ${endedAt} id: ${item.id}`);
+                this.log(`..Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status}  from ${this.formatDate(item.startedAt)} to ${this.formatDate(item.endedAt)} id: ${item.id}`);
         }
         this.log('.data:');
         this.log(JSON.stringify(this.instance.data));
+    }
+    formatDate(date)
+    {
+        if (date)
+            return (date).toISOString();//.split('T')[0];
+        else
+            return '';
     }
 
     uids= {};
@@ -623,19 +631,25 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
     }
 
 
-    async doExecutionEvent(process,event) {
+    async doExecutionEvent(process,event,eventDetails={}) {
         //this.item = null;
-        await this.listener.emit(event, { event, context: this });
-        await this.listener.emit('all', { event, context: this });
+        await this.listener.emit(event, { event, context: this ,eventDetails });
+        await this.listener.emit('all', { event, context: this ,eventDetails});
     }
 
-    async doItemEvent(item, event) {
+    async doItemEvent(item, event,eventDetails={}) {
         this.item = item;
-        await this.listener.emit(event, { event, context: this });
-        await this.listener.emit('all', { event, context: this });
+        await this.listener.emit(event, { event, context: this ,eventDetails });
+        await this.listener.emit('all', { event, context: this ,eventDetails});
     }
     log(...msg) {
         this.instance.logs.push(this.logger.log(...msg));
+    }
+    logS(...msg) {
+        this.instance.logs.push(this.logger.logS(...msg));
+    }
+    logE(...msg) {
+        this.instance.logs.push(this.logger.logE(...msg));
     }
     info(...msg) {
         this.instance.logs.push(this.logger.info(...msg));
