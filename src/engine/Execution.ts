@@ -631,16 +631,16 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
     }
 
 
-    async doExecutionEvent(process,event) {
+    async doExecutionEvent(process,event,eventDetails={}) {
         //this.item = null;
-        await this.listener.emit(event, { event, context: this });
-        await this.listener.emit('all', { event, context: this });
+        await this.listener.emit(event, { event, context: this ,eventDetails });
+        await this.listener.emit('all', { event, context: this ,eventDetails});
     }
 
-    async doItemEvent(item, event) {
+    async doItemEvent(item, event,eventDetails={}) {
         this.item = item;
-        await this.listener.emit(event, { event, context: this });
-        await this.listener.emit('all', { event, context: this });
+        await this.listener.emit(event, { event, context: this ,eventDetails });
+        await this.listener.emit('all', { event, context: this ,eventDetails});
     }
     log(...msg) {
         this.instance.logs.push(this.logger.log(...msg));

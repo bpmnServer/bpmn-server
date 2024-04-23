@@ -1,6 +1,6 @@
 import { Node } from ".";
 import { Behaviour_names } from "./behaviours";
-import { NODE_ACTION } from "../";
+import { Loop, NODE_ACTION } from "../";
 import { Item } from "../engine/Item";
 import { ITEM_STATUS, TOKEN_STATUS } from "../interfaces";
 
@@ -54,17 +54,7 @@ class Event extends Node {
         if (item.node.attachedTo.loopDefinition)
             {   // cancel all items of the loop
 
-                let currentLoop=item.token.loop.id;
-                let promises=[]
-                item.token.execution.tokens.forEach(t=>{
-                    if (t.loop && t.loop.id == currentLoop && t.id !==item.token.id)
-                        {
-
-                            promises.push(t.terminate());
-                        }
-                }
-                );
-                await Promise.all(promises);
+                await Loop.cancel(item);
             }
         else 
             {

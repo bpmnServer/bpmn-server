@@ -12,6 +12,18 @@ and here
 
 ### Changed
 -->
+## Release 2.2.0  -- 2014-04
+### API - no changes
+### Events
+- Added eventsDetails to event to include more details
+### Logging:
+-  some improved logging , log level
+### Datastore:
+-  findInstnaces options accepts projection
+### Cancel/End processing
+- almost total rewrite of the Cancel/End processing for nodes, loops
+### Testing
+- More test cases focusing in Loops, Transactions
 ## Release 2.1.13 -- 20414-04
 Fix Issue #194 , loops inside loops 
 ## Release 2.1.10  -- 2024-03

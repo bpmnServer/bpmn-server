@@ -272,6 +272,9 @@ class Token implements IToken {
         }
         this.status=TOKEN_STATUS.running;
 
+        if (!await this.preExecute())  
+            return; // loop logic will take care of it
+
         let ret;
         const item = new Item(this.currentNode, this);
         if (input)
@@ -282,8 +285,8 @@ class Token implements IToken {
         if (input)
             await this.currentNode.setInput(item,input);
 
-        if (!await this.preExecute())  
-            return; // loop logic will take care of it
+//        if (!await this.preExecute())  
+//            return; // loop logic will take care of it
     
         this.log('Token('+this.id +').execute: executing currentNodeId='+ this.currentNode.id);
 
@@ -537,7 +540,8 @@ class Token implements IToken {
 
         // check if subprocess then continue parent
         const children = this.childrenTokens;
-        if (this.type==TOKEN_TYPE.SubProcess || this.type==TOKEN_TYPE.AdHoc || this.type == TOKEN_TYPE.EventSubProcess) {
+        if (this.type==TOKEN_TYPE.SubProcess || this.type==TOKEN_TYPE.AdHoc 
+                || this.type == TOKEN_TYPE.EventSubProcess || this.type == TOKEN_TYPE.Instance) {
 
             for (let i = 0; i < children.length; i++) {
                 const child = children[i];

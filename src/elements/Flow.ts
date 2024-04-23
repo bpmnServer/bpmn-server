@@ -47,10 +47,10 @@ class Flow extends Element implements IFlow {
         let result = this.evaluateCondition(item);
         if (result !== true) {
             action = FLOW_ACTION.discard;
-            item.token.execution.doItemEvent(item, EXECUTION_EVENT.flow_discard);
+            item.token.execution.doItemEvent(item, EXECUTION_EVENT.flow_discard,{flow:this.id});
         }
         else
-            item.token.execution.doItemEvent(item, EXECUTION_EVENT.flow_take);
+            item.token.execution.doItemEvent(item, EXECUTION_EVENT.flow_take,{flow:this.id});
 
         item.token.log('Flow(' + this.name +'|'+ this.id + ').run: going to ' + this.to.id + " action : " + action);
 

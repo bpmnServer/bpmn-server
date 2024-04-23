@@ -111,7 +111,7 @@ class Process {
         });
         return starts;
     }
-    async doEvent(execution,event) {
+    async doEvent(execution,event,eventDetails={}) {
         execution.log('Process(' + this.name + '|' + this.id + ').doEvent: executing script for event:' + event);
         const scripts = this.scripts.get(event);
         if (scripts) {
@@ -121,6 +121,7 @@ class Process {
 
             }
         }
+        await execution.doExecutionEvent(this,event,eventDetails);
     }
     describe() {
         var desc = [];

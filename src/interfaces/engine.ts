@@ -127,8 +127,8 @@ interface IExecution extends IServerComponent {
     uids: {};
     getNewId(scope: string): number;
     getUUID(): any;
-    doExecutionEvent(process:any, event: any): Promise<any>;
-    doItemEvent(item: any, event: any): Promise<any>;
+    doExecutionEvent(process:any, event: any,eventDetails?:any): Promise<any>;
+    doItemEvent(item: any, event: any,eventDetails?: any): Promise<any>;
     log(...msg: any): void;
     logS(...msg: any): void;
     logE(...msg: any): void;

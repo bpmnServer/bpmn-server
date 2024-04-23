@@ -55,7 +55,7 @@ class Node extends Element {
         });
 
     }
-    async doEvent(item: Item, event: EXECUTION_EVENT, newStatus: ITEM_STATUS) {
+    async doEvent(item: Item, event: EXECUTION_EVENT, newStatus: ITEM_STATUS=null,eventDetails={}) {
         item.token.log('Node('+this.name+'|'+this.id+').doEvent: executing script for event:' + event + ' newStatus:'+newStatus);
         if (newStatus)
             item.status = newStatus;
@@ -70,9 +70,16 @@ class Node extends Element {
                 const ret = await ScriptHandler.executeScript(item, script);
                 rets.push(ret);
 
+                if (ret && ret.escalation) {
+                    await item.token.processEscalation(ret.escalation,item);
+                }
+                if (ret && ret.bpmnError) {
+                    await item.token.processError(ret.bpmnError,item);
+                }
+
             }
         }
-        const ret1 = await item.token.execution.doItemEvent(item, event);
+        const ret1 = await item.token.execution.doItemEvent(item, event,eventDetails);
         rets.push(ret1);
         item.token.log('Node('+this.name+'|'+this.id+').doEvent: executing script for event:' + event + ' ended');
         return rets;
@@ -272,24 +279,26 @@ class Node extends Element {
             else            
                 childrenTokens = item.token.getChildrenTokens();
 
-            for (t = 0; t < childrenTokens.length; t++) {
-                let token = childrenTokens[t];
-                item.token.log('     childToken:'+token.id+' startnode:'+token.startNodeId+' status:'+token.currentItem.status);
-                if (token.startNodeId == boundaryEvent.id) {
-                    if (token.firstItem.status != ITEM_STATUS.end)
-                        await token.terminate();
-                }
+            if (childrenTokens) {
+                for (t = 0; t < childrenTokens.length; t++) {
+                    let token = childrenTokens[t];
+                    item.token.log('     childToken:'+token.id+' startnode:'+token.startNodeId+' status:'+token.currentItem.status);
+                    if (token.startNodeId == boundaryEvent.id) {
+                        if (token.firstItem.status != ITEM_STATUS.end)
+                            await token.terminate();
+                    }
+                }  
             }
         }
     }
     async end(item: Item,cancel:Boolean=false) {
-        item.token.logS('Node('+this.name+'|'+this.id+').end: item=' + item.id+ ' cancel:'+cancel + ' attachments:'+this.attachments.length);
+        item.token.logS('Node('+this.name+'|'+this.id+'|'+item.seq+').end: item=' + item.id+ ' cancel:'+cancel + ' attachments:'+this.attachments.length);
 
         /**
          * Rule:    boundary events are canceled when owner task status is 'end'
          * */
         this.behaviours.forEach(async function (b) { await b.end(item); });
-        await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end);
+        await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end, {cancel});
         item.token.log('Node('+this.name+'|'+this.id+').end: setting item status to end itemId=' + item.id + ' itemStatus=' + item.status + ' cancel: '+cancel+' endedat '+item.endedAt);
         this.behaviours.forEach(async function (b) { await b.exit(item); });
         item.token.log('Node(' + this.name + '|' + this.id + ').end: finished');
