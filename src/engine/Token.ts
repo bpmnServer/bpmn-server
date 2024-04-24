@@ -584,6 +584,17 @@ class Token implements IToken {
      */ 
     async goNext() {
 
+        /** issue 186:  token with empty path due to loop preceded by gateway */
+        if (this.path.length==0) {
+            // borrow item (just temporarly) from first child token
+            let tks=this.getChildrenTokens();
+            let ftkn=tks[0];
+            let titm=ftkn.path[0];
+            this.path.push(titm);
+            // now verify a match
+        
+        }
+
         this.logS('Token('+this.id +').goNext(): currentNodeId=' + this.currentNode.id +' type='+this.currentNode.type+' currentItem.status='+this.currentItem.status);
         if (this.currentItem.status=='wait')
         {
