@@ -292,6 +292,8 @@ class Node extends Element {
         }
     }
     async end(item: Item,cancel:Boolean=false) {
+        if (!item)
+            return;
         item.token.logS('Node('+this.name+'|'+this.id+'|'+item.seq+').end: item=' + item.id+ ' cancel:'+cancel + ' attachments:'+this.attachments.length);
 
         /**
