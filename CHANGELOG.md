@@ -12,6 +12,9 @@ and here
 
 ### Changed
 -->
+## Release 2.2.1  -- 2014-04
+### Fix Issue 186 
+-  Loops/SubProcess/Transactions directly after gateways caused error of a token without any items, since loops create own tokens, fix: borrow item for subprocess
 ## Release 2.2.0  -- 2014-04
 ### API - no changes
 ### Events
