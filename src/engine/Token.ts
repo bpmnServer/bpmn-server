@@ -584,16 +584,16 @@ class Token implements IToken {
      */ 
     async goNext() {
 
-        /** issue 186:  token with empty path due to loop preceded by gateway */
-        if (this.path.length==0) {
-            // borrow item (just temporarly) from first child token
-            let tks=this.getChildrenTokens();
-            let ftkn=tks[0];
-            let titm=ftkn.path[0];
-            this.path.push(titm);
-            // now verify a match
+                /** issue 186:  token with empty path due to loop preceded by gateway */
+                if (this.path.length==0) {
+                    // borrow item (just temporarly) from first child token
+                    let tks=this.getChildrenTokens();
+                    let ftkn=tks[0];
+                    let titm=ftkn.path[0];
+                    this.path.push(titm);
+                    // now verify a match
         
-        }
+                }        
 
         this.logS('Token('+this.id +').goNext(): currentNodeId=' + this.currentNode.id +' type='+this.currentNode.type+' currentItem.status='+this.currentItem.status);
         if (this.currentItem.status=='wait')
@@ -644,7 +644,7 @@ class Token implements IToken {
                 let nextNode = flowItem.element['to'];
                 self.log('Token(' + self.id + ').goNext(): ... currentNodeId(' + self.currentNode.name + '|' + self.currentNode.id + ') processing  Flow(' + flowItem.element.id + ") to " + nextNode.id);
                 if (nextNode) {
-                   promises.push(Token.startNewToken(TOKEN_TYPE.Diverge, self.execution, nextNode, null, self, thisItem, null));
+                    promises.push(Token.startNewToken(TOKEN_TYPE.Diverge, self.execution, nextNode, null, self, thisItem, null));
                 }
             });
             if (this.type!=TOKEN_TYPE.SubProcess)

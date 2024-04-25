@@ -226,7 +226,8 @@ class Loop {
                 token.loop.completed++;
                 if (token.loop.completed == token.loop.items.length) {
                     // need to converge here ;
-                        await token.parentToken.currentNode.end(token.parentToken.currentItem);
+                        if (token.parentToken.currentItem)
+                            await token.parentToken.currentNode.end(token.parentToken.currentItem);
                         await token.parentToken.goNext();
                     return false;
                     if (token.currentNode.type==BPMN_TYPE.SubProcess) {
