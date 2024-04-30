@@ -90,7 +90,15 @@ class BPMNServer implements IBPMNServer {
 			this.cron.start();
 		}
 	}
+	status() {
+		const { memoryUsage } = require('node:process');
 
+
+		return {version: BPMNServer.getVersion(),
+			cache: this.cache.list,
+			engineRunning: this.engine.runningCounter, engineCalls: this.engine.callsCounter,
+			memoryUsage: memoryUsage()};
+	}
 	static getVersion() {
 
 		const configPath = __dirname+'/../../package.json';

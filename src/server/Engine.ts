@@ -8,8 +8,10 @@ import { DataStore } from '../datastore';
 
 class Engine extends ServerComponent implements IEngine{
 
-
+	runningCounter=0;
+	callsCounter=0;
 	constructor(server) {
+		
 		super(server);
     }
 
@@ -25,7 +27,7 @@ class Engine extends ServerComponent implements IEngine{
 		startNodeId: string = null,
 		userName: string=null,
 		options = {}): Promise<Execution> {
-
+		this.runningCounter++;
 		this.logger.log(`^Action:engine.start ${name}`);
 		
 
@@ -63,6 +65,7 @@ class Engine extends ServerComponent implements IEngine{
 			return await this.exception(exc,execution); 
 		}
 		finally {
+			this.runningCounter--;
 			if (execution && execution.isLocked)
 				await this.release(execution);
 		}
@@ -73,6 +76,8 @@ class Engine extends ServerComponent implements IEngine{
 	
 		this.logger.log(`^Action:engine.restart`);
 		let execution;
+		this.runningCounter++;
+		this.callsCounter++;
 
 		try {
 			const item = await this.server.dataStore.findItem(itemQuery);
@@ -91,6 +96,7 @@ class Engine extends ServerComponent implements IEngine{
 			return await this.exception(exc,execution); 
 		}
 		finally {
+			this.runningCounter--;
 			if (execution && execution.isLocked)
 				await this.release(execution);
 		}
@@ -209,6 +215,8 @@ class Engine extends ServerComponent implements IEngine{
 		this.logger.log(itemQuery);
 		let execution;
 
+		this.runningCounter++;
+		this.callsCounter++;
 		try {
 
 			const items = await this.server.dataStore.findItems(itemQuery);
@@ -233,6 +241,7 @@ class Engine extends ServerComponent implements IEngine{
 
 		}
 		finally {
+			this.runningCounter--;
 			if (execution && execution.isLocked)
 				await this.release(execution);
 		}
@@ -259,6 +268,8 @@ class Engine extends ServerComponent implements IEngine{
 		this.logger.log(`^Action:engine.invoke`);
 		this.logger.log(itemQuery);
 		let execution;
+		this.runningCounter++;
+		this.callsCounter++;
 
 		try {
 
@@ -311,6 +322,7 @@ class Engine extends ServerComponent implements IEngine{
 			return await this.exception(exc,execution); 
 		}
 		finally {
+			this.runningCounter--;
 			if (execution && execution.isLocked)
 				await this.release(execution);
 		}
