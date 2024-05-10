@@ -80,6 +80,8 @@ class DataStore extends ServerComponent  implements IDataStore {
 						let dp=instance.tokens[i.tokenId].dataPath;
 						if (dp!=='')
 							data=DataHandler.getData(instance.data,dp);
+						else
+							data=instance.data;
 					}
 					else 
 						data=instance.data
@@ -103,7 +105,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		let saveObject=
 			{	version: instance.version,endedAt: instance.endedAt, status: instance.status, saved: instance.saved,
 				tokens: instance.tokens, items: instance.items, loops: instance.loops,
-				logs: instance.logs, data: instance.data 
+				logs: instance.logs, data: instance.data , parentItemId: instance.parentItemId
 			};
 
 		if (instance.version==null) 
@@ -191,19 +193,28 @@ class DataStore extends ServerComponent  implements IDataStore {
 		}
 
     }
-
+	/**
+	 * 
+	 * @param query 
+	 * @param option
+	 * 		-'summary'	minimal data
+	 * 		- 'full'
+	 * 		- {projection,sort} 
+	 * @returns 
+	 */
 	async findInstances(query, option: 'summary' | 'full' | any = 'summary'): Promise<IInstanceData[]>{
 
-		let projection;
+		let projection=null;
+		let sort=null;
 
 		if (option == 'summary')
 			projection = { source: 0, logs: 0 };
 		else if (option['projection'])
 			projection = option['projection'];
-		else 
-			projection = {};
+		else if (option['sort'])
+			sort=option['sort'];
 
-		var records = await this.db.find(this.dbConfiguration.db, Instance_collection, query, projection);
+		var records = await this.db.find(this.dbConfiguration.db, Instance_collection, query, projection,sort);
 		return records;
 	}
 	/**
@@ -241,7 +252,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		// console.log('...find items for query:', query, " translated to :", JSON.stringify(result),  " recs:" , records.length)
 
 		const items=this.getItemsFromInstances(records, result,trans);
-//		this.logger.log('...find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result) + " instances:" + records.length+ " items: "+items.length);
+		//		this.logger.log('...find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result) + " instances:" + records.length+ " items: "+items.length);
 		return items;
 	}
 

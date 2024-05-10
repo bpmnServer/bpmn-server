@@ -12,6 +12,33 @@ and here
 
 ### Changed
 -->
+## Release 2.2.3  -- 2014-05
+- Fixed bug with callTask
+- JavaScript events errors now throw exceptions
+- Logger.log  is now optional:  {includeLog: true}
+- DataStore.findInstances now accepts sort as an option
+
+```
+	 * @param option
+	 * 		-'summary'	minimal data
+	 * 		- 'full'
+	 * 		- {projection,sort} 
+	async findInstances(query, option: 'summary' | 'full' | any = 'summary'): Promise<IInstanceData[]>{
+
+```
+- Added execution option: 'parentItemId' for callService
+```
+		if (options['parentItemId']) {
+			execution.instance.parentItemId=options['parentItemId'];
+		}
+```
+- Fix issue with async scripts for 'Task Assignment' by adding return
+
+```
+        else if (exp.startsWith('#')) {
+            val = await ScriptHandler.executeScript(item, 'return '+exp.substring(1));
+        }
+```
 ## Release 2.2.1  -- 2014-04
 ### Fix Issue 186 
 -  Loops/SubProcess/Transactions directly after gateways caused error of a token without any items, since loops create own tokens, fix: borrow item for subprocess

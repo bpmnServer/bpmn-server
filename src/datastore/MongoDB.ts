@@ -42,7 +42,7 @@ class MongoDB {
         }
         return this.client;
     }
-    async find( dbName, collName, qry, projection=null) {
+    async find( dbName, collName, qry, projection=null,sort=null) {
 
         var client = await this.getClient();
 
@@ -56,7 +56,13 @@ class MongoDB {
 
             let cursor;
             self.profilerStart('>mongo.find:'+collName);
-            cursor = collection.find(qry).project(projection);
+            if (projection)
+                cursor = collection.find(qry).project(projection);
+            else if (sort)
+                cursor = collection.find(qry).sort(sort);
+            else 
+                cursor = collection.find(qry);
+            
             self.profilerEnd();
             cursor.toArray(function (err, docs) {
                 // Do async job

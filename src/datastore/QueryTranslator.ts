@@ -120,7 +120,15 @@ class QueryTranslator {
 		for (let k = 0; k < keys.length; k++) {
 			const key = keys[k];
 			let cond = condition[key];
-//			console.log('key', key, condition[key], i[key]);
+			pass= this.evaluateValue(i,key,cond);
+			if (pass===false)
+				break;
+		}
+		return pass;
+    }
+	
+	private evaluateValue(i,key,cond) {
+		let pass = true;
 			let val = i;
 			if (key.includes('.')) {
 				let ks = key.split('.');
@@ -150,9 +158,9 @@ class QueryTranslator {
 
 			if (pass == false)
 				return false;
-		}
 		return pass;
     }
+
 	private parseComplexCondition(condition,val) 
 	{
 		let ret=false;

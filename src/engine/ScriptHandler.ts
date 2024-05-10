@@ -1,3 +1,5 @@
+import { Item ,Execution,Token} from ".";
+
     
 class ScriptHandler {
 
@@ -51,7 +53,7 @@ class ScriptHandler {
      * @param expression 
      * @returns 
      */
-    static evaluateExpression(scope, expression) {
+    static evaluateExpression(scope: Item|Token, expression) {
 
         let script=expression;
         let result;
@@ -80,11 +82,12 @@ class ScriptHandler {
         catch (exc) {
             console.log('error in script evaluation', js);
             console.log(exc);
+            throw new Error(exc);
         }
         return ret;
     }
 	// used to be called scopeJS
-    static async executeScript(scope, script) {
+    static async executeScript(scope: Item|Execution, script) {
 
         let result;
 		let ret;
@@ -123,6 +126,7 @@ class ScriptHandler {
         catch (exc) {
             console.log('error in script execution', js);
             console.log(exc);
+            throw new Error(exc);            
         }		
 
 		return ret;

@@ -35,6 +35,10 @@ class Engine extends ServerComponent implements IEngine{
 		const source = await definitions.getSource(name);
 
 		const execution = new Execution(this.server,name, source);
+
+		if (options['parentItemId']) {
+			execution.instance.parentItemId=options['parentItemId'];
+		}
 		execution.userName = userName;
 		execution.operation='start';
 		execution.options=options;

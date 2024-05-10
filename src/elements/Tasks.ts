@@ -161,7 +161,7 @@ class SendTask extends ServiceTask {
 class UserTask extends Node {
 
     async end(item: Item,cancel=false) {
-        item.token.info(`Task ${this.name} ended by ${item.token.execution.userName}`);
+        item.token.info(`User Task '${this.name}' Sequence# ${item.seq} ended by ${item.token.execution.userName}`);
         return await super.end(item,cancel);
     }
     async start(item: Item): Promise<NODE_ACTION> {
@@ -182,7 +182,7 @@ class UserTask extends Node {
             item.candidateGroups.push(this.lane);
             }
 
-        item.token.info(`Task ${this.name} -${this.id} started.`);
+        item.token.info(`User Task '${this.name}' -${this.id} started.`);
         return await super.start(item);
     }
     async setAssignVal(item,attr,dateFormat=false) {
@@ -196,7 +196,7 @@ class UserTask extends Node {
             val = ScriptHandler.evaluateExpression(item, exp);
         }
         else if (exp.startsWith('#')) {
-            val = await ScriptHandler.executeScript(item, exp);
+            val = await ScriptHandler.executeScript(item, 'return '+exp.substring(1));
         }
         else if (exp.includes(","))
         {
@@ -405,7 +405,7 @@ class CallActivity extends Node {
         const modelName = this.calledElement;
         //const data = await item.node.getOutput(item);
 
-        const response = await context.engine.start(modelName, item.input);
+        const response = await context.engine.start(modelName, item.input,null,null,{parentItemId: item.id});
 
         token.log('..end of executing a call activity for item:' + item.id + " calling " + this.calledElement);
 
