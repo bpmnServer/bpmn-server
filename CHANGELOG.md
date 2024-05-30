@@ -12,6 +12,17 @@ and here
 
 ### Changed
 -->
+## Release 2.2.4  -- 2014-05-30
+### engine:
+  added api.engine.upgrade()
+  ade(model:string,afterNodeIds:string[]):Promise<string[]|{errors}>;
+
+### ModelsData
+    added the following to process:
+            candidateStarterGroups
+            candidateStarterUsers
+            historyTimeToLive
+            isStartableInTasklist
 ## Release 2.2.3  -- 2014-05
 - Fixed bug with callTask
 - JavaScript events errors now throw exceptions

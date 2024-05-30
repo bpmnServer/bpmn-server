@@ -113,6 +113,7 @@ interface IEngine {
     throwSignal(signalId, data: {}, matchingQuery: {});
     restart(itemQuery, data:any,userName, options) :Promise<IExecution>;
 
+    upgrade(model:string,afterNodeIds:string[]):Promise<string[]|{errors}>;
 
 }
 

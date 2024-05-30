@@ -19,6 +19,10 @@ class Process {
     eventSubProcesses: any[];
     subProcessEvents: any[];
     scripts = new Map();
+    candidateStarterGroups;
+    candidateStarterUsers;
+    historyTimeToLive;
+    isStartableInTasklist;
 
     constructor(definition,parent=null) {
         this.id = definition.id;
@@ -26,6 +30,11 @@ class Process {
         this.name = definition.name;
         this.def = definition;
         this.parent = parent;
+        this.candidateStarterGroups=definition.candidateStarterGroups;
+        this.candidateStarterUsers=definition.candidateStarterUsers;
+        this.historyTimeToLive=definition.historyTimeToLive;
+        this.isStartableInTasklist=definition.isStartableInTasklist;
+
     }
     init(children, eventSubProcesses) {
         this.childrenNodes = children;

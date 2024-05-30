@@ -3,7 +3,7 @@ import { Execution } from '../';
 import { ServerComponent } from '../server/ServerComponent';
 import { EXECUTION_EVENT, IEngine} from "../interfaces";
 
-import { DataStore } from '../datastore';
+import { DataStore, Instance_collection } from '../datastore';
 
 
 class Engine extends ServerComponent implements IEngine{
@@ -52,9 +52,9 @@ class Engine extends ServerComponent implements IEngine{
 
 			if (options['noWait'] == true) {
 				execution.worker = execution.execute(startNodeId, this.sanitizeData(data), options);
-				execution.worker.then(obj=>{ 
+				execution.worker.then(async (obj)=>{ 
 						this.logger.log('after worker is done releasing ..'+execution.instance.id);
-						this.release(execution);
+						await this.release(execution);
 						});
 				return execution;
 			}
@@ -144,10 +144,13 @@ class Engine extends ServerComponent implements IEngine{
 	/**
 		release instance lock
 	*/
-	private async release(execution: Execution) {
-		this.logger.log('...unlocking ..' + execution.id);
-			await this.server.dataStore.locker.release(execution.id);
-			execution.isLocked=false;
+	private async release(execution: Execution,id=null) {
+		if (id===null)
+			id =execution.id;
+		this.logger.log('...unlocking ..' + id);
+			await this.server.dataStore.locker.release(id);
+			if (execution)
+				execution.isLocked=false;
 	}
 	/***
 		Loads instance into memory for purpose of execution
@@ -512,6 +515,57 @@ class Engine extends ServerComponent implements IEngine{
 		}
 		return instances;
 	}
+
+	/**
+ * 
+ * @param model 
+ * @param afterNodeIds
+ */
+    async upgrade(model:string,afterNodeIds:string[]):Promise<string[]|{errors}> {
+    
+		let ds=this.server.dataStore;
+
+	//    {"name":"boundary-event","$nor":[{"items":{"$elemMatch":{"elementId":"Reminder-Timer"}}}]}
+		let query={"name":model};
+
+		if (afterNodeIds.length>0) {
+			let nors = [];
+			afterNodeIds.forEach(node=>{
+			nors.push({"items":{"elemMatch":{"elementId":node}}});
+			});
+			query["$nor"]=nors;
+		}
+		let insts=await ds.findInstances(query,{"projection":{"id":1}});
+
+		let source=await this.server.definitions.getSource(model);
+		console.log(source);
+
+		console.log(insts);
+		const resIds=[];
+		let self=this;
+		for(let i=0;i<insts.length;i++) {
+
+			let inst=insts[i];
+				await self.lock(inst.id);
+				try {
+					await ds.db.update(ds.dbConfiguration.db,Instance_collection,
+						{ id: inst.id },
+						{
+							$set: {source}
+						});
+					resIds.push(inst.id);
+					}
+				catch(exc) {
+					return {errors:exc};
+				}
+				finally {
+					await self.release(null,inst.id);
+			
+				}
+		}
+		return resIds;
+	}
+
 	private async exception(exc,execution) {
 
 		if (execution)

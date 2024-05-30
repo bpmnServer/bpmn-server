@@ -126,6 +126,18 @@ export interface IAPIEngine {
  */
     restart(itemQuery, data:any,userName, options?) :Promise<IExecution>;
 
+/**
+ * upgrade running instances with the latest revised bpmn model
+ * default behaviour is that running instances will retain the model at start
+ * However, this routine will upgrade already started instances with the revised model
+ * 
+ * @param model     Model Name
+ * @param afterNodeIds  list of nodeIds, to check if already started, don't apply the upgrade
+ * 
+ */
+    upgrade(model:string,afterNodeIds:string[]):Promise<string[]|{errors}>;
+
+
 
 }
 
@@ -245,7 +257,9 @@ class APIEngine extends APIComponent implements IAPIEngine {
         return await this.server.engine.restart(itemQuery, data,user.userName, options);
 
     }
-
+    public async upgrade(model,afterNodeIds) {
+        return await this.server.engine.upgrade(model,afterNodeIds)
+    }
 }
 class APIData extends APIComponent {
     public async getPendingUserTasks(query, user?: ISecureUser): Promise<IItemData[]> {

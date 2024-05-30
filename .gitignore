@@ -12,6 +12,7 @@
 tsconfig.tsbuildinfo
 /bin
 *.tgz
+*.bak
 # Transpiled JavaScript files from Typescript
 /dist
 # generated docs
@@ -26,3 +27,5 @@ src/scripts/output.md
 src/scripts/test.md
 src/scripts/md-include.ts
 src/scripts/file1.md
+
+

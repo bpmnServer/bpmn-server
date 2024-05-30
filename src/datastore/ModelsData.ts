@@ -14,6 +14,7 @@ class BpmnModelData implements IBpmnModelData {
     svg;
     processes: IProcessData[];
     events: IEventData[];
+    historyTimeToLive;
     saved;
     constructor(name,source,svg,processes,events) {
         this.name=name;
@@ -77,6 +78,10 @@ class BpmnModelData implements IBpmnModelData {
             proc.id = p.def.id;
             proc.name = p.def.name;
             proc.isExecutable = p.def.isExecutable;
+            proc.candidateStarterGroups=p.def.candidateStarterGroups;
+            proc.candidateStarterUsers=p.def.candidateStarterUsers;
+            proc.historyTimeToLive=p.def.historyTimeToLive;
+            proc.isStartableInTasklist=p.def.isStartableInTasklist;
             let doc;
             if (p.def.documentation)
                 {
@@ -93,6 +98,10 @@ class ProcessData implements IProcessData {
     name;
     documentation;
     isExecutable;
+    candidateStarterGroups;
+    candidateStarterUsers;
+    historyTimeToLive;
+    isStartableInTasklist;
 }
 class EventData implements IEventData  {
     elementId;

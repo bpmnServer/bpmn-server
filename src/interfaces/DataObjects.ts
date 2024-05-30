@@ -15,7 +15,7 @@ interface IItemData {
     seq: any;
     timeDue: Date;
     status: ITEM_STATUS;
-//    data: any;
+    data?: any;
     messageId;
     signalId;
     vars;
@@ -102,5 +102,9 @@ interface IProcessData {
     id;
     name;
     isExecutable;
+    candidateStarterGroups;
+    candidateStarterUsers;
+    historyTimeToLive;
+    isStartableInTasklist;
 }
 export { IItemData, IInstanceData , IDefinitionData, IElementData, IFlowData , IBpmnModelData, IProcessData, IEventData }

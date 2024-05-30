@@ -15,7 +15,7 @@ interface IItemData {
     seq: any;
     timeDue: Date;
     status: ITEM_STATUS;
-//    data: any;
+    data?: any;
     messageId;
     signalId;
     vars;
@@ -42,7 +42,6 @@ interface IInstanceData {
     tokens;
     loops;
     parentItemId;   // used for subProcess Calls
-    vars;
 }
 
 

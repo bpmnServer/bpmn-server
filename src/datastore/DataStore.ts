@@ -211,7 +211,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 			projection = { source: 0, logs: 0 };
 		else if (option['projection'])
 			projection = option['projection'];
-		else if (option['sort'])
+		if (option['sort'])
 			sort=option['sort'];
 
 		var records = await this.db.find(this.dbConfiguration.db, Instance_collection, query, projection,sort);
