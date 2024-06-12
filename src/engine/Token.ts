@@ -488,13 +488,15 @@ class Token implements IToken {
         //this.log(`..token.signal ${this.currentNode.id} ${this.currentNode.type}`);
         this.logS('Token('+this.id +').signal: invoking '+this.currentNode.id+' '+this.currentNode.type+' with data='+JSON.stringify(data));
 
-        await this.currentNode.setInput(item, data);
+//        await this.currentNode.setInput(item, data);
         
         if (restart) { // case when in restart mode  
             if (item.status==ITEM_STATUS.wait)
                 return;
-            const ret = await this.currentNode.run(item);
 
+            await this.currentNode.setInput(item, data);
+
+            const ret = await this.currentNode.run(item);
 
             let result = await this.currentNode.continue(item);
             result =await this.goNext();
@@ -503,8 +505,9 @@ class Token implements IToken {
 
             await item.node.validate(item);
 
-            const ret = await this.currentNode.run(item);
+            await this.currentNode.setInput(item, item.input);
 
+            const ret = await this.currentNode.run(item);
 
             let result = await this.currentNode.continue(item);
             result =await this.goNext();

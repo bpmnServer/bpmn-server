@@ -12,7 +12,9 @@ and here
 
 ### Changed
 -->
-## Release 2.2.4  -- 2014-05-30
+## Release 2.2.5  -- 2024-06-12
+  fixed bug, instance.data is now impacted by change on item.input during validate
+## Release 2.2.4  -- 2024-05-30
 ### engine:
   added api.engine.upgrade()
   ade(model:string,afterNodeIds:string[]):Promise<string[]|{errors}>;
