@@ -12,6 +12,8 @@ and here
 
 ### Changed
 -->
+## Release 2.2.6  -- 2024-06-12
+  rollback last commit
 ## Release 2.2.5  -- 2024-06-12
   fixed bug, instance.data is now impacted by change on item.input during validate
 ## Release 2.2.4  -- 2024-05-30

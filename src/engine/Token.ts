@@ -488,13 +488,11 @@ class Token implements IToken {
         //this.log(`..token.signal ${this.currentNode.id} ${this.currentNode.type}`);
         this.logS('Token('+this.id +').signal: invoking '+this.currentNode.id+' '+this.currentNode.type+' with data='+JSON.stringify(data));
 
-//        await this.currentNode.setInput(item, data);
+        await this.currentNode.setInput(item, data);
         
         if (restart) { // case when in restart mode  
             if (item.status==ITEM_STATUS.wait)
                 return;
-
-            await this.currentNode.setInput(item, data);
 
             const ret = await this.currentNode.run(item);
 
@@ -504,8 +502,6 @@ class Token implements IToken {
         else if (item.status == ITEM_STATUS.wait || recover) {// || item.type=='bpmn:SubProcess') {
 
             await item.node.validate(item);
-
-            await this.currentNode.setInput(item, item.input);
 
             const ret = await this.currentNode.run(item);
 
