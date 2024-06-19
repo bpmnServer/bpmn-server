@@ -138,16 +138,16 @@ class QueryTranslator {
 				if (val !== cond)
 					pass = false;
 			}
+			else if (typeof cond === 'object' &&
+				!Array.isArray(cond) &&
+				cond !== null) {
+				pass = this.parseComplexCondition(cond, i[key]);
+			}
 			else if (Array.isArray(i[key])) {
 				if (Array.isArray(cond))
 					pass = i[key].some(r => cond.includes(r))
 				else if (!i[key].includes(cond))
 					pass = false;
-			}
-			else if (typeof cond === 'object' &&
-				!Array.isArray(cond) &&
-				cond !== null) {
-				pass = this.parseComplexCondition(cond, i[key]);
 			}
 			else if (cond === null && i[key] == null)
 				pass = true;
@@ -191,6 +191,12 @@ class QueryTranslator {
 					else 
 						ret=false;
 					
+					break;
+				case '$in':
+					if (term.includes(val))
+						ret=true;
+					else if (Array.isArray(val) && val.includes(term))
+						ret=true;
 					break;
 				default:
 					ret=false;
