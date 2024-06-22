@@ -14,6 +14,7 @@ and here
 -->
 ## Release 2.2.7  -- 2024-06-19
   data.findItems: Added $in condition
+  Fixed Bug with query in items.vars.<varname>
 ## Release 2.2.6  -- 2024-06-12
   rollback last commit
 ## Release 2.2.5  -- 2024-06-12

@@ -135,23 +135,24 @@ class QueryTranslator {
 				ks.forEach(k => {
 					val = val[k];
 				});
-				if (val !== cond)
-					pass = false;
 			}
-			else if (typeof cond === 'object' &&
+			else 
+				val=i[key];
+			
+			if (typeof cond === 'object' &&
 				!Array.isArray(cond) &&
 				cond !== null) {
-				pass = this.parseComplexCondition(cond, i[key]);
+				pass = this.parseComplexCondition(cond, val);
 			}
-			else if (Array.isArray(i[key])) {
+			else if (Array.isArray(val)) {
 				if (Array.isArray(cond))
-					pass = i[key].some(r => cond.includes(r))
-				else if (!i[key].includes(cond))
+					pass = val.some(r => cond.includes(r))
+				else if (!val.includes(cond))
 					pass = false;
 			}
-			else if (cond === null && i[key] == null)
+			else if (cond === null && val == null)
 				pass = true;
-			else if (i[key] !== cond)
+			else if (val !== cond)
 				pass = false;
 
 //			console.log('		cond:', cond, key, i[key], pass);
