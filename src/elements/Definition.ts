@@ -309,6 +309,7 @@ references:
 
         return JSON.stringify({ root: this.rootElements, processes , elements, flows });
     }
+
     async getDefinition(source, logger) {
 
         try {
@@ -353,4 +354,46 @@ references:
 
 
 }
+
+    // sorting of json elements
+    let nodes=new Map();
+let sortedNodes=new Map();
+let sortedFlows=new Map();
+
+function sort(def) {
+    def.nodes.forEach(el => {
+        if (el.type=='bpmn:StartEvent')
+            addSorted(el)
+        else
+            nodes.set(el.id,el);
+
+    });
+    let seq=0;
+    let newNodes=[];
+    sortedNodes.forEach(s=>{
+        console.log('sorted',seq,s.id,s.type);
+        newNodes.push(s);
+        s['seq']=seq++; 
+        }
+    );
+    let newFlows=[];
+    sortedFlows.forEach(f=>{newFlows.push(f)});
+    def.nodes=newNodes;
+    def.flows=newFlows;
+
+    return;
+}
+
+ 
+function addSorted(el) {
+    nodes.delete(el.id);
+    sortedNodes.set(el.id,el);
+    el.outbounds.forEach(o=>{
+        sortedFlows.set(o.id,o);
+        addSorted(o.to);
+    })
+}
+
+    // end of sorting
+
 export { Definition }
