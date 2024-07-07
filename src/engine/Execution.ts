@@ -1,5 +1,4 @@
-
-import { nanoid } from 'nanoid';
+import { v4 as uuid } from '@lukeed/uuid';
 import { Item } from './Item';
 import { Token, TOKEN_TYPE  } from './Token';
 import { Loop} from './Loop';
@@ -619,7 +618,7 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
     }
 
     getUUID() {
-        return nanoid() //=> "V1StGXR8_Z5jdHi6B-myT"
+        return uuid(); //=> '400fa120-5e9f-411e-94bd-2a23f6695704'
     }
 
 
