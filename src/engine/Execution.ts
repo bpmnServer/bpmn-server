@@ -42,6 +42,8 @@ class Execution extends ServerComponent implements IExecution {
     get name() { return this.instance.name; }
     get status():EXECUTION_STATUS { return this.instance.status;}
     get execution() { return this;} // backward compatible
+    // TODO: this is not updated
+    action = NODE_ACTION.stop;
 
     async tillDone() {
         const res = await this.worker;

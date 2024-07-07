@@ -8,7 +8,7 @@ import { Process } from './Process';
 import { IExecution } from '../interfaces/engine';
 import { EXECUTION_STATUS } from '../interfaces/Enums';
 import { Item } from '../engine/Item';
-import { ScriptHandler } from '../';
+import { IAppDelegate, ScriptHandler } from '../';
 //NO_import { DecisionTable } from 'dmn-engine';
 
 // ---------------------------------------------
@@ -50,12 +50,12 @@ class ServiceTask extends Node {
         }
 
     }
-    async run(item): Promise<NODE_ACTION> {
+    async run(item: Item): Promise<NODE_ACTION> {
 
         item.context.action = null;
         item.context.item = item;
         // calling appDelegate by service name
-        const appDelegate = item.token.execution.appDelegate;
+        const appDelegate: IAppDelegate = item.token.execution.appDelegate;
 
         // let output = await item.node.getOutput(item);
 
@@ -64,7 +64,7 @@ class ServiceTask extends Node {
         item.log("invoking service:" + this.serviceName + " input:" + JSON.stringify(item.input));
 
         const servicesProvider=await appDelegate.getServicesProvider(item.token.execution);
-//
+
         let obj = servicesProvider;
 
       let method = this.serviceName;
