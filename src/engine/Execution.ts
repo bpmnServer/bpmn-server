@@ -1,19 +1,13 @@
 
-import { Logger } from '../common/Logger';
-const fs = require('fs');
+import { nanoid } from 'nanoid';
 import { Item } from './Item';
 import { Token, TOKEN_TYPE  } from './Token';
 import { Loop} from './Loop';
-import { Element, Node, Flow , Definition, CallActivity, Process } from '../elements/'
-import { EXECUTION_EVENT, NODE_ACTION, FLOW_ACTION, TOKEN_STATUS, EXECUTION_STATUS, ITEM_STATUS, IDefinition } from '../';
-import { IInstanceData, IBPMNServer, IExecution, IAppDelegate , DefaultAppDelegate , DataHandler } from '../';
-import { EventEmitter } from 'events';
-import { BPMNServer, ServerComponent } from '../server';
+import { Definition, CallActivity, Process } from '../elements/'
+import { EXECUTION_EVENT, TOKEN_STATUS, EXECUTION_STATUS, IDefinition } from '../';
+import { IInstanceData, IExecution, DataHandler } from '../';
+import { ServerComponent } from '../server';
 import { InstanceObject } from './Model';
-
-
-const { v4: uuidv4 } = require('uuid');
-
 
 /**
  *  is accessed two ways:
@@ -625,9 +619,7 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
     }
 
     getUUID() {
-
-        return uuidv4(); // -> '6c84fb90-12c4-11e1-840d-7b25c5ee775a' 
-
+        return nanoid() //=> "V1StGXR8_Z5jdHi6B-myT"
     }
 
 
