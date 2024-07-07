@@ -6,7 +6,6 @@ interface IDataStore {
 
 }
 interface IToken {
-
     id: any;
     type;
     execution: IExecution;
@@ -89,6 +88,7 @@ interface IExecution extends IServerComponent {
 
     id;
     status;
+    action: NODE_ACTION;
     options;
     name;
 
