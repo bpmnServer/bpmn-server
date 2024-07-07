@@ -32,10 +32,10 @@ interface IModelsDatastore {
     load(name: any,owner): Promise<IDefinition>;
     loadModel(name: any,owner): Promise<IBpmnModelData>;
     findEvents(query: any,owner): Promise<any[]>;
+    rebuild(model?: any): Promise<void>
 
     install(); 
     import(data);
-
     saveModel(model: IBpmnModelData): Promise<boolean>;
     deleteModel(name: any,owner): Promise<void>;
     renameModel(name: any,newName: any,owner): Promise<boolean>;

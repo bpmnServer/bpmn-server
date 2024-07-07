@@ -2,13 +2,10 @@
 import { Logger } from '../common/Logger';
 
 
-import { IConfiguration, ILogger, DataStore , IAppDelegate, IBPMNServer, IDataStore,ICacheManager,IModelsDatastore} from '../';
+import { IConfiguration, ILogger, IAppDelegate, IBPMNServer, IDataStore, ICacheManager } from '../';
 import { Engine } from './Engine';
-import { CacheManager } from './CacheManager';
 import { Cron } from './Cron';
 import { EventEmitter } from 'events';
-
-console.log('BPMNServer from ',__filename);
 
 process.on('uncaughtException', function (err) {
 	console.log('***************BPMNServer UNCAUGHT ERROR***********');
@@ -100,7 +97,7 @@ class BPMNServer implements IBPMNServer {
 			memoryUsage: memoryUsage()};
 	}
 	static getVersion() {
-
+		if (typeof __dirname === 'undefined') return 'unknown';
 		const configPath = __dirname+'/../../package.json';
 
 		if (fs.existsSync(configPath)) {
@@ -111,8 +108,6 @@ class BPMNServer implements IBPMNServer {
 		}
 		else
 			return 'cannot locate package.json current: ' + __dirname+' path '+configPath;
-
-
     }
 	public static get engine() {
 		return BPMNServer.getInstance().engine;

@@ -6,8 +6,8 @@ import {
 
 interface IConfiguration 
 {
-    definitionsPath: string,
-    templatesPath: string,
+    definitionsPath?: string,
+    templatesPath?: string,
     timers: {
         forceTimersDelay: number,
         precision: number,
