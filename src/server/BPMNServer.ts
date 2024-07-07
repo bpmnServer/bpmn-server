@@ -10,17 +10,6 @@ import { EventEmitter } from 'events';
 
 console.log('BPMNServer from ',__filename);
 
-process.on('uncaughtException', function (err) {
-	console.log('***************BPMNServer UNCAUGHT ERROR***********');
-	try {
-		BPMNServer.getInstance().error = err;
-		BPMNServer.getInstance().logger.reportError(err);
-	}
-	catch (exc) {
-		console.log(err);
-    }
-	return;
-}); 
 
 
 const fs = require('fs');
