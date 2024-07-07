@@ -97,7 +97,7 @@ class BPMNServer implements IBPMNServer {
 			memoryUsage: memoryUsage()};
 	}
 	static getVersion() {
-
+		if (typeof __dirname === 'undefined') return 'unknown';
 		const configPath = __dirname+'/../../package.json';
 
 		if (fs.existsSync(configPath)) {
@@ -108,8 +108,6 @@ class BPMNServer implements IBPMNServer {
 		}
 		else
 			return 'cannot locate package.json current: ' + __dirname+' path '+configPath;
-
-
     }
 	public static get engine() {
 		return BPMNServer.getInstance().engine;
