@@ -7,18 +7,7 @@ import { Engine } from './Engine';
 import { Cron } from './Cron';
 import { EventEmitter } from 'events';
 
-process.on('uncaughtException', function (err) {
-	console.log('***************BPMNServer UNCAUGHT ERROR***********');
-	try {
-		BPMNServer.getInstance().error = err;
-		BPMNServer.getInstance().logger.reportError(err);
-	}
-	catch (exc) {
-		console.log(err);
-    }
-	return;
-}); 
-
+console.log('BPMNServer from ',__filename);
 
 const fs = require('fs');
 /**
