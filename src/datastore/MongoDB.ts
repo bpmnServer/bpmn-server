@@ -2,18 +2,9 @@
 
 const MongoClient = require('mongodb').MongoClient;
 const MongoDb = require('mongodb');
-//const mongoose= require('mongoose');
+
 const assert = require('assert');
 
-//mongoose.set('useNewUrlParser', true);
-//mongoose.set('useFindAndModify', false);
-//mongoose.set('useCreateIndex', true);
-//mongoose.set('useUnifiedTopology', true);
-
-/*Replace update() with updateOne(), updateMany(), or replaceOne()
-Replace remove() with deleteOne() or deleteMany().
-Replace count() with countDocuments(), unless you want to count how many documents are in the whole collection(no filter).In the latter case, use estimatedDocumentCount().
-*/
 
 class MongoDB {
     client;
@@ -35,7 +26,7 @@ class MongoDB {
             console.timeEnd(this.operation);
 
     }
-    async getClient() {
+    private async  getClient() {
 
         if (this.client == null) {
             this.client = await this.connect();
@@ -154,7 +145,7 @@ class MongoDB {
             });
         });
     }
-    async update2(dbName, collName, query, updateObject, options = {}) {
+    async updateDelete(dbName, collName, query, updateObject, options = {}) {
 
         var client = await this.getClient();
 
@@ -237,7 +228,7 @@ class MongoDB {
         });
     }
 
-    async connect() {
+    private async connect() {
     // Return new promise 
         const client = new MongoClient(this.dbConfig.db_url , { useUnifiedTopology: true });
 

@@ -609,7 +609,7 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
     }
     formatDate(date)
     {
-        if (date)
+        if (date && date instanceof Date)
             return (date).toISOString();//.split('T')[0];
         else
             return '';

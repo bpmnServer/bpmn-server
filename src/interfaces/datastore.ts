@@ -20,6 +20,7 @@ interface IDataStore {
     deleteInstances(query?: any): Promise<void>;
     install(); 
     archive(query);
+    updateSource(instanceId,source);
 }
 
 interface IModelsDatastore {

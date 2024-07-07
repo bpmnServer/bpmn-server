@@ -2,7 +2,7 @@
 import { ModelsDatastore } from '../datastore/ModelsDatastore';
 import { DefaultAppDelegate } from '../engine/DefaultAppDelegate';
 
-import { IConfiguration, DataStore, NoCacheManager,ILogger, IModelsDatastore, 
+import { IConfiguration, JSONDataStore, NoCacheManager,ILogger, IModelsDatastore, 
 		IAppDelegate, IDataStore} from '../';
 import { Logger } from './'
 
@@ -26,7 +26,7 @@ class Configuration implements IConfiguration {
 		return new DefaultAppDelegate(server);
 	}
 	dataStore(server) {
-		return new DataStore(server);
+		return new JSONDataStore(server);
 	}
 	cacheManager(server) {
 		return new NoCacheManager(server);
@@ -79,7 +79,7 @@ var defaultConfiguration = new Configuration(
 			return new DefaultAppDelegate(server);
 		},
 		dataStore: function (server) {
-			return new DataStore(server);
+			return new JSONDataStore(server);
 		},
 		cacheManager: function (server) {
 			return new NoCacheManager(server);

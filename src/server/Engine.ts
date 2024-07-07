@@ -3,8 +3,6 @@ import { Execution } from '../';
 import { ServerComponent } from '../server/ServerComponent';
 import { EXECUTION_EVENT, IEngine} from "../interfaces";
 
-import { DataStore, Instance_collection } from '../datastore';
-
 
 class Engine extends ServerComponent implements IEngine{
 
@@ -548,11 +546,7 @@ class Engine extends ServerComponent implements IEngine{
 			let inst=insts[i];
 				await self.lock(inst.id);
 				try {
-					await ds.db.update(ds.dbConfiguration.db,Instance_collection,
-						{ id: inst.id },
-						{
-							$set: {source}
-						});
+					await ds.updateSource(inst.id,source);
 					resIds.push(inst.id);
 					}
 				catch(exc) {

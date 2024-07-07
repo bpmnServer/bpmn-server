@@ -1,4 +1,5 @@
-import  { DataStore }   from './';;
+import  { JSONDataStore }   from './';import { JSONDB } from './JSONDB';
+;
 
 
 const COLLECTION='wf_locks';
@@ -6,10 +7,11 @@ const WAIT=1500;
 const MAX_TRIES=20;
 
 class InstanceLocker {
-    dataStore;
+    db;
 
-    constructor(dataStore) {
-        this.dataStore=dataStore;
+    constructor(db) {
+
+        this.db=db;
     }
     async lock(id) {
 
@@ -38,12 +40,11 @@ class InstanceLocker {
 
         try
         {
-            var records = await this.dataStore.db.insert(this.dataStore.dbConfiguration.db, "wf_locks", [lock]);
-            //console.log(records);
+            await this.db.saveFile(id,lock);
         }
         catch(err)
         {
-            //console.log('lock error',err.code);
+            console.log('lock error',err.code);
             return false;
         }
 
@@ -53,17 +54,18 @@ class InstanceLocker {
 
         const query={"id":id};
 
-        return await this.dataStore.db.remove(this.dataStore.dbConfiguration.db, "wf_locks", query );
+        return await this.db.deleteFile(id);
     }    
     async delete(query) {
 
-        return await this.dataStore.db.remove(this.dataStore.dbConfiguration.db, "wf_locks", query);
+        return [];
+        //return await this.dataStore.db.remove(this.dataStore.dbConfiguration.db, "wf_locks", query);
     }    
 
     async list() {
 
-       var records = await this.dataStore.db.find(this.dataStore.dbConfiguration.db, "wf_locks" , {}, {});
-        return records;
+       //var records = await this.dataStore.db.find(this.dataStore.dbConfiguration.db, "wf_locks" , {}, {});
+        return [];//records;
     }
 
     async delay(time,result) {
