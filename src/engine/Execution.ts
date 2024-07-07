@@ -1,6 +1,7 @@
 
 import { Logger } from '../common/Logger';
 const fs = require('fs');
+import { nanoid } from 'nanoid'
 import { Item } from './Item';
 import { Token, TOKEN_TYPE  } from './Token';
 import { Loop} from './Loop';
@@ -10,9 +11,6 @@ import { IInstanceData, IBPMNServer, IExecution, IAppDelegate , DefaultAppDelega
 import { EventEmitter } from 'events';
 import { BPMNServer, ServerComponent } from '../server';
 import { InstanceObject } from './Model';
-
-
-const { v4: uuidv4 } = require('uuid');
 
 var execution_seq = 0;
 /**
@@ -452,7 +450,7 @@ class Execution extends ServerComponent implements IExecution {
 
     getUUID() {
 
-        return uuidv4(); // -> '6c84fb90-12c4-11e1-840d-7b25c5ee775a' 
+        return nanoid(); // -> 'V1StGXR8_Z5jdHi6B-myT' 
 
     }
 
