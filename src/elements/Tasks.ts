@@ -82,7 +82,7 @@ class ServiceTask extends Node {
             ret = await obj[method](item.input, item.context);
         }
         else {
-            ret = await appDelegate['serviceCalled'](item.input, item.context);
+            ret = await appDelegate['serviceCalled'](item.input, item.context, item);
         }
         
         item.log("service returned " + ret);
