@@ -6,11 +6,9 @@ import { IConfiguration, DataStore, NoCacheManager,ILogger, IModelsDatastore,
 		IAppDelegate, IDataStore} from '../';
 import { Logger } from './'
 
-let definitionsPath = __dirname + '/processes/';
-
-class Configuration implements IConfiguration {
-	definitionsPath: string;
-	templatesPath: string;
+export class Configuration implements IConfiguration {
+	definitionsPath?: string;
+	templatesPath?: string;
 	timers: { forceTimersDelay: number; precision: number; };
 	database: { 
 		MongoDB: { db_url: string; db: string; }; 
@@ -53,10 +51,10 @@ class Configuration implements IConfiguration {
 	}
 
 }
-var defaultConfiguration = new Configuration(
+export const defaultConfiguration = new Configuration(
 	{
-		definitionsPath: definitionsPath,
-		templatesPath: __dirname +'/emailTemplates',
+		definitionsPath: typeof __dirname !== 'undefined' ? __dirname + '/processes/' : undefined,
+		templatesPath: typeof __dirname !== 'undefined' ? __dirname +'/emailTemplates' : undefined,
 		timers: {
 			forceTimersDelay: 1000,
 			precision: 3000,
@@ -86,6 +84,3 @@ var defaultConfiguration = new Configuration(
 		}
 
 	});
-
-
-export { Configuration, defaultConfiguration}
