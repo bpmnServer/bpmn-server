@@ -63,11 +63,11 @@ class ServiceTask extends Node {
 
         item.log("invoking service:" + this.serviceName + " input:" + JSON.stringify(item.input));
 
-        const servicesProvider=await appDelegate.getServicesProvider(item.token.execution);
+        const servicesProvider= await appDelegate.getServicesProvider(item.token.execution);
 
         let obj = servicesProvider;
 
-      let method = this.serviceName;
+        let method = this.serviceName;
         if (obj && this.serviceName)  {
 
             const objs = this.serviceName.split('.');
