@@ -1,8 +1,5 @@
-import { IExecution, Item, NODE_ACTION, FLOW_ACTION, IAppDelegate , IDefinition} from "../";
-
+import { IExecution, Item, IAppDelegate, IServiceProvider} from "../";
 import { moddleOptions} from '../elements/js-bpmn-moddle';
-
-
 
 class DefaultAppDelegate implements IAppDelegate {
     server;
@@ -15,13 +12,17 @@ class DefaultAppDelegate implements IAppDelegate {
             await self.executionEvent(context, event);
         });
     }
-    async getServicesProvider(context)  {
+
+    async getServicesProvider(context): Promise<this>
+    async getServicesProvider(context): Promise<IServiceProvider>
+    async getServicesProvider(context): Promise<this | IServiceProvider>  {
         return this;
     }
 
     startUp(options) {
         console.log('server started..');
     }
+
     sendEmail(to, msg, body) {
         throw Error("sendEmail must be implemented by AppDelegate");
     }
@@ -29,12 +30,15 @@ class DefaultAppDelegate implements IAppDelegate {
     get moddleOptions() {
         return moddleOptions;
     }
+
     async executionStarted(execution: IExecution) {
 
     }
+
     async executionEvent(context,event) {
 
     }
+
     /**
      *  is called when a event throws a message
      * 
