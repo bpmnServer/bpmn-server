@@ -3,7 +3,7 @@ import { Item } from './Item';
 import { Token, TOKEN_TYPE  } from './Token';
 import { Loop} from './Loop';
 import { Definition, CallActivity, Process } from '../elements/'
-import { EXECUTION_EVENT, TOKEN_STATUS, EXECUTION_STATUS, IDefinition } from '../';
+import { EXECUTION_EVENT, TOKEN_STATUS, EXECUTION_STATUS, IDefinition ,NODE_ACTION } from '../';
 import { IInstanceData, IExecution, DataHandler } from '../';
 import { ServerComponent } from '../server';
 import { InstanceObject } from './Model';
