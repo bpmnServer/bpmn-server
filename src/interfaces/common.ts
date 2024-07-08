@@ -73,7 +73,7 @@ interface ILogger {
  * Object to respond to all named services
  */
 interface IServiceProvider {
-    [serviceName: string]: CallableFunction;
+    [serviceName: string]: CallableFunction | IServiceProvider;
 }
 
 /**
@@ -90,7 +90,7 @@ interface IAppDelegate {
     /**
      * Get the service task handlers, default to `this`, so you can add handlers on this class directly.
      */
-    getServicesProvider(execution: IExecution): IAppDelegate | IServiceProvider | Promise<IAppDelegate> | Promise<IServiceProvider>;
+    getServicesProvider(execution: IExecution): IServiceProvider | Promise<IServiceProvider>;
     sendEmail(to, msg, body);
     executionStarted(execution: IExecution);
     startUp(options); // start of server

@@ -13,10 +13,8 @@ class DefaultAppDelegate implements IAppDelegate {
         });
     }
 
-    async getServicesProvider(context): Promise<this>
-    async getServicesProvider(context): Promise<IServiceProvider>
-    async getServicesProvider(context): Promise<this | IServiceProvider>  {
-        return this;
+    async getServicesProvider(context): Promise<IServiceProvider>  {
+        return this as unknown as IServiceProvider;
     }
 
     startUp(options) {

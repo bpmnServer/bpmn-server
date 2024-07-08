@@ -8,7 +8,7 @@ import { Process } from './Process';
 import { IExecution } from '../interfaces/engine';
 import { EXECUTION_STATUS } from '../interfaces/Enums';
 import { Item } from '../engine/Item';
-import { IAppDelegate, ScriptHandler } from '../';
+import { IAppDelegate, IServiceProvider, ScriptHandler } from '../';
 //NO_import { DecisionTable } from 'dmn-engine';
 
 // ---------------------------------------------
@@ -67,21 +67,22 @@ class ServiceTask extends Node {
 
         let obj = servicesProvider;
 
-        let method = this.serviceName;
+        let method: CallableFunction | undefined;
         if (obj && this.serviceName)  {
-
-            const objs = this.serviceName.split('.');
-            for (var i = 0; i < objs.length - 1; i++) {
-                const o = objs[i];
-                obj = obj[o];
+            const serviceNamePathPart = this.serviceName.split('.');
+            for (var i = 0; i <= serviceNamePathPart.length - 1; i++) {
+                const pathPart = serviceNamePathPart[i];
+                if (typeof obj[pathPart] === 'function') {
+                    method = obj[pathPart] as CallableFunction;
+                } else if (typeof obj[pathPart] === 'object') {
+                    obj = obj[pathPart] as IServiceProvider;
+                }
             }
-            method = objs[objs.length - 1];
         }
 
-        if (obj && obj[method]) {
-            ret = await obj[method](item.input, item.context);
-        }
-        else {
+        if (typeof method === 'function') {
+            ret = await method(item.input, item.context);
+        } else {
             ret = await appDelegate['serviceCalled'](item.input, item.context, item);
         }
         
