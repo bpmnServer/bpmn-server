@@ -72,7 +72,7 @@ interface ILogger {
 /**
  * Object to respond to all named services
  */
-export interface IServiceProvider {
+interface IServiceProvider {
     [serviceName: string]: CallableFunction;
 }
 
@@ -113,4 +113,4 @@ interface IAppDelegate {
     serviceCalled(input: Record<string, unknown>, execution: IExecution, item: IItem): unknown;
 }
 
-export { ILogger, IAppDelegate, IConfiguration }
+export { ILogger, IAppDelegate, IConfiguration, IServiceProvider }
