@@ -68,6 +68,14 @@ interface ILogger {
     reportError(err: any): void;
     save(filename: any): Promise<void>;
 }
+
+/**
+ * Object to respond to all named services
+ */
+interface IServiceProvider {
+    [serviceName: string]: CallableFunction | IServiceProvider;
+}
+
 /**
  *  Application Delegate Object to respond to various events and services:
  *  
@@ -79,12 +87,15 @@ interface ILogger {
  * */
 interface IAppDelegate {
     moddleOptions;
-    getServicesProvider(IExecution): any;       // to respond to all named services
+    /**
+     * Get the service task handlers, default to `this`, so you can add handlers on this class directly.
+     */
+    getServicesProvider(execution: IExecution): IServiceProvider | Promise<IServiceProvider>;
     sendEmail(to, msg, body);
-    executionStarted(execution);
+    executionStarted(execution: IExecution);
     startUp(options); // start of server
-    messageThrown(signalId, data, messageMatchingKey: any, item: IItem);
-    signalThrown(signalId, data, messageMatchingKey: any, item: IItem);
+    messageThrown(signalId: string, data, messageMatchingKey: any, item: IItem);
+    signalThrown(signalId: string, data, messageMatchingKey: any, item: IItem);
     /**
      * 
      * is called when an event throws a message that can not be answered by another process
@@ -92,16 +103,14 @@ interface IAppDelegate {
      * @param messageId
      * @param data
      */
-    issueMessage(messageId, data);
-    issueSignal(messageId, data);
+    issueMessage(messageId: string, data);
+    issueSignal(messageId: string, data);
     /**
      * is called only if the serviceTask has no implementation; otherwise the specified implementation will be called.
      * 
      * @param item
      */
-    serviceCalled(serviceName,data,item: IItem);
-
-
+    serviceCalled(input: Record<string, unknown>, execution: IExecution, item: IItem): unknown;
 }
 
-export { ILogger ,IAppDelegate , IConfiguration }
+export { ILogger, IAppDelegate, IConfiguration, IServiceProvider }
