@@ -7,7 +7,6 @@ import { Engine } from './Engine';
 import { Cron } from './Cron';
 import { EventEmitter } from 'events';
 
-console.log('BPMNServer from ',__filename);
 
 const fs = require('fs');
 /**
