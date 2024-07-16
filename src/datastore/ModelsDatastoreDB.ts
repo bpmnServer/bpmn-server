@@ -2,20 +2,10 @@
 import { Definition } from "../elements";
 import { BPMNServer } from "../server";
 
-
-
-const fs = require('fs');
-const Path = require('path')
-
-const BpmnModdle = require('bpmn-moddle');
 import { ServerComponent } from "../server/ServerComponent";
 import { IBpmnModelData, IModelsDatastore, IEventData } from "../interfaces/";
 import { BpmnModelData } from "./ModelsData";
 import { QueryTranslator } from "./QueryTranslator";
-
-
-const MongoDB = require('./MongoDB').MongoDB;
-
 
 const Definition_collection = 'wf_models';
 const Events_collection = 'wf_events';
@@ -28,6 +18,7 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
         super(server);
 
         this.dbConfiguration = this.configuration.database.MongoDB;
+        const MongoDB = require('./MongoDB').MongoDB;
         this.db = new MongoDB(this.dbConfiguration, this.logger);
 
     }
@@ -238,6 +229,7 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
         return true;
     }
     async export(name, folderPath,owner=null) {
+        const fs = require('fs');
 
         let model = await this.loadModel(name,owner);
 

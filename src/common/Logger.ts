@@ -2,8 +2,6 @@
 
 import { ILogger } from "../";
 
-const FS = require('fs');
-
 class Logger implements ILogger {
 
     debugMsgs = [];
@@ -30,7 +28,8 @@ class Logger implements ILogger {
         }
 
         if (this.toFile !== '') {
-                FS.appendFileSync(this.toFile, message);        
+            const fs = require('fs');
+            fs.appendFileSync(this.toFile, message);        
         }
         this.debugMsgs.push({date:new Date(),message, type,level:this.level});
         return ({date:new Date(),message,type,level:this.level});
@@ -120,17 +119,18 @@ class Logger implements ILogger {
         throw new Error(err);
     }
     async save(filename) {
+        const fs = require('fs');
         console.log("writing to:" + filename + " " + this.debugMsgs.length);
-        let id = FS.openSync(filename, 'w', 666);
+        let id = fs.openSync(filename, 'w', 666);
         {
-            FS.writeSync(id,'Started at: '+new Date().toISOString() + "\n", null, 'utf8');
+            fs.writeSync(id,'Started at: '+new Date().toISOString() + "\n", null, 'utf8');
 
             let l = 0;
             for (l = 0; l < this.debugMsgs.length; l++) {
                 let msg = this.debugMsgs[l];
                 if (msg.type == 'error') {
                     let line = msg.type + ": at line " + (l+1) + " " + msg.message;
-                    FS.writeSync(id, line + "\n", null, 'utf8');
+                    fs.writeSync(id, line + "\n", null, 'utf8');
                 }
             }
             for (l = 0; l < this.debugMsgs.length; l++) {
@@ -142,10 +142,10 @@ class Logger implements ILogger {
                     line = msg.message;
 
                 let level=this.level>-1 ? ' '.repeat(this.level):'';
-                FS.writeSync(id,level+line + "\n", null, 'utf8');
+                fs.writeSync(id,level+line + "\n", null, 'utf8');
             }
 
-            FS.closeSync(id );
+            fs.closeSync(id );
             this.clear();
 
         }

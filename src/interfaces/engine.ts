@@ -1,10 +1,7 @@
-import { ITEM_STATUS, EXECUTION_STATUS, NODE_ACTION, FLOW_ACTION, TOKEN_STATUS } from './Enums';
+import { NODE_ACTION, TOKEN_STATUS } from './Enums';
 import { IItemData , IInstanceData } from './';
-import { ILogger, IAppDelegate, IBPMNServer, IDefinition, IElement, Execution, Token, Item, Element, INode, Node, IServerComponent } from '../';
-import { EventEmitter } from 'events';
-interface IDataStore {
+import { ILogger, IAppDelegate, IBPMNServer, IDefinition, Token, Item, Element, Node, IServerComponent } from '../';
 
-}
 interface IToken {
     id: any;
     type;

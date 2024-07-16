@@ -9,11 +9,6 @@ import { InstanceLocker } from './';
 
 import { QueryTranslator } from './QueryTranslator';
 
-const fs = require('fs');
-
-const MongoDB = require('./MongoDB').MongoDB;
-
-
 export const Instance_collection = 'wf_instances';
 export const Locks_collection = 'wf_locks';
 export const Archive_collection = 'wf_archives';
@@ -36,6 +31,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		super(server);
 
 		this.dbConfiguration = this.configuration.database.MongoDB;
+		const MongoDB = require('./MongoDB').MongoDB;
 		this.db = new MongoDB(this.dbConfiguration, this.logger);
 		this.locker=new InstanceLocker(this);
 

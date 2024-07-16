@@ -3,14 +3,7 @@ import { Definition } from "../elements";
 import { BPMNServer } from "../server";
 import {ModelsDatastoreDB} from "./ModelsDatastoreDB";
 
-
-const fs = require('fs');
-const Path = require('path')
-
-const BpmnModdle = require('bpmn-moddle');
-import { ServerComponent } from "../server/ServerComponent";
-import { IBpmnModelData, IModelsDatastore, IEventData } from "../interfaces/";
-import { BpmnModelData } from "./ModelsData";
+import { IModelsDatastore } from "../interfaces/";
 
 
 class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
@@ -30,10 +23,11 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
     async getList(query=null): Promise<string[]> {
 
         let files = [];
-
+        const fs = require('fs');
         fs.readdirSync(this.definitionsPath).forEach(file => {
-            if (Path.extname(file) == '.bpmn') {
-                let name = Path.basename(file);
+            const path = require('path')
+            if (path.extname(file) == '.bpmn') {
+                let name = path.basename(file);
                 name = name.substring(0, name.length - 5);;
                 files.push({name,saved:null});
             }
@@ -62,7 +56,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
     }
 
     private getFile(name, type,owner=null) {
-
+        const fs = require('fs');
         let file = fs.readFileSync(this.getPath(name,type),
             { encoding: 'utf8', flag: 'r' });
         return file;
@@ -70,7 +64,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
     }
     private saveFile(name, type , data,owner=null) {
         let fullpath = this.getPath(name, type);
-
+        const fs = require('fs');
         fs.writeFile(fullpath, data, function (err) {
             if (err) throw err;
         });
@@ -98,7 +92,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
     }
 
     async deleteModel(name: any,owner=null): Promise<void> {
-
+        const fs = require('fs');
         await super.deleteModel(name);
         await fs.unlink(this.definitionsPath + name + '.bpmn',  function (err) {
             if (err) console.log('ERROR: ' + err);
@@ -108,7 +102,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
         });
     }
     async renameModel(name: any, newName: any,owner=null): Promise<boolean> {
-
+        const fs = require('fs');
         await super.renameModel(name, newName);
         await fs.rename(this.definitionsPath + name + '.bpmn', this.definitionsPath + newName + '.bpmn', function (err) {
             if (err) console.log('ERROR: ' + err);
@@ -135,7 +129,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
 
         filesList.forEach(f => {
             const path=this.definitionsPath + f['name'] + '.bpmn';
-
+            const fs = require('fs');
             var stats = fs.statSync(path);
             var mtime = stats.mtime;
             models.set(f['name'], mtime);
