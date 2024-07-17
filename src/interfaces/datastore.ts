@@ -1,7 +1,5 @@
-import { IExecution, ILogger,  IDefinition, IConfiguration, IInstanceData } from './';
+import { IDefinition, IInstanceData } from './';
 import { IBpmnModelData, IItemData, IEventData } from './';
-import { EventEmitter } from 'events';
-import { BPMNServer } from '../server';
 
 interface IDataStore {
     dbConfiguration: any;
@@ -33,6 +31,7 @@ interface IModelsDatastore {
     load(name: any,owner): Promise<IDefinition>;
     loadModel(name: any,owner): Promise<IBpmnModelData>;
     findEvents(query: any,owner): Promise<any[]>;
+    rebuild(model?: any): Promise<void>
 
     install(); 
     import(data);

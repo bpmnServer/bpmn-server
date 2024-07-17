@@ -1,5 +1,4 @@
-import { IExecution, Item, NODE_ACTION, FLOW_ACTION, IAppDelegate , IDefinition} from "../";
-
+import { IExecution, Item, IAppDelegate, IServiceProvider} from "../";
 import { moddleOptions} from '../elements/js-bpmn-moddle';
 
 
@@ -15,8 +14,9 @@ class DefaultAppDelegate implements IAppDelegate {
             await self.executionEvent(context, event);
         });
     }
-    async getServicesProvider(context)  {
-        return this;
+
+    async getServicesProvider(context): Promise<IServiceProvider>  {
+        return this as unknown as IServiceProvider;
     }
 
     startUp(options) {

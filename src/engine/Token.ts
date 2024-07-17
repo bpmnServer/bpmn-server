@@ -1,15 +1,10 @@
 
-import { Logger } from '../common/Logger';
-const fs = require('fs');
-
 import { Execution } from './Execution';
-import { SubProcess ,  LoopBehaviour , Element, Node, Flow, Behaviour_names } from '../elements/'
-import { EXECUTION_EVENT , NODE_ACTION , FLOW_ACTION, TOKEN_STATUS, EXECUTION_STATUS,  ITEM_STATUS, INode, NODE_SUBTYPE} from '../';
-import { EventEmitter } from 'events';
+import { Node, Behaviour_names } from '../elements/'
+import { NODE_ACTION , TOKEN_STATUS, ITEM_STATUS, NODE_SUBTYPE} from '../';
 import { Loop } from './Loop';
 import { Item } from './Item';
-import { IToken, IExecution, IItem } from '../interfaces/engine';
-
+import { IToken, IExecution } from '../interfaces/engine';
 
 /*
  *  Tokens:
