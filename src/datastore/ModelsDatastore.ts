@@ -1,13 +1,11 @@
 
 import { Definition } from "../elements";
-import { BPMNServer } from "../server";
+import { BPMNServer, ServerComponent } from "../server";
 import {ModelsDatastoreDB} from "./ModelsDatastoreDB";
 
-import { IModelsDatastore } from "../interfaces/";
-
+import { IBpmnModelData, IDefinition, IModelsDatastore } from "../interfaces/";
 
 class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
-
     definitionsPath;
     constructor(server: BPMNServer) {
         super(server);
