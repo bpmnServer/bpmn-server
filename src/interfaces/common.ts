@@ -18,7 +18,8 @@ interface IConfiguration
     definitions(server): IModelsDatastore,
     appDelegate(server): IAppDelegate,
     dataStore(server): IDataStore,
-    cacheManager(server): ICacheManager
+    cacheManager(server): ICacheManager,
+    env: any
 }
 
 interface IDatabaseConfigurationBase {

@@ -1,5 +1,5 @@
 
-import { ModelsDatastore } from '../datastore/ModelsDatastore';
+import { RemoteModelsDatastore } from '../datastore/RemoteModelsDatastore';
 import { DefaultAppDelegate } from '../engine/DefaultAppDelegate';
 
 import { IConfiguration, JSONDataStore, NoCacheManager,ILogger, IModelsDatastore, 
@@ -18,7 +18,7 @@ class Configuration implements IConfiguration {
 	apiKey: string;
 	sendGridAPIKey: string;
 	definitions(server) {
-		return new ModelsDatastore(server); 
+		return new RemoteModelsDatastore(server); 
 	}
 	appDelegate(server) :IAppDelegate {
 		return new DefaultAppDelegate(server);
@@ -30,13 +30,16 @@ class Configuration implements IConfiguration {
 		return new NoCacheManager(server);
 	}
 
+	env: any;
 
 	constructor({
 		definitionsPath, templatesPath, timers, database, apiKey,
 		logger,
 		definitions,
 		appDelegate,
-		dataStore,cacheManager}) {
+		dataStore,
+		cacheManager,
+		env=null }) {
 		this.definitionsPath = definitionsPath;
 		this.templatesPath = templatesPath;
 		this.timers = timers;
@@ -47,7 +50,12 @@ class Configuration implements IConfiguration {
 		this.appDelegate = appDelegate;
 		this.dataStore = dataStore;
 		this.cacheManager = cacheManager;
-	
+
+		if (env==null && process)
+			env=process.env;
+
+		this.env=env;
+
 	}
 
 }
@@ -71,7 +79,7 @@ var defaultConfiguration = new Configuration(
 			new Logger(server);
 		},
 		definitions: function (server) {
-			return new ModelsDatastore(server);
+			return new RemoteModelsDatastore(server);
 		},
 		appDelegate: function (server) {
 			return new DefaultAppDelegate(server);

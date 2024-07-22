@@ -20,6 +20,8 @@ import { EventEmitter } from 'eventemitter3';
  *			BPMNServer.dataStore.findItems(...)
  */
 
+var APP_CONFIGURATION;
+
 class BPMNServer implements IBPMNServer {
 
 	engine: Engine;
@@ -44,6 +46,7 @@ class BPMNServer implements IBPMNServer {
 
 	constructor(configuration: IConfiguration, logger?: ILogger, options = {}) {
 
+		APP_CONFIGURATION=configuration;
 		if (logger == null) {
 			logger = new Logger({});
 		}
@@ -109,4 +112,4 @@ class BPMNServer implements IBPMNServer {
 }
 
 
-export { BPMNServer};
+export { BPMNServer , APP_CONFIGURATION};

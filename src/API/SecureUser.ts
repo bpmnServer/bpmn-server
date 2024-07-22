@@ -1,5 +1,6 @@
 import { QueryTranslator } from "../datastore/QueryTranslator";
 import { ISecureUser, IUserInfo } from "../interfaces";
+import { APP_CONFIGURATION  } from "../server";
 
 enum USER_ROLE {
     SYSTEM = 'SYSTEM',  // SYSTEM ADMIN
@@ -40,7 +41,7 @@ class SecureUser implements ISecureUser {
     constructor(params: IUserInfo) {
         Object.assign(this, params);
 
-        if (typeof process !=='undefined' && (process.env.REQUIRE_AUTHENTICATION === 'false' || process.env.ENFORCE_SECURITY === 'false')) {
+        if (APP_CONFIGURATION && (APP_CONFIGURATION.env.REQUIRE_AUTHENTICATION === 'false' || APP_CONFIGURATION.env.ENFORCE_SECURITY === 'false')) {
             console.log('****Security is disabled as requested in .env****');
             byPass = true;
         }

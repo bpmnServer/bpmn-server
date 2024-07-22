@@ -1,3 +1,4 @@
+import { APP_CONFIGURATION } from '../server';
 import  { JSONDataStore }   from './';import { JSONDB } from './JSONDB';
 ;
 
@@ -36,7 +37,8 @@ class InstanceLocker {
     }
     async try(id) {
 
-        const lock={"id":id,"server":process.env.SERVER_ID,"time": new Date()};
+        const serverId=APP_CONFIGURATION.env.SERVER_ID;
+        const lock={"id":id,"server":serverId,"time": new Date()};
 
         try
         {
