@@ -1,12 +1,5 @@
-
-import { Logger } from '../common/Logger';
-
 import { ServerComponent} from './ServerComponent';
-import { Engine } from '.';
-
 import { EXECUTION_EVENT, ICacheManager, IExecution } from '../interfaces';
-
-const fs = require('fs');
 
 class NoCacheManager extends ServerComponent implements ICacheManager {
 

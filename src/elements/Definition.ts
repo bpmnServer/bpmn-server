@@ -5,15 +5,12 @@ const BpmnModdle = require('bpmn-moddle');
 
 //const moddleOptions = require('./js-bpmn-moddle.json');
 
-import { Logger } from '../common/Logger';
-import { Node, Flow , MessageFlow ,NodeLoader , Process, Behaviour_names } from '.'; 
+import { Flow , MessageFlow ,NodeLoader , Process, Behaviour_names } from '.'; 
 import { BPMN_TYPE } from './NodeLoader';
 import { IDefinition } from '../interfaces/elements';
 import { BPMNServer } from '../server/BPMNServer';
-import { NODE_SUBTYPE, EXECUTION_EVENT } from '../interfaces';
+import { EXECUTION_EVENT } from '../interfaces';
 import { Transaction, SubProcess , AdHocSubProcess } from '.';
-
-const fs = require('fs');
 
 //DEBUG(moddleOptions);
 function DEBUG(...args) {

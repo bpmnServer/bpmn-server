@@ -1,12 +1,11 @@
-import { IExecution , ILogger , IItem, IItemData , IDefinition, IConfiguration, IAppDelegate, IDataStore,IModelsDatastore } from '../';
-import { EventEmitter } from 'events';
-
-
+import { IExecution , ILogger , IItem, IConfiguration, IAppDelegate, IDataStore,IModelsDatastore } from '../';
+import type { EventEmitter } from 'eventemitter3';
+import type { EventEmitter as NodeEventEmitter } from 'events';
 
 interface IBPMNServer {
 
     engine: IEngine;
-    listener: EventEmitter;
+    listener: EventEmitter | NodeEventEmitter;
     configuration: IConfiguration;
     logger: ILogger;
     definitions: IModelsDatastore;

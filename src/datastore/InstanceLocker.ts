@@ -34,7 +34,7 @@ class InstanceLocker {
     }
     async try(id) {
 
-        const lock={"id":id,"server":process.env.SERVER_ID,"time": new Date()};
+        const lock={"id":id,"server": typeof process !=='undefined' ? process.env.SERVER_ID : null,"time": new Date()};
 
         try
         {
