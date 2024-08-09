@@ -55,6 +55,8 @@ class BpmnModelData implements IBpmnModelData {
                     event.timeDue = timer.timeDue();
                     event.subType = 'Timer';
                     event.expression = timer.timeCycle;
+                    if (!event.expression) 
+                        event.expression = timer.duration;
                     event.referenceDateTime = new Date().getTime();
                 }
                 let msg = n.hasMessage();

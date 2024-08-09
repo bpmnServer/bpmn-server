@@ -73,7 +73,7 @@ class Loop {
         return (this.sequence > this.items.length - 1)
     }
     getNext() {
-        if (this.isDone)
+        if (this.isDone && (this.items.length>this.sequence))
             return this.items[this.sequence++];
         else
             return null;

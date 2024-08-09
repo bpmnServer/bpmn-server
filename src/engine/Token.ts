@@ -336,12 +336,12 @@ class Token implements IToken {
 
         let errorHandlerToken = this.getScopeCatchEvent('error',errorCode);
         if (errorHandlerToken) {
-            await errorHandlerToken.signal(null);
+            await errorHandlerToken.signal({errorCode});
             this.currentItem.status = ITEM_STATUS.end;
             await this.end(true);
         }
         else {
-            this.log("Aborting due to error")
+            this.log("Aborting due to bpmnError",errorCode)
             await this.execution.terminate();
             return;
         }
