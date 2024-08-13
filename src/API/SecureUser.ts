@@ -40,7 +40,7 @@ class SecureUser implements ISecureUser {
     constructor(params: IUserInfo) {
         Object.assign(this, params);
 
-        if (process.env.REQUIRE_AUTHENTICATION === 'false' || process.env.ENFORCE_SECURITY === 'false') {
+        if (typeof process !=='undefined' && (process.env.REQUIRE_AUTHENTICATION === 'false' || process.env.ENFORCE_SECURITY === 'false')) {
             console.log('****Security is disabled as requested in .env****');
             byPass = true;
         }

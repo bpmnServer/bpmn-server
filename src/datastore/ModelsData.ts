@@ -1,12 +1,5 @@
-import { Definition, IModelsDatastore } from "../";
-import { ServerComponent , BPMNServer } from "../";
+import { Definition } from "../";
 import { IProcessData, IBpmnModelData, IEventData } from "../interfaces/";
-
-
-const fs = require('fs');
-const Path = require('path')
-const MongoDB = require('./MongoDB').MongoDB;
-
 
 class BpmnModelData implements IBpmnModelData {
     name;

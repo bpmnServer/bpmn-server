@@ -1,7 +1,5 @@
-import { IExecution, ILogger,  IDefinition, IConfiguration, IInstanceData } from './';
+import { IDefinition, IInstanceData } from './';
 import { IBpmnModelData, IItemData, IEventData } from './';
-import { EventEmitter } from 'events';
-import { BPMNServer } from '../server';
 
 interface IDataStore {
     dbConfiguration: any;

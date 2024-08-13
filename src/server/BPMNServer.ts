@@ -1,15 +1,9 @@
-
 import { Logger } from '../common/Logger';
-
-
 import { IConfiguration, ILogger, IAppDelegate, IBPMNServer, IDataStore, ICacheManager } from '../';
 import { Engine } from './Engine';
 import { Cron } from './Cron';
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'eventemitter3';
 
-console.log('BPMNServer from ',__filename);
-
-const fs = require('fs');
 /**
  *	The main class of Server Layer
  *	provides the full functionalities:
@@ -77,17 +71,18 @@ class BPMNServer implements IBPMNServer {
 		}
 	}
 	status() {
-		const { memoryUsage } = require('node:process');
-
-
-		return {version: BPMNServer.getVersion(),
+		return {
+			version: BPMNServer.getVersion(),
 			cache: this.cache.list,
-			engineRunning: this.engine.runningCounter, engineCalls: this.engine.callsCounter,
-			memoryUsage: memoryUsage()};
+			engineRunning: this.engine.runningCounter,
+			engineCalls: this.engine.callsCounter,
+			memoryUsage: typeof __dirname === 'undefined' ? require('node:process').memoryUsage() : null,
+		};
 	}
 	static getVersion() {
 		if (typeof __dirname === 'undefined') return 'unknown';
 		const configPath = __dirname+'/../../package.json';
+		const fs = require('fs');
 
 		if (fs.existsSync(configPath)) {
 
