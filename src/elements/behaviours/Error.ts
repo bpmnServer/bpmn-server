@@ -3,7 +3,7 @@ import type { Node } from "..";
 import { Behaviour } from '.';
 import type { Item } from "../../engine/Item";
 import { Event, NODE_SUBTYPE, Transaction } from "../../";
-import { NODE_ACTION, TOKEN_STATUS } from "../../interfaces";
+import { BPMN_TYPE, NODE_ACTION, TOKEN_STATUS } from "../../interfaces";
 
 
 class ErrorEventBehaviour extends Behaviour {
@@ -28,7 +28,13 @@ class ErrorEventBehaviour extends Behaviour {
         else {  // throw a message
             item.log("Error Event is throwing an error");
 
-            let transItem=item.token.parentToken.originItem;
+            let transItem;
+
+            if (item.token.originItem.type==BPMN_TYPE.Transaction)
+                transItem=item.token.originItem;
+            else
+                transItem=item.token.parentToken.originItem;
+            
 
             await item.token.processError(this.errorId,item);
 

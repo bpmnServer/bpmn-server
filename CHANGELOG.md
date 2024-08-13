@@ -12,6 +12,13 @@ and here
 
 ### Changed
 -->
+## Release 2.2.10  -- 2024-08-10
+1.  Added item.statusDetails to contail bpmnError code 
+2.  item.output is now saved to the db
+
+## Release 2.2.9  -- 2024-08-09
+  Minor changes
+
 ## Release 2.2.7  -- 2024-06-19
   data.findItems: Added $in condition
   Fixed Bug with query in items.vars.<varname>

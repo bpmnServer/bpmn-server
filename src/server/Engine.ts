@@ -568,7 +568,7 @@ class Engine extends ServerComponent implements IEngine{
 
 	private async exception(exc,execution) {
 
-		console.log(exc,exc.stack);
+		console.log("Exception: stack",exc.stack);
 		if (execution)
 			await execution.doExecutionEvent(execution,EXECUTION_EVENT.process_exception);
 

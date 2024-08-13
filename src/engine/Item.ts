@@ -23,9 +23,8 @@ class Item implements IItem {
     dueDate;
     followUpDate;
     priority;
-
-    
     status: ITEM_STATUS;
+    statusDetails:object;
     log(...msg) { return this.token.log(msg); }
     get data() { return this.token.data; }
     set data(val) { this.token.appendData(val,this); }
@@ -68,8 +67,8 @@ class Item implements IItem {
 
         return {
             id: this.id, seq: this.seq, itemKey: this.itemKey, tokenId: this.token.id, elementId: this.elementId, name: this.name,
-            status: this.status, userName: this.userName, startedAt: this.startedAt, endedAt: this.endedAt, type: this.type, timeDue: this.timeDue,
-            /*data: null ,*/ vars: this.vars, instanceId: this.instanceId,
+            status: this.status, statusDetails: this.statusDetails, userName: this.userName, startedAt: this.startedAt, endedAt: this.endedAt, type: this.type, timeDue: this.timeDue,
+            /*data: null ,*/ vars: this.vars, output:this.output, instanceId: this.instanceId,
             messageId: this.messageId, signalId: this.signalId,
             assignee:this.assignee,
             candidateGroups:this.candidateGroups,
@@ -90,7 +89,7 @@ class Item implements IItem {
         item.startedAt = dataObject.startedAt;
         item.endedAt = dataObject.endedAt;
         item.timeDue = dataObject.timeDue;
-        
+        item.statusDetails = dataObject.statusDetails;
         item.assignee= dataObject.assignee;
         item.candidateGroups=dataObject.candidateGroups;
         item.candidateUsers=dataObject.candidateUsers;
@@ -98,6 +97,7 @@ class Item implements IItem {
         item.followUpDate=dataObject.followUpDate;
         item.priority=dataObject.priority;
         item.vars = dataObject.vars;
+        item.output=dataObject.output;
         return item;
     }
 }

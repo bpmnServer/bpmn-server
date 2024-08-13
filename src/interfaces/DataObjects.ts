@@ -15,10 +15,12 @@ interface IItemData {
     seq: any;
     timeDue: Date;
     status: ITEM_STATUS;
+    statusDetails?:object;
     data?: any;
     messageId;
     signalId;
     vars;
+    output;
     assignee;
     candidateGroups;
     candidateUsers;
