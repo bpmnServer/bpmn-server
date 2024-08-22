@@ -12,6 +12,9 @@ and here
 
 ### Changed
 -->
+## Release 2.2.11  -- 2024-0822
+Fix bug #222
+
 ## Release 2.2.10  -- 2024-08-10
 1.  Added item.statusDetails to contail bpmnError code 
 2.  item.output is now saved to the db

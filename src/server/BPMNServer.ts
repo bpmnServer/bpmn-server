@@ -19,6 +19,22 @@ import { EventEmitter } from 'eventemitter3';
  *			BPMNServer.dataStore.findItems(...)
  */
 
+ /* removing the following block causes :#222
+	restored in release 2.2.11
+ */
+
+ process.on('uncaughtException', function (err) {
+	console.log('***************BPMNServer UNCAUGHT ERROR***********');
+	try {
+		BPMNServer.getInstance().error = err;
+		BPMNServer.getInstance().logger.reportError(err);
+	}
+	catch (exc) {
+		console.log(err);
+    }
+	return;
+}); 
+
 class BPMNServer implements IBPMNServer {
 
 	engine: Engine;
