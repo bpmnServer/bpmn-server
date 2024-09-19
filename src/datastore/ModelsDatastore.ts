@@ -8,12 +8,12 @@ import { IModelsDatastore } from "../interfaces/";
 
 class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
 
-    definitionsPath;
     constructor(server: BPMNServer) {
         super(server);
-    this.definitionsPath = server.configuration.definitionsPath;
         
     }
+    get definitionsPath() { return this.server.configuration.definitionsPath; }
+
 
     async import(data,owner=null) {
         return await super.import(data);

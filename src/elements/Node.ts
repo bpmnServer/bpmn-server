@@ -291,6 +291,44 @@ class Node extends Element {
             }
         }
     }
+    getBoundaryEventItems(item) {
+
+        let i,t;
+        let boundaryItems=[];
+
+        for (i = 0; i < this.attachments.length; i++) {
+            let boundaryEvent = this.attachments[i];
+            item.token.log('        boundaryEvent:'+boundaryEvent.id);
+            let childrenTokens;
+            if (this.type==BPMN_TYPE.SubProcess || this.type==BPMN_TYPE.AdHocSubProcess || this.type==BPMN_TYPE.Transaction) // subprocess
+            {
+                //find the subprocess token
+                item.token.execution.tokens.forEach(tok =>
+                {
+                    if (tok.originItem)
+                    {
+                       //item.token.log('--check token :'+tok.id+' ' +tok.originItem.id+' '+item.id);
+                        if (tok.originItem.id == item.id &&  tok.type==TOKEN_TYPE.SubProcess)
+                            childrenTokens = tok.getChildrenTokens();
+                    }
+                });
+            }
+            else            
+                childrenTokens = item.token.getChildrenTokens();
+
+            if (childrenTokens) {
+                for (t = 0; t < childrenTokens.length; t++) {
+                    let token = childrenTokens[t];
+                    item.token.log('     childToken:'+token.id+' startnode:'+token.startNodeId+' status:'+token.currentItem.status);
+                    if (token.startNodeId == boundaryEvent.id) {
+                        boundaryItems.push(token.currentItem);
+                    }
+                }  
+            }
+        }
+        return boundaryItems;
+
+    }
     async end(item: Item,cancel:Boolean=false) {
         if (!item)
             return;

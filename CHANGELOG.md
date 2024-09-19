@@ -12,6 +12,9 @@ and here
 
 ### Changed
 -->
+## Release 2.2.12  -- 2024-09-19
+Fix bug #227 - Erorr Handler from direct boundary event
+
 ## Release 2.2.11  -- 2024-0822
 Fix bug #222
 

@@ -332,6 +332,7 @@ class Token implements IToken {
         let errorHandlerToken = this.getScopeCatchEvent('error',errorCode);
         if (errorHandlerToken) {
             this.currentItem.statusDetails={bpmnError:errorCode,errorHandler:errorHandlerToken.currentItem.id,callingEvent:callingEvent.id};
+            this.log("bpmnError raised by:"+callingEvent.elementId+" directing flow to:"+ errorHandlerToken.currentNode.id +  "bpmnError:"+ errorCode)
             await errorHandlerToken.signal({errorCode});
             this.currentItem.status = ITEM_STATUS.end;
             await this.end(true);
@@ -372,6 +373,20 @@ class Token implements IToken {
             propertyName=null;
             nodeSubType=NODE_SUBTYPE.cancel
         }
+
+        let directEvents=contextItem.node.getBoundaryEventItems(contextItem);
+
+        directEvents.forEach(ev=>{
+                tokens.push(ev.token);
+        });
+
+        let handler=this.checkTokensForError(tokens,bhName,propertyName,code);
+
+        if (handler)
+            return handler;
+
+        // second phase 
+        tokens=[];
         while (contextToken && errorHandlerToken == null) {
             contextToken.childrenTokens.forEach(ct => {
                 if ((ct.type == TOKEN_TYPE.EventSubProcess || ct.type == TOKEN_TYPE.BoundaryEvent)
@@ -382,30 +397,40 @@ class Token implements IToken {
             });
             contextToken = contextToken.parentToken;
         }
+
         this.execution.tokens.forEach(ct=>{
             if (ct.type == TOKEN_TYPE.EventSubProcess && ct.currentNode.subType == nodeSubType)
                 tokens.push(ct);
         });
+
+        return this.checkTokensForError(tokens,bhName,propertyName,code);
+
+    }
+    catch (exc) {
+        console.log(exc);
+        return null;
+    }
+
+    }
+    private checkTokensForError(tokens,bhName,propertyName,errorCode) {
+
         let handlingCodeEventToken=null;
         let handlingAllEventToken=null;
 
-            
         tokens.forEach(ct=>{
             let escl=ct.currentNode.getBehaviour(bhName);
-            if (propertyName==null)
-                handlingAllEventToken=ct;
-            else if (escl)
+
+            if (escl)
             {
                 let cd=escl[propertyName];
-
-                if (cd==code && handlingCodeEventToken==null)
+                if (cd==errorCode && handlingCodeEventToken==null)
                     handlingCodeEventToken=ct;
                 else if (!cd && handlingAllEventToken==null)
                     handlingAllEventToken=ct;
     
             }
             else
-            handlingAllEventToken=ct;
+                handlingAllEventToken=ct;
 
         });
 
@@ -413,11 +438,6 @@ class Token implements IToken {
             return handlingCodeEventToken;
         else
             return handlingAllEventToken;
-    }
-    catch (exc) {
-        console.log(exc);
-        return null;
-    }
 
     }
     async processCancel(callingEvent) {
