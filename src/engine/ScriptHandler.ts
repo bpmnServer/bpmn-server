@@ -1,7 +1,8 @@
 import { Item ,Execution,Token} from ".";
+import { IScriptHandler } from "../interfaces";
 
     
-class ScriptHandler {
+class ScriptHandler implements IScriptHandler{
 
 
     /**
@@ -23,14 +24,14 @@ class ScriptHandler {
     *     appDelegate.scopeJS   -->executeScript
     *     
 	*/
-    static async evaluateInputExpression(item, exp, dateFormat = false) {
+    async evaluateInputExpression(item, exp, dateFormat = false) {
 
         if (!exp)
             return;
         var val;
         
         if (exp.startsWith('$')) {
-            val =await ScriptHandler.evaluateExpression(item, exp);
+            val =await this.evaluateExpression(item, exp);
         }
         else if (exp.includes(",")) {
             const arr = exp.split(",");
@@ -53,7 +54,7 @@ class ScriptHandler {
      * @param expression 
      * @returns 
      */
-    static evaluateExpression(scope: Item|Token, expression) {
+    async evaluateExpression(scope: Item|Token, expression) {
 
         let script=expression;
         let result;
@@ -68,13 +69,12 @@ class ScriptHandler {
             var js = ScriptHandler.getJSvars(scope) + `
                 return (${script});`;
 
-            result = Function(js).bind(scope)();
+            result = await Function(js).bind(scope)();
 			
 			
 			if (result instanceof Promise)
 			{
-				ret = result;
-				//console.log(result,ret);
+				ret = await result;
 			}
 			else
 				ret =result;
@@ -87,7 +87,7 @@ class ScriptHandler {
         return ret;
     }
 	// used to be called scopeJS
-    static async executeScript(scope: Item|Execution, script) {
+    async executeScript(scope: Item|Execution, script) {
 
         let result;
 		let ret;
@@ -113,7 +113,7 @@ class ScriptHandler {
 	    //require return
             var js = ScriptHandler.getJSvars(scope) + `
                   ${script};`;
-            result = Function(js).bind(scope)();
+            result = await Function(js).bind(scope)();
 			
 			if (result instanceof Promise)
 			{

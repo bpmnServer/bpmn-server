@@ -2,6 +2,11 @@ import { NODE_ACTION, TOKEN_STATUS } from './Enums';
 import { IItemData , IInstanceData } from './';
 import { ILogger, IAppDelegate, IBPMNServer, IDefinition, Token, Item, Element, Node, IServerComponent } from '../';
 
+interface IScriptHandler {
+    evaluateExpression(scope: IItem|IToken, expression);
+    executeScript(scope: IItem|IExecution, script);
+
+}  
 interface IToken {
     id: any;
     type;
@@ -144,4 +149,4 @@ interface IItem extends IItemData {
 }
 
 
-export { IItem, IToken, IExecution}
+export { IItem, IToken, IExecution , IScriptHandler}

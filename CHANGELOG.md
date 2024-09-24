@@ -12,6 +12,16 @@ and here
 
 ### Changed
 -->
+## Release 2.2.13  -- 2024-09-20
+- All JavaScript triggers are now async
+- ScriptHandler can be assigned to a different class at configuration.ts
+- This release require changes configuration.ts to add scriptHandler, add the following to new Configuration call
+```ts
+		scriptHandler: function(server) {
+			return new ScriptHandler();
+		},
+```
+
 ## Release 2.2.12  -- 2024-09-19
 Fix bug #227 - Erorr Handler from direct boundary event
 

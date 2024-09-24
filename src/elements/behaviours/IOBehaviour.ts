@@ -70,7 +70,7 @@ JavaScript| { 'key1': 'val1', 'key2': 'val2' , 'key3': [item.data.myExistingVar,
      *  
      * @returns 
      */
-    evaluate(item) {
+    async evaluate(item) {
         /**
          * scenario for call
          * */
@@ -81,28 +81,30 @@ JavaScript| { 'key1': 'val1', 'key2': 'val2' , 'key3': [item.data.myExistingVar,
         }
         else if (this.subType == 'camunda:list') {
             val = [];
-            this.value.forEach(entry => {
+            for(const entry of this.value) {
                 //val.push(item.token.execution.appDelegate.scopeEval(item, entry));
-                evalValue = ScriptHandler.evaluateExpression(item, entry);
+                
+                evalValue = await item.execution.scriptHanlder.scriptHandler.evaluateExpression(item, entry);
 
                 val.push(evalValue);
-            });
+            }
         }
         else if (this.subType == 'camunda:map') {
             val = new Map();
-            (this.value).forEach((value, key) => {
+            for (const [key,value] of this.value) {
+//            (this.value).forEach(async (value, key) => {
                 //const newVal = item.token.execution.appDelegate.scopeEval(item, value);
-                evalValue = ScriptHandler.evaluateExpression(item, value);
+                evalValue = await item.execution.scriptHandler.evaluateExpression(item, value);
 
                 val.set(key, evalValue)
-            });
+            }
         }
         else if (this.subType == 'camunda:script') {
-            val = ScriptHandler.evaluateExpression(item, this.value);
+            val = await item.context.scriptHandler.evaluateExpression(item, this.value);
         }        
         else { // just text
             if ((this.value.startsWith('$')))
-                val = ScriptHandler.evaluateExpression(item, this.value.substring(1));
+                val = await item.context.scriptHandler.evaluateExpression(item, this.value.substring(1));
             else
                 val=this.value;
         }
@@ -163,34 +165,36 @@ class IOBehaviour extends Behaviour {
      * generate item.input
      * 
      */
-    enter(item: Item) {
+    async enter(item: Item) {
 
         if (!item.input)
             item.input = {};
         var hasInput = false;
-        this.parameters.forEach(param => {
+        for (const param of this.parameters) {
+//        this.parameters.forEach(async param => {
             if (param.isInput()) {
                 /**
                  * scenario for call
                  * */
                 hasInput = true;
                 var val;
-                val = param.evaluate(item);
+                val = await param.evaluate(item);
                 item.input[param.name] = val;
                 item.log('...set at enter data input : input.' + param.name + ' = ' + val);
             }
-        });
+        }
         if (hasInput == false) {
             /**
              * scenario for throw
              * */
-            this.parameters.forEach(param => {
+            for (const param of this.parameters) {
+//            this.parameters.forEach(async param => {
                 if (param.isOutput()) {
-                    var val = ScriptHandler.evaluateExpression(item, param.value);
+                    var val = await item.context.scriptHandler.evaluateExpression(item, param.value);
                     item.output[param.name] = val;
                     item.log('...set at enter data output : output.' + param.name + ' = ' + val);
                 }
-            });
+            }
         }
     }
     process(item: Item) {
@@ -204,15 +208,15 @@ class IOBehaviour extends Behaviour {
      *      moving output into data
      * 
      */
-    exit(item: Item) {
-        this.parameters.forEach(param => {
+    async exit(item: Item) {
+        for (const param of this.parameters) {
             if (param.isOutput()) {
                 /**
                  * scenario for call results
                  * */
 
                 if (typeof param.value !== 'undefined' && param.value !== '') {
-                    var val = ScriptHandler.evaluateExpression(item, param.value);
+                    var val = await item.context.scriptHandler.evaluateExpression(item, param.value);
                     item.log('...set at exit data output : data.' + param.name + ' = ' + val);
                     item.token.data[param.name] = val;
                 }
@@ -222,7 +226,7 @@ class IOBehaviour extends Behaviour {
                     item.log('...set at exit data output : data.' + param.name + ' = ' + item.output);
                 }
             }
-        });
+        }
 
     }
     describe() {

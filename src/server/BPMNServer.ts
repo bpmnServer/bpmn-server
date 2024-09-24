@@ -1,5 +1,5 @@
 import { Logger } from '../common/Logger';
-import { IConfiguration, ILogger, IAppDelegate, IBPMNServer, IDataStore, ICacheManager } from '../';
+import { IConfiguration, ILogger, IAppDelegate, IBPMNServer, IDataStore, ICacheManager, IScriptHandler } from '../';
 import { Engine } from './Engine';
 import { Cron } from './Cron';
 import { EventEmitter } from 'eventemitter3';
@@ -45,6 +45,7 @@ class BPMNServer implements IBPMNServer {
 	appDelegate: IAppDelegate;
 	dataStore: IDataStore;
 	cache: ICacheManager;
+	scriptHandler: IScriptHandler;
 	cron: Cron;
 	error;
 
@@ -67,10 +68,12 @@ class BPMNServer implements IBPMNServer {
 		this.configuration = configuration;
 		this.cron = new Cron(this);
 		this.engine = new Engine(this);
+
 		this.cache = configuration.cacheManager(this);
 		this.dataStore = configuration.dataStore(this);
 		this.definitions = configuration.definitions(this);
 		this.appDelegate = configuration.appDelegate(this);
+		this.scriptHandler = configuration.scriptHandler(this);
 	
 		//this.acl = new ACL(this);
 		//this.iam = new IAM(this);

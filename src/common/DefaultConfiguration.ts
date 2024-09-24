@@ -3,8 +3,10 @@ import { ModelsDatastore } from '../datastore/ModelsDatastore';
 import { DefaultAppDelegate } from '../engine/DefaultAppDelegate';
 
 import { IConfiguration, DataStore, NoCacheManager,ILogger, IModelsDatastore, 
-		IAppDelegate, IDataStore} from '../';
+		IAppDelegate, IDataStore,
+		ScriptHandler} from '../';
 import { Logger } from './'
+import { Script } from 'vm';
 
 export class Configuration implements IConfiguration {
 	definitionsPath?: string;
@@ -29,6 +31,9 @@ export class Configuration implements IConfiguration {
 	cacheManager(server) {
 		return new NoCacheManager(server);
 	}
+	scriptHandler(server) {
+		return new ScriptHandler();
+	}
 
 
 	constructor({
@@ -36,7 +41,7 @@ export class Configuration implements IConfiguration {
 		logger,
 		definitions,
 		appDelegate,
-		dataStore,cacheManager}) {
+		dataStore,cacheManager,scriptHandler}) {
 		this.definitionsPath = definitionsPath;
 		this.templatesPath = templatesPath;
 		this.timers = timers;
@@ -47,6 +52,7 @@ export class Configuration implements IConfiguration {
 		this.appDelegate = appDelegate;
 		this.dataStore = dataStore;
 		this.cacheManager = cacheManager;
+		this.scriptHandler=scriptHandler;
 	
 	}
 
@@ -81,6 +87,9 @@ export const defaultConfiguration = new Configuration(
 		},
 		cacheManager: function (server) {
 			return new NoCacheManager(server);
+		},
+		scriptHandler: function (server) {
+			return new ScriptHandler();
 		}
 
 	});

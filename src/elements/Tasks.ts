@@ -18,7 +18,7 @@ class ScriptTask extends Node {
         if (this.def.script) {
             item.token.log('executing script task');
             item.token.log(this.def.script);
-            let ret=await ScriptHandler.executeScript(item, this.def.script);
+            let ret=await item.context.scriptHandler.executeScript(item, this.def.script);
             if (ret && ret.escalation) {
                 await item.token.processEscalation(ret.escalation,item);
             }
@@ -194,10 +194,10 @@ class UserTask extends Node {
         var val;
         if (exp.startsWith('$'))
         {
-            val = ScriptHandler.evaluateExpression(item, exp);
+            val = await item.context.scriptHandler.evaluateExpression(item, exp);
         }
         else if (exp.startsWith('#')) {
-            val = await ScriptHandler.executeScript(item, 'return '+exp.substring(1));
+            val = await item.context.scriptHandler.executeScript(item, 'return '+exp.substring(1));
         }
         else if (exp.includes(","))
         {

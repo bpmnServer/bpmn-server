@@ -20,6 +20,7 @@ class ServerComponent {
 	get dataStore() { return this.server.dataStore; }
 	get definitions() { return this.server.definitions; }
 	get listener() { return this.server.listener; }
+	get scriptHandler() { return this.server.scriptHandler; }
 }
 
 export { ServerComponent }

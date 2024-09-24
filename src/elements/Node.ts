@@ -67,7 +67,7 @@ class Node extends Element {
                 var script = scripts[s];
                 item.token.log('--executing script for event:' + event);
 
-                const ret = await ScriptHandler.executeScript(item, script);
+                const ret = await item.context.scriptHandler.executeScript(item, script);
                 rets.push(ret);
 
                 if (ret && ret.escalation) {
@@ -379,21 +379,35 @@ class Node extends Element {
     }
     /* to be overwritten by XOR gateway */
 
-    getOutbounds(item: Item): Item[] {
+    async getOutbounds(item: Item): Promise<Item[]> {
         item.token.log('Node('+this.name+'|'+this.id+').getOutbounds: itemId='+item.id);
         const outbounds = [];
-        this.outbounds.forEach(flow => {
+
+        for(const flow of this.outbounds) {
             if (flow.type == BPMN_TYPE.MessageFlow) {
 
             }
             else {
                 let flowItem = new Item(flow, item.token);
-                if (flow.run(flowItem) == FLOW_ACTION.take)
+                if (await flow.run(flowItem) == FLOW_ACTION.take)
                     outbounds.push(flowItem);
                 else 
                     flowItem.token=null;
             }
-        });
+
+        }/*
+        this.outbounds.forEach(async flow => {
+            if (flow.type == BPMN_TYPE.MessageFlow) {
+
+            }
+            else {
+                let flowItem = new Item(flow, item.token);
+                if (await flow.run(flowItem) == FLOW_ACTION.take)
+                    outbounds.push(flowItem);
+                else 
+                    flowItem.token=null;
+            }
+        }); */
         //item.token.log('..return outbounds' + outbounds.length);
         item.token.log('Node('+this.name+'|'+this.id+').getOutbounds: return outbounds'+outbounds.length);
         return outbounds;

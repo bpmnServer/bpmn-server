@@ -31,22 +31,22 @@ class Gateway extends Node {
       */
     /*  rule: DefaultFlow will only fire if no other flows are valid
      */
-    getOutbounds(item: Item): Item[] {
+    async getOutbounds(item: Item): Promise<Item[]> {
 
         if (this.def.default) {
 
             let defaultFlow;
             const outbounds = [];
-            this.outbounds.forEach(flow => {
+            for(const flow of this.outbounds) {
                 if (flow.id == this.def.default.id) {
                     defaultFlow = flow;
                 }
                 else {
                     let flowItem = new Item(flow, item.token);
-                    if (flow.run(flowItem) == FLOW_ACTION.take)
+                    if (await flow.run(flowItem) == FLOW_ACTION.take)
                         outbounds.push(flowItem);
                 }
-            });
+            }
 
             if (outbounds.length == 0 && defaultFlow) {
                 let flowItem = new Item(defaultFlow, item.token);
@@ -246,9 +246,9 @@ class Gateway extends Node {
  * */
 class XORGateway extends Gateway {
 
-    getOutbounds(item) {
+    async getOutbounds(item) {
 
-        const outbounds = super.getOutbounds(item);
+        const outbounds = await super.getOutbounds(item);
 
         if (outbounds.length > 1) {
             item.token.log('..XORGateway : removed other outbounds , took the first');

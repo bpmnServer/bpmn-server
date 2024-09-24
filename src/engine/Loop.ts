@@ -12,7 +12,7 @@ class Loop {
     definition: LoopBehaviour;
     sequence;
     dataPath;
-    items: any[];
+    _items: any[];
     completed;  // used to count # completed for parallel loops
     isSequential() { return (this.definition.isSequential()); }
     isStandard() { return (this.definition.isStandard()); }
@@ -25,7 +25,7 @@ class Loop {
         this.id = token.execution.getNewId('loop');
         if (dataObject) {
             this.id = dataObject.id;
-            this.items = dataObject.items;
+            this._items = dataObject.items;
             this.completed = dataObject.completed;
             this.sequence = dataObject.sequence;
             this.definition = node.loopDefinition;
@@ -34,24 +34,17 @@ class Loop {
             this.definition = node.loopDefinition;
             this.completed = 0;
             this.sequence = 0;
-            const coll = this.definition.collection;
             if (token.dataPath!=='')
                 this.dataPath = token.dataPath + '.' + this.node.id;
             else
                 this.dataPath = this.node.id;
 
-            if (coll) {
-                token.log('loop collection:' + coll);
-                this.items = ScriptHandler.evaluateExpression(token, coll);
-            }
-            else
-                this.items = [];
         }
     }
     save() {
         return {
             id: this.id, nodeId: this.node.id, ownerTokenId: this.ownerToken.id, dataPath: this.dataPath,
-            items: this.items,
+            items: this._items,
             completed: this.completed, sequence: this.sequence
         };
     }
@@ -62,19 +55,27 @@ class Loop {
         let loop = new Loop(node, ownerToken, dataObject);
         loop.dataPath = dataObject.dataPath;
         loop.sequence = dataObject.sequence;
-        loop.items=dataObject.items;
+        loop._items=dataObject.items;
         return loop;
 
     }
     getKeyName() {
         return 'loopKey';
     }
-    isDone(): boolean {
-        return (this.sequence > this.items.length - 1)
+    async getItems() {
+        if (this._items==null)
+            this._items=await this.ownerToken.execution.scriptHandler.evaluateExpression(this.ownerToken,this.definition.collection);
+ 
+        return this._items;
     }
-    getNext() {
-        if (this.isDone && (this.items.length>this.sequence))
-            return this.items[this.sequence++];
+    async isDone(): Promise<boolean> {
+        let items=await this.getItems();
+        return (this.sequence > items.length - 1)
+    }
+    async getNext() {
+        let items=await this.getItems();
+        if (await this.isDone && (items.length>this.sequence))
+            return items[this.sequence++];
         else
             return null;
     }
@@ -99,7 +100,7 @@ class Loop {
             if (loopDefinition.isSequential()) {
                 // are we starting a new loop or continueing in an exiting one?
     
-                let seq = loop.getNext();
+                let seq = await loop.getNext();
                 let data = {};
 
                 let newToken = await Token.startNewToken(TOKEN_TYPE.Instance,token.execution, token.currentNode, 
@@ -113,7 +114,7 @@ class Loop {
                 // are we starting a new loop or continueing in an exiting one?
                 try {
 
-                    let seq = loop.getNext();
+                    let seq = await loop.getNext();
                     let data = {};
  
                     let newToken = await Token.startNewToken(TOKEN_TYPE.Instance, token.execution, token.currentNode, 
@@ -130,10 +131,12 @@ class Loop {
             else { // parallel 
                 // launch as many tokens as needed
                 let seq;
-                if (loop.items) {
+                let items=await loop.getItems();
+
+                if (items) {
                     let tokens=[];
-                    for (seq = 0; seq < loop.items.length; seq++) {
-                        let entry = loop.items[seq];
+                    for (seq = 0; seq < items.length; seq++) {
+                        let entry = items[seq];
                         let data = {};
                         let newToken = await Token.startNewToken(TOKEN_TYPE.Instance, token.execution, token.currentNode,
                              loop.dataPath+'.'+entry , token, token.currentItem, loop, data,true,entry);
@@ -186,7 +189,7 @@ class Loop {
 
         if (token.loop && token.currentNode.id==token.loop.node.id) {
             if (token.loop.isSequential()) {
-                if (token.loop.isDone()) {
+                if (await token.loop.isDone()) {
 
                     // need to converge here ;
                     await token.end();
@@ -198,7 +201,7 @@ class Loop {
                 else {
                     
                     await token.end();
-                    let seq = token.loop.getNext();
+                    let seq = await token.loop.getNext();
                     let data = {};
   
                     //token=token.parentToken;
@@ -214,7 +217,10 @@ class Loop {
 
                 token.loop.completed++;
                 await token.end();
-                if (token.loop.completed == token.loop.items.length) {
+                
+                let items=await token.loop.getItems();
+
+                if (token.loop.completed == items.length) {
                     // need to converge here ;
                     await token.parentToken.goNext();
                 }
@@ -224,7 +230,8 @@ class Loop {
             else { // parallel 
                 await token.end();
                 token.loop.completed++;
-                if (token.loop.completed == token.loop.items.length) {
+                let items = await token.loop.getItems();
+                if (token.loop.completed == items.length) {
                     // need to converge here ;
                         if (token.parentToken.currentItem)
                             await token.parentToken.currentNode.end(token.parentToken.currentItem);

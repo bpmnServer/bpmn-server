@@ -41,10 +41,10 @@ class Flow extends Element implements IFlow {
      * ```
      * @param item
      */
-    run(item: Item) {
+    async run(item: Item) {
         item.token.log('Flow(' + this.name +'|'+ this.id + ').run: from='+this.from.name+' to=' + this.to.name + " find action... " );
         let action = FLOW_ACTION.take;
-        let result = this.evaluateCondition(item);
+        let result = await this.evaluateCondition(item);
         if (result !== true) {
             action = FLOW_ACTION.discard;
             item.token.execution.doItemEvent(item, EXECUTION_EVENT.flow_discard,{flow:this.id});
@@ -56,14 +56,14 @@ class Flow extends Element implements IFlow {
 
         return action;
     }
-    evaluateCondition(item) {
+    async evaluateCondition(item) {
         // conditionExpression:{"$type":"bpmn:Expression","body":"true"}
         if (this.def.conditionExpression) {
             //console.log('flow definition ',this.def);
             let expression = this.def.conditionExpression.body;
             item.token.log('..conditionExpression:' + JSON.stringify(expression));
             item.token.log(JSON.stringify(item.token.data));
-            let result = ScriptHandler.evaluateExpression(item, expression);
+            let result = await item.context.scriptHandler.evaluateExpression(item, expression);
             item.token.log('..conditionExpression:' + expression + " result: " + result);
             return result;
         }

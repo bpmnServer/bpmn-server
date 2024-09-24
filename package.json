@@ -1,6 +1,6 @@
 {
   "name": "bpmn-server",
-  "version": "2.2.12",
+  "version": "2.2.13",
   "description": "BPMN 2.0 Server including Modeling, Execution and Presistence, an open source for Node.js",
   "license": "MIT",
   "scripts": {
@@ -34,7 +34,7 @@
   "dependencies": {
     "@lukeed/uuid": "^2.0.1",
     "bcrypt": "^5.0.1",
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.3",
     "bpmn-moddle": "^8.1.0",
     "camunda-bpmn-moddle": "^4.4.0",
     "chai": "^4.2.0",

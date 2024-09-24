@@ -630,7 +630,7 @@ class Token implements IToken {
             return;
         }
 
-        const outbounds = this.currentNode.getOutbounds(this.currentItem);
+        const outbounds =await this.currentNode.getOutbounds(this.currentItem);
 
         if (outbounds.length == 0) {
             await this.end();

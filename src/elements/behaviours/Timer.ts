@@ -96,7 +96,7 @@ class TimerBehaviour extends Behaviour {
      * format is time format
      * @param timerModifier - for testing purposes configuration can alter the timer
      */
-    timeDue(item,timerModifier=null) {
+    async timeDue(item,timerModifier=null) {
 
         let seconds;
         let timeDue;
@@ -119,7 +119,7 @@ class TimerBehaviour extends Behaviour {
             else if (this.timeDate) {
                     let timeDate=this.timeDate;
                     if (timeDate.startsWith('$')) {
-                        timeDate= ScriptHandler.evaluateExpression(item,timeDate);
+                        timeDate= await item.context.scriptHandler.evaluateExpression(item,timeDate);
                         }
                 timeDue=timeDate;
             }
@@ -134,18 +134,18 @@ class TimerBehaviour extends Behaviour {
                 }
             return 1;
     }
-    start(item: Item) {
+    async start(item: Item) {
 
         if (item.node.type == "bpmn:StartEvent")
             return;
         item.token.log("..------timer running --- " );
-        this.startTimer(item);
+        await this.startTimer(item);
         item.timerCount = 0;
 
         return NODE_ACTION.wait;
     }
 
-    startTimer(item) {
+    async startTimer(item) {
 
         let timerModifier = null;
         const config = item.context.configuration;
@@ -154,7 +154,7 @@ class TimerBehaviour extends Behaviour {
             item.token.log("...Timer duration modified by the configuration to " + timerModifier);
         }
 
-        item.timeDue = this.timeDue(item,timerModifier);
+        item.timeDue = await this.timeDue(item,timerModifier);
 
         item.token.log("timer is set at " + item.timeDue + " - "+ new Date(item.timeDue).toISOString());
 

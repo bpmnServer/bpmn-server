@@ -1,4 +1,4 @@
-import { IExecution , ILogger , IItem, IConfiguration, IAppDelegate, IDataStore,IModelsDatastore } from '../';
+import { IExecution , ILogger , IItem, IConfiguration, IAppDelegate, IDataStore,IModelsDatastore, IScriptHandler } from '../';
 import type { EventEmitter } from 'eventemitter3';
 import type { EventEmitter as NodeEventEmitter } from 'events';
 
@@ -25,7 +25,9 @@ interface IServerComponent {
     appDelegate: IAppDelegate;
     engine: any;
     dataStore: IDataStore;
+    scriptHandler: IScriptHandler;
     definitions;
+
 }
 
 interface IEngine {

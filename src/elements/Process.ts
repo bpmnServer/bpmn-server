@@ -123,7 +123,7 @@ class Process {
         if (scripts) {
             for (var s = 0; s < scripts.length; s++) {
                 var script = scripts[s];
-                const ret = await ScriptHandler.executeScript(execution, script);
+                const ret = await execution.scriptHandler.executeScript(execution, script);
 
             }
         }
