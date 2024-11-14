@@ -12,6 +12,21 @@ and here
 
 ### Changed
 -->
+## Release 2.2.14  -- 2024-11-13
+  To fix issue #231
+- engine.invoke noWait option changed behaviour:
+  Old Behaviour:  engine.invoke complete the target node and continue execution till a wait state of end of process
+  New Behaviour:  with 'noWait' option now it will complete the target node and return before continue with the rest of the process till wait state
+  Example:
+```ts
+    let res = await api.engine.start('test-wait-invoke', {},user);
+
+    console.log('about to invoke with noWait option')
+    res=await api.engine.invoke({ "id": res.instance.id, "items.elementId": 'Activity_0z113lq'},{},user,{noWait:true}),
+    console.log(`invoked`,res.item.element.type,res.item.status);
+
+    report(res.instance);
+```
 ## Release 2.2.13  -- 2024-09-20
 - All JavaScript triggers are now async
 - ScriptHandler can be assigned to a different class at configuration.ts

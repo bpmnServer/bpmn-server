@@ -4,6 +4,7 @@ import { ServerComponent } from '../server/ServerComponent';
 import { EXECUTION_EVENT, IEngine} from "../interfaces";
 
 import { DataStore, Instance_collection } from '../datastore';
+import { exec } from 'child_process';
 
 
 class Engine extends ServerComponent implements IEngine{
@@ -295,14 +296,19 @@ class Engine extends ServerComponent implements IEngine{
             }
 			execution = await this.restore(item.instanceId);
 
-			execution.worker = execution.signalItem(item.id, this.sanitizeData(data),userName,options);
+			await execution.signalItem(item.id, this.sanitizeData(data),userName,options);
+			let exeItem=execution.item;
+			execution.worker=execution.signalItem2(item.id);
 
 			try {
 				if (options['noWait'] == true) {
 					this.logger.log(`.noWait`);
-					execution.worker.then(obj=>{ 
-						this.logger.log('after worker is done releasing ..'+item.instanceId);
-						this.release(execution);
+					let self=this;
+					execution.save();
+					execution.worker.then(async function (obj) { 
+						await execution.signalItem2(item.id);
+						self.logger.log('after worker is done releasing ..'+item.instanceId);
+						self.release(execution);
 						});
 					return execution;
 				}

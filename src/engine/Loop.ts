@@ -29,6 +29,7 @@ class Loop {
             this.completed = dataObject.completed;
             this.sequence = dataObject.sequence;
             this.definition = node.loopDefinition;
+            this.endFlag = dataObject.endFlag;
         }
         else {
             this.definition = node.loopDefinition;
@@ -44,9 +45,14 @@ class Loop {
     save() {
         return {
             id: this.id, nodeId: this.node.id, ownerTokenId: this.ownerToken.id, dataPath: this.dataPath,
-            items: this._items,
+            items: this._items, endFlag: this.endFlag,
             completed: this.completed, sequence: this.sequence
         };
+    }
+    // for Manual Loops:
+    endFlag=false;
+    end() {
+        this.endFlag=true;
     }
     static load(execution, dataObject): Loop {
 
@@ -63,8 +69,13 @@ class Loop {
         return 'loopKey';
     }
     async getItems() {
-        if (this._items==null)
+        if (this._items==null) {
             this._items=await this.ownerToken.execution.scriptHandler.evaluateExpression(this.ownerToken,this.definition.collection);
+            if (Number.isInteger(this._items))
+            {
+                this._items=[...Array(this._items).keys()];
+            }
+        }
  
         return this._items;
     }
@@ -74,7 +85,7 @@ class Loop {
     }
     async getNext() {
         let items=await this.getItems();
-        if (await this.isDone && (items.length>this.sequence))
+        if (items.length>this.sequence)
             return items[this.sequence++];
         else
             return null;
@@ -114,7 +125,7 @@ class Loop {
                 // are we starting a new loop or continueing in an exiting one?
                 try {
 
-                    let seq = await loop.getNext();
+                    let seq = loop.sequence++;//await loop.getNext();
                     let data = {};
  
                     let newToken = await Token.startNewToken(TOKEN_TYPE.Instance, token.execution, token.currentNode, 
@@ -214,16 +225,23 @@ class Loop {
             }
             else if (token.loop.isStandard())
             {
-
-                token.loop.completed++;
-                await token.end();
-                
-                let items=await token.loop.getItems();
-
-                if (token.loop.completed == items.length) {
-                    // need to converge here ;
+                if (token.loop.endFlag==true)
+                {
+                    await token.end();
+                    //token.parentToken.currentItem.status=ITEM_STATUS.end;
+                    await token.parentToken.currentNode.end(token.parentToken.currentItem);
                     await token.parentToken.goNext();
                 }
+                else 
+                {
+                    let seq = token.loop.sequence++;//await loop.getNext();
+                    let data = {};
+ 
+                    let newToken = await Token.startNewToken(TOKEN_TYPE.Instance, token.execution, token.currentNode, 
+                            token.loop.dataPath + '.' + seq, token, token.currentItem, token.loop, data,false,seq);
+
+                }
+
                 return false; // no further action
 
             }

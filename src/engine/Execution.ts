@@ -243,6 +243,9 @@ class Execution extends ServerComponent implements IExecution {
             this.log('Execution('+this.name+').signal: .. launching a token signal');
 
             let result=await token.signal(inputData,options);
+
+            if (options['noWait']==true)
+                return this;
             
             this.log('Execution('+this.name+').signalItem: .. signal token is done');
         }   
@@ -263,6 +266,42 @@ class Execution extends ServerComponent implements IExecution {
 
         return this;
     }
+    public async signalItem2(itemId) :Promise<IExecution>  {
+        this.log('Execution('+this.name+').signalItem2: executionId=' + itemId);
+        this.operation = 'signal2';
+        let token = null;
+        this.tokens.forEach(t => {
+            if (t.currentItem && t.currentItem.id == itemId /*&& t.status=='wait' */) {
+                this.item = t.currentItem;
+                token = t;
+            }
+        });
+
+        if (token) {
+            this.log('Execution('+this.name+').signal2: .. launching a token signal');
+
+            let result=await token.signal2();
+            
+            this.log('Execution('+this.name+').signalItem2: .. signal token is done');
+        }   
+             
+        this.log('Execution('+this.name+').signalItem: returning .. waiting for promises status:' + this.instance.status + " id: " + itemId);
+        await Promise.all(this.promises);
+
+
+        await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoked);
+
+        this.log('Execution('+this.name+').signalItem: returned process  status:' + this.instance.status + " id: " + itemId);
+
+        this.report();
+
+        await Promise.all(this.promises);
+        await this.save();
+        this.log('Execution('+this.name+').signalItem: finished!');
+
+        return this;
+    }
+
     /**
      * 
      * restarting an already completed instance at a particular node

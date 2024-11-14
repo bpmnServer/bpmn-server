@@ -523,6 +523,10 @@ class Token implements IToken {
             const ret = await this.currentNode.run(item);
 
             let result = await this.currentNode.continue(item);
+
+            if (options['noWait']==true)
+                return;
+
             result =await this.goNext();
         }
         else
@@ -530,6 +534,28 @@ class Token implements IToken {
 
         this.logE('Token('+this.id +').signal: invoke '+this.currentNode.id+' '+this.currentNode.type+' finished!');
 
+    }
+    /*
+     *  is called to invoke an element like userTask, or trigger an envent or signal
+     *  
+     */ 
+    async signal2() {
+        // check if valid node and valid status
+        // find the item
+        let self=this;
+        await delay(5,null);
+        /*
+        await new Promise(function (resolve) {
+            setTimeout(async function () {
+                await self.goNext();
+                }, 5);
+        });*/
+
+       await self.goNext();
+
+       return this;
+
+        
     }
     /*
      *  is called to mark this token end
@@ -704,6 +730,12 @@ class Token implements IToken {
         this.execution.error(msg);
     }
 }
-
+async function delay(time, result) {
+    return new Promise(function (resolve) {
+        setTimeout(function () {
+            resolve(result);
+        }, time);
+    });
+}
 // ---------------------------------------------
 export { Token , TOKEN_TYPE }
