@@ -90,8 +90,16 @@ class Loop {
         else
             return null;
     }
+    /**
+     * 
+     * @param token 
+     *    
+     *  is called before Node execute and before an item is created
+     *  
+     */
+          
     static async checkStart(token) {
-        // loop
+        
         const loopDefinition = token.currentNode.loopDefinition;
         if (loopDefinition) {
 
@@ -196,6 +204,19 @@ class Loop {
 
         await Promise.all(promises);
     }
+    /**
+     *  
+     * is called just before moving to next item in the flow
+     *
+     *  checks if there is more items to be executed in the loop
+     *  if more items are needed:
+     *      execute
+     *      return false
+     *  returns true only if no loop for the token
+     * 
+     * @param token 
+     * @returns 
+     */
     static async checkNext(token: Token) {
 
         if (token.loop && token.currentNode.id==token.loop.node.id) {
@@ -234,6 +255,7 @@ class Loop {
                 }
                 else 
                 {
+                    token.loop.completed++;
                     let seq = token.loop.sequence++;//await loop.getNext();
                     let data = {};
  

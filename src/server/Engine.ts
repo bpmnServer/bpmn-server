@@ -298,7 +298,7 @@ class Engine extends ServerComponent implements IEngine{
 
 			await execution.signalItem(item.id, this.sanitizeData(data),userName,options);
 			let exeItem=execution.item;
-			execution.worker=execution.signalItem2(item.id);
+			//execution.worker=execution.signalItem2(item.id);
 
 			try {
 				if (options['noWait'] == true) {

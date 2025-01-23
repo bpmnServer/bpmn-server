@@ -12,6 +12,8 @@ and here
 
 ### Changed
 -->
+## Release 2.2.16  -- 2025-01-23
+- Fix bugs with loop firing twice
 ## Release 2.2.15  -- 2025-01-22
 - Fix error when token.currentItem is missing
 ## Release 2.2.14  -- 2024-11-13

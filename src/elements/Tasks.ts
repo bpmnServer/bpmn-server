@@ -163,7 +163,8 @@ class UserTask extends Node {
 
     async end(item: Item,cancel=false) {
 
-        item.token.info(`User Task '${this.name}' Sequence# ${item.seq} ended by ${item.token.execution.userName}`);
+        if (item)
+            item.token.info(`User Task '${this.name}' Sequence# ${item.seq} ended by ${item.token.execution.userName}`);
         return await super.end(item,cancel);
     }
     async start(item: Item): Promise<NODE_ACTION> {
