@@ -282,7 +282,7 @@ class Node extends Element {
             if (childrenTokens) {
                 for (t = 0; t < childrenTokens.length; t++) {
                     let token = childrenTokens[t];
-                    item.token.log('     childToken:'+token.id+' startnode:'+token.startNodeId+' status:'+token.currentItem.status);
+                    item.token.log('     childToken:'+token.id+' startnode:'+token.startNodeId);
                     if (token.startNodeId == boundaryEvent.id) {
                         if (token.firstItem.status != ITEM_STATUS.end)
                             await token.terminate();

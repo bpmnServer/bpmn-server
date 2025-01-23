@@ -12,6 +12,8 @@ and here
 
 ### Changed
 -->
+## Release 2.2.15  -- 2025-01-22
+- Fix error when token.currentItem is missing
 ## Release 2.2.14  -- 2024-11-13
   To fix issue #231
 - engine.invoke noWait option changed behaviour:

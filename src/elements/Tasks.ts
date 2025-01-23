@@ -162,6 +162,7 @@ class SendTask extends ServiceTask {
 class UserTask extends Node {
 
     async end(item: Item,cancel=false) {
+
         item.token.info(`User Task '${this.name}' Sequence# ${item.seq} ended by ${item.token.execution.userName}`);
         return await super.end(item,cancel);
     }
