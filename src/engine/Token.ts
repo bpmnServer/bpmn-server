@@ -419,7 +419,6 @@ class Token implements IToken {
 
         tokens.forEach(ct=>{
             let escl=ct.currentNode.getBehaviour(bhName);
-
             if (escl)
             {
                 let cd=escl[propertyName];
@@ -452,12 +451,19 @@ class Token implements IToken {
 
         let errorHandlerToken = this.getScopeCatchEvent('escalation',escalationCode);
         if (errorHandlerToken) {
+            let escl=errorHandlerToken.currentNode.getBehaviour(Behaviour_names.EscalationEventDefinition);
+
             this.log(`Action:"Escalation",Item:${errorHandlerToken.currentItem.seq},Code:"${escalationCode}",By:${callingEvent.seq}`);
             this.log({action:"Escalation",Item:errorHandlerToken.currentItem.seq,Code:escalationCode,By:callingEvent.seq});
             await errorHandlerToken.signal(null);
+            if (escl){
+                let cancel=escl.definition.$parent.cancelActivity;
+                if (cancel==true && errorHandlerToken.type==TOKEN_TYPE.BoundaryEvent)
+                    await errorHandlerToken.parentToken.end(true);
+            }
         }
         else
-            this.log({error:"Escalation not found",Item:errorHandlerToken.currentItem.seq,Code:escalationCode,By:callingEvent.seq});
+            this.log({error:"Escalation not found",By:callingEvent.seq});
 
     }
     /**
@@ -580,22 +586,12 @@ class Token implements IToken {
 
         // check if subprocess then continue parent
         const children = this.childrenTokens;
-        if (this.type==TOKEN_TYPE.SubProcess || this.type==TOKEN_TYPE.AdHoc 
-                || this.type == TOKEN_TYPE.EventSubProcess || this.type == TOKEN_TYPE.Instance) {
-
             for (let i = 0; i < children.length; i++) {
                 const child = children[i];
+                if (this.type==TOKEN_TYPE.SubProcess || this.type==TOKEN_TYPE.AdHoc 
+                    || this.type == TOKEN_TYPE.EventSubProcess || this.type == TOKEN_TYPE.Instance
+                    || child.type==TOKEN_TYPE.Instance || child.type==TOKEN_TYPE.AdHoc) 
                 //if (child.type == TOKEN_TYPE.EventSubProcess || child.type==TOKEN_TYPE.AdHoc || child.type==TOKEN_TYPE.Instance ) 
-                {
-                    await child.terminate();
-                }
-            }
-    
-        }
-        
-            for (let i = 0; i < children.length; i++) {
-                const child = children[i];
-                if (child.type == TOKEN_TYPE.AdHoc) 
                 {
                     await child.terminate();
                 }

@@ -12,6 +12,8 @@ and here
 
 ### Changed
 -->
+## Release 2.2.17  -- 2025-01-24
+- Fix bugs with escalation, also cancels pending items
 ## Release 2.2.16  -- 2025-01-23
 - Fix bugs with loop firing twice
 ## Release 2.2.15  -- 2025-01-22
