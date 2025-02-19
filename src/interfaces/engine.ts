@@ -26,6 +26,7 @@ interface IToken {
     lastItem: IItem;
     firstItem: Item;
     childrenTokens: Token[];
+    itemsKey: any;
 
     save(): {
         id: any;

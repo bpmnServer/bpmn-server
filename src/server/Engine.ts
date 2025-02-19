@@ -298,22 +298,23 @@ class Engine extends ServerComponent implements IEngine{
 
 			await execution.signalItem(item.id, this.sanitizeData(data),userName,options);
 			let exeItem=execution.item;
-			//execution.worker=execution.signalItem2(item.id);
 
 			try {
 				if (options['noWait'] == true) {
 					this.logger.log(`.noWait`);
 					let self=this;
 					execution.save();
+					execution.worker=execution.signalItem2(item.id);
 					execution.worker.then(async function (obj) { 
-						await execution.signalItem2(item.id);
+			//			await execution.signalItem2(item.id);
 						self.logger.log('after worker is done releasing ..'+item.instanceId);
 						self.release(execution);
 						});
 					return execution;
 				}
 				else {
-					const waiter = await execution.worker;
+					// await execution.signalItem2(item.id); not needed since signal() issues goNext()
+					
 					this.logger.log(`.engine.continue ended`);
 
 					await this.release(execution);

@@ -10,7 +10,7 @@ import { ScriptHandler } from '../';
 
 // ---------------------------------------------
 class Node extends Element {
-    name;
+    name='';
     process;
     def;
     outbounds: Flow[];
@@ -37,7 +37,8 @@ class Node extends Element {
         this.def = def;
         this.inbounds = [];
         this.outbounds = [];
-        this.name = def.name;
+        if (def.name)
+            this.name = def.name;
         this.attachments = [];
 
         BehaviourLoader.load(this);
@@ -57,6 +58,7 @@ class Node extends Element {
     }
     async doEvent(item: Item, event: EXECUTION_EVENT, newStatus: ITEM_STATUS=null,eventDetails={}) {
         item.token.log('Node('+this.name+'|'+this.id+').doEvent: executing script for event:' + event + ' newStatus:'+newStatus);
+
         if (newStatus)
             item.status = newStatus;
         ///item.token.log('..>' + event + ' ' + this.id);
@@ -235,6 +237,8 @@ class Node extends Element {
         return;
     }
     async start(item: Item): Promise<NODE_ACTION> {
+        item.token.info(`Item# ${item.seq} - ${this.type}   started`);
+
         item.token.log('Node('+this.name+'|'+this.id+').start: item=' + item.id);
 
         await this.startBoundaryEvents(item, item.token);
@@ -332,6 +336,11 @@ class Node extends Element {
     async end(item: Item,cancel:Boolean=false) {
         if (!item)
             return;
+
+        if (cancel==true)
+            item.token.info(`Item# ${item.seq} - ${this.type}   cancelled`);
+        else 
+            item.token.info(`Item# ${item.seq} -${this.type}    ended by ${item.token.execution.userName}`);
         item.token.logS('Node('+this.name+'|'+this.id+'|'+item.seq+').end: item=' + item.id+ ' cancel:'+cancel + ' attachments:'+this.attachments.length);
 
         /**

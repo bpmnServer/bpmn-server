@@ -13,7 +13,7 @@ class Loop {
     sequence;
     dataPath;
     _items: any[];
-    completed;  // used to count # completed for parallel loops
+    completed=1;  // since it is only computed on completion, used to count # completed for parallel loops
     isSequential() { return (this.definition.isSequential()); }
     isStandard() { return (this.definition.isStandard()); }
 
@@ -33,7 +33,7 @@ class Loop {
         }
         else {
             this.definition = node.loopDefinition;
-            this.completed = 0;
+            this.completed = 1;
             this.sequence = 0;
             if (token.dataPath!=='')
                 this.dataPath = token.dataPath + '.' + this.node.id;
@@ -226,12 +226,12 @@ class Loop {
                     // need to converge here ;
                     await token.end();
                     //token.parentToken.currentItem.status=ITEM_STATUS.end;
-                    await token.parentToken.currentNode.end(token.parentToken.currentItem);
+//                    await token.parentToken.currentNode.end(token.parentToken.currentItem);
                     await token.parentToken.goNext();
                     return false;
                 }
                 else {
-                    
+                    await token.currentNode.end(token.currentItem);
                     await token.end();
                     let seq = await token.loop.getNext();
                     let data = {};
@@ -246,12 +246,13 @@ class Loop {
             }
             else if (token.loop.isStandard())
             {
+                await token.end();
                 if (token.loop.endFlag==true)
                 {
-                    await token.end();
                     //token.parentToken.currentItem.status=ITEM_STATUS.end;
-                    await token.parentToken.currentNode.end(token.parentToken.currentItem);
+                    //await token.parentToken.currentNode.end(token.parentToken.currentItem);
                     await token.parentToken.goNext();
+                    return true;
                 }
                 else 
                 {
@@ -259,22 +260,21 @@ class Loop {
                     let seq = token.loop.sequence++;//await loop.getNext();
                     let data = {};
  
-                    let newToken = await Token.startNewToken(TOKEN_TYPE.Instance, token.execution, token.currentNode, 
-                            token.loop.dataPath + '.' + seq, token, token.currentItem, token.loop, data,false,seq);
+
+                        await Token.startNewToken(TOKEN_TYPE.Instance, token.execution, token.currentNode, 
+                            token.loop.dataPath + '.' + seq,token.parentToken, token.currentItem, token.loop, data,false,seq);
+                            return false; // no further action
 
                 }
-
-                return false; // no further action
-
             }
             else { // parallel 
                 await token.end();
                 token.loop.completed++;
                 let items = await token.loop.getItems();
-                if (token.loop.completed == items.length) {
+                if (token.loop.completed == items.length+1) {
                     // need to converge here ;
-                        if (token.parentToken.currentItem)
-                            await token.parentToken.currentNode.end(token.parentToken.currentItem);
+                          //if (token.parentToken.currentItem)
+                          //      await token.parentToken.currentNode.end(token.parentToken.currentItem);
                         await token.parentToken.goNext();
                     return false;
                     if (token.currentNode.type==BPMN_TYPE.SubProcess) {

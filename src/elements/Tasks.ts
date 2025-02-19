@@ -163,8 +163,6 @@ class UserTask extends Node {
 
     async end(item: Item,cancel=false) {
 
-        if (item)
-            item.token.info(`User Task '${this.name}' Sequence# ${item.seq} ended by ${item.token.execution.userName}`);
         return await super.end(item,cancel);
     }
     async start(item: Item): Promise<NODE_ACTION> {
@@ -185,7 +183,6 @@ class UserTask extends Node {
             item.candidateGroups.push(this.lane);
             }
 
-        item.token.info(`User Task '${this.name}' -${this.id} started.`);
         return await super.start(item);
     }
     async setAssignVal(item,attr,dateFormat=false) {

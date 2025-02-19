@@ -105,14 +105,25 @@ class Gateway extends Node {
 
                     let canReach=this.canReach(token.currentNode,this);
                     ex.log(`            ..canReach: ${canReach} - token status: ${token.status} - item status ${token.currentItem.status}` );
-                    if (canReach)
+                    if (canReach) {
+                        // fix to bug #233 -- gateway mixes incoming flow for loops
+                        //  loops need to be split by using keys
+                        //  Rule: gateway inside a loop only waits of the loop flows
+                      if (token.itemsKey!==null && item.token.itemsKey!==null) 
+                        {
+                        if ((item.token.itemsKey+'.'+token.itemsKey).startsWith(token.itemsKey+'.'))
                         related.push(token);
+                        }
+                      else  // normal case no keys
+                        related.push(token);
+                    } 
+                        
                 }
             }
         });
 
         related.forEach(t=>{
-            ex.log(`    .. related token: ${t.id} ` );
+            ex.log(`    .. related token: ${t.id} ${t.status} ${t.itemsKey}` );
         });
         return related;
     }

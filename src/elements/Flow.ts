@@ -56,6 +56,9 @@ class Flow extends Element implements IFlow {
 
         return action;
     }
+    async end(item) {
+        
+    }
     async evaluateCondition(item) {
         // conditionExpression:{"$type":"bpmn:Expression","body":"true"}
         if (this.def.conditionExpression) {

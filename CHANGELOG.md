@@ -12,6 +12,11 @@ and here
 
 ### Changed
 -->
+## Release 2.2.18  -- 2025-02-18
+- Fix bugs with Loop , completed counter is now correct
+- Fix bug with loop subprocess not proceeding
+- Fix bug with standard loop
+Issue #233 , Issue #237 , Issue #238 , Issue #235
 ## Release 2.2.17  -- 2025-01-24
 - Fix bugs with escalation, also cancels pending items
 ## Release 2.2.16  -- 2025-01-23

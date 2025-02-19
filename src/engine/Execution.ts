@@ -633,10 +633,13 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
         const items = this.getItems();
         for (indx = 0; indx < items.length; indx++) {
             const item = items[indx];
+            let key='';
+            if (item.itemKey!==null)
+                key=' key:'+item.itemKey;
             if (item.element.type == 'bpmn:SequenceFlow')
                 this.log(`..Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status}`);
             else
-                this.log(`..Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status}  from ${this.formatDate(item.startedAt)} to ${this.formatDate(item.endedAt)} id: ${item.id}`);
+                this.log(`..Item:${indx} -T# ${item.token.id} ${item.element.id} Type: ${item.element.type} status: ${item.status}  from ${this.formatDate(item.startedAt)} to ${this.formatDate(item.endedAt)} id: ${item.id} ${key}`);
         }
         this.log('.data:');
         this.log(JSON.stringify(this.instance.data));

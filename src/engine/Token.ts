@@ -57,16 +57,18 @@ class Token implements IToken {
     startNodeId;
     parentToken?: Token;
 //    branchNode?: Node;
+
     originItem: Item;
     path: Item[];  //  keep track of all nodes and flow taken 
     loop: Loop;
-    currentNode: Node;
+    _currentNode: Node;
+    get currentNode():Node {return this._currentNode}
     processId;
     status: TOKEN_STATUS;
     input: {};
     output: {};
     messageMatchingKey: {};
-    itemsKey; // for loop items
+    itemsKey=null; // for loop items
 
     get data():any {
         return this.execution.getData(this.dataPath);
@@ -120,7 +122,7 @@ class Token implements IToken {
             this.dataPath='';
 
         this.startNodeId = startNode.id;
-        this.currentNode = startNode;
+        this._currentNode = startNode;
         this.parentToken = parentToken;
         this.originItem= originItem;
         this.id = execution.getNewId('token');
@@ -146,8 +148,8 @@ class Token implements IToken {
         if (parentToken && parentToken.itemsKey)
             token.itemsKey=parentToken.itemsKey;
         
-        if (itemsKey) {
-            if (token.itemsKey)
+        if (itemsKey!==null) {
+            if (token.itemsKey!==null)
                 token.itemsKey+='.';
             else 
                 token.itemsKey='';
@@ -192,7 +194,7 @@ class Token implements IToken {
         const token = new Token(da.type,execution, startNode, da.dataPath, parentToken, null);
         token.id = da.id;
         token.startNodeId = da.startNodeId;
-        token.currentNode = currentNode;
+        token._currentNode = currentNode;
         token.status = da.status;
         token.itemsKey=da.itemsKey;
         token.path = [];
@@ -274,7 +276,7 @@ class Token implements IToken {
         const item = new Item(this.currentNode, this);
         if (input)
             item.input = input;
-        this.path.push(item);
+        this.addItemToPath(item);
         this.log('Token('+this.id +').execute: new Item created itemId='+item.id);
 
         if (input)
@@ -325,6 +327,11 @@ class Token implements IToken {
         const result = await this.goNext();
         this.logE('Token('+this.id +').execute:end executing currentNodeId=' + this.currentNode.id+ " item.seq=" +item.seq + " is done!");
         return result;
+
+    }
+    addItemToPath(item) {
+        this.path.push(item);
+        this.setCurrentNode(item.node);
 
     }
     async processError(errorCode,callingEvent) {
@@ -579,9 +586,19 @@ class Token implements IToken {
         if (this.status ==TOKEN_STATUS.end || this.status==TOKEN_STATUS.terminated)
             return;
 
+        if (this.currentItem.node.id !== this.currentNode.id)
+        {
+            console.log('========= Node ',this.currentNode.id,'does not mach item',this.currentItem.node.id);
+        }
         this.status = TOKEN_STATUS.end;
         if (this.currentItem)
-            await this.currentNode.end(this.currentItem,cancel);
+            try {
+                await this.currentNode.end(this.currentItem,cancel);
+            }
+            catch(exc) {
+                console.log(exc.message,'current',this.currentNode);
+                console.log(exc);
+            }
         await this.execution.tokenEnded(this);
 
         // check if subprocess then continue parent
@@ -610,7 +627,7 @@ class Token implements IToken {
 
     setCurrentNode(newCurrentNode:Node){
         this.log('Token('+this.id +').setCurrentNode():  newCurrentNode.id=' + newCurrentNode.id+' currentNode='+this.currentNode);
-        this.currentNode = newCurrentNode;
+        this._currentNode = newCurrentNode;
     
       }
       
@@ -626,7 +643,7 @@ class Token implements IToken {
                     let tks=this.getChildrenTokens();
                     let ftkn=tks[0];
                     let titm=ftkn.path[0];
-                    this.path.push(titm);
+                    this.addItemToPath(titm);
                     // now verify a match
         
                 }        
@@ -676,7 +693,7 @@ class Token implements IToken {
                 self.log('Token(' + self.id + ').goNext(): ... outbonds flowItemId=' + flowItem.id);
                 /// need to check if next node is converging; therefore no new item``
                 flowItem.status = ITEM_STATUS.end;
-                self.path.push(flowItem);
+                self.addItemToPath(flowItem);
                 let nextNode = flowItem.element['to'];
                 self.log('Token(' + self.id + ').goNext(): ... currentNodeId(' + self.currentNode.name + '|' + self.currentNode.id + ') processing  Flow(' + flowItem.element.id + ") to " + nextNode.id);
                 if (nextNode) {
@@ -693,11 +710,11 @@ class Token implements IToken {
                 self.log('Token(' + self.id + ').goNext(): ... outbonds flowItemId=' + flowItem.id);
                 /// need to check if next node is converging; therefore no new item``
                 flowItem.status = ITEM_STATUS.end;
-                self.path.push(flowItem);
+                self.addItemToPath(flowItem);
                 let nextNode = flowItem.element['to'];
                 self.log('Token(' + self.id + ').goNext(): ... currentNodeId(' + self.currentNode.name + '|' + self.currentNode.id + ') processing  Flow(' + flowItem.element.id + ") to " + nextNode.id);
                 if (nextNode) {
-                        self.currentNode = nextNode;
+                        self._currentNode = nextNode;
 //                        await self.execute(null);
                         promises.push(self.execute(null));
                 }
