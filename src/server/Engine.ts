@@ -517,7 +517,7 @@ class Engine extends ServerComponent implements IEngine{
 //				console.log(`Throw Signal ${signalId} found target: ${item.processName} ${item.id}`);
 				this.logger.log('..^Action:engine.Throw Signal found target', item.processName,item.id );
 				var res=await this.invoke({ "items.id": item.id }, this.sanitizeData(data));
-				instances.push(res.instance.id);
+				instances.push({instanceId:res.instance.id,itemId:item.id});
             }
 		}
 		return instances;

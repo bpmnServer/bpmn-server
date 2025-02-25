@@ -54,6 +54,10 @@ class Item implements IItem {
     constructor(element, token, status = ITEM_STATUS.start) {
         this.id = token.execution.getUUID();
         this.seq = token.execution.getNewId('item');
+
+        this.messageId= element.messageId;
+        this.signalId=element.signalId;
+
         this.element = element;
         this.token = token;
         this.status = status;
@@ -90,6 +94,8 @@ class Item implements IItem {
         item.endedAt = dataObject.endedAt;
         item.timeDue = dataObject.timeDue;
         item.statusDetails = dataObject.statusDetails;
+        item.messageId= dataObject.messageId;
+        item.signalId= dataObject.signalId;
         item.assignee= dataObject.assignee;
         item.candidateGroups=dataObject.candidateGroups;
         item.candidateUsers=dataObject.candidateUsers;

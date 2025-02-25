@@ -12,6 +12,9 @@ and here
 
 ### Changed
 -->
+## Release 2.2.19  -- 2025-02-24
+- Fix bug that signalId, messageId are not being saved in item
+- Change response signature of engine.throwSignal now returns array of {instanceId,itemId}
 ## Release 2.2.18  -- 2025-02-18
 - Fix bugs with Loop , completed counter is now correct
 - Fix bug with loop subprocess not proceeding
