@@ -265,7 +265,7 @@ class Node extends Element {
         let i,t;
         for (i = 0; i < this.attachments.length; i++) {
             let boundaryEvent = this.attachments[i];
-            item.token.log('        boundaryEvent:'+boundaryEvent.id);
+            item.token.log('        cancelBoundaryEvent:'+boundaryEvent.id);
             let childrenTokens;
             if (this.type==BPMN_TYPE.SubProcess || this.type==BPMN_TYPE.AdHocSubProcess || this.type==BPMN_TYPE.Transaction) // subprocess
             {
@@ -286,10 +286,13 @@ class Node extends Element {
             if (childrenTokens) {
                 for (t = 0; t < childrenTokens.length; t++) {
                     let token = childrenTokens[t];
-                    item.token.log('     childToken:'+token.id+' startnode:'+token.startNodeId);
-                    if (token.startNodeId == boundaryEvent.id) {
-                        if (token.firstItem.status != ITEM_STATUS.end)
-                            await token.terminate();
+                    if (token.firstItem)
+                    {
+                        item.token.log('     cancellBoundaryEvents childToken:'+token.id+' startnode:'+token.startNodeId+' status:'+token.firstItem.status);
+                        if (token.startNodeId == boundaryEvent.id) {
+                            if (token.firstItem.status != ITEM_STATUS.end)
+                                await token.terminate();
+                        }
                     }
                 }  
             }
@@ -347,7 +350,8 @@ class Node extends Element {
          * Rule:    boundary events are canceled when owner task status is 'end'
          * */
         this.behaviours.forEach(async function (b) { await b.end(item); });
-        await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end, {cancel});
+        if (cancel==false)
+            await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end, {cancel});
         item.token.log('Node('+this.name+'|'+this.id+').end: setting item status to end itemId=' + item.id + ' itemStatus=' + item.status + ' cancel: '+cancel+' endedat '+item.endedAt);
         this.behaviours.forEach(async function (b) { await b.exit(item); });
         item.token.log('Node(' + this.name + '|' + this.id + ').end: finished');
@@ -367,7 +371,7 @@ class Node extends Element {
                     }
             }
         }
-
+        item.status=ITEM_STATUS.end;
         if (cancel)
             item.endedAt = null;
         else

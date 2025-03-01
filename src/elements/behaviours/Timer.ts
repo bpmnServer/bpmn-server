@@ -104,12 +104,20 @@ class TimerBehaviour extends Behaviour {
             seconds = timerModifier/1000;
         else {
             if (this.duration) {
+
+                if (this.duration.startsWith('$')) 
+                    this.duration= await item.context.scriptHandler.evaluateExpression(item,this.duration);
+
                 //seconds = toSeconds((parse(this.duration)));
                 seconds= Cron.timeDue(this.duration, null);
                 timeDue = new Date();
                 timeDue = dayjs(timeDue).add(seconds,'s').toDate();
             }
             else if (this.timeCycle) {
+
+                if (this.timeCycle.startsWith('$')) 
+                    this.timeCycle= await item.context.scriptHandler.evaluateExpression(item,this.timeCycle);
+
                 //seconds = toSeconds((parse(this.timeCycle)));
                 seconds = Cron.timeDue(this.timeCycle, null);
                 this.repeat = this.getRepeat(this.timeCycle);
@@ -181,7 +189,7 @@ class TimerBehaviour extends Behaviour {
 
         }
         // check for repeat
-        if (this.timeCycle) {
+        if (timer.timeCycle) {
 
 //console.log('repeating ',item.timerCount);
 

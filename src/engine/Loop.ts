@@ -184,11 +184,16 @@ class Loop {
     }
     static async cancel(fromItem) {
         // cancel all items of the loop
+        if (!fromItem || !fromItem.token.loop)
+            return;
 
         let currentLoop=fromItem.token.loop.id;
         let promises=[]
         let loopFirstToken=null;
         let tokens=[];
+
+        fromItem.token.log(`..loop.cancel ${currentLoop}`);
+
         fromItem.token.execution.tokens.forEach(t=>{
             if (t.loop && t.loop.id == currentLoop && t.id !==fromItem.token.id)
                 {
@@ -197,7 +202,9 @@ class Loop {
                     tokens.push(t);
                 }
         });
+        fromItem.token.log(`..loop.cancel ${currentLoop} - first token ${loopFirstToken.id} `);
         for(let i=0 ; i < tokens.length;i++) {
+            fromItem.token.log(`..loop.cancel ${currentLoop} - terminating token ${tokens[i].id} `);
             await tokens[i].terminate();
         }        // also cancel the original item 
         await loopFirstToken.parentToken.currentNode.end(loopFirstToken.parentToken.currentItem);

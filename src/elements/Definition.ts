@@ -148,6 +148,7 @@ class Definition implements IDefinition{
         }
         catch(exc)
         {
+            console.log(' Error in loading definition for'+this.name);
             throw exc;
             return null;
         }

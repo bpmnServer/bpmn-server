@@ -57,8 +57,9 @@ class Event extends Node {
                 await Loop.cancel(item);
             }
         else 
-            {
+            {   
                 await item.token.parentToken.terminate();
+                
             }
         if (item.token.parentToken.originItem && item.token.parentToken.originItem.elementId==item.node.attachedTo.id) { // finding the attached item
             item.token.parentToken.originItem.node.end(item.token.parentToken.originItem,true);
@@ -112,7 +113,11 @@ class BoundaryEvent extends Event {
         var ret=await super.run(item);
 
         if (this.isCancelling) {
+            
+            item.token.status=TOKEN_STATUS.terminated;
             await Event.terminate(item);
+            item.token.status=TOKEN_STATUS.wait;
+            
             //  current token is already terminated in the above logic, we need to restore it
             item.token.status=TOKEN_STATUS.running;
         }

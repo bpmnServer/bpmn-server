@@ -86,7 +86,7 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
         }
         catch(exc)
         {
-            console.log('error in save',exc);
+            console.log('error in saving',name,exc);
             throw exc;
             return null;
         }

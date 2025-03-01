@@ -35,7 +35,13 @@ class Cron  extends ServerComponent implements ICron {
 			return;
 		Cron.timersStarted = true;
 
-		await this.definitions.rebuild();
+		try {
+			await this.definitions.rebuild();
+		}
+		catch(exc)
+		{
+			console.log(exc);
+		}
 
 //		this.logger.log("Start timers");
 
@@ -155,7 +161,7 @@ class Cron  extends ServerComponent implements ICron {
 			try {
 				delay = Cron.checkCron(expression, baseDate);
 				if (delay) {
-//					console.log(" expression " + expression + " base date" + baseDate+ " -> delay of " + delay + " sec " + delay / 60 + " min" + delay/3600 + " hours ");
+					console.log(" expression " + expression + " base date" + baseDate+ " -> delay of " + delay + " sec " + delay / 60 + " min" + delay/3600 + " hours ");
 				}
 				else {
 					delay = toSeconds(parse(expression));

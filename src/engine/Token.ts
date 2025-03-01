@@ -462,12 +462,14 @@ class Token implements IToken {
 
             this.log(`Action:"Escalation",Item:${errorHandlerToken.currentItem.seq},Code:"${escalationCode}",By:${callingEvent.seq}`);
             this.log({action:"Escalation",Item:errorHandlerToken.currentItem.seq,Code:escalationCode,By:callingEvent.seq});
-            await errorHandlerToken.signal(null);
+            let oldStatus=errorHandlerToken.status;
             if (escl){
                 let cancel=escl.definition.$parent.cancelActivity;
-                if (cancel==true && errorHandlerToken.type==TOKEN_TYPE.BoundaryEvent)
-                    await errorHandlerToken.parentToken.end(true);
+//                if (cancel==true && errorHandlerToken.type==TOKEN_TYPE.BoundaryEvent)
+//                    await errorHandlerToken.parentToken.end(true);
             }
+            errorHandlerToken.status=oldStatus;
+            await errorHandlerToken.signal(null);
         }
         else
             this.log({error:"Escalation not found",By:callingEvent.seq});
@@ -486,10 +488,23 @@ class Token implements IToken {
      *  
      * */
     async terminate() {
+        if (this.status==TOKEN_STATUS.terminated)
+            return;
         this.log('Token('+this.id +').terminate: terminating ....');
         //await this.currentNode.end(this.currentItem,true);
         await this.end(true);
-        this.log('Token('+this.id +').terminate: terminating is done!');
+
+        this.status=TOKEN_STATUS.terminated;
+
+        await Loop.cancel(this.currentItem);
+
+        this.childrenTokens.forEach(async ct => {
+            this.log('Token('+this.id +').terminate: terminating  child....'+ct.id);
+
+            await ct.terminate();
+        });
+        if (this.currentItem)
+        this.log('Token('+this.id +').terminate: terminating is done!'+this.currentNode.id+' status='+this.currentItem.status);
     }
     /**
      *  is called by events to cancel current token
@@ -585,11 +600,6 @@ class Token implements IToken {
 
         if (this.status ==TOKEN_STATUS.end || this.status==TOKEN_STATUS.terminated)
             return;
-
-        if (this.currentItem.node.id !== this.currentNode.id)
-        {
-            console.log('========= Node ',this.currentNode.id,'does not mach item',this.currentItem.node.id);
-        }
         this.status = TOKEN_STATUS.end;
         if (this.currentItem)
             try {
