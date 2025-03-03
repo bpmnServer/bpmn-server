@@ -469,7 +469,16 @@ class Token implements IToken {
 //                    await errorHandlerToken.parentToken.end(true);
             }
             errorHandlerToken.status=oldStatus;
+            {// this causes problem that create child tokens for the escalation, reset parent to parent of subprocess to start a fresh
+            let parent=errorHandlerToken.parentToken;
+            if (parent.type==TOKEN_TYPE.SubProcess)
+            {
+                parent=parent.parentToken;
+                errorHandlerToken.parentToken=parent;
+                errorHandlerToken.dataPath=parent.dataPath;
+            }
             await errorHandlerToken.signal(null);
+            }
         }
         else
             this.log({error:"Escalation not found",By:callingEvent.seq});

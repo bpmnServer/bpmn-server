@@ -12,6 +12,9 @@ and here
 
 ### Changed
 -->
+## Release 2.2.20  -- 2025-03-02
+- Adjust parentToken for escalation to be parent of subprocess
+
 ## Release 2.2.19  -- 2025-02-24
 - Fix bug that signalId, messageId are not being saved in item
 - Change response signature of engine.throwSignal now returns array of {instanceId,itemId}
