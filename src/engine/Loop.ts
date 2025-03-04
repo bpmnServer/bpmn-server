@@ -187,7 +187,13 @@ class Loop {
         if (!fromItem || !fromItem.token.loop)
             return;
 
+        // if loop belongs to my parent - nothing to cancel
+        let token=fromItem.token;
         let currentLoop=fromItem.token.loop.id;
+
+        if (token.parentToken && token.parentToken.loop && token.parentToken.loop.id == currentLoop)
+            return; // loop belongs to my parent, let him cancel
+
         let promises=[]
         let loopFirstToken=null;
         let tokens=[];

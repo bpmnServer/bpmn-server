@@ -12,6 +12,9 @@ and here
 
 ### Changed
 -->
+## Release 2.2.21  -- 2025-03-03
+- Patch fixes for previous release, fixing problems with loop and subprocessing ending
+
 ## Release 2.2.20  -- 2025-03-02
 - Adjust parentToken for escalation to be parent of subprocess
 

@@ -141,6 +141,8 @@ class Definition implements IDefinition{
         let definition;
         try 
         {
+            if (this.source=='')
+                return null;
             definition = await this.getDefinition(this.source, this.logger);
             // console.log("************************************")
             // console.log(definition)

@@ -1,6 +1,6 @@
 import { Node } from ".";
 import { Behaviour_names } from "./behaviours";
-import { Loop, NODE_ACTION } from "../";
+import { Loop, NODE_ACTION, TOKEN_TYPE } from "../";
 import { Item } from "../engine/Item";
 import { ITEM_STATUS, TOKEN_STATUS } from "../interfaces";
 
@@ -56,11 +56,14 @@ class Event extends Node {
 
                 await Loop.cancel(item);
             }
+        //
+        let pToken=item.token.parentToken;  // to be terminated 
+
+        if (pToken.type==TOKEN_TYPE.SubProcess && pToken.parentToken && pToken.parentToken.type==TOKEN_TYPE.Instance)
+                await pToken.parentToken.terminate();
         else 
-            {   
                 await item.token.parentToken.terminate();
                 
-            }
         if (item.token.parentToken.originItem && item.token.parentToken.originItem.elementId==item.node.attachedTo.id) { // finding the attached item
             item.token.parentToken.originItem.node.end(item.token.parentToken.originItem,true);
         }

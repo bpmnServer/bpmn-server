@@ -350,8 +350,7 @@ class Node extends Element {
          * Rule:    boundary events are canceled when owner task status is 'end'
          * */
         this.behaviours.forEach(async function (b) { await b.end(item); });
-        if (cancel==false)
-            await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end, {cancel});
+        await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end, {cancel});
         item.token.log('Node('+this.name+'|'+this.id+').end: setting item status to end itemId=' + item.id + ' itemStatus=' + item.status + ' cancel: '+cancel+' endedat '+item.endedAt);
         this.behaviours.forEach(async function (b) { await b.exit(item); });
         item.token.log('Node(' + this.name + '|' + this.id + ').end: finished');

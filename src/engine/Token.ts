@@ -1,6 +1,6 @@
 
 import { Execution } from './Execution';
-import { Node, Behaviour_names } from '../elements/'
+import { Node, Behaviour_names, BPMN_TYPE } from '../elements/'
 import { NODE_ACTION , TOKEN_STATUS, ITEM_STATUS, NODE_SUBTYPE} from '../';
 import { Loop } from './Loop';
 import { Item } from './Item';
@@ -471,7 +471,7 @@ class Token implements IToken {
             errorHandlerToken.status=oldStatus;
             {// this causes problem that create child tokens for the escalation, reset parent to parent of subprocess to start a fresh
             let parent=errorHandlerToken.parentToken;
-            if (parent.type==TOKEN_TYPE.SubProcess)
+            if (parent && parent.type==TOKEN_TYPE.SubProcess)
             {
                 parent=parent.parentToken;
                 errorHandlerToken.parentToken=parent;
@@ -512,6 +512,7 @@ class Token implements IToken {
 
             await ct.terminate();
         });
+
         if (this.currentItem)
         this.log('Token('+this.id +').terminate: terminating is done!'+this.currentNode.id+' status='+this.currentItem.status);
     }
