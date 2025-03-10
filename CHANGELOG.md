@@ -12,6 +12,11 @@ and here
 
 ### Changed
 -->
+## Release 2.2.21  -- 2025-03-10
+- Fix Bug # 245:
+    Error Event causes process status to be ended , while still other tokens active, error cancel events first then process its flow
+    Fix: move Token.TokenEnded(token) to Execution.CheckEnd()
+
 ## Release 2.2.21  -- 2025-03-03
 - Patch fixes for previous release, fixing problems with loop and subprocessing ending
 

@@ -97,7 +97,6 @@ interface IExecution extends IServerComponent {
 
     getNodeById(id: any): Node;
     getToken(id: number): IToken;
-    tokenEnded(token: IToken): void;
     getItemsData(): IItemData[];
     save(): Promise<void>;
     end(): Promise<void>;

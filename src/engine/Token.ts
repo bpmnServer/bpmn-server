@@ -619,7 +619,6 @@ class Token implements IToken {
                 console.log(exc.message,'current',this.currentNode);
                 console.log(exc);
             }
-        await this.execution.tokenEnded(this);
 
         // check if subprocess then continue parent
         const children = this.childrenTokens;

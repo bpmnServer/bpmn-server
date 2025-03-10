@@ -74,7 +74,7 @@ class Execution extends ServerComponent implements IExecution {
     public getToken(id: number): Token {
         return this.tokens.get(id);
     }
-    public tokenEnded(token: Token) {
+    private async checkEnd() {
         let active = 0;
         this.tokens.forEach(t => { 
             if (t.status != TOKEN_STATUS.end 
@@ -165,6 +165,8 @@ class Execution extends ServerComponent implements IExecution {
         await proc.start(this, token);
         await token.execute(inputData);
 
+        await this.checkEnd();
+        
         await Promise.all(this.promises);
         this.log('.execute returned');
         await this.doExecutionEvent(this.process, EXECUTION_EVENT.process_wait);
@@ -251,6 +253,9 @@ class Execution extends ServerComponent implements IExecution {
         }   
              
         this.log('Execution('+this.name+').signalItem: returning .. waiting for promises status:' + this.instance.status + " id: " + itemId);
+        
+        await this.checkEnd();
+
         await Promise.all(this.promises);
 
 
@@ -286,6 +291,8 @@ class Execution extends ServerComponent implements IExecution {
         }   
              
         this.log('Execution('+this.name+').signalItem: returning .. waiting for promises status:' + this.instance.status + " id: " + itemId);
+        await this.checkEnd();
+
         await Promise.all(this.promises);
 
 
@@ -441,6 +448,8 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
          newItem.timerCount = prevItem.timerCount+1;     // it increments at start
 
         this.log('Execution('+this.name+').signal: returning .. waiting for promises status:' + this.instance.status + " id: " + executionId);
+        await this.checkEnd();
+
         await Promise.all(this.promises);
 
         this.log('Execution('+this.name+').signal: returned process  status:' + this.instance.status + " id: " + executionId);
