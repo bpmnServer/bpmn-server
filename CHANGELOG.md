@@ -12,7 +12,14 @@ and here
 
 ### Changed
 -->
-## Release 2.2.21  -- 2025-03-10
+## Release 2.2.23  -- 2025-03-10
+
+Enhance Datastore Configuration #246
+- change collection names from default
+- saving of logs is optional
+- saving of source bpmn xml is optional
+
+## Release 2.2.22  -- 2025-03-10
 - Fix Bug # 245:
     Error Event causes process status to be ended , while still other tokens active, error cancel events first then process its flow
     Fix: move Token.TokenEnded(token) to Execution.CheckEnd()

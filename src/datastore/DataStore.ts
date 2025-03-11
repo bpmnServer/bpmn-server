@@ -9,11 +9,6 @@ import { InstanceLocker } from './';
 
 import { QueryTranslator } from './QueryTranslator';
 
-export const Instance_collection = 'wf_instances';
-export const Locks_collection = 'wf_locks';
-export const Archive_collection = 'wf_archives';
-
-
 class DataStore extends ServerComponent  implements IDataStore {
 
 	dbConfiguration;
@@ -26,11 +21,21 @@ class DataStore extends ServerComponent  implements IDataStore {
 	promises = [];
 	locker;
 	enableSavePoints=false;
+	saveLogs=true;
+	saveSource=true;
 
 	constructor(server: IBPMNServer) {
 		super(server);
 
 		this.dbConfiguration = this.configuration.database.MongoDB;
+		if (!this.dbConfiguration.Instance_collection)
+			this.dbConfiguration.Instance_collection='wf_instances';
+		if (!this.dbConfiguration.Locks_collection)
+			this.dbConfiguration.Locks_collection='wf_locks';
+		if (!this.dbConfiguration.Archive_collection)
+			this.dbConfiguration.Archive_collection='wf_archive';
+
+
 		const MongoDB = require('./MongoDB').MongoDB;
 		this.db = new MongoDB(this.dbConfiguration, this.logger);
 		this.locker=new InstanceLocker(this);
@@ -42,7 +47,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 	} */
 
 	async save(instance,options={}) {
-		return await this.saveInstance(instance);
+		return await this.saveInstance(instance,options);
 	}
 	async loadInstance(instanceId,options={}) {
 
@@ -82,6 +87,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 					else 
 						data=instance.data
 					i['processName'] = instance.name;
+					i['instanceData'] = instance.data;
 					i['data'] = data;
 					i['instanceId'] = instance.id;
 					i['instanceVersion'] = instance.version;
@@ -99,9 +105,9 @@ class DataStore extends ServerComponent  implements IDataStore {
 //		this.logger.log("Saving...");
 
 		let saveObject=
-			{	version: instance.version,endedAt: instance.endedAt, status: instance.status, saved: instance.saved,
-				tokens: instance.tokens, items: instance.items, loops: instance.loops,
-				logs: instance.logs, data: instance.data , parentItemId: instance.parentItemId
+			{	version: instance.version,startedAt: instance.startedAt,endedAt: instance.endedAt, status: instance.status, saved: instance.saved,
+				tokens: instance.tokens, items: instance.items, loops: instance.loops, name: instance.name,
+				data: instance.data , parentItemId: instance.parentItemId
 			};
 
 		if (instance.version==null) 
@@ -109,29 +115,34 @@ class DataStore extends ServerComponent  implements IDataStore {
 		else 
 			instance.version++;
 
-		if (this.enableSavePoints) {
+			if (this.saveLogs==true)
+				saveObject['logs'] = instance.logs;
+			if (this.saveSource==true)
+				saveObject['source'] = instance.source;
+	
+			if (this.enableSavePoints) {
 			let lastItem=instance.items[instance.items.length-1].id;
 
 			let savePoint={id:lastItem,items:instance.items,loop:instance.loops,tokens:instance.tokens,data:instance.data}
 	
-			if (!instance['savePoints'])
-				instance['savePoints']={};
+			if (!saveObject['savePoints'])
+				saveObject['savePoints']={};
 			
-			instance['savePoints'][lastItem]=savePoint;
-
-			saveObject['savePoints']=instance['savePoints'];
+			saveObject['savePoints'][lastItem]=savePoint;
 		}
 
 		var recs;
 		if (!instance.saved) {
 			instance.saved = new Date();
+			saveObject['saved'] = instance.saved;
+			saveObject['id']=instance.id;
 
-			await this.db.insert(this.dbConfiguration.db, Instance_collection, [instance]);
+			await this.db.insert(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, [saveObject]);
 
 		}
 		else {
 
-			this.promises.push(this.db.update(this.dbConfiguration.db, Instance_collection,
+			this.promises.push(this.db.update(this.dbConfiguration.db, this.dbConfiguration.Instance_collection,
 				{ id: instance.id },
 				{
 					$set: saveObject
@@ -164,14 +175,8 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 		const rec = results[0];
 
-		/*this.convertColl(rec.authorizations, Authorization);
-		this.convertColl(rec.involvements, Involvement);
-		rec.items.forEach(item => {
-			this.convertColl(item.authorizations, Authorization);
-			this.convertColl(item.assignments, Assignment);
-			this.convertColl(item.notifications, Notification);
-
-		}); */
+		if (!rec.logs)
+			rec.logs=[];
 		return rec;
 
 	}
@@ -210,7 +215,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		if (option['sort'])
 			sort=option['sort'];
 
-		var records = await this.db.find(this.dbConfiguration.db, Instance_collection, query, projection,sort);
+		var records = await this.db.find(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, query, projection,sort);
 		return records;
 	}
 	/**
@@ -244,7 +249,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 		const trans = new QueryTranslator('items');
 		const result = trans.translateCriteria(query);
 		const projection = { id: 1, data: 1, name: 1, version:1, "items": 1 , "tokens":1};
-		var records = await this.db.find(this.dbConfiguration.db, Instance_collection, result, projection);
+		var records = await this.db.find(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, result, projection);
 		// console.log('...find items for query:', query, " translated to :", JSON.stringify(result),  " recs:" , records.length)
 
 		const items=this.getItemsFromInstances(records, result,trans);
@@ -256,7 +261,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 		await this.cache.shutdown();
 		
-		return await this.db.remove(this.dbConfiguration.db, Instance_collection, query );
+		return await this.db.remove(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, query );
 
 	}
 	// db.collection.createIndex({ "a.loc": 1, "a.qty": 1 }, { unique: true })
@@ -267,18 +272,18 @@ class DataStore extends ServerComponent  implements IDataStore {
      * 
      * */
 	async install() {
-		await this.db.createIndex(this.dbConfiguration.db, Instance_collection, { id: 1 }, { unique: true });
-		await this.db.createIndex(this.dbConfiguration.db, Instance_collection, { "items.id": 1 });
-		await this.db.createIndex(this.dbConfiguration.db, Locks_collection, { id: 1 }, { unique: true });
+		await this.db.createIndex(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, { id: 1 }, { unique: true });
+		await this.db.createIndex(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, { "items.id": 1 });
+		await this.db.createIndex(this.dbConfiguration.db, this.dbConfiguration.Locks_collection, { id: 1 }, { unique: true });
 	}
 	
 	async archive(query) {
 		
-        let docs=await this.db.find(this.dbConfiguration.db,Instance_collection,query,{});
+        let docs=await this.db.find(this.dbConfiguration.db,this.dbConfiguration.Instance_collection,query,{});
 
 		if (docs.length>0)
 			{
-				await this.db.insert(this.dbConfiguration.db, Archive_collection, docs);
+				await this.db.insert(this.dbConfiguration.db, this.dbConfiguration.Archive_collection, docs);
 
 				await this.deleteInstances(query);
 			}

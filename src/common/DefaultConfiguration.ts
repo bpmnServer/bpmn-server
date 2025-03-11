@@ -13,7 +13,13 @@ export class Configuration implements IConfiguration {
 	templatesPath?: string;
 	timers: { forceTimersDelay: number; precision: number; };
 	database: { 
-		MongoDB: { db_url: string; db: string; }; 
+		MongoDB: {
+			 db_url: string; 
+			 db: string; 
+			 Locks_collection:'wf_locks';
+			 Instance_collection:'wf_instances';
+			 Archive_collection:'wf_archives';
+			 }; 
 		loopbackRepositories?:any;
 	};
 	logger: ILogger;

@@ -30,7 +30,10 @@ interface IMongoDBDatabaseConfiguration extends IDatabaseConfigurationBase {
     MongoDB: {
         db_url: string,
         db: string,
-    },
+        Locks_collection:string,
+        Instance_collection:string,
+        Archive_collection:string
+    }
 }
 interface ISQLiteDatabaseConfiguration extends IDatabaseConfigurationBase {
     SQLite: {

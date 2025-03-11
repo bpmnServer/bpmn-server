@@ -3,7 +3,7 @@ import { Execution } from '../';
 import { ServerComponent } from '../server/ServerComponent';
 import { EXECUTION_EVENT, IEngine} from "../interfaces";
 
-import { DataStore, Instance_collection } from '../datastore';
+import { DataStore } from '../datastore';
 import { exec } from 'child_process';
 
 
@@ -555,7 +555,7 @@ class Engine extends ServerComponent implements IEngine{
 			let inst=insts[i];
 				await self.lock(inst.id);
 				try {
-					await ds.db.update(ds.dbConfiguration.db,Instance_collection,
+					await ds.db.update(ds.dbConfiguration.db,ds.dbConfiguration.Instance_collection,
 						{ id: inst.id },
 						{
 							$set: {source}

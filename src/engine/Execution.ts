@@ -551,7 +551,11 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
             else
                 server.logger.error("***Error*** No savePoint found for item "+itemId);
         }
-        const source = state.source;
+        let source = state.source;
+
+        if (!source)
+            source = await server.definitions.getSource(state.name);
+
         const execution = new Execution(server, state.name, source,state);
 
 
