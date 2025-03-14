@@ -9,7 +9,8 @@ import { IExecution } from '../interfaces/engine';
 import { EXECUTION_STATUS } from '../interfaces/Enums';
 import { Item } from '../engine/Item';
 import { IAppDelegate, IServiceProvider, ScriptHandler } from '../';
-//NO_import { DecisionTable } from 'dmn-engine';
+
+import { DMNEngine } from '../dmn/DMNEngine';
 
 // ---------------------------------------------
 class ScriptTask extends Node {
@@ -127,19 +128,19 @@ class BusinessRuleTask extends ServiceTask {
         //console.log('Business Rule Task'); //.loopCharacteristics.$attrs["camunda:collection"];
         if (this.def.$attrs && this.def.$attrs["camunda:decisionRef"]) {
 
-            throw new Error("Business Rule Task Not supported in this release.");
-            /*
+            //throw new Error("Business Rule Task Not supported in this release.");
+            
             businessRule = this.def.$attrs["camunda:decisionRef"];
             console.log("invoking business rule:" + businessRule)
-            const dt = await DecisionTable.load(path + businessRule + '.json');
-            console.log(dt);
-            const data = await item.node.getOutput(item);
-            const result = await dt.evaluate(data);
-            console.log("result");
-            console.log(result.actions);
+
+            const filePath=path+'/'+businessRule+'.dmn.xml';
+            console.log(' invoking ',filePath,' rules file')
+            const dmn=await new DMNEngine({debug:true}).load(filePath);
             
-            await item.node.setInput(item, result.actions);
-            */
+            item.output = await dmn.evaluate(item.input);
+            console.log("**** Business Rule input","item.input",item.input,"result:",item.output);
+            
+           
         }
         return NODE_ACTION.end;
     }

@@ -12,6 +12,9 @@ and here
 
 ### Changed
 -->
+## Release 2.3.0  -- 2025-03-14
+Added Support for DMN 1.3 Rules Engine
+
 ## Release 2.2.23  -- 2025-03-10
 
 Enhance Datastore Configuration #246
