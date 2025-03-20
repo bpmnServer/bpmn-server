@@ -522,7 +522,10 @@ class Engine extends ServerComponent implements IEngine{
 		}
 		return instances;
 	}
-
+	status() {
+		return { running: this.runningCounter, calls: this.callsCounter };
+	}
+	
 	/**
  * 
  * @param model 

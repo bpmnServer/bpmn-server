@@ -171,6 +171,8 @@ class Node extends Element {
 
         //  3   start
         //  --------
+
+        item.token.info(`{"seq":${item.seq},"type":'${this.type}',"id":'${this.id}',"action":'Started'}`);
         item.token.log('Node('+this.name+'|'+this.id+').execute: execute start ...');
 
         await this.doEvent(item, EXECUTION_EVENT.node_start, ITEM_STATUS.start);
@@ -187,16 +189,22 @@ class Node extends Element {
         // check for attachments - boundary events:
 
         if (ret == NODE_ACTION.error || ret == NODE_ACTION.abort) {
+            item.token.info(`{"seq":${item.seq},"type":'${this.type}',"id":'${this.id}',"action":'Aborted'}`);
+
             item.token.log('Node('+this.name+'|'+this.id+').execute: start complete ...token:'+item.token.id+' ret:'+ret);
             return ret;
         }
         else if (ret ==NODE_ACTION.wait) {
             await this.doEvent(item, EXECUTION_EVENT.node_wait, ITEM_STATUS.wait);
+            item.token.info(`{"seq":${item.seq},"type":'${this.type}',"id":'${this.id}',"action":'Waiting'}`);
             item.token.log('Node('+this.name+'|'+this.id+').execute: start complete ...token:'+item.token.id+' ret:'+ret);
             return ret;
         }
         else if (ret ==NODE_ACTION.end) {
             await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end);
+
+            item.token.info(`{"seq":${item.seq},"type":'${this.type}',"id":'${this.id}',"action":'Ended'}`);
+
             item.token.log('Node('+this.name+'|'+this.id+').execute: start complete ...token:'+item.token.id+' ret:'+ret);
             return ret;
         }
@@ -204,6 +212,8 @@ class Node extends Element {
         //  --------
         //  Save before performing the work
       //  await item.token.execution.save();
+        item.token.info(`{"seq":${item.seq},"type":'${this.type}',"id":'${this.id}',"action":'Started'}`);
+
         item.token.log('Node('+this.name+'|'+this.id+').execute: execute run ...token:'+item.token.id);
         //item.token.log('..>run ' + this.id);
 
@@ -237,8 +247,6 @@ class Node extends Element {
         return;
     }
     async start(item: Item): Promise<NODE_ACTION> {
-        item.token.info(`Item# ${item.seq} - ${this.type}   started`);
-
         item.token.log('Node('+this.name+'|'+this.id+').start: item=' + item.id);
 
         await this.startBoundaryEvents(item, item.token);
@@ -337,13 +345,14 @@ class Node extends Element {
 
     }
     async end(item: Item,cancel:Boolean=false) {
-        if (!item)
+        if (!item  || item.status==ITEM_STATUS.end)
             return;
 
         if (cancel==true)
-            item.token.info(`Item# ${item.seq} - ${this.type}   cancelled`);
+            item.token.info(`{"seq":${item.seq},"type":'${this.type}',"id":'${this.id}',"action":'Cancelled'}`);
         else 
-            item.token.info(`Item# ${item.seq} -${this.type}    ended by ${item.token.execution.userName}`);
+        item.token.info(`{"seq":${item.seq},"type":'${this.type}',"id":'${this.id}',"action":'Ended'}`);
+
         item.token.logS('Node('+this.name+'|'+this.id+'|'+item.seq+').end: item=' + item.id+ ' cancel:'+cancel + ' attachments:'+this.attachments.length);
 
         /**

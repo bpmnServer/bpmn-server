@@ -158,6 +158,7 @@ class Gateway extends Node {
     }
 
     async start(item: Item): Promise<NODE_ACTION> {
+
         item.token.log('Gateway(' + item.element.name+'|'+item.element.id + ').start: node.type=' + item.node.type);
         if (this.inbounds.length > 1) { // converging .....
             item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: Starting a converging gateway this.inbounds.length=' + this.inbounds.length);

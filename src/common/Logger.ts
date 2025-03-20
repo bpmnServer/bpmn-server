@@ -118,10 +118,10 @@ class Logger implements ILogger {
     error(err) {
         throw new Error(err);
     }
-    async save(filename) {
+    async save(filename,flag='w') {
         const fs = require('fs');
         console.log("writing to:" + filename + " " + this.debugMsgs.length);
-        let id = fs.openSync(filename, 'w', 666);
+        let id = fs.openSync(filename, flag, 666);
         {
             fs.writeSync(id,'Started at: '+new Date().toISOString() + "\n", null, 'utf8');
 
@@ -149,6 +149,11 @@ class Logger implements ILogger {
             this.clear();
 
         }
+    }
+    async saveForInstance(instanceId) {
+        if (process.env['logFolder'])
+            await this.save(process.env['logFolder']+'/'+instanceId+'.log', 'a');
+        
     }
 }
 

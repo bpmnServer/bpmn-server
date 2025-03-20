@@ -89,7 +89,6 @@ class Execution extends ServerComponent implements IExecution {
     }
     async end() {
         this.log(".execution ended.");
-        this.info("execution ended.");
         this.instance.endedAt = new Date();
         this.instance.status = EXECUTION_STATUS.end;
         if (this.instance.parentItemId) {
@@ -122,7 +121,7 @@ class Execution extends ServerComponent implements IExecution {
     public async execute(startNodeId = null, inputData = {}, options = {}) {
 
         this.log('^ACTION:execute:');
-        this.info('execution started');
+        this.info(`{type:'execution',action:'execute',name:${this.name}}`);
         this.operation='execute';
         this.options=options;
         await this.definition.load();
@@ -163,6 +162,7 @@ class Execution extends ServerComponent implements IExecution {
 
         const proc = startNode.process;
         await proc.start(this, token);
+
         await token.execute(inputData);
 
         await this.checkEnd();
@@ -472,6 +472,8 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
 
         await this.server.dataStore.saveInstance(state,this.options);
 
+        await this.server.logger.saveForInstance(this.instance.id);
+
     }
     getItems(): Item[] {
         const items = [];
@@ -625,21 +627,31 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
         this.tokens.forEach(t => {
             t.resume();});
     }
+    reportToken(token:Token,level) {
+            
+        const branch = token.originItem ? token.originItem.elementId : 'root';
+        const parent = token.parentToken ? token.parentToken.id : '-';
+        let p='';
+        for(var i=0;i<token.path.length;i++)
+            {p+=''+token.path[i].node.id+'->'; }
+        let loop='';
+        if (token.loop)
+            loop=' Loop: '+token.loop.id+' key:'+token.itemsKey;
+        
+        this.log('..'.repeat(level+1)+`token: ${token.id} - ${token.type} - ${token.status}  current: ${token.currentNode.id} from ${branch} child of ${parent} path: ${p} `+loop+' data:'+JSON.stringify(token.data) );
 
+        token.childrenTokens.forEach(t => {
+            this.reportToken(t,level+1);
+        });
+
+    }
     report() {
 
         this.log('.Execution Report ----');
         this.log('..Status:' + this.instance.status);
         this.tokens.forEach(token => {
-            const branch = token.originItem ? token.originItem.elementId : 'root';
-            const parent = token.parentToken ? token.parentToken.id : '-';
-            let p='';
-            for(var i=0;i<token.path.length;i++)
-                {p+=''+token.path[i].node.id+'->'; }
-            let loop='';
-            if (token.loop)
-                loop=' Loop: '+token.loop.id+' key:'+token.itemsKey;
-            this.log(`..token: ${token.id} - ${token.status} - ${token.type} current: ${token.currentNode.id} from ${branch} child of ${parent} path: ${p} `+loop+' data:'+JSON.stringify(token.data) );
+            if (!token.parentToken)
+                this.reportToken(token,0);
         });
 
         let indx = 0;
@@ -715,7 +727,25 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
     getData(dataPath) {
         return DataHandler.getData(this.instance.data,dataPath);
     }
-}
+    // Process not currently used
     
+    async processQueue(): Promise<void> {
+
+        while (true) {
+            let running=false;
+            for(let token of this.tokens.values()) {
+                
+                if (token.status===TOKEN_STATUS.queued)
+                {
+                    running=true;
+                    await token.execute();
+                }
+            }
+            if (!running)
+                break;
+        }
+    }
+}
+
 
 export { Execution }

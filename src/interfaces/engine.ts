@@ -138,6 +138,7 @@ interface IExecution extends IServerComponent {
     error(msg: any): void;
     appendData(inputData: any,item:IItem, dataPath?: any,assignment?:any): void;
     getData(dataPath: any): any;
+    processQueue(): any;
 //    getAndCreateData(dataPath: any, asArray?: boolean): any;
 }
 

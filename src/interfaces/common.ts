@@ -72,6 +72,7 @@ interface ILogger {
     error(err: any): void;
     reportError(err: any): void;
     save(filename: any): Promise<void>;
+    saveForInstance(instanceId:string);
 }
 
 /**

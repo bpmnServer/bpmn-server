@@ -115,21 +115,21 @@ class DataStore extends ServerComponent  implements IDataStore {
 		else 
 			instance.version++;
 
-			if (this.saveLogs==true)
+			if (this.saveLogs===true)
 				saveObject['logs'] = instance.logs;
-			if (this.saveSource==true)
+			if (this.saveSource===true)
 				saveObject['source'] = instance.source;
 	
-			if (this.enableSavePoints) {
-			let lastItem=instance.items[instance.items.length-1].id;
+			if (this.enableSavePoints===true && instance.items.length>0) {
+				let lastItem=instance.items[instance.items.length-1].id;
 
-			let savePoint={id:lastItem,items:instance.items,loop:instance.loops,tokens:instance.tokens,data:instance.data}
-	
-			if (!saveObject['savePoints'])
-				saveObject['savePoints']={};
-			
-			saveObject['savePoints'][lastItem]=savePoint;
-		}
+				let savePoint={id:lastItem,items:instance.items,loop:instance.loops,tokens:instance.tokens,data:instance.data}
+		
+				saveObject['savePoints']=instance.savePoints;
+				if (!saveObject['savePoints'])
+					saveObject['savePoints']={};
+				saveObject['savePoints'][lastItem]=savePoint;
+			}
 
 		var recs;
 		if (!instance.saved) {

@@ -12,6 +12,13 @@ and here
 
 ### Changed
 -->
+## Release 2.3.1  -- 2025-03-20
+- Fix bug, savePoints not saved
+- Improved logging to help with animation
+- Added variable `instance` to all javascript triggers to access root data: so 
+```js
+  instance.data // now refers to root data available to all subprocesses or loop items
+```
 ## Release 2.3.0  -- 2025-03-14
 Added Support for DMN 1.3 Rules Engine
 

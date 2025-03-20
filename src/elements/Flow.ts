@@ -50,9 +50,13 @@ class Flow extends Element implements IFlow {
             item.token.execution.doItemEvent(item, EXECUTION_EVENT.flow_discard,{flow:this.id});
         }
         else
+        {
             item.token.execution.doItemEvent(item, EXECUTION_EVENT.flow_take,{flow:this.id});
+            item.token.info(`{"seq":${item.seq},"type":'${this.type}',"id":'${this.id}',"action":'Taken'}`);
 
-        item.token.log('Flow(' + this.name +'|'+ this.id + ').run: going to ' + this.to.id + " action : " + action);
+
+            item.token.log('(Flow:'+this.id+')Flow(' + this.name +'|'+ this.id + ').run: going to ' + this.to.id + " action : " + action);
+        }
 
         return action;
     }

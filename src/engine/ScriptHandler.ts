@@ -138,6 +138,7 @@ class ScriptHandler implements IScriptHandler{
         if (isToken) {
             return `
             var data=this.data;
+            var instance=this.execution.instance;
             var input=this.input;
             var output=this.output;
             var appDelegate=this.execution.appDelegate;
@@ -150,6 +151,7 @@ class ScriptHandler implements IScriptHandler{
         else if (isExecution) {
             return `
             var appDelegate=this.appDelegate;
+            var instance=this.instance;
             var appServices=this.servicesProvider;
             var appUtils=appDelegate.appUtils;
             `;
@@ -159,6 +161,7 @@ class ScriptHandler implements IScriptHandler{
             return `
             var item=this;
             var data=this.data;
+            var instance=this.token.execution.instance;
             var input=this.input;
             var output=this.output;
             var appDelegate=this.token.execution.appDelegate;

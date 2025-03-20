@@ -88,7 +88,7 @@ enum ITEM_STATUS {
 
 enum EXECUTION_STATUS { running='running',wait='wait', end = 'end' , terminated ='terminated' }
 
-enum TOKEN_STATUS { running = 'running', wait = 'wait', end = 'end', terminated = 'terminated' }
+enum TOKEN_STATUS { running = 'running', wait = 'wait', end = 'end', terminated = 'terminated' , queued = 'queued' }
 /*
  * possible actions by flow
  */
