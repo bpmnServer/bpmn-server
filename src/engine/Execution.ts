@@ -183,7 +183,7 @@ class Execution extends ServerComponent implements IExecution {
      */
     public async assign(executionId, inputData: any, assignment = {}, userName,options={}) {
 
-        this.log('Execution(' + this.name + ').assign: executionId=' + executionId + ' data ' + JSON.stringify(inputData));
+        this.log('Execution(' + this.name + ').assign: executionId=' + executionId + ' data ' + JSON.stringify(inputData)+' assignment:'+JSON.stringify(assignment));
         this.userName = userName;
         this.operation = 'assign';
         this.options=options;

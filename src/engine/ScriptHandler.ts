@@ -1,5 +1,6 @@
 import { Item ,Execution,Token} from ".";
 import { IScriptHandler } from "../interfaces";
+import { spawn } from 'child_process';
 
     
 class ScriptHandler implements IScriptHandler{
@@ -109,6 +110,12 @@ class ScriptHandler implements IScriptHandler{
         return result;
 		*/
         try {
+            if (script.startsWith('$py'))
+            {
+                 result=await this.runPython(scope,script.substring(3));
+                 console.log('python result:',result)
+                return result;
+            }
            script = script.replace('#','')    //remove symbol '#'
 	    //require return
             var js = ScriptHandler.getJSvars(scope) + `
@@ -170,8 +177,58 @@ class ScriptHandler implements IScriptHandler{
             `;
 
         }
-
     }
+ 
+ async  runPython(item,code: string, input: any={}): Promise<any> {
+  return new Promise((resolve, reject) => {
+    
+    const pythonCmd = process.env.PYTHON_CMD||'python';
+    item.data['a']=3;
+    item.data['b']=4;
+    const pyCode=`
+import sys, json
+input = json.loads(sys.stdin.read())
+data =${JSON.stringify(item.data)}
+item =${JSON.stringify({id:item.id,name:item.name,elementId:item.elementId})}
+result = data["a"] + data["b"]
+print(json.dumps({ "sum": result }), flush=True)
+${code.trim()}`;
+    const python = spawn(pythonCmd, ['-c', pyCode]);
+
+    let output = '';
+    let error = '';
+
+    // Handle stdout
+    python.stdout.on('data', (data) => {
+      output += data.toString();
+    });
+
+    // Handle stderr
+    python.stderr.on('data', (data) => {
+      error += data.toString();
+    });
+
+    // Handle close
+    python.on('close', (code) => {
+      if (code !== 0 || error) {
+        reject(new Error(`Python error: ${error || 'Exit code ' + code}`));
+      } else {
+        try {
+          const parsed = JSON.parse(output);
+          resolve(parsed);
+        } catch (e) {
+          resolve(output.trim()); // fallback: plain string
+        }
+      }
+    });
+
+    // Send input if provided
+    if (input !== undefined) {
+      python.stdin.write(JSON.stringify(input));
+      python.stdin.end();
+    }
+  });
+}
 }
 
 export {ScriptHandler}

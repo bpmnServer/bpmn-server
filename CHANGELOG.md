@@ -12,6 +12,9 @@ and here
 
 ### Changed
 -->
+## Release 2.3.2  -- 2025-03-26
+- Added method `dataStore.find` to use mongodb aggregate function
+- Added support for `python scripts`, now scripts stating with `$py` are treated as python, see `engine.ScriptHandler.ts` 
 ## Release 2.3.1  -- 2025-03-20
 - Fix bug, savePoints not saved
 - Improved logging to help with animation

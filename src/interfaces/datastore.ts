@@ -1,6 +1,22 @@
 import { IDefinition, IInstanceData } from './';
 import { IBpmnModelData, IItemData, IEventData } from './';
 
+export interface FindParams {
+	filter?: Record<string, any>;
+	after?: string;
+	limit?: number;
+	sort?: Record<string, 1 | -1>;
+	projection?: Record<string, 0 | 1| any>;
+  getTotalCount?: boolean; // if true, return total count of items in the result set
+  }
+  
+  export interface FindResult<T = any> {
+	data?: any[];
+	nextCursor?: string | null;
+  totalCount?: number;
+	error?: string;
+  }
+
 interface IDataStore {
     dbConfiguration: any;
     db: any;
@@ -18,6 +34,7 @@ interface IDataStore {
     deleteInstances(query?: any): Promise<void>;
     install(); 
     archive(query);
+    find(FindParams) : Promise<FindResult>;
 }
 
 interface IModelsDatastore {
