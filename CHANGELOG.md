@@ -12,6 +12,8 @@ and here
 
 ### Changed
 -->
+## Release 2.3.3  -- 2025-03-27
+- Avoid code blocking, adding puase() between operations
 ## Release 2.3.2  -- 2025-03-26
 - Added method `dataStore.find` to use mongodb aggregate function #247
 - Added support for `python scripts`, now scripts stating with `$py` are treated as python, see `engine.ScriptHandler.ts` #248

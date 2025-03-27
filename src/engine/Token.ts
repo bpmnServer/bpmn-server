@@ -499,6 +499,7 @@ class Token implements IToken {
     async terminate() {
         if (this.status==TOKEN_STATUS.terminated)
             return;
+
         this.log('Token('+this.id +').terminate: terminating ....');
         //await this.currentNode.end(this.currentItem,true);
         await this.end(true);
@@ -550,6 +551,8 @@ class Token implements IToken {
                 return;
 
             const ret = await this.currentNode.run(item);
+
+            await pause();
 
             let result = await this.currentNode.continue(item);
             result =await this.goNext();
@@ -608,6 +611,8 @@ class Token implements IToken {
     async end(cancel:Boolean=false) {
         this.logS('Token('+this.id +').end: currentNode=' + this.currentNode.id +' status='+this.status);
 
+        await pause();
+
         if (this.status ==TOKEN_STATUS.end || this.status==TOKEN_STATUS.terminated)
             return;
         this.status = TOKEN_STATUS.end;
@@ -655,7 +660,7 @@ class Token implements IToken {
      *  
      */ 
     async goNext() {
-
+                await pause();
                 /** issue 186:  token with empty path due to loop preceded by gateway */
                 if (this.path.length==0) {
                     // borrow item (just temporarly) from first child token
@@ -766,6 +771,9 @@ async function delay(time, result) {
             resolve(result);
         }, time);
     });
+}
+function pause(ms = 10) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 // ---------------------------------------------
 export { Token , TOKEN_TYPE }
