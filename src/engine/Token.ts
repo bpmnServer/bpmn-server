@@ -611,7 +611,7 @@ class Token implements IToken {
     async end(cancel:Boolean=false) {
         this.logS('Token('+this.id +').end: currentNode=' + this.currentNode.id +' status='+this.status);
 
-        await pause();
+        //await pause();
 
         if (this.status ==TOKEN_STATUS.end || this.status==TOKEN_STATUS.terminated)
             return;

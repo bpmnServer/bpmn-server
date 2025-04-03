@@ -3,7 +3,7 @@ import { Node, LoopBehaviour, Behaviour_names, BPMN_TYPE } from '../elements/';
 
 import { Execution } from './Execution';
 import { ScriptHandler } from '.';
-import { ITEM_STATUS } from '../interfaces';
+import { ITEM_STATUS, TOKEN_STATUS } from '../interfaces';
 
 class Loop {
     id;
@@ -210,8 +210,11 @@ class Loop {
         });
         fromItem.token.log(`..loop.cancel ${currentLoop} - first token ${loopFirstToken.id} `);
         for(let i=0 ; i < tokens.length;i++) {
+            if (tokens[i].status!==TOKEN_STATUS.terminated)
+            {
             fromItem.token.log(`..loop.cancel ${currentLoop} - terminating token ${tokens[i].id} `);
             await tokens[i].terminate();
+            }
         }        // also cancel the original item 
         await loopFirstToken.parentToken.currentNode.end(loopFirstToken.parentToken.currentItem);
 

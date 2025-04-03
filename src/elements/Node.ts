@@ -212,7 +212,7 @@ class Node extends Element {
         //  --------
         //  Save before performing the work
         await item.token.execution.save();
-        item.token.info(`{"seq":${item.seq},"type":'${this.type}',"id":'${this.id}',"action":'Started'}`);
+        //item.token.info(`{"seq":${item.seq},"type":'${this.type}',"id":'${this.id}',"action":'Started'}`);
 
         item.token.log('Node('+this.name+'|'+this.id+').execute: execute run ...token:'+item.token.id);
         //item.token.log('..>run ' + this.id);

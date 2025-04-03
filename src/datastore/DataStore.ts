@@ -441,6 +441,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 			pipeline.push({ $sort: sort });
 			pipeline.push({ $limit: limit });
 
+		
 			const data = await collection.aggregate(pipeline).toArray();
 
 			if (process.env.ENABLE_PROFILER === 'true')

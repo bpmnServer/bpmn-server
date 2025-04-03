@@ -1,156 +1,199 @@
 # Overview Home
 
-`bpmn-server` provides a Workflow component based on **Business Process Model and Notation** that can be easily integrated into your application.
+`bpmn-server` is a BPMN-based workflow engine that integrates easily into your Node.js app. It supports built-in state persistence, variable management, and concurrency across clusters—ideal for long-running processes, durable services, and scheduled tasks.
 
+## Architecture Overview
 
-As workflow application can outlive Node.js applications, `bpmn-server` has out-of-the-box state presistence and variables, with concurrency across Node.js cluster and process instances
-to make them ideal platform to do long running business processes, durable services or scheduled backgound tasks.
+The following diagram illustrates the core components of `bpmn-server` and how they interact:
 
+![Architecture Diagram](https://bpmnserver.github.io/docs/images/architecture-diagram.png)
+
+- **Modeler**: Front-end UI for designing BPMN models using bpmn.io.
+- **bpmn-server Core**: Executes BPMN workflows, manages state, and interfaces with external services.
+- **Datastore**: Persists workflow state, variables, and history (MongoDB by default).
+- **Application Layer**: Your Node.js app that integrates with the server, handles user authentication, and invokes workflows.
+
+## Quick Start
+
+### Using the Demo Project
+
+```sh
+# 1. Clone the demo app
+$ git clone https://github.com/bpmnServer/bpmn-web.git
+$ cd bpmn-web
+
+# 2. Install dependencies
+$ npm install
+
+# 3. Run setup to create default install files
+$ npm run setup
+
+# 4. Edit `.env` file.
+
+# 5. Run setup to create database and models
+$ npm run setup
+
+# 6. Start the server
+$ npm run start
+```
+
+Open your browser to [http://localhost:3000](http://localhost:3000) to launch the demo.
+
+### Programmatic Usage Example
+
+```js
+const { BPMNServer, DefaultAppDelegate } = require('bpmn-server');
+const { configuration } = require('./configuration');
+
+const server = new BPMNServer(configuration, new DefaultAppDelegate());
+
+const processName = 'invoice';
+const inputData = { amount: 1200 };
+
+(async () => {
+    const result = await server.engine.start(processName, inputData);
+    console.log('Process started with instance id:', result.instance.id);
+})();
+```
+
+For more advanced examples, see the [API documentation](https://bpmnserver.github.io/docs/api).
+
+---
 
 ## Modeling
-`bpmn-server` provides a modeling tool based on `bpmn.io` with customized property panel, no need to edit bpmn files
 
-![](./docs/images/Modeler.png)
+`bpmn-server` provides a modeling tool based on `bpmn.io` with a customized property panel, eliminating the need to manually edit BPMN files.
 
-`bpmn` models can also be imported from other tools.
+![](https://bpmnserver.github.io/docs/images/Modeler.png)
 
-Typically your application has multiple bpmn models, a model is represented in a bpmn definition (xml).
+You can also import BPMN models from other tools.
 
-Each Model is made of various elements, an `element` can be a `node` in the diagram (events/tasks/gateway) or a  `flow`
+Each model is defined in a BPMN XML file and consists of various elements. An `element` can be a `node` (such as events, tasks, or gateways) or a `flow`.
 
-Models are saved by `bpmn-server` and can be queried [see API.model](https://bpmnserver.github.io/docs/api/interfaces/IAPIModel)
+Models are managed by `bpmn-server` and can be queried using the [Model API](https://bpmnserver.github.io/docs/api/interfaces/IAPIModel).
 
-`bpmn-server` support all bpmn 2.0 elements [see Modeling Support](https://bpmnserver.github.io/docs/examples)
+All BPMN 2.0 elements are supported. [See Modeling Support](https://bpmnserver.github.io/docs/examples)
 
 ## Execution
-`bpmn-server` is primiraly an execution engine for bpmn models.
 
-Everytime a model is executed (started), an `instance` is created, and for each `element` that is executed it creates an `item' 
+`bpmn-server` is primarily an execution engine for BPMN models.
 
-Execution is based on the model logic that is enhanced by various extensions that allow scripting and access to your application.
+Each time a model is started, an `instance` is created. For every `element` that is executed, an `item` is generated.
 
-During Execution, Model Listeners and Application Listeners are invoked.
+Execution follows the BPMN model logic and supports extensions such as scripting and application context access.
 
-The execution `engine` is availabe through an API [see API.engine](https://bpmnserver.github.io/docs/api/interfaces/IAPIEngine).
+During execution, both Model Listeners and Application Listeners are invoked.
 
-[For more details about Invoking Execution Engine](https://bpmnserver.github.io/docs/invokation)
+Access the execution engine via the [Engine API](https://bpmnserver.github.io/docs/api/interfaces/IAPIEngine).
 
-[For more details about Execution behaviour](https://bpmnserver.github.io/docs/execution)
+- [Invoking the Execution Engine](https://bpmnserver.github.io/docs/invokation)
+- [Execution Behavior](https://bpmnserver.github.io/docs/execution)
 
 ## Datastore
 
-At various stages of execution, instance object with its parts is saved into a datastore (defaults to MongoDB)
+Execution data, including instances and their elements, are persisted to a datastore (MongoDB by default).
 
-Instances and Items can be queried through an API [see API.data](https://bpmnserver.github.io/docs/api/interfaces/IAPIData)
+You can query this data through the [Data API](https://bpmnserver.github.io/docs/api/interfaces/IAPIData).
 
-[For more details about data management](https://bpmnserver.github.io/docs/data)
+- [Data Management Documentation](https://bpmnserver.github.io/docs/data)
 
-# User Management and Security
+## User Management and Security
 
-`bpmn-server` is relying on the front-end applicaton to authenticate users and to pass user information through the API.
-1. Model designer/developr can define assignee, candidateUsers, candidateUserGroups as static string or JavaScript expressions
+`bpmn-server` delegates authentication to the front-end application, which must pass user information via the API.
 
-2. Application fron-end need to pass the implementation of `userService' 
-  
-3. `bpmnServer` will enforce security rules based on the current user passed by the application
+1. Model designers can define `assignee`, `candidateUsers`, and `candidateUserGroups` using static strings or JavaScript expressions.
+2. The front-end must provide a `userService` implementation.
+3. `bpmn-server` enforces security rules based on the current user.
 
-`bpmn-web` Demo Application , provides a complete implementation of users management using Passport and MongoDB.
+The `bpmn-web` demo application demonstrates full user management using Passport and MongoDB.
 
-[For more details about security](https://bpmnserver.github.io/docs/security)
+- [Security Documentation](https://bpmnserver.github.io/docs/security)
 
-# Demo Web Application
+## Demo Web Application
 
 <details>
-<summary>
-A Demo Web application `bpmn-web` provides full front-end along with security features to demonstrate and test the capabilities of `bpmn-server`.
-</summary>
+<summary>Explore the `bpmn-web` demo application.</summary>
 
-The web app provides:
-- Presistent Modeling tool, using bpmn.io 
-- Model property panel supporting all features of `bpmn-server` , no need to edit bpmn file
-- Execution with input form for defined fields
+Features include:
 
-![](./docs/images/inputFields.png)
+- Persistent modeling tool (based on `bpmn.io`)
+- Property panel supporting all `bpmn-server` features
+- Execution with input forms for defined fields
 
-- List of outstanding/recent tasks and workflow
-- Viewing of `instance` details
+![](https://bpmnserver.github.io/docs/images/inputFields.png)
 
-![](./docs/images/instance-details1.png)
+- Task and workflow lists
+- Instance detail view
 
-- View of Model specification
-![](./docs/images/instance-details2.png)
+![](https://bpmnserver.github.io/docs//images/instance-details1.png)
 
+- Model specification viewer
+
+![](https://bpmnserver.github.io/docs//images/instance-details2.png)
 </details>
 
-# Full Demo Web Application
+## Live Demo
 
-We Provide a full demo @ https://bpmn.omniworkflow.com
+A live demo is available at: [https://bpmn.omniworkflow.com](https://bpmn.omniworkflow.com)
 
-# Installation
+## Installation
 
-This package requires Node.js and an access to MongoDB ()
-if you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas) or can be [installed locally](https://www.mongodb.com/docs/manual/installation/)
+This package requires Node.js and MongoDB.
 
-### 1. git clone
+If MongoDB is not installed, you can [create a free cloud account](http://bit.ly/cyd-atlas) or [install it locally](https://www.mongodb.com/docs/manual/installation/).
+
+### 1. Clone the repository
 ```sh
-> git clone https://github.com/bpmnServer/bpmn-web.git
+git clone https://github.com/bpmnServer/bpmn-web.git
 ```
-### 2. install packages
-```
-> npm install
-``````
-### 3. setup the app
-```
-> npm run setup
-```
- 
-Edit .env file to have MongoDB point to your server or free cloud account
 
+### 2. Install dependencies
+```sh
+npm install
+```
+
+### 3. Set up the app
+```sh
+npm run setup
+```
+
+Edit the `.env` file to configure MongoDB:
 ```env
-# MongoDB Settings
 MONGO_DB_URL=mongodb://0.0.0.0:27017/bpmn
-#
 ```
-- Run Setup again to create db objects
 
+Run setup again to create DB objects:
 ```sh
-> npm run setup
+npm run setup
 ```
 
-Your installation is now complete.
-
-### 4. Start server
-
+### 4. Start the server
 ```sh
-> npm run start
+npm run start
 ```
 
-Console will display:
-
+Console output:
 ```text
 bpmn-server WebApp.ts version 1.4.0
 MongoDB URL mongodb://0.0.0.0:27017/bpmn
 db connection open
-
 App is running at http://localhost:3000 in development mode
-  Press CTRL-C to stop
+Press CTRL-C to stop
 ```
 
-Use your browser to view the bpmn-server running
+## Docker Installation
 
-## Docker installation
 <details>
-<summary>
-To install MongoDB, bpmn-server and bpmn-web in on a docker container
-</summary>
+<summary>Install `bpmn-server` and dependencies with Docker.</summary>
 
-#### 1. Create a folder , cd to folder
-#### 2. Create a `docker-compose.yml` as follows:
-```
+### 1. Create a project folder
+
+### 2. Add a `docker-compose.yml` file:
+```yaml
 version: "3.7"
 name: bpmn-server
 services:
- bpmn-web:
+  bpmn-web:
     image: ralphhanna/bpmn-web
     command: sh -c "
         npm run setup &&
@@ -158,99 +201,98 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - 'app:/app'      
+      - 'app:/app'
     depends_on:
-      - mongo      
- mongo:
-   image: mongo
-   ports:
-     - 27017:27017
-   volumes:
-     - mongodb:/data/db
+      - mongo
+
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+
 volumes:
   mongodb:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: './mongodb_volume'    
+      device: './mongodb_volume'
+
   app:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: './bpmn_server_volume'    
-
+      device: './bpmn_server_volume'
 ```
-#### 3. start the container `docker compose up -d`
 
+### 3. Start the container
+```sh
+docker compose up -d
+```
 </details>
 
 ## Command Line Interface
+
 <details>
-<summary>
-bpmnServer provide some basic functionalities using CLI
-</summary>
+<summary>Use `bpmn-server` via CLI for common operations.</summary>
 
 ```sh
->npm run cli
-
+npm run cli
 
 server started..
 Commands:
-        q       to quit
-        s       start process
-        lo      list outstanding items
-        li      list items
-        l       list instances for a process
-        di      display Instance information
-        i       Invoke Task
-        sgl     Signal Task
-        msg     Message Task
-        d       delete instnaces
-        lm      List of Models
-        lme     List of Models
-        ck      Check locked instnaces
-        re      Recover hung processes
-        lu      List Users
-        spw     Set User Password
-        ?       repeat this list
-Enter Command, q to quit, or ? to list commands
->
+  q     quit
+  s     start process
+  lo    list outstanding items
+  li    list items
+  l     list instances for a process
+  di    display instance information
+  i     invoke task
+  sgl   signal task
+  msg   message task
+  d     delete instances
+  lm    list models
+  lme   list model elements
+  ck    check locked instances
+  re    recover hung processes
+  lu    list users
+  spw   set user password
+  ?     show this help menu
 ```
-
 </details>
 
-## to update to latest release
-
+## Updating to Latest Release
 ```sh
-> npm update bpmn-server
+npm update bpmn-server
 ```
-# Application Integration
 
-`bpmn-server` is intended to be integrated into your application [see](https://bpmnserver.github.io/docs/customization)
+## Application Integration
 
-# Documentation
+`bpmn-server` is designed to be embedded into your application. [See customization guide](https://bpmnserver.github.io/docs/customization)
 
-- [Invoking Workflows](https://bpmnserver.github.io/docs/invokation) 
-- [Execution](https://bpmnserver.github.io/docs/execution) 
-- [Scripting](https://bpmnserver.github.io/docs/scripting) 
+## Documentation
+
+- [Invoking Workflows](https://bpmnserver.github.io/docs/invokation)
+- [Execution](https://bpmnserver.github.io/docs/execution)
+- [Scripting](https://bpmnserver.github.io/docs/scripting)
 - [Security](https://bpmnserver.github.io/docs/security)
 - [Data](https://bpmnserver.github.io/docs/data)
-  -  [Input/Output](https://bpmnserver.github.io/docs/data#input-output-data)
-  -  [Data Query](https://bpmnserver.github.io/docs/data#dataQuery) 
+  - [Input/Output](https://bpmnserver.github.io/docs/data#input-output-data)
+  - [Data Query](https://bpmnserver.github.io/docs/data#dataQuery)
 - [Examples](https://bpmnserver.github.io/docs/examples)
 - [API Summary](https://bpmnserver.github.io/docs/api-summary)
-- [API](https://bpmnserver.github.io/docs/api) 
-- [Setup](https://bpmnserver.github.io/docs/setup) 
-- [Application Integration](https://bpmnserver.github.io/docs/customization) 
+- [API Reference](https://bpmnserver.github.io/docs/api)
+- [Setup](https://bpmnserver.github.io/docs/setup)
+- [Application Integration](https://bpmnserver.github.io/docs/customization)
 
-# License
+## License
 
-This project is licensed under the terms of the MIT license.
+Licensed under the MIT License.
 
-# Acknowledgments
+## Acknowledgments
 
-The **bpmn-server** resides upon the excellent library [bpmn-io/bpmn-moddle](https://github.com/bpmn-io/bpmn-moddle) developed by [bpmn.io](http://bpmn.io/)
+`bpmn-server` builds upon [bpmn-io/bpmn-moddle](https://github.com/bpmn-io/bpmn-moddle) by [bpmn.io](http://bpmn.io), and is inspired by [bpmn-engine](https://github.com/paed01/bpmn-engine).
 
-The **bpmn-server** is inspired by the library [bpmn-engine](https://github.com/paed01/bpmn-engine)

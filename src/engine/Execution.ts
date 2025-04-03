@@ -118,10 +118,16 @@ class Execution extends ServerComponent implements IExecution {
         });
 
     }
-    public async execute(startNodeId = null, inputData = {}, options = {}) {
+    public async execute(startNodeId = null, inputData = {}, options = {},userName=null) {
 
         this.log('^ACTION:execute:');
-        this.info(`{type:'execution',action:'execute',name:${this.name}}`);
+        this.info(JSON.stringify({type:'execution', label:'Start Process',
+            userName,
+            action:'execute',
+            name:this.name,
+            startNodeId,
+            options,
+            inputData}));
         this.operation='execute';
         this.options=options;
         await this.definition.load();
@@ -240,6 +246,13 @@ class Execution extends ServerComponent implements IExecution {
                 token = t;
             }
         });
+        this.info(JSON.stringify({type:'execution', label:'Invoke Item',
+            action:'signalInput',
+            id:token.currentNodeId,
+            itemId,
+            userName,
+            options,
+            inputData}));
 
         if (token) {
             this.log('Execution('+this.name+').signal: .. launching a token signal');
@@ -345,6 +358,13 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
 
     public async signalEvent(executionId, inputData:any,userName,options={}) :Promise<IExecution> {
         this.log('Execution('+this.name+').signal: executionId=' + executionId + ' data '+JSON.stringify(inputData));
+
+        this.info(JSON.stringify({type:'execution', label:'Invoke Event',
+            action:'signalEvent',
+            id:executionId,
+            userName,
+            options,
+            inputData}));
         this.operation = 'signal';
         this.options=options;
         let token = null;

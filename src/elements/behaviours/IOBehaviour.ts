@@ -84,7 +84,7 @@ JavaScript| { 'key1': 'val1', 'key2': 'val2' , 'key3': [item.data.myExistingVar,
             for(const entry of this.value) {
                 //val.push(item.token.execution.appDelegate.scopeEval(item, entry));
                 
-                evalValue = await item.execution.scriptHandler.evaluateExpression(item, entry);
+                evalValue = await item.context.scriptHandler.evaluateExpression(item, entry);
 
                 val.push(evalValue);
             }
@@ -94,7 +94,7 @@ JavaScript| { 'key1': 'val1', 'key2': 'val2' , 'key3': [item.data.myExistingVar,
             for (const [key,value] of this.value) {
 //            (this.value).forEach(async (value, key) => {
                 //const newVal = item.token.execution.appDelegate.scopeEval(item, value);
-                evalValue = await item.execution.scriptHandler.evaluateExpression(item, value);
+                evalValue = await item.context.scriptHandler.evaluateExpression(item, value);
 
                 val.set(key, evalValue)
             }
