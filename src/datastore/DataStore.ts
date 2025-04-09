@@ -426,6 +426,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 				}
 			  }
 			}
+
 			const pipeline: Document[]=[];
 			pipeline.push({ $match: matchInstances });
 				//if (sortField.startsWith('items.')===true)
@@ -433,7 +434,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 			if (projection) {
 			  pipeline.push({ $project: projection });
 			}
-			//if (includeItems===true)
+			if (includeItems===true)
 			{
 				pipeline.push({ $unwind: '$items' });
 				pipeline.push({ $match: matchItems });

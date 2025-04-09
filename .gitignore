@@ -16,16 +16,6 @@ tsconfig.tsbuildinfo
 # Transpiled JavaScript files from Typescript
 /dist
 # generated docs
-/.docusaurus
-#/docs/api  - needs them for /README.md
-/build
-# Copied by scripts\copy-readme.ts
-#docs/README.md
-package.json
-src/scripts/file2.md
-src/scripts/output.md
-src/scripts/test.md
-src/scripts/md-include.ts
-src/scripts/file1.md
+
 
 

@@ -12,6 +12,9 @@ and here
 
 ### Changed
 -->
+## Release 2.3.4  -- 2025-04-09
+= enhance `dataStore.find` to ignore items 
+
 ## Release 2.3.3  -- 2025-03-27
 - Avoid code blocking, adding puase() between operations
 - Minor changes to logging
