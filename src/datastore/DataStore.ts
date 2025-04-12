@@ -10,29 +10,9 @@ import { ServerComponent } from '../server/ServerComponent';
 import { InstanceLocker } from './';
 
 import { QueryTranslator } from './QueryTranslator';
+import { Aggregate} from './Aggregate'
 
-	function isDateString(value: any): boolean {
-		if (value instanceof Date)
-			return true;
-	return !isNaN(Date.parse(value)) && isNaN(Number(value));
-  }
-
-  function getFieldValue(doc,fieldName)
-  {
-	let dp=fieldName.split('.');
-	if (dp.length===1)
-		return doc[dp[0]];
-	if (dp[0]==='data') {
-		return doc.data[dp[1]];
-	}
-	else if (dp[0]==='items')
-	{
-		return doc.items[dp[1]];
-	}
-	
-  }
-  
-  
+ 
 class DataStore extends ServerComponent  implements IDataStore {
 
 	dbConfiguration;
@@ -331,6 +311,7 @@ class DataStore extends ServerComponent  implements IDataStore {
  * * * `projection` is an object that specifies which fields to include or exclude in the returned documents.
  * 
  *  *  */
+
 	async find(
 	  {
 		filter = {},
@@ -338,163 +319,27 @@ class DataStore extends ServerComponent  implements IDataStore {
 		limit = 10,
 		sort = { _id: -1 },
 		projection,
+		lastItem={},
+		latestItem={},
 		getTotalCount=false
 	  }: FindParams
 	): Promise<FindResult> {
 
-		try {
-
-			const client = await this.db.getClient();
-			const db = client.db(this.configuration.db);
-			const collection = db.collection(this.dbConfiguration.Instance_collection);
-			let includeItems=false;
-
-			if (process.env.ENABLE_PROFILER === 'true')
-				console.time('find');
-
-
-			const sortField = Object.keys(sort)[0] || '_id';
-			const sortDirection = sort[sortField] ?? -1;
-		
-			const matchInstances: Record<string, any>= { };
-			const matchItems: Record<string, any> = {};
-			Object.keys(filter).forEach((key,value) => {
-				if (key.startsWith('items.')) 
-				{
-					matchItems[key]=filter[key];
-					includeItems=true;
-				}
-				else
-					matchInstances[key]=filter[key]
-
-			});
-		
-			let sortFieldIsDate=false;
-			let sortVal;
-
-			if (after) {
-			  const [sortValRaw, idPart] = sortField === '_id' ? [after, null] : after.split('|');
-			  if (sortValRaw.startsWith('d:'))
-			  {
-				sortFieldIsDate=true;
-				sortVal=new Date();
-				sortVal.setTime(Number(sortValRaw.substring(2)));
-			  }
-			  else if (isNaN(Number(sortValRaw)))	
-				sortVal=sortValRaw;
-			  else
-				sortVal=Number(sortValRaw);
-			  
-			  const comparator = sortDirection === -1 ? '$lt' : '$gt';
-		
-			  // for items:
-			  // {"items":{"$elemMatch":{"candidateGroups":"Owner"}}},
-
-			  if (sortField === '_id') {
-				matchInstances._id = { [comparator]: new ObjectId(sortValRaw) };
-			  } else {
-
-				if (sortField.startsWith('items.')) {	
-					includeItems=true;
-					const sortField2=sortField.substring(6);
-					matchItems.$and = matchItems.$and || [];
-					matchItems.$and.push({
-						$or: [
-							{ [sortField]: { [comparator]: sortVal } ,
-								_id: { "$ne": new ObjectId(idPart) }},
-							{
-							[sortField]: sortVal,
-							_id: { [comparator]: new ObjectId(idPart) }
-							}
-						]
-						});
+			const aggregate=new Aggregate(this.db,this.configuration,this.dbConfiguration);
 			
-				}
-				else {
+			return await aggregate.find({
+				filter,
+				after,
+				limit,
+				sort,
+				projection,
+				lastItem,
+				latestItem,
+				getTotalCount
+			});
+		}
 
-					matchInstances.$and = matchInstances.$and || [];
-					matchInstances.$and.push({
-					$or: [
-						{ [sortField]: { [comparator]: sortVal } ,
-							_id: { "$ne": new ObjectId(idPart) }},
-						{
-						[sortField]: sortVal,
-						_id: { [comparator]: new ObjectId(idPart) }
-						}
-					]
-					});
-				}
-			  }
-			}
-
-			const pipeline: Document[]=[];
-			pipeline.push({ $match: matchInstances });
-				//if (sortField.startsWith('items.')===true)
-		
-			if (projection) {
-			  pipeline.push({ $project: projection });
-			}
-			if (includeItems===true)
-			{
-				pipeline.push({ $unwind: '$items' });
-				pipeline.push({ $match: matchItems });
-			}
-			pipeline.push({ $sort: sort });
-			pipeline.push({ $limit: limit });
-
-		
-			const data = await collection.aggregate(pipeline).toArray();
-
-			if (process.env.ENABLE_PROFILER === 'true')
-				console.timeEnd('find');
-
-			if (data.length === 0)
-				return {data,nextCursor:null,totalCount:0}; 
-
-			const last = data[data.length - 1];
-
-			const sortFieldValue=getFieldValue(last,sortField);
-
-			if (isDateString(sortFieldValue)===true)
-				sortFieldIsDate=true;
-			let lastSortField;
-
-			if (sortFieldIsDate===true)
-				lastSortField='d:'+new Date(sortFieldValue).getTime();
-			else
-				lastSortField=sortFieldValue;
-				
-			const nextCursor = last
-			  ? sortField === '_id'
-				? last._id.toString()
-				: `${lastSortField}|${last._id}`
-			  : null;
-
-			  let ret: FindResult = { data, nextCursor };
-
-			  if (getTotalCount === true) {
-
-				if (process.env.ENABLE_PROFILER === 'true')
-					console.time('find-count');
-
-				const totalCount= await collection.countDocuments(filter);
-
-				if (process.env.ENABLE_PROFILER === 'true')
-					console.timeEnd('find-count');
-				ret['totalCount']=totalCount;
-		
-			}
-			  
-			return ret;
-		  } 
-		  	catch (error: any) {
-				if (process.env.ENABLE_PROFILER === 'true')
-					console.timeEnd('find');
-				
-				return { error: error.message };
-		  }
-		
-	}
-}
+  }
+  
 
 export { DataStore };

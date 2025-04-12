@@ -12,6 +12,9 @@ and here
 
 ### Changed
 -->
+## Release 2.3.5  -- 2025-04-09
+= enhance `dataStore.find` added more scenarios see docs/data_find.md
+
 ## Release 2.3.4  -- 2025-04-09
 = enhance `dataStore.find` to ignore items 
 

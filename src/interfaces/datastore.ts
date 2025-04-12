@@ -7,6 +7,8 @@ export interface FindParams {
 	limit?: number;
 	sort?: Record<string, 1 | -1>;
 	projection?: Record<string, 0 | 1| any>;
+  lastItem?: Record<string, any>;
+  latestItem?: Record<string, any>;
   getTotalCount?: boolean; // if true, return total count of items in the result set
   }
   
