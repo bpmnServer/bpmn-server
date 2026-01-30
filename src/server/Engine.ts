@@ -36,6 +36,7 @@ class Engine extends ServerComponent implements IEngine{
 		const source = await definitions.getSource(name);
 
 		const execution = new Execution(this.server,name, source);
+		execution.svg = await definitions.getSVG(name);
 
 		if (options['parentItemId']) {
 			execution.instance.parentItemId=options['parentItemId'];

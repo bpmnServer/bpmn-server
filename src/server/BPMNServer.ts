@@ -1,5 +1,5 @@
 import { Logger } from '../common/Logger';
-import { IConfiguration, ILogger, IAppDelegate, IBPMNServer, IDataStore, ICacheManager, IScriptHandler } from '../';
+import { IConfiguration, ILogger, IAppDelegate, IBPMNServer, IDataStore, ICacheManager, IScriptHandler, IModelsDatastore } from '../';
 import { Engine } from './Engine';
 import { Cron } from './Cron';
 import { EventEmitter } from 'eventemitter3';

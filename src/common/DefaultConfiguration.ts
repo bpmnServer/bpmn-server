@@ -25,13 +25,13 @@ export class Configuration implements IConfiguration {
 	logger: ILogger;
 	apiKey: string;
 	sendGridAPIKey: string;
-	definitions(server) {
+	definitions(server)/* :IModelsDatastore */{
 		return new ModelsDatastore(server); 
 	}
 	appDelegate(server) :IAppDelegate {
 		return new DefaultAppDelegate(server);
 	}
-	dataStore(server) {
+	dataStore(server) :IDataStore {
 		return new DataStore(server);
 	}
 	cacheManager(server) {

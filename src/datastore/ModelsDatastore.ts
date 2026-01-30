@@ -35,16 +35,32 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
   
         return files;
     }
+    /**
+     * load definition for instance
+     * @param instance
+     * @param owner 
+     */
+    async loadFromInstance(instance,owner=null): Promise<Definition> {
+        if (instance.source) {
+            return this.loadDefinition(instance.name, instance.source);
+        }
+        else {
+            return this.load(instance.name,owner);
+        }
+    }
 
 	/*
-	 *	loads a definition
+	 *	loads a definition by name
 	 *	
 	 */
     async load(name,owner=null) : Promise<Definition> {
 
         const source = await this.getSource(name);
-        //const rules = this.getFile(name, 'rules');
+        return this.loadDefinition(name, source);
+    }
 
+    private async loadDefinition(name, source): Promise<Definition> {
+        
         const definition = new Definition(name, source, this.server);
         await definition.load();
         return definition;
@@ -57,9 +73,14 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
 
     private getFile(name, type,owner=null) {
         const fs = require('fs');
+        try {
         let file = fs.readFileSync(this.getPath(name,type),
             { encoding: 'utf8', flag: 'r' });
         return file;
+        }
+        catch {
+            return null;
+        }
 
     }
     private saveFile(name, type , data,owner=null) {

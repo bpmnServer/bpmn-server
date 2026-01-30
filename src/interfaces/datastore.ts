@@ -42,20 +42,20 @@ interface IDataStore {
 interface IModelsDatastore {
     get(query): Promise<object[]>;
     getList(query): Promise<string[]>;
-    getSource(name: any,owner): Promise<string>;
-    getSVG(name: any,owner): Promise<string>;
+    getSource(name: any,owner?): Promise<string>;
+    getSVG(name: any,owner?): Promise<string>;
     save(name: any, bpmn: any, svg?: any,owner?): Promise<boolean>;
 
-    load(name: any,owner): Promise<IDefinition>;
-    loadModel(name: any,owner): Promise<IBpmnModelData>;
-    findEvents(query: any,owner): Promise<any[]>;
+    load(name: any,owner?): Promise<IDefinition>;
+    loadModel(name: any,owner?): Promise<IBpmnModelData>;
+    findEvents(query: any,owner?): Promise<any[]>;
     rebuild(model?: any): Promise<void>
 
     install(); 
     import(data);
     saveModel(model: IBpmnModelData): Promise<boolean>;
-    deleteModel(name: any,owner): Promise<void>;
-    renameModel(name: any,newName: any,owner): Promise<boolean>;
+    deleteModel(name: any,owner?): Promise<void>;
+    renameModel(name: any,newName: any,owner?): Promise<boolean>;
 }
 
 

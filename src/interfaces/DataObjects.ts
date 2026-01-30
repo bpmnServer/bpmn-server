@@ -44,6 +44,7 @@ interface IInstanceData {
     tokens;
     loops;
     parentItemId;   // used for subProcess Calls
+    svg?;
 }
 
 

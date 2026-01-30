@@ -20,6 +20,7 @@ class InstanceObject implements IInstanceData {
     tokens=[];
     loops=[];
     parentItemId;
+    svg?: any;
     vars;
 
 }

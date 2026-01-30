@@ -351,7 +351,18 @@ references:
     public getNodeById(id) {
             return this.nodes.get(id);
     }
+    public getNodeInfo(elementId) {
 
+        let node =this.getNodeById(elementId);
+        let extName = Behaviour_names.CamundaFormData;
+        let ext;
+        if (node)
+            ext = node.getBehaviour(extName);
+        let fields;
+        if (ext)
+            fields = ext.fields;
+        return { node, fields };
+    }
 
 }
 

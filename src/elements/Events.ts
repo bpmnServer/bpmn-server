@@ -49,6 +49,10 @@ class Event extends Node {
         /* fix bug #86
         */
         item.status = ITEM_STATUS.end;
+        
+        if (!item.endedAt) {
+            item.endedAt = new Date();
+        }
 
         // check for loop:
         if (item.node.attachedTo.loopDefinition)

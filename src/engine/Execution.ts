@@ -30,6 +30,7 @@ class Execution extends ServerComponent implements IExecution {
     isLocked: boolean = false;
     options;
     operation;
+    svg:string; 
 
     get id() { return this.instance.id; }
     get name() { return this.instance.name; }
@@ -533,7 +534,10 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
         this.instance.items = items;
         this.instance.loops = loops;
         this.instance.tokens = tokens;
-
+   
+        this.instance.source = this.definition.source;
+        this.instance.svg = this.svg;
+   
         
         return this.instance;
     }
@@ -574,11 +578,15 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
                 server.logger.error("***Error*** No savePoint found for item "+itemId);
         }
         let source = state.source;
+        let svg= state.svg;
 
         if (!source)
             source = await server.definitions.getSource(state.name);
+        if (!svg)
+            svg = await server.definitions.getSVG(state.name);
 
         const execution = new Execution(server, state.name, source,state);
+        execution.svg=svg;
 
 
         await execution.definition.load();

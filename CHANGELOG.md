@@ -12,6 +12,13 @@ and here
 
 ### Changed
 -->
+## Release 2.3.6  -- 2026-01-27
+
+- Fix Issue with displaying wrong svg
+-  with saveSource option = true, started workflow should continue with the definition it started, however, svg was not refreshed, this release fixes this issue
+-  fix design: svg is now saved with the instance in db
+
+
 ## Release 2.3.5  -- 2025-04-09
 = enhance `dataStore.find` added more scenarios see docs/data_find.md
 

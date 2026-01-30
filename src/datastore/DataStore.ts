@@ -121,9 +121,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 			if (this.saveLogs===true)
 				saveObject['logs'] = instance.logs;
-			if (this.saveSource===true)
-				saveObject['source'] = instance.source;
-	
+
 			if (this.enableSavePoints===true && instance.items.length>0) {
 				let lastItem=instance.items[instance.items.length-1].id;
 
@@ -137,9 +135,16 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 		var recs;
 		if (!instance.saved) {
+
 			instance.saved = new Date();
 			saveObject['saved'] = instance.saved;
 			saveObject['id']=instance.id;
+
+			if (this.saveSource===true)
+			{
+				saveObject['source'] = instance.source;
+				saveObject['svg'] = instance.svg;
+			}
 
 			await this.db.insert(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, [saveObject]);
 

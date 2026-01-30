@@ -1,0 +1,1268 @@
+{
+  "generatedAt": "2025-10-29T16:56:52.329Z",
+  "modules": [
+    {
+      "file": "C:/bp/dev/server/src/index.ts",
+      "imports": [],
+      "publicApi": [
+        "Logger",
+        "Configuration",
+        "defaultConfiguration",
+        "dateDiff",
+        "Execution",
+        "Token",
+        "TOKEN_TYPE",
+        "Item",
+        "Loop",
+        "DefaultAppDelegate",
+        "Query",
+        "InstanceObject",
+        "ItemObject",
+        "TokenObject",
+        "LoopObject",
+        "ScriptHandler",
+        "DataHandler",
+        "Definition",
+        "Element",
+        "Node",
+        "Flow",
+        "MessageFlow",
+        "NodeLoader",
+        "BPMN_TYPE",
+        "UserTask",
+        "ScriptTask",
+        "ServiceTask",
+        "BusinessRuleTask",
+        "SendTask",
+        "ReceiveTask",
+        "SubProcess",
+        "CallActivity",
+        "AdHocSubProcess",
+        "Event",
+        "StartEvent",
+        "EndEvent",
+        "CatchEvent",
+        "ThrowEvent",
+        "BoundaryEvent",
+        "IBehaviour",
+        "Behaviour",
+        "BehaviourLoader",
+        "Behaviour_names",
+        "CamundaFormData",
+        "IOBehaviour",
+        "MessageEventBehaviour",
+        "SignalEventBehaviour",
+        "TerminateBehaviour",
+        "TimerBehaviour",
+        "LoopBehaviour",
+        "ScriptBehaviour",
+        "Gateway",
+        "XORGateway",
+        "EventBasedGateway",
+        "Process",
+        "Transaction",
+        "BPMNServer",
+        "Cron",
+        "CacheManager",
+        "NoCacheManager",
+        "ServerComponent",
+        "Engine",
+        "DataStore",
+        "ModelsDatastore",
+        "ModelsDatastoreDB",
+        "ProcessData",
+        "EventData",
+        "BpmnModelData",
+        "MongoDB",
+        "InstanceLocker",
+        "QueryTranslator",
+        "EXECUTION_EVENT",
+        "NODE_ACTION",
+        "FLOW_ACTION",
+        "ITEM_STATUS",
+        "TOKEN_STATUS",
+        "EXECUTION_STATUS",
+        "NODE_SUBTYPE",
+        "IItemData",
+        "IInstanceData",
+        "IDefinitionData",
+        "IElementData",
+        "IFlowData",
+        "IBpmnModelData",
+        "IProcessData",
+        "IEventData",
+        "ILogger",
+        "IAppDelegate",
+        "IConfiguration",
+        "IServiceProvider",
+        "IBPMNServer",
+        "IEngine",
+        "ICron",
+        "ICacheManager",
+        "IServerComponent",
+        "IItem",
+        "IToken",
+        "IExecution",
+        "IScriptHandler",
+        "FindParams",
+        "FindResult",
+        "IDataStore",
+        "IModelsDatastore",
+        "IDefinition",
+        "IElement",
+        "INode",
+        "IFlow",
+        "IUserService",
+        "IUserInfo",
+        "ISecureUser",
+        "IEngineOptions",
+        "IAPIEngine",
+        "IAPIData",
+        "IAPIModel",
+        "BPMNAPI",
+        "APIEngine",
+        "APIData",
+        "APIModel",
+        "SecureUser",
+        "USER_ROLE",
+        "SystemUser"
+      ],
+      "hasTest": false,
+      "lines": 8
+    },
+    {
+      "file": "C:/bp/dev/server/src/API/AccessManager.ts",
+      "imports": [
+        "../interfaces"
+      ],
+      "publicApi": [
+        "SecureUser",
+        "USER_ROLE",
+        "IUserInfo"
+      ],
+      "hasTest": false,
+      "lines": 156
+    },
+    {
+      "file": "C:/bp/dev/server/src/API/API.ts",
+      "imports": [
+        "../"
+      ],
+      "publicApi": [
+        "IEngineOptions",
+        "IAPIEngine",
+        "IAPIData",
+        "IAPIModel",
+        "BPMNAPI",
+        "APIEngine",
+        "APIData",
+        "APIModel"
+      ],
+      "hasTest": false,
+      "lines": 359
+    },
+    {
+      "file": "C:/bp/dev/server/src/API/index.ts",
+      "imports": [],
+      "publicApi": [
+        "IEngineOptions",
+        "IAPIEngine",
+        "IAPIData",
+        "IAPIModel",
+        "BPMNAPI",
+        "APIEngine",
+        "APIData",
+        "APIModel",
+        "SecureUser",
+        "USER_ROLE",
+        "IUserInfo",
+        "SystemUser"
+      ],
+      "hasTest": false,
+      "lines": 5
+    },
+    {
+      "file": "C:/bp/dev/server/src/API/SecureUser.ts",
+      "imports": [
+        "../datastore/QueryTranslator",
+        "../interfaces"
+      ],
+      "publicApi": [
+        "SecureUser",
+        "USER_ROLE",
+        "IUserInfo",
+        "SystemUser"
+      ],
+      "hasTest": false,
+      "lines": 232
+    },
+    {
+      "file": "C:/bp/dev/server/src/common/DefaultConfiguration.ts",
+      "imports": [
+        "../datastore/ModelsDatastore",
+        "../engine/DefaultAppDelegate",
+        "../",
+        "./",
+        "vm"
+      ],
+      "publicApi": [
+        "Configuration",
+        "defaultConfiguration"
+      ],
+      "hasTest": false,
+      "lines": 102
+    },
+    {
+      "file": "C:/bp/dev/server/src/common/index.ts",
+      "imports": [],
+      "publicApi": [
+        "Logger",
+        "Configuration",
+        "defaultConfiguration",
+        "dateDiff"
+      ],
+      "hasTest": false,
+      "lines": 6
+    },
+    {
+      "file": "C:/bp/dev/server/src/common/Logger.ts",
+      "imports": [
+        "../"
+      ],
+      "publicApi": [
+        "Logger"
+      ],
+      "hasTest": false,
+      "lines": 162
+    },
+    {
+      "file": "C:/bp/dev/server/src/common/timer.ts",
+      "imports": [],
+      "publicApi": [
+        "dateDiff"
+      ],
+      "hasTest": false,
+      "lines": 43
+    },
+    {
+      "file": "C:/bp/dev/server/src/datastore/Aggregate.ts",
+      "imports": [
+        "../engine",
+        "../engine/Execution",
+        "../interfaces",
+        "mongodb"
+      ],
+      "publicApi": [
+        "Aggregate"
+      ],
+      "hasTest": false,
+      "lines": 316
+    },
+    {
+      "file": "C:/bp/dev/server/src/datastore/DataStore.ts",
+      "imports": [
+        "../engine",
+        "../engine/Execution",
+        "../interfaces",
+        "mongodb",
+        "../server/ServerComponent",
+        "./",
+        "./QueryTranslator",
+        "./Aggregate"
+      ],
+      "publicApi": [
+        "DataStore"
+      ],
+      "hasTest": false,
+      "lines": 345
+    },
+    {
+      "file": "C:/bp/dev/server/src/datastore/index.ts",
+      "imports": [],
+      "publicApi": [
+        "DataStore",
+        "ModelsDatastore",
+        "ModelsDatastoreDB",
+        "ProcessData",
+        "EventData",
+        "BpmnModelData",
+        "MongoDB",
+        "InstanceLocker",
+        "QueryTranslator"
+      ],
+      "hasTest": false,
+      "lines": 9
+    },
+    {
+      "file": "C:/bp/dev/server/src/datastore/InstanceLocker.ts",
+      "imports": [
+        "./"
+      ],
+      "publicApi": [
+        "InstanceLocker"
+      ],
+      "hasTest": false,
+      "lines": 78
+    },
+    {
+      "file": "C:/bp/dev/server/src/datastore/ModelsData.ts",
+      "imports": [
+        "../",
+        "../interfaces/"
+      ],
+      "publicApi": [
+        "ProcessData",
+        "EventData",
+        "BpmnModelData"
+      ],
+      "hasTest": false,
+      "lines": 123
+    },
+    {
+      "file": "C:/bp/dev/server/src/datastore/ModelsDatastore.ts",
+      "imports": [
+        "../elements",
+        "../server",
+        "./ModelsDatastoreDB",
+        "../interfaces/"
+      ],
+      "publicApi": [
+        "ModelsDatastore"
+      ],
+      "hasTest": false,
+      "lines": 185
+    },
+    {
+      "file": "C:/bp/dev/server/src/datastore/ModelsDatastoreDB.ts",
+      "imports": [
+        "../elements",
+        "../server",
+        "../server/ServerComponent",
+        "../interfaces/",
+        "./ModelsData",
+        "./QueryTranslator"
+      ],
+      "publicApi": [
+        "ModelsDatastoreDB"
+      ],
+      "hasTest": false,
+      "lines": 254
+    },
+    {
+      "file": "C:/bp/dev/server/src/datastore/MongoDB.ts",
+      "imports": [],
+      "publicApi": [
+        "MongoDB"
+      ],
+      "hasTest": false,
+      "lines": 250
+    },
+    {
+      "file": "C:/bp/dev/server/src/datastore/QueryTranslator.ts",
+      "imports": [],
+      "publicApi": [
+        "QueryTranslator"
+      ],
+      "hasTest": false,
+      "lines": 215
+    },
+    {
+      "file": "C:/bp/dev/server/src/dmn/DMNEngine.ts",
+      "imports": [
+        "./DMNParser",
+        "feelin"
+      ],
+      "publicApi": [
+        "DMNEngine"
+      ],
+      "hasTest": false,
+      "lines": 178
+    },
+    {
+      "file": "C:/bp/dev/server/src/dmn/DMNParser.ts",
+      "imports": [
+        "fs",
+        "xml2js",
+        "feelin"
+      ],
+      "publicApi": [
+        "DMNParser",
+        "DecisionTable",
+        "Condition"
+      ],
+      "hasTest": false,
+      "lines": 195
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/Definition.ts",
+      "imports": [
+        ".",
+        "./NodeLoader",
+        "../interfaces/elements",
+        "../server/BPMNServer",
+        "../interfaces",
+        "."
+      ],
+      "publicApi": [
+        "Definition"
+      ],
+      "hasTest": false,
+      "lines": 400
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/Element.ts",
+      "imports": [
+        "../engine/Execution",
+        "../engine/Token",
+        "./behaviours/.",
+        "../",
+        "../engine/Item",
+        ".",
+        "../interfaces/elements"
+      ],
+      "publicApi": [
+        "Element"
+      ],
+      "hasTest": false,
+      "lines": 47
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/Events.ts",
+      "imports": [
+        ".",
+        "./behaviours",
+        "../",
+        "../engine/Item",
+        "../interfaces"
+      ],
+      "publicApi": [
+        "Event",
+        "StartEvent",
+        "EndEvent",
+        "CatchEvent",
+        "ThrowEvent",
+        "BoundaryEvent"
+      ],
+      "hasTest": false,
+      "lines": 184
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/Flow.ts",
+      "imports": [
+        "../engine/Execution",
+        "../engine/Token",
+        "./behaviours",
+        "../",
+        "../engine/Item",
+        ".",
+        "../interfaces"
+      ],
+      "publicApi": [
+        "Flow",
+        "MessageFlow"
+      ],
+      "hasTest": false,
+      "lines": 116
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/Gateway.ts",
+      "imports": [
+        "../engine/Execution",
+        "../engine/Token",
+        "./behaviours",
+        "../",
+        ".",
+        "../engine/Item"
+      ],
+      "publicApi": [
+        "Gateway",
+        "XORGateway",
+        "EventBasedGateway"
+      ],
+      "hasTest": false,
+      "lines": 313
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/index.ts",
+      "imports": [],
+      "publicApi": [
+        "Definition",
+        "Element",
+        "Node",
+        "Flow",
+        "MessageFlow",
+        "NodeLoader",
+        "BPMN_TYPE",
+        "UserTask",
+        "ScriptTask",
+        "ServiceTask",
+        "BusinessRuleTask",
+        "SendTask",
+        "ReceiveTask",
+        "SubProcess",
+        "CallActivity",
+        "AdHocSubProcess",
+        "Event",
+        "StartEvent",
+        "EndEvent",
+        "CatchEvent",
+        "ThrowEvent",
+        "BoundaryEvent",
+        "IBehaviour",
+        "Behaviour",
+        "BehaviourLoader",
+        "Behaviour_names",
+        "CamundaFormData",
+        "IOBehaviour",
+        "MessageEventBehaviour",
+        "SignalEventBehaviour",
+        "TerminateBehaviour",
+        "TimerBehaviour",
+        "LoopBehaviour",
+        "ScriptBehaviour",
+        "Gateway",
+        "XORGateway",
+        "EventBasedGateway",
+        "Process",
+        "Transaction"
+      ],
+      "hasTest": false,
+      "lines": 11
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/js-bpmn-moddle.ts",
+      "imports": [],
+      "publicApi": [
+        "moddleOptions"
+      ],
+      "hasTest": false,
+      "lines": 117
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/Node.ts",
+      "imports": [
+        ".",
+        "../engine/Token",
+        "../interfaces/Enums",
+        "../engine/Item",
+        "../interfaces/Enums",
+        "./behaviours/BehaviourLoader",
+        "../"
+      ],
+      "publicApi": [
+        "Node"
+      ],
+      "hasTest": false,
+      "lines": 465
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/NodeLoader.ts",
+      "imports": [
+        "./",
+        "../interfaces/Enums",
+        "."
+      ],
+      "publicApi": [
+        "NodeLoader",
+        "BPMN_TYPE"
+      ],
+      "hasTest": false,
+      "lines": 78
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/Process.ts",
+      "imports": [
+        "../engine/Execution",
+        "../engine/Token",
+        "../",
+        ".",
+        "../interfaces"
+      ],
+      "publicApi": [
+        "Process"
+      ],
+      "hasTest": false,
+      "lines": 145
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/Tasks.ts",
+      "imports": [
+        "./Node",
+        "../engine/Token",
+        "../interfaces/Enums",
+        "./Process",
+        "../interfaces/engine",
+        "../interfaces/Enums",
+        "../engine/Item",
+        "../",
+        "../dmn/DMNEngine"
+      ],
+      "publicApi": [
+        "UserTask",
+        "ScriptTask",
+        "ServiceTask",
+        "BusinessRuleTask",
+        "SendTask",
+        "ReceiveTask",
+        "SubProcess",
+        "CallActivity",
+        "AdHocSubProcess"
+      ],
+      "hasTest": false,
+      "lines": 423
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/Transaction.ts",
+      "imports": [
+        "./Node",
+        "../engine/Token",
+        "../interfaces/Enums",
+        "./Process",
+        "../interfaces/engine",
+        "../interfaces/Enums",
+        "../engine/Item",
+        "."
+      ],
+      "publicApi": [
+        "Transaction"
+      ],
+      "hasTest": false,
+      "lines": 116
+    },
+    {
+      "file": "C:/bp/dev/server/src/engine/DataHandler.ts",
+      "imports": [],
+      "publicApi": [
+        "DataHandler"
+      ],
+      "hasTest": false,
+      "lines": 79
+    },
+    {
+      "file": "C:/bp/dev/server/src/engine/DefaultAppDelegate.ts",
+      "imports": [
+        "../",
+        "../elements/js-bpmn-moddle"
+      ],
+      "publicApi": [
+        "DefaultAppDelegate"
+      ],
+      "hasTest": false,
+      "lines": 104
+    },
+    {
+      "file": "C:/bp/dev/server/src/engine/Execution.ts",
+      "imports": [
+        "@lukeed/uuid",
+        "./Item",
+        "./Token",
+        "./Loop",
+        "../elements/",
+        "../",
+        "../",
+        "../server",
+        "./Model"
+      ],
+      "publicApi": [
+        "Execution"
+      ],
+      "hasTest": false,
+      "lines": 771
+    },
+    {
+      "file": "C:/bp/dev/server/src/engine/index.ts",
+      "imports": [],
+      "publicApi": [
+        "Execution",
+        "Token",
+        "TOKEN_TYPE",
+        "Item",
+        "Loop",
+        "DefaultAppDelegate",
+        "Query",
+        "InstanceObject",
+        "ItemObject",
+        "TokenObject",
+        "LoopObject",
+        "ScriptHandler",
+        "DataHandler"
+      ],
+      "hasTest": false,
+      "lines": 8
+    },
+    {
+      "file": "C:/bp/dev/server/src/engine/Item.ts",
+      "imports": [
+        "./Execution",
+        "../",
+        "../",
+        "../elements",
+        "./Token"
+      ],
+      "publicApi": [
+        "Item"
+      ],
+      "hasTest": false,
+      "lines": 111
+    },
+    {
+      "file": "C:/bp/dev/server/src/engine/Loop.ts",
+      "imports": [
+        "./Token",
+        "../elements/",
+        "./Execution",
+        ".",
+        "../interfaces"
+      ],
+      "publicApi": [
+        "Loop"
+      ],
+      "hasTest": false,
+      "lines": 321
+    },
+    {
+      "file": "C:/bp/dev/server/src/engine/Model.ts",
+      "imports": [
+        "../",
+        "../",
+        "../elements"
+      ],
+      "publicApi": [
+        "Query",
+        "InstanceObject",
+        "ItemObject",
+        "TokenObject",
+        "LoopObject"
+      ],
+      "hasTest": false,
+      "lines": 239
+    },
+    {
+      "file": "C:/bp/dev/server/src/engine/ScriptHandler.ts",
+      "imports": [
+        ".",
+        "../interfaces",
+        "child_process"
+      ],
+      "publicApi": [
+        "ScriptHandler"
+      ],
+      "hasTest": false,
+      "lines": 235
+    },
+    {
+      "file": "C:/bp/dev/server/src/engine/Token.ts",
+      "imports": [
+        "./Execution",
+        "../elements/",
+        "../",
+        "./Loop",
+        "./Item",
+        "../interfaces/engine"
+      ],
+      "publicApi": [
+        "Token",
+        "TOKEN_TYPE"
+      ],
+      "hasTest": false,
+      "lines": 779
+    },
+    {
+      "file": "C:/bp/dev/server/src/interfaces/common.ts",
+      "imports": [
+        "../"
+      ],
+      "publicApi": [
+        "ILogger",
+        "IAppDelegate",
+        "IConfiguration",
+        "IServiceProvider"
+      ],
+      "hasTest": false,
+      "lines": 123
+    },
+    {
+      "file": "C:/bp/dev/server/src/interfaces/DataObjects.ts",
+      "imports": [
+        "./Enums"
+      ],
+      "publicApi": [
+        "IItemData",
+        "IInstanceData",
+        "IDefinitionData",
+        "IElementData",
+        "IFlowData",
+        "IBpmnModelData",
+        "IProcessData",
+        "IEventData"
+      ],
+      "hasTest": false,
+      "lines": 112
+    },
+    {
+      "file": "C:/bp/dev/server/src/interfaces/datastore.ts",
+      "imports": [
+        "./",
+        "./"
+      ],
+      "publicApi": [
+        "FindParams",
+        "FindResult",
+        "IDataStore",
+        "IModelsDatastore"
+      ],
+      "hasTest": false,
+      "lines": 80
+    },
+    {
+      "file": "C:/bp/dev/server/src/interfaces/elements.ts",
+      "imports": [
+        "../"
+      ],
+      "publicApi": [
+        "IDefinition",
+        "IElement",
+        "INode",
+        "IFlow"
+      ],
+      "hasTest": false,
+      "lines": 77
+    },
+    {
+      "file": "C:/bp/dev/server/src/interfaces/engine.ts",
+      "imports": [
+        "./Enums",
+        "./",
+        "../"
+      ],
+      "publicApi": [
+        "IItem",
+        "IToken",
+        "IExecution",
+        "IScriptHandler"
+      ],
+      "hasTest": false,
+      "lines": 153
+    },
+    {
+      "file": "C:/bp/dev/server/src/interfaces/Enums.ts",
+      "imports": [
+        "../elements"
+      ],
+      "publicApi": [
+        "BPMN_TYPE",
+        "EXECUTION_EVENT",
+        "NODE_ACTION",
+        "FLOW_ACTION",
+        "ITEM_STATUS",
+        "TOKEN_STATUS",
+        "EXECUTION_STATUS",
+        "NODE_SUBTYPE"
+      ],
+      "hasTest": false,
+      "lines": 103
+    },
+    {
+      "file": "C:/bp/dev/server/src/interfaces/index.ts",
+      "imports": [],
+      "publicApi": [
+        "BPMN_TYPE",
+        "EXECUTION_EVENT",
+        "NODE_ACTION",
+        "FLOW_ACTION",
+        "ITEM_STATUS",
+        "TOKEN_STATUS",
+        "EXECUTION_STATUS",
+        "NODE_SUBTYPE",
+        "IItemData",
+        "IInstanceData",
+        "IDefinitionData",
+        "IElementData",
+        "IFlowData",
+        "IBpmnModelData",
+        "IProcessData",
+        "IEventData",
+        "ILogger",
+        "IAppDelegate",
+        "IConfiguration",
+        "IServiceProvider",
+        "IBPMNServer",
+        "IEngine",
+        "ICron",
+        "ICacheManager",
+        "IServerComponent",
+        "IItem",
+        "IToken",
+        "IExecution",
+        "IScriptHandler",
+        "FindParams",
+        "FindResult",
+        "IDataStore",
+        "IModelsDatastore",
+        "IDefinition",
+        "IElement",
+        "INode",
+        "IFlow",
+        "IUserService",
+        "IUserInfo",
+        "ISecureUser"
+      ],
+      "hasTest": false,
+      "lines": 9
+    },
+    {
+      "file": "C:/bp/dev/server/src/interfaces/server.ts",
+      "imports": [
+        "../",
+        "eventemitter3",
+        "events"
+      ],
+      "publicApi": [
+        "IBPMNServer",
+        "IEngine",
+        "ICron",
+        "ICacheManager",
+        "IServerComponent"
+      ],
+      "hasTest": false,
+      "lines": 138
+    },
+    {
+      "file": "C:/bp/dev/server/src/interfaces/User.ts",
+      "imports": [],
+      "publicApi": [
+        "IUserService",
+        "IUserInfo",
+        "ISecureUser"
+      ],
+      "hasTest": false,
+      "lines": 68
+    },
+    {
+      "file": "C:/bp/dev/server/src/scripts/copy-readme.ts",
+      "imports": [
+        "fs"
+      ],
+      "publicApi": [],
+      "hasTest": false,
+      "lines": 25
+    },
+    {
+      "file": "C:/bp/dev/server/src/scripts/example.ts",
+      "imports": [],
+      "publicApi": [
+        "MyType",
+        "abc"
+      ],
+      "hasTest": false,
+      "lines": 16
+    },
+    {
+      "file": "C:/bp/dev/server/src/scripts/tsToApi.ts",
+      "imports": [
+        "path",
+        "typescript",
+        "fs"
+      ],
+      "publicApi": [],
+      "hasTest": false,
+      "lines": 158
+    },
+    {
+      "file": "C:/bp/dev/server/src/server/BPMNServer.ts",
+      "imports": [
+        "../common/Logger",
+        "../",
+        "./Engine",
+        "./Cron",
+        "eventemitter3"
+      ],
+      "publicApi": [
+        "BPMNServer"
+      ],
+      "hasTest": false,
+      "lines": 129
+    },
+    {
+      "file": "C:/bp/dev/server/src/server/CacheManager.ts",
+      "imports": [
+        "./ServerComponent",
+        "../interfaces"
+      ],
+      "publicApi": [
+        "CacheManager",
+        "NoCacheManager"
+      ],
+      "hasTest": false,
+      "lines": 76
+    },
+    {
+      "file": "C:/bp/dev/server/src/server/Cron.ts",
+      "imports": [
+        "../common/Logger",
+        "./ServerComponent",
+        "../"
+      ],
+      "publicApi": [
+        "Cron"
+      ],
+      "hasTest": false,
+      "lines": 226
+    },
+    {
+      "file": "C:/bp/dev/server/src/server/Engine.ts",
+      "imports": [
+        "../",
+        "../server/ServerComponent",
+        "../interfaces",
+        "../datastore",
+        "child_process"
+      ],
+      "publicApi": [
+        "Engine"
+      ],
+      "hasTest": false,
+      "lines": 595
+    },
+    {
+      "file": "C:/bp/dev/server/src/server/index.ts",
+      "imports": [],
+      "publicApi": [
+        "BPMNServer",
+        "Cron",
+        "CacheManager",
+        "NoCacheManager",
+        "ServerComponent",
+        "Engine"
+      ],
+      "hasTest": false,
+      "lines": 5
+    },
+    {
+      "file": "C:/bp/dev/server/src/server/Listener.ts",
+      "imports": [
+        "events",
+        "../interfaces"
+      ],
+      "publicApi": [
+        "Listener"
+      ],
+      "hasTest": false,
+      "lines": 32
+    },
+    {
+      "file": "C:/bp/dev/server/src/server/ServerComponent.ts",
+      "imports": [
+        "./",
+        "../interfaces"
+      ],
+      "publicApi": [
+        "ServerComponent"
+      ],
+      "hasTest": false,
+      "lines": 26
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/behaviours/Behaviour.ts",
+      "imports": [
+        ".",
+        "..",
+        "../../engine/Item",
+        "../../",
+        "./Script"
+      ],
+      "publicApi": [
+        "IBehaviour",
+        "Behaviour"
+      ],
+      "hasTest": false,
+      "lines": 59
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/behaviours/BehaviourLoader.ts",
+      "imports": [
+        ".",
+        "../Node",
+        "../../engine/Item",
+        "../../",
+        "./Script",
+        "./TransEvents",
+        "./Escalation",
+        "./Error"
+      ],
+      "publicApi": [
+        "BehaviourLoader",
+        "Behaviour_names"
+      ],
+      "hasTest": false,
+      "lines": 184
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/behaviours/Error.ts",
+      "imports": [
+        ".",
+        "..",
+        ".",
+        "../../engine/Item",
+        "../../",
+        "../../interfaces"
+      ],
+      "publicApi": [
+        "ErrorEventBehaviour"
+      ],
+      "hasTest": false,
+      "lines": 69
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/behaviours/Escalation.ts",
+      "imports": [
+        ".",
+        "../../engine/Item",
+        "../../",
+        "../../interfaces"
+      ],
+      "publicApi": [
+        "EscalationEventBehaviour"
+      ],
+      "hasTest": false,
+      "lines": 48
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/behaviours/Form.ts",
+      "imports": [
+        "."
+      ],
+      "publicApi": [
+        "CamundaFormData"
+      ],
+      "hasTest": false,
+      "lines": 30
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/behaviours/index.ts",
+      "imports": [],
+      "publicApi": [
+        "IBehaviour",
+        "Behaviour",
+        "BehaviourLoader",
+        "Behaviour_names",
+        "CamundaFormData",
+        "IOBehaviour",
+        "MessageEventBehaviour",
+        "SignalEventBehaviour",
+        "TerminateBehaviour",
+        "TimerBehaviour",
+        "LoopBehaviour",
+        "ScriptBehaviour"
+      ],
+      "hasTest": false,
+      "lines": 11
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/behaviours/IOBehaviour.ts",
+      "imports": [
+        ".",
+        "..",
+        ".",
+        "../../engine/Item",
+        "../../engine/ScriptHandler"
+      ],
+      "publicApi": [
+        "IOBehaviour"
+      ],
+      "hasTest": false,
+      "lines": 248
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/behaviours/Loop.ts",
+      "imports": [
+        ".",
+        "..",
+        ".",
+        "../../engine/Item"
+      ],
+      "publicApi": [
+        "LoopBehaviour"
+      ],
+      "hasTest": false,
+      "lines": 49
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/behaviours/MessageSignal.ts",
+      "imports": [
+        ".",
+        "..",
+        ".",
+        "../../engine/Item",
+        "../../"
+      ],
+      "publicApi": [
+        "MessageEventBehaviour",
+        "SignalEventBehaviour"
+      ],
+      "hasTest": false,
+      "lines": 82
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/behaviours/Script.ts",
+      "imports": [
+        ".",
+        "../../"
+      ],
+      "publicApi": [
+        "ScriptBehaviour"
+      ],
+      "hasTest": false,
+      "lines": 68
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/behaviours/Terminate.ts",
+      "imports": [
+        ".",
+        "..",
+        ".",
+        "../../engine/Item"
+      ],
+      "publicApi": [
+        "TerminateBehaviour"
+      ],
+      "hasTest": false,
+      "lines": 23
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/behaviours/Timer.ts",
+      "imports": [
+        "../../engine",
+        "..",
+        "../../",
+        "../../engine",
+        "../../server",
+        "./",
+        "../../server/Cron",
+        "../../interfaces"
+      ],
+      "publicApi": [
+        "TimerBehaviour"
+      ],
+      "hasTest": false,
+      "lines": 216
+    },
+    {
+      "file": "C:/bp/dev/server/src/elements/behaviours/TransEvents.ts",
+      "imports": [
+        ".",
+        "../../engine/Item",
+        "../../",
+        "../../interfaces",
+        "../Node",
+        "../"
+      ],
+      "publicApi": [
+        "CompensateEventBehaviour",
+        "CancelEventBehaviour"
+      ],
+      "hasTest": false,
+      "lines": 91
+    }
+  ]
+}
