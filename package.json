@@ -33,7 +33,7 @@
   ],
   "dependencies": {
     "@lukeed/uuid": "^2.0.1",
-    "bcrypt": "^5.0.1",
+    "bcrypt": "^6.0.0",
     "body-parser": "^1.20.3",
     "bpmn-moddle": "^8.1.0",
     "camunda-bpmn-moddle": "^4.4.0",
