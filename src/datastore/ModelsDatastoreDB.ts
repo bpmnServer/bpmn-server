@@ -38,17 +38,39 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
         records.forEach(r => { list.push({ name: r.name }); });
         return list;
     }
-    /*
-     *	loads a definition 
-     *	
+
+
+    /**
+     * load definition for instance
+     * @param instance
+     * @param owner 
      */
-    async load(name,owner=null): Promise<Definition> {
-        console.log('loading ', name, 'from db');
-        let data = await this.loadModel(name);
-        const definition = new Definition(name, data.source, this.server);
+    async loadFromInstance(instance,owner=null): Promise<Definition> {
+        if (instance.source) {
+            return this.loadDefinition(instance.name, instance.source);
+        }
+        else {
+            return this.load(instance.name,owner);
+        }
+    }
+
+	/*
+	 *	loads a definition by name
+	 *	
+	 */
+    async load(name,owner=null) : Promise<Definition> {
+
+        const source = await this.getSource(name);
+        return this.loadDefinition(name, source);
+    }
+
+    protected async loadDefinition(name, source): Promise<Definition> {
+        
+        const definition = new Definition(name, source, this.server);
         await definition.load();
         return definition;
     }
+
     async getSource(name,owner=null) {
         let model = await this.loadModel(name);
         return model.source;

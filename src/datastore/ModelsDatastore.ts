@@ -35,11 +35,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
   
         return files;
     }
-    /**
-     * load definition for instance
-     * @param instance
-     * @param owner 
-     */
+       /* moved to superclass
     async loadFromInstance(instance,owner=null): Promise<Definition> {
         if (instance.source) {
             return this.loadDefinition(instance.name, instance.source);
@@ -48,24 +44,19 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
             return this.load(instance.name,owner);
         }
     }
-
-	/*
-	 *	loads a definition by name
-	 *	
-	 */
     async load(name,owner=null) : Promise<Definition> {
 
         const source = await this.getSource(name);
         return this.loadDefinition(name, source);
     }
-
+ 
     private async loadDefinition(name, source): Promise<Definition> {
         
         const definition = new Definition(name, source, this.server);
         await definition.load();
         return definition;
     }
-
+    */
     private getPath(name, type,owner=null) {
 
         return this.definitionsPath + name + '.' + type;

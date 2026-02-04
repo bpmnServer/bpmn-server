@@ -12,6 +12,8 @@ and here
 
 ### Changed
 -->
+## Release 2.3.7  -- 2025-02-04
+Fix #257
 ## Release 2.3.6  -- 2026-01-27
 
 - Fix Issue with displaying wrong svg
