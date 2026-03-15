@@ -361,7 +361,7 @@ references:
         let fields;
         if (ext)
             fields = ext.fields;
-        return { node, fields };
+        return { node, fields ,formKey: node.def.formKey };
     }
 
 }

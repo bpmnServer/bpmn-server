@@ -1,6 +1,6 @@
 {
   "name": "bpmn-server",
-  "version": "2.3.7",
+  "version": "2.3.8",
   "description": "BPMN 2.0 Server including Modeling, Execution and Presistence, an open source for Node.js",
   "license": "MIT",
   "scripts": {
@@ -34,10 +34,8 @@
   "dependencies": {
     "@lukeed/uuid": "^2.0.1",
     "bcrypt": "^6.0.0",
-    "body-parser": "^1.20.3",
     "bpmn-moddle": "^8.1.0",
     "camunda-bpmn-moddle": "^4.4.0",
-    "chai": "^4.2.0",
     "chalk": "^2.4.2",
     "compression": "^1.7.4",
     "connect-busboy": "^1.0.0",
@@ -56,14 +54,13 @@
     "lodash": "^4.17.20",
     "lusca": "^1.7.0",
     "minimist": "^1.2.8",
-    "mocha": "^10.2.0",
-    "mocha-cakes-2": "^3.3.0",
     "moment": "^2.29.4",
     "mongodb": "^3.6.0",
     "morgan": "^1.10.0",
     "multer": "*",
     "nock": "^12.0.3",
     "nodemon": "^3.0.1",
+    "ts-morph": "^27.0.2",
     "typedoc-plugin-markdown": "^3.17.1",
     "xml2js": "^0.6.2"
   },
