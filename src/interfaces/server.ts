@@ -1,4 +1,5 @@
-import { IExecution , ILogger , IItem, IConfiguration, IAppDelegate, IDataStore,IModelsDatastore, IScriptHandler } from '../';
+import { IExecution , ILogger , IItem, IConfiguration, IAppDelegate, IDataStore,IModelsDatastore, IScriptHandler,
+    InstanceQuery, ItemQuery, InputData, AssignmentData, MatchingQuery } from '../';
 import type { EventEmitter } from 'eventemitter3';
 import type { EventEmitter as NodeEventEmitter } from 'events';
 
@@ -38,7 +39,7 @@ interface IEngine {
      * @param data		input data
      * @param startNodeId	in process has multiple start node; you need to specify which one
      */
-    start(name: any, data?: any, startNodeId?: string, userName?: string, options?: any): Promise<IExecution>;
+    start(name: string, data?: InputData, startNodeId?: string, userName?: string, options?: any): Promise<IExecution>;
     /**
      * restores an instance into memeory or provides you access to a running instance
      *
@@ -47,7 +48,7 @@ interface IEngine {
      * @param instanceQuery		criteria to fetch the instance
      *
      * query example:
-     * 
+     *
      * ```jsonl
      * { id: instanceId}
      * { data: {caseId: 1005}}
@@ -56,14 +57,14 @@ interface IEngine {
      * ```
      *
      */
-    get(instanceQuery: any): Promise<IExecution>;
+    get(instanceQuery: InstanceQuery): Promise<IExecution>;
     /**
      * Continue an existing item that is in a wait state
      *
      * -------------------------------------------------
-     * 
+     *
      * scenario:
-     * 
+     *
      * ```
      * itemId 	{itemId: value }
      * itemKey 	{itemKey: value}
@@ -73,12 +74,12 @@ interface IEngine {
      * @param itemQuery		criteria to retrieve the item
      * @param data
      */
-    invoke(itemQuery: any, data: {}, userName?: string, options?: {}): Promise<IExecution>;
+    invoke(itemQuery: ItemQuery, data: InputData, userName?: string, options?: any): Promise<IExecution>;
 
-    assign(itemQuery: any, data: {}, assignment: {}, userName: string,options?:{}): Promise<IExecution>;
+    assign(itemQuery: ItemQuery, data: InputData, assignment: AssignmentData, userName: string, options?: any): Promise<IExecution>;
 
 
-	startRepeatTimerEvent(instanceId, prevItem: IItem, data: {},options?:{}) : Promise<IExecution>;
+	startRepeatTimerEvent(instanceId: string, prevItem: IItem, data: InputData, options?: any) : Promise<IExecution>;
 
     /**
      *
@@ -96,7 +97,7 @@ interface IEngine {
      * @param elementId
      * @param data
      */
-    startEvent(instanceId: any, elementId: any, data?: {},userName?: string,options?:{}): Promise<IExecution>;
+    startEvent(instanceId: string, elementId: string, data?: InputData, userName?: string, options?: any): Promise<IExecution>;
     /**
      *
      * signal/message raise a signal or throw a message
@@ -109,10 +110,9 @@ interface IEngine {
      * @param matchingKey	should match the itemKey (if specified)
      * @param data			message data
      */
-    //signal(messageId: any, matchingKey: any, data?: {}): Promise<IExecution>;
-    throwMessage(messageId, data: {}, matchingQuery: {}): Promise<IExecution>;
-    throwSignal(signalId, data: {}, matchingQuery: {});
-    restart(itemQuery, data:any,userName, options) :Promise<IExecution>;
+    throwMessage(messageId: string, data: InputData, matchingQuery: MatchingQuery): Promise<IExecution>;
+    throwSignal(signalId: string, data: InputData, matchingQuery: MatchingQuery);
+    restart(itemQuery: ItemQuery, data: InputData, userName: string, options?: any) :Promise<IExecution>;
 
     upgrade(model:string,afterNodeIds:string[]):Promise<string[]|{errors}>;
 

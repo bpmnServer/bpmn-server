@@ -52,7 +52,10 @@ export class Configuration implements IConfiguration {
 		this.templatesPath = templatesPath;
 		this.timers = timers;
 		this.database = database;
-		this.apiKey = apiKey;
+		this.apiKey = apiKey || process.env.API_KEY;
+		if (!this.apiKey) {
+			throw new Error('Configuration error: apiKey is required. Set the API_KEY environment variable or pass apiKey in configuration.');
+		}
 		this.logger = logger;
 		this.definitions = definitions;
 		this.appDelegate = appDelegate;
@@ -78,7 +81,7 @@ export const defaultConfiguration = new Configuration(
 				db: 'bpmn'
 			}
 		},
-		apiKey: '1234',
+		apiKey: process.env.API_KEY,
 		logger: function (server) {
 			new Logger(server);
 		},

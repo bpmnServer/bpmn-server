@@ -1,7 +1,8 @@
 
 import {
     IBPMNServer, IEngine, IDefinition, IConfiguration, IDataStore, EXECUTION_EVENT
-    , IExecution, IInstanceData, IItemData, ISecureUser
+    , IExecution, IInstanceData, IItemData, ISecureUser,
+    InstanceQuery, ItemQuery, InputData, AssignmentData, MatchingQuery, FindOption
 } from '../';
 
 /**
@@ -85,46 +86,46 @@ export interface IAPIEngine {
 @param {ISecureUser}  user - user object {}
 
 */
-    
-    start(modelName,
-        data: {},
+
+    start(modelName: string,
+        data: InputData,
          user: ISecureUser,
          options?:IEngineOptions): Promise<IExecution>;
 /**
     continue with the execution of a particular item that is in a wait state, typically a user task
 */
-    invoke(query, data: {}, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
+    invoke(query: ItemQuery, data: InputData, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
 /**
     provide assignment data to a user task
     Also, updates item data
 */
-    assign(query, data, assignment, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
+    assign(query: ItemQuery, data: InputData, assignment: AssignmentData, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
 /**
     throw a message with an id, system will identify receiving item
 */
-    throwMessage(messageId, data, messageMatchingKey, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
+    throwMessage(messageId: string, data: InputData, messageMatchingKey: MatchingQuery, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
 /**
     throw a signal with an id, system will identify receiving item(s)
 */
-    throwSignal(signalId, data, messageMatchingKey, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
+    throwSignal(signalId: string, data: InputData, messageMatchingKey: MatchingQuery, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
 /**
     start a second event node (in a subprocess) for a running instance
 */
-    startEvent(query, elementId, data: {}, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
+    startEvent(query: InstanceQuery, elementId: string, data: InputData, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
 
 
 /**
- * 
+ *
  * restarting an already completed instance at a particular node
  * this function requires `dataStore.enableSavePoints` to be true in configuration.ts
  * this add a savePoint for each item, allowing you to select that item to restore it
  *
- *      
+ *
  * @param itemQuery - Query to find a single item
  * @param inputData
- * 
+ *
  */
-    restart(itemQuery, data:any,userName, options?) :Promise<IExecution>;
+    restart(itemQuery: ItemQuery, data: InputData, user: ISecureUser, options?: IEngineOptions) :Promise<IExecution>;
 
 /**
  * upgrade running instances with the latest revised bpmn model
@@ -153,20 +154,20 @@ export interface IAPIData {
 ```
 
 */
-     getPendingUserTasks(query, user: ISecureUser): Promise<IItemData[]>;
+     getPendingUserTasks(query: InstanceQuery, user: ISecureUser): Promise<IItemData[]>;
 /**
     returns list of `item`s
 */
-     findItems(query, user?: ISecureUser): Promise<IItemData[]>;
-     findItem(query, user?: ISecureUser): Promise<IItemData>;
+     findItems(query: InstanceQuery, user?: ISecureUser): Promise<IItemData[]>;
+     findItem(query: InstanceQuery, user?: ISecureUser): Promise<IItemData>;
 /**
     returns list of `instance`s
 */
-     findInstances(query, user?: ISecureUser, options?): Promise<IInstanceData[]>;
+     findInstances(query: InstanceQuery, user?: ISecureUser, options?: FindOption): Promise<IInstanceData[]>;
 /**
     deletes the `instance`s
 */
-     deleteInstances(query, user?: ISecureUser);
+     deleteInstances(query: InstanceQuery, user?: ISecureUser);
 }
 /**
         common parameters:
