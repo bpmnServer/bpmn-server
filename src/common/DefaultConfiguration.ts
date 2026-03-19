@@ -54,7 +54,7 @@ export class Configuration implements IConfiguration {
 		this.database = database;
 		this.apiKey = apiKey || process.env.API_KEY;
 		if (!this.apiKey) {
-			throw new Error('Configuration error: apiKey is required. Set the API_KEY environment variable or pass apiKey in configuration.');
+			console.warn('Warning: apiKey is not set. Set the API_KEY environment variable or pass apiKey in configuration.');
 		}
 		this.logger = logger;
 		this.definitions = definitions;

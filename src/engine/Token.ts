@@ -49,6 +49,12 @@ enum TOKEN_TYPE {
     EventSubProcess='EventSubProces', BoundaryEvent ='BoundaryEvent' ,AdHoc ='AdHoc'
 }
 // ---------------------------------------------
+/**
+ * Represents a pointer moving through the BPMN flow graph.
+ *
+ * Each token tracks its current node, the path of items visited, and its
+ * relationship to parent/child tokens (for subprocesses, gateways, loops).
+ */
 class Token implements IToken {
     id;
     type: TOKEN_TYPE;
@@ -62,6 +68,7 @@ class Token implements IToken {
     path: Item[];  //  keep track of all nodes and flow taken 
     loop: Loop;
     _currentNode: Node;
+    /** The node the token is currently positioned at. */
     get currentNode():Node {return this._currentNode}
     processId;
     status: TOKEN_STATUS;
@@ -70,16 +77,20 @@ class Token implements IToken {
     messageMatchingKey: {};
     itemsKey=null; // for loop items
 
+    /** Returns the instance data scoped to this token's dataPath. */
     get data():any {
         return this.execution.getData(this.dataPath);
     }
+    /** The most recent item in this token's path. */
     get currentItem() : Item {
         return this.path[this.path.length - 1];
     }
+    /** The first item in this token's path. */
     get firstItem(): Item {
         return this.path[0];
     }
 
+    /** Returns true if any item in the path visited the given node id. */
     hasNode(nodeId): Boolean {
         let match=false;
         this.path.forEach(i => {
@@ -88,6 +99,7 @@ class Token implements IToken {
             });
         return match;
     }
+    /** Returns the second-to-last non-flow item, or null if fewer than two exist. */
     get lastItem() : Item {
         let nodes = this.path.filter(function (value) {
             return (value.element.type == 'bpmn:SequenceFlow') ? false : true;
@@ -98,18 +110,30 @@ class Token implements IToken {
         else
             return null;
     }
+    /** Returns all tokens whose parentToken is this token. */
     get childrenTokens(): Token[] {
 
         const list = [];
         this.execution.tokens.forEach(t => { if (t.parentToken && t.parentToken.id == this.id) list.push(t); });
         return list;
     }
+    /** Returns the concatenated path from root parent down to this token. */
     getFullPath(path=[]) : Item[] {
         if (this.parentToken)
             path=this.parentToken.getFullPath(path);
         this.path.forEach(i => { path.push(i); });
         return path;       
     }
+    /**
+     * Creates a new token starting at the given node.
+     *
+     * @param type			token type (Primary, SubProcess, Diverge, etc.)
+     * @param execution		the owning execution
+     * @param startNode		the node where this token begins
+     * @param dataPath		explicit data path (falls back to parent's dataPath)
+     * @param parentToken	parent token for subprocess/diverge tokens
+     * @param originItem	the item that caused this token to be created (e.g. gateway item)
+     */
     constructor(type: TOKEN_TYPE, execution: Execution, startNode: Node, dataPath? ,parentToken?: Token, originItem?: Item) {
         this.execution = execution;
         this.type = type;
@@ -171,6 +195,7 @@ class Token implements IToken {
             await token.execute(data);
         return token;
     } 
+    /** Serializes this token's state for persistence. */
     save() {
         let parentToken, originItem, loopId;
         if (this.parentToken)
@@ -186,38 +211,46 @@ class Token implements IToken {
             currentNode: this.currentNode.id , itemsKey: this.itemsKey
         };
     }
-    static load(execution: Execution , da :any ) : Token {
-        const startNode = execution.getNodeById(da.startNodeId);
-        const parentToken = execution.getToken(da.parentToken);
-        const currentNode = execution.getNodeById(da.currentNode);
+    /** Restores a token from saved state data. */
+    /**
+     * Reconstructs a Token from its persisted state.
+     *
+     * @param execution     the parent Execution instance
+     * @param savedData     the serialized token state loaded from the datastore
+     */
+    static load(execution: Execution , savedData :any ) : Token {
+        const startNode = execution.getNodeById(savedData.startNodeId);
+        const parentToken = execution.getToken(savedData.parentToken);
+        const currentNode = execution.getNodeById(savedData.currentNode);
 
-        const token = new Token(da.type,execution, startNode, da.dataPath, parentToken, null);
-        token.id = da.id;
-        token.startNodeId = da.startNodeId;
+        const token = new Token(savedData.type,execution, startNode, savedData.dataPath, parentToken, null);
+        token.id = savedData.id;
+        token.startNodeId = savedData.startNodeId;
         token._currentNode = currentNode;
-        token.status = da.status;
-        token.itemsKey=da.itemsKey;
+        token.status = savedData.status;
+        token.itemsKey=savedData.itemsKey;
         token.path = [];
         return token;
     }
+    /** Placeholder for stopping a token (currently no-op). */
     stop() {
-        
+
     }
-    /*
-     * is fired once after the execution is resumed from restrt 
-     * 
-     *  fire resume for all existing items to wakeup the timers
-     *  
+    /**
+     * Fires after the execution is resumed from a restart.
+     * Wakes up timers and other waiting behaviours on the current item.
      */
     resume() {
         this.currentNode.resume(this.currentItem);
 
     }
+    /** Notifies all items in the path that the execution has been restored from persistence. */
     restored() {
         this.path.forEach(item => {
             item.element.restored(item);
         });
     }
+    /** Walks up the parent chain to find the nearest SubProcess or AdHoc token, or null. */
     getSubProcessToken() : Token {
         if (this.type==TOKEN_TYPE.SubProcess || this.type==TOKEN_TYPE.AdHoc)
             return this;
@@ -227,6 +260,7 @@ class Token implements IToken {
             return this.parentToken.getSubProcessToken();
 
     }
+    /** Returns all direct child tokens of this token (same as childrenTokens getter). */
     getChildrenTokens() {
         const children = [];
         this.execution.tokens.forEach(token => {
@@ -282,25 +316,10 @@ class Token implements IToken {
         if (input)
             await this.currentNode.setInput(item,input);
 
-//        if (!await this.preExecute())  
-//            return; // loop logic will take care of it
-    
         this.log('Token('+this.id +').execute: executing currentNodeId='+ this.currentNode.id);
 
 
         ret = await this.currentNode.execute(item);
-/*
-        // check for subprocess 
-        if (this.currentNode.type == 'bpmn:SubProcess') {
-            this.log('..executing a sub process item:' + this.currentNode.id + " " + item.id + " is done");
-            const subProcess = this.currentNode as SubProcess;
-            const proc = subProcess.childProcess;
-            const startNode = proc.getStartNode();
-
-            const newToken = await Token.startNewToken(this.execution, startNode, null, this, this.currentNode, null);
-
-        }
-*/
 
         if (ret == NODE_ACTION.wait) {
             this.status = TOKEN_STATUS.wait;
@@ -309,7 +328,6 @@ class Token implements IToken {
 
         }
         else if (ret == NODE_ACTION.error) {
-            // await this.processError(); done by the event with code
         }
         else if (ret == NODE_ACTION.abort) {
             this.execution.terminate();
@@ -329,11 +347,19 @@ class Token implements IToken {
         return result;
 
     }
+    /** Appends an item to the token's path and updates the current node. */
     addItemToPath(item) {
         this.path.push(item);
         this.setCurrentNode(item.node);
 
     }
+    /**
+     * Handles a BPMN error by finding the matching error boundary event or
+     * event subprocess. If no handler is found, terminates the execution.
+     *
+     * @param errorCode		the BPMN error code to match
+     * @param callingEvent	the item that raised the error
+     */
     async processError(errorCode,callingEvent) {
 
         let errorHandlerToken = this.getScopeCatchEvent('error',errorCode);
@@ -352,6 +378,13 @@ class Token implements IToken {
         }
 
     }
+    /**
+     * Searches the token hierarchy for a matching catch event (error, escalation, or cancel).
+     * First checks direct boundary events, then walks up parent tokens.
+     *
+     * @param type	the event type to find
+     * @param code	the error/escalation code to match (null matches any)
+     */
     getScopeCatchEvent(type:'error'|'escalation'|'cancel',code) {
         
         let contextItem: Item = this.currentItem;
@@ -360,65 +393,60 @@ class Token implements IToken {
         let errorHandlerToken = null;
         let tokens=[];
         try {
+            // two types of error handlers
+            //  1.  eventSubProcess
+            //  2.  boundaryEvents
+            let bhName=Behaviour_names.ErrorEventDefinition;
+            let propertyName='errorId';
+            let nodeSubType=NODE_SUBTYPE.error;
+            if (type=='escalation') {
+                bhName=Behaviour_names.EscalationEventDefinition;
+                propertyName='escalationId';
+                nodeSubType=NODE_SUBTYPE.escalation
+            }
+            else if (type=='cancel') {
+                bhName=Behaviour_names.CancelEventDefinition;
+                propertyName=null;
+                nodeSubType=NODE_SUBTYPE.cancel
+            }
 
-        
-        // two types of error handlers
-        //  1.  eventSubProcess 
-        //  2.  boundaryEvents  
-        let bhName=Behaviour_names.ErrorEventDefinition;
-        let propertyName='errorId';
-        let nodeSubType=NODE_SUBTYPE.error;
-        if (type=='escalation')
-        {
-            bhName=Behaviour_names.EscalationEventDefinition;
-            propertyName='escalationId';
-            nodeSubType=NODE_SUBTYPE.escalation
-        }
-        else if (type=='cancel')
-        {
-            bhName=Behaviour_names.CancelEventDefinition;
-            propertyName=null;
-            nodeSubType=NODE_SUBTYPE.cancel
-        }
+            let directEvents=contextItem.node.getBoundaryEventItems(contextItem);
 
-        let directEvents=contextItem.node.getBoundaryEventItems(contextItem);
-
-        directEvents.forEach(ev=>{
+            directEvents.forEach(ev=>{
                 tokens.push(ev.token);
-        });
-
-        let handler=this.checkTokensForError(tokens,bhName,propertyName,code);
-
-        if (handler)
-            return handler;
-
-        // second phase 
-        tokens=[];
-        while (contextToken && errorHandlerToken == null) {
-            contextToken.childrenTokens.forEach(ct => {
-                if ((ct.type == TOKEN_TYPE.EventSubProcess || ct.type == TOKEN_TYPE.BoundaryEvent)
-                    && ct.currentNode.subType == nodeSubType) {
-
-                    tokens.push(ct);
-                }
             });
-            contextToken = contextToken.parentToken;
+
+            let handler=this.checkTokensForError(tokens,bhName,propertyName,code);
+
+            if (handler)
+                return handler;
+
+            // second phase
+            tokens=[];
+            while (contextToken && errorHandlerToken == null) {
+                contextToken.childrenTokens.forEach(ct => {
+                    if ((ct.type == TOKEN_TYPE.EventSubProcess || ct.type == TOKEN_TYPE.BoundaryEvent)
+                        && ct.currentNode.subType == nodeSubType) {
+                        tokens.push(ct);
+                    }
+                });
+                contextToken = contextToken.parentToken;
+            }
+
+            this.execution.tokens.forEach(ct=>{
+                if (ct.type == TOKEN_TYPE.EventSubProcess && ct.currentNode.subType == nodeSubType)
+                    tokens.push(ct);
+            });
+
+            return this.checkTokensForError(tokens,bhName,propertyName,code);
+
         }
-
-        this.execution.tokens.forEach(ct=>{
-            if (ct.type == TOKEN_TYPE.EventSubProcess && ct.currentNode.subType == nodeSubType)
-                tokens.push(ct);
-        });
-
-        return this.checkTokensForError(tokens,bhName,propertyName,code);
-
+        catch (exc) {
+            console.log(exc);
+            return null;
+        }
     }
-    catch (exc) {
-        console.log(exc);
-        return null;
-    }
-
-    }
+    /** Finds the best matching error handler token: prefers code-specific over catch-all. */
     private checkTokensForError(tokens,bhName,propertyName,errorCode) {
 
         let handlingCodeEventToken=null;
@@ -446,6 +474,7 @@ class Token implements IToken {
             return handlingAllEventToken;
 
     }
+    /** Handles a BPMN cancel event by finding and signaling the cancel boundary event. */
     async processCancel(callingEvent) {
 
         let errorHandlerToken = this.getScopeCatchEvent('cancel',null);
@@ -454,6 +483,12 @@ class Token implements IToken {
         }
 
     }
+    /**
+     * Handles a BPMN escalation by finding the matching escalation handler and signaling it.
+     *
+     * @param escalationCode	the escalation code to match
+     * @param callingEvent		the item that raised the escalation
+     */
     async processEscalation (escalationCode,callingEvent) {
 
         let errorHandlerToken = this.getScopeCatchEvent('escalation',escalationCode);
@@ -501,7 +536,6 @@ class Token implements IToken {
             return;
 
         this.log('Token('+this.id +').terminate: terminating ....');
-        //await this.currentNode.end(this.currentItem,true);
         await this.end(true);
 
         this.status=TOKEN_STATUS.terminated;
@@ -526,10 +560,15 @@ class Token implements IToken {
         await this.goNext();
 
     }
-    /*
-     *  is called to invoke an element like userTask, or trigger an envent or signal
-     *  
-     */ 
+    /**
+     * Signals a waiting token with input data to resume execution.
+     *
+     * Handles restart mode, validates the item, runs the node, and
+     * advances to the next node (unless noWait is set).
+     *
+     * @param data		input data for the current item
+     * @param options	execution options (restart, recover, noWait)
+     */
     async signal(data,options={}) {
         // check if valid node and valid status
         // find the item
@@ -541,7 +580,6 @@ class Token implements IToken {
             recover=options['recover'];
 
         const item = this.currentItem;
-        //this.log(`..token.signal ${this.currentNode.id} ${this.currentNode.type}`);
         this.logS('Token('+this.id +').signal: invoking '+this.currentNode.id+' '+this.currentNode.type+' with data='+JSON.stringify(data));
 
         await this.currentNode.setInput(item, data);
@@ -576,42 +614,26 @@ class Token implements IToken {
         this.logE('Token('+this.id +').signal: invoke '+this.currentNode.id+' '+this.currentNode.type+' finished!');
 
     }
-    /*
-     *  is called to invoke an element like userTask, or trigger an envent or signal
-     *  
-     */ 
-    async signal2() {
-        // check if valid node and valid status
-        // find the item
-        let self=this;
+    /**
+     * Phase 2 of a noWait signal: waits briefly then advances to the next node.
+     * Called after signalItem returns early in the noWait path.
+     */
+    async signalContinue() {
         await delay(5,null);
-        /*
-        await new Promise(function (resolve) {
-            setTimeout(async function () {
-                await self.goNext();
-                }, 5);
-        });*/
 
-       await self.goNext();
+       await this.goNext();
 
        return this;
 
         
     }
-    /*
-     *  is called to mark this token end
-
-    Child Scenarios:
-        diverge
-        subprocess/trans/adHoc
-        loop
-
+    /**
+     * Ends this token, terminating children and continuing the parent if subprocess.
+     *
+     * @param cancel	if true, marks as terminated rather than cleanly ended
      */
-
     async end(cancel:Boolean=false) {
         this.logS('Token('+this.id +').end: currentNode=' + this.currentNode.id +' status='+this.status);
-
-        //await pause();
 
         if (this.status ==TOKEN_STATUS.end || this.status==TOKEN_STATUS.terminated)
             return;
@@ -631,8 +653,7 @@ class Token implements IToken {
                 const child = children[i];
                 if (this.type==TOKEN_TYPE.SubProcess || this.type==TOKEN_TYPE.AdHoc 
                     || this.type == TOKEN_TYPE.EventSubProcess || this.type == TOKEN_TYPE.Instance
-                    || child.type==TOKEN_TYPE.Instance || child.type==TOKEN_TYPE.AdHoc) 
-                //if (child.type == TOKEN_TYPE.EventSubProcess || child.type==TOKEN_TYPE.AdHoc || child.type==TOKEN_TYPE.Instance ) 
+                    || child.type==TOKEN_TYPE.Instance || child.type==TOKEN_TYPE.AdHoc)
                 {
                     await child.terminate();
                 }
@@ -649,16 +670,19 @@ class Token implements IToken {
         this.logE('Token('+this.id +').end(): finished!');
     }
 
+    /** Updates the token's current node pointer. */
     setCurrentNode(newCurrentNode:Node){
         this.log('Token('+this.id +').setCurrentNode():  newCurrentNode.id=' + newCurrentNode.id+' currentNode='+this.currentNode);
         this._currentNode = newCurrentNode;
     
       }
       
-    /*
-     *  once node is completed the token will move to next action
-     *  
-     */ 
+    /**
+     * Advances the token to the next node(s) after the current node completes.
+     *
+     * If diverging (multiple outbounds), creates child tokens for each branch.
+     * If single outbound, continues on the same token.
+     */
     async goNext() {
                 await pause();
                 /** issue 186:  token with empty path due to loop preceded by gateway */
@@ -684,8 +708,6 @@ class Token implements IToken {
             return await this.end(true);
         }
         this.log('Token('+this.id +').goNext(): currentNodeId=' + this.currentNode.id +' type='+this.currentNode.type+' currentItem.status='+this.currentItem.status);
-        //this.log(`..token.goNext from ${this.currentNode.id} ${this.currentNode.type}`);
-
         if (!await this.preNext()) {
             this.logE('Token('+this.id +').goNext(): no more outbounds - ending this token '+this.id);
             return;
@@ -739,7 +761,6 @@ class Token implements IToken {
                 self.log('Token(' + self.id + ').goNext(): ... currentNodeId(' + self.currentNode.name + '|' + self.currentNode.id + ') processing  Flow(' + flowItem.element.id + ") to " + nextNode.id);
                 if (nextNode) {
                         self._currentNode = nextNode;
-//                        await self.execute(null);
                         promises.push(self.execute(null));
                 }
             });

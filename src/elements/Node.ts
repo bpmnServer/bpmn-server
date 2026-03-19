@@ -9,6 +9,12 @@ import { ScriptHandler } from '../';
 
 
 // ---------------------------------------------
+/**
+ * Base class for all BPMN nodes (tasks, events, gateways, subprocesses).
+ *
+ * Manages the node lifecycle (enter, start, run, continue, end),
+ * boundary event attachments, outbound flow evaluation, and script execution.
+ */
 class Node extends Element {
     name='';
     process;
@@ -24,11 +30,18 @@ class Node extends Element {
     candidateGroups;
     candidateUsers;
     scripts = new Map();
+    /** Returns the id of the owning process. */
     get processId() : any {
 
         return this.process.id;
-    } 
+    }
 
+    /**
+     * @param id		BPMN element id
+     * @param process	the owning Process
+     * @param type		BPMN type string (e.g. 'bpmn:UserTask')
+     * @param def		the raw BPMN definition object
+     */
     constructor(id, process , type, def) {
         super();
         this.id = id;
@@ -43,6 +56,7 @@ class Node extends Element {
 
         BehaviourLoader.load(this);
     }
+    /** Fires the node_validate event and throws if validation returns an error. */
     async validate(item: Item) {
 
         let validate = await item.node.doEvent(item, EXECUTION_EVENT.node_validate,item.status);
@@ -56,12 +70,20 @@ class Node extends Element {
         });
 
     }
+    /**
+     * Executes scripts registered for the given event, updates item status,
+     * and emits the event through the execution listener.
+     *
+     * @param item			the current item
+     * @param event			the execution event type
+     * @param newStatus		if provided, sets the item status before running scripts
+     * @param eventDetails	additional event details passed to listeners
+     */
     async doEvent(item: Item, event: EXECUTION_EVENT, newStatus: ITEM_STATUS=null,eventDetails={}) {
         item.token.log('Node('+this.name+'|'+this.id+').doEvent: executing script for event:' + event + ' newStatus:'+newStatus);
 
         if (newStatus)
             item.status = newStatus;
-        ///item.token.log('..>' + event + ' ' + this.id);
         const scripts = this.scripts.get(event);
         const rets = [];
         if (scripts) {
@@ -95,14 +117,13 @@ class Node extends Element {
      */
     async setInput(item: Item, input) {
         item.token.log('Node('+this.name+'|'+this.id+').setInput: input' + JSON.stringify(input));
-        //
-        //item.token.log('--setting input ' + JSON.stringify(input));
 
         const data = await this.getInput(item, input);
 
         item.token.appendData(data,item);
 
     }
+    /** Stores raw input and fires the transform_input event, returning the (possibly transformed) input. */
     async getInput(item: Item, input) {
         item.token.log('Node('+this.name+'|'+this.id+').getInput: input' + JSON.stringify(input));
 
@@ -121,6 +142,7 @@ class Node extends Element {
         return item.output;
 
     }
+    /** Called when the token first visits this node; records the start time. */
     enter(item: Item) {
         item.token.log('Node('+this.name+'|'+this.id+').enter: item=' + item.id);
         item.startedAt = new Date();
@@ -130,18 +152,18 @@ class Node extends Element {
      * does the need require to go into wait 
      * tasks like UserTasks, receiveTask, timer 
      */
+    /** Whether this node requires the token to wait (overridden by UserTask, ReceiveTask, etc.). */
     get requiresWait() { return false; }
-    /* 
-     * Can the Node be invoked externally (not from the workflow)
-     * tasks like UserTasks, receiveTask, or events like receive,signal can be invoked
-     */
+    /** Whether this node can be invoked externally (overridden by UserTask, events, etc.). */
     get canBeInvoked() { return false; }
 
+    /** Returns the loop characteristics behaviour if defined, or undefined. */
     get loopDefinition() {
         return this.getBehaviour(Behaviour_names.LoopCharacteristics);
     } 
 
-    get isCatching(): boolean { return false; } // catching events and tasks
+    /** Whether this is a catching event or task (overridden by CatchEvent, ReceiveTask). */
+    get isCatching(): boolean { return false; }
     /**
      * this is the primary exectuion method for a node
      * 
@@ -212,10 +234,7 @@ class Node extends Element {
         //  --------
         //  Save before performing the work
         await item.token.execution.save();
-        //item.token.info(`{"seq":${item.seq},"type":'${this.type}',"id":'${this.id}',"action":'Started'}`);
-
         item.token.log('Node('+this.name+'|'+this.id+').execute: execute run ...token:'+item.token.id);
-        //item.token.log('..>run ' + this.id);
 
         ret = await this.run(item);
         switch (ret) {
@@ -238,14 +257,13 @@ class Node extends Element {
         return ret2;
 
     }
-    /*
-     *  called by execute or by token.invoke to continue work already started
-     */
+    /** Called after run() to finalize the node and trigger the end phase. */
     async continue(item: Item) {
         item.token.log('Node('+this.name+'|'+this.id+').continue: item=' + item.id);
         await this.end(item);
         return;
     }
+    /** Starts boundary events and returns wait if the node requires it. Override for custom start logic. */
     async start(item: Item): Promise<NODE_ACTION> {
         item.token.log('Node('+this.name+'|'+this.id+').start: item=' + item.id);
 
@@ -256,10 +274,12 @@ class Node extends Element {
         return NODE_ACTION.continue;
     }
 
+    /** Performs the node's work. Override in subclasses (ScriptTask, ServiceTask, etc.). */
     async run(item: Item): Promise<NODE_ACTION> {
         item.token.log('Node('+this.name+'|'+this.id+').run: item=' + item.id);
         return NODE_ACTION.end;
     }
+    /** Cancels sibling branches of an EventBasedGateway when one branch completes. */
     async cancelEBG(item) {
         const ebgItem=item.token.originItem;
         if (ebgItem && ebgItem.node.type===BPMN_TYPE.EventBasedGateway)
@@ -268,6 +288,7 @@ class Node extends Element {
             await ebg.cancelAllBranched(item);
         }
     }
+    /** Terminates all boundary event tokens attached to this node. */
     async cancelBoundaryEvents(item) {
         // cancel boundary events
         let i,t;
@@ -306,6 +327,7 @@ class Node extends Element {
             }
         }
     }
+    /** Returns the current items of all boundary event tokens attached to this node. */
     getBoundaryEventItems(item) {
 
         let i,t;
@@ -344,6 +366,13 @@ class Node extends Element {
         return boundaryItems;
 
     }
+    /**
+     * Ends the node: fires end event, runs exit behaviours, cancels boundary events,
+     * processes message flows, and sets the item status and endedAt timestamp.
+     *
+     * @param item		the item to end
+     * @param cancel	if true, marks as cancelled (no endedAt timestamp)
+     */
     async end(item: Item,cancel:Boolean=false) {
         if (!item  || item.status==ITEM_STATUS.end)
             return;
@@ -358,10 +387,10 @@ class Node extends Element {
         /**
          * Rule:    boundary events are canceled when owner task status is 'end'
          * */
-        this.behaviours.forEach(async function (b) { await b.end(item); });
+        for (const b of this.behaviours.values()) { await b.end(item); }
         await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end, {cancel});
         item.token.log('Node('+this.name+'|'+this.id+').end: setting item status to end itemId=' + item.id + ' itemStatus=' + item.status + ' cancel: '+cancel+' endedat '+item.endedAt);
-        this.behaviours.forEach(async function (b) { await b.exit(item); });
+        for (const b of this.behaviours.values()) { await b.exit(item); }
         item.token.log('Node(' + this.name + '|' + this.id + ').end: finished');
 
         let result=await this.cancelBoundaryEvents(item);
@@ -398,8 +427,7 @@ class Node extends Element {
     init(item: Item) {
 
     }
-    /* to be overwritten by XOR gateway */
-
+    /** Evaluates outbound flows and returns items for flows that should be taken. Overridden by XOR gateway. */
     async getOutbounds(item: Item): Promise<Item[]> {
         item.token.log('Node('+this.name+'|'+this.id+').getOutbounds: itemId='+item.id);
         const outbounds = [];
@@ -416,23 +444,11 @@ class Node extends Element {
                     flowItem.token=null;
             }
 
-        }/*
-        this.outbounds.forEach(async flow => {
-            if (flow.type == BPMN_TYPE.MessageFlow) {
-
-            }
-            else {
-                let flowItem = new Item(flow, item.token);
-                if (await flow.run(flowItem) == FLOW_ACTION.take)
-                    outbounds.push(flowItem);
-                else 
-                    flowItem.token=null;
-            }
-        }); */
-        //item.token.log('..return outbounds' + outbounds.length);
+        }
         item.token.log('Node('+this.name+'|'+this.id+').getOutbounds: return outbounds'+outbounds.length);
         return outbounds;
     }
+    /** Creates tokens for all non-compensate boundary events attached to this node. */
     async startBoundaryEvents(item,token) {
         let i;
         // check for attachments - boundary events:
@@ -444,6 +460,7 @@ class Node extends Element {
 
 
     }
+    /** Returns a description array of this node's configuration (initiator, assignee, scripts). */
     describe() {
         var desc = [];
         if (this.initiator)

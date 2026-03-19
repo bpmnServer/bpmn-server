@@ -30,41 +30,40 @@ enum USER_ROLE {
  *  Warn the User that instance information has changed since last seen
  *  
  * */
-var byPass = false;
-
 class SecureUser implements ISecureUser {
     userName;
     userGroups;
     tenantId?;
     modelsOwner?;
+
+    /**
+     * Returns true when security enforcement is disabled via environment variables.
+     * Evaluated on every call so toggling the env var takes effect immediately
+     * without requiring a process restart or leaving a permanent bypass in place.
+     */
+    static isSecurityBypassed(): boolean {
+        return typeof process !== 'undefined' &&
+            (process.env.REQUIRE_AUTHENTICATION === 'false' || process.env.ENFORCE_SECURITY === 'false');
+    }
+
     constructor(params: IUserInfo) {
         Object.assign(this, params);
-
-        if (typeof process !=='undefined' && (process.env.REQUIRE_AUTHENTICATION === 'false' || process.env.ENFORCE_SECURITY === 'false')) {
-            console.log('****Security is disabled as requested in .env****');
-            byPass = true;
-        }
-//        else
-//            console.log('Security is enabled as requested in .env');
-
-//        console.log('new SecureUser', this);
-
     }
     static SystemUser() {
         return new SecureUser({ userName: 'system', userGroups: [USER_ROLE.SYSTEM], tenantId: null, modelsOwner: null });
     }
     isAdmin(): boolean {
-        if (byPass)
+        if (SecureUser.isSecurityBypassed())
             return true;
         return (this.userGroups.includes(USER_ROLE.ADMIN) || this.userGroups.includes(USER_ROLE.SYSTEM));
     }
     isSystem(): boolean {
-        if (byPass)
+        if (SecureUser.isSecurityBypassed())
             return true;
         return (this.userGroups.includes(USER_ROLE.SYSTEM));
     }
     inGroup(userGroup) :boolean {
-        if (byPass)
+        if (SecureUser.isSecurityBypassed())
             return true;
         return (this.userGroups.includes(userGroup))
     }
@@ -74,25 +73,13 @@ class SecureUser implements ISecureUser {
      * @returns query
      */
     qualifyInstances(query) {
-        if (byPass)
+        if (SecureUser.isSecurityBypassed())
             return query;
         if (this.tenantId)
             query['tenantId'] = this.tenantId;
         if (!this.isAdmin()) {
 
             const grpQuery = [];
-/* old
-            grpQuery.push({ 'items.assignee': null, 'items.candidateUsers': null, 'items.candidateGroups': null });
-
-            grpQuery.push({ 'items.assignee': this.userName });
-            grpQuery.push({ 'items.candidateUsers': this.userName, 'items.assignee': null });
-
-            this.userGroups.forEach(grp => {
-                grpQuery.push({ 'items.candidateGroups': grp, 'items.assignee': null });
-                });
-
-            query['$or'] = grpQuery;
-*/
             grpQuery.push({ 'items.assignee': null, 'items.candidateUsers': null, 'items.candidateGroups': null });
 
             grpQuery.push({ 'items.assignee': this.userName });
@@ -113,7 +100,7 @@ class SecureUser implements ISecureUser {
      * @returns query
      */
     qualifyItems(query) {
-        if (byPass)
+        if (SecureUser.isSecurityBypassed())
             return query;
         return this.qualifyInstances(query);
 
@@ -158,7 +145,7 @@ class SecureUser implements ISecureUser {
      * @returns query
      */
     qualifyModels(query) {
-        if (byPass)
+        if (SecureUser.isSecurityBypassed())
             return true;
         if (this.modelsOwner)
             query['owner'] = this.modelsOwner;
