@@ -1,5 +1,5 @@
 import { IDefinition, IInstanceData } from './';
-import { IBpmnModelData, IItemData, IEventData } from './';
+import { IBpmnModelData, IItemData, IEventData, InstanceQuery, ItemQuery, FindOption } from './';
 
 export interface FindParams {
 	filter?: Record<string, any>;
@@ -24,16 +24,16 @@ interface IDataStore {
     db: any;
     logger: any;
     locker: any;
-    save(instance:any,options:any): Promise<void>;
-    loadInstance(instanceId: any,options:any): Promise<{
+    save(instance: any, options: any): Promise<void>;
+    loadInstance(instanceId: string, options: any): Promise<{
         instance: any;
         items: any[];
     }>;
-    findItem(query: any): Promise<IItemData>;
-    findInstance(query: any, options: any): Promise<IInstanceData>;
-    findInstances(query: any, option: 'summary' | 'full'|any): Promise<IInstanceData[]>;
-    findItems(query: any): Promise<IItemData[]>;
-    deleteInstances(query?: any): Promise<void>;
+    findItem(query: InstanceQuery): Promise<IItemData>;
+    findInstance(query: InstanceQuery, options: any): Promise<IInstanceData>;
+    findInstances(query: InstanceQuery, option?: FindOption): Promise<IInstanceData[]>;
+    findItems(query: InstanceQuery): Promise<IItemData[]>;
+    deleteInstances(query?: InstanceQuery): Promise<void>;
     install(); 
     archive(query);
     find(FindParams) : Promise<FindResult>;

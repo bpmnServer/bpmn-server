@@ -80,9 +80,7 @@ class MongoDB {
                     else
                         console.log('error',err);
                     resolve(null);
-                } else 
-                    {
-                    //  self.logger.log(" inserted " + result.result);
+                } else {
                     console.log('index named "'+result+'" was created for collection "'+collName+'"');
                     resolve(result);
                 }
@@ -108,8 +106,6 @@ class MongoDB {
                 if (err) {
                     reject(err);
                 } else {
-                    // self.logger.log(" inserted " + result.result.n);
-    //                console.log(result);
                     resolve(result.result.n);
                 }
             });
@@ -129,15 +125,16 @@ class MongoDB {
         return new Promise(function (resolve, reject) {
 
             self.profilerStart('>mongo.update:'+collName);
-            collection.updateOne(query, updateObject, options, 
+            collection.updateOne(query, updateObject, options,
                 function (err, result) {
                 self.profilerEnd();
 
                 if (err) {
                     reject(err);
                 } else {
-                    self.logger.log(" updated " + JSON.parse(result).n );
-                    resolve(JSON.parse(result).n );
+                    const n = result.modifiedCount ?? result.matchedCount ?? 0;
+                    self.logger.log(" updated " + n);
+                    resolve(n);
                 }
             });
         });
@@ -154,14 +151,15 @@ class MongoDB {
         return new Promise(function (resolve, reject) {
 
             self.profilerStart('>mongo.update:'+collName);
-            collection.update(query, updateObject, options,
+            collection.updateMany(query, updateObject, options,
                 function (err, result) {
                     self.profilerEnd();
                     if (err) {
                         reject(err);
                     } else {
-                        self.logger.log(" updated " + JSON.parse(result).n);
-                        resolve(JSON.parse(result).n);
+                        const n = result.modifiedCount ?? result.matchedCount ?? 0;
+                        self.logger.log(" updated " + n);
+                        resolve(n);
                     }
                 });
         });
@@ -189,7 +187,7 @@ class MongoDB {
                         reject(err);
                     } else {
 
-                        self.logger.log("remove done for  " + JSON.parse(result).n + " docs in " + collName);
+                        self.logger.log("remove done for " + result.deletedCount + " docs in " + collName);
 
                         resolve(result);
                     }
@@ -217,7 +215,7 @@ class MongoDB {
                     reject(err);
                 } else {
 
-                    self.logger.log("remove done for " + id + " >" + JSON.parse(result).n );
+                    self.logger.log("remove done for " + id + " >" + result.deletedCount);
 
                     resolve(result);
                 }
@@ -226,24 +224,24 @@ class MongoDB {
     }
 
     async connect() {
-        // Return new promise 
+        // Return new promise
         const MongoClient = require('mongodb').MongoClient;
 
         const client = new MongoClient(this.dbConfig.db_url , { useUnifiedTopology: true });
 
-    return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
 
-        // Use connect method to connect to the Server
-        client.connect(function (err) {
-            // Do async job
-            if (err) {
-                reject(err);
-                client.close();
-            } else {
-                resolve(client);
-            }
+            // Use connect method to connect to the Server
+            client.connect(function (err) {
+                // Do async job
+                if (err) {
+                    reject(err);
+                    client.close();
+                } else {
+                    resolve(client);
+                }
+            })
         })
-    })
     }
 }
 

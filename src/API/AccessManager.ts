@@ -6,38 +6,35 @@ enum USER_ROLE {
     DESIGNER = 'DESIGNER'
 }
 
-var byPass = false;
 class SecureUser implements ISecureUser {
     userName;
     userGroups;
     tenantId?;
     modelsOwner?;
+
+    static isSecurityBypassed(): boolean {
+        return typeof process !== 'undefined' &&
+            (process.env.REQUIRE_AUTHENTICATION === 'false' || process.env.ENFORCE_SECURITY === 'false');
+    }
+
     constructor(params: IUserInfo) {
         Object.assign(this, params);
-
-        if (typeof process !=='undefined' && (process.env.REQUIRE_AUTHENTICATION === 'false' || process.env.ENFORCE_SECURITY === 'false')) {
-            console.log('****Security is disabled as requested in .env****');
-            byPass = true;
-        }
-        else
-            console.log('Security is enabled as requested in .env');
-
     }
     static SystemUser() {
         return new SecureUser({ userName: 'system', userGroups: [USER_ROLE.SYSTEM], tenantId: null, modelsOwner: null });
     }
     isAdmin(): boolean {
-        if (byPass)
+        if (SecureUser.isSecurityBypassed())
             return true;
         return (this.userGroups.includes(USER_ROLE.ADMIN) || this.userGroups.includes(USER_ROLE.SYSTEM));
     }
     isSystem(): boolean {
-        if (byPass)
+        if (SecureUser.isSecurityBypassed())
             return true;
         return (this.userGroups.includes(USER_ROLE.SYSTEM));
     }
     inGroup(userGroup) :boolean {
-        if (byPass)
+        if (SecureUser.isSecurityBypassed())
             return true;
         return (this.userGroups.includes(userGroup))
     }
@@ -47,7 +44,7 @@ class SecureUser implements ISecureUser {
      * @returns query
      */
     qualifyInstances(query) {
-        if (byPass)
+        if (SecureUser.isSecurityBypassed())
             return query;
         if (this.tenantId)
             query['tenantId'] = this.tenantId;
@@ -74,7 +71,7 @@ class SecureUser implements ISecureUser {
      * @returns query
      */
     qualifyItems(query) {
-        if (byPass)
+        if (SecureUser.isSecurityBypassed())
             return query;
         return this.qualifyInstances(query);
 
@@ -119,7 +116,7 @@ class SecureUser implements ISecureUser {
      * @returns query
      */
     qualifyModels(query) {
-        if (byPass)
+        if (SecureUser.isSecurityBypassed())
             return true;
         if (this.modelsOwner)
             query['owner'] = this.modelsOwner;

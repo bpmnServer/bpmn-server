@@ -7,12 +7,24 @@ import { DataStore } from '../datastore';
 import { exec } from 'child_process';
 
 
+/**
+ * Core orchestrator for BPMN process execution.
+ *
+ * Manages the full lifecycle of process instances: starting new processes,
+ * resuming waiting items, handling signals/messages, and timer events.
+ * All operations acquire an instance lock before modifying state and release it on completion.
+ */
 class Engine extends ServerComponent implements IEngine{
 
 	runningCounter=0;
 	callsCounter=0;
+	/**
+	 * Creates an Engine instance bound to the given server context.
+	 *
+	 * @param server	the server providing dataStore, definitions, cache, and appDelegate
+	 */
 	constructor(server) {
-		
+
 		super(server);
     }
 
@@ -78,8 +90,16 @@ class Engine extends ServerComponent implements IEngine{
 		
 	}
 
+	/**
+	 * Restarts a completed or terminated item, allowing re-execution from that point.
+	 *
+	 * @param itemQuery		criteria to locate the item to restart
+	 * @param data			input data for the restarted item
+	 * @param userName		user performing the restart
+	 * @param options		execution options
+	 */
 	public async restart(itemQuery, data:any,userName, options={}) :Promise<Execution>  {
-	
+
 		this.logger.log(`^Action:engine.restart`);
 		let execution;
 		this.runningCounter++;
@@ -112,20 +132,17 @@ class Engine extends ServerComponent implements IEngine{
 	
 	
 	/**
-	 * restores an instance into memeory or provides you access to a running instance
-	 * 
-	 * this will also resume execution
-	 * 
-		* @param instanceQuery		criteria to fetch the instance
-		*
-		* query example:
-		* 
-		* ```jsonl
-		* { id: instanceId}
-		* { data: {caseId: 1005}}
-		* { items.id : 'abcc111322'}
-		* { items.itemKey : 'businesskey here'}
-		* ```
+	 * Restores an instance into memory and returns the execution.
+	 *
+	 * @param instanceQuery		criteria to fetch the instance
+	 *
+	 * Query examples:
+	 * ```
+	 * { id: instanceId }
+	 * { data: { caseId: 1005 } }
+	 * { "items.id": "abcc111322" }
+	 * { "items.itemKey": "businesskey here" }
+	 * ```
 	 */
 	async get(instanceQuery): Promise<Execution> {
 
@@ -138,10 +155,9 @@ class Engine extends ServerComponent implements IEngine{
 		lock instance 
 	*/
 	private async lock(executionId) {
-			this.logger.log('...locking ..'+executionId);
-			await this.server.dataStore.locker.lock(executionId);
-			
-			this.logger.log('   locking complete' + executionId);
+		this.logger.log('...locking ..'+executionId);
+		await this.server.dataStore.locker.lock(executionId);
+		this.logger.log('   locking complete' + executionId);
 	}
 	/**
 		release instance lock
@@ -150,29 +166,15 @@ class Engine extends ServerComponent implements IEngine{
 		if (id===null)
 			id =execution.id;
 		this.logger.log('...unlocking ..' + id);
-			await this.server.dataStore.locker.release(id);
-			if (execution)
-				execution.isLocked=false;
+		await this.server.dataStore.locker.release(id);
+		if (execution)
+			execution.isLocked=false;
 	}
 	/***
 		Loads instance into memory for purpose of execution
 		Locks instance first if required
 		check if in cache
 	*/
-	/*static restorePromise = null;
-	private async restore(instanceId): Promise<Execution> {
-
-		if (Engine.restorePromise)
-			await Engine.restorePromise;
-
-		Engine.restorePromise = this.doRestore(instanceId);
-
-		let ret=await Engine.restorePromise;
-
-		Engine.restorePromise = null;
-		return ret;
-	}
-	 */
 	private async restore(instanceId,itemId=null): Promise<Execution> {
 
 		// need to load instance first
@@ -191,12 +193,6 @@ class Engine extends ServerComponent implements IEngine{
 			execution = await Execution.restore(this.server,instance,itemId);
 
 			execution.isLocked = true;
-			/* new dataStore for every execution to be monitored 
-			const newDataStore = new DataStore(execution.server);
-			execution.server.dataStore = newDataStore;
-
-			newDataStore.monitorExecution(execution); */
-
 
 			this.cache.add(execution);
 			this.logger.log("restore completed: "+instance.saved);
@@ -205,18 +201,25 @@ class Engine extends ServerComponent implements IEngine{
 
 		return execution;
 	}
+	/**
+	 * Convenience wrapper around {@link invoke} for signaling a single waiting item.
+	 *
+	 * @param itemQuery		criteria to retrieve the item
+	 * @param data			data to pass to the item
+	 */
 	async invokeItem(itemQuery, data = {}): Promise<Execution> {
 
 		return await this.invoke(itemQuery, data);
 	}
 	/**
-	 * update an existing item that is in a wait state with an assignment
-	 * can modify data or assignment or both
-	 * 
-	 * -------------------------------------------------
-	 *		
+	 * Updates an existing item that is in a wait state with an assignment.
+	 * Can modify data, assignment, or both without completing the item.
+	 *
 	 * @param itemQuery		criteria to retrieve the item
-	 * @param data
+	 * @param data			data to merge into the item
+	 * @param assignment	assignment fields (e.g. assignee, candidateGroups)
+	 * @param userName		user performing the assignment
+	 * @param options		execution options
 	 */
 	async assign(itemQuery, data = {}, assignment = {}, userName: string,options= {}): Promise<Execution> {
 		
@@ -257,20 +260,23 @@ class Engine extends ServerComponent implements IEngine{
 
 	}
 	/**
-     * Continue an existing item that is in a wait state
-     *
-     * -------------------------------------------------
-     * 
-     * scenario:
-     * 
-     * ```
-     * itemId 	{itemId: value }
-     * itemKey 	{itemKey: value}
-     * instance,task	{instanceId: instanceId, elementId: value }
-     * ```
-	 *		
+	 * Continues a waiting item by signaling its token with input data.
+	 *
+	 * Uses a two-phase signal when `options.noWait` is true:
+	 *   - Phase 1 (`signalItem`): sets up context, passes data to the token, saves, and returns immediately.
+	 *   - Phase 2 (`signalItemContinue`): runs in the background to complete execution and release the lock.
+	 *
+	 * Query examples:
+	 * ```
+	 * { itemId: value }
+	 * { itemKey: value }
+	 * { instanceId: instanceId, elementId: value }
+	 * ```
+	 *
 	 * @param itemQuery		criteria to retrieve the item
-	 * @param data
+	 * @param data			input data to pass to the item
+	 * @param userName		user performing the invocation
+	 * @param options		execution options; set `noWait: true` for async two-phase signal
 	 */
 	async invoke(itemQuery, data = {}, userName: string = null, options = {}): Promise<Execution> {
 
@@ -293,46 +299,39 @@ class Engine extends ServerComponent implements IEngine{
 
 			if (item.status !== 'wait') {
 				this.logger.log(`*****Item status is not in wait state ${item.status} ${item.elementId}-${item.processName}`)
-                    //this.logger.error(`Item status is not in wait state`);
             }
 			execution = await this.restore(item.instanceId);
 
 			await execution.signalItem(item.id, this.sanitizeData(data),userName,options);
 			let exeItem=execution.item;
 
-			try {
+				try {
 				if (options['noWait'] == true) {
 					this.logger.log(`.noWait`);
 					let self=this;
 					execution.save();
-					execution.worker=execution.signalItem2(item.id);
-					execution.worker.then(async function (obj) { 
-			//			await execution.signalItem2(item.id);
+					execution.worker=execution.signalItemContinue(item.id);
+					execution.worker.then(async function (obj) {
 						self.logger.log('after worker is done releasing ..'+item.instanceId);
 						self.release(execution);
-						});
+					});
 					return execution;
 				}
 				else {
-					// await execution.signalItem2(item.id); not needed since signal() issues goNext()
-					
 					this.logger.log(`.engine.continue ended`);
-
 					await this.release(execution);
 					return execution;
 				}
 			}
-			catch(exc)
-			{
-					await this.release(execution);
-					throw exc;
+			catch(exc) {
+				await this.release(execution);
+				throw exc;
 			}
-
 			finally {
 				if (execution && execution.isLocked)
 					await this.release(execution);
 			}
-			}
+		}
 		catch (exc) {
 			return await this.exception(exc,execution); 
 		}
@@ -343,11 +342,14 @@ class Engine extends ServerComponent implements IEngine{
 		}
 	}
 	/**
-	 * 
-	 *	Repeat Timers need to create new Item
-	 * @param instanceId
-	 * @param elementId
-	 * @param data
+	 * Creates a new item for a repeating timer event on an existing instance.
+	 *
+	 * Called by the Cron scheduler when a repeat-cycle timer fires again.
+	 *
+	 * @param instanceId	the instance to attach the new timer item to
+	 * @param prevItem		the previous timer item that triggered this repeat
+	 * @param data			input data for the new timer item
+	 * @param options		execution options
 	 */
 	async startRepeatTimerEvent(instanceId, prevItem, data = {},options={}) : Promise<Execution> {
 
@@ -377,19 +379,16 @@ class Engine extends ServerComponent implements IEngine{
 		}
 	}
 	/**
-	 * 
-	 * Invoking an event (usually start event of a secondary process) against an existing instance
-	 * or
-	 * Invoking a start event (of a secondary process) against an existing instance
-	 * ----------------------------------------------------------------------------
-	 *	 instance,task 
-	 *```
-	 *	{instanceId: instanceId, elementId: value } 
-	 *```
-	 *		
-	 * @param instanceId
-	 * @param elementId
-	 * @param data
+	 * Invokes a start event (typically from a secondary process) against an existing instance.
+	 *
+	 * Used when a signal or message triggers a new event subprocess or secondary
+	 * start event within an already-running instance.
+	 *
+	 * @param instanceId	the running instance to target
+	 * @param elementId		the start event element id to invoke
+	 * @param data			input data for the event
+	 * @param userName		user triggering the event
+	 * @param options		execution options
 	 */
 	async startEvent(instanceId, elementId, data = {},userName: string = null, options = {}) : Promise<Execution> {
 
@@ -419,6 +418,16 @@ class Engine extends ServerComponent implements IEngine{
 		}
 
 	}
+	/**
+	 * Throws a BPMN message event.
+	 *
+	 * First checks model definitions for a matching start event to launch a new instance.
+	 * If none found, searches running instances for a waiting item with the given messageId.
+	 *
+	 * @param messageId		the message id as defined in the BPMN model
+	 * @param data			message payload
+	 * @param matchingQuery	additional criteria to narrow down the target item
+	 */
 	async throwMessage(messageId, data = {}, matchingQuery = {}): Promise<Execution> {
 
 		this.logger.log('..^Action:engine.throwMessage ', messageId,this.sanitizeData(data),matchingQuery);
@@ -515,7 +524,6 @@ class Engine extends ServerComponent implements IEngine{
 
 			for (var i = 0; i < items.length; i++) {
 				let item = items[i];
-//				console.log(`Throw Signal ${signalId} found target: ${item.processName} ${item.id}`);
 				this.logger.log('..^Action:engine.Throw Signal found target', item.processName,item.id );
 				var res=await this.invoke({ "items.id": item.id }, this.sanitizeData(data));
 				instances.push({instanceId:res.instance.id,itemId:item.id});
@@ -523,26 +531,32 @@ class Engine extends ServerComponent implements IEngine{
 		}
 		return instances;
 	}
+	/**
+	 * Returns current engine status counters.
+	 */
 	status() {
 		return { running: this.runningCounter, calls: this.callsCounter };
 	}
 	
 	/**
- * 
- * @param model 
- * @param afterNodeIds
- */
-    async upgrade(model:string,afterNodeIds:string[]):Promise<string[]|{errors}> {
-    
-		let ds=this.server.dataStore;
+	 * Upgrades running instances to a new model source.
+	 *
+	 * Finds all instances of the given model that have not yet reached any of
+	 * the specified nodes, then replaces their stored BPMN source with the latest version.
+	 *
+	 * @param model			name of the BPMN model to upgrade
+	 * @param afterNodeIds	exclude instances that have already passed through these nodes
+	 * @returns				list of upgraded instance ids, or an error object
+	 */
+	async upgrade(model:string,afterNodeIds:string[]):Promise<string[]|{errors}> {
 
-	//    {"name":"boundary-event","$nor":[{"items":{"$elemMatch":{"elementId":"Reminder-Timer"}}}]}
+		let ds=this.server.dataStore;
 		let query={"name":model};
 
 		if (afterNodeIds.length>0) {
 			let nors = [];
 			afterNodeIds.forEach(node=>{
-			nors.push({"items":{"elemMatch":{"elementId":node}}});
+				nors.push({"items":{"elemMatch":{"elementId":node}}});
 			});
 			query["$nor"]=nors;
 		}
@@ -555,28 +569,30 @@ class Engine extends ServerComponent implements IEngine{
 		const resIds=[];
 		let self=this;
 		for(let i=0;i<insts.length;i++) {
-
 			let inst=insts[i];
-				await self.lock(inst.id);
-				try {
-					await ds.db.update(ds.dbConfiguration.db,ds.dbConfiguration.Instance_collection,
-						{ id: inst.id },
-						{
-							$set: {source}
-						});
-					resIds.push(inst.id);
-					}
-				catch(exc) {
-					return {errors:exc};
-				}
-				finally {
-					await self.release(null,inst.id);
-			
-				}
+			await self.lock(inst.id);
+			try {
+				await ds.db.update(ds.dbConfiguration.db,ds.dbConfiguration.Instance_collection,
+					{ id: inst.id },
+					{
+						$set: {source}
+					});
+				resIds.push(inst.id);
+			}
+			catch(exc) {
+				return {errors:exc};
+			}
+			finally {
+				await self.release(null,inst.id);
+			}
 		}
 		return resIds;
 	}
 
+	/**
+	 * Centralized exception handler for engine operations.
+	 * Fires a process_exception event and logs the error.
+	 */
 	private async exception(exc,execution) {
 
 		console.log("Exception: stack",exc.stack);
@@ -586,6 +602,9 @@ class Engine extends ServerComponent implements IEngine{
 		return this.logger.error(exc);
 
 	}
+	/**
+	 * Deep-clones data to prevent mutation of caller's objects during execution.
+	 */
 	private sanitizeData(data) {
 		return JSON.parse(JSON.stringify(data));
 	}

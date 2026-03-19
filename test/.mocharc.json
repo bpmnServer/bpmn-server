@@ -1,0 +1,7 @@
+{
+  "require": ["ts-mocha"],
+  "spec": "test/unit/**/*.test.ts",
+  "timeout": 10000,
+  "recursive": true,
+  "node-option": ["no-experimental-strip-types"]
+}

@@ -84,9 +84,7 @@ enum ITEM_STATUS {
 
 }
 
-//type ITEMSTATUS = 'enter' | 'start' | 'wait' | 'end' | 'terminated' | 'discard';
-
-enum EXECUTION_STATUS { running='running',wait='wait', end = 'end' , terminated ='terminated' }
+enum EXECUTION_STATUS { running='running',wait='wait', end = 'end' , terminated ='terminated', error='error' }
 
 enum TOKEN_STATUS { running = 'running', wait = 'wait', end = 'end', terminated = 'terminated' , queued = 'queued' }
 /*

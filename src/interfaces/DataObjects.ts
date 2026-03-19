@@ -1,4 +1,64 @@
-import { ITEM_STATUS, } from './Enums';
+import { ITEM_STATUS, EXECUTION_STATUS, BPMN_TYPE } from './Enums';
+
+/** MongoDB-style query operator for field-level conditions */
+type QueryOperator<T> = T | {
+    $eq?: T;
+    $gt?: T;
+    $gte?: T;
+    $lt?: T;
+    $lte?: T;
+    $in?: T[];
+    $exists?: boolean;
+};
+
+/**
+ * Query for locating process instances.
+ * Supports direct instance fields, dot-notation item fields, and data fields.
+ */
+interface InstanceQuery {
+    id?: QueryOperator<string>;
+    name?: QueryOperator<string>;
+    status?: QueryOperator<EXECUTION_STATUS>;
+    startedAt?: QueryOperator<Date>;
+    endedAt?: QueryOperator<Date>;
+    version?: QueryOperator<number>;
+    parentItemId?: QueryOperator<string>;
+    /** Dot-notation item fields (e.g., 'items.status', 'items.elementId') */
+    'items.id'?: QueryOperator<string>;
+    'items.status'?: QueryOperator<ITEM_STATUS>;
+    'items.elementId'?: QueryOperator<string>;
+    'items.itemKey'?: QueryOperator<string>;
+    'items.type'?: QueryOperator<string | BPMN_TYPE>;
+    'items.assignee'?: QueryOperator<string | null>;
+    'items.candidateUsers'?: QueryOperator<string | null>;
+    'items.candidateGroups'?: QueryOperator<string | null>;
+    'items.messageId'?: QueryOperator<string>;
+    'items.signalId'?: QueryOperator<string>;
+    'items.timeDue'?: QueryOperator<Date> | { $exists: boolean };
+    'items.name'?: QueryOperator<string>;
+    /** $or for complex queries (e.g., security qualification) */
+    $or?: InstanceQuery[];
+    /** Open for data.* fields and other custom filters */
+    [key: string]: any;
+}
+
+/**
+ * Query for locating specific items within instances.
+ * Same shape as InstanceQuery since items are queried via instance-level MongoDB queries.
+ */
+type ItemQuery = InstanceQuery;
+
+/** Input data passed to engine operations (start, invoke, signal, etc.) */
+type InputData = Record<string, any>;
+
+/** Assignment data for user task assignment (assignee, candidateUsers, candidateGroups, etc.) */
+type AssignmentData = Record<string, any>;
+
+/** Matching query for throwMessage / throwSignal */
+type MatchingQuery = Record<string, any>;
+
+/** Options for findInstances projection */
+type FindOption = 'summary' | 'full';
 
 interface IItemData {
     id: string;            // System generated unique Id
@@ -110,4 +170,5 @@ interface IProcessData {
     historyTimeToLive;
     isStartableInTasklist;
 }
-export { IItemData, IInstanceData , IDefinitionData, IElementData, IFlowData , IBpmnModelData, IProcessData, IEventData }
+export { IItemData, IInstanceData , IDefinitionData, IElementData, IFlowData , IBpmnModelData, IProcessData, IEventData,
+    InstanceQuery, ItemQuery, InputData, AssignmentData, MatchingQuery, FindOption, QueryOperator }

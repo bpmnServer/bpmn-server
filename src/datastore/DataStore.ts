@@ -12,7 +12,13 @@ import { InstanceLocker } from './';
 import { QueryTranslator } from './QueryTranslator';
 import { Aggregate} from './Aggregate'
 
- 
+/**
+ * Persistence layer for BPMN process instances.
+ *
+ * Manages saving, loading, querying, and deleting instance state in MongoDB.
+ * Provides locking via {@link InstanceLocker} to prevent concurrent writes,
+ * and supports optional save-points for instance restart.
+ */
 class DataStore extends ServerComponent  implements IDataStore {
 
 	dbConfiguration;
@@ -63,8 +69,6 @@ class DataStore extends ServerComponent  implements IDataStore {
 		}
 		const instanceData = recs[0];
 
-//		this.logger.log(" instance obj found" + instanceData.id);
-
 		return { instance: instanceData, items: this.getItemsFromInstances([instanceData]) };
 	}
 	/*
@@ -106,7 +110,6 @@ class DataStore extends ServerComponent  implements IDataStore {
 	// save instance to DB
 	static seq = 0;
 	private async saveInstance(instance,options={}) {
-//		this.logger.log("Saving...");
 
 		let saveObject=
 			{	version: instance.version,startedAt: instance.startedAt,endedAt: instance.endedAt, status: instance.status, saved: instance.saved,
@@ -254,15 +257,12 @@ class DataStore extends ServerComponent  implements IDataStore {
 	 * @param query
 	 */
 	async findItems(query) : Promise<IItemData[]> {
-		// let us rebuild the query form {status: value} to >  "tokens.items.status": "wait" 
 		const trans = new QueryTranslator('items');
 		const result = trans.translateCriteria(query);
 		const projection = { id: 1, data: 1, name: 1, version:1, "items": 1 , "tokens":1};
 		var records = await this.db.find(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, result, projection);
-		// console.log('...find items for query:', query, " translated to :", JSON.stringify(result),  " recs:" , records.length)
 
 		const items=this.getItemsFromInstances(records, result,trans);
-		//		this.logger.log('...find items for ' + JSON.stringify(query) + " result :" + JSON.stringify(result) + " instances:" + records.length+ " items: "+items.length);
 		return items;
 	}
 

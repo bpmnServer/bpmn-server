@@ -109,13 +109,12 @@ class Gateway extends Node {
                         // fix to bug #233 -- gateway mixes incoming flow for loops
                         //  loops need to be split by using keys
                         //  Rule: gateway inside a loop only waits of the loop flows
-                      if (token.itemsKey!==null && item.token.itemsKey!==null) 
-                        {
-                        if ((item.token.itemsKey+'.'+token.itemsKey).startsWith(token.itemsKey+'.'))
-                        related.push(token);
+                        if (token.itemsKey !== null && item.token.itemsKey !== null) {
+                            if ((item.token.itemsKey + '.' + token.itemsKey).startsWith(token.itemsKey + '.'))
+                                related.push(token);
                         }
-                      else  // normal case no keys
-                        related.push(token);
+                        else  // normal case no keys
+                            related.push(token);
                     } 
                         
                 }
@@ -169,11 +168,11 @@ class Gateway extends Node {
                 if (this.type == BPMN_TYPE.ExclusiveGateway) {
 
                     item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: cancel other pendingTokens.length=' + result.pendingTokens.length);
-                    result.pendingTokens.forEach(async t => {
+                    for (const t of result.pendingTokens) {
                         item.token.log("..cancel ending token #" + t.id);
                         t.currentItem.status = ITEM_STATUS.end;
                         await t.terminate();
-                    });
+                    }
 
                 }
                 else {
@@ -188,22 +187,17 @@ class Gateway extends Node {
 
                 item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: let us converge now waitingTokens.length=' + result.waitingTokens.length);
                 item.token.log('..let us converge now ');
-                result.waitingTokens.forEach(async t => {
+                for (const t of result.waitingTokens) {
                     item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: ..converging ending token ' + t.id);
                     item.token.log("..converging ending token #" + t.id);
                     t.currentItem.status = ITEM_STATUS.end;
                     await t.end(true);
-                    //await t.terminate();
-                });
+                }
 
-                
+
                 // -------------------------------------------------------------------------------------------------
                 // Create a new Token at converging  gateway
                 // -------------------------------------------------------------------------------------------------
-                //item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: Creating a new Token at converging  gateway ..... ');
-                //await Token.startNewToken(TOKEN_TYPE.Primary,item.token.execution, item.token.currentNode, null, item.token, item, null);
-                //item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: new Token created ');
-
                 item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: converged! all waiting tokens ended');
 
                 const oldCurrentToken = item.token;
@@ -235,15 +229,14 @@ class Gateway extends Node {
                 }
             }
             else { // there are still pending tokens need to be cancelled or ended
-                result.waitingTokens.forEach(async t => {
+                for (const t of result.waitingTokens) {
                     item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: ..converging ending token ' + t.id);
                     item.token.log("..converging ending token #" + t.id);
                     t.currentItem.status = ITEM_STATUS.end;
                     await t.end(true);
-                    //await t.terminate();
-               });
-               return NODE_ACTION.continue;
-        }
+                }
+                return NODE_ACTION.continue;
+            }
 
         }
     }
@@ -294,8 +287,7 @@ class EventBasedGateway extends Gateway {
         this.working = true;
         const self = this;
 
-        endingItem.token.execution.tokens.forEach(async function (token) {
-
+        for (const token of endingItem.token.execution.tokens.values()) {
             if (token.status == TOKEN_STATUS.wait && token.currentItem.id != endingItem.id) {
                 if (token.originItem && token.originItem.node.id == self.id)
                      {
@@ -305,7 +297,7 @@ class EventBasedGateway extends Gateway {
                     await token.terminate();
                 }
             }
-        });
+        }
         this.working = false;
     }
 }
