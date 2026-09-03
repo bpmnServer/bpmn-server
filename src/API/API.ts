@@ -15,26 +15,37 @@ import {
  * 
  *  api.engine  to access engine functions (start,invoke..)
  *  api.data    to access dataStore functions (find.. delete)
- *  api.model   to access Model functions (list,save,export..)
+ *
+ *  Model administration is intentionally available only through BPMNAdminAPI.
  * 
  * 
  *  api cli:
  *  >api engine start       --name 'Buy Used Car'   --data caseId 1003
  *  >api engine invoke      --query name 'Buy Used Car' items.status wait name 'Buy'     --data carModel 'Mazda 3'
  *  >api data   findItems   --query name 'Buy Used Car' items.status wait
- *  >api model  list
  */
 class BPMNAPI {
     server: IBPMNServer;
     engine: APIEngine;
     data: APIData;
-    model: APIModel;
     defaultUser: ISecureUser;
 
     constructor(server: IBPMNServer) {
         this.server = server;
         this.engine = new APIEngine(this);
         this.data = new APIData(this);
+    }
+}
+
+/**
+ * Privileged API used by deployment and model-management tooling.
+ * Runtime integrations should receive BPMNAPI so they cannot mutate models.
+ */
+class BPMNAdminAPI extends BPMNAPI {
+    model: APIModel;
+
+    constructor(server: IBPMNServer) {
+        super(server);
         this.model = new APIModel(this);
     }
 }
@@ -333,6 +344,7 @@ class APIModel extends APIComponent {
         return await this.server.definitions.findEvents(query, user.modelsOwner);
     }
     public async delete(name, user?: ISecureUser) {
+        user=this.getUser(user);
         if (await user.canDeleteModel(name))
             return await this.server.definitions.deleteModel(name, user.modelsOwner);
         return false;
@@ -345,9 +357,11 @@ class APIModel extends APIComponent {
         return false;
     }
     public async getSource(name, user?: ISecureUser) {
+        user=this.getUser(user);
         return await this.server.definitions.getSource(name, user.modelsOwner);
     }
     public async load(name, user?: ISecureUser) {
+        user=this.getUser(user);
         return await this.server.definitions.load(name, user.modelsOwner);
     }
     public async export(query, folder, user?: ISecureUser) {
@@ -355,4 +369,4 @@ class APIModel extends APIComponent {
     }
 }
 
-export { BPMNAPI, APIEngine, APIData, APIModel  }
+export { BPMNAPI, BPMNAdminAPI, APIEngine, APIData, APIModel }

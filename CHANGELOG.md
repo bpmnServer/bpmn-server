@@ -12,6 +12,12 @@ and here
 
 ### Changed
 -->
+## Unreleased — Separate runtime and administration APIs (#2)
+
+- Keep workflow execution operations on `BPMNAPI`.
+- Move workflow-definition administration to the explicit `BPMNAdminAPI` surface.
+- Add boundary tests preventing runtime clients from acquiring model-management capabilities.
+
 ## Release 2.3.8  -- 2026-3-15
 Fix NPM i
 ## Release 2.3.7  -- 2026-02-04
