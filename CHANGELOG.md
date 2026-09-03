@@ -12,6 +12,12 @@ and here
 
 ### Changed
 -->
+## Unreleased — Require trusted workflow principals (#4)
+
+- Require authenticated principals for workflow execution operations.
+- Remove the runtime API's implicit default-user fallback.
+- Reject engine calls when the integration layer has not supplied a trusted principal.
+
 ## Unreleased — Separate runtime and administration APIs (#2)
 
 - Keep workflow execution operations on `BPMNAPI`.

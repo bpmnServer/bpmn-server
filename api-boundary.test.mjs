@@ -18,3 +18,8 @@ test('admin API explicitly exposes model administration', () => {
     assert.ok(api.engine);
     assert.ok(api.data);
 });
+
+test('API rejects calls without a trusted principal', async () => {
+    const api = new BPMNAPI({ engine: { invoke: () => assert.fail('engine must not be called') } });
+    await assert.rejects(() => api.engine.invoke({}, {}), /authenticated principal is required/);
+});
