@@ -23,3 +23,31 @@ test('API rejects calls without a trusted principal', async () => {
     const api = new BPMNAPI({ engine: { invoke: () => assert.fail('engine must not be called') } });
     await assert.rejects(() => api.engine.invoke({}, {}), /authenticated principal is required/);
 });
+
+test('migrated legacy operations qualify queries before reaching the engine or datastore', async () => {
+    const calls = [];
+    const principal = {
+        userName: 'alice',
+        qualifyItems: query => ({ ...query, authorizedItem: true }),
+        qualifyInstances: query => ({ ...query, authorizedInstance: true })
+    };
+    const api = new BPMNAPI({
+        engine: {
+            get: query => { calls.push(['get', query]); return {}; },
+            restart: (query, data, userName) => { calls.push(['restart', query, userName]); return {}; }
+        },
+        dataStore: {
+            find: options => { calls.push(['find', options]); return {}; }
+        }
+    });
+
+    await api.engine.get({ id: 1 }, principal);
+    await api.engine.restart({ id: 2 }, {}, principal);
+    await api.data.find({ filter: { status: 'running' } }, principal);
+
+    assert.deepEqual(calls, [
+        ['get', { id: 1, authorizedItem: true }],
+        ['restart', { id: 2, authorizedItem: true }, 'alice'],
+        ['find', { filter: { status: 'running', authorizedInstance: true } }]
+    ]);
+});

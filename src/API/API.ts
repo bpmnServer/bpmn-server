@@ -119,6 +119,11 @@ export interface IAPIEngine {
 */
     startEvent(query, elementId, data: {}, user: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
 
+/**
+ * Retrieve one execution after applying the caller's item-level authorization.
+ */
+    get(query, user: ISecureUser): Promise<IExecution>;
+
 
 /**
  * 
@@ -131,7 +136,7 @@ export interface IAPIEngine {
  * @param inputData
  * 
  */
-    restart(itemQuery, data:any,userName, options?) :Promise<IExecution>;
+    restart(itemQuery, data:any, user: ISecureUser, options?) :Promise<IExecution>;
 
 /**
  * upgrade running instances with the latest revised bpmn model
@@ -150,6 +155,10 @@ export interface IAPIEngine {
 
 
 export interface IAPIData {
+/**
+ * Run a cursor-based instance query after qualifying its filter for the caller.
+ */
+     find(options, user: ISecureUser);
 /**
     returns list of `User Tasks` that the user has access to
 
@@ -261,9 +270,17 @@ class APIEngine extends APIComponent implements IAPIEngine {
     }
     public async startEvent(query, elementId, data = {}, user?: ISecureUser, options:IEngineOptions = {}): Promise<IExecution> {
         user=this.getUser(user);
+        query = user.qualifyItems(query);
         return await this.server.engine.startEvent(query, elementId, data,user.userName,options);
     }
+    public async get(query, user?: ISecureUser): Promise<IExecution> {
+        user=this.getUser(user);
+        query = user.qualifyItems(query);
+        return await this.server.engine.get(query);
+    }
     public async restart(itemQuery, data:any,user:ISecureUser, options={}) :Promise<IExecution>  {
+        user=this.getUser(user);
+        itemQuery = user.qualifyItems(itemQuery);
         return await this.server.engine.restart(itemQuery, data,user.userName, options);
 
     }
@@ -272,6 +289,11 @@ class APIEngine extends APIComponent implements IAPIEngine {
     }
 }
 class APIData extends APIComponent {
+    public async find(options: any = {}, user?: ISecureUser) {
+        user=this.getUser(user);
+        options = { ...options, filter: user.qualifyInstances(options.filter || {}) };
+        return await this.server.dataStore.find(options);
+    }
     public async getPendingUserTasks(query, user?: ISecureUser): Promise<IItemData[]> {
 
         query['items.status'] = 'wait';
