@@ -114,7 +114,9 @@ class Token implements IToken {
         this.execution = execution;
         this.type = type;
 
-        if (dataPath)
+        // '' is a real value (instance root scope) and must survive a save/restore;
+        // only null/undefined mean "inherit from parent".
+        if (dataPath !== null && dataPath !== undefined)
             this.dataPath = dataPath;
         else if (parentToken)
             this.dataPath=parentToken.dataPath;

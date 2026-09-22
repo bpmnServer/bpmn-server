@@ -438,8 +438,16 @@ class Node extends Element {
         // check for attachments - boundary events:
         for (i = 0; i < this.attachments.length; i++) {
             let event = this.attachments[i];
-            if (event.subType!==NODE_SUBTYPE.compensate)
-                await Token.startNewToken(TOKEN_TYPE.BoundaryEvent, item.token.execution, event, null, token, item, null);
+            if (event.subType!==NODE_SUBTYPE.compensate) {
+                // The boundary token stays a child of `token` (so getScopeCatchEvent can find it),
+                // but its DATA scope must be the scope the attached activity lives in. For an
+                // embedded subprocess `token` is the child token scoped to the subprocess
+                // (dataPath = subprocess id); inheriting that leaks the whole downstream path
+                // into instance.data[<subprocessId>] once the boundary fires.
+                const bt = await Token.startNewToken(TOKEN_TYPE.BoundaryEvent, item.token.execution, event, null, token, item, null, null, true);
+                bt.dataPath = item.token.dataPath;
+                await bt.execute(null);
+            }
         }
 
 
