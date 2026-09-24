@@ -12,6 +12,11 @@ and here
 
 ### Changed
 -->
+## Unreleased — Authorize migrated legacy operations (#5)
+
+- Add authorized runtime API wrappers for cursor-based find, execution lookup, and restart.
+- Qualify every migrated query through the trusted principal before engine or datastore access.
+
 ## Unreleased — Require trusted workflow principals (#4)
 
 - Require authenticated principals for workflow execution operations.
