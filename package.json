@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc --build",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "test:boundary": "node --test api-boundary.test.mjs"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

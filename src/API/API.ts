@@ -15,26 +15,36 @@ import {
  * 
  *  api.engine  to access engine functions (start,invoke..)
  *  api.data    to access dataStore functions (find.. delete)
- *  api.model   to access Model functions (list,save,export..)
+ *
+ *  Model administration is intentionally available only through BPMNAdminAPI.
  * 
  * 
  *  api cli:
  *  >api engine start       --name 'Buy Used Car'   --data caseId 1003
  *  >api engine invoke      --query name 'Buy Used Car' items.status wait name 'Buy'     --data carModel 'Mazda 3'
  *  >api data   findItems   --query name 'Buy Used Car' items.status wait
- *  >api model  list
  */
 class BPMNAPI {
     server: IBPMNServer;
     engine: APIEngine;
     data: APIData;
-    model: APIModel;
-    defaultUser: ISecureUser;
 
     constructor(server: IBPMNServer) {
         this.server = server;
         this.engine = new APIEngine(this);
         this.data = new APIData(this);
+    }
+}
+
+/**
+ * Privileged API used by deployment and model-management tooling.
+ * Runtime integrations should receive BPMNAPI so they cannot mutate models.
+ */
+class BPMNAdminAPI extends BPMNAPI {
+    model: APIModel;
+
+    constructor(server: IBPMNServer) {
+        super(server);
         this.model = new APIModel(this);
     }
 }
@@ -48,11 +58,8 @@ class APIComponent {
         return this.api.server;
     }
     getUser(user) {
-        if (!user)
-            return this.api.defaultUser;
-        else
-            return user;
-
+        if (!user) throw new Error('A trusted authenticated principal is required');
+        return user;
     }
 }
 /**
@@ -93,24 +100,24 @@ export interface IAPIEngine {
 /**
     continue with the execution of a particular item that is in a wait state, typically a user task
 */
-    invoke(query, data: {}, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
+    invoke(query, data: {}, user: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
 /**
     provide assignment data to a user task
     Also, updates item data
 */
-    assign(query, data, assignment, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
+    assign(query, data, assignment, user: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
 /**
     throw a message with an id, system will identify receiving item
 */
-    throwMessage(messageId, data, messageMatchingKey, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
+    throwMessage(messageId, data, messageMatchingKey, user: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
 /**
     throw a signal with an id, system will identify receiving item(s)
 */
-    throwSignal(signalId, data, messageMatchingKey, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
+    throwSignal(signalId, data, messageMatchingKey, user: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
 /**
     start a second event node (in a subprocess) for a running instance
 */
-    startEvent(query, elementId, data: {}, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
+    startEvent(query, elementId, data: {}, user: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
 
 
 /**
@@ -245,12 +252,15 @@ class APIEngine extends APIComponent implements IAPIEngine {
         return await this.server.engine.assign(query, data, assignment, user.userName, options);
     }
     public async throwMessage(messageId, data, messageMatchingKey, user?: ISecureUser, options:IEngineOptions = {}) {
+        this.getUser(user);
         return await this.server.engine.throwMessage(messageId, data, messageMatchingKey);
     }
     public async throwSignal(signalId, data, messageMatchingKey, user?: ISecureUser, options:IEngineOptions = {}) {
+        this.getUser(user);
         return await this.server.engine.throwSignal(signalId, data, messageMatchingKey);
     }
     public async startEvent(query, elementId, data = {}, user?: ISecureUser, options:IEngineOptions = {}): Promise<IExecution> {
+        user=this.getUser(user);
         return await this.server.engine.startEvent(query, elementId, data,user.userName,options);
     }
     public async restart(itemQuery, data:any,user:ISecureUser, options={}) :Promise<IExecution>  {
@@ -333,6 +343,7 @@ class APIModel extends APIComponent {
         return await this.server.definitions.findEvents(query, user.modelsOwner);
     }
     public async delete(name, user?: ISecureUser) {
+        user=this.getUser(user);
         if (await user.canDeleteModel(name))
             return await this.server.definitions.deleteModel(name, user.modelsOwner);
         return false;
@@ -345,9 +356,11 @@ class APIModel extends APIComponent {
         return false;
     }
     public async getSource(name, user?: ISecureUser) {
+        user=this.getUser(user);
         return await this.server.definitions.getSource(name, user.modelsOwner);
     }
     public async load(name, user?: ISecureUser) {
+        user=this.getUser(user);
         return await this.server.definitions.load(name, user.modelsOwner);
     }
     public async export(query, folder, user?: ISecureUser) {
@@ -355,4 +368,4 @@ class APIModel extends APIComponent {
     }
 }
 
-export { BPMNAPI, APIEngine, APIData, APIModel  }
+export { BPMNAPI, BPMNAdminAPI, APIEngine, APIData, APIModel }
