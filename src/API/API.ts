@@ -28,7 +28,6 @@ class BPMNAPI {
     server: IBPMNServer;
     engine: APIEngine;
     data: APIData;
-    defaultUser: ISecureUser;
 
     constructor(server: IBPMNServer) {
         this.server = server;
@@ -59,11 +58,8 @@ class APIComponent {
         return this.api.server;
     }
     getUser(user) {
-        if (!user)
-            return this.api.defaultUser;
-        else
-            return user;
-
+        if (!user) throw new Error('A trusted authenticated principal is required');
+        return user;
     }
 }
 /**
@@ -104,24 +100,24 @@ export interface IAPIEngine {
 /**
     continue with the execution of a particular item that is in a wait state, typically a user task
 */
-    invoke(query, data: {}, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
+    invoke(query, data: {}, user: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
 /**
     provide assignment data to a user task
     Also, updates item data
 */
-    assign(query, data, assignment, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
+    assign(query, data, assignment, user: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
 /**
     throw a message with an id, system will identify receiving item
 */
-    throwMessage(messageId, data, messageMatchingKey, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
+    throwMessage(messageId, data, messageMatchingKey, user: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
 /**
     throw a signal with an id, system will identify receiving item(s)
 */
-    throwSignal(signalId, data, messageMatchingKey, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
+    throwSignal(signalId, data, messageMatchingKey, user: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
 /**
     start a second event node (in a subprocess) for a running instance
 */
-    startEvent(query, elementId, data: {}, user?: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
+    startEvent(query, elementId, data: {}, user: ISecureUser, options?:IEngineOptions): Promise<IExecution>;
 
 
 /**
@@ -256,12 +252,15 @@ class APIEngine extends APIComponent implements IAPIEngine {
         return await this.server.engine.assign(query, data, assignment, user.userName, options);
     }
     public async throwMessage(messageId, data, messageMatchingKey, user?: ISecureUser, options:IEngineOptions = {}) {
+        this.getUser(user);
         return await this.server.engine.throwMessage(messageId, data, messageMatchingKey);
     }
     public async throwSignal(signalId, data, messageMatchingKey, user?: ISecureUser, options:IEngineOptions = {}) {
+        this.getUser(user);
         return await this.server.engine.throwSignal(signalId, data, messageMatchingKey);
     }
     public async startEvent(query, elementId, data = {}, user?: ISecureUser, options:IEngineOptions = {}): Promise<IExecution> {
+        user=this.getUser(user);
         return await this.server.engine.startEvent(query, elementId, data,user.userName,options);
     }
     public async restart(itemQuery, data:any,user:ISecureUser, options={}) :Promise<IExecution>  {
