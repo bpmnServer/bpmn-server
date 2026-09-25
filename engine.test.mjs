@@ -72,6 +72,82 @@ test('Buy Used Car (gateways + user tasks) starts and waits on a user task', asy
     `instance status=${resp.instance.status}`);
 });
 
+test('user task start applies assignment metadata from BPMN attributes', async () => {
+  const resp = await server.engine.start('Buy Used Car', { caseId: 30 }, null, 'buyer-a');
+  const buyItems = itemBy(resp, 'task_Buy');
+  assert.equal(buyItems.length, 1, 'Buy task should be created once');
+
+  const buy = buyItems[0];
+  assert.equal(buy.status, 'wait');
+  assert.equal(buy.assignee, 'buyer-a');
+  assert.deepEqual(buy.candidateUsers, ['User1', 'User2']);
+  assert.deepEqual(buy.candidateGroups, ['Employee', 'Manager']);
+  assert.equal(buy.priority, '5');
+  assert.ok(buy.dueDate, 'due date should be evaluated');
+  assert.ok(buy.followUpDate, 'follow-up date should be evaluated');
+});
+
+test('assign updates a waiting user task without completing it', async () => {
+  const resp = await server.engine.start('Buy Used Car', { caseId: 31 }, null, 'buyer-b');
+  const buy = itemBy(resp, 'task_Buy')[0];
+
+  const assignedExecution = await server.engine.assign(
+    { "items.id": buy.id },
+    { assignmentNote: 'ready for review' },
+    { assignee: 'agent-1' },
+    'manager-1',
+  );
+  await assignedExecution.worker;
+
+  const assigned = await server.dataStore.findItem({ "items.id": buy.id });
+  assert.equal(assigned.status, 'wait');
+  assert.equal(assigned.assignee, 'agent-1');
+  assert.equal(assigned.instanceData.assignmentNote, 'ready for review');
+});
+
+test('invoking Buy Used Car with default gateway path reaches Drive only', async () => {
+  const resp = await server.engine.start('Buy Used Car', { caseId: 32 }, null, 'buyer-c');
+  const buy = itemBy(resp, 'task_Buy')[0];
+
+  const invoked = await server.engine.invoke(
+    { "items.id": buy.id },
+    { needsRepairs: 'No', needsCleaning: 'No' },
+    'buyer-c',
+  );
+
+  assert.equal(itemBy(invoked, 'task_repair').length, 0, 'repair task should not be created');
+  assert.equal(itemBy(invoked, 'task_clean').length, 0, 'clean task should not be created');
+  assert.equal(itemBy(invoked, 'task_Drive').length, 1, 'default path should reach Drive');
+  assert.equal(itemBy(invoked, 'task_Drive')[0].status, 'wait');
+});
+
+test('invoking Buy Used Car with both conditions creates both branch tasks', async () => {
+  const resp = await server.engine.start('Buy Used Car', { caseId: 33 }, null, 'buyer-d');
+  const buy = itemBy(resp, 'task_Buy')[0];
+
+  const invoked = await server.engine.invoke(
+    { "items.id": buy.id },
+    { needsRepairs: 'Yes', needsCleaning: 'Yes' },
+    'buyer-d',
+  );
+
+  assert.equal(itemBy(invoked, 'task_repair').length, 1, 'repair branch should be taken');
+  assert.equal(itemBy(invoked, 'task_clean').length, 1, 'clean branch should be taken');
+  assert.equal(itemBy(invoked, 'task_Drive').length, 0, 'parallel join should wait for branch tasks');
+  assert.ok(itemBy(invoked, 'task_repair').every(i => i.status === 'wait'));
+  assert.ok(itemBy(invoked, 'task_clean').every(i => i.status === 'wait'));
+});
+
+test('validation listener rejects invalid Buy task data', async () => {
+  const resp = await server.engine.start('Buy Used Car', { caseId: 34 }, null, 'buyer-e');
+  const buy = itemBy(resp, 'task_Buy')[0];
+
+  await assert.rejects(
+    () => server.engine.invoke({ "items.id": buy.id }, { needsRepairs: '' }, 'buyer-e'),
+    /Validation failed with error:Invalid values/,
+  );
+});
+
 test('loop process executes the loop body more than once', async () => {
   const resp = await server.engine.start('loop', { caseId: 4 });
   assert.ok(resp.execution);
@@ -94,6 +170,43 @@ test('multiple instances persist and are independently retrievable', async () =>
   assert.notEqual(a.instance.id, b.instance.id);
   const all = await server.dataStore.findInstances({}, 'summary');
   assert.ok(all.length >= 2, `expected >=2 instances, got ${all.length}`);
+});
+
+test('datastore findItem reports zero and multiple matches distinctly', async () => {
+  await assert.rejects(
+    () => server.dataStore.findItem({ "items.id": 'missing-item-id' }),
+    /No items found/,
+  );
+
+  await assert.rejects(
+    () => server.dataStore.findItem({ "items.elementId": 'task1' }),
+    /More than one record found/,
+  );
+});
+
+test('datastore summary projection omits source and logs while full includes them', async () => {
+  const resp = await server.engine.start('simple', { caseId: 40 });
+
+  const summary = await server.dataStore.findInstances({ id: resp.instance.id }, 'summary');
+  assert.equal(summary.length, 1);
+  assert.equal('source' in summary[0], false);
+  assert.equal('logs' in summary[0], false);
+
+  const full = await server.dataStore.findInstances({ id: resp.instance.id }, 'full');
+  assert.equal(full.length, 1);
+  assert.equal(typeof full[0].source, 'string');
+  assert.ok(Array.isArray(full[0].logs));
+});
+
+test('datastore deleteInstances removes only matching instances', async () => {
+  const keep = await server.engine.start('simple', { caseId: 41 });
+  const remove = await server.engine.start('simple', { caseId: 42 });
+
+  const result = await server.dataStore.deleteInstances({ "data.caseId": 42 });
+  assert.equal(result.deletedCount, 1);
+
+  assert.equal((await server.dataStore.findInstances({ id: keep.instance.id }, 'summary')).length, 1);
+  assert.equal((await server.dataStore.findInstances({ id: remove.instance.id }, 'summary')).length, 0);
 });
 
 test.after(() => { setImmediate(() => process.exit(0)); });

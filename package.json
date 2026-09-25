@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc --build",
+    "test": "node --test *.test.mjs",
     "clean": "rimraf dist",
     "test:boundary": "node --test api-boundary.test.mjs"
   },

@@ -16,6 +16,8 @@ tsconfig.tsbuildinfo
 # Transpiled JavaScript files from Typescript
 /dist
 # generated docs
+# Test coverage output
+/coverage
 
 
 
