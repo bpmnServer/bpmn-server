@@ -43,7 +43,7 @@ class MongoDB {
         this.profilerStart('>mongo.find:' + collName);
         let cursor = collection.find(qry);
         if (projection) cursor = cursor.project(projection) as any;
-        else if (sort) cursor = cursor.sort(sort);
+        if (sort) cursor = cursor.sort(sort);
 
         try {
             return await cursor.toArray();

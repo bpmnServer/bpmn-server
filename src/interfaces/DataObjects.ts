@@ -31,6 +31,7 @@ interface IItemData {
 }
 interface IInstanceData {
     id;
+    tenantId?: string;
     name;
     status;
     version;

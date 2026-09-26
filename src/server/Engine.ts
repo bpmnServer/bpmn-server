@@ -44,20 +44,22 @@ class Engine extends ServerComponent implements IEngine{
 		execution.userName = userName;
 		execution.operation='start';
 		execution.options=options;
+		execution.instance.tenantId = options['tenantId'];
 	
 		this.cache.add(execution);
 
+		let handedOff = false;
 		try {
 			await this.lock(execution.id);
 			execution.isLocked = true;
 
 
 			if (options['noWait'] == true) {
-				execution.worker = execution.execute(startNodeId, this.sanitizeData(data), options);
-				execution.worker.then(async (obj)=>{ 
-						this.logger.log('after worker is done releasing ..'+execution.instance.id);
-						await this.release(execution);
-						});
+				execution.worker = execution.execute(startNodeId, this.sanitizeData(data), options)
+					.finally(() => this.release(execution));
+				// Preserve the rejection on worker while preventing an unhandled rejection.
+				execution.worker.catch(err => this.logger.log(err));
+				handedOff = true;
 				return execution;
 			}
 			else {
@@ -72,7 +74,7 @@ class Engine extends ServerComponent implements IEngine{
 		}
 		finally {
 			this.runningCounter--;
-			if (execution && execution.isLocked)
+			if (!handedOff && execution && execution.isLocked)
 				await this.release(execution);
 		}
 		
@@ -179,31 +181,22 @@ class Engine extends ServerComponent implements IEngine{
 		let execution;
 
 		await this.lock(instanceId);	// if fails throws exception
-
-		let instance = await this.dataStore.findInstance({ id: instanceId }, 'Full');
-
-		const live = this.cache.getInstance(instance.id);
-		if (live) {
-
-			execution = live;
-		}
-		else {
-			execution = await Execution.restore(this.server,instance,itemId);
-
+		try {
+			const instance = await this.dataStore.findInstance({ id: instanceId }, 'full');
+			const live = this.cache.getInstance(instance.id);
+			if (live) {
+				execution = live;
+			} else {
+				execution = await Execution.restore(this.server, instance, itemId);
+				this.cache.add(execution);
+				this.logger.log("restore completed: " + instance.saved);
+			}
 			execution.isLocked = true;
-			/* new dataStore for every execution to be monitored 
-			const newDataStore = new DataStore(execution.server);
-			execution.server.dataStore = newDataStore;
-
-			newDataStore.monitorExecution(execution); */
-
-
-			this.cache.add(execution);
-			this.logger.log("restore completed: "+instance.saved);
-
+			return execution;
+		} catch (error) {
+			await this.server.dataStore.locker.release(instanceId);
+			throw error;
 		}
-
-		return execution;
 	}
 	async invokeItem(itemQuery, data = {}): Promise<Execution> {
 
@@ -239,7 +232,7 @@ class Engine extends ServerComponent implements IEngine{
 
 			execution = await this.restore(item.instanceId);
 
-			execution.worker = execution.assign(item.id, this.sanitizeData(data), assignment, userName,options);
+			await execution.assign(item.id, this.sanitizeData(data), assignment, userName,options);
 
 			await this.release(execution);
 
@@ -277,6 +270,7 @@ class Engine extends ServerComponent implements IEngine{
 		this.logger.log(`^Action:engine.invoke`);
 		this.logger.log(itemQuery);
 		let execution;
+		let handedOff = false;
 		this.runningCounter++;
 		this.callsCounter++;
 
@@ -304,13 +298,12 @@ class Engine extends ServerComponent implements IEngine{
 				if (options['noWait'] == true) {
 					this.logger.log(`.noWait`);
 					let self=this;
-					execution.save();
-					execution.worker=execution.signalItem2(item.id);
-					execution.worker.then(async function (obj) { 
-			//			await execution.signalItem2(item.id);
-						self.logger.log('after worker is done releasing ..'+item.instanceId);
-						self.release(execution);
-						});
+					execution.worker=(async () => {
+						await execution.save();
+						return execution.signalItem2(item.id);
+					})().finally(() => self.release(execution));
+					execution.worker.catch(err => self.logger.log(err));
+					handedOff = true;
 					return execution;
 				}
 				else {
@@ -329,7 +322,7 @@ class Engine extends ServerComponent implements IEngine{
 			}
 
 			finally {
-				if (execution && execution.isLocked)
+				if (!handedOff && execution && execution.isLocked)
 					await this.release(execution);
 			}
 			}
@@ -338,7 +331,7 @@ class Engine extends ServerComponent implements IEngine{
 		}
 		finally {
 			this.runningCounter--;
-			if (execution && execution.isLocked)
+			if (!handedOff && execution && execution.isLocked)
 				await this.release(execution);
 		}
 	}
