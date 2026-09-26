@@ -82,6 +82,19 @@ test('find with projection and with sort both run (branch coverage)', async () =
   assert.equal((await db.find('app', 'wf', {}, null, { id: 1 })).length, 1); // sort branch
 });
 
+test('find applies sort even when a projection is provided', async () => {
+  const calls = [];
+  const cursor = {
+    project: () => { calls.push('project'); return cursor; },
+    sort: () => { calls.push('sort'); return cursor; },
+    toArray: async () => [],
+  };
+  const db = freshDB({});
+  db.client = { db: () => ({ collection: () => ({ find: () => cursor }) }) };
+  await db.find('app', 'wf', {}, { id: 1 }, { id: -1 });
+  assert.deepEqual(calls, ['project', 'sort']);
+});
+
 test('update returns modifiedCount and mutates the doc', async () => {
   const store = {}; const db = freshDB(store);
   await db.insert('app', 'wf', [{ id: 'a', status: 'open' }]);

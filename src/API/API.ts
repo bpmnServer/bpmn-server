@@ -142,7 +142,7 @@ export interface IAPIEngine {
  * @param afterNodeIds  list of nodeIds, to check if already started, don't apply the upgrade
  * 
  */
-    upgrade(model:string,afterNodeIds:string[]):Promise<string[]|{errors}>;
+    upgrade(model:string,afterNodeIds:string[], user: ISecureUser):Promise<string[]|{errors}>;
 
 
 
@@ -237,8 +237,9 @@ get(query:any ,user: ISecureUser): Promise<object[]>;
 class APIEngine extends APIComponent implements IAPIEngine {
 
     public async start(name, data = {}, user?: ISecureUser, options: IEngineOptions = {}): Promise<IExecution> {
-
-        return await this.server.engine.start(name, data, options['startNodeId'], this.getUser(user).userName, options);
+        user = this.getUser(user);
+        return await this.server.engine.start(name, data, options['startNodeId'], user.userName,
+            { ...options, tenantId: user.tenantId });
     }
     public async invoke(query, data = {}, user?: ISecureUser, options:IEngineOptions = {}): Promise<IExecution> {
         user=this.getUser(user);
@@ -252,22 +253,28 @@ class APIEngine extends APIComponent implements IAPIEngine {
         return await this.server.engine.assign(query, data, assignment, user.userName, options);
     }
     public async throwMessage(messageId, data, messageMatchingKey, user?: ISecureUser, options:IEngineOptions = {}) {
-        this.getUser(user);
+        // Messages and signals can start or resume any matching process; the engine
+        // does not currently support tenant-scoped delivery.
+        if (!this.getUser(user).isSystem()) throw new Error('System permission is required to throw a message');
         return await this.server.engine.throwMessage(messageId, data, messageMatchingKey);
     }
     public async throwSignal(signalId, data, messageMatchingKey, user?: ISecureUser, options:IEngineOptions = {}) {
-        this.getUser(user);
+        if (!this.getUser(user).isSystem()) throw new Error('System permission is required to throw a signal');
         return await this.server.engine.throwSignal(signalId, data, messageMatchingKey);
     }
     public async startEvent(query, elementId, data = {}, user?: ISecureUser, options:IEngineOptions = {}): Promise<IExecution> {
         user=this.getUser(user);
-        return await this.server.engine.startEvent(query, elementId, data,user.userName,options);
+        const instance = await this.server.dataStore.findInstance(user.qualifyInstances({ id: query }), 'summary');
+        return await this.server.engine.startEvent(instance.id, elementId, data,user.userName,options);
     }
     public async restart(itemQuery, data:any,user:ISecureUser, options={}) :Promise<IExecution>  {
-        return await this.server.engine.restart(itemQuery, data,user.userName, options);
+        user = this.getUser(user);
+        return await this.server.engine.restart(user.qualifyItems({ ...itemQuery }), data,user.userName, options);
 
     }
-    public async upgrade(model,afterNodeIds) {
+    public async upgrade(model,afterNodeIds,user?: ISecureUser) {
+        user = this.getUser(user);
+        if (!user.isSystem()) throw new Error('System permission is required to upgrade instances');
         return await this.server.engine.upgrade(model,afterNodeIds)
     }
 }
@@ -294,7 +301,11 @@ class APIData extends APIComponent {
     public async findInstances(query, user?: ISecureUser, options?): Promise<IInstanceData[]> {
         user=this.getUser(user);
         query = user.qualifyInstances(query);
-        return await this.server.dataStore.findInstances(query, options);
+        const instances = await this.server.dataStore.findInstances(query, options);
+        if (user.isAdmin()) return instances;
+        // Matching one accessible task does not authorize other tasks or process data.
+        return instances.map(({ id, name, status, version, startedAt, endedAt, saved }) =>
+            ({ id, name, status, version, startedAt, endedAt, saved } as IInstanceData));
     }
     public async deleteInstances(query, user?: ISecureUser) {
         user=this.getUser(user);

@@ -109,7 +109,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 //		this.logger.log("Saving...");
 
 		let saveObject=
-			{	version: instance.version,startedAt: instance.startedAt,endedAt: instance.endedAt, status: instance.status, saved: instance.saved,
+			{	version: instance.version,tenantId: instance.tenantId,startedAt: instance.startedAt,endedAt: instance.endedAt, status: instance.status, saved: instance.saved,
 				tokens: instance.tokens, items: instance.items, loops: instance.loops, name: instance.name,
 				data: instance.data , parentItemId: instance.parentItemId
 			};
