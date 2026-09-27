@@ -58,7 +58,8 @@ class Definition implements IDefinition{
         
         const eventSubProcesses = [];
         // process flowElements i.e. nodes 
-        processElement.flowElements.forEach(child => {
+        // BPMN moddle omits this optional collection for an empty process or subprocess.
+        (processElement.flowElements ?? []).forEach(child => {
             //
             let el = definition.elementsById[child.id];
             let node;
