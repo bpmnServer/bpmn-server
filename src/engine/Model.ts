@@ -7,6 +7,7 @@ import { BPMN_TYPE } from '../elements/index.js';
  * */
 class InstanceObject implements IInstanceData {
     id;
+    tenantId?: string;
     name;
     status : EXECUTION_STATUS;
     version=null;

@@ -53,6 +53,39 @@ test('parse + start a simple process and persist an instance', async () => {
   assert.equal(loaded.length, 1, 'instance retrievable via datastore.findInstances');
 });
 
+test('started instance persists its tenant marker', async () => {
+  const resp = await server.engine.start('simple', { caseId: 101 }, null, 'alice', { tenantId: 'tenant-a' });
+  const [saved] = await server.dataStore.findInstances({ id: resp.instance.id }, 'full');
+  assert.equal(saved.tenantId, 'tenant-a');
+  assert.equal(resp.instance.tenantId, 'tenant-a');
+});
+
+test('noWait start holds the instance lock until its worker settles', async () => {
+  const isolated = makeServer();
+  await isolated.dataStore.install();
+  const execution = await isolated.engine.start('simple', { caseId: 102 }, null, 'alice', { noWait: true });
+  assert.equal(execution.isLocked, true);
+  await execution.worker;
+  assert.equal(execution.isLocked, false);
+});
+
+test('restore releases its lock if loading the instance fails', async () => {
+  const isolated = makeServer();
+  await isolated.dataStore.install();
+  const originalFind = isolated.dataStore.findInstance.bind(isolated.dataStore);
+  let calls = 0;
+  isolated.dataStore.findInstance = async (...args) => {
+    if (++calls === 2) throw new Error('load failed');
+    return { id: 'instance-restore-failure' };
+  };
+  try {
+    await assert.rejects(isolated.engine.get({ id: 'instance-restore-failure' }), /load failed/);
+    assert.deepEqual(await isolated.dataStore.locker.list(), []);
+  } finally {
+    isolated.dataStore.findInstance = originalFind;
+  }
+});
+
 test('exclusive gateway routes and reaches an end state', async () => {
   const resp = await server.engine.start('test-exclusive-gateway', { caseId: 2 });
   assert.ok(resp.execution);
@@ -97,7 +130,7 @@ test('assign updates a waiting user task without completing it', async () => {
     { assignee: 'agent-1' },
     'manager-1',
   );
-  await assignedExecution.worker;
+  assert.equal(assignedExecution.isLocked, false, 'assignment finishes before the lock is released');
 
   const assigned = await server.dataStore.findItem({ "items.id": buy.id });
   assert.equal(assigned.status, 'wait');
