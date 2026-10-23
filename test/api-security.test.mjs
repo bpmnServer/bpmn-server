@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { BPMNAPI, SecureUser } from './dist/index.js';
+import { BPMNAPI, SecureUser } from '../dist/index.js';
 
 const alice = new SecureUser({ userName: 'alice', userGroups: ['staff'], tenantId: 'tenant-a' });
 const admin = new SecureUser({ userName: 'admin', userGroups: ['ADMIN'], tenantId: 'tenant-a' });

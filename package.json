@@ -1,16 +1,15 @@
 {
   "name": "bpmn-server",
-  "version": "3.0.3",
+  "version": "3.1.0",
   "description": "BPMN 2.0 Server including Modeling, Execution and Persistence, an open source for Node.js",
   "license": "MIT",
   "type": "module",
   "scripts": {
     "build": "tsc --build",
-    "test": "node --test --test-concurrency=1 *.test.mjs \"test/*.test.mjs\"",
+    "test": "node --test --test-concurrency=1 \"test/*.test.mjs\"",
     "clean": "rimraf dist",
-    "test:boundary": "node --test api-boundary.test.mjs",
+    "test:boundary": "node --test test/api-boundary.test.mjs",
     "pretest": "tsc --build",
-    "test:engine": "node --test --test-concurrency=1 \"test/*.test.mjs\"",
     "test:scenarios": "mocha --config test/scenarios/.mocharc.json"
   },
   "main": "dist/index.js",

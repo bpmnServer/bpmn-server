@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   BPMNServer, Configuration, ModelsDatastore, DataStore,
   NoCacheManager, Logger, DefaultAppDelegate, ScriptHandler,
-} from './dist/index.js';
+} from '../dist/index.js';
 import { MemoryMongoDB } from './MemoryMongoDB.mjs';
 
 import { mkdtempSync, writeFileSync } from 'node:fs';

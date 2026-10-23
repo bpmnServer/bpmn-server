@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { Definition } from './dist/elements/Definition.js';
+import { Definition } from '../dist/elements/Definition.js';
 
 test('loads a BPMN process with no flow elements', async () => {
   const source = `<?xml version="1.0" encoding="UTF-8"?>

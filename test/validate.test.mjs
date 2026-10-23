@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { MongoClient, ObjectId } from 'mongodb';
-import { MongoDB } from './dist/datastore/MongoDB.js';
+import { MongoDB } from '../dist/datastore/MongoDB.js';
 
 // ---------------------------------------------------------------------------
 // SUITE 1 — real mongodb@7 API contract: every surface MongoDB.ts depends on

@@ -3,7 +3,7 @@
 // Skips itself if MONGO_URL is unset, so it's CI-safe.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { MongoDB } from './dist/datastore/MongoDB.js';
+import { MongoDB } from '../dist/datastore/MongoDB.js';
 
 const URL = process.env.MONGO_URL;
 const DB = process.env.MONGO_DB || 'bpmn_migration_check';
