@@ -132,8 +132,9 @@ class QueryTranslator {
 			let val = i;
 			if (key.includes('.')) {
 				let ks = key.split('.');
+				// An item without the path's parent has no value at it (not an error).
 				ks.forEach(k => {
-					val = val[k];
+					val = val == null ? undefined : val[k];
 				});
 			}
 			else 
@@ -185,12 +186,8 @@ class QueryTranslator {
 					break;
 				case '$exists':
 					 
-					if ((!val) && term == false)
-						ret=true;
-					if ((val) && term == true)
-						ret=true;
-					else 
-						ret=false;
+					// Whether the item has a value there, as asked (the upstream's `$exists: false` never held).
+					ret = term ? val !== undefined && val !== null : val === undefined || val === null;
 					
 					break;
 				case '$in':

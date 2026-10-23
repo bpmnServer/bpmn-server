@@ -1,9 +1,11 @@
 import { Execution } from '../engine/Execution.js';
 import { Token, TOKEN_TYPE } from '../engine/Token.js';
-import { ScriptHandler } from '../index.js';
+import { ScriptHandler } from '../engine/ScriptHandler.js';
 
-import { Node, Definition } from './index.js';
-import { IExecution, NODE_SUBTYPE } from '../interfaces/index.js';
+import { Definition } from './Definition.js';
+import { Node } from './Node.js';
+import { NODE_SUBTYPE } from '../interfaces/Enums.js';
+import type { IExecution } from '../interfaces/engine.js';
 
 
 class Process {

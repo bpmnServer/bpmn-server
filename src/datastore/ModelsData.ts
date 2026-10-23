@@ -1,5 +1,5 @@
-import { Definition } from "../index.js";
-import { IProcessData, IBpmnModelData, IEventData } from "../interfaces/index.js";
+import { Definition } from '../elements/Definition.js';
+import type { IProcessData, IBpmnModelData, IEventData } from '../interfaces/DataObjects.js';
 
 class BpmnModelData implements IBpmnModelData {
     name;

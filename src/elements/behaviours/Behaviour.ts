@@ -1,7 +1,12 @@
-import { TimerBehaviour, CamundaFormData, IOBehaviour, MessageEventBehaviour, SignalEventBehaviour, TerminateBehaviour, LoopBehaviour } from "./index.js";
-import  type { Node } from "../index.js";
+import { CamundaFormData } from './Form.js';
+import { IOBehaviour } from './IOBehaviour.js';
+import { LoopBehaviour } from './Loop.js';
+import { MessageEventBehaviour, SignalEventBehaviour } from './MessageSignal.js';
+import { TerminateBehaviour } from './Terminate.js';
+import { TimerBehaviour } from './Timer.js';
+import type { Node } from '../Node.js';
 import type { Item } from "../../engine/Item.js";
-import { IItem } from "../../index.js";
+import type { IItem } from '../../interfaces/engine.js';
 import { ScriptBehaviour } from "./Script.js";
 
 

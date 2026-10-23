@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:collaboration id="Collaboration_1h9md97">
+    <bpmn2:participant id="Participant_1my7i70" processRef="Process_1" />
+  </bpmn2:collaboration>
+  <bpmn2:process id="Process_1" isExecutable="false">
+    <bpmn2:sequenceFlow id="Flow_1rzl3ui" sourceRef="StartEvent_1" targetRef="Activity_0j772hc" />
+    <bpmn2:startEvent id="Event_0l8efkv" name="Signal-102">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">data.caseId = input.caseId;
+data.signal = 'signal-102';
+data.check=true;</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>Flow_0ex807n</bpmn2:outgoing>
+      <bpmn2:signalEventDefinition id="SignalEventDefinition_0qi0pgo" signalRef="Signal_0pz3ifx" />
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="Flow_0ex807n" sourceRef="Event_0l8efkv" targetRef="Activity_0j772hc" />
+    <bpmn2:startEvent id="StartEvent_1" name="Signal-101">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">data.caseId = input.caseId;
+data.signal = 'signal-101';</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>Flow_1rzl3ui</bpmn2:outgoing>
+      <bpmn2:signalEventDefinition id="SignalEventDefinition_0klf34a" signalRef="Signal_0zgxvib" />
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="Flow_0kfjhvf" sourceRef="Activity_0j772hc" targetRef="Event_0f5gkmt" />
+    <bpmn2:sequenceFlow id="Flow_1u7k3fy" sourceRef="Event_0f5gkmt" targetRef="Event_0c5xml3" />
+    <bpmn2:scriptTask id="Activity_0j772hc" name="Script" scriptFormat="JavaScript">
+      <bpmn2:incoming>Flow_1rzl3ui</bpmn2:incoming>
+      <bpmn2:incoming>Flow_0ex807n</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0kfjhvf</bpmn2:outgoing>
+      <bpmn2:script></bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:endEvent id="Event_0c5xml3">
+      <bpmn2:incoming>Flow_1u7k3fy</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:intermediateCatchEvent id="Event_0f5gkmt" name="Signal-103">
+      <bpmn2:incoming>Flow_0kfjhvf</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1u7k3fy</bpmn2:outgoing>
+      <bpmn2:signalEventDefinition id="SignalEventDefinition_0r5hyrj" signalRef="Signal_0969f2b" />
+    </bpmn2:intermediateCatchEvent>
+    <bpmn2:textAnnotation id="TextAnnotation_1nlfra1">
+      <bpmn2:text>start-script   data.caseId = input.caseId;
+data.signal = 'signal-101';</bpmn2:text>
+    </bpmn2:textAnnotation>
+    <bpmn2:association id="Association_00u32nb" sourceRef="StartEvent_1" targetRef="TextAnnotation_1nlfra1" />
+    <bpmn2:textAnnotation id="TextAnnotation_1fulrby">
+      <bpmn2:text>start=script    data.caseId = input.caseId;
+data.signal = 'signal-102';</bpmn2:text>
+    </bpmn2:textAnnotation>
+    <bpmn2:association id="Association_0nyamk6" sourceRef="Event_0l8efkv" targetRef="TextAnnotation_1fulrby" />
+  </bpmn2:process>
+  <bpmn2:signal id="Signal_0zgxvib" name="Signal-101" />
+  <bpmn2:signal id="Signal_0pz3ifx" name="Signal-102" />
+  <bpmn2:signal id="Signal_0969f2b" name="Signal-103" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1h9md97">
+      <bpmndi:BPMNShape id="Participant_1my7i70_di" bpmnElement="Participant_1my7i70" isHorizontal="true">
+        <dc:Bounds x="210" y="10" width="600" height="330" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1u7k3fy_di" bpmnElement="Flow_1u7k3fy">
+        <di:waypoint x="628" y="140" />
+        <di:waypoint x="712" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kfjhvf_di" bpmnElement="Flow_0kfjhvf">
+        <di:waypoint x="480" y="140" />
+        <di:waypoint x="592" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ex807n_di" bpmnElement="Flow_0ex807n">
+        <di:waypoint x="298" y="250" />
+        <di:waypoint x="430" y="250" />
+        <di:waypoint x="430" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rzl3ui_di" bpmnElement="Flow_1rzl3ui">
+        <di:waypoint x="298" y="140" />
+        <di:waypoint x="380" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1as18rl_di" bpmnElement="Event_0l8efkv">
+        <dc:Bounds x="262" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="254" y="275" width="53" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1dg6xhq_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="262" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="254" y="165" width="53" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0qu0m37_di" bpmnElement="Activity_0j772hc">
+        <dc:Bounds x="380" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0c5xml3_di" bpmnElement="Event_0c5xml3">
+        <dc:Bounds x="712" y="122" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0t0alp8_di" bpmnElement="Event_0f5gkmt">
+        <dc:Bounds x="592" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="584" y="165" width="53" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1nlfra1_di" bpmnElement="TextAnnotation_1nlfra1">
+        <dc:Bounds x="270" y="30" width="250" height="41" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1fulrby_di" bpmnElement="TextAnnotation_1fulrby">
+        <dc:Bounds x="399" y="270" width="243" height="41" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_00u32nb_di" bpmnElement="Association_00u32nb">
+        <di:waypoint x="287" y="124" />
+        <di:waypoint x="309" y="71" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0nyamk6_di" bpmnElement="Association_0nyamk6">
+        <di:waypoint x="298" y="254" />
+        <di:waypoint x="399" y="275" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

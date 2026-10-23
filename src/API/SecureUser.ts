@@ -1,5 +1,5 @@
 import { QueryTranslator } from "../datastore/QueryTranslator.js";
-import { ISecureUser, IUserInfo } from "../interfaces/index.js";
+import type { ISecureUser, IUserInfo } from '../interfaces/User.js';
 
 enum USER_ROLE {
     SYSTEM = 'SYSTEM',  // SYSTEM ADMIN
@@ -30,41 +30,50 @@ enum USER_ROLE {
  *  Warn the User that instance information has changed since last seen
  *  
  * */
-var byPass = false;
+/** Whether the environment turns the security rules off (REQUIRE_AUTHENTICATION=false or ENFORCE_SECURITY=false), read when a user is made. */
+function securityDisabledByEnvironment(): boolean {
+    return typeof process !== 'undefined' && (process.env.REQUIRE_AUTHENTICATION === 'false' || process.env.ENFORCE_SECURITY === 'false');
+}
 
 class SecureUser implements ISecureUser {
     userName;
     userGroups;
     tenantId?;
     modelsOwner?;
-    constructor(params: IUserInfo) {
+    /** Whether the security rules are off for this user: decided when it is made, never changed after, never shared with another user. */
+    readonly #bypass: boolean;
+    private static warned = false;
+
+    /**
+     * @param options.enforceSecurity  true or false decides it for this user; absent, the environment does
+     *                                 (as before, but for this user only: the upstream set it once for the
+     *                                 whole process, and never back)
+     */
+    constructor(params: IUserInfo, options: { enforceSecurity?: boolean } = {}) {
         Object.assign(this, params);
-
-        if (typeof process !=='undefined' && (process.env.REQUIRE_AUTHENTICATION === 'false' || process.env.ENFORCE_SECURITY === 'false')) {
+        this.#bypass = options.enforceSecurity === undefined ? securityDisabledByEnvironment() : !options.enforceSecurity;
+        if (this.#bypass && !SecureUser.warned) {
+            SecureUser.warned = true;
             console.log('****Security is disabled as requested in .env****');
-            byPass = true;
         }
-//        else
-//            console.log('Security is enabled as requested in .env');
-
-//        console.log('new SecureUser', this);
-
     }
+    /** Whether this user's security rules are off. */
+    get securityBypassed(): boolean { return this.#bypass; }
     static SystemUser() {
         return new SecureUser({ userName: 'system', userGroups: [USER_ROLE.SYSTEM], tenantId: null, modelsOwner: null });
     }
     isAdmin(): boolean {
-        if (byPass)
+        if (this.#bypass)
             return true;
         return (this.userGroups.includes(USER_ROLE.ADMIN) || this.userGroups.includes(USER_ROLE.SYSTEM));
     }
     isSystem(): boolean {
-        if (byPass)
+        if (this.#bypass)
             return true;
         return (this.userGroups.includes(USER_ROLE.SYSTEM));
     }
     inGroup(userGroup) :boolean {
-        if (byPass)
+        if (this.#bypass)
             return true;
         return (this.userGroups.includes(userGroup))
     }
@@ -74,7 +83,7 @@ class SecureUser implements ISecureUser {
      * @returns query
      */
     qualifyInstances(query) {
-        if (byPass)
+        if (this.#bypass)
             return query;
         if (this.tenantId)
             query['tenantId'] = this.tenantId;
@@ -113,7 +122,7 @@ class SecureUser implements ISecureUser {
      * @returns query
      */
     qualifyItems(query) {
-        if (byPass)
+        if (this.#bypass)
             return query;
         return this.qualifyInstances(query);
 
@@ -158,7 +167,7 @@ class SecureUser implements ISecureUser {
      * @returns query
      */
     qualifyModels(query) {
-        if (byPass)
+        if (this.#bypass)
             return true;
         if (this.modelsOwner)
             query['owner'] = this.modelsOwner;

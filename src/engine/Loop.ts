@@ -1,9 +1,12 @@
 import { Token, TOKEN_TYPE } from './Token.js';
-import { Node, LoopBehaviour, Behaviour_names, BPMN_TYPE } from '../elements/index.js';
+import { Node } from '../elements/Node.js';
+import { BPMN_TYPE } from '../elements/NodeLoader.js';
+import { Behaviour_names } from '../elements/behaviours/BehaviourLoader.js';
+import { LoopBehaviour } from '../elements/behaviours/Loop.js';
 
 import { Execution } from './Execution.js';
-import { ScriptHandler } from './index.js';
-import { ITEM_STATUS, TOKEN_STATUS } from '../interfaces/index.js';
+import { ScriptHandler } from './ScriptHandler.js';
+import { ITEM_STATUS, TOKEN_STATUS } from '../interfaces/Enums.js';
 
 class Loop {
     id;

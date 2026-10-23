@@ -1,12 +1,15 @@
 
 import { Execution } from '../engine/Execution.js';
 import { Token, TOKEN_TYPE } from '../engine/Token.js';
-import { IBehaviour, Behaviour} from "./behaviours/index.js";
-import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, IFlow, ScriptHandler } from '../index.js';
+import { type IBehaviour, Behaviour } from './behaviours/Behaviour.js';
+import { ScriptHandler } from '../engine/ScriptHandler.js';
+import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../interfaces/Enums.js';
+import type { IFlow } from '../interfaces/elements.js';
 
 import { Item } from '../engine/Item.js';
-import { Node, Element } from './index.js';
-import { IExecution } from '../interfaces/index.js';
+import { Element } from './Element.js';
+import { Node } from './Node.js';
+import type { IExecution } from '../interfaces/engine.js';
 
 class Flow extends Element implements IFlow {
     from: Node;

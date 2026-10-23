@@ -5,12 +5,16 @@ import { BpmnModdle } from 'bpmn-moddle';
 
 //const moddleOptions = require('./js-bpmn-moddle.json');
 
-import { Flow , MessageFlow ,NodeLoader , Process, Behaviour_names } from './index.js'; 
+import { Flow, MessageFlow } from './Flow.js';
+import { NodeLoader } from './NodeLoader.js';
+import { Process } from './Process.js';
+import { Behaviour_names } from './behaviours/BehaviourLoader.js'; 
 import { BPMN_TYPE } from './NodeLoader.js';
 import { IDefinition } from '../interfaces/elements.js';
-import { BPMNServer } from '../server/BPMNServer.js';
-import { EXECUTION_EVENT } from '../interfaces/index.js';
-import { Transaction, SubProcess , AdHocSubProcess } from './index.js';
+import type { IBPMNServer } from '../interfaces/server.js';
+import { EXECUTION_EVENT } from '../interfaces/Enums.js';
+import { SubProcess, AdHocSubProcess } from './Tasks.js';
+import { Transaction } from './Transaction.js';
 
 //DEBUG(moddleOptions);
 function DEBUG(...args) {
@@ -28,7 +32,7 @@ class Definition implements IDefinition{
     server;
     moddle;
     accessRules = [];
-    constructor(name:string,source:string,server:BPMNServer) {
+    constructor(name:string,source:string,server:IBPMNServer) {
         this.server = server;
         this.name = name;
         this.source = source;
@@ -367,45 +371,6 @@ references:
 
 }
 
-    // sorting of json elements
-    let nodes=new Map();
-let sortedNodes=new Map();
-let sortedFlows=new Map();
 
-function sort(def) {
-    def.nodes.forEach(el => {
-        if (el.type=='bpmn:StartEvent')
-            addSorted(el)
-        else
-            nodes.set(el.id,el);
-
-    });
-    let seq=0;
-    let newNodes=[];
-    sortedNodes.forEach(s=>{
-        console.log('sorted',seq,s.id,s.type);
-        newNodes.push(s);
-        s['seq']=seq++; 
-        }
-    );
-    let newFlows=[];
-    sortedFlows.forEach(f=>{newFlows.push(f)});
-    def.nodes=newNodes;
-    def.flows=newFlows;
-
-    return;
-}
-
- 
-function addSorted(el) {
-    nodes.delete(el.id);
-    sortedNodes.set(el.id,el);
-    el.outbounds.forEach(o=>{
-        sortedFlows.set(o.id,o);
-        addSorted(o.to);
-    })
-}
-
-    // end of sorting
 
 export { Definition }

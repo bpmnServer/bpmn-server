@@ -2,7 +2,7 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 'use strict';
 
-import { ILogger } from "../index.js";
+import type { ILogger } from '../interfaces/common.js';
 
 class Logger implements ILogger {
 
@@ -104,12 +104,14 @@ class Logger implements ILogger {
         if (typeof err === 'object') {
             if (err.message) {
                 this.msg(err.message, 'error');
-                console.log('\nError Message: ' + err.message)
+                if (this.toConsole) console.log('\nError Message: ' + err.message)
             }
             if (err.stack) {
-                console.log('\nStacktrace:')
-                console.log('====================')
-                console.log(err.stack);
+                if (this.toConsole) {
+                    console.log('\nStacktrace:')
+                    console.log('====================')
+                    console.log(err.stack);
+                }
                 this.log(err.stack);
             }
         } else {

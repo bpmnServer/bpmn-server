@@ -1,9 +1,10 @@
 
 import { Execution } from '../engine/Execution.js';
 import { Token, TOKEN_TYPE } from '../engine/Token.js';
-import { IBehaviour, Behaviour } from "./behaviours/index.js";
-import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../index.js';
-import { BPMN_TYPE, Node } from './index.js';
+import { type IBehaviour, Behaviour } from './behaviours/Behaviour.js';
+import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../interfaces/Enums.js';
+import { Node } from './Node.js';
+import { BPMN_TYPE } from './NodeLoader.js';
 import { Item } from '../engine/Item.js';
 
 

@@ -1,8 +1,8 @@
-import type { TimerBehaviour } from "./index.js";
-import type { Node } from "../index.js";
-import { Behaviour } from './index.js';
+import type { TimerBehaviour } from './Timer.js';
+import type { Node } from '../Node.js';
+import { Behaviour } from './Behaviour.js';
 import { Item } from "../../engine/Item.js";
-import { NODE_SUBTYPE } from "../../index.js";
+import { NODE_SUBTYPE } from '../../interfaces/Enums.js';
 /**
  * 
  * 
@@ -60,7 +60,8 @@ class SignalEventBehaviour extends Behaviour {
             const output = await this.node.getOutput(item);
             const matchingKey = item.context.messageMatchingKey;
             item.token.log(`.Throwing Signal <${this.signalId}> - output: ${JSON.stringify(output)} - matching key : ${JSON.stringify(matchingKey)}`);
-            item.context.appDelegate.signalThrown(this.signalId, output, matchingKey, item);
+            // Awaited, as a message's is: the delegate's decision is part of the step, and its failure the step's.
+            await item.context.appDelegate.signalThrown(this.signalId, output, matchingKey, item);
         }
 
 

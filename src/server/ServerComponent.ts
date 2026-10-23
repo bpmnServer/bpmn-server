@@ -1,5 +1,6 @@
-import { Cron, CacheManager} from "./index.js";
-import { IEngine, IBPMNServer } from "../interfaces/index.js";
+import type { Cron } from "./Cron.js";
+import type { ICacheManager } from "../interfaces/server.js";
+import type { IEngine, IBPMNServer } from "../interfaces/server.js";
 
 
 /**
@@ -14,10 +15,12 @@ class ServerComponent {
 	get configuration() { return this.server.configuration; }
 	get logger() { return this.server.logger; }
 	get cron(): Cron { return this.server.cron; };
-	get cache(): CacheManager { return this.server.cache; };
+	get cache(): ICacheManager { return this.server.cache; };
 	get appDelegate() { return this.server.appDelegate; }
 	get engine(): IEngine { return this.server.engine; };
 	get dataStore() { return this.server.dataStore; }
+	/** The lock port: the configuration's, else the data store's. */
+	get lockManager() { return this.server.locker ?? this.server.dataStore.locker; }
 	get definitions() { return this.server.definitions; }
 	get listener() { return this.server.listener; }
 	get scriptHandler() { return this.server.scriptHandler; }

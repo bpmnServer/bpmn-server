@@ -1,9 +1,9 @@
 
 
-import { Behaviour } from './index.js';
+import { Behaviour } from './Behaviour.js';
 import { Item } from "../../engine/Item.js";
-import { NODE_SUBTYPE } from "../../index.js";
-import { NODE_ACTION } from "../../interfaces/index.js";
+import { NODE_SUBTYPE } from '../../interfaces/Enums.js';
+import { NODE_ACTION } from '../../interfaces/Enums.js';
 
 
 class EscalationEventBehaviour extends Behaviour {

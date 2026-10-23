@@ -1,6 +1,9 @@
-import { IExecution , ILogger , IItem, IConfiguration, IAppDelegate, IDataStore,IModelsDatastore, IScriptHandler } from '../index.js';
+import type { ILogger, IConfiguration, IAppDelegate } from './common.js';
+import type { IDataStore, IModelsDatastore } from './datastore.js';
+import type { IExecution, IItem, IScriptHandler } from './engine.js';
 import type { EventEmitter } from 'eventemitter3';
 import type { EventEmitter as NodeEventEmitter } from 'events';
+import type { IDocumentStore, ILockManager } from './storage.js';
 
 interface IBPMNServer {
 
@@ -13,6 +16,11 @@ interface IBPMNServer {
     dataStore: IDataStore;
     cache: ICacheManager;
     cron: ICron;
+    /** The lock port the engine uses: the configuration's `locker`, else the data store's. */
+    locker?: ILockManager;
+    /** The storage adapter the configuration's `documentStore` supplied, shared by the data stores; absent for the MongoDB default. */
+    documentStore?: IDocumentStore;
+    scriptHandler?: IScriptHandler;
 
 }
 
@@ -113,6 +121,8 @@ interface IEngine {
     throwMessage(messageId, data: {}, matchingQuery: {}): Promise<IExecution>;
     throwSignal(signalId, data: {}, matchingQuery: {});
     restart(itemQuery, data:any,userName, options) :Promise<IExecution>;
+    /** Cancels a running instance: terminated and saved, never deleted. */
+    cancel(instanceQuery: any, userName?: string, options?: {}): Promise<IExecution>;
 
     upgrade(model:string,afterNodeIds:string[]):Promise<string[]|{errors}>;
 
@@ -120,15 +130,18 @@ interface IEngine {
 
 interface ICron {
 
-	checkTimers(duration);
+	checkTimers(duration?);
 	start();
 	startTimers();
+	stop?(): void;
 
 }
 
 
 interface ICacheManager {
     list();
+    /** The live execution of an instance this cache holds, or null/undefined. */
+    getInstance(instanceId): IExecution | null | undefined;
     add(execution: IExecution);
     remove(instanceId);
     shutdown();

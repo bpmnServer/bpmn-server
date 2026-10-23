@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:collaboration id="Collaboration_0836vd2">
+    <bpmn2:participant id="Participant_1ta8xo0" processRef="Process_1" />
+  </bpmn2:collaboration>
+  <bpmn2:process id="Process_1" isExecutable="false">
+    <bpmn2:userTask id="Activity_handle" name="处理者反馈">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">console.log("cur data at handle is: ", data);
+          
+          Object.assign(data, item.token.execution.instance.data.input);
+          item.token.execution.appDelegate.collService().handleWork_method(item, data, [{name:"confirm",cnName:"确认"}]);</camunda:script>
+        </camunda:executionListener>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">item.token.execution.instance.data.loopCount++;</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0uy37y6</bpmn2:incoming>
+      <bpmn2:incoming>Flow_1i31pip</bpmn2:incoming>
+      <bpmn2:incoming>Flow_0dsqfd8</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1xu4j5a</bpmn2:outgoing>
+      <bpmn2:multiInstanceLoopCharacteristics camunda:collection="data.users" />
+    </bpmn2:userTask>
+    <bpmn2:userTask id="Collaboration_0t2r4h0" name="指派">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">console.log("cur data is--&gt;: ", data, item.token.execution.instance.data);
+          Object.assign(data, item.token.execution.instance.data.input);
+item.token.execution.appDelegate.collService().assign_method(item, data, [{name:"handleWork",cnName:"处理"}]);</camunda:script>
+        </camunda:executionListener>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">console.log("current workers: ", data.users.workers.length);
+          let instanceData = item.token.execution.instance.data;  
+          instanceData.loopWorkerNumber += instanceData.input.users.workers.length;
+          //data.users = instanceData.input.users;
+          console.log("end assign input : ", instanceData.input)
+          Object.assign(data, instanceData.input);</camunda:script>
+        </camunda:executionListener>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">console.log("cur data is--&gt;: ", data, item.token.execution.instance.data);</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0el4ex2</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0uy37y6</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_1vrc93y</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_0eghsd3</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_031x8am</bpmn2:outgoing>
+      <bpmn2:multiInstanceLoopCharacteristics camunda:collection="data.assigners" />
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_05t9qac" sourceRef="Activity_18perkk" targetRef="Gateway_0kt06x8" />
+    <bpmn2:sequenceFlow id="Flow_0uy37y6" sourceRef="Collaboration_0t2r4h0" targetRef="Activity_handle" />
+    <bpmn2:sequenceFlow id="Flow_0edsb3u" sourceRef="Activity_0wc88mk" targetRef="Gateway_1vaib6t" />
+    <bpmn2:sequenceFlow id="Flow_1yzvgi3" sourceRef="Gateway_0tle6uq" targetRef="Activity_15729s5">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">item.token.execution.instance.data.input.nextAction == "askfor"</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_14t5cwo" sourceRef="Gateway_0tle6uq" targetRef="Activity_18perkk">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">item.token.execution.instance.data.input.nextAction== "confirm"</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_0z6m60j" name="结束" sourceRef="Gateway_0kt06x8" targetRef="Event_0rb320g">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">item.token.execution.instance.data.input.nextAction == "end"</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_0aav87x" name="重新打开" sourceRef="Gateway_0kt06x8" targetRef="Gateway_1vaib6t">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">item.token.execution.instance.data.input.nextAction == "assignWorker"</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_1i60t57" sourceRef="StartEvent_1" targetRef="Activity_0wc88mk" />
+    <bpmn2:sequenceFlow id="Flow_1g0hlc5" sourceRef="Activity_15729s5" targetRef="Gateway_08ag6yh" />
+    <bpmn2:sequenceFlow id="Flow_1xu4j5a" sourceRef="Activity_handle" targetRef="Activity_1rbhi04">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">item.token.execution.instance.data.loopCount == item.token.execution.instance.data.loopWorkerNumber</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_0el4ex2" sourceRef="Gateway_1vaib6t" targetRef="Collaboration_0t2r4h0" />
+    <bpmn2:parallelGateway id="Gateway_1vaib6t">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">let instanceData = item.token.execution.instance.data;
+          let instanceInput = instanceData.input;  
+          instanceInput.assigners = [];
+          if (instanceInput.type == '1' || instanceInput.type == '16') {
+            instanceInput.assigners.push(data.cur_applicant);
+          }
+          else if (instanceInput.type == '16') {
+            if (instanceInput.users.workers.length &gt; 0) {
+              instanceInput.assigners.push(instanceInput.users.workers[0]);
+            }
+            console.log("reopen worker len: ", instanceInput.users.workers.length);
+          }
+          else if (instanceInput.type == '4' || instanceInput.type == '5') {
+            instanceInput.assigners = instanceInput.users.leaders;
+            console.log("cur instanceInput: " , instanceInput);
+          }
+console.log("cur leaders: ", instanceInput.users.leaders);</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0aav87x</bpmn2:incoming>
+      <bpmn2:incoming>Flow_0edsb3u</bpmn2:incoming>
+      <bpmn2:incoming>Flow_1vrc93y</bpmn2:incoming>
+      <bpmn2:incoming>Flow_1h8bywf</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0el4ex2</bpmn2:outgoing>
+    </bpmn2:parallelGateway>
+    <bpmn2:userTask id="Activity_0wc88mk" name="开孔请求">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">Object.assign(data, item.token.execution.instance.data.input);
+          let instanceData = item.token.execution.instance.data;
+          instanceData.loopCount = 0;
+          instanceData.loopWorkerNumber = 0;  
+          instanceData.workLoopHandled = false;
+          this.token.execution.appDelegate.collService().startWorkflow_method(item, data, [{name:"assignWorker", cnName:"指派"}]);</camunda:script>
+        </camunda:executionListener>
+        <camunda:formData>
+          <camunda:formField id="UserInput" label="User Input" type="string" defaultValue="Testing" />
+        </camunda:formData>
+        <camunda:taskListener event="validate">
+          <camunda:script scriptFormat="JavaScript">console.log("item.input:",item.input);
+item.data.assigners = ["A","B","C"];
+item.data.users=[1,2]</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1i60t57</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0edsb3u</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:startEvent id="StartEvent_1">
+      <bpmn2:outgoing>Flow_1i60t57</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="Flow_1vrc93y" name="如果是管理员" sourceRef="Collaboration_0t2r4h0" targetRef="Gateway_1vaib6t">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">item.token.execution.instance.data.input.result == '3' &amp;&amp; item.token.execution.instance.data.input.users.leaders.length &gt; 0</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_19bpkvb" sourceRef="Activity_1rbhi04" targetRef="Gateway_0tle6uq" />
+    <bpmn2:sequenceFlow id="Flow_0eghsd3" name="拒绝" sourceRef="Collaboration_0t2r4h0" targetRef="Activity_1rbhi04">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">item.token.execution.instance.data.input.result == '4'</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_1i31pip" name="处理者" sourceRef="Gateway_08ag6yh" targetRef="Activity_handle">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">item.token.execution.instance.data.input.users.hasOwnProperty('workers') &amp;&amp; item.token.execution.instance.data.input.users.workers.length &gt; 0</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_1h8bywf" name="管理员" sourceRef="Gateway_08ag6yh" targetRef="Gateway_1vaib6t">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">item.token.execution.instance.data.input.users.hasOwnProperty('leaders') &amp;&amp; item.token.execution.instance.data.input.users.leaders.length &gt; 0</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:endEvent id="Event_0rb320g">
+      <bpmn2:incoming>Flow_0z6m60j</bpmn2:incoming>
+      <bpmn2:terminateEventDefinition id="TerminateEventDefinition_0gkw9sa" />
+    </bpmn2:endEvent>
+    <bpmn2:exclusiveGateway id="Gateway_0kt06x8">
+      <bpmn2:incoming>Flow_05t9qac</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0aav87x</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_0z6m60j</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:userTask id="Activity_18perkk" name="重新打开">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">console.log("input data: ", input)
+          Object.assign(data, item.token.execution.instance.data.input);
+          this.token.execution.appDelegate.collService().reopen_method(item, data, [{name:"end",cnName:"结束"},{name:"assignWorker",cnName:"指派"}]);</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_14t5cwo</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_05t9qac</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:exclusiveGateway id="Gateway_0tle6uq">
+      <bpmn2:incoming>Flow_19bpkvb</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_14t5cwo</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_1yzvgi3</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="Flow_031x8am" sourceRef="Collaboration_0t2r4h0" targetRef="Activity_1vg41qm">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">false</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:task id="Activity_1vg41qm" name="再指派">
+      <bpmn2:incoming>Flow_031x8am</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0dsqfd8</bpmn2:outgoing>
+    </bpmn2:task>
+    <bpmn2:exclusiveGateway id="Gateway_08ag6yh">
+      <bpmn2:incoming>Flow_1g0hlc5</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1h8bywf</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_1i31pip</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:task id="Activity_15729s5" name="求指派">
+      <bpmn2:extensionElements>
+        <camunda:taskListener class="" event="create" />
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">/*
+this.token.execution.appDelegate.collService().askfor_method(item, data, [{name:"assignWorker",cnName:"指派"}]);
+*/
+console.log("cur data.loopWorkerNumber is, ", data.loopWorkerNumber)
+let instanceData = item.token.execution.instance.data;
+instanceData.loopWorkerNumber = instanceData.input.users.workers.length;
+Object.assign(data, item.token.execution.instance.data.input);
+console.log("after, cur data.loopWorkerNumber is, ", instanceData.loopWorkerNumber)</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1yzvgi3</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1g0hlc5</bpmn2:outgoing>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="Flow_0dsqfd8" sourceRef="Activity_1vg41qm" targetRef="Activity_handle" />
+    <bpmn2:userTask id="Activity_1rbhi04" name="请求者确认">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">console.log("cur data at confirm, is ", data);          
+          console.log("start confirm instance.data:", item.token.execution.instance.data)
+          console.log("data.loopWorkerNumber:", item.token.execution.instance.data.loopWorkerNumber)
+          Object.assign(data, item.token.execution.instance.data.input);
+          item.token.execution.appDelegate.collService().applicantConfirm_method(item, data, [{name:"askfor",cnName:"求指派"},{name:"confirm",cnName:"确认"}]);</camunda:script>
+        </camunda:executionListener>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">console.log("end data.loopWorkerNumber:", item.token.execution.instance.data.loopWorkerNumber)
+          console.log("end confirm data:", data)
+          console.log("end confirm instance.data:", item.token.execution.instance.data)
+          let instanceData = item.token.execution.instance.data;
+          instanceData.loopCount = 0;
+          instanceData.loopWorkerNumber = 0;  
+          instanceData.workLoopHandled = false;</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0eghsd3</bpmn2:incoming>
+      <bpmn2:incoming>Flow_1xu4j5a</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_19bpkvb</bpmn2:outgoing>
+    </bpmn2:userTask>
+  </bpmn2:process>
+  <bpmn2:message id="Message_1xjp44w" name="msg1" />
+  <bpmn2:message id="Message_1ia8xed" name="confirm1" />
+  <bpmn2:message id="Message_06069yb" name="msg2" />
+  <bpmn2:message id="Message_1ywvuw8" name="confirm2" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0836vd2">
+      <bpmndi:BPMNShape id="Participant_1ta8xo0_di" bpmnElement="Participant_1ta8xo0" isHorizontal="true">
+        <dc:Bounds x="170" y="30" width="1410" height="480" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0dsqfd8_di" bpmnElement="Flow_0dsqfd8">
+        <di:waypoint x="670" y="300" />
+        <di:waypoint x="695" y="300" />
+        <di:waypoint x="695" y="220" />
+        <di:waypoint x="720" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_031x8am_di" bpmnElement="Flow_031x8am">
+        <di:waypoint x="620" y="230" />
+        <di:waypoint x="620" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1h8bywf_di" bpmnElement="Flow_1h8bywf">
+        <di:waypoint x="735" y="390" />
+        <di:waypoint x="450" y="390" />
+        <di:waypoint x="450" y="215" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="577" y="372" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i31pip_di" bpmnElement="Flow_1i31pip">
+        <di:waypoint x="760" y="365" />
+        <di:waypoint x="760" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="759" y="301" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0eghsd3_di" bpmnElement="Flow_0eghsd3">
+        <di:waypoint x="620" y="150" />
+        <di:waypoint x="620" y="120" />
+        <di:waypoint x="950" y="120" />
+        <di:waypoint x="950" y="150" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="774" y="102" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19bpkvb_di" bpmnElement="Flow_19bpkvb">
+        <di:waypoint x="1000" y="190" />
+        <di:waypoint x="1115" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vrc93y_di" bpmnElement="Flow_1vrc93y">
+        <di:waypoint x="570" y="180" />
+        <di:waypoint x="465" y="180" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="486" y="162" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0el4ex2_di" bpmnElement="Flow_0el4ex2">
+        <di:waypoint x="475" y="190" />
+        <di:waypoint x="570" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xu4j5a_di" bpmnElement="Flow_1xu4j5a">
+        <di:waypoint x="820" y="190" />
+        <di:waypoint x="900" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1g0hlc5_di" bpmnElement="Flow_1g0hlc5">
+        <di:waypoint x="860" y="390" />
+        <di:waypoint x="785" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i60t57_di" bpmnElement="Flow_1i60t57">
+        <di:waypoint x="248" y="190" />
+        <di:waypoint x="290" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0aav87x_di" bpmnElement="Flow_0aav87x">
+        <di:waypoint x="1400" y="165" />
+        <di:waypoint x="1400" y="90" />
+        <di:waypoint x="450" y="90" />
+        <di:waypoint x="450" y="165" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="904" y="72" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0z6m60j_di" bpmnElement="Flow_0z6m60j">
+        <di:waypoint x="1425" y="190" />
+        <di:waypoint x="1482" y="190" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1440" y="173" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14t5cwo_di" bpmnElement="Flow_14t5cwo">
+        <di:waypoint x="1165" y="190" />
+        <di:waypoint x="1220" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yzvgi3_di" bpmnElement="Flow_1yzvgi3">
+        <di:waypoint x="1140" y="215" />
+        <di:waypoint x="1140" y="390" />
+        <di:waypoint x="960" y="390" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="715" y="272" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0edsb3u_di" bpmnElement="Flow_0edsb3u">
+        <di:waypoint x="390" y="190" />
+        <di:waypoint x="425" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uy37y6_di" bpmnElement="Flow_0uy37y6">
+        <di:waypoint x="670" y="190" />
+        <di:waypoint x="720" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05t9qac_di" bpmnElement="Flow_05t9qac">
+        <di:waypoint x="1320" y="190" />
+        <di:waypoint x="1375" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_0eoc3fu_di" bpmnElement="Activity_handle">
+        <dc:Bounds x="720" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1iiz49f_di" bpmnElement="Collaboration_0t2r4h0">
+        <dc:Bounds x="570" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1rrv3zm_di" bpmnElement="Gateway_1vaib6t">
+        <dc:Bounds x="425" y="165" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vq5kt3_di" bpmnElement="Activity_0wc88mk">
+        <dc:Bounds x="290" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_176h5pp_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="212" y="172" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="259" y="185" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_121vrkv_di" bpmnElement="Event_0rb320g">
+        <dc:Bounds x="1482" y="172" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="628" y="118" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0kt06x8_di" bpmnElement="Gateway_0kt06x8" isMarkerVisible="true">
+        <dc:Bounds x="1375" y="165" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ffrw9f_di" bpmnElement="Activity_18perkk">
+        <dc:Bounds x="1220" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0tle6uq_di" bpmnElement="Gateway_0tle6uq" isMarkerVisible="true">
+        <dc:Bounds x="1115" y="165" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1vg41qm_di" bpmnElement="Activity_1vg41qm">
+        <dc:Bounds x="570" y="260" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_08ag6yh_di" bpmnElement="Gateway_08ag6yh" isMarkerVisible="true">
+        <dc:Bounds x="735" y="365" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0k7a0f1_di" bpmnElement="Activity_15729s5">
+        <dc:Bounds x="860" y="350" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kymr5s_di" bpmnElement="Activity_1rbhi04">
+        <dc:Bounds x="900" y="150" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

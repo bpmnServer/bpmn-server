@@ -1,8 +1,12 @@
 
-import {
-    IBPMNServer, IEngine, IDefinition, IConfiguration, IDataStore, EXECUTION_EVENT
-    , IExecution, IInstanceData, IItemData, ISecureUser
-} from '../index.js';
+import type { IInstanceData, IItemData } from '../interfaces/DataObjects.js';
+import { EXECUTION_EVENT } from '../interfaces/Enums.js';
+import type { ISecureUser } from '../interfaces/User.js';
+import type { IConfiguration } from '../interfaces/common.js';
+import type { IDataStore } from '../interfaces/datastore.js';
+import type { IDefinition } from '../interfaces/elements.js';
+import type { IExecution } from '../interfaces/engine.js';
+import type { IBPMNServer, IEngine } from '../interfaces/server.js';
 
 /**
  *  root object to api

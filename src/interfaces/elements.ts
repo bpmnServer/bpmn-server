@@ -1,6 +1,7 @@
-import { IItem, ILogger, NODE_ACTION, EXECUTION_EVENT, ITEM_STATUS, Node } from "../index.js"
-
-interface IDefinition {
+import { Node } from '../elements/Node.js';
+import { NODE_ACTION, EXECUTION_EVENT, ITEM_STATUS } from './Enums.js';
+import type { ILogger } from './common.js';
+import type { IItem } from './engine.js';interface IDefinition {
     name: any;
     processes: Map<any, any>;
     rootElements: any;

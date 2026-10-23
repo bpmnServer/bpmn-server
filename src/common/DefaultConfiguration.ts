@@ -5,11 +5,12 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 import { ModelsDatastore } from '../datastore/ModelsDatastore.js';
 import { DefaultAppDelegate } from '../engine/DefaultAppDelegate.js';
 
-import { IConfiguration, DataStore, NoCacheManager,ILogger, IModelsDatastore, 
-		IAppDelegate, IDataStore,
-		ScriptHandler} from '../index.js';
-import { Logger } from './index.js'
-import { Script } from 'vm';
+import { DataStore } from '../datastore/DataStore.js';
+import { ScriptHandler } from '../engine/ScriptHandler.js';
+import type { IConfiguration, ILogger, IAppDelegate } from '../interfaces/common.js';
+import type { IModelsDatastore, IDataStore } from '../interfaces/datastore.js';
+import { NoCacheManager } from '../server/CacheManager.js';
+import { Logger } from './Logger.js';import type { IDocumentStore, ILockManager } from '../interfaces/storage.js';
 
 export class Configuration implements IConfiguration {
 	definitionsPath?: string;
@@ -45,23 +46,36 @@ export class Configuration implements IConfiguration {
 	}
 
 
+	documentStore?(server): IDocumentStore;
+	locker?(server): ILockManager;
+	serverId?: string;
+	locks?: { retryDelay?: number; maxTries?: number; staleAfter?: number; };
+	shutdownTimeout?: number;
+
+	/** Each factory given replaces the default one; one left out keeps it. */
 	constructor({
-		definitionsPath, templatesPath, timers, database, apiKey,
-		logger,
-		definitions,
-		appDelegate,
-		dataStore,cacheManager,scriptHandler}) {
+		definitionsPath = undefined, templatesPath = undefined, timers = { forceTimersDelay: 1000, precision: 3000 }, database = undefined, apiKey = undefined,
+		logger = undefined,
+		definitions = undefined,
+		appDelegate = undefined,
+		dataStore = undefined, cacheManager = undefined, scriptHandler = undefined,
+		documentStore = undefined, locker = undefined, serverId = undefined, locks = undefined, shutdownTimeout = undefined }: any) {
 		this.definitionsPath = definitionsPath;
 		this.templatesPath = templatesPath;
 		this.timers = timers;
 		this.database = database;
 		this.apiKey = apiKey;
 		this.logger = logger;
-		this.definitions = definitions;
-		this.appDelegate = appDelegate;
-		this.dataStore = dataStore;
-		this.cacheManager = cacheManager;
-		this.scriptHandler=scriptHandler;
+		if (definitions) this.definitions = definitions;
+		if (appDelegate) this.appDelegate = appDelegate;
+		if (dataStore) this.dataStore = dataStore;
+		if (cacheManager) this.cacheManager = cacheManager;
+		if (scriptHandler) this.scriptHandler = scriptHandler;
+		if (documentStore) this.documentStore = documentStore;
+		if (locker) this.locker = locker;
+		this.serverId = serverId;
+		this.locks = locks;
+		this.shutdownTimeout = shutdownTimeout;
 	
 	}
 
@@ -82,9 +96,7 @@ export const defaultConfiguration = new Configuration(
 			}
 		},
 		apiKey: '1234',
-		logger: function (server) {
-			new Logger(server);
-		},
+		logger: new Logger({}),
 		definitions: function (server) {
 			return new ModelsDatastore(server);
 		},

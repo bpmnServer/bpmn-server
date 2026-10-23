@@ -7,3 +7,5 @@ export * from './engine.js';
 export * from './datastore.js';
 export * from './elements.js';
 export * from './User.js';
+export * from './storage.js';
+export * from './lifecycle.js';

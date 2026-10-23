@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" id="loan-approval" name="Loan Approval Table" exporter="dmn-js (https://demo.bpmn.io/dmn)" exporterVersion="17.0.2">
+  <decision id="loanApproval" name="Loan Approval">
+    <decisionTable hitPolicy="PRIORITY">
+      <input id="i1" label="credit_score" biodi:width="150">
+        <inputExpression typeRef="integer">
+          <text>credit_score</text>
+        </inputExpression>
+      </input>
+      <input id="i2" label="income">
+        <inputExpression typeRef="integer">
+          <text>income</text>
+        </inputExpression>
+      </input>
+      <output id="o1" label="Approval Status" name="approvalStatus" typeRef="string">
+        <outputValues id="UnaryTests_1k82mx8">
+          <text>"Approved","Rejected","Conditional Approval"</text>
+        </outputValues>
+      </output>
+      <output id="OutputClause_1x57vxz" label="Max Amount" name="maxAmount" typeRef="number" />
+      <rule id="DecisionRule_0vvyoly">
+        <inputEntry id="UnaryTests_1f58h4p">
+          <text>null</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_09xdllr">
+          <text>-</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_14l1tju">
+          <text>"Missing Credit"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_07x6tfc">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0n53n9g">
+        <inputEntry id="UnaryTests_0vfapms">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0xmvk97">
+          <text>null</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0348q7p">
+          <text>"Missing Income"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0evzlz3">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+      <rule>
+        <description></description>
+        <inputEntry>
+          <text>&gt;= 750</text>
+        </inputEntry>
+        <inputEntry>
+          <text>&gt; 50000</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"Approved"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1lewcox">
+          <text>5000</text>
+        </outputEntry>
+      </rule>
+      <rule>
+        <inputEntry>
+          <text>&gt;= 600</text>
+        </inputEntry>
+        <inputEntry>
+          <text>&lt;= 50000</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"Conditional Approval"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1j0ws51">
+          <text>$(.1 * income)</text>
+        </outputEntry>
+      </rule>
+      <rule>
+        <inputEntry>
+          <text>{credit_score in [600 .. 700]}</text>
+        </inputEntry>
+        <inputEntry>
+          <text>-</text>
+        </inputEntry>
+        <outputEntry>
+          <text>"Rejected"</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_09q0dlb">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="DMNDiagram_00lo6zp">
+      <dmndi:DMNShape id="DMNShape_0gpgyb3" dmnElementRef="loanApproval">
+        <dc:Bounds height="80" width="180" x="120" y="120" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

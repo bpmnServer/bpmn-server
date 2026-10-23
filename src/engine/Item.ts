@@ -1,7 +1,9 @@
 import { Execution } from "./Execution.js";
-import { ITEM_STATUS, IItem, } from "../index.js";
-import { IItemData } from "../index.js";
-import { Element , Node } from '../elements/index.js';
+import { ITEM_STATUS } from '../interfaces/Enums.js';
+import type { IItem } from '../interfaces/engine.js';
+import type { IItemData } from '../interfaces/DataObjects.js';
+import { Element } from '../elements/Element.js';
+import { Node } from '../elements/Node.js';
 import { Token } from "./Token.js";
 
 class Item implements IItem {
