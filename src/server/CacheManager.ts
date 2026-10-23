@@ -1,5 +1,7 @@
 import { ServerComponent} from './ServerComponent.js';
-import { EXECUTION_EVENT, ICacheManager, IExecution } from '../interfaces/index.js';
+import { EXECUTION_EVENT } from '../interfaces/Enums.js';
+import type { IExecution } from '../interfaces/engine.js';
+import type { ICacheManager } from '../interfaces/server.js';
 
 class NoCacheManager extends ServerComponent implements ICacheManager {
 
@@ -20,23 +22,19 @@ class NoCacheManager extends ServerComponent implements ICacheManager {
 }
 
 class CacheManager extends ServerComponent implements ICacheManager {
-	static liveInstances = new Map();
+	private readonly liveInstances = new Map<string, IExecution>();
+	/** Drops an ended or cancelled execution: nothing more runs in it. */
+	private readonly onEnded = ({ context }) => { this.remove(context.instance.id); };
 
 	constructor(server)  {
 		super(server);
-
-		var self = this;
-		server.listener.on(EXECUTION_EVENT.process_end,
-			function ({ context, event, }) {
-//				console.log(`--->Cache Event: ${event} Removing Instance:`, context.instance.id);
-				self.remove(context.instance.id);
-			});
-
+		server.listener.on(EXECUTION_EVENT.process_end, this.onEnded);
+		server.listener.on(EXECUTION_EVENT.process_terminated, this.onEnded);
     }
 
 	list() {
 		const items = [];
-		CacheManager.liveInstances.forEach(item => { items.push(item); });
+		this.liveInstances.forEach(item => { items.push(item); });
 		return items;
 
 	}
@@ -44,32 +42,24 @@ class CacheManager extends ServerComponent implements ICacheManager {
 	**/
 	getInstance(instanceId) {
 
-		const instance = CacheManager.liveInstances.get(instanceId);
+		const instance = this.liveInstances.get(instanceId);
 		return instance;
 	}
 
 	add(execution:IExecution) {
 
-		CacheManager.liveInstances.set(execution.id, execution);
+		this.liveInstances.set(execution.id, execution);
 	}
 	remove(instanceId) {
-		CacheManager.liveInstances.delete(instanceId);
+		this.liveInstances.delete(instanceId);
 	}
-	//	shutsdown all instances that are still live
+	/** Clear only this server's cached executions. */
 	async shutdown() {
-
-		this.logger.log("Shutdown..");
-		const instances = CacheManager.liveInstances;
-		let i = 0;
-		const list = [];
-		instances.forEach(item => { list.push(item); });
-		for (i = 0; i < list.length; i++) {
-
-			const engine = list[i];
-			//await engine.stop();
-			this.logger.log("shutdown engine " + engine.execution.name + " status : " + engine.execution.state);
-			instances.delete(list[i].execution.id);
-		}
+		this.logger.log('Shutdown execution cache');
+		this.liveInstances.clear();
+		this.server.listener.off(EXECUTION_EVENT.process_end, this.onEnded);
+		this.server.listener.off(EXECUTION_EVENT.process_terminated, this.onEnded);
 	}
+
 }
 export { CacheManager , NoCacheManager};

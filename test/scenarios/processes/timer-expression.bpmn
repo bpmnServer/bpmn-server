@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:collaboration id="Collaboration_0mf9uh4">
+    <bpmn2:participant id="Participant_1w18zh6" processRef="Process_1" />
+  </bpmn2:collaboration>
+  <bpmn2:process id="Process_1" isExecutable="false">
+    <bpmn2:startEvent id="StartEvent_1">
+      <bpmn2:outgoing>Flow_0e9q2d8</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="Flow_0e9q2d8" sourceRef="StartEvent_1" targetRef="Activity_0cijuru" />
+    <bpmn2:sequenceFlow id="Flow_17rfycc" sourceRef="Activity_0cijuru" targetRef="Event_0gknofg" />
+    <bpmn2:sequenceFlow id="Flow_1akv9q1" sourceRef="Event_0hx26qc" targetRef="Activity_1sb18f9" />
+    <bpmn2:intermediateThrowEvent id="Event_0gknofg">
+      <bpmn2:incoming>Flow_17rfycc</bpmn2:incoming>
+    </bpmn2:intermediateThrowEvent>
+    <bpmn2:userTask id="Activity_0cijuru" name="User Task" camunda:candidateUsers="system" camunda:priority="high">
+      <bpmn2:incoming>Flow_0e9q2d8</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_17rfycc</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:boundaryEvent id="Event_0hx26qc" cancelActivity="false" attachedToRef="Activity_0cijuru">
+      <bpmn2:outgoing>Flow_1akv9q1</bpmn2:outgoing>
+      <bpmn2:timerEventDefinition id="TimerEventDefinition_0hwwvzf">
+        <bpmn2:timeDuration xsi:type="bpmn2:tFormalExpression">$appServices.getTimerDelay(this)</bpmn2:timeDuration>
+      </bpmn2:timerEventDefinition>
+    </bpmn2:boundaryEvent>
+    <bpmn2:scriptTask id="Activity_1sb18f9" name="Reminder">
+      <bpmn2:incoming>Flow_1akv9q1</bpmn2:incoming>
+    </bpmn2:scriptTask>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0mf9uh4">
+      <bpmndi:BPMNShape id="Participant_1w18zh6_di" bpmnElement="Participant_1w18zh6" isHorizontal="true">
+        <dc:Bounds x="230" y="80" width="600" height="250" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0e9q2d8_di" bpmnElement="Flow_0e9q2d8">
+        <di:waypoint x="328" y="210" />
+        <di:waypoint x="354" y="210" />
+        <di:waypoint x="354" y="170" />
+        <di:waypoint x="380" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17rfycc_di" bpmnElement="Flow_17rfycc">
+        <di:waypoint x="480" y="150" />
+        <di:waypoint x="546" y="150" />
+        <di:waypoint x="546" y="190" />
+        <di:waypoint x="612" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1akv9q1_di" bpmnElement="Flow_1akv9q1">
+        <di:waypoint x="440" y="228" />
+        <di:waypoint x="440" y="270" />
+        <di:waypoint x="496" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="292" y="192" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0gknofg_di" bpmnElement="Event_0gknofg">
+        <dc:Bounds x="612" y="172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vrjp1y_di" bpmnElement="Activity_0cijuru">
+        <dc:Bounds x="380" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1hav8p8_di" bpmnElement="Activity_1sb18f9">
+        <dc:Bounds x="496" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0bqw53x_di" bpmnElement="Event_0hx26qc">
+        <dc:Bounds x="422" y="192" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

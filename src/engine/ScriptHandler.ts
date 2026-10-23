@@ -1,5 +1,7 @@
-import { Item ,Execution,Token} from "./index.js";
-import { IScriptHandler } from "../interfaces/index.js";
+import { Execution } from './Execution.js';
+import { Item } from './Item.js';
+import { Token } from './Token.js';
+import type { IScriptHandler } from '../interfaces/engine.js';
 import { spawn } from 'child_process';
 
     

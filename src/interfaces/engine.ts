@@ -1,6 +1,12 @@
 import { NODE_ACTION, TOKEN_STATUS } from './Enums.js';
-import { IItemData , IInstanceData } from './index.js';
-import { ILogger, IAppDelegate, IBPMNServer, IDefinition, Token, Item, Element, Node, IServerComponent } from '../index.js';
+import type { IItemData, IInstanceData } from './DataObjects.js';
+import { Element } from '../elements/Element.js';
+import { Node } from '../elements/Node.js';
+import { Item } from '../engine/Item.js';
+import { Token } from '../engine/Token.js';
+import type { ILogger, IAppDelegate } from './common.js';
+import type { IDefinition } from './elements.js';
+import type { IBPMNServer, IServerComponent } from './server.js';
 
 interface IScriptHandler {
     evaluateExpression(scope: IItem|IToken, expression);
@@ -73,6 +79,8 @@ interface IToken {
 
 interface IExecution extends IServerComponent {
     instance: IInstanceData;
+    /** What the call running it does: `start`, `signal`, `assign`, `cancel`, … */
+    operation?: string;
     server: IBPMNServer;
     tokens: Map<any, IToken>;
     definition: IDefinition;

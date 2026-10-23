@@ -1,8 +1,10 @@
-import { Node } from "./index.js";
-import { Behaviour_names } from "./behaviours/index.js";
-import { Loop, NODE_ACTION, TOKEN_TYPE } from "../index.js";
+import { Node } from './Node.js';
+import { Behaviour_names } from './behaviours/BehaviourLoader.js';
+import { Loop } from '../engine/Loop.js';
+import { TOKEN_TYPE } from '../engine/Token.js';
+import { NODE_ACTION } from '../interfaces/Enums.js';
 import { Item } from "../engine/Item.js";
-import { ITEM_STATUS, TOKEN_STATUS } from "../interfaces/index.js";
+import { ITEM_STATUS, TOKEN_STATUS } from '../interfaces/Enums.js';
 
 class Event extends Node {
 

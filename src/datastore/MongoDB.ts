@@ -1,4 +1,6 @@
 import { MongoClient, ObjectId } from 'mongodb';
+import { DuplicateKeyError } from '../interfaces/storage.js';
+import type { IDocumentStore } from '../interfaces/storage.js';
 
 /*
  * mongodb 6/7 driver migration notes (was written against the 3.x callback API):
@@ -9,8 +11,10 @@ import { MongoClient, ObjectId } from 'mongodb';
  *  - `ObjectID` was renamed to `ObjectId`.
  *  - `useUnifiedTopology` is the default and is no longer an accepted option.
  */
-class MongoDB {
+/** The MongoDB adapter of the storage port: one client, opened on first use, closed by `close()`. */
+class MongoDB implements IDocumentStore {
     client: MongoClient | null = null;
+    private connecting: Promise<MongoClient> | null = null;
     dbConfig: any;
     logger: any;
     operation: string;
@@ -30,10 +34,10 @@ class MongoDB {
     }
 
     async getClient(): Promise<MongoClient> {
-        if (this.client == null) {
-            this.client = await this.connect();
-        }
-        return this.client;
+        if (this.client) return this.client;
+        // One connection however many callers ask at once.
+        this.connecting ??= this.connect().then(client => (this.client = client), error => { this.connecting = null; throw error; });
+        return this.connecting;
     }
 
     async find(dbName, collName, qry, projection = null, sort = null) {
@@ -59,15 +63,15 @@ class MongoDB {
 
         try {
             const name = await collection.createIndex(index, unique);
-            console.log('index named "' + name + '" was created for collection "' + collName + '"');
+            this.logger.log('index named "' + name + '" was created for collection "' + collName + '"');
             return name;
         } catch (err: any) {
-            // 85 = IndexOptionsConflict (index already exists with different options)
-            if (err && err.code === 85)
-                console.log('index for ' + JSON.stringify(index) + ' already exists for collection "' + collName + '"');
-            else
-                console.log('error', err);
-            return null;
+            // 85 IndexOptionsConflict, 86 IndexKeySpecsConflict: an index already exists with other options; keep it.
+            if (err && (err.code === 85 || err.code === 86)) {
+                this.logger.log('index for ' + JSON.stringify(index) + ' already exists for collection "' + collName + '"');
+                return null;
+            }
+            throw err;
         }
     }
 
@@ -79,6 +83,9 @@ class MongoDB {
         try {
             const result = await collection.insertMany(docs);
             return result.insertedCount;
+        } catch (err: any) {
+            if (err && err.code === 11000) throw new DuplicateKeyError(err.message);
+            throw err;
         } finally {
             this.profilerEnd();
         }
@@ -127,6 +134,13 @@ class MongoDB {
             this.logger.log('error ' + err);
             throw err;
         }
+    }
+
+    async close(): Promise<void> {
+        const client = this.client ?? (this.connecting ? await this.connecting.catch(() => null) : null);
+        this.client = null;
+        this.connecting = null;
+        if (client) await client.close();
     }
 
     async connect(): Promise<MongoClient> {

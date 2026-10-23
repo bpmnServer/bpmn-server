@@ -1,7 +1,8 @@
 
 import { Execution } from './Execution.js';
-import { Node, Behaviour_names, BPMN_TYPE } from '../elements/index.js'
-import { NODE_ACTION , TOKEN_STATUS, ITEM_STATUS, NODE_SUBTYPE} from '../index.js';
+import { Node } from '../elements/Node.js';
+import { BPMN_TYPE } from '../elements/NodeLoader.js';
+import { Behaviour_names } from '../elements/behaviours/BehaviourLoader.js';import { NODE_ACTION, TOKEN_STATUS, ITEM_STATUS, NODE_SUBTYPE } from '../interfaces/Enums.js';
 import { Loop } from './Loop.js';
 import { Item } from './Item.js';
 import { IToken, IExecution } from '../interfaces/engine.js';

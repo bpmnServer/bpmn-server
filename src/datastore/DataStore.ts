@@ -1,30 +1,36 @@
 import { MongoDB } from './MongoDB.js';
-import { DataHandler } from '../engine/index.js';
+import { DataHandler } from '../engine/DataHandler.js';
 import { Execution } from '../engine/Execution.js';
-import { IDataStore,FindParams,FindResult, IBPMNServer, IInstanceData, IItemData } from '../interfaces/index.js';
+import type { IInstanceData, IItemData } from '../interfaces/DataObjects.js';
+import type { IDataStore, FindParams, FindResult } from '../interfaces/datastore.js';
+import type { IBPMNServer } from '../interfaces/server.js';
 
 import { ObjectId, Document, WithId } from 'mongodb';
 
 import { ServerComponent } from '../server/ServerComponent.js';
 
 
-import { InstanceLocker } from './index.js';
+import { InstanceLocker } from './InstanceLocker.js';
+import type { IDocumentStore, ILockManager } from '../interfaces/storage.js';
 
 import { QueryTranslator } from './QueryTranslator.js';
 import { Aggregate} from './Aggregate.js'
+import { DocumentPager } from './DocumentPager.js';
 
  
 class DataStore extends ServerComponent  implements IDataStore {
 
 	dbConfiguration;
-	db;
+	/** The storage adapter: the server's shared `documentStore`, else this data store's own MongoDB connection. */
+	db: IDocumentStore | any;
+	private readonly ownsDb: boolean;
 
 	execution: Execution;
 	isModified = false;
 	isRunning = false;
 	inSaving = false;
 	promises = [];
-	locker;
+	locker: ILockManager;
 	enableSavePoints=false;
 	saveLogs=true;
 	saveSource=true;
@@ -32,7 +38,8 @@ class DataStore extends ServerComponent  implements IDataStore {
 	constructor(server: IBPMNServer) {
 		super(server);
 
-		this.dbConfiguration = this.configuration.database.MongoDB;
+		// The collection names are MongoDB's settings, kept for every adapter (a non-MongoDB configuration need not give them).
+		this.dbConfiguration = this.configuration.database?.MongoDB ?? { db: 'bpmn' };
 		if (!this.dbConfiguration.Instance_collection)
 			this.dbConfiguration.Instance_collection='wf_instances';
 		if (!this.dbConfiguration.Locks_collection)
@@ -41,8 +48,11 @@ class DataStore extends ServerComponent  implements IDataStore {
 			this.dbConfiguration.Archive_collection='wf_archive';
 
 
-		this.db = new MongoDB(this.dbConfiguration, this.logger);
-		this.locker=new InstanceLocker(this);
+		this.ownsDb = !server.documentStore;
+		this.db = server.documentStore ?? new MongoDB(this.dbConfiguration, this.logger);
+		const locks = this.configuration.locks ?? {};
+		this.locker = new InstanceLocker(() => this.db, { database: this.dbConfiguration.db, collection: this.dbConfiguration.Locks_collection,
+			owner: this.configuration.serverId, retryDelay: locks.retryDelay, maxTries: locks.maxTries, staleAfter: locks.staleAfter, logger: this.logger });
 
 	}
 	/*monitorExecution(execution: Execution) {
@@ -105,19 +115,17 @@ class DataStore extends ServerComponent  implements IDataStore {
 
 	// save instance to DB
 	static seq = 0;
-	private async saveInstance(instance,options={}) {
+	async saveInstance(instance,options={}) {
 //		this.logger.log("Saving...");
+
+		// Each save is one version: 0 when first saved, one more on each later save; saved as it is.
+		instance.version = instance.version == null ? 0 : instance.version + 1;
 
 		let saveObject=
 			{	version: instance.version,tenantId: instance.tenantId,startedAt: instance.startedAt,endedAt: instance.endedAt, status: instance.status, saved: instance.saved,
 				tokens: instance.tokens, items: instance.items, loops: instance.loops, name: instance.name,
 				data: instance.data , parentItemId: instance.parentItemId
 			};
-
-		if (instance.version==null) 
-			instance.version =0;
-		else 
-			instance.version++;
 
 			if (this.saveLogs===true)
 				saveObject['logs'] = instance.logs;
@@ -151,15 +159,14 @@ class DataStore extends ServerComponent  implements IDataStore {
 		}
 		else {
 
-			this.promises.push(this.db.update(this.dbConfiguration.db, this.dbConfiguration.Instance_collection,
+			await this.db.update(this.dbConfiguration.db, this.dbConfiguration.Instance_collection,
 				{ id: instance.id },
 				{
 					$set: saveObject
-				}));
+				});
 
 		}
 
-		await Promise.all(this.promises);
 		this.logger.log('..DataStore:saving Complete');
 
 	}
@@ -266,6 +273,14 @@ class DataStore extends ServerComponent  implements IDataStore {
 		return items;
 	}
 
+	async updateInstanceSource(instanceId: string, source: string): Promise<void> {
+		await this.db.update(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, { id: instanceId }, { $set: { source } });
+	}
+
+	async close(): Promise<void> {
+		if (this.ownsDb) await this.db.close?.();
+	}
+
 	async deleteInstances(query) {
 
 		await this.cache.shutdown();
@@ -283,7 +298,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 	async install() {
 		await this.db.createIndex(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, { id: 1 }, { unique: true });
 		await this.db.createIndex(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, { "items.id": 1 });
-		await this.db.createIndex(this.dbConfiguration.db, this.dbConfiguration.Locks_collection, { id: 1 }, { unique: true });
+		if (this.locker instanceof InstanceLocker) await this.locker.install();
 	}
 	
 	async archive(query) {
@@ -330,6 +345,10 @@ class DataStore extends ServerComponent  implements IDataStore {
 	  }: FindParams
 	): Promise<FindResult> {
 
+			// On MongoDB, an aggregation; on any other adapter, the same search over what it finds.
+			if (!(this.db instanceof MongoDB))
+				return DocumentPager.find(this.db, this.dbConfiguration.db, this.dbConfiguration.Instance_collection,
+					{ filter, after, limit, sort, projection, lastItem, latestItem, getTotalCount });
 			const aggregate=new Aggregate(this.db,this.configuration,this.dbConfiguration);
 			
 			return await aggregate.find({

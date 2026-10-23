@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:collaboration id="Collaboration_0d9b8md">
+    <bpmn2:participant id="Participant_12627jb" processRef="Process_1" />
+  </bpmn2:collaboration>
+  <bpmn2:process id="Process_1" isExecutable="false">
+    <bpmn2:startEvent id="StartEvent_1">
+      <bpmn2:outgoing>Flow_1ly2dyb</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:scriptTask id="Activity_provide" name="Get Departments List" scriptFormat="JavaScript">
+      <bpmn2:incoming>Flow_1ly2dyb</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0gxv496</bpmn2:outgoing>
+      <bpmn2:script>item.data.departments = ["IT", "HR", "Billing"]</bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:endEvent id="Event_end">
+      <bpmn2:incoming>Flow_0ri93gq</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:subProcess id="department" name="Department">
+      <bpmn2:incoming>Flow_0gxv496</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1umlt4b</bpmn2:outgoing>
+      <bpmn2:multiInstanceLoopCharacteristics camunda:collection="$(item.data.departments)" />
+      <bpmn2:startEvent id="Event_startsub">
+        <bpmn2:outgoing>Flow_1l3c0w1</bpmn2:outgoing>
+      </bpmn2:startEvent>
+      <bpmn2:endEvent id="Event_endsub">
+        <bpmn2:incoming>Flow_05e3vg6</bpmn2:incoming>
+      </bpmn2:endEvent>
+      <bpmn2:userTask id="Activity_vote" name="Vote">
+        <bpmn2:extensionElements>
+          <camunda:formData>
+            <camunda:formField id="vote" label="Vote" type="boolean" defaultValue="false" />
+            <camunda:formField id="additionalInformation" label="additional Information" type="string" />
+          </camunda:formData>
+          <camunda:executionListener event="start">
+            <camunda:script scriptFormat="JavaScript">item.data.scriptLog='added by script event,key:'+item.itemKey;</camunda:script>
+          </camunda:executionListener>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>Flow_0m5apq3</bpmn2:incoming>
+        <bpmn2:outgoing>Flow_05e3vg6</bpmn2:outgoing>
+      </bpmn2:userTask>
+      <bpmn2:scriptTask id="Activity_read" name="Prepare for a vote" scriptFormat="JavaScript">
+        <bpmn2:incoming>Flow_1l3c0w1</bpmn2:incoming>
+        <bpmn2:outgoing>Flow_0m5apq3</bpmn2:outgoing>
+        <bpmn2:script>console.log((item.data));</bpmn2:script>
+      </bpmn2:scriptTask>
+      <bpmn2:sequenceFlow id="Flow_1l3c0w1" sourceRef="Event_startsub" targetRef="Activity_read" />
+      <bpmn2:sequenceFlow id="Flow_05e3vg6" sourceRef="Activity_vote" targetRef="Event_endsub" />
+      <bpmn2:sequenceFlow id="Flow_0m5apq3" sourceRef="Activity_read" targetRef="Activity_vote" />
+    </bpmn2:subProcess>
+    <bpmn2:sequenceFlow id="Flow_0ri93gq" sourceRef="Activity_summary" targetRef="Event_end" />
+    <bpmn2:sequenceFlow id="Flow_1umlt4b" sourceRef="department" targetRef="Activity_summary" />
+    <bpmn2:sequenceFlow id="Flow_0gxv496" sourceRef="Activity_provide" targetRef="department" />
+    <bpmn2:sequenceFlow id="Flow_1ly2dyb" sourceRef="StartEvent_1" targetRef="Activity_provide" />
+    <bpmn2:scriptTask id="Activity_summary" name="Summerize Votes" scriptFormat="JavaScript">
+      <bpmn2:incoming>Flow_1umlt4b</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0ri93gq</bpmn2:outgoing>
+      <bpmn2:script>  Object.keys(item.data.department).forEach(key=&gt;{
+    console.log('Vote for:',key,item.data.department[key]['vote']);
+
+  });
+
+
+item.token.execution.getItems().filter(itm=&gt;(itm.elementId=='Activity_vote')).forEach(voteItem=&gt;{
+        let vote =voteItem['data']['vote'];
+        let parent=voteItem.token.parentToken;
+        let dept=parent.data['key'];
+        console.log("vote Item",voteItem.seq,'dept:',dept,'vote',vote);
+
+    });;
+console.log("end Votes Summary");</bpmn2:script>
+    </bpmn2:scriptTask>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0d9b8md">
+      <bpmndi:BPMNShape id="Participant_12627jb_di" bpmnElement="Participant_12627jb" isHorizontal="true">
+        <dc:Bounds x="360" y="115" width="1110" height="285" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1ly2dyb_di" bpmnElement="Flow_1ly2dyb">
+        <di:waypoint x="448" y="258" />
+        <di:waypoint x="520" y="258" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gxv496_di" bpmnElement="Flow_0gxv496">
+        <di:waypoint x="620" y="258" />
+        <di:waypoint x="700" y="258" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1umlt4b_di" bpmnElement="Flow_1umlt4b">
+        <di:waypoint x="1200" y="258" />
+        <di:waypoint x="1260" y="258" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ri93gq_di" bpmnElement="Flow_0ri93gq">
+        <di:waypoint x="1360" y="258" />
+        <di:waypoint x="1392" y="258" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="412" y="240" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1trqr8z_di" bpmnElement="Activity_provide">
+        <dc:Bounds x="520" y="218" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1jag0kh_di" bpmnElement="Event_end">
+        <dc:Bounds x="1392" y="240" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0dsqa5j_di" bpmnElement="department" isExpanded="true">
+        <dc:Bounds x="700" y="139" width="500" height="211" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0m5apq3_di" bpmnElement="Flow_0m5apq3">
+        <di:waypoint x="920" y="260" />
+        <di:waypoint x="970" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05e3vg6_di" bpmnElement="Flow_05e3vg6">
+        <di:waypoint x="1070" y="260" />
+        <di:waypoint x="1132" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1l3c0w1_di" bpmnElement="Flow_1l3c0w1">
+        <di:waypoint x="778" y="260" />
+        <di:waypoint x="820" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_03fca9f_di" bpmnElement="Event_startsub">
+        <dc:Bounds x="742" y="242" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1evbsib_di" bpmnElement="Event_endsub">
+        <dc:Bounds x="1132" y="242" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_05zd5q5_di" bpmnElement="Activity_vote">
+        <dc:Bounds x="970" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1i5cr6k_di" bpmnElement="Activity_read">
+        <dc:Bounds x="820" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_01fu166_di" bpmnElement="Activity_summary">
+        <dc:Bounds x="1260" y="218" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

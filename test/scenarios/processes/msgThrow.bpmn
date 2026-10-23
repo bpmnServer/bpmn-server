@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:message id="Msg1" name="newInvoiceMessage" />
+  <bpmn2:message id="Msg2" name="newInvoiceMessage2" />
+  <bpmn2:message id="Confirm1" name="newInvoiceMessage3" />
+  <bpmn2:message id="Confirm2" name="newInvoiceMessage4" />
+  <bpmn2:collaboration id="Collaboration_0j1bghr">
+    <bpmn2:participant id="Participant_16pif1h" processRef="Process_1" />
+  </bpmn2:collaboration>
+  <bpmn2:process id="Process_1" isExecutable="false">
+    <bpmn2:endEvent id="EndEvent_016qedv">
+      <bpmn2:incoming>SequenceFlow_0bi5abv</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:intermediateCatchEvent id="event_catch_confirm2" name="receive confirm2">
+      <bpmn2:incoming>SequenceFlow_0011qnj</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0bi5abv</bpmn2:outgoing>
+      <bpmn2:messageEventDefinition id="messageEventDef5" messageRef="Confirm2" />
+    </bpmn2:intermediateCatchEvent>
+    <bpmn2:intermediateThrowEvent id="throw_msg1" name="msg1">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">this.context.output={caseId: this.token.data.caseId, action: 'justdoit'};
+            this.context.messageMatchingKey={'data.caseId': this.token.data.caseId };</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_0eersm2</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0v5dt2n</bpmn2:outgoing>
+      <bpmn2:messageEventDefinition id="messageEventDef1" messageRef="Msg1" />
+    </bpmn2:intermediateThrowEvent>
+    <bpmn2:intermediateThrowEvent id="event_throw_msg2" name="send msg2">
+      <bpmn2:extensionElements />
+      <bpmn2:incoming>SequenceFlow_0t3k59u</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0011qnj</bpmn2:outgoing>
+      <bpmn2:messageEventDefinition id="messageEventDef2" messageRef="Msg2" />
+    </bpmn2:intermediateThrowEvent>
+    <bpmn2:intermediateCatchEvent id="catch_confirm1" name="receive confirm1">
+      <bpmn2:incoming>SequenceFlow_0v5dt2n</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0t3k59u</bpmn2:outgoing>
+      <bpmn2:messageEventDefinition id="messageEventDef4" messageRef="Confirm1" />
+    </bpmn2:intermediateCatchEvent>
+    <bpmn2:startEvent id="StartEvent_1">
+      <bpmn2:outgoing>SequenceFlow_0eersm2</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_0bi5abv" sourceRef="event_catch_confirm2" targetRef="EndEvent_016qedv" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0011qnj" sourceRef="event_throw_msg2" targetRef="event_catch_confirm2" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0eersm2" sourceRef="StartEvent_1" targetRef="throw_msg1" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0v5dt2n" sourceRef="throw_msg1" targetRef="catch_confirm1" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0t3k59u" sourceRef="catch_confirm1" targetRef="event_throw_msg2" />
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0j1bghr">
+      <bpmndi:BPMNShape id="Participant_16pif1h_di" bpmnElement="Participant_16pif1h">
+        <dc:Bounds x="124" y="24" width="503" height="183" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0t3k59u_di" bpmnElement="SequenceFlow_0t3k59u">
+        <di:waypoint x="354" y="109" />
+        <di:waypoint x="397" y="109" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="331" y="88" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0v5dt2n_di" bpmnElement="SequenceFlow_0v5dt2n">
+        <di:waypoint x="284" y="109" />
+        <di:waypoint x="318" y="109" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="256" y="88" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0eersm2_di" bpmnElement="SequenceFlow_0eersm2">
+        <di:waypoint x="210" y="109" />
+        <di:waypoint x="248" y="109" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="184" y="88" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0011qnj_di" bpmnElement="SequenceFlow_0011qnj">
+        <di:waypoint x="433" y="109" />
+        <di:waypoint x="496" y="109" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="420" y="88" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0bi5abv_di" bpmnElement="SequenceFlow_0bi5abv">
+        <di:waypoint x="532" y="109" />
+        <di:waypoint x="562" y="109" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="502" y="88" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_016qedv_di" bpmnElement="EndEvent_016qedv">
+        <dc:Bounds x="562" y="91" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="535" y="131" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1ie86c5_di" bpmnElement="event_catch_confirm2">
+        <dc:Bounds x="496" y="91" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="474" y="131" width="81" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_0w6mex8_di" bpmnElement="throw_msg1">
+        <dc:Bounds x="248" y="91" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="253" y="131" width="27" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_11kpc7j_di" bpmnElement="event_throw_msg2">
+        <dc:Bounds x="397" y="91" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="388" y="131" width="54" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_0izegmp_di" bpmnElement="catch_confirm1">
+        <dc:Bounds x="318" y="91" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="296" y="131" width="81" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="174" y="91" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="147" y="127" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

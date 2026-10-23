@@ -1,12 +1,13 @@
 
-import { Token, Execution, TOKEN_TYPE  } from '../../engine/index.js';
-import { Node } from '../index.js';
-import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../../index.js';
-import { Item ,ScriptHandler} from '../../engine/index.js';
-import { BPMNServer } from '../../server/index.js';
-import { Behaviour  } from './index.js';
+import { Execution } from '../../engine/Execution.js';
+import { Token, TOKEN_TYPE } from '../../engine/Token.js';
+import { Node } from '../Node.js';
+import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../../interfaces/Enums.js';
+import { Item } from '../../engine/Item.js';
+import { ScriptHandler } from '../../engine/ScriptHandler.js';
+import { Behaviour } from './Behaviour.js';
 import { Cron } from '../../server/Cron.js';
-import { NODE_SUBTYPE } from '../../interfaces/index.js';
+import { NODE_SUBTYPE } from '../../interfaces/Enums.js';
 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime.js';
@@ -100,8 +101,10 @@ class TimerBehaviour extends Behaviour {
 
         let seconds;
         let timeDue;
-        if (timerModifier)
+        if (timerModifier) {
             seconds = timerModifier/1000;
+            timeDue = dayjs(new Date()).add(seconds,'s').toDate();
+        }
         else {
             if (this.duration) {
 
@@ -169,7 +172,13 @@ class TimerBehaviour extends Behaviour {
         const seconds = ((new Date(item.timeDue)).getTime()/1000) - (new Date().getTime()/1000);
 
         item.log("..setting timer for " + seconds + " seconds for: "+item.id);
-        setTimeout(this.expires.bind({ item, instanceId: item.token.execution.id, timer: this }), seconds * 1000);
+        // The server's scheduler owns the timer: cancelled on shutdown, claimed so that one server fires it.
+        const expires = this.expires.bind({ item, instanceId: item.token.execution.id, timer: this });
+        const cron = item.token.execution.server.cron;
+        if (cron && typeof cron.scheduleItemTimer === 'function')
+            cron.scheduleItemTimer({ id: item.id, timeDue: item.timeDue, instanceId: item.token.execution.id }, expires);
+        else
+            setTimeout(expires, seconds * 1000);
     }
     async expires() {
         let item = this['item'] as unknown as Item;
@@ -184,8 +193,12 @@ class TimerBehaviour extends Behaviour {
 
             if (exec.isLocked===true)
                 exec.promises.push(exec.signalItem(item.id, {}));
-            else
-    			await exec.server.engine.invoke({ "items.id": item.id }, null); 
+            else {
+                // This execution may be an old copy: fire only while the stored item still waits.
+                const stored = (await exec.server.dataStore.findItems({ "items.id": item.id }))[0];
+                if (stored && stored.status == ITEM_STATUS.wait)
+    			    await exec.server.engine.invoke({ "items.id": item.id }, null);
+            }
 
         }
         // check for repeat

@@ -8,7 +8,8 @@ import { Process } from './Process.js';
 import { IExecution } from '../interfaces/engine.js';
 import { EXECUTION_STATUS } from '../interfaces/Enums.js';
 import { Item } from '../engine/Item.js';
-import { IAppDelegate, IServiceProvider, ScriptHandler } from '../index.js';
+import { ScriptHandler } from '../engine/ScriptHandler.js';
+import type { IAppDelegate, IServiceProvider } from '../interfaces/common.js';
 
 import { DMNEngine } from '../dmn/DMNEngine.js';
 
@@ -69,12 +70,15 @@ class ServiceTask extends Node {
         let obj = servicesProvider;
 
         let method: CallableFunction | undefined;
+        // The object the service is a method of: it is called as its method (`this` is it).
+        let owner: IServiceProvider | undefined;
         if (obj && this.serviceName)  {
             const serviceNamePathPart = this.serviceName.split('.');
             for (var i = 0; i <= serviceNamePathPart.length - 1; i++) {
                 const pathPart = serviceNamePathPart[i];
                 if (typeof obj[pathPart] === 'function') {
                     method = obj[pathPart] as CallableFunction;
+                    owner = obj;
                 } else if (typeof obj[pathPart] === 'object') {
                     obj = obj[pathPart] as IServiceProvider;
                 }
@@ -82,7 +86,7 @@ class ServiceTask extends Node {
         }
 
         if (typeof method === 'function') {
-            ret = await method(item.input, item.context);
+            ret = await (method as Function).call(owner, item.input, item.context);
         } else {
             ret = await appDelegate['serviceCalled'](item.input, item.context, item);
         }
@@ -392,7 +396,13 @@ class CallActivity extends Node {
     get requiresWait() { return true; }
     get canBeInvoked() { return false; }
 
+    /**
+     * A called process has ended: its caller's call activity continues. When it ended within its own
+     * start, the call activity is still running (`start` below sees the end, and continues); otherwise
+     * the caller waits, and is invoked, before the called process's own call returns.
+     */
     static async executionEnded(execution: IExecution) {
+        if (execution.operation === 'start') return;
         const itemId = execution.instance.parentItemId;
         const engine = execution.server.engine;
         await engine.invoke({ "items.id": itemId }, execution.instance.data);

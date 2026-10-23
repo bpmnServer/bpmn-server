@@ -1,7 +1,12 @@
-import { TimerBehaviour, CamundaFormData, IOBehaviour, MessageEventBehaviour, SignalEventBehaviour, TerminateBehaviour, LoopBehaviour } from "./index.js";
+import { CamundaFormData } from './Form.js';
+import { IOBehaviour } from './IOBehaviour.js';
+import { LoopBehaviour } from './Loop.js';
+import { MessageEventBehaviour, SignalEventBehaviour } from './MessageSignal.js';
+import { TerminateBehaviour } from './Terminate.js';
+import { TimerBehaviour } from './Timer.js';
 import { Node } from "../Node.js";
 import { Item } from "../../engine/Item.js";
-import { IItem } from "../../index.js";
+import type { IItem } from '../../interfaces/engine.js';
 import { ScriptBehaviour } from "./Script.js";
 import { CancelEventBehaviour, CompensateEventBehaviour } from "./TransEvents.js";
 import { EscalationEventBehaviour } from "./Escalation.js";
@@ -111,6 +116,12 @@ class BehaviourLoader {
             }
         }
     ];
+    /**
+     * Adds a behaviour for a BPMN element, extension or event definition, by its name (`funct(node, def)`
+     * makes it). The registry is the library's, for every server in the process, as a moddle extension
+     * is: it extends what BPMN the engine understands, not one server's configuration. Register once,
+     * at start, before servers load definitions.
+     */
     static register(name,funct) {
 
         BehaviourLoader.behaviours.push({ name, funct });

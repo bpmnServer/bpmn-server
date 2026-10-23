@@ -7,7 +7,7 @@ import { Process } from './Process.js';
 import { IExecution } from '../interfaces/engine.js';
 import { EXECUTION_STATUS } from '../interfaces/Enums.js';
 import { Item } from '../engine/Item.js';
-import { SubProcess } from './index.js';
+import { SubProcess } from './Tasks.js';
 
 //NO_import { DecisionTable } from 'dmn-engine';
 

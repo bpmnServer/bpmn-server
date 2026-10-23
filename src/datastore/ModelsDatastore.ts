@@ -1,16 +1,16 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-import { Definition } from "../elements/index.js";
-import { BPMNServer } from "../server/index.js";
+import { Definition } from '../elements/Definition.js';
+import type { IBPMNServer } from '../interfaces/server.js';
 import {ModelsDatastoreDB} from "./ModelsDatastoreDB.js";
 
-import { IModelsDatastore } from "../interfaces/index.js";
+import type { IModelsDatastore } from '../interfaces/datastore.js';
 
 
 class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
 
-    constructor(server: BPMNServer) {
+    constructor(server: IBPMNServer) {
         super(server);
         
     }
@@ -64,42 +64,46 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
         return this.definitionsPath + name + '.' + type;
     }
 
-    private getFile(name, type,owner=null) {
+    /** A model file's text; null only when it does not exist (an unreadable file throws). */
+    private async getFile(name, type,owner=null) {
         const fs = require('fs');
         try {
-        let file = fs.readFileSync(this.getPath(name,type),
-            { encoding: 'utf8', flag: 'r' });
-        return file;
+            return await fs.promises.readFile(this.getPath(name,type), 'utf8');
         }
-        catch {
-            return null;
+        catch (error) {
+            if (error.code === 'ENOENT') return null;
+            throw error;
         }
 
     }
-    private saveFile(name, type , data,owner=null) {
+    /** Writes a model file whole or not at all: to a temporary file beside it, then renamed over it. */
+    private async saveFile(name, type , data,owner=null) {
         let fullpath = this.getPath(name, type);
         const fs = require('fs');
-        fs.writeFile(fullpath, data, function (err) {
-            if (err) throw err;
-        });
+        const temporary = fullpath + '.' + process.pid + '.tmp';
+        await fs.promises.writeFile(temporary, data);
+        await fs.promises.rename(temporary, fullpath);
 
     }
     async getSource(name,owner=null): Promise<string> {
 
-        return this.getFile(name, 'bpmn');
+        const source = await this.getFile(name, 'bpmn');
+        if (source == null) throw new Error(`No process definition named ${name} in ${this.definitionsPath}`);
+        return source;
 
     }
+    /** The model's diagram, or null when it has none (the SVG is optional). */
     async getSVG(name,owner=null): Promise<string> {
         return this.getFile(name, 'svg');
     }
 
     async save(name, bpmn, svg?,owner=null): Promise<boolean> {
 
-        this.saveFile(name, 'bpmn', bpmn);
-        if (svg)
-            this.saveFile(name, 'svg', svg);
-
+        // The database's record first: it parses the model, so a model that does not load leaves the files as they were.
         await super.save(name, bpmn, svg);
+        await this.saveFile(name, 'bpmn', bpmn);
+        if (svg)
+            await this.saveFile(name, 'svg', svg);
 
         return true;
 
@@ -108,22 +112,18 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
     async deleteModel(name: any,owner=null): Promise<void> {
         const fs = require('fs');
         await super.deleteModel(name);
-        await fs.unlink(this.definitionsPath + name + '.bpmn',  function (err) {
-            if (err) console.log('ERROR: ' + err);
-        });
-        await fs.unlink(this.definitionsPath + name + '.svg',function (err) {
-            if (err) console.log('ERROR: ' + err);
-        });
+        for (const extension of ['bpmn', 'svg']) {
+            try { await fs.promises.unlink(this.definitionsPath + name + '.' + extension); }
+            catch (error) { if (error.code !== 'ENOENT') throw error; }
+        }
     }
     async renameModel(name: any, newName: any,owner=null): Promise<boolean> {
         const fs = require('fs');
         await super.renameModel(name, newName);
-        await fs.rename(this.definitionsPath + name + '.bpmn', this.definitionsPath + newName + '.bpmn', function (err) {
-            if (err) console.log('ERROR: ' + err);
-        });
-        await fs.rename(this.definitionsPath + name + '.svg', this.definitionsPath + newName + '.svg', function (err) {
-            if (err) console.log('ERROR: ' + err);
-        });
+        for (const extension of ['bpmn', 'svg']) {
+            try { await fs.promises.rename(this.definitionsPath + name + '.' + extension, this.definitionsPath + newName + '.' + extension); }
+            catch (error) { if (error.code !== 'ENOENT') throw error; }
+        }
         return true;
     }
     /**
@@ -149,7 +149,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
             models.set(f['name'], mtime);
         });
         const dbList = await super.get();
-        dbList.forEach(model => {
+        for (const model of dbList) {
             const name = model['name'];
             const saved = new Date(model['saved']);
             const entry = models.get(name);
@@ -159,9 +159,9 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
                 }
             }
             else {
-                super.deleteModel(name);
+                await super.deleteModel(name);
             }
-        });
+        }
         let i;
 
         for (const entry of models.entries()) {
@@ -171,20 +171,14 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
         }
         catch(exc)
         {
-            console.log('rebuild error');
+            this.logger.log('rebuild error');
             throw exc;
         }
     }
     private async rebuildModel(name) {
-        console.log("rebuilding " + name);
+        this.logger.log("rebuilding " + name);
         let source = await this.getSource(name);
-        let svg;
-        try {
-            svg = await this.getSVG(name);
-        }
-        catch (exc) {
-            //console.log(exc);
-        }
+        const svg = await this.getSVG(name);
         await super.save(name, source, svg);
 
     }

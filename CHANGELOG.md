@@ -9,9 +9,47 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- `engine.start(..., options.instanceId)`: the caller may name the instance (an application whose record of it shares its id).
 
 ### Changed
 -->
+## Unreleased — Embeddable engine: ports, lifecycle, independent servers (2026-10-21)
+
+Each change is described, as a future upstream pull request, in [UPSTREAM.md](UPSTREAM.md).
+
+### Added
+- Storage port `IDocumentStore` (MongoDB the default adapter; `MemoryDocumentStore`; any other through the configuration's `documentStore`), with `DuplicateKeyError` and the shared query semantics `DocumentQuery`.
+- Lock port `ILockManager` (`lock`, `release`, `claim`), injectable (`locker`); owner identity (`serverId`), stale takeover (`locks.staleAfter`).
+- `server.ready`, `BPMNServer.create(...)`, an idempotent `shutdown()` that waits for running executions; `onLifecycle(listener)` subscribers, awaited and isolated.
+- `engine.cancel(query, user)`: terminates an instance and keeps it.
+- `IDataStore.updateInstanceSource`; `DataStore.find` on any storage adapter (`DocumentPager`).
+- Configuration: `documentStore`, `locker`, `serverId`, `locks`, `shutdownTimeout`, `timers.pollInterval`.
+- `ItemNotWaitingError`, `ReentrantCallError`.
+- Tests: `test/` (the engine on memory and MongoDB) and `test/scenarios` (bpmn-web's feature suite, `npm run test:scenarios`).
+
+### Changed
+- Several servers per process, each with its own engine, cache, listeners, timers and connections; `BPMNServer.getInstance()` and `BPMNServer.engine` kept, deprecated.
+- No process-wide `uncaughtException` handler.
+- Timers are the server's: cancelled on shutdown or cancellation, claimed so one server fires each, re-read so another server fires a stopped server's.
+- Errors reach the caller as themselves; an ended item is not invoked again; a call on an instance its caller holds is refused.
+- Services are called with their provider as `this`.
+- The security bypass of `REQUIRE_AUTHENTICATION` / `ENFORCE_SECURITY` is each user's own, not latched for the process.
+- Each save is one version (0 first); model files are written whole; modules import from their defining modules, not barrels.
+- Package renamed `@ai-mde/bpmn-server` (private) in this repository.
+
+### Fixed
+- A message goes to the instance waiting for it before a start event: a waiting instance is never passed over for a new one (`throwMessage`; `waitingFor(kind, name, query)` finds every waiting item). A message start no longer passes the element id as the user.
+- A data store's `db` replaced after it was made (an in-memory one, in a test) is the one its locker uses.
+- `signalThrown` is awaited, as `messageThrown` is: the delegate's decision and its failure are part of the step.
+- Queries on items: a dotted path into an item without its parent is no value (it threw); `$exists: false` holds (it never did).
+- A called process ending advances its caller before returning (the CallTask race).
+- Lifecycle subscribers were never notified; `process.exception` never ran after a failure.
+- A lost connection was retried as lock contention; locks could be released by another owner.
+- `timers.forceTimersDelay` left timers without a due time.
+- `upgrade`'s `$nor` query (`elemMatch` without `$`); `saveInstance` kept every update promise for the store's life.
+- The paged search opened a database the configuration does not name.
+- A configuration factory not given was set to `undefined`.
+
 ## Unreleased — Require trusted workflow principals (#4)
 
 - Require authenticated principals for workflow execution operations.

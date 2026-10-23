@@ -1,9 +1,12 @@
-import type { TimerBehaviour } from "./index.js";
-import type { Node } from "../index.js";
-import { Behaviour } from './index.js';
+import type { TimerBehaviour } from './Timer.js';
+import type { Node } from '../Node.js';
+import { Behaviour } from './Behaviour.js';
 import type { Item } from "../../engine/Item.js";
-import { Event, NODE_SUBTYPE, Transaction } from "../../index.js";
-import { BPMN_TYPE, NODE_ACTION, TOKEN_STATUS } from "../../interfaces/index.js";
+import { NODE_SUBTYPE } from '../../interfaces/Enums.js';
+import { Event } from '../Events.js';
+import { Transaction } from '../Transaction.js';
+import { NODE_ACTION, TOKEN_STATUS } from '../../interfaces/Enums.js';
+import { BPMN_TYPE } from '../NodeLoader.js';
 
 
 class ErrorEventBehaviour extends Behaviour {

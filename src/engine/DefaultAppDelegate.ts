@@ -1,4 +1,6 @@
-import { IExecution, Item, IAppDelegate, IServiceProvider} from "../index.js";
+import type { IAppDelegate, IServiceProvider } from '../interfaces/common.js';
+import type { IExecution } from '../interfaces/engine.js';
+import { Item } from './Item.js';
 import { moddleOptions} from '../elements/js-bpmn-moddle.js';
 
 class DefaultAppDelegate implements IAppDelegate {

@@ -1,11 +1,11 @@
 
 import { Execution } from '../engine/Execution.js';
 import { Token } from '../engine/Token.js';
-import { IBehaviour, Behaviour} from './behaviours/./index.js';
-import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../index.js';
+import { type IBehaviour, Behaviour } from './behaviours/Behaviour.js';
+import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../interfaces/Enums.js';
 
 import { Item } from '../engine/Item.js';
-import { Node } from './index.js';
+import { Node } from './Node.js';
 import { IElement } from '../interfaces/elements.js';
 
 

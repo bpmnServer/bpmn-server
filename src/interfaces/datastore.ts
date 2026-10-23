@@ -1,5 +1,7 @@
-import { IDefinition, IInstanceData } from './index.js';
-import { IBpmnModelData, IItemData, IEventData } from './index.js';
+import type { IInstanceData } from './DataObjects.js';
+import type { IDefinition } from './elements.js';
+import type { IDocumentStore, ILockManager } from './storage.js';
+import type { IBpmnModelData, IItemData, IEventData } from './DataObjects.js';
 
 export interface FindParams {
 	filter?: Record<string, any>;
@@ -20,11 +22,19 @@ export interface FindParams {
   }
 
 interface IDataStore {
-    dbConfiguration: any;
-    db: any;
+    /** @deprecated MongoDB's settings, for code written against the MongoDB data store; engine code does not read it. */
+    dbConfiguration?: any;
+    /** @deprecated The data store's storage adapter; engine code uses the operations below. */
+    db?: IDocumentStore | any;
     logger: any;
-    locker: any;
+    /** The data store's own lock adapter; the engine uses the server's (`server.locker`), which is this one unless the configuration supplies another. */
+    locker: ILockManager;
     save(instance:any,options:any): Promise<void>;
+    saveInstance(instance:any,options?:any): Promise<void>;
+    /** Replaces a saved instance's definition source (upgrading it to a newer model); the caller holds the instance's lock. */
+    updateInstanceSource(instanceId: string, source: string): Promise<void>;
+    /** Releases the store's connections. */
+    close?(): Promise<void>;
     loadInstance(instanceId: any,options:any): Promise<{
         instance: any;
         items: any[];

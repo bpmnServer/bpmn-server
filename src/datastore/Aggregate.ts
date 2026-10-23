@@ -1,6 +1,8 @@
-import { DataHandler } from '../engine/index.js';
+import { DataHandler } from '../engine/DataHandler.js';
 import { Execution } from '../engine/Execution.js';
-import { IDataStore,FindParams,FindResult, IBPMNServer, IInstanceData, IItemData } from '../interfaces/index.js';
+import type { IInstanceData, IItemData } from '../interfaces/DataObjects.js';
+import type { IDataStore, FindParams, FindResult } from '../interfaces/datastore.js';
+import type { IBPMNServer } from '../interfaces/server.js';
 
 import { ObjectId, Document, WithId } from 'mongodb';
 
@@ -48,7 +50,8 @@ export class Aggregate {
 		try {
 
 			const client = await this.db.getClient();
-			const db = client.db(this.configuration.db);
+			// The instances' database (the upstream named the server configuration's `db`, which it has not: the URL's default database).
+			const db = client.db(this.dbConfiguration.db);
 			const collection = db.collection(this.dbConfiguration.Instance_collection);
 
 			let includeItems=false;
@@ -167,7 +170,6 @@ export class Aggregate {
 			pipeline.push({ $sort: sort });
 			pipeline.push({ $limit: limit });
 
-			console.log(JSON.stringify(pipeline,null,2));
 		
 			const data = await collection.aggregate(pipeline).toArray();
 

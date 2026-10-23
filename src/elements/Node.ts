@@ -1,11 +1,13 @@
-import { Element, Flow , EventBasedGateway} from './index.js';
+import { Element } from './Element.js';
+import { Flow } from './Flow.js';
+import { EventBasedGateway } from './Gateway.js';
 
 import { Token, TOKEN_TYPE } from '../engine/Token.js';
 import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS, NODE_SUBTYPE} from '../interfaces/Enums.js';
 import { Item } from '../engine/Item.js';
 import { BPMN_TYPE } from '../interfaces/Enums.js';
 import { Behaviour_names, BehaviourLoader } from './behaviours/BehaviourLoader.js';
-import { ScriptHandler } from '../index.js';
+import { ScriptHandler } from '../engine/ScriptHandler.js';
 
 
 // ---------------------------------------------

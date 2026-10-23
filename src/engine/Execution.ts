@@ -2,10 +2,14 @@ import { v4 as uuid } from '@lukeed/uuid';
 import { Item } from './Item.js';
 import { Token, TOKEN_TYPE  } from './Token.js';
 import { Loop} from './Loop.js';
-import { Definition, CallActivity, Process } from '../elements/index.js'
-import { EXECUTION_EVENT, TOKEN_STATUS, EXECUTION_STATUS, IDefinition ,NODE_ACTION } from '../index.js';
-import { IInstanceData, IExecution, DataHandler } from '../index.js';
-import { ServerComponent } from '../server/index.js';
+import { Definition } from '../elements/Definition.js';
+import { Process } from '../elements/Process.js';
+import { CallActivity } from '../elements/Tasks.js';import { EXECUTION_EVENT, TOKEN_STATUS, EXECUTION_STATUS, NODE_ACTION } from '../interfaces/Enums.js';
+import type { IDefinition } from '../interfaces/elements.js';
+import type { IInstanceData } from '../interfaces/DataObjects.js';
+import type { IExecution } from '../interfaces/engine.js';
+import { DataHandler } from './DataHandler.js';
+import { ServerComponent } from '../server/ServerComponent.js';
 import { InstanceObject } from './Model.js';
 
 /**
@@ -93,7 +97,7 @@ class Execution extends ServerComponent implements IExecution {
         this.instance.endedAt = new Date();
         this.instance.status = EXECUTION_STATUS.end;
         if (this.instance.parentItemId) {
-            CallActivity.executionEnded(this);
+            await CallActivity.executionEnded(this);
         }
         await this.process.end(this);
         await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_end);
@@ -724,14 +728,19 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
 
     async doExecutionEvent(process,event,eventDetails={}) {
         //this.item = null;
-        await this.listener.emit(event, { event, context: this ,eventDetails });
-        await this.listener.emit('all', { event, context: this ,eventDetails});
+        await this.dispatch(event, eventDetails);
     }
 
     async doItemEvent(item, event,eventDetails={}) {
         this.item = item;
-        await this.listener.emit(event, { event, context: this ,eventDetails });
-        await this.listener.emit('all', { event, context: this ,eventDetails});
+        await this.dispatch(event, eventDetails);
+    }
+    /** The server's listeners, then its lifecycle subscribers (server/Listener.ts); a plain emitter only emits. */
+    private async dispatch(event, eventDetails) {
+        const payload = { event, context: this, eventDetails };
+        if (typeof this.listener.dispatch === 'function') return this.listener.dispatch(event, payload);
+        this.listener.emit(event, payload);
+        this.listener.emit('all', payload);
     }
     log(...msg) {
         this.instance.logs.push(this.logger.log(...msg));

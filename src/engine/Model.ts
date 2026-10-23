@@ -1,6 +1,5 @@
-import { IItemData, IInstanceData} from  '../index.js'
-import { ITEM_STATUS , EXECUTION_STATUS } from '../index.js';
-import { BPMN_TYPE } from '../elements/index.js';
+import type { IItemData, IInstanceData } from '../interfaces/DataObjects.js';import { ITEM_STATUS, EXECUTION_STATUS } from '../interfaces/Enums.js';
+import { BPMN_TYPE } from '../elements/NodeLoader.js';
 
 /**
  * as stored in MongoDB

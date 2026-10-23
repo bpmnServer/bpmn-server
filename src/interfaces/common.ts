@@ -1,8 +1,8 @@
-import {
-    IExecution, IItem, NODE_ACTION, FLOW_ACTION, IModelsDatastore,
-    IDataStore, ICacheManager,
-    IScriptHandler
-} from '../index.js';
+import type { IDocumentStore, ILockManager } from './storage.js';
+import { NODE_ACTION, FLOW_ACTION } from './Enums.js';
+import type { IModelsDatastore, IDataStore } from './datastore.js';
+import type { IExecution, IItem, IScriptHandler } from './engine.js';
+import type { ICacheManager } from './server.js';
 
 
 interface IConfiguration 
@@ -10,8 +10,10 @@ interface IConfiguration
     definitionsPath?: string,
     templatesPath?: string,
     timers: {
-        forceTimersDelay: number,
-        precision: number,
+        forceTimersDelay?: number,
+        precision?: number,
+        /** Milliseconds between re-reads of waiting timers, so a timer another server scheduled is fired here when that server is gone (0: never; default 60000). */
+        pollInterval?: number,
     },
     database: IMongoDBDatabaseConfiguration | ISQLiteDatabaseConfiguration,
     apiKey: string,
@@ -20,7 +22,23 @@ interface IConfiguration
     appDelegate(server): IAppDelegate,
     dataStore(server): IDataStore,
     scriptHandler(server): IScriptHandler,
-    cacheManager(server): ICacheManager
+    cacheManager(server): ICacheManager,
+    /** The storage adapter both data stores use (MongoDB when absent): an in-memory store, an application's database. */
+    documentStore?(server): IDocumentStore,
+    /** The lock adapter (the data store's own when absent). */
+    locker?(server): ILockManager,
+    /** This process's identity as a lock owner (default `SERVER_ID`, else host, process id and a random suffix). */
+    serverId?: string,
+    locks?: {
+        /** Milliseconds between lock tries (1500). */
+        retryDelay?: number,
+        /** Tries before a lock gives up (20). */
+        maxTries?: number,
+        /** Milliseconds after which a lock or a timer claim is stale (300000). */
+        staleAfter?: number,
+    },
+    /** How long `shutdown()` waits for running executions, in milliseconds (10000). */
+    shutdownTimeout?: number,
 }
 
 interface IDatabaseConfigurationBase {

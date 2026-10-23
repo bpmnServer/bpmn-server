@@ -1,5 +1,5 @@
-import { Behaviour } from './index.js';
-import { Item } from "../../index.js";
+import { Behaviour } from './Behaviour.js';
+import { Item } from '../../engine/Item.js';
 
 class ScriptBehaviour extends Behaviour {
     /*    

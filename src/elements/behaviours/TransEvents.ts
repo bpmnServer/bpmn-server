@@ -1,10 +1,11 @@
 
-import { Behaviour } from './index.js';
+import { Behaviour } from './Behaviour.js';
 import { Item } from "../../engine/Item.js";
-import { NODE_SUBTYPE } from "../../index.js";
-import { ITEM_STATUS, NODE_ACTION, TOKEN_STATUS } from "../../interfaces/index.js";
+import { NODE_SUBTYPE } from '../../interfaces/Enums.js';
+import { ITEM_STATUS, NODE_ACTION, TOKEN_STATUS } from '../../interfaces/Enums.js';
 import { Node } from "../Node.js";
-import { Event, Transaction } from "../index.js";
+import { Event } from '../Events.js';
+import { Transaction } from '../Transaction.js';
 
 class CancelEventBehaviour extends Behaviour {
     init() {

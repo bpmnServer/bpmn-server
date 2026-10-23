@@ -2,11 +2,12 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 import { MongoDB } from './MongoDB.js';
 
-import { Definition } from "../elements/index.js";
-import { BPMNServer } from "../server/index.js";
+import { Definition } from '../elements/Definition.js';
+import type { IBPMNServer } from "../interfaces/server.js";
 
 import { ServerComponent } from "../server/ServerComponent.js";
-import { IBpmnModelData, IModelsDatastore, IEventData } from "../interfaces/index.js";
+import type { IBpmnModelData, IEventData } from '../interfaces/DataObjects.js';
+import type { IModelsDatastore } from '../interfaces/datastore.js';
 import { BpmnModelData } from "./ModelsData.js";
 import { QueryTranslator } from "./QueryTranslator.js";
 
@@ -15,14 +16,20 @@ const Events_collection = 'wf_events';
 
 class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
     dbConfiguration;
+    /** The storage adapter: the server's shared `documentStore`, else this datastore's own MongoDB connection. */
     db;
+    private readonly ownsDb: boolean;
 
-    constructor(server: BPMNServer) {
+    constructor(server: IBPMNServer) {
         super(server);
 
-        this.dbConfiguration = this.configuration.database.MongoDB;
-        this.db = new MongoDB(this.dbConfiguration, this.logger);
+        this.dbConfiguration = this.configuration.database?.MongoDB ?? { db: 'bpmn' };
+        this.ownsDb = !server.documentStore;
+        this.db = server.documentStore ?? new MongoDB(this.dbConfiguration, this.logger);
 
+    }
+    async close(): Promise<void> {
+        if (this.ownsDb) await this.db.close?.();
     }
     async get(query={}): Promise<object[]> {
 
@@ -92,6 +99,7 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
         var records = await this.db.find(this.dbConfiguration.db, Definition_collection, { name: name }, {});
 
         this.logger.log('find model for  ' + name + " recs:" + records.length);
+        if (records.length == 0) throw new Error(`No process definition named ${name}`);
 
         return records[0];
 
@@ -133,7 +141,7 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
 //        this.logger.log('...find events for ' + JSON.stringify(query) + "=>" + JSON.stringify(newQuery) + " recs:" + records.length);
 
         records.forEach(rec => {
-            rec.events.forEach(ev => {
+            (rec.events ?? []).forEach(ev => {
                 let pass = true;
                 if (query) {
                     pass = trans.filterItem(ev, newQuery);

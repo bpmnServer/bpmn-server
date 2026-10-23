@@ -1,0 +1,11 @@
+{
+  "extension": ["js"],
+  "spec": ["test/scenarios/feature/*.js"],
+  "ignore": ["test/scenarios/feature/index.js"],
+  "file": ["./test/scenarios/helpers/setup.js"],
+  "ui": "mocha-cakes-2",
+  "reporter": "spec",
+  "timeout": 50000,
+  "exit": true,
+  "parallel": false
+}

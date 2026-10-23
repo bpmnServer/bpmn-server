@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:collaboration id="Collaboration_04y2yh2">
+    <bpmn2:participant id="Participant_0r7glje" processRef="Process_1" />
+  </bpmn2:collaboration>
+  <bpmn2:process id="Process_1" isExecutable="false">
+    <bpmn2:extensionElements>
+      <camunda:executionListener event="start">
+        <camunda:script scriptFormat="JavaScript">console.log('=========== Process Start ===============');</camunda:script>
+      </camunda:executionListener>
+    </bpmn2:extensionElements>
+    <bpmn2:laneSet id="LaneSet_0yxecu8">
+      <bpmn2:lane id="Lane_0jmm0qb" name="Employee">
+        <bpmn2:flowNodeRef>StartEvent_1</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Request</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+      <bpmn2:lane id="Lane_0a5bph6" name="Manager">
+        <bpmn2:flowNodeRef>Approve</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Event_02om8ew</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Gateway_1kqewfd</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>timer-event</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+      <bpmn2:lane id="Lane_05wy8pe" name="HR">
+        <bpmn2:flowNodeRef>Event_1qg3mz1</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Activity_1escddn</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Activity_1rx1txe</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+    </bpmn2:laneSet>
+    <bpmn2:sequenceFlow id="Flow_1ig8mx7" sourceRef="Request" targetRef="Approve" />
+    <bpmn2:sequenceFlow id="Flow_0xa1hl7" sourceRef="StartEvent_1" targetRef="Request" />
+    <bpmn2:startEvent id="StartEvent_1" camunda:initiator="requester">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">/*console.log('appDel',appDelegate);
+console.log('services',appServices); */
+console.log('inst ', item.token.execution.getItems().length);</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>Flow_0xa1hl7</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="Flow_1my72g7" sourceRef="Approve" targetRef="Gateway_1kqewfd" />
+    <bpmn2:sequenceFlow id="Flow_1un6mui" sourceRef="Activity_1rx1txe" targetRef="Event_1qg3mz1" />
+    <bpmn2:userTask id="Request" name="Request" camunda:assignee="$(this.data.requester)">
+      <bpmn2:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="RequestReason" label="Reason" type="string" />
+          <camunda:formField id="LeaveType" label="Leave Type" type="enum">
+            <camunda:value id="Sick" name="Sick Leave" />
+            <camunda:value id="Vacation" name="Vacation" />
+            <camunda:value id="Study" name="Study" />
+            <camunda:value id="Maternity" name="Maternity" />
+          </camunda:formField>
+          <camunda:formField id="StartDate" label="Start Date" type="date" />
+          <camunda:formField id="EndDate" label="End Date" type="date" />
+        </camunda:formData>
+        <camunda:taskListener event="assignment">
+          <camunda:script scriptFormat="JavaScript">console.log('assignment');</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0xa1hl7</bpmn2:incoming>
+      <bpmn2:incoming>Flow_0rvg1ym</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1ig8mx7</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="Approve" name="Approve">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">this.assignee='Supervisor';</camunda:script>
+        </camunda:executionListener>
+        <camunda:formData>
+          <camunda:formField id="approval" label="Approval Outcome" type="enum">
+            <camunda:value id="A" name="Approve" />
+            <camunda:value id="Reject" name="Reject" />
+            <camunda:value id="InformationRequired" name="Information Required" />
+          </camunda:formField>
+        </camunda:formData>
+        <camunda:taskListener event="assignment">
+          <camunda:script scriptFormat="JavaScript">console.log(' item is now assigned ',item.assignee);</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1ig8mx7</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1my72g7</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_1ufmnuh" name="Approved" sourceRef="Gateway_1kqewfd" targetRef="Activity_1rx1txe" />
+    <bpmn2:sequenceFlow id="Flow_1ef1q1u" name="Rejected" sourceRef="Gateway_1kqewfd" targetRef="Event_02om8ew">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.approval=='Reject'</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Flow_0rvg1ym" name="Require Information" sourceRef="Gateway_1kqewfd" targetRef="Request">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.approval=='InformationRequired'</bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:endEvent id="Event_02om8ew">
+      <bpmn2:incoming>Flow_1ef1q1u</bpmn2:incoming>
+      <bpmn2:terminateEventDefinition id="TerminateEventDefinition_0wbo0a4" />
+    </bpmn2:endEvent>
+    <bpmn2:endEvent id="Event_1qg3mz1">
+      <bpmn2:incoming>Flow_1un6mui</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:exclusiveGateway id="Gateway_1kqewfd" default="Flow_1ufmnuh">
+      <bpmn2:incoming>Flow_1my72g7</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1ufmnuh</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_1ef1q1u</bpmn2:outgoing>
+      <bpmn2:outgoing>Flow_0rvg1ym</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="Flow_00etx8n" sourceRef="timer-event" targetRef="Activity_1escddn" />
+    <bpmn2:scriptTask id="Activity_1escddn" name="Reminder" scriptFormat="JavaScript">
+      <bpmn2:incoming>Flow_00etx8n</bpmn2:incoming>
+      <bpmn2:script>/*appUtils.notify();*/</bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:boundaryEvent id="timer-event" cancelActivity="false" attachedToRef="Approve">
+      <bpmn2:documentation>Repeat 3 times after 2 days</bpmn2:documentation>
+      <bpmn2:outgoing>Flow_00etx8n</bpmn2:outgoing>
+      <bpmn2:timerEventDefinition id="TimerEventDefinition_1hfeiwy">
+        <bpmn2:timeCycle xsi:type="bpmn2:tFormalExpression">R3P2D</bpmn2:timeCycle>
+      </bpmn2:timerEventDefinition>
+    </bpmn2:boundaryEvent>
+    <bpmn2:serviceTask id="Activity_1rx1txe" name="Process">
+      <bpmn2:incoming>Flow_1ufmnuh</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1un6mui</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_04y2yh2">
+      <bpmndi:BPMNShape id="Participant_0r7glje_di" bpmnElement="Participant_0r7glje" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="650" height="374" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_05wy8pe_di" bpmnElement="Lane_05wy8pe" isHorizontal="true">
+        <dc:Bounds x="190" y="320" width="620" height="134" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0a5bph6_di" bpmnElement="Lane_0a5bph6" isHorizontal="true">
+        <dc:Bounds x="190" y="200" width="620" height="120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0jmm0qb_di" bpmnElement="Lane_0jmm0qb" isHorizontal="true">
+        <dc:Bounds x="190" y="80" width="620" height="120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_00etx8n_di" bpmnElement="Flow_00etx8n">
+        <di:waypoint x="312" y="270" />
+        <di:waypoint x="300" y="270" />
+        <di:waypoint x="300" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rvg1ym_di" bpmnElement="Flow_0rvg1ym">
+        <di:waypoint x="500" y="235" />
+        <di:waypoint x="500" y="140" />
+        <di:waypoint x="430" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="512" y="136" width="56" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ef1q1u_di" bpmnElement="Flow_1ef1q1u">
+        <di:waypoint x="525" y="260" />
+        <di:waypoint x="652" y="260" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="567" y="242" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ufmnuh_di" bpmnElement="Flow_1ufmnuh">
+        <di:waypoint x="500" y="285" />
+        <di:waypoint x="500" y="360" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="517" y="343" width="46" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1un6mui_di" bpmnElement="Flow_1un6mui">
+        <di:waypoint x="550" y="400" />
+        <di:waypoint x="592" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1my72g7_di" bpmnElement="Flow_1my72g7">
+        <di:waypoint x="430" y="260" />
+        <di:waypoint x="475" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xa1hl7_di" bpmnElement="Flow_0xa1hl7">
+        <di:waypoint x="248" y="140" />
+        <di:waypoint x="330" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ig8mx7_di" bpmnElement="Flow_1ig8mx7">
+        <di:waypoint x="380" y="180" />
+        <di:waypoint x="380" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="212" y="122" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jq3ugg_di" bpmnElement="Request">
+        <dc:Bounds x="330" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1aanvd6_di" bpmnElement="Approve">
+        <dc:Bounds x="330" y="220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_11njyo2_di" bpmnElement="Event_02om8ew">
+        <dc:Bounds x="652" y="242" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1qg3mz1_di" bpmnElement="Event_1qg3mz1">
+        <dc:Bounds x="592" y="382" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1kqewfd_di" bpmnElement="Gateway_1kqewfd" isMarkerVisible="true">
+        <dc:Bounds x="475" y="235" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_12w2lic_di" bpmnElement="Activity_1escddn">
+        <dc:Bounds x="250" y="350" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jssmpk_di" bpmnElement="Activity_1rx1txe">
+        <dc:Bounds x="450" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0dn083r_di" bpmnElement="timer-event">
+        <dc:Bounds x="312" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>
