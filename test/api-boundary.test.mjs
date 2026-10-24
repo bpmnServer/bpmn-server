@@ -5,11 +5,13 @@ import { BPMNAPI, BPMNAdminAPI } from '../dist/index.js';
 
 const server = {};
 
-test('runtime API does not expose model administration', () => {
+test('runtime API reads models but does not expose model administration', () => {
     const api = new BPMNAPI(server);
-    assert.equal(api.model, undefined);
     assert.ok(api.engine);
     assert.ok(api.data);
+    assert.ok(api.model, 'runtime clients read models (start events, forms, documentation)');
+    for (const write of ['save', 'delete', 'rename', 'export'])
+        assert.equal(api.model[write], undefined, write);
 });
 
 test('admin API explicitly exposes model administration', () => {

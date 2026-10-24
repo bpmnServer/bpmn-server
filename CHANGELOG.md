@@ -13,7 +13,38 @@ and here
 
 ### Changed
 -->
-## Unreleased — Embeddable engine: ports, lifecycle, independent servers (2026-10-21)
+## Release 3.2.0 — Runtime model reads, consistent instance visibility, verifyModel (2026-10-24)
+
+3.1.0 restricted the runtime API further than its security rules required, which broke task
+portals and end-user applications for non-admin users (bpmn-web among them).
+
+### Changed
+- `BPMNAPI.model` is back, **read-only** (`APIModelReader`): `get`, `list`, `findEvents`,
+  `findStartEvents` (candidate rules of the start event apply), `getSource`, `load`, `verifyModel`,
+  scoped to the principal's tenant. 3.1.0 had moved all model calls to `BPMNAdminAPI`, so a client
+  that only needed to list startable processes or read a task form had to hold the API that also
+  saves, deletes and renames models.
+- `BPMNAdminAPI.model` (`APIModel`) extends the reader with `save`, `delete`, `rename`, `export`.
+- `api.data.findInstances` returns the instances a principal may see whole again, as `findItems`
+  does. 3.1.0 stripped data and items for non-admins, but `findItems` still returned the same data,
+  so the stripping protected nothing and broke task and assignment forms.
+
+### Fixed
+- Model reads called without a query (`list(undefined, user)`) no longer fail; reads no longer
+  change the caller's query object.
+
+### Added
+- `verifyModel(source, server?)` and `api.model.verifyModel(nameOrSource, user)`: checks a model without running it (XML and references, structure, gateways, diagram, the engine's own load, script/condition/expression syntax, timers, services, called models) and returns `{ valid, errors, warnings, issues }`.
+- Tests: `test/runtime-api.test.mjs` drives the runtime API as a task portal does, with non-admin
+  principals (start events, forms, tasks, data, completion, tenant isolation); API boundary and
+  security tests for the reader/admin split.
+
+### Not changed (documented by a test)
+- Instance visibility: `qualifyInstances` admits an instance when any of its items has no assignee
+  and no candidates (e.g. its start event), so any principal of the tenant sees every instance.
+  Tasks stay restricted to their candidates. Tightening this is a separate decision.
+
+## Release 3.1.0 — Embeddable engine: ports, lifecycle, independent servers (2026-10-23)
 
 Each change is described, as a future upstream pull request, in [UPSTREAM.md](UPSTREAM.md).
 
@@ -25,7 +56,6 @@ Each change is described, as a future upstream pull request, in [UPSTREAM.md](UP
 - `IDataStore.updateInstanceSource`; `DataStore.find` on any storage adapter (`DocumentPager`).
 - Configuration: `documentStore`, `locker`, `serverId`, `locks`, `shutdownTimeout`, `timers.pollInterval`.
 - `ItemNotWaitingError`, `ReentrantCallError`.
-- `verifyModel(source, server?)` and `api.model.verifyModel(nameOrSource, user)`: checks a model without running it (XML and references, structure, gateways, diagram, the engine's own load, script/condition/expression syntax, timers, services, called models) and returns `{ valid, errors, warnings, issues }`.
 - Tests: `test/` (the engine on memory and MongoDB) and `test/scenarios` (bpmn-web's feature suite, `npm run test:scenarios`).
 
 ### Changed
