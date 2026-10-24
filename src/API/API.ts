@@ -7,6 +7,7 @@ import type { IDataStore } from '../interfaces/datastore.js';
 import type { IDefinition } from '../interfaces/elements.js';
 import type { IExecution } from '../interfaces/engine.js';
 import type { IBPMNServer, IEngine } from '../interfaces/server.js';
+import { verifyModel, type IModelVerification } from '../elements/verifyModel.js';
 
 /**
  *  root object to api
@@ -19,8 +20,9 @@ import type { IBPMNServer, IEngine } from '../interfaces/server.js';
  * 
  *  api.engine  to access engine functions (start,invoke..)
  *  api.data    to access dataStore functions (find.. delete)
+ *  api.model   to read models (list, start events, source, verify)
  *
- *  Model administration is intentionally available only through BPMNAdminAPI.
+ *  Changing models (save, delete, rename) is available only through BPMNAdminAPI.
  * 
  * 
  *  api cli:
@@ -32,11 +34,14 @@ class BPMNAPI {
     server: IBPMNServer;
     engine: APIEngine;
     data: APIData;
+    /** Read-only: changing models needs BPMNAdminAPI. */
+    model: APIModelReader;
 
     constructor(server: IBPMNServer) {
         this.server = server;
         this.engine = new APIEngine(this);
         this.data = new APIData(this);
+        this.model = new APIModelReader(this);
     }
 }
 
@@ -45,7 +50,7 @@ class BPMNAPI {
  * Runtime integrations should receive BPMNAPI so they cannot mutate models.
  */
 class BPMNAdminAPI extends BPMNAPI {
-    model: APIModel;
+    declare model: APIModel;
 
     constructor(server: IBPMNServer) {
         super(server);
@@ -305,11 +310,9 @@ class APIData extends APIComponent {
     public async findInstances(query, user?: ISecureUser, options?): Promise<IInstanceData[]> {
         user=this.getUser(user);
         query = user.qualifyInstances(query);
-        const instances = await this.server.dataStore.findInstances(query, options);
-        if (user.isAdmin()) return instances;
-        // Matching one accessible task does not authorize other tasks or process data.
-        return instances.map(({ id, name, status, version, startedAt, endedAt, saved }) =>
-            ({ id, name, status, version, startedAt, endedAt, saved } as IInstanceData));
+        // The same visibility as findItems (qualifyInstances): an instance the principal may see is
+        // returned whole. 3.1.0 stripped data and items for non-admins, which findItems still returned.
+        return await this.server.dataStore.findInstances(query, options);
     }
     public async deleteInstances(query, user?: ISecureUser) {
         user=this.getUser(user);
@@ -317,58 +320,37 @@ class APIData extends APIComponent {
         return await this.server.dataStore.deleteInstances(query)
     }
 }
-class APIModel extends APIComponent {
+/**
+ * Reading models: what runtime clients need to offer and run processes (the processes a user may
+ * start, documentation, task forms, diagrams). Scoped to the principal's tenant (modelsOwner).
+ */
+class APIModelReader extends APIComponent {
 
-    public async get(query:any ,user: ISecureUser): Promise<object[]> {
+    public async get(query: any, user: ISecureUser): Promise<object[]> {
         user=this.getUser(user);
+        query = { ...(query ?? {}) };
         if (user.tenantId)
             query['owner'] = user.modelsOwner;
-        const list=await this.server.definitions.get(query);
-
-        return list;
-
+        return await this.server.definitions.get(query);
     }
-
-
-    public async save(name, source, svg, user?: ISecureUser) {
-
+    public async list(query, user?: ISecureUser): Promise<string[]> {
         user=this.getUser(user);
-        if (await user.canModifyModel(name))
-            return await this.server.definitions.save(name, source, svg, user.modelsOwner);
-        else
-            return false;
-    }
-    public async list(query,user?: ISecureUser): Promise<string[]> {
-
-        user=this.getUser(user);
+        query = { ...(query ?? {}) };
         if (user.tenantId)
             query['owner'] = user.modelsOwner;
         return await this.server.definitions.getList(query);
     }
     public async findEvents(query, user?: ISecureUser) {
-
         user=this.getUser(user);
-        return await this.server.definitions.findEvents(query, user.modelsOwner);
+        return await this.server.definitions.findEvents({ ...(query ?? {}) }, user.modelsOwner);
     }
+    /** Start events the principal may use: candidate starter users/groups apply. */
     public async findStartEvents(query, user?: ISecureUser) {
-
         user=this.getUser(user);
+        query = { ...(query ?? {}) };
         query['events.subType'] = null;
         query = user.qualifyStartEvents(query);
         return await this.server.definitions.findEvents(query, user.modelsOwner);
-    }
-    public async delete(name, user?: ISecureUser) {
-        user=this.getUser(user);
-        if (await user.canDeleteModel(name))
-            return await this.server.definitions.deleteModel(name, user.modelsOwner);
-        return false;
-    }
-    public async rename(name, newName, user?: ISecureUser) {
-
-        user=this.getUser(user);
-        if (await user.canModifyModel(name))
-            return await this.server.definitions.renameModel(name, newName, user.modelsOwner);
-        return false;
     }
     public async getSource(name, user?: ISecureUser) {
         user=this.getUser(user);
@@ -378,9 +360,55 @@ class APIModel extends APIComponent {
         user=this.getUser(user);
         return await this.server.definitions.load(name, user.modelsOwner);
     }
+    /**
+     * Checks a model for errors and likely mistakes without running it.
+     * @param nameOrSource  a saved model's name, or BPMN XML
+     */
+    public async verifyModel(nameOrSource: string, user?: ISecureUser): Promise<IModelVerification> {
+        user=this.getUser(user);
+        let name = 'model';
+        let source = nameOrSource;
+        if (!String(nameOrSource || '').trim().startsWith('<')) {
+            name = nameOrSource;
+            try {
+                source = await this.server.definitions.getSource(name, user.modelsOwner);
+            }
+            catch (exc) {
+                source = null;
+            }
+            if (!source)
+                return { valid: false, errors: 1, warnings: 0,
+                    issues: [{ severity: 'error', code: 'model-not-found', message: `Model '${name}' was not found.` }] };
+        }
+        return await verifyModel(source, this.server, name);
+    }
+}
+
+/** Changing models: deployment and model-management tooling only (BPMNAdminAPI). */
+class APIModel extends APIModelReader {
+
+    public async save(name, source, svg, user?: ISecureUser) {
+        user=this.getUser(user);
+        if (await user.canModifyModel(name))
+            return await this.server.definitions.save(name, source, svg, user.modelsOwner);
+        else
+            return false;
+    }
+    public async delete(name, user?: ISecureUser) {
+        user=this.getUser(user);
+        if (await user.canDeleteModel(name))
+            return await this.server.definitions.deleteModel(name, user.modelsOwner);
+        return false;
+    }
+    public async rename(name, newName, user?: ISecureUser) {
+        user=this.getUser(user);
+        if (await user.canModifyModel(name))
+            return await this.server.definitions.renameModel(name, newName, user.modelsOwner);
+        return false;
+    }
     public async export(query, folder, user?: ISecureUser) {
 
     }
 }
 
-export { BPMNAPI, BPMNAdminAPI, APIEngine, APIData, APIModel }
+export { BPMNAPI, BPMNAdminAPI, APIEngine, APIData, APIModelReader, APIModel }
