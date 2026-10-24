@@ -9,3 +9,4 @@ export * from './behaviours/./index.js';
 export * from './Gateway.js';
 export * from './Process.js';
 export * from './Transaction.js';
+export * from './verifyModel.js';

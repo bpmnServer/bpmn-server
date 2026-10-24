@@ -7,6 +7,7 @@ import type { IDataStore } from '../interfaces/datastore.js';
 import type { IDefinition } from '../interfaces/elements.js';
 import type { IExecution } from '../interfaces/engine.js';
 import type { IBPMNServer, IEngine } from '../interfaces/server.js';
+import { verifyModel, type IModelVerification } from '../elements/verifyModel.js';
 
 /**
  *  root object to api
@@ -377,6 +378,28 @@ class APIModel extends APIComponent {
     public async load(name, user?: ISecureUser) {
         user=this.getUser(user);
         return await this.server.definitions.load(name, user.modelsOwner);
+    }
+    /**
+     * Checks a model for errors and likely mistakes without running it.
+     * @param nameOrSource  a saved model's name, or BPMN XML
+     */
+    public async verifyModel(nameOrSource: string, user?: ISecureUser): Promise<IModelVerification> {
+        user=this.getUser(user);
+        let name = 'model';
+        let source = nameOrSource;
+        if (!String(nameOrSource || '').trim().startsWith('<')) {
+            name = nameOrSource;
+            try {
+                source = await this.server.definitions.getSource(name, user.modelsOwner);
+            }
+            catch (exc) {
+                source = null;
+            }
+            if (!source)
+                return { valid: false, errors: 1, warnings: 0,
+                    issues: [{ severity: 'error', code: 'model-not-found', message: `Model '${name}' was not found.` }] };
+        }
+        return await verifyModel(source, this.server, name);
     }
     public async export(query, folder, user?: ISecureUser) {
 

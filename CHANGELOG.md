@@ -25,6 +25,7 @@ Each change is described, as a future upstream pull request, in [UPSTREAM.md](UP
 - `IDataStore.updateInstanceSource`; `DataStore.find` on any storage adapter (`DocumentPager`).
 - Configuration: `documentStore`, `locker`, `serverId`, `locks`, `shutdownTimeout`, `timers.pollInterval`.
 - `ItemNotWaitingError`, `ReentrantCallError`.
+- `verifyModel(source, server?)` and `api.model.verifyModel(nameOrSource, user)`: checks a model without running it (XML and references, structure, gateways, diagram, the engine's own load, script/condition/expression syntax, timers, services, called models) and returns `{ valid, errors, warnings, issues }`.
 - Tests: `test/` (the engine on memory and MongoDB) and `test/scenarios` (bpmn-web's feature suite, `npm run test:scenarios`).
 
 ### Changed
