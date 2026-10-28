@@ -13,6 +13,34 @@ and here
 
 ### Changed
 -->
+## Unreleased — Speed and memory
+
+Measured with `npm run bench` (the expense process: start and two user tasks, in-memory store), before → after:
+
+| | before | after |
+|---|---|---|
+| CPU per process | 21.6 ms | 9–14 ms |
+| a process end to end (wall, machine-dependent) | 84–102 ms | 5–20 ms |
+| a waiting instance, live-instance cache on | 316 KB | 49 KB (29 KB without saved logs) |
+| a waiting instance, no cache | 41 KB | 28 KB |
+| logger messages kept in memory | every message, never freed | none (unless asked) |
+
+### Fixed
+- **A fixed 10 ms pause on every step** (release 2.3.3, "avoid code blocking"): it made a process about 10× slower
+  than its work. A step now yields with `setImmediate`, which keeps other work running without the wait.
+- **The logger kept every message in memory**, for the life of the server, even when not printed or saved (about 90
+  per process); it keeps them only when asked (`new Logger({ keepMessages: true })`) or when per-instance log files
+  are written (`logFolder`).
+- **Each definition built its own BPMN type registry** (`BpmnModdle`, about 190 KB and most of a load's time): one
+  is shared (`Definition.moddleFor`); parsing a model takes 0.3 ms instead of 2.4 ms.
+- **An instance collected its log lines even when they were not saved**: it keeps them only with
+  `dataStore.saveLogs` (the default, so nothing changes by default).
+
+### Added
+- `test/perf.test.mjs` (in `npm test`): no fixed waits between steps, other work runs while a process runs, nothing
+  accumulates in the logger, one shared type registry, logs kept only when saved, a memory ceiling per cached
+  instance. `npm run bench`: speed (median of several rounds) and memory per waiting instance.
+
 ## Release 3.2.0 — Runtime model reads, consistent instance visibility, verifyModel (2026-10-24)
 
 3.1.0 restricted the runtime API further than its security rules required, which broke task

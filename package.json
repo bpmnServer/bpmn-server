@@ -10,7 +10,8 @@
     "clean": "rimraf dist",
     "test:boundary": "node --test test/api-boundary.test.mjs",
     "pretest": "tsc --build",
-    "test:scenarios": "mocha --config test/scenarios/.mocharc.json"
+    "test:scenarios": "mocha --config test/scenarios/.mocharc.json",
+    "bench": "node test/perf/bench.mjs"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
