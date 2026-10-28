@@ -11,9 +11,13 @@ class Logger implements ILogger {
     toFile = null;
     callback = null;
     level=0;
+    /** Keep the messages in memory for `get()` and `save()`; without it nothing accumulates (it grew with every step a server ran). */
+    keepMessages = false;
 
-    constructor({ toConsole=true, toFile='', callback=null }) {
+    constructor({ toConsole=true, toFile='', callback=null, keepMessages=undefined }: { toConsole?: boolean, toFile?: string, callback?: any, keepMessages?: boolean } = {}) {
         this.setOptions({ toConsole, toFile, callback });
+        // the per-instance log files (logFolder) are written from the kept messages
+        this.keepMessages = keepMessages ?? !!process.env['logFolder'];
     }
     setOptions({ toConsole, toFile, callback }) {
 
@@ -33,8 +37,10 @@ class Logger implements ILogger {
             const fs = require('fs');
             fs.appendFileSync(this.toFile, message);        
         }
-        this.debugMsgs.push({date:new Date(),message, type,level:this.level});
-        return ({date:new Date(),message,type,level:this.level});
+        const entry = { date: new Date(), message, type, level: this.level };
+        if (this.keepMessages)
+            this.debugMsgs.push(entry);
+        return entry;
     }
     clear() {
 
