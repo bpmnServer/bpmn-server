@@ -22,6 +22,17 @@ function DEBUG(...args) {
 }
 
 class Definition implements IDefinition{
+    /** One BpmnModdle per extension set: building one registers every BPMN type (about 190 KB and the bulk of a load's time), and parsing does not change it. */
+    private static moddles = new Map<object, BpmnModdle>();
+    static moddleFor(moddleOptions): BpmnModdle {
+        const key = moddleOptions ?? Definition;
+        let moddle = Definition.moddles.get(key);
+        if (!moddle) {
+            moddle = new BpmnModdle({ moddleOptions });
+            Definition.moddles.set(key, moddle);
+        }
+        return moddle;
+    }
     name;
     processes = new Map();
     rootElements;
@@ -40,7 +51,7 @@ class Definition implements IDefinition{
 
         const moddleOptions = this.server.appDelegate.moddleOptions;
 
-        this.moddle = new BpmnModdle({ moddleOptions });
+        this.moddle = Definition.moddleFor(moddleOptions);
     }
     loadProcess(definition, processElement ,parentProcess) {
 

@@ -1,5 +1,3 @@
-import { BpmnModdle } from 'bpmn-moddle';
-
 import { moddleOptions as defaultModdleOptions } from './js-bpmn-moddle.js';
 import { Definition } from './Definition.js';
 import { Behaviour_names } from './behaviours/BehaviourLoader.js';
@@ -74,7 +72,7 @@ class ModelVerifier {
         // 1. XML and BPMN schema, parsed the same way Definition parses it
         let parsed;
         try {
-            parsed = await new BpmnModdle({ moddleOptions: this.moddleOptions }).fromXML(source);
+            parsed = await Definition.moddleFor(this.moddleOptions).fromXML(source);
         }
         catch (exc) {
             this.add('error', 'invalid-xml', 'The model is not valid BPMN XML: ' + (exc && exc.message || exc));
