@@ -11,7 +11,9 @@
     "test:boundary": "node --test test/api-boundary.test.mjs",
     "pretest": "tsc --build",
     "test:scenarios": "mocha --config test/scenarios/.mocharc.json",
-    "bench": "node test/perf/bench.mjs"
+    "bench": "node test/perf/bench.mjs",
+    "pretest:load": "tsc --build",
+    "test:load": "node --test --test-concurrency=1 \"test/load/*.test.mjs\""
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

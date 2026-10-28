@@ -40,6 +40,16 @@ Measured with `npm run bench` (the expense process: start and two user tasks, in
 - `test/perf.test.mjs` (in `npm test`): no fixed waits between steps, other work runs while a process runs, nothing
   accumulates in the logger, one shared type registry, logs kept only when saved, a memory ceiling per cached
   instance. `npm run bench`: speed (median of several rounds) and memory per waiting instance.
+- `npm run test:load` (`test/load/`, not in `npm test`; about 3 minutes in memory, 6 on MongoDB). On the in-memory
+  store, or on MongoDB with `LOAD_MONGO_URL` (database `bpmn_load_test`, dropped first); `LOAD_SCALE` multiplies
+  every count.
+  - stress: hundreds of processes at once, each keeping its own data; mixed processes with service tasks awaiting
+    I/O; I/O waits overlapping across instances; many callers for one task, exactly one going through; three
+    servers on one database; throughput and latency at 1, 10, 50 and 200 requests in flight.
+  - speed: CPU budgets for a process and for a model load; a process costing the same as the store grows (MongoDB;
+    a known limit of the in-memory store, which checks every document); finding waiting tasks among many instances.
+  - memory: nothing held after instances are deleted, after servers stop, or after cached instances end; heap per
+    waiting instance; peak heap of a burst of 500 requests.
 
 ## Release 3.2.0 — Runtime model reads, consistent instance visibility, verifyModel (2026-10-24)
 
