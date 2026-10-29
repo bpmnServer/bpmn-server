@@ -76,6 +76,21 @@ its element and field.
 npm run watch:modeler
 ```
 
+#### Element templates
+
+Configured tasks (a service task that calls a given service with its inputs, a user task for a given group)
+are element templates in the [Camunda 7 template format](https://docs.camunda.io/docs/components/modeler/desktop-modeler/element-templates/c7-element-templates/),
+one or more per `*.json` file in the application's `elementTemplatesPath` (the sample's are in
+`elementTemplates/`; `ELEMENT_TEMPLATES_PATH` overrides). The editor offers them under **Template** in the
+properties panel.
+
+A template is offered only if bpmn-server runs everything it sets: `property` bindings of the attributes
+the engine reads (the service name, user assignment, form key, decision, called process, script), input and
+output parameters, and JavaScript execution listeners. Templates that set anything else (Java classes, field
+injection, connectors, `camunda:property`, `camunda:in/out`) are left out, with the reason in the server log
+and in `GET /model/templates`. A template that names a service the application does not provide is offered,
+with a warning.
+
 Models are designed by users in the `DESIGNER` group and by administrators (`ADMIN`, `SYSTEM`).
 
 Set `MODELER=classic` to use the previous editor (the prebuilt `modeller-withPropertyPanel.js`) instead.

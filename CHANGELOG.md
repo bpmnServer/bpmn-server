@@ -38,6 +38,10 @@ and here
 - Designers: users in the `DESIGNER` group (bpmn-server's USER_ROLE.DESIGNER) work on models like
   administrators do: list, create, import, edit, check, save, rename and delete them, with the model actions
   on the home page. Administration (users, resetting data) stays with `ADMIN` and `SYSTEM`.
+- Element templates: configured tasks from the application's `elementTemplatesPath` (Camunda 7 template
+  format), chosen under Template in the properties panel. Templates are checked against what bpmn-server runs;
+  ones that set anything else are left out with the reason (`GET /model/templates`). The sample offers Add
+  two numbers, Echo, Manager approval and Review by requester.
 - `MODELER=classic` keeps the previous editor.
 
 ## Unreleased — Separate web host and workflow application (#1)

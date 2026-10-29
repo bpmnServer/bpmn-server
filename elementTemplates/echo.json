@@ -1,0 +1,23 @@
+{
+  "$schema": "https://unpkg.com/@camunda/element-templates-json-schema@0.1.0/resources/schema.json",
+  "name": "Echo",
+  "id": "bpmn-web.sample.echo",
+  "version": 1,
+  "description": "Calls the sample service echo, which copies its input to data.echo: a quick way to see a service run.",
+  "appliesTo": ["bpmn:ServiceTask"],
+  "properties": [
+    {
+      "label": "Service",
+      "type": "Hidden",
+      "value": "echo",
+      "binding": { "type": "property", "name": "camunda:delegateExpression" }
+    },
+    {
+      "label": "Message",
+      "description": "Text, or an expression such as $data.reason",
+      "type": "String",
+      "value": "hello",
+      "binding": { "type": "camunda:inputParameter", "name": "message" }
+    }
+  ]
+}

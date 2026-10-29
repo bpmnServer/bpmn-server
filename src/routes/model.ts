@@ -14,6 +14,7 @@ import { bpmnToSvg } from './bpmnToSvg.js';
 import { BPMNServer, BPMNAdminAPI, verifyModel } from '../index.js';
 import { Common } from './common.js';
 import { modelNameGuard, isSafeModelName } from './middleware/modelName.js';
+import { loadTemplateCatalog } from './elementTemplates.js';
 
 
 const awaitHandlerFactory = (middleware) => {
@@ -330,6 +331,21 @@ export class Model extends Common {
             response.send(svg);
 
         }));
+        // the editor's element templates; read on each request, so a template added to the folder shows on reload
+        router.get('/templates', awaitHandlerFactory(async (request, response) => {
+            let services;
+            try {
+                services = await bpmnServer.appDelegate.getServicesProvider(null);
+            }
+            catch (exc) {
+                services = undefined;   // a provider that needs a running execution: service names are not checked
+            }
+            const catalog = loadTemplateCatalog(this.webApp.application?.elementTemplatesPath, services);
+            for (const rejected of catalog.rejected)
+                console.log(`element template ${rejected.file} ${rejected.id ?? ''} left out: ${rejected.problems.join('; ')}`);
+            response.json(catalog);
+        }));
+
         // the editor's Problems list: checks the model being edited, as sent, without saving it
         router.post('/verify', awaitHandlerFactory(async (request, response) => {
             const { bpmn, processName } = request.body ?? {};

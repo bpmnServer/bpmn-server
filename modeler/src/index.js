@@ -6,11 +6,15 @@ import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 import '@bpmn-io/properties-panel/dist/assets/properties-panel.css';
+import 'bpmn-js-element-templates/dist/assets/element-templates.css';
+import '@bpmn-io/element-template-chooser/dist/element-template-chooser.css';
 import './modeler.css';
 
 import BpmnModeler from 'bpmn-js/lib/Modeler';
 import { BpmnPropertiesPanelModule, BpmnPropertiesProviderModule, CamundaPlatformPropertiesProviderModule } from 'bpmn-js-properties-panel';
 import CamundaBehaviorsModule from 'camunda-bpmn-js-behaviors/lib/camunda-platform';
+import { ElementTemplatesPropertiesProviderModule } from 'bpmn-js-element-templates';
+import ElementTemplateChooserModule from '@bpmn-io/element-template-chooser';
 import camundaModdle from './moddle.js';
 import BpmnServerPropertiesModule from './properties/index.js';
 import ProblemsModule from './problems/index.js';
@@ -28,6 +32,8 @@ const modeler = new BpmnModeler({
         BpmnPropertiesProviderModule,
         CamundaPlatformPropertiesProviderModule,
         CamundaBehaviorsModule,
+        ElementTemplatesPropertiesProviderModule,
+        ElementTemplateChooserModule,
         BpmnServerPropertiesModule,
         ProblemsModule
     ],
@@ -156,8 +162,24 @@ function fitDiagram() {
 
 // ---- open and save
 
+/** The configured tasks of the application (GET /model/templates), offered under Template in the panel. */
+async function loadTemplates() {
+    try {
+        const response = await fetch('/model/templates');
+        if (!response.ok)
+            throw new Error(`${response.status} ${response.statusText}`);
+        const { templates, rejected } = await response.json();
+        for (const template of rejected)
+            console.warn(`element template ${template.file} left out: ${template.problems.join('; ')}`);
+        modeler.get('elementTemplates').set(templates);
+    } catch (err) {
+        console.error('Could not load the element templates', err);
+    }
+}
+
 async function open() {
     const xml = JSON.parse(document.getElementById('model-source').textContent);
+    await loadTemplates();    // before the model: tasks made from a template show it
     applyPanelState();
     try {
         const { warnings } = await modeler.importXML(xml);

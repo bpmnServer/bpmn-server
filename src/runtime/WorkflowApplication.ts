@@ -12,6 +12,8 @@ export interface WorkflowApplication {
 	logger?: ILogger;
 	serverOptions?: Record<string, unknown>;
 	initialize?: (server: BPMNServer) => void;
+	/** A folder of element templates (Camunda 7 format, *.json) the model editor offers: configured tasks. */
+	elementTemplatesPath?: string;
 }
 
 export function defineWorkflowApplication(application: WorkflowApplication): WorkflowApplication {
