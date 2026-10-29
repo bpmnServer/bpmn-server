@@ -100,6 +100,16 @@ test('import refuses unsafe file names', async () => {
   assert.ok([302, 400].includes(res.status), why(res));
 });
 
+test('the modeler lays out a saved model without a diagram, without changing the file', async () => {
+  fs.writeFileSync(path.join(web.definitionsPath, 'no-diagram.bpmn'), NO_DIAGRAM);
+  await web.bpmnServer.definitions.rebuild();
+  const res = await designer.get('/model/edit/no-diagram');
+  assert.equal(res.status, 200, why(res));
+  const modelJson = /<script id="model-source" type="application\/json">([\s\S]*?)<\/script>/.exec(res.text)[1];
+  assert.match(JSON.parse(modelJson), /BPMNDiagram/, 'the editor gets diagram information');
+  assert.equal(await web.bpmnServer.definitions.getSource('no-diagram'), NO_DIAGRAM, 'the file is unchanged until saved');
+});
+
 test('the modeler saves a model with its diagram', async () => {
   const bpmn = fs.readFileSync(path.join(FIXTURES, 'leave-request.bpmn'), 'utf8').replace('name="Leave request"', 'name="Leave request v2"');
   const res = await admin.request('POST', '/model/edit/leave-request', { json: { processId: 'leave-request', bpmn, svg: '<svg xmlns="http://www.w3.org/2000/svg"><g data-element-id="Submit"/></svg>' } });

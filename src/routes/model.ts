@@ -224,6 +224,15 @@ export class Model extends Common {
             request.session.processName = processName;
             try {
                 xml = await definitions.getSource(processName);
+                // a model without diagram information (written by hand or by another tool) is laid out to be
+                // drawn; it is saved with the layout only when the designer saves it
+                if (!/<(\w+:)?BPMNDiagram[\s>]/.test(xml)) {
+                    try {
+                        xml = await layoutProcess(xml);
+                    } catch (exc) {
+                        console.log('auto-layout error:', exc);
+                    }
+                }
             } catch (exc) {
                 xml = `
                     <?xml version="1.0" encoding="UTF-8"?>

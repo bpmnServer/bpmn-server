@@ -4,6 +4,7 @@ import { Group, TextAreaEntry, isTextAreaEntryEdited } from '@bpmn-io/properties
 import { useService } from 'bpmn-js-properties-panel';
 import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { attributeEntry } from './AttributeEntry.jsx';
+import { formatEntry } from './FormatEntry.jsx';
 
 export function ServiceGroup(element, translate) {
     if (!is(element, 'bpmn:ServiceTask') && !is(element, 'bpmn:SendTask'))
@@ -37,7 +38,9 @@ function ScriptField({ element, id }) {
         rows={8}
         debounce={debounce}
         getValue={() => getBusinessObject(element).get('script') || ''}
-        setValue={value => modeling.updateProperties(element, { scriptFormat: 'JavaScript', script: value || undefined })}
+        setValue={value => modeling.updateProperties(element, {
+            scriptFormat: getBusinessObject(element).get('scriptFormat') || 'JavaScript', script: value || undefined
+        })}
     />;
 }
 
@@ -48,6 +51,9 @@ export function ScriptGroup(element, translate) {
         id: 'BpmnServer__Script',
         label: translate('Script'),
         component: Group,
-        entries: [{ id: 'script-body', element, component: ScriptField, isEdited: isTextAreaEntryEdited }]
+        entries: [
+            formatEntry(element, { id: 'script-format', target: () => getBusinessObject(element), property: 'scriptFormat' }),
+            { id: 'script-body', element, component: ScriptField, isEdited: isTextAreaEntryEdited }
+        ]
     };
 }

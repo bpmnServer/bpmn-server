@@ -1,10 +1,14 @@
 // Scripts that run on an element's events. bpmn-server reads camunda:executionListener and camunda:taskListener
 // alike (behaviours/Script.ts): each holds a camunda:script, run when the node fires the listener's event
 // (EXECUTION_EVENT in bpmn-server's Enums.ts). New scripts are written as execution listeners.
-import { ListGroup, SelectEntry, TextAreaEntry, isSelectEntryEdited, isTextAreaEntryEdited } from '@bpmn-io/properties-panel';
+import { ListGroup, SelectEntry, TextAreaEntry, TextFieldEntry, isSelectEntryEdited, isTextAreaEntryEdited, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { addExtensionElement } from './extensions.js';
+import { formatEntry } from './FormatEntry.jsx';
+
+/** How a listener is implemented when it has no script: Camunda's Java options, which bpmn-server does not run. */
+const JAVA = [['class', 'Java class'], ['expression', 'Expression'], ['delegateExpression', 'Delegate expression']];
 
 const LISTENER_TYPES = ['camunda:ExecutionListener', 'camunda:TaskListener'];
 
@@ -82,6 +86,22 @@ function ScriptField({ element, id, listener }) {
     />;
 }
 
+/** A Java listener's implementation, shown so the entry is not mistaken for an empty script. */
+function JavaField({ element, id, listener, property, label }) {
+    const debounce = useService('debounceInput');
+    const translate = useService('translate');
+    return <TextFieldEntry
+        element={element}
+        id={id}
+        label={translate(label)}
+        description={translate('Not run by bpmn-server: add a script, or remove this entry')}
+        debounce={debounce}
+        disabled
+        getValue={() => listener.get(property) || ''}
+        setValue={() => { }}
+    />;
+}
+
 export function ScriptsGroup(element, injector) {
     const bo = container(element);
     if (!bo || !(is(bo, 'bpmn:FlowElement') || is(bo, 'bpmn:Process')))
@@ -97,6 +117,9 @@ export function ScriptsGroup(element, injector) {
             label: listener.get('event') || translate('<no event>'),
             entries: [
                 { id: `${id}-event`, element, listener, component: EventField, isEdited: isSelectEntryEdited },
+                ...JAVA.filter(([property]) => listener.get(property)).map(([property, label]) =>
+                    ({ id: `${id}-${property}`, element, listener, property, label, component: JavaField, isEdited: isTextFieldEntryEdited })),
+                ...(listener.get('script') ? [formatEntry(element, { id: `${id}-format`, target: () => listener.get('script'), property: 'scriptFormat' })] : []),
                 { id: `${id}-script`, element, listener, component: ScriptField, isEdited: isTextAreaEntryEdited }
             ],
             autoFocusEntry: `${id}-script`,

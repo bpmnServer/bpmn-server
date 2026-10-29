@@ -38,6 +38,13 @@ and here
 - Designers: users in the `DESIGNER` group (bpmn-server's USER_ROLE.DESIGNER) work on models like
   administrators do: list, create, import, edit, check, save, rename and delete them, with the model actions
   on the home page. Administration (users, resetting data) stays with `ADMIN` and `SYSTEM`.
+- Nothing in a model file is hidden: settings bpmn-server does not run are not offered for new work, but
+  when a model has one the panel shows it (Camunda's group, or read-only under Other attributes) and Problems
+  says it has no effect. Script tasks and event scripts show their format, conditions their language, gateways
+  their default flow, and conditions on any flow are shown. A test opens every model file in the repository
+  and checks that each value it sets can be read in the panel (`READABLE_MODELS_EXTRA` adds another folder).
+- The editor lays out a model that has no diagram information when it is opened (as import does); the file
+  is saved with the layout only when the designer saves it.
 - Element templates: configured tasks from the application's `elementTemplatesPath` (Camunda 7 template
   format), chosen under Template in the properties panel. Templates are checked against what bpmn-server runs;
   ones that set anything else are left out with the reason (`GET /model/templates`). The sample offers Add

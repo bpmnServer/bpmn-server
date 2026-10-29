@@ -2,6 +2,7 @@
 // but models made with other tools (or the classic editor) can carry them; they are listed as Problems so
 // nobody expects them to work. Each is checked against what bpmn-server reads (elements/, behaviours/).
 import { is } from 'bpmn-js/lib/util/ModelUtil';
+import { isSet } from '../properties/settings.js';
 
 const NOT_RUN = 'is a Camunda setting bpmn-server does not run; it has no effect';
 const NOT_USED = 'is stored with the model but bpmn-server does not use it when the process runs';
@@ -57,14 +58,6 @@ export function findUnsupported(definitions) {
     return issues;
 }
 
-/** Set in the model, not just the descriptor's default (camunda:decisionRefBinding defaults to 'latest'). */
-function isSet(bo, property) {
-    const value = bo.get(property);
-    if (value === undefined || value === null || value === '' || value === false)
-        return false;
-    return value !== bo.$model.getPropertyDescriptor(bo, property)?.default;
-}
-
 function* flowElements(container) {
     for (const element of container.get('flowElements') || []) {
         yield element;
@@ -93,9 +86,13 @@ function checkElement(bo, add) {
         if (loop.get('camunda:asyncBefore') || loop.get('camunda:asyncAfter'))
             add('warning', bo, 'Multi-instance asynchronous continuation', NOT_RUN);
     }
-    for (const definition of bo.get('eventDefinitions') || [])
+    for (const definition of bo.get('eventDefinitions') || []) {
+        for (const [property, label] of [['camunda:class', 'Java class'], ['camunda:expression', 'Expression implementation'], ['camunda:delegateExpression', 'Service on a message event']])
+            if (isSet(definition, property))
+                add('warning', bo, label, NOT_RUN);
         if (is(definition, 'bpmn:ConditionalEventDefinition'))
             add('warning', bo, 'Conditional event', 'is not supported by bpmn-server; the event never triggers');
+    }
     checkExtensions(bo, add);
 }
 

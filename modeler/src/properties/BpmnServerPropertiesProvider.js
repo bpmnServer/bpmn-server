@@ -4,11 +4,17 @@
 import { UserAssignmentGroup, StartAssignmentGroup } from './AssignmentGroups.jsx';
 import { ServiceGroup, ScriptGroup } from './TaskGroups.jsx';
 import { ScriptsGroup } from './ScriptsGroup.jsx';
+import { hasCamundaOnly } from './settings.js';
+import { DefaultFlowGroup } from './DefaultFlowGroup.jsx';
+import { OtherAttributesGroup } from './OtherAttributesGroup.jsx';
 import { ConditionGroup, MultiInstanceGroup, FormGroup, NewFormFieldsGroup, DecisionGroup, CalledProcessGroup } from './FlowGroups.jsx';
 
 const LOW_PRIORITY = 400;
 
-/** Camunda engine features with no meaning in bpmn-server. */
+/**
+ * Camunda engine features with no meaning in bpmn-server: not offered, but shown when the element has a value
+ * for one (settings.js), so every setting in a model file can be read in the panel.
+ */
 const REMOVED = new Set([
     'CamundaPlatform__ExternalTask',
     'CamundaPlatform__AsynchronousContinuations',
@@ -40,14 +46,17 @@ export default class BpmnServerPropertiesProvider {
     getGroups(element) {
         return groups => {
             const translate = this._translate;
+            // bpmn-server's group in place of Camunda's, unless the element has a setting only Camunda's shows
             const replace = (id, group) => {
+                if (hasCamundaOnly(element, id))
+                    return;
                 const index = groups.findIndex(g => g.id === id);
                 if (index >= 0)
                     groups.splice(index, 1, ...(group ? [group] : []));
                 else if (group)
                     groups.push(group);
             };
-            groups = groups.filter(group => !REMOVED.has(group.id));
+            groups = groups.filter(group => !REMOVED.has(group.id) || hasCamundaOnly(element, group.id));
 
             replace('CamundaPlatform__Implementation', ServiceGroup(element, translate) || DecisionGroup(element, translate));
             replace('CamundaPlatform__Condition', ConditionGroup(element, translate));
@@ -60,6 +69,14 @@ export default class BpmnServerPropertiesProvider {
             replace('CamundaPlatform__Script', ScriptGroup(element, translate));
             replace('CamundaPlatform__UserAssignment', UserAssignmentGroup(element, translate));
             replace('CamundaPlatform__ExecutionListener', ScriptsGroup(element, this._injector));
+
+            const defaultFlow = DefaultFlowGroup(element, translate);
+            if (defaultFlow)
+                groups.splice(Math.min(groups.length, 2), 0, defaultFlow);
+
+            const other = OtherAttributesGroup(element, translate);
+            if (other)
+                groups.push(other);
 
             const startAssignment = StartAssignmentGroup(element, translate);
             if (startAssignment)

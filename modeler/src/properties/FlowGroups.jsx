@@ -8,6 +8,7 @@ import { useService } from 'bpmn-js-properties-panel';
 import { is, isAny, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { attributeEntry } from './AttributeEntry.jsx';
 import { addExtensionElement } from './extensions.js';
+import { formatEntry } from './FormatEntry.jsx';
 
 const CONDITIONAL_SOURCES = ['bpmn:Activity', 'bpmn:ExclusiveGateway', 'bpmn:InclusiveGateway', 'bpmn:ComplexGateway'];
 
@@ -45,15 +46,28 @@ function ConditionField({ element, id }) {
 }
 
 export function ConditionGroup(element, translate) {
-    if (!is(element, 'bpmn:SequenceFlow') || !isAny(element.source, CONDITIONAL_SOURCES))
+    if (!is(element, 'bpmn:SequenceFlow'))
         return null;
-    if (getBusinessObject(element.source).get('default') === getBusinessObject(element))
-        return null;    // the default flow is taken when no other condition is true
+    const bo = getBusinessObject(element);
+    // a flow that has a condition shows it, wherever it starts: the engine evaluates it
+    const condition = bo.get('conditionExpression');
+    if (!condition) {
+        if (!isAny(element.source, CONDITIONAL_SOURCES))
+            return null;
+        if (getBusinessObject(element.source).get('default') === bo)
+            return null;    // the default flow is taken when no other condition is true
+    }
     return {
         id: 'BpmnServer__Condition',
         label: translate('Condition'),
         component: Group,
-        entries: [{ id: 'conditionExpression', element, component: ConditionField, isEdited: isTextAreaEntryEdited }]
+        entries: [
+            { id: 'conditionExpression', element, component: ConditionField, isEdited: isTextAreaEntryEdited },
+            ...(condition ? [formatEntry(element, {
+                id: 'conditionLanguage', label: 'Language', allowEmpty: true,
+                target: () => bo.get('conditionExpression'), property: 'language'
+            })] : [])
+        ]
     };
 }
 
@@ -74,14 +88,62 @@ function CollectionField({ element, id }) {
     />;
 }
 
+/** A loop setting bpmn-server ignores, shown when a model has it so it can be read and cleared. */
+function UnusedLoopField({ element, id, property, label, expression }) {
+    const commandStack = useService('commandStack');
+    const bpmnFactory = useService('bpmnFactory');
+    const debounce = useService('debounceInput');
+    const translate = useService('translate');
+    const loop = getBusinessObject(element).get('loopCharacteristics');
+    const value = () => {
+        const v = loop.get(property);
+        return (expression ? v?.get('body') : v) || '';
+    };
+    const setValue = text => {
+        const current = loop.get(property);
+        if (expression && text && current) {
+            commandStack.execute('element.updateModdleProperties', { element, moddleElement: current, properties: { body: text } });
+            return;
+        }
+        let next = text || undefined;
+        if (expression && text) {
+            next = bpmnFactory.create('bpmn:FormalExpression', { body: text });
+            next.$parent = loop;
+        }
+        commandStack.execute('element.updateModdleProperties', { element, moddleElement: loop, properties: { [property]: next } });
+    };
+    return <TextFieldEntry
+        element={element}
+        id={id}
+        label={translate(label)}
+        description={translate('Not used by bpmn-server, which loops over the collection; clear it')}
+        debounce={debounce}
+        getValue={value}
+        setValue={setValue}
+    />;
+}
+
+const UNUSED_LOOP = [
+    ['loopCardinality', 'Loop cardinality', true],
+    ['completionCondition', 'Completion condition', true],
+    ['camunda:elementVariable', 'Element variable', false]
+];
+
 export function MultiInstanceGroup(element, translate) {
-    if (!is(getBusinessObject(element).get('loopCharacteristics'), 'bpmn:MultiInstanceLoopCharacteristics'))
+    const loop = getBusinessObject(element).get('loopCharacteristics');
+    if (!is(loop, 'bpmn:MultiInstanceLoopCharacteristics'))
         return null;
     return {
         id: 'BpmnServer__MultiInstance',
         label: translate('Multi-instance'),
         component: Group,
-        entries: [{ id: 'multiInstance-collection', element, component: CollectionField, isEdited: isTextFieldEntryEdited }]
+        entries: [
+            { id: 'multiInstance-collection', element, component: CollectionField, isEdited: isTextFieldEntryEdited },
+            ...UNUSED_LOOP.filter(([property]) => loop.get(property)).map(([property, label, expression]) => ({
+                id: `multiInstance-${property.replace(':', '-')}`, element, property, label, expression,
+                component: UnusedLoopField, isEdited: isTextFieldEntryEdited
+            }))
+        ]
     };
 }
 

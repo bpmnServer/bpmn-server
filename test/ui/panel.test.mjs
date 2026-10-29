@@ -73,7 +73,9 @@ test('a flow condition is one JavaScript expression', async () => {
     await openGroup(page, 'Condition');
     const field = page.locator('#bio-properties-panel-conditionExpression');
     assert.equal(await field.inputValue(), '$(item.data.needsCleaning=="Yes")');
-    assert.equal(await page.locator('#js-properties-panel select').count(), 0, 'no condition type or script format to choose');
+    // no condition type or script resource to choose; the language the file names is shown
+    assert.deepEqual(await page.locator('#js-properties-panel select').evaluateAll(els => els.map(e => e.id)), ['bio-properties-panel-conditionLanguage']);
+    assert.equal(await page.inputValue('#bio-properties-panel-conditionLanguage'), 'JavaScript');
     await field.fill('data.needsCleaning == "No"');
     const xml = await save(page, model);
     assert.match(xml, /<bpmn2?:sequenceFlow id="flow_gw1_clean"[^>]*>\s*<bpmn2?:conditionExpression[^>]*>data.needsCleaning == "No"<\/bpmn2?:conditionExpression>/);
@@ -111,13 +113,22 @@ test('form fields are started on a task that has none', async () => {
     await close();
 });
 
-test('process settings bpmn-server does not use are not offered, and are listed when set', async () => {
+test('process settings bpmn-server does not use are not offered, but shown and listed when set', async () => {
+    // not offered on a process that does not set them
+    const plain = await addModel('panel-process-plain', { sample: 'Users Vote' });
+    let editor = await openEditor(plain);
+    await select(editor.page, 'Process_1');
+    let titles = await groupTitles(editor.page);
+    for (const hidden of ['Candidate starter', 'History cleanup', 'Tasklist'])
+        assert.ok(!titles.includes(hidden), hidden);
+    await editor.close();
+
     const model = await addModel('panel-process', { sample: 'ad hoc' });
     const { page, errors, close } = await openEditor(model);
     await select(page, 'Process_1');
-    const titles = await groupTitles(page);
-    for (const hidden of ['Candidate starter', 'History cleanup', 'Tasklist'])
-        assert.ok(!titles.includes(hidden), hidden);
+    titles = await groupTitles(page);
+    for (const shown of ['Candidate starter', 'History cleanup'])
+        assert.ok(titles.includes(shown), shown + ' shown: the file sets it');
     const notes = await page.locator('#js-problems .problem.severity-info[data-code="not-run-by-bpmn-server"] .message').allInnerTexts();
     assert.deepEqual(notes.map(n => n.split(' is ')[0]).sort(), ['Candidate starter groups', 'Candidate starter users', 'History time to live']);
     assert.deepEqual(errors, []);
