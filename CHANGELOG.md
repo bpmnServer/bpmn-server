@@ -13,6 +13,44 @@ and here
 
 ### Changed
 -->
+## Unreleased — Speed and memory
+
+Measured with `npm run bench` (the expense process: start and two user tasks, in-memory store), before → after:
+
+| | before | after |
+|---|---|---|
+| CPU per process | 21.6 ms | 9–14 ms |
+| a process end to end (wall, machine-dependent) | 84–102 ms | 5–20 ms |
+| a waiting instance, live-instance cache on | 316 KB | 49 KB (29 KB without saved logs) |
+| a waiting instance, no cache | 41 KB | 28 KB |
+| logger messages kept in memory | every message, never freed | none (unless asked) |
+
+### Fixed
+- **A fixed 10 ms pause on every step** (release 2.3.3, "avoid code blocking"): it made a process about 10× slower
+  than its work. A step now yields with `setImmediate`, which keeps other work running without the wait.
+- **The logger kept every message in memory**, for the life of the server, even when not printed or saved (about 90
+  per process); it keeps them only when asked (`new Logger({ keepMessages: true })`) or when per-instance log files
+  are written (`logFolder`).
+- **Each definition built its own BPMN type registry** (`BpmnModdle`, about 190 KB and most of a load's time): one
+  is shared (`Definition.moddleFor`); parsing a model takes 0.3 ms instead of 2.4 ms.
+- **An instance collected its log lines even when they were not saved**: it keeps them only with
+  `dataStore.saveLogs` (the default, so nothing changes by default).
+
+### Added
+- `test/perf.test.mjs` (in `npm test`): no fixed waits between steps, other work runs while a process runs, nothing
+  accumulates in the logger, one shared type registry, logs kept only when saved, a memory ceiling per cached
+  instance. `npm run bench`: speed (median of several rounds) and memory per waiting instance.
+- `npm run test:load` (`test/load/`, not in `npm test`; about 3 minutes in memory, 6 on MongoDB). On the in-memory
+  store, or on MongoDB with `LOAD_MONGO_URL` (database `bpmn_load_test`, dropped first); `LOAD_SCALE` multiplies
+  every count.
+  - stress: hundreds of processes at once, each keeping its own data; mixed processes with service tasks awaiting
+    I/O; I/O waits overlapping across instances; many callers for one task, exactly one going through; three
+    servers on one database; throughput and latency at 1, 10, 50 and 200 requests in flight.
+  - speed: CPU budgets for a process and for a model load; a process costing the same as the store grows (MongoDB;
+    a known limit of the in-memory store, which checks every document); finding waiting tasks among many instances.
+  - memory: nothing held after instances are deleted, after servers stop, or after cached instances end; heap per
+    waiting instance; peak heap of a burst of 500 requests.
+
 ## Release 3.2.0 — Runtime model reads, consistent instance visibility, verifyModel (2026-10-24)
 
 3.1.0 restricted the runtime API further than its security rules required, which broke task
