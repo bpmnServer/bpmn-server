@@ -13,6 +13,15 @@ and here
 
 ### Changed
 -->
+## Unreleased
+
+### verifyModel
+- Checks multi-instance loop collections: they must compile as expressions (they are always evaluated).
+- Checks `appServices.<name>` in scripts and expressions against the application's services (when the services
+  provider can be had without a running execution): calling one the services do not provide is an error,
+  reading one is a warning (`unknown-app-service`). A model looping over `Object.keys(appServices.rules)`
+  with no `rules` in the services failed only when it ran; it is now reported before.
+
 ## Release 3.2.0 — Speed and memory (2026-10-28)
 
 Measured with `npm run bench` (the expense process: start and two user tasks, in-memory store), before → after:

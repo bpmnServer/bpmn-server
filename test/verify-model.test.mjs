@@ -117,6 +117,41 @@ test('timers need a valid duration, cycle or date', async () => {
   assert.deepEqual(failed, ['timer-invalid:badDate', 'timer-invalid:badDuration', 'timer-not-defined:none']);
 });
 
+test('loop collections compile, and appServices references are checked against the application', async () => {
+  // the test delegate takes the services' own properties (an application's class instance keeps its methods too)
+  const { server } = await makeServer({ services: { rules: { A: [] }, async getApprovers(stage) { return []; } } });
+  const loop = (id, collection) => `<bpmn:userTask id="${id}"><bpmn:multiInstanceLoopCharacteristics camunda:collection="${collection}" /></bpmn:userTask>`;
+  const source = model(`
+    <bpmn:startEvent id="s" />
+    ${loop('okProperty', '$Object.keys(appServices.rules)')}
+    ${loop('okMethod', '$appServices.getApprovers(this)')}
+    ${loop('missingProperty', '$Object.keys(appServices.stages)')}
+    ${loop('missingMethod', '$appServices.listApprovers(this)')}
+    ${loop('badSyntax', '$data.items.filter(')}
+    <bpmn:scriptTask id="script"><bpmn:script>appServices.notify(data); appServices.notify(data);</bpmn:script></bpmn:scriptTask>
+    <bpmn:endEvent id="e" />
+    <bpmn:sequenceFlow id="f1" sourceRef="s" targetRef="okProperty" /><bpmn:sequenceFlow id="f2" sourceRef="okProperty" targetRef="okMethod" />
+    <bpmn:sequenceFlow id="f3" sourceRef="okMethod" targetRef="missingProperty" /><bpmn:sequenceFlow id="f4" sourceRef="missingProperty" targetRef="missingMethod" />
+    <bpmn:sequenceFlow id="f5" sourceRef="missingMethod" targetRef="badSyntax" /><bpmn:sequenceFlow id="f6" sourceRef="badSyntax" targetRef="script" />
+    <bpmn:sequenceFlow id="f7" sourceRef="script" targetRef="e" />`);
+  const result = await verifyModel(source, server, 'loops');
+  const found = result.issues.filter(i => ['unknown-app-service', 'expression-syntax'].includes(i.code))
+    .map(i => `${i.severity}:${i.code}:${i.elementId}`).sort();
+  assert.deepEqual(found, [
+    'error:expression-syntax:badSyntax',
+    'error:unknown-app-service:missingMethod',
+    'error:unknown-app-service:script',          // reported once, though called twice
+    'warning:unknown-app-service:missingProperty'
+  ]);
+  assert.match(issue(result, 'unknown-app-service').message, /appServices/);
+  assert.match(result.issues.find(i => i.elementId === 'missingProperty').message,
+    /The collection reads appServices.stages, which the application's services do not have: it is undefined when the process runs/);
+
+  // without an application (the verify CLI), service names are not checked
+  assert.deepEqual(codes(await verifyModel(source)).filter(c => c === 'unknown-app-service'), []);
+  await server.shutdown();
+});
+
 test('api.model.verifyModel checks saved models against the application', async () => {
   const { server } = await makeServer({ services: coverage(true) });
   const api = new BPMNAdminAPI(server);

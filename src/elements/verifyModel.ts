@@ -41,6 +41,8 @@ const SEVERITY_ORDER = { error: 0, warning: 1, info: 2 };
 class ModelVerifier {
     issues: IModelIssue[] = [];
     processId: string;
+    /** the application's services provider, when it can be had without a running execution */
+    services: any = null;
 
     constructor(private server?: IBPMNServer) { }
 
@@ -254,6 +256,7 @@ class ModelVerifier {
         const checkScripts = !handler || handler instanceof ScriptHandler;
         const knownModels = await this.knownModels();
         const services = await this.servicesProvider();
+        this.services = services;
 
         definition.processes.forEach(proc => {
             this.processId = proc.id;
@@ -275,6 +278,11 @@ class ModelVerifier {
                     else if (typeof exp == 'string' && exp.startsWith('#'))
                         this.checkScript('return ' + exp.substring(1), attr, def);
                 }
+                // a multi-instance loop's collection is always evaluated as an expression (engine/Loop.ts)
+                const loop = def.loopCharacteristics;
+                const collection = loop && (loop.collection || (loop.$attrs && loop.$attrs['camunda:collection']));
+                if (typeof collection == 'string' && collection.trim())
+                    this.checkExpression(collection, 'collection', def);
             }
 
             const timer = node.getBehaviour(Behaviour_names.TimerEventDefinition);
@@ -306,6 +314,7 @@ class ModelVerifier {
 
     checkScript(script: string, what: string, element) {
         if (!script || script.startsWith('$py')) return;
+        this.checkServiceReferences(script, what, element);
         try {
             Function(ScriptHandler.getJSvars({}) + script.replace('#', '') + ';');
         }
@@ -314,8 +323,27 @@ class ModelVerifier {
         }
     }
 
+    /**
+     * `appServices.name` in a script or expression must be something the application's services provide:
+     * calling one that is not there fails when the process runs; reading one gives undefined, which fails
+     * as soon as it is used (Object.keys(appServices.rules)).
+     */
+    checkServiceReferences(code: string, what: string, element) {
+        if (!this.services) return;
+        const seen = new Set<string>();
+        for (const [, name, call] of code.matchAll(/\bappServices\s*\.\s*([A-Za-z_$][\w$]*)(\s*\()?/g)) {
+            if (seen.has(name) || name in Object(this.services)) continue;
+            seen.add(name);
+            if (call)
+                this.add('error', 'unknown-app-service', `The ${what} calls appServices.${name}(), which the application's services do not provide.`, element);
+            else
+                this.add('warning', 'unknown-app-service', `The ${what} reads appServices.${name}, which the application's services do not have: it is undefined when the process runs.`, element);
+        }
+    }
+
     checkExpression(expression: string, what: string, element) {
         const script = expression.startsWith('$') ? expression.substring(1) : expression;
+        this.checkServiceReferences(script, what, element);
         try {
             Function(ScriptHandler.getJSvars({}) + `return (${script});`);
         }
