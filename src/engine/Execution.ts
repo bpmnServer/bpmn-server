@@ -742,21 +742,28 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
         this.listener.emit(event, payload);
         this.listener.emit('all', payload);
     }
+    /** The instance keeps its log lines only when they are saved (dataStore.saveLogs, the default). */
+    private get keepLogs(): boolean {
+        return this.server?.dataStore?.saveLogs !== false;
+    }
+    private record(entry) {
+        if (this.keepLogs) this.instance.logs.push(entry);
+    }
     log(...msg) {
-        this.instance.logs.push(this.logger.log(...msg));
+        this.record(this.logger.log(...msg));
     }
     logS(...msg) {
-        this.instance.logs.push(this.logger.logS(...msg));
+        this.record(this.logger.logS(...msg));
     }
     logE(...msg) {
-        this.instance.logs.push(this.logger.logE(...msg));
+        this.record(this.logger.logE(...msg));
     }
     info(...msg) {
-        this.instance.logs.push(this.logger.info(...msg));
+        this.record(this.logger.info(...msg));
     }
     error(msg) {
         this.doExecutionEvent(this, EXECUTION_EVENT.process_error);
-        this.instance.logs.push(msg);
+        this.record(msg);
         this.logger.error(msg);
     }
     appendData(inputData: any,item:Item, dataPath?: any,assignment?:any): void {

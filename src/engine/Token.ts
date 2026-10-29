@@ -555,8 +555,6 @@ class Token implements IToken {
 
             const ret = await this.currentNode.run(item);
 
-            await pause();
-
             let result = await this.currentNode.continue(item);
             result =await this.goNext();
             }  
@@ -663,7 +661,7 @@ class Token implements IToken {
      *  
      */ 
     async goNext() {
-                await pause();
+                await yieldToEventLoop();
                 /** issue 186:  token with empty path due to loop preceded by gateway */
                 if (this.path.length==0) {
                     // borrow item (just temporarly) from first child token
@@ -768,15 +766,20 @@ class Token implements IToken {
         this.execution.error(msg);
     }
 }
+/**
+ * Lets other work run (requests, timers, other instances) between a token's steps, so a long
+ * process does not block the server (release 2.3.3's intent). setImmediate yields without the
+ * fixed 10 ms that 2.3.3's pause() added to every step.
+ */
+function yieldToEventLoop(): Promise<void> {
+    return new Promise(resolve => setImmediate(resolve));
+}
 async function delay(time, result) {
     return new Promise(function (resolve) {
         setTimeout(function () {
             resolve(result);
         }, time);
     });
-}
-function pause(ms = 10) {
-    return new Promise(resolve => setTimeout(resolve, ms));
 }
 // ---------------------------------------------
 export { Token , TOKEN_TYPE }

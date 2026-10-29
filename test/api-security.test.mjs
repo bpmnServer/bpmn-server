@@ -55,15 +55,42 @@ test('global message and signal delivery require a system principal', async () =
   assert.equal(called, false);
 });
 
-test('non-admin instance list exposes metadata without other tasks or process data', async () => {
-  const full = { id: 'instance-1', name: 'model', status: 'wait', data: { secret: 42 },
-    items: [{ id: 'other-task' }], source: '<xml/>', logs: ['private'] };
-  const api = new BPMNAPI({ dataStore: { findInstances: async query => {
-    assert.equal(query.tenantId, 'tenant-a');
-    return [full];
-  } } });
-  assert.deepEqual(await api.data.findInstances({}, alice),
-    [{ id: 'instance-1', name: 'model', status: 'wait', version: undefined,
-      startedAt: undefined, endedAt: undefined, saved: undefined }]);
+test('instance lists are qualified by the principal and returned whole', async () => {
+  const full = { id: 'instance-1', name: 'model', status: 'wait', data: { value: 42 }, items: [{ id: 'task' }] };
+  const queries = [];
+  const api = new BPMNAPI({ dataStore: { findInstances: async query => { queries.push(query); return [full]; } } });
+  assert.deepEqual(await api.data.findInstances({}, alice), [full]);
+  assert.equal(queries[0].tenantId, 'tenant-a');
+  assert.ok(queries[0].$or.length, 'non-admin query is qualified');
   assert.deepEqual(await api.data.findInstances({}, admin), [full]);
+  assert.equal(queries[1].$or, undefined, 'admins are not filtered by candidates');
+});
+
+test("model reads are scoped to the principal's tenant", async () => {
+  const seen = [];
+  const scoped = new SecureUser({ userName: 'alice', userGroups: ['staff'], tenantId: 'tenant-a', modelsOwner: 'owner-a' });
+  const api = new BPMNAPI({ definitions: {
+    getList: async query => { seen.push(['list', query]); return []; },
+    get: async query => { seen.push(['get', query]); return []; },
+    getSource: async (name, owner) => { seen.push(['source', owner]); return ''; },
+    findEvents: async (query, owner) => { seen.push(['events', owner, query.$or ? 'qualified' : 'open']); return []; },
+  } });
+  await api.model.list({}, scoped);
+  await api.model.get({ name: 'm' }, scoped);
+  await api.model.getSource('m', scoped);
+  await api.model.findStartEvents({}, scoped);
+  assert.deepEqual(seen, [
+    ['list', { owner: 'owner-a' }],
+    ['get', { name: 'm', owner: 'owner-a' }],
+    ['source', 'owner-a'],
+    ['events', 'owner-a', 'qualified'],
+  ]);
+});
+
+test("model reads do not change the caller's query object", async () => {
+  const api = new BPMNAPI({ definitions: { getList: async q => q, findEvents: async q => q } });
+  const query = { name: 'm' };
+  await api.model.list(query, new SecureUser({ userName: 'x', userGroups: [], tenantId: 't', modelsOwner: 'o' }));
+  await api.model.findStartEvents(query, alice);
+  assert.deepEqual(query, { name: 'm' });
 });

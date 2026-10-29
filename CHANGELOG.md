@@ -13,7 +13,78 @@ and here
 
 ### Changed
 -->
-## Unreleased — Embeddable engine: ports, lifecycle, independent servers (2026-10-21)
+## Release 3.2.0 — Speed and memory (2026-10-28)
+
+Measured with `npm run bench` (the expense process: start and two user tasks, in-memory store), before → after:
+
+| | before | after |
+|---|---|---|
+| CPU per process | 21.6 ms | 9–14 ms |
+| a process end to end (wall, machine-dependent) | 84–102 ms | 5–20 ms |
+| a waiting instance, live-instance cache on | 316 KB | 49 KB (29 KB without saved logs) |
+| a waiting instance, no cache | 41 KB | 28 KB |
+| logger messages kept in memory | every message, never freed | none (unless asked) |
+
+### Fixed
+- **A fixed 10 ms pause on every step** (release 2.3.3, "avoid code blocking"): it made a process about 10× slower
+  than its work. A step now yields with `setImmediate`, which keeps other work running without the wait.
+- **The logger kept every message in memory**, for the life of the server, even when not printed or saved (about 90
+  per process); it keeps them only when asked (`new Logger({ keepMessages: true })`) or when per-instance log files
+  are written (`logFolder`).
+- **Each definition built its own BPMN type registry** (`BpmnModdle`, about 190 KB and most of a load's time): one
+  is shared (`Definition.moddleFor`); parsing a model takes 0.3 ms instead of 2.4 ms.
+- **An instance collected its log lines even when they were not saved**: it keeps them only with
+  `dataStore.saveLogs` (the default, so nothing changes by default).
+
+### Added
+- `test/perf.test.mjs` (in `npm test`): no fixed waits between steps, other work runs while a process runs, nothing
+  accumulates in the logger, one shared type registry, logs kept only when saved, a memory ceiling per cached
+  instance. `npm run bench`: speed (median of several rounds) and memory per waiting instance.
+- `npm run test:load` (`test/load/`, not in `npm test`; about 3 minutes in memory, 6 on MongoDB). On the in-memory
+  store, or on MongoDB with `LOAD_MONGO_URL` (database `bpmn_load_test`, dropped first); `LOAD_SCALE` multiplies
+  every count.
+  - stress: hundreds of processes at once, each keeping its own data; mixed processes with service tasks awaiting
+    I/O; I/O waits overlapping across instances; many callers for one task, exactly one going through; three
+    servers on one database; throughput and latency at 1, 10, 50 and 200 requests in flight.
+  - speed: CPU budgets for a process and for a model load; a process costing the same as the store grows (MongoDB;
+    a known limit of the in-memory store, which checks every document); finding waiting tasks among many instances.
+  - memory: nothing held after instances are deleted, after servers stop, or after cached instances end; heap per
+    waiting instance; peak heap of a burst of 500 requests.
+
+## Release 3.2.0 — Runtime model reads, consistent instance visibility, verifyModel (2026-10-28)
+
+3.1.0 restricted the runtime API further than its security rules required, which broke task
+portals and end-user applications for non-admin users (bpmn-web among them).
+
+### Changed
+- `BPMNAPI.model` is back, **read-only** (`APIModelReader`): `get`, `list`, `findEvents`,
+  `findStartEvents` (candidate rules of the start event apply), `getSource`, `load`, `verifyModel`,
+  scoped to the principal's tenant. 3.1.0 had moved all model calls to `BPMNAdminAPI`, so a client
+  that only needed to list startable processes or read a task form had to hold the API that also
+  saves, deletes and renames models.
+- `BPMNAdminAPI.model` (`APIModel`) extends the reader with `save`, `delete`, `rename`, `export`.
+- `api.data.findInstances` returns the instances a principal may see whole again, as `findItems`
+  does. 3.1.0 stripped data and items for non-admins, but `findItems` still returned the same data,
+  so the stripping protected nothing and broke task and assignment forms.
+
+### Fixed
+- Model reads called without a query (`list(undefined, user)`) no longer fail; reads no longer
+  change the caller's query object.
+
+### Added
+- `verifyModel(source, server?)` and `api.model.verifyModel(nameOrSource, user)`: checks a model without running it (XML and references, structure, gateways, diagram, the engine's own load, script/condition/expression syntax, timers, services, called models) and returns `{ valid, errors, warnings, issues }`.
+- `bpmn-server verify <file-or-folder>... [--json]` (`npx bpmn-server verify model.bpmn`): `verifyModel` from the
+  command line, no server or database; one line per issue, exit code 1 when a model has errors.
+- Tests: `test/runtime-api.test.mjs` drives the runtime API as a task portal does, with non-admin
+  principals (start events, forms, tasks, data, completion, tenant isolation); API boundary and
+  security tests for the reader/admin split.
+
+### Not changed (documented by a test)
+- Instance visibility: `qualifyInstances` admits an instance when any of its items has no assignee
+  and no candidates (e.g. its start event), so any principal of the tenant sees every instance.
+  Tasks stay restricted to their candidates. Tightening this is a separate decision.
+
+## Release 3.1.0 — Embeddable engine: ports, lifecycle, independent servers (2026-10-23)
 
 Each change is described, as a future upstream pull request, in [UPSTREAM.md](UPSTREAM.md).
 
