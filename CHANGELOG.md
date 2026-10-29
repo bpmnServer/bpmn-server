@@ -19,6 +19,14 @@ and here
 - The properties panel shows what bpmn-server runs. Camunda engine settings it does not run (asynchronous
   continuations, job execution, external tasks, connectors, field injection, extension properties) are gone;
   user assignment, who can start, service names and script tasks have bpmn-server's own fields and help.
+- Curated fields, each with what it means when the process runs: a flow's condition is one JavaScript
+  expression; a multi-instance task offers its collection only; forms are a form key and form fields (fields
+  can be started on a task that has none); business rule tasks name their decision table; call activities
+  name the model they start. Process settings bpmn-server only stores (candidate starters, history time to
+  live, tasklist) are no longer offered.
+- Camunda settings bpmn-server does not run (asynchronous continuations, Java classes and listeners, external
+  tasks, connectors, field injection, loop cardinality, completion conditions, conditional events, ...) are
+  listed under Problems when a model has them, so nobody expects them to work.
 - Scripts on events: one list for execution and task listeners, with the events bpmn-server fires
   (enter, start, wait, end, assign, validate, take, ...).
 - The panel sits beside the diagram, can be resized and hidden, and remembers both; the editor fills the

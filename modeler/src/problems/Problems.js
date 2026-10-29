@@ -1,8 +1,10 @@
 // The Problems list: checks the model with bpmn-server (POST config.problems.url, verifyModel) as it is
-// edited, lists the issues, marks their elements on the canvas and their fields in the properties panel,
-// and takes the user to the element and field when an issue is clicked.
+// edited, adds the Camunda settings bpmn-server does not run (unsupported.js), lists the issues, marks their
+// elements on the canvas and their fields in the properties panel, and takes the user to the element and
+// field when an issue is clicked.
 import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { fieldsFor } from './fields.js';
+import { findUnsupported } from './unsupported.js';
 
 const CHECK_DELAY = 800;
 const SEVERITIES = ['error', 'warning', 'info'];
@@ -58,7 +60,9 @@ export default class Problems {
             const result = await response.json();
             if (run !== this._run)
                 return;
-            this._issues = result.issues || [];
+            const rank = { error: 0, warning: 1, info: 2 };
+            this._issues = [...(result.issues || []), ...findUnsupported(this._bpmnjs.getDefinitions())]
+                .sort((a, b) => rank[a.severity] - rank[b.severity]);
             this._render();
             this._eventBus.fire('problems.changed', { issues: this._issues });
         } catch (err) {

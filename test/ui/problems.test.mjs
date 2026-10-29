@@ -101,7 +101,7 @@ test('condition and timer issues open their fields', async () => {
     const SAMPLES = path.join(FIXTURES, '..', '..', 'processes');
     const cases = [
         ['Buy Used Car.bpmn', s => s.replace('$(item.data.needsCleaning=="Yes")', '$(item.data.needsCleaning=="Yes"'),
-            /condition expression/, 'flow_gw1_clean', 'bio-properties-panel-conditionScriptValue'],
+            /condition expression/, 'flow_gw1_clean', 'bio-properties-panel-conditionExpression'],
         ['Invoice.bpmn.bpmn', s => s.replace('<bpmn2:timeDuration>PT2S<', '<bpmn2:timeDuration>soon<'),
             /Timer duration 'soon'/, 'event_timer', 'bio-properties-panel-timerEventDefinitionValue']
     ];

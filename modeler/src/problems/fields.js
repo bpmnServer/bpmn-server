@@ -4,7 +4,7 @@
 import { is } from 'bpmn-js/lib/util/ModelUtil';
 import { container, listenersOf } from '../properties/ScriptsGroup.jsx';
 
-const CONDITION = ['conditionExpression', 'conditionScriptValue'];
+const CONDITION = ['conditionExpression'];
 const TIMER = ['timerEventDefinitionValue'];
 const ASSIGNMENT = ['assignee', 'candidateGroups', 'candidateUsers', 'dueDate', 'followUpDate', 'priority'];
 

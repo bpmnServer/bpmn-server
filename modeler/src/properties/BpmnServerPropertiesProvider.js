@@ -4,6 +4,7 @@
 import { UserAssignmentGroup, StartAssignmentGroup } from './AssignmentGroups.jsx';
 import { ServiceGroup, ScriptGroup } from './TaskGroups.jsx';
 import { ScriptsGroup } from './ScriptsGroup.jsx';
+import { ConditionGroup, MultiInstanceGroup, FormGroup, NewFormFieldsGroup, DecisionGroup, CalledProcessGroup } from './FlowGroups.jsx';
 
 const LOW_PRIORITY = 400;
 
@@ -22,7 +23,11 @@ const REMOVED = new Set([
     'CamundaPlatform__ConnectorInput',
     'CamundaPlatform__ConnectorOutput',
     'CamundaPlatform__ExtensionProperties',
-    'CamundaPlatform__TaskListener'          // shown with the execution listeners, under Scripts
+    'CamundaPlatform__TaskListener',         // shown with the execution listeners, under Scripts
+    // stored with the model but not used when it runs; who may start is set on the start event
+    'CamundaPlatform__CandidateStarter',
+    'CamundaPlatform__HistoryCleanup',
+    'CamundaPlatform__Tasklist'
 ]);
 
 export default class BpmnServerPropertiesProvider {
@@ -44,10 +49,14 @@ export default class BpmnServerPropertiesProvider {
             };
             groups = groups.filter(group => !REMOVED.has(group.id));
 
-            // a business rule task keeps Camunda's implementation group (decisionRef)
-            const service = ServiceGroup(element, translate);
-            if (service)
-                replace('CamundaPlatform__Implementation', service);
+            replace('CamundaPlatform__Implementation', ServiceGroup(element, translate) || DecisionGroup(element, translate));
+            replace('CamundaPlatform__Condition', ConditionGroup(element, translate));
+            replace('multiInstance', MultiInstanceGroup(element, translate));
+            replace('CamundaPlatform__Form', FormGroup(element, translate));
+            const newFormFields = NewFormFieldsGroup(element, this._injector);
+            if (newFormFields)
+                groups.splice(groups.findIndex(g => g.id === 'BpmnServer__Form') + 1, 0, newFormFields);
+            replace('CamundaPlatform__CallActivity', CalledProcessGroup(element, translate));
             replace('CamundaPlatform__Script', ScriptGroup(element, translate));
             replace('CamundaPlatform__UserAssignment', UserAssignmentGroup(element, translate));
             replace('CamundaPlatform__ExecutionListener', ScriptsGroup(element, this._injector));

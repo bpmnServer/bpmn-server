@@ -4,6 +4,7 @@
 import { ListGroup, SelectEntry, TextAreaEntry, isSelectEntryEdited, isTextAreaEntryEdited } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
+import { addExtensionElement } from './extensions.js';
 
 const LISTENER_TYPES = ['camunda:ExecutionListener', 'camunda:TaskListener'];
 
@@ -109,22 +110,10 @@ export function ScriptsGroup(element, injector) {
 
     const add = event => {
         event.stopPropagation();
-        const commands = [];
-        let extensionElements = bo.get('extensionElements');
-        if (!extensionElements) {
-            extensionElements = bpmnFactory.create('bpmn:ExtensionElements', { values: [] });
-            extensionElements.$parent = bo;
-            commands.push({ cmd: 'element.updateModdleProperties', context: { element, moddleElement: bo, properties: { extensionElements } } });
-        }
         const script = bpmnFactory.create('camunda:Script', { scriptFormat: 'JavaScript', value: '' });
         const listener = bpmnFactory.create('camunda:ExecutionListener', { event: eventsFor(element)[0], script });
         script.$parent = listener;
-        listener.$parent = extensionElements;
-        commands.push({
-            cmd: 'element.updateModdleProperties',
-            context: { element, moddleElement: extensionElements, properties: { values: [...extensionElements.get('values'), listener] } }
-        });
-        commandStack.execute('properties-panel.multi-command-executor', commands);
+        addExtensionElement(element, bo, listener, bpmnFactory, commandStack);
     };
 
     return { id: 'BpmnServer__Scripts', label: translate('Scripts'), component: ListGroup, items, add };
