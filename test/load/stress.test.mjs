@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { performance } from 'node:perf_hooks';
 
 import { ItemNotWaitingError } from '../../dist/index.js';
-import { DB, STORE, n, loadServer, freshStore, expense, claim, payment, coverageAfter } from './setup.mjs';
+import { DB, STORE, n, sleep, loadServer, freshStore, expense, claim, payment, coverageAfter } from './setup.mjs';
 
 async function noLocksLeft(store) {
   assert.deepEqual(await store.find(DB, 'wf_locks', { kind: 'lock' }), [], 'every instance lock was released');
@@ -57,20 +57,21 @@ test('different processes mixed together, with service tasks awaiting I/O, each 
 });
 
 test('service tasks awaiting I/O overlap across instances instead of queueing', async (t) => {
-  let io = 0;
-  const { server } = await loadServer({ services: coverageAfter(() => io) });
-  const N = n(50), IO = 20;
-  const burst = async () => {
-    const t0 = performance.now();
-    await Promise.all(Array.from({ length: N }, (_, i) => server.engine.start('property-claim', { claimNo: i, covered: true })));
-    return performance.now() - t0;
-  };
-  await burst();   // warm up
-  io = 0; const without = await burst();
-  io = IO; const withIO = await burst();
-  t.diagnostic(`${N} claims at once: ${without.toFixed(0)} ms; ${withIO.toFixed(0)} ms when each service waits ${IO} ms`);
-  // one after another the waits would add N x IO ms; overlapped, they add about one wait
-  assert.ok(withIO - without < N * IO / 4, `the waits added ${(withIO - without).toFixed(0)} ms (queued they would add ${N * IO} ms)`);
+  // counted, not timed: how many services are waiting at the same moment (queued, never more than one)
+  const IO = 20, N = n(50);
+  let waiting = 0, most = 0;
+  const { server } = await loadServer({ services: { verifyCoverage: async (input, context) => {
+    most = Math.max(most, ++waiting);
+    try { await sleep(IO); } finally { waiting--; }
+    const covered = context.item.token.data.covered;
+    context.item.token.appendData({ covered }, context.item);
+    return { covered };
+  } } });
+  const t0 = performance.now();
+  const ended = await Promise.all(Array.from({ length: N }, (_, i) => claim(server, i * 2)));
+  t.diagnostic(`${N} claims at once, each service waiting ${IO} ms: up to ${most} waiting together; ${(performance.now() - t0).toFixed(0)} ms in all`);
+  assert.equal(ended.length, N);
+  assert.ok(most >= Math.min(5, N), `up to ${most} services waited at the same time`);
   await server.shutdown();
 });
 
