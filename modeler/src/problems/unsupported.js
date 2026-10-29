@@ -101,6 +101,12 @@ function checkExtensions(bo, add) {
         const label = EXTENSION_SETTINGS[value.$type];
         if (label)
             add('warning', bo, label, NOT_RUN);
+        if ((is(value, 'camunda:ExecutionListener') || is(value, 'camunda:TaskListener')) && is(bo, 'bpmn:SequenceFlow')) {
+            add('warning', bo, `The '${value.get('event')}' script on a sequence flow`, 'is not run: bpmn-server does not run scripts on sequence flows');
+            continue;
+        }
+        if ((is(value, 'camunda:ExecutionListener') || is(value, 'camunda:TaskListener')) && value.get('event') === 'transformOutput')
+            add('warning', bo, "The 'transformOutput' script", 'is not run: bpmn-server never fires that event');
         // scripts on events run; listeners implemented in Java do not
         if ((is(value, 'camunda:ExecutionListener') || is(value, 'camunda:TaskListener')) && !value.get('script'))
             add('warning', bo, `The '${value.get('event')}' listener`, 'has no script: bpmn-server runs only script listeners, so it has no effect');

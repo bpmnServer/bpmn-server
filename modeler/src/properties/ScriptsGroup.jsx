@@ -1,6 +1,10 @@
 // Scripts that run on an element's events. bpmn-server reads camunda:executionListener and camunda:taskListener
 // alike (behaviours/Script.ts): each holds a camunda:script, run when the node fires the listener's event
 // (EXECUTION_EVENT in bpmn-server's Enums.ts). New scripts are written as execution listeners.
+// Checked by running them: a node fires enter, start, wait, end (a user task also assign, validate,
+// transformInput); a process fires start and end, with the execution as `this` (instance.data holds the
+// data). Scripts on sequence flows and transformOutput scripts are never run: they are shown when a model has
+// them, not offered.
 import { ListGroup, SelectEntry, TextAreaEntry, TextFieldEntry, isSelectEntryEdited, isTextAreaEntryEdited, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
@@ -12,15 +16,25 @@ const JAVA = [['class', 'Java class'], ['expression', 'Expression'], ['delegateE
 
 const LISTENER_TYPES = ['camunda:ExecutionListener', 'camunda:TaskListener'];
 
+const isProcess = element => is(element, 'bpmn:Process') || is(element, 'bpmn:Participant');
+
 function eventsFor(element) {
-    if (is(element, 'bpmn:Process') || is(element, 'bpmn:Participant'))
+    if (isProcess(element))
         return ['start', 'end'];
     if (is(element, 'bpmn:SequenceFlow'))
-        return ['take', 'discard'];
-    const events = ['enter', 'start', 'wait', 'end', 'transformInput', 'transformOutput'];
+        return [];
+    const events = ['enter', 'start', 'wait', 'end'];
     if (is(element, 'bpmn:UserTask'))
-        events.push('assign', 'validate');
+        events.push('assign', 'validate', 'transformInput');
     return events;
+}
+
+function scriptHelp(element) {
+    if (is(element, 'bpmn:SequenceFlow'))
+        return 'Not run: bpmn-server does not run scripts on sequence flows';
+    if (isProcess(element))
+        return 'JavaScript; this is the execution, instance.data holds the instance data';
+    return 'JavaScript; this.data holds the instance data';
 }
 
 /** The business object that holds the scripts: a pool's scripts belong to its process. */
@@ -77,7 +91,7 @@ function ScriptField({ element, id, listener }) {
         element={element}
         id={id}
         label={translate('Script')}
-        description={translate('JavaScript; this.data holds the instance data')}
+        description={translate(scriptHelp(element))}
         monospace
         rows={6}
         debounce={debounce}
@@ -130,6 +144,13 @@ export function ScriptsGroup(element, injector) {
             }
         };
     });
+
+    // a sequence flow's scripts are shown when it has some, but none are added: they would not run
+    if (!eventsFor(element).length) {
+        if (!items.length)
+            return null;
+        return { id: 'BpmnServer__Scripts', label: translate('Scripts'), component: ListGroup, items };
+    }
 
     const add = event => {
         event.stopPropagation();

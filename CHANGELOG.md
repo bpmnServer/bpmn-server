@@ -45,6 +45,10 @@ and here
   and checks that each value it sets can be read in the panel (`READABLE_MODELS_EXTRA` adds another folder).
 - The editor lays out a model that has no diagram information when it is opened (as import does); the file
   is saved with the layout only when the designer saves it.
+- A catalog of the panel's properties (`modeler/PROPERTIES.md`): by element, the file attribute and what
+  bpmn-server does with it. Writing it found that scripts on sequence flows and `transformOutput` scripts never
+  run, and that process scripts see the execution (`instance.data`): the panel no longer offers those, shows
+  existing ones flagged, and says so; `test/web/script-events.test.mjs` runs every offered event.
 - Element templates: configured tasks from the application's `elementTemplatesPath` (Camunda 7 template
   format), chosen under Template in the properties panel. Templates are checked against what bpmn-server runs;
   ones that set anything else are left out with the reason (`GET /model/templates`). The sample offers Add

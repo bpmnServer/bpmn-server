@@ -76,6 +76,9 @@ its element and field.
 npm run watch:modeler
 ```
 
+[modeler/PROPERTIES.md](modeler/PROPERTIES.md) is the catalog of the panel's properties: by element, what each
+writes to the model file and what bpmn-server does with it when the process runs.
+
 #### Element templates
 
 Configured tasks (a service task that calls a given service with its inputs, a user task for a given group)
