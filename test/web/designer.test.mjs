@@ -109,6 +109,19 @@ test('model names with path separators are refused', async () => {
   assert.ok((await modelNames()).includes('leave-request'));
 });
 
+test('the modeler checks a model it is editing without saving it', async () => {
+  const bpmn = fs.readFileSync(path.join(FIXTURES, 'leave-request.bpmn'), 'utf8').replace("data.approvedBy = 'system';", 'data.approvedBy = ;');
+  const res = await admin.request('POST', '/model/verify', { json: { bpmn, processName: 'leave-request' } });
+  assert.equal(res.status, 200, why(res));
+  const result = JSON.parse(res.text);
+  assert.equal(result.valid, false);
+  assert.ok(result.issues.some(i => i.code === 'script-syntax' && i.elementId === 'AutoApprove'), res.text);
+  assert.doesNotMatch(await web.bpmnServer.definitions.getSource('leave-request'), /approvedBy = ;/, 'not saved');
+
+  assert.equal((await admin.request('POST', '/model/verify', { json: {} })).status, 400);
+  assert.equal((await staff.request('POST', '/model/verify', { json: { bpmn } })).status, 403);
+});
+
 test('models are exported for download', async () => {
   const page = await admin.get('/model/export');
   assert.equal(page.status, 200);

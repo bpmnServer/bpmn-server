@@ -83,10 +83,17 @@ body {
     min-height: 0;
 }
 
+.modeler-main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
 .modeler-canvas {
     position: relative;
     flex: 1;
-    min-width: 0;
+    min-height: 0;
 }
 
 .modeler-resizer {
@@ -149,4 +156,142 @@ body {
 /* long help text wraps inside the panel instead of widening it */
 .modeler-panel .bio-properties-panel-description {
     overflow-wrap: anywhere;
+}
+
+/* ---- Problems: a list under the canvas, the elements marked on it */
+
+.problems {
+    --error: #b42318;
+    --warning: #b54708;
+    --info: #1f62c8;
+    flex: none;
+    border-top: 1px solid #dcdfe4;
+    background: #fff;
+}
+
+.problems-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 6px 16px;
+    border: 0;
+    background: #f7f8fa;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.problems-header::before {
+    content: "\25BE";
+    color: #52575f;
+}
+
+.problems.collapsed .problems-header::before {
+    content: "\25B8";
+}
+
+.problems-title {
+    font-weight: 600;
+}
+
+.problems-counts {
+    display: flex;
+    gap: 6px;
+}
+
+.problems-counts .count {
+    min-width: 18px;
+    padding: 0 6px;
+    border-radius: 9px;
+    color: #fff;
+    font-size: 12px;
+    line-height: 18px;
+    text-align: center;
+}
+
+.problems-status {
+    color: #52575f;
+    font-size: 13px;
+}
+
+.problems-status.error {
+    color: var(--error);
+}
+
+.problems-list {
+    max-height: 28vh;
+    overflow: auto;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.problems.collapsed .problems-list {
+    display: none;
+}
+
+.problem {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    gap: 12px;
+    padding: 6px 16px;
+    border-top: 1px solid #eef0f3;
+    font-size: 13px;
+}
+
+.problem[tabindex] {
+    cursor: pointer;
+}
+
+.problem[tabindex]:hover,
+.problem:focus-visible {
+    background: #f0f4fb;
+    outline: none;
+}
+
+.problem .severity {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.problem .where {
+    color: #52575f;
+}
+
+.severity-error .severity { color: var(--error); }
+.severity-warning .severity { color: var(--warning); }
+.severity-info .severity { color: var(--info); }
+.count.severity-error { background: var(--error); }
+.count.severity-warning { background: var(--warning); }
+.count.severity-info { background: var(--info); }
+
+.djs-element.problem-error .djs-visual > :first-child {
+    stroke: #b42318 !important;
+}
+
+.djs-element.problem-warning .djs-visual > :first-child {
+    stroke: #b54708 !important;
+}
+
+.problem-badge {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 9px;
+    box-sizing: border-box;
+    background: #b54708;
+    color: #fff;
+    font: 600 11px/18px -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    text-align: center;
+    cursor: pointer;
+}
+
+.problem-badge.severity-error {
+    background: #b42318;
+}
+
+.problem-badge.severity-info {
+    background: #1f62c8;
 }

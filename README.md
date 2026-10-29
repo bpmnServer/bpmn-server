@@ -67,7 +67,9 @@ npm start
 ### Model editor
 
 The model editor is built from source in `modeler/`: bpmn-js with a properties panel that shows the settings
-bpmn-server runs (user assignment, who can start, service names, scripts on events, forms, inputs and outputs).
+bpmn-server runs (user assignment, who can start, service names, scripts on events, forms, inputs and outputs),
+and a Problems list: bpmn-server checks the model as it is edited (`verifyModel`), and an issue takes you to
+its element and field.
 `npm start` and `npm run build` build it into `public/modeler/`; while working on it, rebuild on change with:
 
 ```bash

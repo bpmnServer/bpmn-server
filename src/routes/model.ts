@@ -11,7 +11,7 @@ import path from 'node:path';
 import { layoutProcess } from 'bpmn-auto-layout';
 import { bpmnToSvg } from './bpmnToSvg.js';
 
-import { BPMNServer, BPMNAdminAPI } from '../index.js';
+import { BPMNServer, BPMNAdminAPI, verifyModel } from '../index.js';
 import { Common } from './common.js';
 import { modelNameGuard, isSafeModelName } from './middleware/modelName.js';
 
@@ -329,6 +329,15 @@ export class Model extends Common {
             response.header("Content-Type", "image/svg+xml");
             response.send(svg);
 
+        }));
+        // the editor's Problems list: checks the model being edited, as sent, without saving it
+        router.post('/verify', awaitHandlerFactory(async (request, response) => {
+            const { bpmn, processName } = request.body ?? {};
+            if (typeof bpmn !== 'string') {
+                response.status(400).json({ error: 'bpmn (the model XML) is required' });
+                return;
+            }
+            response.json(await verifyModel(bpmn, bpmnServer, processName || 'model'));
         }));
         return router;
     }

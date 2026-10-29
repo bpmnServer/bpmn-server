@@ -23,6 +23,10 @@ and here
   (enter, start, wait, end, assign, validate, take, ...).
 - The panel sits beside the diagram, can be resized and hidden, and remembers both; the editor fills the
   window and opens with the diagram in view, clear of the palette. Ctrl+S saves.
+- Problems: bpmn-server checks the model as it is edited (`POST /model/verify`, `verifyModel`). Issues are
+  listed under the diagram, their elements outlined and badged, their fields marked in the properties panel;
+  clicking an issue selects the element and opens the field (scripts, expressions, conditions, timers,
+  service names, called processes).
 - `MODELER=classic` keeps the previous editor.
 
 ## Unreleased — Separate web host and workflow application (#1)

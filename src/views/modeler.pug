@@ -23,7 +23,9 @@ html(lang="en")
           button#js-save-run(type="button") Save &amp; Run
           button#js-save.primary(type="button" title="Ctrl+S") Save
       .modeler-body
-        #js-canvas.modeler-canvas
+        .modeler-main
+          #js-canvas.modeler-canvas
+          section#js-problems(aria-label="Problems")
         #js-panel-resizer.modeler-resizer(title="Drag to resize the properties panel")
           button#js-panel-toggle(type="button" title="Show or hide the properties panel" aria-label="Show or hide the properties panel")
         #js-properties-panel.modeler-panel

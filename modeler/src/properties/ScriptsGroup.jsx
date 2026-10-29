@@ -19,12 +19,12 @@ function eventsFor(element) {
 }
 
 /** The business object that holds the scripts: a pool's scripts belong to its process. */
-function container(element) {
+export function container(element) {
     const bo = getBusinessObject(element);
     return is(bo, 'bpmn:Participant') ? bo.get('processRef') : bo;
 }
 
-function listenersOf(bo) {
+export function listenersOf(bo) {
     const values = bo.get('extensionElements')?.get('values') || [];
     return values.filter(value => LISTENER_TYPES.some(type => is(value, type)));
 }
