@@ -6,6 +6,7 @@ import { BPMNServer, dateDiff, Behaviour_names, SystemUser   } from '../index.js
 import { BPMNAPI , SecureUser } from '../index.js';
 import { Common } from './common.js';
 import { ViewHelper } from './ViewHelper.js';
+import { runProcess } from './runErrors.js';
 
 
 var caseId = Math.floor(Math.random() * 10000);
@@ -99,7 +100,7 @@ export class EndUser extends Common {
 
             let processName = request.params.processName;
             request.session.processName = processName;
-            let context = await bpmnAPI.engine.start(processName, { caseId: caseId++ },getSecureUser(request));
+            let context = await runProcess(bpmnServer, { processName: processName }, () => bpmnAPI.engine.start(processName, { caseId: caseId++ },getSecureUser(request)));
 
             if (context.errors) {
                 displayError(response, context.errors);
@@ -134,7 +135,7 @@ export class EndUser extends Common {
 
             data['caseId'] = caseId++;
 
-            let context = await bpmnAPI.engine.start(process, data,getSecureUser(request), { startNodeId });
+            let context = await runProcess(bpmnServer, { processName: process }, () => bpmnAPI.engine.start(process, data,getSecureUser(request), { startNodeId }));
             if (context.errors) {
                 displayError(response, context.errors);
             }
@@ -166,14 +167,9 @@ console.log('fields',fields);
                 });
                 return;
             }
-            try {
-                let result = await bpmnAPI.engine.invoke({ "items.id": id }, {}, getSecureUser(request));
+            let result = await runProcess(bpmnServer, { itemId: id }, () => bpmnAPI.engine.invoke({ "items.id": id }, {}, getSecureUser(request)));
 
-                response.redirect('/instanceDetails?id=' + result.execution.id);
-            }
-            catch (exc) {
-                response.send(exc.toString());
-            }
+            response.redirect('/instanceDetails?id=' + result.execution.id);
         }));
         router.post('/invokeItem', awaitAppDelegateFactory(async (request, response) => {
             let id = request.body.itemId;
@@ -186,15 +182,10 @@ console.log('fields',fields);
                 }
             });
 
-            try {
 
-                let result = await bpmnAPI.engine.invoke({ "items.id": id }, data, getSecureUser(request));
+            let result = await runProcess(bpmnServer, { itemId: id }, () => bpmnAPI.engine.invoke({ "items.id": id }, data, getSecureUser(request)));
 
-                response.redirect('/instanceDetails?id=' + result.execution.id);
-            }
-            catch (exc) {
-                response.send(exc.toString());
-            }
+            response.redirect('/instanceDetails?id=' + result.execution.id);
 
         }));
 
@@ -249,21 +240,16 @@ console.log('fields',fields);
                 }
             });
 
-            try {
-                assignment['dueDate'] = ViewHelper.dateInput(assignment['DueDate']);
-                assignment['followUpDate'] = ViewHelper.dateInput(assignment['followUpDate']);
+            assignment['dueDate'] = ViewHelper.dateInput(assignment['DueDate']);
+            assignment['followUpDate'] = ViewHelper.dateInput(assignment['followUpDate']);
 
-                assignment['candidateUsers'] = assignment['candidateUsers'].split(',');
-                assignment['candidateGroups'] = assignment['candidateGroups'].split(',');
+            assignment['candidateUsers'] = assignment['candidateUsers'].split(',');
+            assignment['candidateGroups'] = assignment['candidateGroups'].split(',');
 
-                //console.log('data', data, 'assignment', assignment);
-                let result = await bpmnAPI.engine.assign({ "items.id": id }, data, assignment, getSecureUser(request));
+            //console.log('data', data, 'assignment', assignment);
+            let result = await runProcess(bpmnServer, { itemId: id }, () => bpmnAPI.engine.assign({ "items.id": id }, data, assignment, getSecureUser(request)));
 
-                response.redirect('/instanceDetails?id=' + result.execution.id);
-            }
-            catch (exc) {
-                response.send(exc.toString());
-            }
+            response.redirect('/instanceDetails?id=' + result.execution.id);
 
         }));
 
@@ -271,7 +257,7 @@ console.log('fields',fields);
         router.get('/run/:process', awaitAppDelegateFactory(async (request, response) => {
             let process = request.params.process;
 
-            let exec = await bpmnAPI.engine.start(process, { caseId: caseId++ }, getSecureUser(request));
+            let exec = await runProcess(bpmnServer, { processName: process }, () => bpmnAPI.engine.start(process, { caseId: caseId++ }, getSecureUser(request)));
             if (exec.errors) {
                 displayError(response, exec.errors);
             }

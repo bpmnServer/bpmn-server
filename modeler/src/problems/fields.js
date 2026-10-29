@@ -18,6 +18,7 @@ const BY_CODE = {
     'call-activity-no-target': () => ['calledElement'],
     'called-model-missing': () => ['calledElement'],
     'script-syntax': fieldsOfScript,
+    'unknown-app-service': fieldsOfScript,
     'expression-syntax': fieldsOfScript
 };
 
@@ -28,13 +29,16 @@ export function fieldsFor(issue, element) {
 }
 
 function fieldsOfScript(issue, element) {
-    const what = /^The (.+?) (?:expression )?does not compile/.exec(issue.message || '')?.[1];
+    // "The X does not compile", "The X expression does not compile", "The X calls|reads appServices.name"
+    const what = /^The (.+?) (?:expression )?(?:does not compile|calls appServices|reads appServices)/.exec(issue.message || '')?.[1];
     if (!what)
         return [];
     if (what === 'script')
         return ['script-body'];
     if (what === 'condition')
         return CONDITION;
+    if (what === 'collection')
+        return ['multiInstance-collection'];
     if (ASSIGNMENT.includes(what))
         return [is(element, 'bpmn:StartEvent') ? `start-${what}` : `assignment-${what}`];
     // "'start' script" on a node, "process 'start' script" on a process: every script for that event

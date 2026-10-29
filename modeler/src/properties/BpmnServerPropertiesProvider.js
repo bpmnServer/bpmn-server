@@ -7,6 +7,7 @@ import { ScriptsGroup } from './ScriptsGroup.jsx';
 import { hasCamundaOnly } from './settings.js';
 import { DefaultFlowGroup } from './DefaultFlowGroup.jsx';
 import { OtherAttributesGroup } from './OtherAttributesGroup.jsx';
+import { TemplateValuesGroup } from './TemplateValuesGroup.jsx';
 import { ConditionGroup, MultiInstanceGroup, FormGroup, NewFormFieldsGroup, DecisionGroup, CalledProcessGroup } from './FlowGroups.jsx';
 
 const LOW_PRIORITY = 400;
@@ -73,6 +74,10 @@ export default class BpmnServerPropertiesProvider {
             const defaultFlow = DefaultFlowGroup(element, translate);
             if (defaultFlow)
                 groups.splice(Math.min(groups.length, 2), 0, defaultFlow);
+
+            const templateValues = TemplateValuesGroup(element, this._injector);
+            if (templateValues)
+                groups.splice(groups.findIndex(g => g.id === 'ElementTemplates__Template') + 1, 0, templateValues);
 
             const other = OtherAttributesGroup(element, translate);
             if (other)

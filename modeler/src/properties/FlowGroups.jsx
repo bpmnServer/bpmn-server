@@ -134,7 +134,7 @@ export function MultiInstanceGroup(element, translate) {
     if (!is(loop, 'bpmn:MultiInstanceLoopCharacteristics'))
         return null;
     return {
-        id: 'BpmnServer__MultiInstance',
+        id: 'multiInstance',    // bpmn-js's id: shown on a task made from a template too
         label: translate('Multi-instance'),
         component: Group,
         entries: [

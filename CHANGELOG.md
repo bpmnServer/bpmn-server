@@ -49,6 +49,11 @@ and here
   bpmn-server does with it. Writing it found that scripts on sequence flows and `transformOutput` scripts never
   run, and that process scripts see the execution (`instance.data`): the panel no longer offers those, shows
   existing ones flagged, and says so; `test/web/script-events.test.mjs` runs every offered event.
+- A process that fails while running (a script or expression throws, a task is completed twice) is answered
+  with a page naming the error and what bpmn-server's checks find in the model, with a link to the model for
+  designers (status 422, or 409 for a task no longer waiting; JSON for API-style requests), instead of an
+  error 500. The editor's Problems list leads loop collections and service references to their fields.
+- A task made from a template lists the template's hidden values (the service it calls, ...) read-only.
 - Element templates: configured tasks from the application's `elementTemplatesPath` (Camunda 7 template
   format), chosen under Template in the properties panel. Templates are checked against what bpmn-server runs;
   ones that set anything else are left out with the reason (`GET /model/templates`). The sample offers Add

@@ -26,6 +26,7 @@ import { Model } from './routes/model.js';
 import { API } from './routes/api.js';
 import { API2 } from './routes/api2.js';
 import { errorDetailsHandler } from './routes/middleware/errorDetails.js';
+import { processRunErrorHandler } from './routes/runErrors.js';
 
 const __dirname = import.meta.dirname;
 console.log('app.ts from ', import.meta.filename);
@@ -127,6 +128,8 @@ export class WebApp {
 		/**
 		 * Error Handler.
 		 */
+		// a process that fails while running: what went wrong and what the model's checks find
+		app.use(processRunErrorHandler);
 		if (process.env.NODE_ENV === 'development') {
 			// only use in development
 			app.use(errorHandler());

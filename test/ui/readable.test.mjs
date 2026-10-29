@@ -92,7 +92,10 @@ function valuesInModel() {
         const bo = element.businessObject, values = [];
         walk(bo, '', values);
         if (element.type === 'bpmn:Participant' && bo.processRef) walk(bo.processRef, 'process.', values);
-        return { id: element.id, type: element.type, values };
+        // parameters an applied element template binds are shown under the template's labels, not their names
+        const template = window.bpmnModeler.get('elementTemplates').get(element);
+        const boundNames = new Set((template?.properties || []).map(p => p.binding?.name).filter(Boolean));
+        return { id: element.id, type: element.type, values: values.filter(v => !(/.camunda:name$/.test(v.path) && boundNames.has(v.value))) };
     });
 }
 
