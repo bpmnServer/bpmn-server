@@ -31,7 +31,7 @@ async function brokenModel(name) {
     return name;
 }
 
-async function openEditor(model) {
+async function openEditor(model, userName = 'admin') {
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
     await context.route('**/*', route => route.request().url().startsWith(web.base) ? route.continue() : route.abort());
     const page = await context.newPage();
@@ -39,7 +39,7 @@ async function openEditor(model) {
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
     await page.goto(web.base + '/login');
-    await page.fill('#userName', 'admin');
+    await page.fill('#userName', userName);
     await page.fill('#password', PASSWORD);
     await Promise.all([page.waitForURL(url => !url.pathname.startsWith('/login')), page.click('button[type=submit]')]);
     await page.goto(`${web.base}/model/edit/${model}`);
@@ -135,6 +135,15 @@ test('fixing the field clears the issue', async () => {
     await page.waitForFunction(() => document.querySelectorAll('#js-problems .problem.severity-error').length === 2);
     assert.equal(await page.locator('.djs-element.problem-error[data-element-id="AutoApprove"]').count(), 0, 'no longer outlined');
     assert.match(await page.locator('[data-entry-id="script-body"]').getAttribute('class'), /^(?!.*has-error)/);
+    assert.deepEqual(errors, []);
+    await close();
+});
+
+test('a designer gets the same checks', async () => {
+    const { page, errors, close } = await openEditor(await brokenModel('broken-designer'), 'designer');
+    assert.equal(await errorItems(page).count(), 3);
+    await errorItem(page, /candidateUsers/).click();
+    await page.waitForFunction(() => document.activeElement?.id === 'bio-properties-panel-assignment-candidateUsers');
     assert.deepEqual(errors, []);
     await close();
 });

@@ -9,6 +9,7 @@ import MongoStore from 'connect-mongo';
 import User from './models/User.js';
 import * as passportConfig from './config/passport.js';
 import { Account } from './routes/account.js';
+import { isDesignerGroups } from './roles.js';
 
 
 export class UserManager {
@@ -120,6 +121,8 @@ export class UserManager {
 
 		app.use((req, res, next) => {
 			res.locals.user = req.user;
+			// views show the model actions (new, import, open, rename, delete) to designers
+			res.locals.canDesign = process.env.REQUIRE_AUTHENTICATION === 'false' || isDesignerGroups(req.user?.userGroups);
 			next();
 		});
 

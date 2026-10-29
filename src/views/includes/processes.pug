@@ -3,7 +3,7 @@ section.models-workspace(aria-labelledby="models-heading")
     div
       h2#models-heading Models
       p Browse a process, inspect its diagram, then open or run it.
-    if user && user.isAdmin()
+    if canDesign
       .models-create
         a.btn.btn-primary(href="/model/new")
           i.fa.fa-plus(aria-hidden="true")
@@ -26,7 +26,7 @@ section.models-workspace(aria-labelledby="models-heading")
           span.models-eyebrow BPMN model
           h3#selected-model-name Select a model
         .models-actions
-          if user && user.isAdmin()
+          if canDesign
             a#modelLink.btn.btn-primary(href="#")
               i.fa.fa-pencil-square-o(aria-hidden="true")
               | Open model
@@ -37,7 +37,7 @@ section.models-workspace(aria-labelledby="models-heading")
             a#execLink.btn.btn-primary(href="#")
               i.fa.fa-play(aria-hidden="true")
               | Start process
-          if user && user.isAdmin()
+          if canDesign
             .details-menu
               button.btn.btn-default(type="button", aria-expanded="false", aria-controls="model-more-actions")
                 i.fa.fa-ellipsis-h(aria-hidden="true")

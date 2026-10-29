@@ -1,6 +1,7 @@
 import * as bcrypt from "bcrypt";
 import * as crypto from "crypto";
 import mongoose from "mongoose";
+import { isAdminGroups, isDesignerGroups } from "../roles.js";
 
 
 const userSchema = new mongoose.Schema({
@@ -56,7 +57,11 @@ userSchema.methods.comparePassword = function comparePassword(candidatePassword,
  * Helper method for getting user's gravatar.
  */
 userSchema.virtual('isAdmin').get(function () {
-    return this.userGroups?.includes('ADMIN') || this.userGroups?.includes('SYSTEM') || false;
+    return isAdminGroups(this.userGroups);
+});
+/** May work on models (see roles.ts). */
+userSchema.virtual('isDesigner').get(function () {
+    return isDesignerGroups(this.userGroups);
 });
 userSchema.methods.hasGroup = function hasGroup(group) {
     if (this.userGroups && this.userGroups.indexOf(group) !== -1)

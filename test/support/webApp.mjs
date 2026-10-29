@@ -20,6 +20,7 @@ export const ADMIN_API_KEY = 'test-admin-api-key';
 /** The test users: userName -> groups. */
 export const USERS = {
     admin: ['ADMIN'],
+    designer: ['DESIGNER'],
     staff: ['staff'],
     manager: ['manager', 'staff'],
 };

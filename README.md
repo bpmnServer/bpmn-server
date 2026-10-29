@@ -76,6 +76,8 @@ its element and field.
 npm run watch:modeler
 ```
 
+Models are designed by users in the `DESIGNER` group and by administrators (`ADMIN`, `SYSTEM`).
+
 Set `MODELER=classic` to use the previous editor (the prebuilt `modeller-withPropertyPanel.js`) instead.
 
 ### Embed the web adapter in an application

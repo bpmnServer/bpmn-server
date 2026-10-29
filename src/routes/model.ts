@@ -38,8 +38,8 @@ export class Model extends Common {
 
         var router = express.Router();
 
-        // Deny-by-default: model designer routes require a session.
-        router.use(this.isAuthenticated, this.isAdmin, modelNameGuard);
+        // Deny-by-default: model designer routes require a session, as a designer (or administrator).
+        router.use(this.isAuthenticated, this.isDesigner, modelNameGuard);
 
         router.get('/list', awaitHandlerFactory(async (request, response) => {
 

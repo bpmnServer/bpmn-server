@@ -27,6 +27,9 @@ and here
   listed under the diagram, their elements outlined and badged, their fields marked in the properties panel;
   clicking an issue selects the element and opens the field (scripts, expressions, conditions, timers,
   service names, called processes).
+- Designers: users in the `DESIGNER` group (bpmn-server's USER_ROLE.DESIGNER) work on models like
+  administrators do: list, create, import, edit, check, save, rename and delete them, with the model actions
+  on the home page. Administration (users, resetting data) stays with `ADMIN` and `SYSTEM`.
 - `MODELER=classic` keeps the previous editor.
 
 ## Unreleased — Separate web host and workflow application (#1)

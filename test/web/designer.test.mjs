@@ -1,15 +1,15 @@
 // The model designer: list, import (with layout and preview), modeler save, rename, delete, export,
-// and that only administrators reach it.
+// the model check, and that only designers and administrators reach it.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { startWebApp, why, FIXTURES } from '../support/webApp.mjs';
 
-let web, admin, staff;
+let web, admin, designer, staff;
 test.before(async () => {
   web = await startWebApp();
-  [admin, staff] = await Promise.all([web.login('admin'), web.login('staff')]);
+  [admin, designer, staff] = await Promise.all([web.login('admin'), web.login('designer'), web.login('staff')]);
 });
 test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0)); });
 
@@ -30,10 +30,37 @@ const NO_DIAGRAM = `<?xml version="1.0" encoding="UTF-8"?>
 const upload = (client, filename, content) =>
   client.request('POST', '/model/import', { multipart: { file: { filename, content, type: 'application/xml' } } });
 
-test('the designer is for administrators only', async () => {
+test('the designer is for designers and administrators only', async () => {
   for (const url of ['/model/list', '/model/import', '/model/new', '/model/edit/leave-request'])
     assert.equal((await staff.get(url)).status, 403, url);
   assert.equal((await upload(staff, 'x.bpmn', NO_DIAGRAM)).status, 403);
+  assert.equal((await staff.request('POST', '/model/verify', { json: { bpmn: NO_DIAGRAM } })).status, 403);
+});
+
+test('a designer edits, checks and saves models', async () => {
+  for (const url of ['/model/list', '/model/import', '/model/new', '/model/edit/leave-request'])
+    assert.equal((await designer.get(url)).status, 200, url);
+  const bpmn = fs.readFileSync(path.join(FIXTURES, 'leave-request.bpmn'), 'utf8');
+  const check = await designer.request('POST', '/model/verify', { json: { bpmn, processName: 'leave-request' } });
+  assert.equal(check.status, 200, why(check));
+  assert.equal(JSON.parse(check.text).valid, true, check.text);
+  const save = await designer.request('POST', '/model/edit/designer-copy', { json: { processId: 'designer-copy', bpmn, svg: '<svg xmlns="http://www.w3.org/2000/svg"/>' } });
+  assert.equal(save.status, 200, why(save));
+  assert.ok((await modelNames()).includes('designer-copy'));
+});
+
+test('the home page shows model actions to designers, not to other users', async () => {
+  for (const [client, expected] of [[admin, true], [designer, true], [staff, false]]) {
+    const home = await client.get('/');
+    assert.equal(home.text.includes('href="/model/new"'), expected, 'New model');
+    assert.equal(home.text.includes('id="modelLink"'), expected, 'Open model');
+  }
+});
+
+test('a designer is not an administrator', async () => {
+  assert.equal((await designer.post('/resetData', {})).status, 403);
+  const adminPage = await designer.get('/admin');
+  assert.equal(adminPage.status, 302, 'sent away from the user admin page');
 });
 
 test('the model list shows the definitions', async () => {

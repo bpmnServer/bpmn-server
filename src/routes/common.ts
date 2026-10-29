@@ -1,3 +1,5 @@
+import { isAdminGroups, isDesignerGroups } from '../userAccess/roles.js';
+
 export class Common {
     webApp;
     constructor(webApp) {
@@ -16,13 +18,19 @@ export class Common {
         if (typeof req.isAuthenticated !== 'function' || req.isAuthenticated() !== true || !req.user) {
             return res.redirect('/login');
         }
-        req.isAdmin = Array.isArray(req.user.userGroups) &&
-            (req.user.userGroups.includes('ADMIN') || req.user.userGroups.includes('SYSTEM'));
+        req.isAdmin = isAdminGroups(req.user.userGroups);
+        req.isDesigner = isDesignerGroups(req.user.userGroups);
         return next();
     }
 
     isAdmin(req, res, next) {
         if (process.env.REQUIRE_AUTHENTICATION === 'false' || req.isAdmin === true) return next();
         return res.status(403).send('Administrator permission required');
+    }
+
+    /** Model design (the model routes): designers and administrators. */
+    isDesigner(req, res, next) {
+        if (process.env.REQUIRE_AUTHENTICATION === 'false' || req.isDesigner === true) return next();
+        return res.status(403).send('Designer permission required');
     }
 }
