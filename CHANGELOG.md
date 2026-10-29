@@ -13,7 +13,7 @@ and here
 
 ### Changed
 -->
-## Unreleased — Speed and memory
+## Release 3.2.0 — Speed and memory (2026-10-28)
 
 Measured with `npm run bench` (the expense process: start and two user tasks, in-memory store), before → after:
 
@@ -51,7 +51,7 @@ Measured with `npm run bench` (the expense process: start and two user tasks, in
   - memory: nothing held after instances are deleted, after servers stop, or after cached instances end; heap per
     waiting instance; peak heap of a burst of 500 requests.
 
-## Release 3.2.0 — Runtime model reads, consistent instance visibility, verifyModel (2026-10-24)
+## Release 3.2.0 — Runtime model reads, consistent instance visibility, verifyModel (2026-10-28)
 
 3.1.0 restricted the runtime API further than its security rules required, which broke task
 portals and end-user applications for non-admin users (bpmn-web among them).
