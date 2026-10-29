@@ -35,6 +35,8 @@ portals and end-user applications for non-admin users (bpmn-web among them).
 
 ### Added
 - `verifyModel(source, server?)` and `api.model.verifyModel(nameOrSource, user)`: checks a model without running it (XML and references, structure, gateways, diagram, the engine's own load, script/condition/expression syntax, timers, services, called models) and returns `{ valid, errors, warnings, issues }`.
+- `bpmn-server verify <file-or-folder>... [--json]` (`npx bpmn-server verify model.bpmn`): `verifyModel` from the
+  command line, no server or database; one line per issue, exit code 1 when a model has errors.
 - Tests: `test/runtime-api.test.mjs` drives the runtime API as a task portal does, with non-admin
   principals (start events, forms, tasks, data, completion, tenant isolation); API boundary and
   security tests for the reader/admin split.

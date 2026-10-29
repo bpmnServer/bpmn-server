@@ -13,6 +13,9 @@
     "test:scenarios": "mocha --config test/scenarios/.mocharc.json"
   },
   "main": "dist/index.js",
+  "bin": {
+    "bpmn-server": "dist/cli.js"
+  },
   "types": "dist/index.d.ts",
   "files": [
     "dist",
