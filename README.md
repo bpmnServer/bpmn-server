@@ -64,6 +64,18 @@ Start the bundled sample application with:
 npm start
 ```
 
+### Model editor
+
+The model editor is built from source in `modeler/`: bpmn-js with a properties panel that shows the settings
+bpmn-server runs (user assignment, who can start, service names, scripts on events, forms, inputs and outputs).
+`npm start` and `npm run build` build it into `public/modeler/`; while working on it, rebuild on change with:
+
+```bash
+npm run watch:modeler
+```
+
+Set `MODELER=classic` to use the previous editor (the prebuilt `modeller-withPropertyPanel.js`) instead.
+
 ### Embed the web adapter in an application
 
 ```ts

@@ -12,6 +12,19 @@ and here
 
 ### Changed
 -->
+## Unreleased — New model editor
+
+- The model editor is rebuilt from source (`modeler/`, built with esbuild) on current bpmn-js and properties
+  panel, in place of the hand-edited 7.4 MB bundle.
+- The properties panel shows what bpmn-server runs. Camunda engine settings it does not run (asynchronous
+  continuations, job execution, external tasks, connectors, field injection, extension properties) are gone;
+  user assignment, who can start, service names and script tasks have bpmn-server's own fields and help.
+- Scripts on events: one list for execution and task listeners, with the events bpmn-server fires
+  (enter, start, wait, end, assign, validate, take, ...).
+- The panel sits beside the diagram, can be resized and hidden, and remembers both; the editor fills the
+  window and opens with the diagram in view, clear of the palette. Ctrl+S saves.
+- `MODELER=classic` keeps the previous editor.
+
 ## Unreleased — Separate web host and workflow application (#1)
 
 - Separate reusable web-host integration from the example workflow application.

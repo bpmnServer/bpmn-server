@@ -24,3 +24,8 @@ docker/bpmn_server_volume
 
 # uploads written by older imports
 src/tmp/
+
+# the model editor's source is JavaScript; its build output is generated (npm run build:modeler)
+!/modeler/**/*.js
+!/modeler/**/*.mjs
+/public/modeler/

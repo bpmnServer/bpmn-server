@@ -1,0 +1,111 @@
+doctype html
+html(lang="en-CA" class="no-js")
+  head
+    meta(charset="UTF-8")
+    if withProps && cspHost
+      //- allow rendering inside the ITSM host iframe
+      meta(http-equiv="Content-Security-Policy" content=`frame-ancestors 'self' ${cspHost}`)
+    title Omni-WorkFlow
+    meta(name="csrf-token" content=_csrf)
+    script(type="text/javascript" src="/javascripts/csrf.js")
+    script(type="text/javascript" src="/javascripts/jquery.min.js")
+    script(type="text/javascript" src="/javascripts/bootstrap.min.js")
+    script(type="text/javascript" src="/javascripts/jquery-ui.min.js")
+    script(type="text/javascript" src="/javascripts/jquery.isloading.min.js")
+    script(type="text/javascript" src="/javascripts/workflow.js")
+    script(type="text/javascript" src="/javascripts/processEditor.js")
+    link(rel="stylesheet" type="text/css" href="/stylesheets/bootstrap.min.css")
+    link(rel="stylesheet" type="text/css" href="/stylesheets/bootstrap-theme.min.css")
+    link(rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
+    //- Both modes use the property-panel bundle, so load its vendor CSS in both.
+    link(rel="stylesheet" href="/vendor/css/diagram-js.css")
+    link(rel="stylesheet" href="/vendor/bpmn-font/css/bpmn-embedded.css")
+    link(rel="stylesheet" href="/vendor/css/app.css")
+    link(rel="stylesheet" type="text/css" href="/stylesheets/jquery-ui.css")
+    link(rel="stylesheet" type="text/css" href="/stylesheets/jquery-ui.theme.css")
+    if withProps
+      style.
+        .label { color: blue; }
+  body
+    script.
+      var ajax_object = null;
+    if !withProps
+      script
+        != 'var omni_base_url=' + JSON.stringify(base_url || '') + ';'
+    #omni_page
+      #omni_header
+        nav.navbar.navbar-default(role="navigation")
+          .navbar-header
+            button.navbar-toggle(type="button" data-target="#navbarCollapse" data-toggle="collapse")
+              span.sr-only Toggle navigation
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+            a.navbar-brand(href="/")
+              img(src="https://demo.omniworkflow.com/web//images/omniworkflow_icon.png")
+          #navbarCollapse.collapse.navbar-collapse
+            ul.nav.navbar-nav
+            ul.nav.navbar-nav.navbar-right
+              if withProps
+                li: a(href=`/execute/${processName}` target="execute") Run
+                li: a(href='javascript:window.saveDiagramFunct("run");') Save &amp; Run
+              li: a(href="javascript:window.saveDiagramFunct();") Save Model
+        .clearfix
+      style.
+        div.entry-content { margin:5px !important; }
+      #js-drop-zone.content(style="min-height:400px")
+        if withProps
+          h2(style="position: absolute;top: -80px;left: 100px;")= title
+        else
+          h2(style="padding-left:20px;")= title
+        .message.error
+          .note
+            p Ooops, we could not display the BPMN 2.0 diagram.
+            .details
+              span cause of the problem
+              pre
+        #js-canvas.canvas(style="height:800px")
+          //- panel container is required by the bundle's modeler init in both modes
+          #js-properties-panel.properties-panel-parent
+      ul.buttons
+        li: #js-download-diagram(href title="download BPMN diagram")
+        li: #js-download-svg(href title="download as SVG image")
+        li
+      br
+      //- The no-property-panel variant never had its own bundle built (/javascripts/modeller.js
+      //- was a 404). Reuse the working property-panel bundle for both modes.
+      script(src="/javascripts/modeller-withPropertyPanel.js")
+      script#xmlSrc(type="text/xmldata")
+        != xml
+      script
+        != 'var processId=' + JSON.stringify(processName) + ';'
+      script.
+        var OmniXML;
+        var OmniSVG;
+        var OmniChangesCallback = diagramChanged;
+        window.saveDiagramFunct = saveDiagram;
+      if withProps
+        script.
+          var propertyPanel = false;
+          var control = $("#property-panel-control");
+          var panel = $("div#js-properties-panel");
+          $("#property-panel-control")
+            .mousedown(function () { panel.offset(control.offset); })
+            .mousemove(function () {})
+            .mouseup(function () {});
+          function togglePropertyPanel() {
+            if (propertyPanel) {
+              $('#js-properties-panel').css('height', '30px');
+              $('#js-properties-panel').css('overflow', 'hidden');
+              $('#showPropertyPanel').removeClass('fa fa-angle-up');
+              $('#showPropertyPanel').addClass('fa fa-angle-down');
+            } else {
+              $('#js-properties-panel').css('height', 'auto');
+              $('#js-properties-panel').css('overflow', 'visible');
+              $('#showPropertyPanel').removeClass('fa fa-angle-down');
+              $('#showPropertyPanel').addClass('fa fa-angle-up');
+            }
+            propertyPanel = !propertyPanel;
+          }
+      #omni_footer
+        hr

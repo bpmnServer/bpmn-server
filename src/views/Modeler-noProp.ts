@@ -6,10 +6,10 @@ export class ModelerNoProp {
         this.bpmnServer = bpmnServer;
     }
     async displayNew(name, request, response) {
-        response.render('modeler', { title: name, processName: name, xml: EMPTY_DIAGRAM, withProps: false });
+        response.render('modeler-classic', { title: name, processName: name, xml: EMPTY_DIAGRAM, withProps: false });
     }
     async display(processName, request, response) {
         const xml = await this.bpmnServer.definitions.getSource(processName);
-        response.render('modeler', { title: processName, processName, xml, withProps: false });
+        response.render('modeler-classic', { title: processName, processName, xml, withProps: false });
     }
 }

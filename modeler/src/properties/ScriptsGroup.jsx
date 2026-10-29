@@ -1,0 +1,131 @@
+// Scripts that run on an element's events. bpmn-server reads camunda:executionListener and camunda:taskListener
+// alike (behaviours/Script.ts): each holds a camunda:script, run when the node fires the listener's event
+// (EXECUTION_EVENT in bpmn-server's Enums.ts). New scripts are written as execution listeners.
+import { ListGroup, SelectEntry, TextAreaEntry, isSelectEntryEdited, isTextAreaEntryEdited } from '@bpmn-io/properties-panel';
+import { useService } from 'bpmn-js-properties-panel';
+import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
+
+const LISTENER_TYPES = ['camunda:ExecutionListener', 'camunda:TaskListener'];
+
+function eventsFor(element) {
+    if (is(element, 'bpmn:Process') || is(element, 'bpmn:Participant'))
+        return ['start', 'end'];
+    if (is(element, 'bpmn:SequenceFlow'))
+        return ['take', 'discard'];
+    const events = ['enter', 'start', 'wait', 'end', 'transformInput', 'transformOutput'];
+    if (is(element, 'bpmn:UserTask'))
+        events.push('assign', 'validate');
+    return events;
+}
+
+/** The business object that holds the scripts: a pool's scripts belong to its process. */
+function container(element) {
+    const bo = getBusinessObject(element);
+    return is(bo, 'bpmn:Participant') ? bo.get('processRef') : bo;
+}
+
+function listenersOf(bo) {
+    const values = bo.get('extensionElements')?.get('values') || [];
+    return values.filter(value => LISTENER_TYPES.some(type => is(value, type)));
+}
+
+function update(commandStack, element, moddleElement, properties) {
+    commandStack.execute('element.updateModdleProperties', { element, moddleElement, properties });
+}
+
+function EventField({ element, id, listener }) {
+    const commandStack = useService('commandStack');
+    const translate = useService('translate');
+    const options = () => {
+        const events = eventsFor(element);
+        const current = listener.get('event');
+        if (current && !events.includes(current))    // keep a value written by another tool visible
+            events.push(current);
+        return events.map(value => ({ value, label: value }));
+    };
+    return <SelectEntry
+        element={element}
+        id={id}
+        label={translate('Event')}
+        getValue={() => listener.get('event')}
+        setValue={value => update(commandStack, element, listener, { event: value })}
+        getOptions={options}
+    />;
+}
+
+function ScriptField({ element, id, listener }) {
+    const commandStack = useService('commandStack');
+    const bpmnFactory = useService('bpmnFactory');
+    const debounce = useService('debounceInput');
+    const translate = useService('translate');
+    const setValue = value => {
+        const script = listener.get('script');
+        if (script)
+            update(commandStack, element, script, { value });
+        else {
+            const created = bpmnFactory.create('camunda:Script', { scriptFormat: 'JavaScript', value });
+            created.$parent = listener;
+            update(commandStack, element, listener, { script: created });
+        }
+    };
+    return <TextAreaEntry
+        element={element}
+        id={id}
+        label={translate('Script')}
+        description={translate('JavaScript; this.data holds the instance data')}
+        monospace
+        rows={6}
+        debounce={debounce}
+        getValue={() => listener.get('script')?.get('value') || ''}
+        setValue={setValue}
+    />;
+}
+
+export function ScriptsGroup(element, injector) {
+    const bo = container(element);
+    if (!bo || !(is(bo, 'bpmn:FlowElement') || is(bo, 'bpmn:Process')))
+        return null;
+    const translate = injector.get('translate');
+    const bpmnFactory = injector.get('bpmnFactory');
+    const commandStack = injector.get('commandStack');
+
+    const items = listenersOf(bo).map((listener, index) => {
+        const id = `${element.id}-script-${index}`;
+        return {
+            id,
+            label: listener.get('event') || translate('<no event>'),
+            entries: [
+                { id: `${id}-event`, element, listener, component: EventField, isEdited: isSelectEntryEdited },
+                { id: `${id}-script`, element, listener, component: ScriptField, isEdited: isTextAreaEntryEdited }
+            ],
+            autoFocusEntry: `${id}-script`,
+            remove: () => {
+                const extensionElements = bo.get('extensionElements');
+                update(commandStack, element, extensionElements,
+                    { values: extensionElements.get('values').filter(value => value !== listener) });
+            }
+        };
+    });
+
+    const add = event => {
+        event.stopPropagation();
+        const commands = [];
+        let extensionElements = bo.get('extensionElements');
+        if (!extensionElements) {
+            extensionElements = bpmnFactory.create('bpmn:ExtensionElements', { values: [] });
+            extensionElements.$parent = bo;
+            commands.push({ cmd: 'element.updateModdleProperties', context: { element, moddleElement: bo, properties: { extensionElements } } });
+        }
+        const script = bpmnFactory.create('camunda:Script', { scriptFormat: 'JavaScript', value: '' });
+        const listener = bpmnFactory.create('camunda:ExecutionListener', { event: eventsFor(element)[0], script });
+        script.$parent = listener;
+        listener.$parent = extensionElements;
+        commands.push({
+            cmd: 'element.updateModdleProperties',
+            context: { element, moddleElement: extensionElements, properties: { values: [...extensionElements.get('values'), listener] } }
+        });
+        commandStack.execute('properties-panel.multi-command-executor', commands);
+    };
+
+    return { id: 'BpmnServer__Scripts', label: translate('Scripts'), component: ListGroup, items, add };
+}
