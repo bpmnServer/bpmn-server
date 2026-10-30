@@ -43,7 +43,7 @@ async function openEditor(model, userName = 'admin') {
     await page.fill('#password', PASSWORD);
     await Promise.all([page.waitForURL(url => !url.pathname.startsWith('/login')), page.click('button[type=submit]')]);
     await page.goto(`${web.base}/model/edit/${model}`);
-    await page.waitForSelector('#js-problems .problems-counts .count, #js-problems .problems-status:text("No problems")');
+    await page.waitForSelector('#js-problems-counts .count, #js-problems-status:text("No problems")');
     return { page, errors, close: () => context.close() };
 }
 
@@ -56,7 +56,7 @@ const selectedIds = page => page.evaluate(() => window.bpmnModeler.get('selectio
 test('a model without errors lists none', async () => {
     const { page, errors, close } = await openEditor('leave-request');
     assert.equal(await errorItems(page).count(), 0);
-    assert.equal(await page.locator('#js-problems .count.severity-error').count(), 0, 'no error count shown');
+    assert.equal(await page.locator('#js-problems-counts .count.severity-error').count(), 0, 'no error count shown');
     assert.deepEqual(errors, []);
     await close();
 });
@@ -68,7 +68,7 @@ test('errors are listed and their elements marked', async () => {
     assert.ok(messages.some(m => /'start' script does not compile/.test(m)));
     assert.ok(messages.some(m => /candidateUsers expression does not compile/.test(m)));
     assert.ok(messages.some(m => /^The script does not compile/.test(m)));
-    assert.equal(await page.locator('#js-problems .count.severity-error').innerText(), '3');
+    assert.equal(await page.locator('#js-problems-counts .count.severity-error').innerText(), '3');
 
     for (const [id, count] of [['Submit', '2'], ['AutoApprove', '1']]) {
         assert.equal(await page.locator(`.djs-element.problem-error[data-element-id="${id}"]`).count(), 1, id + ' outlined');
@@ -148,12 +148,38 @@ test('a designer gets the same checks', async () => {
     await close();
 });
 
-test('the problems list collapses', async () => {
-    const { page, close } = await openEditor(await brokenModel('broken-collapse'));
-    await page.click('#js-problems .problems-header');
-    assert.equal(await issues(page).first().isVisible(), false);
-    assert.equal(await page.locator('#js-problems .problems-header').getAttribute('aria-expanded'), 'false');
-    await page.click('#js-problems .problems-header');
+test('Problems and Report are tabs under the diagram: resized, hidden, and remembered', async () => {
+    const { page, close } = await openEditor(await brokenModel('broken-dock'));
+    const body = () => page.locator('.dock-body').boundingBox();
+    assert.equal(Math.round((await body()).height), 220, 'default height');
+    assert.equal(await page.getAttribute('#js-tab-problems', 'aria-selected'), 'true');
+
+    // drag the handle up: taller dock, shorter canvas
+    const canvasBefore = (await page.locator('#js-canvas').boundingBox()).height;
+    const handle = await page.locator('#js-dock-resizer').boundingBox();
+    await page.mouse.move(handle.x + 200, handle.y + 2);
+    await page.mouse.down();
+    await page.mouse.move(handle.x + 200, handle.y + 2 - 100, { steps: 5 });
+    await page.mouse.up();
+    assert.equal(Math.round((await body()).height), 320);
+    assert.ok((await page.locator('#js-canvas').boundingBox()).height < canvasBefore - 90, 'the canvas gives the room');
+
+    // the Report tab, then hide the dock
+    await page.click('#js-tab-report');
+    await page.waitForSelector('.report-element');
+    assert.equal(await issues(page).first().isVisible(), false, 'the problems list is behind its tab');
+    await page.click('#js-dock-toggle');
+    assert.equal(await page.locator('.dock-body').isVisible(), false);
+    assert.equal(await page.getAttribute('#js-dock-toggle', 'aria-expanded'), 'false');
+
+    // remembered: hidden, on Report, 320px; a tab opens it again
+    await page.reload();
+    await page.waitForSelector('#js-problems-counts .count');
+    assert.equal(await page.locator('.dock-body').isVisible(), false);
+    await page.click('#js-tab-report');
+    await page.waitForSelector('.report-element');
+    assert.equal(Math.round((await body()).height), 320);
+    await page.click('#js-tab-problems');
     assert.equal(await issues(page).first().isVisible(), true);
     await close();
 });

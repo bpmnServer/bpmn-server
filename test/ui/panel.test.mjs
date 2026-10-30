@@ -41,7 +41,7 @@ async function openEditor(model) {
     await page.fill('#password', PASSWORD);
     await Promise.all([page.waitForURL(url => !url.pathname.startsWith('/login')), page.click('button[type=submit]')]);
     await page.goto(`${web.base}/model/edit/${model}`);
-    await page.waitForSelector('#js-problems .problems-counts .count, #js-problems .problems-status:text("No problems")');
+    await page.waitForSelector('#js-problems-counts .count, #js-problems-status:text("No problems")');
     return { page, errors, close: () => context.close() };
 }
 

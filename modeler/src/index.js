@@ -1,6 +1,6 @@
 // The bpmn-web model editor: bpmn-js with the properties panel shaped for bpmn-server.
 // The page (src/views/modeler.pug) provides #js-canvas, #js-properties-panel, #js-panel-resizer, the save
-// buttons, #js-problems, #js-report with its view switch, and the model as JSON in #model-source. window.saveDiagramFunct(option) saves, as it did in the
+// buttons, the dock under the canvas (#js-dock: the Problems and Report tabs) and the model as JSON in #model-source. window.saveDiagramFunct(option) saves, as it did in the
 // classic modeler (hosts and tests call it).
 import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-js.css';
@@ -40,7 +40,7 @@ const modeler = new BpmnModeler({
         ReportModule
     ],
     report: { container: '#js-report', processName },
-    problems: { container: '#js-problems', url: '/model/verify', processName },
+    problems: { list: '#js-problems', counts: '#js-problems-counts', status: '#js-problems-status', url: '/model/verify', processName },
     moddleExtensions: { camunda: camundaModdle }
 });
 window.bpmnModeler = modeler;
@@ -81,7 +81,7 @@ function savePanelState(state) {
     }
 }
 
-const panelState = { width: 360, collapsed: false, ...loadPanelState() };
+const panelState = { width: 360, collapsed: false, dockHeight: 220, dockCollapsed: false, dockTab: 'problems', ...loadPanelState() };
 const maxWidth = () => Math.max(MIN_WIDTH, Math.floor(page.clientWidth * 0.6));
 
 function applyPanelState() {
@@ -138,27 +138,62 @@ new ResizeObserver(() => {
         fitDiagram();
 }).observe(canvasElement);
 
-// ---- views: the diagram (with the panel and Problems) or the report of the whole process
+// ---- the dock under the canvas: Problems and Report tabs, resizable and collapsible, remembered per browser
 
-function showView(view) {
-    const report = view === 'report';
-    page.classList.toggle('report-view', report);
-    for (const [id, active] of [['js-view-diagram', !report], ['js-view-report', report]]) {
-        const button = document.getElementById(id);
-        button.classList.toggle('active', active);
-        button.setAttribute('aria-pressed', String(active));
-    }
-    const reportView = modeler.get('report');
-    if (report)
-        reportView.show();
+const dock = document.getElementById('js-dock');
+const MIN_DOCK = 80;
+const maxDock = () => Math.max(MIN_DOCK, Math.floor(page.clientHeight * 0.7));
+
+function applyDockState() {
+    const tab = panelState.dockTab === 'report' ? 'report' : 'problems';
+    dock.style.setProperty('--dock-height', Math.min(Math.max(panelState.dockHeight, MIN_DOCK), maxDock()) + 'px');
+    dock.classList.toggle('collapsed', panelState.dockCollapsed);
+    dock.dataset.tab = tab;
+    for (const name of ['problems', 'report'])
+        document.getElementById(`js-tab-${name}`).setAttribute('aria-selected', String(name === tab));
+    document.getElementById('js-dock-toggle').setAttribute('aria-expanded', String(!panelState.dockCollapsed));
+    const report = modeler.get('report');
+    if (tab === 'report' && !panelState.dockCollapsed)
+        report.show();
     else
-        reportView.hide();
+        report.hide();
 }
-document.getElementById('js-view-diagram').addEventListener('click', () => showView('diagram'));
-document.getElementById('js-view-report').addEventListener('click', () => showView('report'));
+
+function showTab(tab) {
+    panelState.dockTab = tab;
+    panelState.dockCollapsed = false;      // choosing a tab opens the dock
+    applyDockState();
+    savePanelState(panelState);
+}
+document.getElementById('js-tab-problems').addEventListener('click', () => showTab('problems'));
+document.getElementById('js-tab-report').addEventListener('click', () => showTab('report'));
+document.getElementById('js-dock-toggle').addEventListener('click', () => {
+    panelState.dockCollapsed = !panelState.dockCollapsed;
+    applyDockState();
+    savePanelState(panelState);
+});
 document.getElementById('js-print').addEventListener('click', () => window.print());
-// an element clicked in the report: back to the diagram, where it is selected
-modeler.on('report.reveal', () => showView('diagram'));
+
+const dockResizer = document.getElementById('js-dock-resizer');
+dockResizer.addEventListener('pointerdown', down => {
+    if (panelState.dockCollapsed)
+        return;
+    dockResizer.setPointerCapture(down.pointerId);
+    const startY = down.clientY, startHeight = dock.querySelector('.dock-body').getBoundingClientRect().height;
+    page.classList.add('resizing-dock');
+    const move = event => {
+        panelState.dockHeight = Math.min(Math.max(startHeight + startY - event.clientY, MIN_DOCK), maxDock());
+        applyDockState();
+    };
+    const up = () => {
+        dockResizer.removeEventListener('pointermove', move);
+        page.classList.remove('resizing-dock');
+        savePanelState(panelState);
+    };
+    dockResizer.addEventListener('pointermove', move);
+    dockResizer.addEventListener('pointerup', up, { once: true });
+});
+window.addEventListener('resize', applyDockState);
 
 /** Fit the whole diagram in view, to the right of the palette rather than under it. */
 function fitDiagram() {
@@ -206,6 +241,7 @@ async function open() {
     const xml = JSON.parse(document.getElementById('model-source').textContent);
     await loadTemplates();    // before the model: tasks made from a template show it
     applyPanelState();
+    applyDockState();
     try {
         const { warnings } = await modeler.importXML(xml);
         if (warnings.length)

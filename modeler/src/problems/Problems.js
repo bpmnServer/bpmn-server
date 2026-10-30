@@ -24,10 +24,19 @@ export default class Problems {
         this._run = 0;
         this._timer = null;
 
-        this._root = document.querySelector(this._config.container);
+        this._root = document.querySelector(this._config.list);
+        this._counts = document.querySelector(this._config.counts);
+        this._status = document.querySelector(this._config.status);
         if (!this._root || !this._config.url)
             return;
-        this._renderShell();
+        this._list = this._root;
+        this._list.addEventListener('click', event => this._onItem(event));
+        this._list.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                this._onItem(event);
+            }
+        });
 
         eventBus.on('import.done', () => this.check());
         eventBus.on('commandStack.changed', () => this._schedule());
@@ -125,33 +134,6 @@ export default class Problems {
 
     // ---- the list and the canvas
 
-    _renderShell() {
-        this._root.classList.add('problems');
-        this._root.innerHTML = `
-            <button type="button" class="problems-header" aria-expanded="true">
-                <span class="problems-title">Problems</span>
-                <span class="problems-counts"></span>
-                <span class="problems-status" role="status"></span>
-            </button>
-            <ul class="problems-list"></ul>`;
-        this._header = this._root.querySelector('.problems-header');
-        this._list = this._root.querySelector('.problems-list');
-        this._header.addEventListener('click', () => this.toggle());
-        this._list.addEventListener('click', event => this._onItem(event));
-        this._list.addEventListener('keydown', event => {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                this._onItem(event);
-            }
-        });
-    }
-
-    toggle(open = this._root.classList.contains('collapsed')) {
-        this._root.classList.toggle('collapsed', !open);
-        this._header.setAttribute('aria-expanded', String(open));
-        this._eventBus.fire('problems.toggled', { open });
-    }
-
     _onItem(event) {
         const item = event.target.closest('.problem');
         if (item)
@@ -159,14 +141,15 @@ export default class Problems {
     }
 
     _setStatus(text, isError = false) {
-        const status = this._root.querySelector('.problems-status');
-        status.textContent = text;
-        status.classList.toggle('error', isError);
+        if (!this._status)
+            return;
+        this._status.textContent = text;
+        this._status.classList.toggle('error', isError);
     }
 
     _render() {
         const counts = SEVERITIES.map(severity => [severity, this._issues.filter(i => i.severity === severity).length]);
-        this._root.querySelector('.problems-counts').innerHTML = counts
+        if (this._counts) this._counts.innerHTML = counts
             .filter(([, n]) => n > 0)
             .map(([severity, n]) => `<span class="count severity-${severity}" title="${n} ${severity}${n === 1 ? '' : 's'}">${n}</span>`)
             .join('');

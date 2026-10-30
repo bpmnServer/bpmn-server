@@ -1,4 +1,5 @@
-// The editor's Report view: the whole process as one document, from the model being edited.
+// The editor's Report tab (under the diagram, beside Problems): the whole process as one document, from the
+// model being edited.
 //   npm run test:ui
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -34,9 +35,9 @@ async function openReport(model, xml) {
     await page.fill('#password', PASSWORD);
     await Promise.all([page.waitForURL(url => !url.pathname.startsWith('/login')), page.click('button[type=submit]')]);
     await page.goto(`${web.base}/model/edit/${model}`);
-    await page.waitForSelector('#js-problems .problems-counts .count, #js-problems .problems-status:text("No problems")');
+    await page.waitForSelector('#js-problems-counts .count, #js-problems-status:text("No problems")');
     assert.equal(await page.locator('#js-print').isVisible(), false, 'Print belongs to the report');
-    await page.click('#js-view-report');
+    await page.click('#js-tab-report');
     await page.waitForSelector('.report-element');
     return { page, errors, close: () => context.close() };
 }
@@ -45,7 +46,7 @@ const section = (page, id) => page.locator(`.report-element[data-element-id="${i
 
 test('the report lists the process in flow order, with how bpmn-server reads each element', async () => {
     const { page, errors, close } = await openReport('report-car', fs.readFileSync(path.join(SAMPLES, 'Buy Used Car.bpmn'), 'utf8'));
-    assert.equal(await page.locator('#js-canvas').isVisible(), false, 'the report replaces the diagram');
+    assert.equal(await page.locator('#js-canvas').isVisible(), true, 'the diagram stays in view above');
     assert.equal(await page.locator('#js-print').isVisible(), true);
 
     const order = await page.locator('.report-element').evaluateAll(els => els.map(e => e.dataset.elementId));
@@ -75,24 +76,20 @@ test('problems are shown with their element, and the report follows edits', asyn
     assert.match(await page.locator('.report-summary').innerText(), /Problems: 1 error/);
     assert.match(await section(page, 'AutoApprove').locator('.report-issues').innerText(), /ERROR\s+The script does not compile/);
 
-    // an edit in the diagram shows in the report
-    await page.click('#js-view-diagram');
+    // an edit in the diagram shows in the report, which stays open beside it
     await page.evaluate(() => {
         const m = window.bpmnModeler;
         m.get('modeling').updateProperties(m.get('elementRegistry').get('Submit'), { name: 'Send the request' });
     });
-    await page.waitForFunction(() => window.bpmnModeler.get('problems').issues !== undefined);
-    await page.click('#js-view-report');
     await page.waitForSelector('.report-element[data-element-id="Submit"] h3 a:text("Send the request")');
     assert.deepEqual(errors, []);
     await close();
 });
 
-test('an element of the report opens it in the diagram', async () => {
+test('an element of the report is selected in the diagram', async () => {
     const { page, errors, close } = await openReport('report-reveal', fs.readFileSync(path.join(SAMPLES, 'Buy Used Car.bpmn'), 'utf8'));
     await section(page, 'task_Drive').locator('h3 a').click();
-    assert.equal(await page.locator('#js-canvas').isVisible(), true);
-    assert.equal(await page.locator('#js-view-diagram').getAttribute('aria-pressed'), 'true');
+    assert.equal(await page.getAttribute('#js-tab-report', 'aria-selected'), 'true', 'the report stays open');
     assert.deepEqual(await page.evaluate(() => window.bpmnModeler.get('selection').get().map(e => e.id)), ['task_Drive']);
     assert.deepEqual(errors, []);
     await close();

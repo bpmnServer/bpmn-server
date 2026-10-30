@@ -158,46 +158,124 @@ body {
     overflow-wrap: anywhere;
 }
 
-/* ---- Problems: a list under the canvas, the elements marked on it */
+/* ---- the dock under the canvas: Problems and Report tabs, resizable */
 
-.problems {
+.dock {
     --error: #b42318;
     --warning: #b54708;
     --info: #1f62c8;
+    --dock-height: 220px;
     flex: none;
-    border-top: 1px solid #dcdfe4;
+    display: flex;
+    flex-direction: column;
     background: #fff;
 }
 
-.problems-header {
+.dock-resizer {
+    height: 5px;
+    cursor: row-resize;
+    background: #e8eaee;
+    touch-action: none;
+}
+
+.dock-resizer:hover,
+.resizing-dock .dock-resizer {
+    background: #b9c3d3;
+}
+
+.dock.collapsed .dock-resizer {
+    cursor: default;
+}
+
+.resizing-dock {
+    user-select: none;
+}
+
+.dock-bar {
     display: flex;
     align-items: center;
-    gap: 10px;
-    width: 100%;
-    padding: 6px 16px;
-    border: 0;
+    gap: 4px;
+    padding: 0 8px 0 4px;
     background: #f7f8fa;
+    border-bottom: 1px solid #dcdfe4;
+}
+
+.dock-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: none;
     font: inherit;
-    text-align: left;
+    font-weight: 600;
+    color: #52575f;
     cursor: pointer;
 }
 
-.problems-header::before {
-    content: "\25BE";
-    color: #52575f;
+.dock-tab[aria-selected="true"] {
+    color: #22242a;
+    border-bottom-color: #1f62c8;
 }
 
-.problems.collapsed .problems-header::before {
-    content: "\25B8";
+.dock-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
 }
 
-.problems-title {
-    font-weight: 600;
+.dock-actions button {
+    font: inherit;
+    font-size: 13px;
+    padding: 3px 10px;
+    border: 1px solid #c4c8cf;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+}
+
+#js-dock-toggle::before {
+    content: "\25BE";      /* open: hide */
+}
+
+.dock.collapsed #js-dock-toggle::before {
+    content: "\25B4";
+}
+
+#js-print {
+    display: none;
+}
+
+.dock[data-tab="report"]:not(.collapsed) #js-print {
+    display: inline-block;
+}
+
+.dock-body {
+    height: var(--dock-height);
+    overflow: hidden;
+    position: relative;
+}
+
+.dock.collapsed .dock-body {
+    display: none;
+}
+
+.dock-body > [role="tabpanel"] {
+    position: absolute;
+    inset: 0;
+    overflow: auto;
+}
+
+.dock[data-tab="problems"] .dock-report,
+.dock[data-tab="report"] .problems-list {
+    display: none;
 }
 
 .problems-counts {
     display: flex;
     gap: 6px;
+    font-weight: normal;
 }
 
 .problems-counts .count {
@@ -211,6 +289,7 @@ body {
 }
 
 .problems-status {
+    margin-left: 8px;
     color: #52575f;
     font-size: 13px;
 }
@@ -220,15 +299,9 @@ body {
 }
 
 .problems-list {
-    max-height: 28vh;
-    overflow: auto;
     margin: 0;
     padding: 0;
     list-style: none;
-}
-
-.problems.collapsed .problems-list {
-    display: none;
 }
 
 .problem {
@@ -297,62 +370,11 @@ body {
 }
 
 
-/* ---- views: Diagram or Report */
-
-.modeler-views {
-    display: flex;
-    border: 1px solid #c4c8cf;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.modeler-views button {
-    font: inherit;
-    padding: 5px 12px;
-    border: 0;
-    background: #fff;
-    color: inherit;
-    cursor: pointer;
-}
-
-.modeler-views button + button {
-    border-left: 1px solid #c4c8cf;
-}
-
-.modeler-views button.active {
-    background: #1f62c8;
-    color: #fff;
-}
-
-#js-print,
-.modeler-report {
-    display: none;
-}
-
-.report-view #js-print {
-    display: inline-block;
-}
-
-.report-view .modeler-body {
-    display: none;
-}
-
-.report-view .modeler-report {
-    display: block;
-    flex: 1;
-    overflow: auto;
-    background: #f7f8fa;
-}
-
 /* ---- the report */
 
 .report-document {
     max-width: 960px;
-    margin: 0 auto;
-    padding: 24px 32px 48px;
-    background: #fff;
-    min-height: 100%;
-    box-sizing: border-box;
+    padding: 12px 24px 32px;
 }
 
 .report-title h1 {
@@ -469,9 +491,12 @@ body {
 }
 
 @media print {
+    /* the report only, at full length */
     #modeler-page { height: auto; overflow: visible; }
-    .modeler-header, .modeler-body { display: none !important; }
-    .modeler-report { display: block !important; background: #fff; overflow: visible; }
+    .modeler-header, .modeler-canvas, .modeler-resizer, .modeler-panel, .dock-resizer, .dock-bar, .problems-list { display: none !important; }
+    .modeler-body, .modeler-main, .dock, .dock-body { display: block !important; height: auto !important; overflow: visible !important; }
+    .dock-body > [role="tabpanel"] { position: static; }
+    .dock-report { display: block !important; }
     .report-document { max-width: none; padding: 0; }
     .report-element { break-inside: avoid; }
 }
