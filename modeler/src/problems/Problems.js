@@ -19,6 +19,7 @@ export default class Problems {
         this._selection = selection;
         this._overlays = overlays;
         this._issues = [];
+        this.descriptions = {};     // how bpmn-server reads each element, from each check (the Report view)
         this._marked = [];
         this._run = 0;
         this._timer = null;
@@ -63,8 +64,9 @@ export default class Problems {
             const rank = { error: 0, warning: 1, info: 2 };
             this._issues = [...(result.issues || []), ...findUnsupported(this._bpmnjs.getDefinitions())]
                 .sort((a, b) => rank[a.severity] - rank[b.severity]);
+            this.descriptions = result.descriptions || {};
             this._render();
-            this._eventBus.fire('problems.changed', { issues: this._issues });
+            this._eventBus.fire('problems.changed', { issues: this._issues, descriptions: this.descriptions });
         } catch (err) {
             if (run === this._run)
                 this._setStatus('Could not check the model: ' + err.message, true);

@@ -155,6 +155,13 @@ test('the modeler checks a model it is editing without saving it', async () => {
   assert.ok(result.issues.some(i => i.code === 'script-syntax' && i.elementId === 'AutoApprove'), res.text);
   assert.doesNotMatch(await web.bpmnServer.definitions.getSource('leave-request'), /approvedBy = ;/, 'not saved');
 
+  // with how bpmn-server reads each element, as the instance page's model documentation does
+  const descriptions = result.descriptions;
+  assert.ok(descriptions.Submit.some(([label, value]) => label === 'candidateGroups' && value === 'staff'), JSON.stringify(descriptions.Submit));
+  assert.ok(descriptions.ToApprove.some(([label, value]) => /condition/.test(label) && /days/.test(value)), JSON.stringify(descriptions.ToApprove));
+  const unreadable = await admin.request('POST', '/model/verify', { json: { bpmn: '<not-bpmn/>' } });
+  assert.deepEqual(JSON.parse(unreadable.text).descriptions, {}, 'none when the model does not load');
+
   assert.equal((await admin.request('POST', '/model/verify', { json: {} })).status, 400);
   assert.equal((await staff.request('POST', '/model/verify', { json: { bpmn } })).status, 403);
 });

@@ -295,3 +295,183 @@ body {
 .problem-badge.severity-info {
     background: #1f62c8;
 }
+
+
+/* ---- views: Diagram or Report */
+
+.modeler-views {
+    display: flex;
+    border: 1px solid #c4c8cf;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.modeler-views button {
+    font: inherit;
+    padding: 5px 12px;
+    border: 0;
+    background: #fff;
+    color: inherit;
+    cursor: pointer;
+}
+
+.modeler-views button + button {
+    border-left: 1px solid #c4c8cf;
+}
+
+.modeler-views button.active {
+    background: #1f62c8;
+    color: #fff;
+}
+
+#js-print,
+.modeler-report {
+    display: none;
+}
+
+.report-view #js-print {
+    display: inline-block;
+}
+
+.report-view .modeler-body {
+    display: none;
+}
+
+.report-view .modeler-report {
+    display: block;
+    flex: 1;
+    overflow: auto;
+    background: #f7f8fa;
+}
+
+/* ---- the report */
+
+.report-document {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px 32px 48px;
+    background: #fff;
+    min-height: 100%;
+    box-sizing: border-box;
+}
+
+.report-title h1 {
+    font-size: 22px;
+    margin: 0 0 4px;
+}
+
+.report-summary {
+    color: #52575f;
+    margin: 0 0 16px;
+}
+
+.report-process > h2 {
+    font-size: 18px;
+    margin: 24px 0 8px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #dcdfe4;
+}
+
+.report-type {
+    margin-left: 10px;
+    font-size: 12px;
+    font-weight: normal;
+    color: #6b7079;
+}
+
+.report-element {
+    padding: 10px 0 10px 12px;
+    border-left: 3px solid #e3e6eb;
+    margin: 8px 0;
+}
+
+.report-element h3 {
+    font-size: 15px;
+    margin: 0 0 4px;
+}
+
+.report-element h3 a,
+.report-flows a {
+    color: #1f62c8;
+    text-decoration: none;
+}
+
+.report-element h3 a:hover,
+.report-flows a:hover {
+    text-decoration: underline;
+}
+
+.report-documentation {
+    margin: 4px 0;
+    white-space: pre-wrap;
+    color: #33373d;
+}
+
+.report-description {
+    display: grid;
+    grid-template-columns: minmax(120px, 25%) 1fr;
+    gap: 2px 12px;
+    margin: 6px 0;
+    font-size: 13px;
+}
+
+.report-description dt {
+    color: #52575f;
+}
+
+.report-description dd {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 12px;
+}
+
+.report-issues {
+    list-style: none;
+    padding: 0;
+    margin: 6px 0;
+    font-size: 13px;
+}
+
+.report-issues .severity {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.report-issues .severity-error .severity { color: #b42318; }
+.report-issues .severity-warning .severity { color: #b54708; }
+.report-issues .severity-info .severity { color: #1f62c8; }
+
+.report-flows-title {
+    font-size: 15px;
+    margin: 20px 0 6px;
+}
+
+.report-flows {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.report-flows th,
+.report-flows td {
+    text-align: left;
+    padding: 5px 8px;
+    border-bottom: 1px solid #eef0f3;
+    vertical-align: top;
+}
+
+.report-flows td:nth-child(3) {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 12px;
+}
+
+@media print {
+    #modeler-page { height: auto; overflow: visible; }
+    .modeler-header, .modeler-body { display: none !important; }
+    .modeler-report { display: block !important; background: #fff; overflow: visible; }
+    .report-document { max-width: none; padding: 0; }
+    .report-element { break-inside: avoid; }
+}

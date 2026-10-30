@@ -1,6 +1,6 @@
 // The bpmn-web model editor: bpmn-js with the properties panel shaped for bpmn-server.
 // The page (src/views/modeler.pug) provides #js-canvas, #js-properties-panel, #js-panel-resizer, the save
-// buttons, #js-problems and the model as JSON in #model-source. window.saveDiagramFunct(option) saves, as it did in the
+// buttons, #js-problems, #js-report with its view switch, and the model as JSON in #model-source. window.saveDiagramFunct(option) saves, as it did in the
 // classic modeler (hosts and tests call it).
 import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-js.css';
@@ -18,6 +18,7 @@ import ElementTemplateChooserModule from '@bpmn-io/element-template-chooser';
 import camundaModdle from './moddle.js';
 import BpmnServerPropertiesModule from './properties/index.js';
 import ProblemsModule from './problems/index.js';
+import ReportModule from './report/index.js';
 
 const page = document.getElementById('modeler-page');
 const { processName } = page.dataset;
@@ -35,8 +36,10 @@ const modeler = new BpmnModeler({
         ElementTemplatesPropertiesProviderModule,
         ElementTemplateChooserModule,
         BpmnServerPropertiesModule,
-        ProblemsModule
+        ProblemsModule,
+        ReportModule
     ],
+    report: { container: '#js-report', processName },
     problems: { container: '#js-problems', url: '/model/verify', processName },
     moddleExtensions: { camunda: camundaModdle }
 });
@@ -134,6 +137,28 @@ new ResizeObserver(() => {
     if (fitted)
         fitDiagram();
 }).observe(canvasElement);
+
+// ---- views: the diagram (with the panel and Problems) or the report of the whole process
+
+function showView(view) {
+    const report = view === 'report';
+    page.classList.toggle('report-view', report);
+    for (const [id, active] of [['js-view-diagram', !report], ['js-view-report', report]]) {
+        const button = document.getElementById(id);
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', String(active));
+    }
+    const reportView = modeler.get('report');
+    if (report)
+        reportView.show();
+    else
+        reportView.hide();
+}
+document.getElementById('js-view-diagram').addEventListener('click', () => showView('diagram'));
+document.getElementById('js-view-report').addEventListener('click', () => showView('report'));
+document.getElementById('js-print').addEventListener('click', () => window.print());
+// an element clicked in the report: back to the diagram, where it is selected
+modeler.on('report.reveal', () => showView('diagram'));
 
 /** Fit the whole diagram in view, to the right of the palette rather than under it. */
 function fitDiagram() {

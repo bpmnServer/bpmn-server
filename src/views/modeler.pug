@@ -17,8 +17,12 @@ html(lang="en")
         a.brand(href="/" title="Home")
           img(src="https://demo.omniworkflow.com/web//images/omniworkflow_icon.png" alt="Home")
         h1= processName
+        .modeler-views(role="group" aria-label="View")
+          button#js-view-diagram.active(type="button" aria-pressed="true") Diagram
+          button#js-view-report(type="button" aria-pressed="false") Report
         span#js-save-status.modeler-status(role="status")
         nav.modeler-actions
+          button#js-print(type="button" title="Print the report or save it as PDF") Print
           a(href=`/execute/${processName}` target="execute") Run
           button#js-save-run(type="button") Save &amp; Run
           button#js-save.primary(type="button" title="Ctrl+S") Save
@@ -29,5 +33,6 @@ html(lang="en")
         #js-panel-resizer.modeler-resizer(title="Drag to resize the properties panel")
           button#js-panel-toggle(type="button" title="Show or hide the properties panel" aria-label="Show or hide the properties panel")
         #js-properties-panel.modeler-panel
+      #js-report.modeler-report(aria-label="Report")
     script#model-source(type="application/json")!= modelJson
     script(src="/modeler/modeler.js")

@@ -11,7 +11,7 @@ import path from 'node:path';
 import { layoutProcess } from 'bpmn-auto-layout';
 import { bpmnToSvg } from './bpmnToSvg.js';
 
-import { BPMNServer, BPMNAdminAPI, verifyModel } from '../index.js';
+import { BPMNServer, BPMNAdminAPI, verifyModel, Definition } from '../index.js';
 import { Common } from './common.js';
 import { modelNameGuard, isSafeModelName } from './middleware/modelName.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
@@ -355,6 +355,35 @@ export class Model extends Common {
             response.json(catalog);
         }));
 
+        /**
+         * How bpmn-server reads each element of a model, as the instance page's Model documentation shows it
+         * (Definition.getJson): id -> [label, value] lines from the elements' and their behaviours' describe().
+         * Empty when the model does not load (verifyModel says why).
+         */
+        async function describeModel(name: string, source: string) {
+            const descriptions: Record<string, string[][]> = {};
+            const text = value => String(value ?? '').replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '').trim();
+            const add = (id, lines) => {
+                const clean = (lines || []).filter(Array.isArray).map(([label, value]) => [text(label), text(value)]).filter(([, value]) => value);
+                if (id && clean.length)
+                    descriptions[id] = [...(descriptions[id] || []), ...clean];
+            };
+            try {
+                const definition = new Definition(name, source, bpmnServer);
+                await definition.load();
+                definition.processes.forEach(proc => add(proc.id, proc.describe()));
+                definition.nodes.forEach(node => {
+                    add(node.id, node.describe());
+                    node.behaviours.forEach(behaviour => add(node.id, behaviour.describe()));
+                });
+                definition.flows.forEach(flow => add(flow.id, flow.describe()));
+            }
+            catch (exc) {
+                return {};
+            }
+            return descriptions;
+        }
+
         // the editor's Problems list: checks the model being edited, as sent, without saving it
         router.post('/verify', awaitHandlerFactory(async (request, response) => {
             const { bpmn, processName } = request.body ?? {};
@@ -362,7 +391,9 @@ export class Model extends Common {
                 response.status(400).json({ error: 'bpmn (the model XML) is required' });
                 return;
             }
-            response.json(await verifyModel(bpmn, bpmnServer, processName || 'model'));
+            const name = processName || 'model';
+            const [result, descriptions] = await Promise.all([verifyModel(bpmn, bpmnServer, name), describeModel(name, bpmn)]);
+            response.json({ ...result, descriptions });
         }));
         return router;
     }

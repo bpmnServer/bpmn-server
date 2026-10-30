@@ -54,6 +54,11 @@ and here
   designers (status 422, or 409 for a task no longer waiting; JSON for API-style requests), instead of an
   error 500. The editor's Problems list leads loop collections and service references to their fields.
 - A task made from a template lists the template's hidden values (the service it calls, ...) read-only.
+- Report view (Diagram | Report in the editor's header): the whole process as one document, from the model
+  being edited: its elements in flow order (sub-processes inside their parent), with their documentation, how
+  bpmn-server reads them (the engine's description, as on the instance page's Model documentation) and their
+  problems, then the conditions. An element opens in the diagram; Print saves it as PDF. The model check
+  (`POST /model/verify`) returns the engine's descriptions with the issues.
 - Element templates: configured tasks from the application's `elementTemplatesPath` (Camunda 7 template
   format), chosen under Template in the properties panel. Templates are checked against what bpmn-server runs;
   ones that set anything else are left out with the reason (`GET /model/templates`). The sample offers Add
