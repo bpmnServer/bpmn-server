@@ -4,10 +4,15 @@ extends ../../../views/layout
 block content
  -var loggedUser=user
  -var user=editUser
+ //- editGroups: an administrator editing a user (/account/edit/:id), groups included; otherwise your own profile
   .pb-2.mt-2.mb-4.border-bottom
-    h3 Profile Information for `#{editUser.userName}` by #{loggedUser.userName} - by user `#{user.userName}`
+    if editGroups
+      h3 User `#{editUser.userName}`
+      p: a(href='/admin') Back to the users
+    else
+      h3 Your profile
  table(width="80%")
-  form(action='/account/profile', method='POST')
+  form(action=editGroups ? '/account/edit' : '/account/profile', method='POST')
     input(type='hidden', name='_csrf', value=_csrf)
     tr
       td(class='form-label') 
@@ -52,10 +57,11 @@ block content
       td(class='form-label')
         label User Groups
       td
-        if loggedUser.isAdmin
+        if editGroups
             input.form-control(type='text', name='userGroups', id='userGroups', value=user.userGroups.join(','))
+            small.text-muted Comma-separated: ADMIN (manages the app), DESIGNER (works on models), and the groups tasks are assigned to
         else
-            input.form-control(type='text', name='userGroups', id='userGroups', value=user.userGroups, readOnly)
+            input.form-control(type='text', id='userGroups', value=user.userGroups.join(','), readOnly)
         input.form-control(type='hidden', name='id', id='id', value=user.id, readOnly)
     tr 
        td 
@@ -64,105 +70,105 @@ block content
           i.fas.fa-pencil-alt.fa-sm
           | Update Profile
 
+ //- the rest acts on the signed-in user: only on your own profile
+ if !editGroups
   .pb-2.mt-2.mb-4.border-bottom
- h3 Change Password
- table(width="80%")
-  form(action='/account/password', method='POST')
-    input.form-control(type='hidden', name='id', id='id', value=user.id, readOnly)
-    input(type='hidden', name='_csrf', value=_csrf)
-    tr 
-      td(class='form-label')
-          label(for='password') New Password
-      td
-        input.form-control(type='password', name='password', id='password', autocomplete='new-password', minlength='8', required)
-    tr
-      td(class='form-label')
-        label(for='confirmPassword') Confirm Password
-      td
-        input.form-control(type='password', name='confirmPassword', id='confirmPassword', autocomplete='new-password', minlength='8', required)
-    tr 
-      td
-      td
-        button.btn.btn-primary(type='submit')
-          | Change Password
+  h3 Change Password
+  table(width="80%")
+   form(action='/account/password', method='POST')
+     input.form-control(type='hidden', name='id', id='id', value=user.id, readOnly)
+     input(type='hidden', name='_csrf', value=_csrf)
+     tr 
+       td(class='form-label')
+           label(for='password') New Password
+       td
+         input.form-control(type='password', name='password', id='password', autocomplete='new-password', minlength='8', required)
+     tr
+       td(class='form-label')
+         label(for='confirmPassword') Confirm Password
+       td
+         input.form-control(type='password', name='confirmPassword', id='confirmPassword', autocomplete='new-password', minlength='8', required)
+     tr 
+       td
+       td
+         button.btn.btn-primary(type='submit')
+           | Change Password
 
-  .pb-2.mt-2.mb-4.border-bottom
- h3 Logout
- table(width="80%")
-  form(action='/logout', method='GET')
-    input.form-control(type='hidden', name='id', id='id', value=user.id, readOnly)
-    input(type='hidden', name='_csrf', value=_csrf)
-    tr 
-      td(class='form-label')
-      td
-        button(type='submit')
+   .pb-2.mt-2.mb-4.border-bottom
+  h3 Logout
+  table(width="80%")
+   form(action='/logout', method='GET')
+     input.form-control(type='hidden', name='id', id='id', value=user.id, readOnly)
+     input(type='hidden', name='_csrf', value=_csrf)
+     tr 
+       td(class='form-label')
+       td
+         button(type='submit')
         
-          | Logout
+           | Logout
 
-  .pb-2.mt-2.mb-4.border-bottom
- h3 Delete Account
- table(width="80%")
-  form(action='/account/delete', method='POST', onsubmit="return confirm('Are you sure you want to delete your account?');")
-    input.form-control(type='hidden', name='id', id='id', value=user.id, readOnly)
-    input(type='hidden', name='_csrf', value=_csrf)
-    tr 
-      td(class='form-label')
-        p.offset-sm-3.col-md-7.pl-2 You can delete your account, but keep in mind this action is irreversible.
-        input(type='hidden', name='_csrf', value=_csrf)
-      td
-        button.btn.btn-danger(type='submit')
-          i.fas.fa-trash-alt.fa-sm
-          | Delete my account
-    tr
-      td(style={display:'none'})
-        h3 Linked Accounts
-          if user.instagram
-            p.mb-1: a.text-danger(href='/account/unlink/instagram') Unlink your Instagram account
-          else
-            p.mb-1: a(href='/auth/instagram') Link your Instagram account
-        .offset-sm-3.col-md-7.pl-2
-          if user.google
-            p.mb-1: a.text-danger(href='/account/unlink/google') Unlink your Google account
-          else
-            p.mb-1: a(href='/auth/google') Link your Google account
-        .offset-sm-3.col-md-7.pl-2
-          if user.facebook
-            p.mb-1: a.text-danger(href='/account/unlink/facebook') Unlink your Facebook account
-          else
-            p.mb-1: a(href='/auth/facebook') Link your Facebook account
-          if user.snapchat
-            p.mb-1: a.text-danger(href='/account/unlink/snapchat') Unlink your Snapchat account
-          else
-            p.mb-1: a(href='/auth/snapchat') Link your Snapchat account
-        .offset-sm-3.col-md-7.pl-2
-          if user.twitter
-            p.mb-1: a.text-danger(href='/account/unlink/twitter') Unlink your Twitter account
-          else
-            p.mb-1: a(href='/auth/twitter') Link your Twitter account
-        .offset-sm-3.col-md-7.pl-2
-          if user.github
-            p.mb-1: a.text-danger(href='/account/unlink/github') Unlink your GitHub account
-          else
-            p.mb-1: a(href='/auth/github') Link your GitHub account
-        .offset-sm-3.col-md-7.pl-2
-          if user.linkedin
-            p.mb-1: a.text-danger(href='/account/unlink/linkedin') Unlink your LinkedIn account
-          else
-            p.mb-1: a(href='/auth/linkedin') Link your LinkedIn account
-        .offset-sm-3.col-md-7.pl-2
-          if user.steam
-            p.mb-1: a.text-danger(href='/account/unlink/steam') Unlink your Steam account
-          else
-            p.mb-1: a(href='/auth/steam') Link your Steam account
-        .offset-sm-3.col-md-7.pl-2
-          if user.twitch
-            p.mb-1: a.text-danger(href='/account/unlink/twitch') Unlink your Twitch account
-          else
-            p.mb-1: a(href='/auth/twitch') Link your Twitch account
-        .offset-sm-3.col-md-7.pl-2
-          if user.quickbooks
-            p.mb-1: a.text-danger(href='/account/unlink/quickbooks') Unlink your QuickBooks account
-          else
-            p.mb-1: a(href='/auth/quickbooks') Link your QuickBooks account
-
-    
+   .pb-2.mt-2.mb-4.border-bottom
+  h3 Delete Account
+  table(width="80%")
+   form(action='/account/delete', method='POST', onsubmit="return confirm('Are you sure you want to delete your account?');")
+     input.form-control(type='hidden', name='id', id='id', value=user.id, readOnly)
+     input(type='hidden', name='_csrf', value=_csrf)
+     tr 
+       td(class='form-label')
+         p.offset-sm-3.col-md-7.pl-2 You can delete your account, but keep in mind this action is irreversible.
+         input(type='hidden', name='_csrf', value=_csrf)
+       td
+         button.btn.btn-danger(type='submit')
+           i.fas.fa-trash-alt.fa-sm
+           | Delete my account
+     tr
+       td(style={display:'none'})
+         h3 Linked Accounts
+           if user.instagram
+             p.mb-1: a.text-danger(href='/account/unlink/instagram') Unlink your Instagram account
+           else
+             p.mb-1: a(href='/auth/instagram') Link your Instagram account
+         .offset-sm-3.col-md-7.pl-2
+           if user.google
+             p.mb-1: a.text-danger(href='/account/unlink/google') Unlink your Google account
+           else
+             p.mb-1: a(href='/auth/google') Link your Google account
+         .offset-sm-3.col-md-7.pl-2
+           if user.facebook
+             p.mb-1: a.text-danger(href='/account/unlink/facebook') Unlink your Facebook account
+           else
+             p.mb-1: a(href='/auth/facebook') Link your Facebook account
+           if user.snapchat
+             p.mb-1: a.text-danger(href='/account/unlink/snapchat') Unlink your Snapchat account
+           else
+             p.mb-1: a(href='/auth/snapchat') Link your Snapchat account
+         .offset-sm-3.col-md-7.pl-2
+           if user.twitter
+             p.mb-1: a.text-danger(href='/account/unlink/twitter') Unlink your Twitter account
+           else
+             p.mb-1: a(href='/auth/twitter') Link your Twitter account
+         .offset-sm-3.col-md-7.pl-2
+           if user.github
+             p.mb-1: a.text-danger(href='/account/unlink/github') Unlink your GitHub account
+           else
+             p.mb-1: a(href='/auth/github') Link your GitHub account
+         .offset-sm-3.col-md-7.pl-2
+           if user.linkedin
+             p.mb-1: a.text-danger(href='/account/unlink/linkedin') Unlink your LinkedIn account
+           else
+             p.mb-1: a(href='/auth/linkedin') Link your LinkedIn account
+         .offset-sm-3.col-md-7.pl-2
+           if user.steam
+             p.mb-1: a.text-danger(href='/account/unlink/steam') Unlink your Steam account
+           else
+             p.mb-1: a(href='/auth/steam') Link your Steam account
+         .offset-sm-3.col-md-7.pl-2
+           if user.twitch
+             p.mb-1: a.text-danger(href='/account/unlink/twitch') Unlink your Twitch account
+           else
+             p.mb-1: a(href='/auth/twitch') Link your Twitch account
+         .offset-sm-3.col-md-7.pl-2
+           if user.quickbooks
+             p.mb-1: a.text-danger(href='/account/unlink/quickbooks') Unlink your QuickBooks account
+           else
+             p.mb-1: a(href='/auth/quickbooks') Link your QuickBooks account

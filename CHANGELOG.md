@@ -35,6 +35,9 @@ and here
   listed under the diagram, their elements outlined and badged, their fields marked in the properties panel;
   clicking an issue selects the element and opens the field (scripts, expressions, conditions, timers,
   service names, called processes).
+- Administrators set a user's groups on the user's page (Admin, Edit). The page saved to the signed-in
+  administrator instead and ignored the groups, and its password and delete forms acted on the administrator;
+  it now edits only the user shown. Your own profile shows your groups read-only.
 - Designers: users in the `DESIGNER` group (bpmn-server's USER_ROLE.DESIGNER) work on models like
   administrators do: list, create, import, edit, check, save, rename and delete them, with the model actions
   on the home page. Administration (users, resetting data) stays with `ADMIN` and `SYSTEM`.

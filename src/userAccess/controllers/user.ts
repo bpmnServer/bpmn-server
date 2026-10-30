@@ -62,41 +62,41 @@ export class UserController {
      * Update profile information by admin
      */
     static postEdit(req, res, next) {
-        console.log("post edit profile", req.body);
+        // the user being edited (the form's id), not the administrator signed in
+        const editPage = '/account/edit/' + encodeURIComponent(String(req.body.id || ''));
         const validationErrors = [];
         if (!validator.isEmail(req.body.email))
             validationErrors.push({ msg: 'Please enter a valid email address.' });
         if (validationErrors.length) {
             req.flash('errors', validationErrors);
-            return res.redirect(viewPath + '/edit/' + req.body.id);
+            return res.redirect(editPage);
         }
         req.body.email = validator.normalizeEmail(req.body.email, { gmail_remove_dots: false });
 
-        return User.findById(req.body.id).then(
-            function (user) {
-        
-                if (user.email !== req.body.email)
-                    user.emailVerified = false;
-                user.email = req.body.email || '';
-                user.userGroups = String(req.body.userGroups || '').split(',').map(group => group.trim()).filter(Boolean);
-                user.profile.name = req.body.name || '';
-                user.profile.gender = req.body.gender || '';
-                user.profile.location = req.body.location || '';
-                user.profile.website = req.body.website || '';
-                console.log('user obj', user);
-                return user.save().then((savedUser) => {
-                    /*if (!user) {
-                        if (err.code === 11000) {
-                            req.flash('errors', { msg: 'The email address you have entered is already associated with an account.' });
-                            return res.redirect(viewPath + 'edit/' + req.body.id);
-                        }
-                        return next(err);
-                     
-                    }   */ 
-                    req.flash('success', { msg: 'Profile information has been updated.' });
-                    return res.redirect(viewPath + 'edit/' + req.body.id);
-                });
+        return User.findById(req.body.id).then(user => {
+            if (!user) {
+                req.flash('errors', { msg: 'No such user.' });
+                return res.redirect('/admin');
+            }
+            if (user.email !== req.body.email)
+                user.emailVerified = false;
+            user.email = req.body.email || '';
+            user.userGroups = String(req.body.userGroups || '').split(',').map(group => group.trim()).filter(Boolean);
+            user.profile.name = req.body.name || '';
+            user.profile.gender = req.body.gender || '';
+            user.profile.location = req.body.location || '';
+            user.profile.website = req.body.website || '';
+            return user.save().then(() => {
+                req.flash('success', { msg: 'Profile information has been updated.' });
+                res.redirect(editPage);
             });
+        }).catch(err => {
+            if (err?.code === 11000) {
+                req.flash('errors', { msg: 'The email address you have entered is already associated with an account.' });
+                return res.redirect(editPage);
+            }
+            next(err);
+        });
     }
     /**
      * GET /login
