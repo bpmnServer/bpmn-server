@@ -15,7 +15,7 @@ import { spawnSync } from 'node:child_process';
 const PACKAGE_ROOT = path.join(import.meta.dirname, '..');
 const TEMPLATE = path.join(PACKAGE_ROOT, 'templates', 'app');
 /** The first bpmn-web with start(). */
-const BPMN_WEB_VERSION = '^3.1.0';
+const BPMN_WEB_VERSION = '^3.0.1';
 
 export const INIT_USAGE = `usage: bpmn-server init [folder] [options]
 
