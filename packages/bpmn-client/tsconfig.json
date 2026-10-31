@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    // TypeScript 7 flipped the default for `strict` to true. This package was authored
+    // against the old default, and its published .d.ts surface is built on implicit `any`
+    // parameters. Turning strict on here would narrow those public signatures and is a
+    // breaking change for consumers, so pin the previous behaviour explicitly and adopt
+    // strict mode separately. (Mirrors the same pin in bpmn-server.)
+    "strict": false,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "src/test.ts",
+    "src/test2.ts",
+    "src/test3.ts",
+    "src/testFind.ts",
+    "src/test-raw.ts",
+    "src/monitor.ts",
+    "src/remote-import.ts"
+  ]
+}

@@ -1,0 +1,1 @@
+{"root":["./src/bpmnclient.ts","./src/bpmnclient2.ts","./src/webservice.ts","./src/cli.ts","./src/index.ts","./src/setup.ts","./src/interfaces/api.ts","./src/interfaces/dataobjects.ts","./src/interfaces/enums.ts"],"version":"5.9.3"}
