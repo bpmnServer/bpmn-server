@@ -45,7 +45,7 @@ async function openReport(model, xml) {
 const section = (page, id) => page.locator(`.report-element[data-element-id="${id}"]`);
 
 test('the report lists the process in flow order, with how bpmn-server reads each element', async () => {
-    const { page, errors, close } = await openReport('report-car', fs.readFileSync(path.join(SAMPLES, 'Buy Used Car.bpmn'), 'utf8'));
+    const { page, errors, close } = await openReport('report-car', fs.readFileSync(path.join(FIXTURES, '..', 'fixtures', 'buy-used-car.bpmn'), 'utf8'));
     assert.equal(await page.locator('#js-canvas').isVisible(), true, 'the diagram stays in view above');
     assert.equal(await page.locator('#js-print').isVisible(), true);
 
@@ -87,7 +87,7 @@ test('problems are shown with their element, and the report follows edits', asyn
 });
 
 test('an element of the report is selected in the diagram', async () => {
-    const { page, errors, close } = await openReport('report-reveal', fs.readFileSync(path.join(SAMPLES, 'Buy Used Car.bpmn'), 'utf8'));
+    const { page, errors, close } = await openReport('report-reveal', fs.readFileSync(path.join(FIXTURES, '..', 'fixtures', 'buy-used-car.bpmn'), 'utf8'));
     await section(page, 'task_Drive').locator('h3 a').click();
     assert.equal(await page.getAttribute('#js-tab-report', 'aria-selected'), 'true', 'the report stays open');
     assert.deepEqual(await page.evaluate(() => window.bpmnModeler.get('selection').get().map(e => e.id)), ['task_Drive']);

@@ -18,6 +18,7 @@ const awaitAppDelegateFactory = (middleware) => {
 import { apiKeyAuth as loggedIn, apiServiceAuth, configuredApiUser } from './middleware/apiKeyAuth.js';
 import { modelNameGuard } from './middleware/modelName.js';
 import { Common } from './common.js';
+import { invokeDecision } from './decisions.js';
 import { ViewHelper } from './ViewHelper.js';
 import { json } from 'body-parser';
 //////////////////////////////////////////////////////////////////////
@@ -558,18 +559,12 @@ export class API2 extends Common {
         });
 
         router.put('/rules/invoke', loggedIn, awaitAppDelegateFactory(async (request, response) => {
-            /*
-             * 
-             * 
-             */
+            // evaluate a decision of the models folder: { decision, data } -> { decision, file, result }
             try {
-                throw new Error("Decision Table not supported this release.");
-                // await response.json(ExecuteDecisionTable(request.body));
-                //await WebService(request, response);
+                response.json(await invokeDecision(this.bpmnServer, request.body));
             }
             catch (exc) {
-                console.log(exc);
-                response.json({ errors: exc.toString() });
+                response.status(400).json({ errors: exc.message || String(exc) });
             }
         }));
         // an unknown API path is the caller's mistake: answer it here, not with the UI's login redirect

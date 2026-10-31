@@ -210,7 +210,26 @@ class MyAppDelegate extends DefaultAppDelegate{
         this.server.logger.log("service called");
 
     }
+    /**
+     * Loads a model's data object into the instance data when an element connected to it runs (a start event, a
+     * service task): data.client for a data object 'client'. It is saved with the instance. The sample keeps a
+     * few clients in memory; an application loads from its own store.
+     */
+    async loadDataObject(name: string, item: Item) {
+        if (name === 'client') {
+            const id = item.data?.clientId ?? 'C-1';
+            return { ...(SAMPLE_CLIENTS[id] ?? { name: 'Unknown client', tier: 'standard' }), id };
+        }
+        this.server.logger.log(`loadDataObject: the sample application has no data object '${name}'`);
+        return null;
+    }
 }
+
+/** The sample's clients, by id: what loadDataObject('client') gives for data.clientId. */
+const SAMPLE_CLIENTS = {
+    'C-1': { name: 'Kim Lee', tier: 'gold', since: '2019-04-01' },
+    'C-2': { name: 'Sam Patel', tier: 'standard', since: '2024-11-15' },
+};
 class Utils {
 
 }

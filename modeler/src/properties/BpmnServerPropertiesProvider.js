@@ -8,6 +8,7 @@ import { hasCamundaOnly } from './settings.js';
 import { DefaultFlowGroup } from './DefaultFlowGroup.jsx';
 import { OtherAttributesGroup } from './OtherAttributesGroup.jsx';
 import { TemplateValuesGroup } from './TemplateValuesGroup.jsx';
+import { DataObjectGroup } from './DataObjectGroup.jsx';
 import { ConditionGroup, MultiInstanceGroup, FormGroup, NewFormFieldsGroup, DecisionGroup, CalledProcessGroup } from './FlowGroups.jsx';
 
 const LOW_PRIORITY = 400;
@@ -78,6 +79,10 @@ export default class BpmnServerPropertiesProvider {
             const templateValues = TemplateValuesGroup(element, this._injector);
             if (templateValues)
                 groups.splice(groups.findIndex(g => g.id === 'ElementTemplates__Template') + 1, 0, templateValues);
+
+            const dataObject = DataObjectGroup(element, translate);
+            if (dataObject)
+                groups.splice(Math.min(groups.length, 1), 0, dataObject);
 
             const other = OtherAttributesGroup(element, translate);
             if (other)

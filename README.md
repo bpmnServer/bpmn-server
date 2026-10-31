@@ -64,6 +64,17 @@ Start the bundled sample application with:
 npm start
 ```
 
+### Command line
+
+A console for the same server and database: start processes, list and invoke items, send messages and signals,
+list models and users, set a user's password (`?` lists the commands, `q` quits):
+
+```bash
+npm run cli
+```
+
+Commands can also be piped in, e.g. `printf 'lo\nq\n' | npm run cli` lists the outstanding items.
+
 ### Model editor
 
 The model editor is built from source in `modeler/`: bpmn-js with a properties panel that shows the settings
@@ -78,6 +89,21 @@ npm run watch:modeler
 
 [modeler/PROPERTIES.md](modeler/PROPERTIES.md) is the catalog of the panel's properties: by element, what each
 writes to the model file and what bpmn-server does with it when the process runs.
+
+#### Testing models
+
+The editor's **Test** tab keeps test scenarios for the model and runs them step by step. **Start** starts the
+process with the scenario's start data and shows the user tasks and events that wait as the next steps, each with
+its data and the instance page's button (**Execute** a user task, **Force** an event); running a step shows what
+waits next, until nothing waits. The data chooses the branches, and which
+step you run first chooses between elements that wait together (events of an event-based gateway, a boundary
+timer, parallel tasks). The steps you run are saved as the scenario's, so **Run** and **Run all** repeat them on a
+new instance without stopping, and check what the scenario expects at the end (status, data values, elements passed and not
+passed). Each scenario keeps its runs (the latest 20) with their instances, so its last
+run is shown when it is opened, and any earlier run can be opened again. **Simulate** plays a run on the diagram:
+an element turns blue when it starts and green when it ends (a joining gateway waits for its last branch), orange
+if it still waits; numbered in the order they started; **Pause**, **Continue** and **Step** while it plays.
+Test runs are ordinary instances whose ids start with `test-`.
 
 #### Element templates
 

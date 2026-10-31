@@ -17,6 +17,11 @@ const BY_CODE = {
     'service-not-found': () => ['service-name'],
     'call-activity-no-target': () => ['calledElement'],
     'called-model-missing': () => ['calledElement'],
+    'decision-not-named': () => ['decisionRef'],
+    'decision-not-found': () => ['decisionRef'],
+    'decision-invalid': () => ['decisionRef'],
+    'decision-input-from-data': () => ['decisionRef'],
+    'decision-result-not-saved': () => ['decision-resultVariable'],
     'script-syntax': fieldsOfScript,
     'unknown-app-service': fieldsOfScript,
     'expression-syntax': fieldsOfScript

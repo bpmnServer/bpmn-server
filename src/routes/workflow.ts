@@ -535,8 +535,7 @@ async function instanceDetails(request,response,instanceId,version) {
     }
     let lastItem = items[items.length - 1];
 
-    const def = await bpmnServer.definitions.loadFromInstance(instance);
-    await def.load();
+    const def = await bpmnServer.definitions.loadFromInstance(instance);     // loaded: loading again listed each flow twice
     const defJson = def.getJson();
     let output = ['View Process Log'];
     output = show(output);

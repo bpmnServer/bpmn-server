@@ -68,7 +68,7 @@ function* flowElements(container) {
 
 function checkElement(bo, add) {
     for (const [property, label] of ELEMENT_SETTINGS)
-        if (isSet(bo, property))
+        if (isSet(bo, property) && !(property === 'camunda:resultVariable' && is(bo, 'bpmn:BusinessRuleTask')))   // a decision's result is saved there
             add('warning', bo, label, NOT_RUN);
     if (bo.get('camunda:type') === 'external')
         add('warning', bo, 'External task', NOT_RUN);

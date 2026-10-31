@@ -1,16 +1,18 @@
 // The Problems list: checks the model with bpmn-server (POST config.problems.url, verifyModel) as it is
-// edited, adds the Camunda settings bpmn-server does not run (unsupported.js), lists the issues, marks their
+// edited, adds the Camunda settings bpmn-server does not run (unsupported.js) and bpmnlint's modeling rules
+// (lint/lint.js), lists the issues, marks their
 // elements on the canvas and their fields in the properties panel, and takes the user to the element and
 // field when an issue is clicked.
 import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { fieldsFor } from './fields.js';
 import { findUnsupported } from './unsupported.js';
+import { lint } from '../lint/lint.js';
 
 const CHECK_DELAY = 800;
 const SEVERITIES = ['error', 'warning', 'info'];
 
 export default class Problems {
-    constructor(config, eventBus, bpmnjs, canvas, elementRegistry, selection, overlays) {
+    constructor(config, eventBus, bpmnjs, canvas, elementRegistry, selection, overlays, injector) {
         this._config = config || {};
         this._eventBus = eventBus;
         this._bpmnjs = bpmnjs;
@@ -18,6 +20,7 @@ export default class Problems {
         this._elementRegistry = elementRegistry;
         this._selection = selection;
         this._overlays = overlays;
+        this._lintRules = injector.get('lintRules', false);
         this._issues = [];
         this.descriptions = {};     // how bpmn-server reads each element, from each check (the Report view)
         this._marked = [];
@@ -39,6 +42,7 @@ export default class Problems {
         });
 
         eventBus.on('import.done', () => this.check());
+        eventBus.on('lintRules.changed', () => this.check());
         eventBus.on('commandStack.changed', () => this._schedule());
         eventBus.on(['selection.changed', 'propertiesPanel.updated'], () => this._showDiagnostics());
     }
@@ -70,8 +74,11 @@ export default class Problems {
             const result = await response.json();
             if (run !== this._run)
                 return;
+            const linted = await this._lint();
+            if (run !== this._run)
+                return;
             const rank = { error: 0, warning: 1, info: 2 };
-            this._issues = [...(result.issues || []), ...findUnsupported(this._bpmnjs.getDefinitions())]
+            this._issues = [...(result.issues || []), ...findUnsupported(this._bpmnjs.getDefinitions()), ...linted]
                 .sort((a, b) => rank[a.severity] - rank[b.severity]);
             this.descriptions = result.descriptions || {};
             this._render();
@@ -79,6 +86,19 @@ export default class Problems {
         } catch (err) {
             if (run === this._run)
                 this._setStatus('Could not check the model: ' + err.message, true);
+        }
+    }
+
+    /** bpmnlint's findings, named like bpmn-server's issues; a rule that fails is reported, not thrown. */
+    async _lint() {
+        try {
+            await this._lintRules?.loaded;
+            return (await lint(this._bpmnjs.getDefinitions(), this._lintRules?.overrides)).map(issue => {
+                const bo = this._elementRegistry.get(issue.elementId)?.businessObject;
+                return bo?.name ? { ...issue, elementName: bo.name } : issue;
+            });
+        } catch (err) {
+            return [{ severity: 'info', code: 'bpmnlint/failed', message: 'The modeling rules (bpmnlint) could not run: ' + err.message }];
         }
     }
 
@@ -168,6 +188,31 @@ export default class Problems {
             item.querySelector('.severity').textContent = issue.severity;
             item.querySelector('.message').textContent = issue.message;
             item.querySelector('.where').textContent = where;
+            if (issue.url) {     // a bpmnlint rule: its documentation
+                const rule = document.createElement('a');
+                rule.className = 'rule';
+                rule.href = issue.url;
+                rule.target = '_blank';
+                rule.rel = 'noopener';
+                rule.textContent = issue.code;
+                rule.title = 'What this rule checks, and why';
+                rule.addEventListener('click', event => event.stopPropagation());
+                item.append(rule);
+                if (this._lintRules) {
+                    const off = document.createElement('button');
+                    off.type = 'button';
+                    off.className = 'rule-off';
+                    off.textContent = 'Turn off';
+                    off.title = 'Turn this rule off for every designer';
+                    off.addEventListener('click', event => {
+                        event.stopPropagation();
+                        const name = issue.code.replace(/^bpmnlint\//, '');
+                        if (window.confirm(`Turn off the rule '${name}' for every designer? The Rules dialog turns it on again.`))
+                            this._lintRules.setLevel(name, 'off').catch(err => this._setStatus('The rule was not changed: ' + err.message, true));
+                    });
+                    item.append(off);
+                }
+            }
             return item;
         }));
         this._mark();
@@ -202,4 +247,4 @@ export default class Problems {
     }
 }
 
-Problems.$inject = ['config.problems', 'eventBus', 'bpmnjs', 'canvas', 'elementRegistry', 'selection', 'overlays'];
+Problems.$inject = ['config.problems', 'eventBus', 'bpmnjs', 'canvas', 'elementRegistry', 'selection', 'overlays', 'injector'];

@@ -32,13 +32,16 @@ html(lang="en")
                 | Problems
                 span#js-problems-counts.problems-counts
               button#js-tab-report.dock-tab(type="button" role="tab" aria-selected="false" aria-controls="js-report") Report
+              button#js-tab-test.dock-tab(type="button" role="tab" aria-selected="false" aria-controls="js-test") Test
               span#js-problems-status.problems-status(role="status")
               .dock-actions
+                button#js-lint-rules-open(type="button" title="The modeling rules (bpmnlint) checked for every designer") Rules
                 button#js-print(type="button" title="Print the report or save it as PDF") Print
                 button#js-dock-toggle(type="button" aria-expanded="true" title="Hide or show" aria-label="Hide or show the problems and report")
             .dock-body
               ul#js-problems.problems-list(role="tabpanel" aria-label="Problems")
               #js-report.dock-report(role="tabpanel" aria-label="Report")
+              #js-test.dock-test(role="tabpanel" aria-label="Test")
         #js-panel-resizer.modeler-resizer(title="Drag to resize the properties panel")
           button#js-panel-toggle(type="button" title="Show or hide the properties panel" aria-label="Show or hide the properties panel")
         #js-properties-panel.modeler-panel

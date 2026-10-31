@@ -19,6 +19,9 @@ import camundaModdle from './moddle.js';
 import BpmnServerPropertiesModule from './properties/index.js';
 import ProblemsModule from './problems/index.js';
 import ReportModule from './report/index.js';
+import TestModule from './testing/index.js';
+import DecisionsModule from './decisions/index.js';
+import LintRulesModule from './lint/index.js';
 
 const page = document.getElementById('modeler-page');
 const { processName } = page.dataset;
@@ -37,9 +40,17 @@ const modeler = new BpmnModeler({
         ElementTemplateChooserModule,
         BpmnServerPropertiesModule,
         ProblemsModule,
-        ReportModule
+        ReportModule,
+        TestModule,
+        DecisionsModule,
+        LintRulesModule
     ],
     report: { container: '#js-report', processName },
+    scriptContext: { servicesUrl: '/model/services' },
+    decisions: { url: '/model/decisions' },
+    lint: { url: '/model/lint-rules', button: '#js-lint-rules-open' },
+    // tests run the saved model: save the editor's changes first
+    test: { container: '#js-test', processName, save: () => saveIfChanged() },
     problems: { list: '#js-problems', counts: '#js-problems-counts', status: '#js-problems-status', url: '/model/verify', processName },
     moddleExtensions: { camunda: camundaModdle }
 });
@@ -48,7 +59,11 @@ window.BPMNModeler = modeler;     // the classic modeler's name for it, used by 
 
 
 let changed = false;
-modeler.on('commandStack.changed', () => { changed = true; });
+modeler.on('commandStack.changed', () => {
+    changed = true;
+    if (status.textContent === 'Saved')
+        showStatus('Unsaved changes');
+});
 window.addEventListener('beforeunload', event => {
     if (changed) {
         event.preventDefault();
@@ -144,19 +159,22 @@ const dock = document.getElementById('js-dock');
 const MIN_DOCK = 80;
 const maxDock = () => Math.max(MIN_DOCK, Math.floor(page.clientHeight * 0.7));
 
+const DOCK_TABS = ['problems', 'report', 'test'];
+
 function applyDockState() {
-    const tab = panelState.dockTab === 'report' ? 'report' : 'problems';
+    const tab = DOCK_TABS.includes(panelState.dockTab) ? panelState.dockTab : 'problems';
     dock.style.setProperty('--dock-height', Math.min(Math.max(panelState.dockHeight, MIN_DOCK), maxDock()) + 'px');
     dock.classList.toggle('collapsed', panelState.dockCollapsed);
     dock.dataset.tab = tab;
-    for (const name of ['problems', 'report'])
+    for (const name of DOCK_TABS)
         document.getElementById(`js-tab-${name}`).setAttribute('aria-selected', String(name === tab));
     document.getElementById('js-dock-toggle').setAttribute('aria-expanded', String(!panelState.dockCollapsed));
-    const report = modeler.get('report');
-    if (tab === 'report' && !panelState.dockCollapsed)
-        report.show();
-    else
-        report.hide();
+    for (const [name, view] of [['report', modeler.get('report')], ['test', modeler.get('testPanel')]]) {
+        if (tab === name && !panelState.dockCollapsed)
+            view.show();
+        else
+            view.hide();
+    }
 }
 
 function showTab(tab) {
@@ -167,6 +185,7 @@ function showTab(tab) {
 }
 document.getElementById('js-tab-problems').addEventListener('click', () => showTab('problems'));
 document.getElementById('js-tab-report').addEventListener('click', () => showTab('report'));
+document.getElementById('js-tab-test').addEventListener('click', () => showTab('test'));
 document.getElementById('js-dock-toggle').addEventListener('click', () => {
     panelState.dockCollapsed = !panelState.dockCollapsed;
     applyDockState();
@@ -275,6 +294,15 @@ async function saveDiagram(option) {
     }
 }
 window.saveDiagramFunct = saveDiagram;
+
+/** Save when the editor has changes; fails when saving does. */
+async function saveIfChanged() {
+    if (!changed)
+        return;
+    await saveDiagram();
+    if (changed)
+        throw new Error('Save the model first: saving failed');
+}
 document.getElementById('js-save').addEventListener('click', () => saveDiagram());
 document.getElementById('js-save-run').addEventListener('click', () => saveDiagram('run'));
 

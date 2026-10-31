@@ -21,6 +21,8 @@
     "prestart": "npm run build:modeler",
     "start": "node --import tsx src/main.ts",
     "start:prod": "node dist/main.js",
+    "cli": "node --import tsx src/scripts/cli.ts",
+    "setup": "node --import tsx src/scripts/setup.ts",
     "clean": "tsc --build --clean",
     "test": "npm run test:unit && npm run test:client && npm run test:engine && npm run test:web",
     "test:client": "node --test \"client-tests/*.test.mjs\"",
@@ -28,7 +30,8 @@
     "pretest:ui": "npm run build:modeler",
     "test:ui": "node --test --test-concurrency=1 \"test/ui/*.test.mjs\"",
     "test:web": "node --test --test-concurrency=1 \"test/web/*.test.mjs\"",
-    "test:unit": "node --test apikey-auth.test.mjs web-security.test.mjs account-security.test.mjs dashboard-header.test.mjs error-details.test.mjs bpmn-svg.test.mjs architecture-boundary.test.mjs admin-route-boundary.test.mjs"
+    "test:unit": "node --test apikey-auth.test.mjs web-security.test.mjs account-security.test.mjs dashboard-header.test.mjs error-details.test.mjs bpmn-svg.test.mjs architecture-boundary.test.mjs admin-route-boundary.test.mjs",
+    "lint:models": "node modeler/lint-models.mjs"
   },
   "dependencies": {
     "axios": "^1.18.1",
@@ -66,6 +69,13 @@
   "devDependencies": {
     "@bpmn-io/element-template-chooser": "^3.0.0",
     "@bpmn-io/properties-panel": "^3.58.0",
+    "@codemirror/autocomplete": "^6.20.4",
+    "@codemirror/commands": "^6.11.1",
+    "@codemirror/lang-javascript": "^6.2.5",
+    "@codemirror/language": "^6.13.1",
+    "@codemirror/lint": "^6.9.7",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.15",
     "@types/express": "^5.0.6",
     "@types/express-session": "^1.19.0",
     "@types/lodash": "^4.17.24",
@@ -78,8 +88,10 @@
     "bpmn-js": "^18.31.1",
     "bpmn-js-element-templates": "^2.40.2",
     "bpmn-js-properties-panel": "^5.65.3",
+    "bpmnlint": "^12.0.0",
     "camunda-bpmn-js-behaviors": "^1.18.0",
     "camunda-bpmn-moddle": "^8.0.2",
+    "dmn-js": "^17.12.3",
     "esbuild": "^0.28.2",
     "playwright": "^1.61.1",
     "tsx": "^4.23.1",

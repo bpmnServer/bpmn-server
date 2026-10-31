@@ -15,6 +15,7 @@ import { BPMNServer, BPMNAdminAPI, verifyModel, Definition } from '../index.js';
 import { Common } from './common.js';
 import { modelNameGuard, isSafeModelName } from './middleware/modelName.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
+import { loadScenarios, saveScenarios, checkScenarios, runScenario, startTest, completeTest, findTest, summarize, checkExpectations } from '../testing/scenarios.js';
 
 
 const awaitHandlerFactory = (middleware) => {
@@ -384,6 +385,187 @@ export class Model extends Common {
             return descriptions;
         }
 
+        /**
+         * The names of the application's services, for completion in the editor's scripts (appServices.…):
+         * functions and properties of the services provider, its classes included, and one level into objects.
+         */
+        // ---- modeling rules (bpmnlint): the team's changes to the editor's rules, `bpmnlint.json` in the models
+        // folder: { rules: { '<rule>': 'off' | 'info' | 'warn' | 'error' } }. The same for every designer, and
+        // `npm run lint:models` applies them too.
+        const LINT_FILE = 'bpmnlint.json';
+        const LINT_LEVELS = ['off', 'info', 'warn', 'error'];
+        const lintFile = () => path.join(bpmnServer.configuration.definitionsPath, LINT_FILE);
+
+        router.get('/lint-rules', awaitHandlerFactory(async (request, response) => {
+            let rules = {};
+            try {
+                rules = JSON.parse(FS.readFileSync(lintFile(), 'utf8')).rules || {};
+            } catch {
+                rules = {};     // none changed, or a file that can not be read: the editor's defaults
+            }
+            response.json({ rules });
+        }));
+
+        router.put('/lint-rules', awaitHandlerFactory(async (request, response) => {
+            const rules = request.body && request.body.rules;
+            if (!rules || typeof rules !== 'object' || Array.isArray(rules))
+                return response.status(400).json({ errors: "Send { rules: { '<rule>': 'off' | 'info' | 'warn' | 'error' } }" });
+            for (const [name, level] of Object.entries(rules))
+                if (!/^[a-z][a-z0-9-]*(\/[a-z][a-z0-9-]*)?$/.test(name) || !LINT_LEVELS.includes(level as string))
+                    return response.status(400).json({ errors: `Rule '${name}': '${level}' is not one of ${LINT_LEVELS.join(', ')}` });
+            FS.writeFileSync(lintFile(), JSON.stringify({ rules }, null, 2) + '\n');
+            response.json({ rules });
+        }));
+
+        // ---- decisions (DMN): files `<name>.dmn.xml` in the models folder, as business rule tasks name them
+        const DMN_FILE = /\.dmn(\.xml)?$/i;
+        const decisionFiles = () => {
+            try {
+                return FS.readdirSync(bpmnServer.configuration.definitionsPath).filter(f => DMN_FILE.test(f));
+            } catch {
+                return [];
+            }
+        };
+        /** The file of decision `name`: the existing one (either extension), else `<name>.dmn.xml`. */
+        const decisionFile = (name: string) =>
+            decisionFiles().find(f => f.replace(DMN_FILE, '') === name) || `${name}.dmn.xml`;
+
+        router.get('/decisions', awaitHandlerFactory(async (request, response) => {
+            // the files and their XML: the editor reads their decisions, inputs and outputs
+            const decisions = decisionFiles().map(file => ({
+                name: file.replace(DMN_FILE, ''), file,
+                xml: FS.readFileSync(path.join(bpmnServer.configuration.definitionsPath, file), 'utf8')
+            }));
+            response.json({ decisions });
+        }));
+
+        router.get('/decision/:decision', awaitHandlerFactory(async (request, response) => {
+            const name = request.params.decision;
+            if (!isSafeModelName(name))
+                return response.status(400).send('Invalid decision name');
+            const file = path.join(bpmnServer.configuration.definitionsPath, decisionFile(name));
+            const exists = FS.existsSync(file);
+            const xml = exists ? FS.readFileSync(file, 'utf8') : newDecision(name);
+            response.render('decision', {
+                name, exists,
+                modelJson: JSON.stringify(xml).replace(/</g, '<'),
+                cspHost: process.env.ITSM_HOST,
+            });
+        }));
+
+        router.post('/decision/:decision', awaitHandlerFactory(async (request, response) => {
+            const name = request.params.decision;
+            const xml = request.body && request.body.xml;
+            if (!isSafeModelName(name))
+                return response.status(400).json({ errors: 'Invalid decision name' });
+            if (typeof xml !== 'string' || !/<(\w+:)?definitions[\s>]/.test(xml))
+                return response.status(400).json({ errors: 'Not a DMN file' });
+            FS.writeFileSync(path.join(bpmnServer.configuration.definitionsPath, decisionFile(name)), xml);
+            response.json({ saved: decisionFile(name) });
+        }));
+
+        router.get('/services', awaitHandlerFactory(async (request, response) => {
+            let provider;
+            try {
+                provider = await bpmnServer.appDelegate.getServicesProvider(null);
+            }
+            catch (exc) {
+                provider = null;    // a provider that needs a running execution
+            }
+            const names = (obj) => {
+                const found = new Set<string>();
+                for (let o = obj; o && o !== Object.prototype && o !== Function.prototype; o = Object.getPrototypeOf(o))
+                    for (const key of Object.getOwnPropertyNames(o))
+                        if (key !== 'constructor' && !key.startsWith('_')) found.add(key);
+                return [...found];
+            };
+            const services = [];
+            if (provider && typeof provider === 'object') {
+                for (const name of names(provider)) {
+                    let value;
+                    try { value = provider[name]; } catch { continue; }
+                    services.push({ name, kind: typeof value === 'function' ? 'function' : 'property' });
+                    if (value && typeof value === 'object' && !Array.isArray(value) && name !== 'appDelegate')
+                        for (const inner of names(value).slice(0, 50))
+                            services.push({ name: `${name}.${inner}`, kind: typeof value[inner] === 'function' ? 'function' : 'property' });
+                }
+            }
+            response.json({ services });
+        }));
+
+        // ---- the editor's Test tab: scenarios per model, run on the saved model
+
+        router.get('/scenarios/:process', awaitHandlerFactory(async (request, response) => {
+            response.json({ scenarios: await loadScenarios(request.params.process) });
+        }));
+        router.put('/scenarios/:process', awaitHandlerFactory(async (request, response) => {
+            const scenarios = request.body?.scenarios;
+            const problems = checkScenarios(scenarios);
+            if (problems.length) {
+                response.status(400).json({ error: problems.join('; ') });
+                return;
+            }
+            await saveScenarios(request.params.process, scenarios, request.user?.userName);
+            response.json({ saved: scenarios.length });
+        }));
+        /** Run a scenario given in the body, or every saved scenario of the model (all: true). */
+        router.post('/test/run', awaitHandlerFactory(async (request, response) => {
+            const { processName, scenario, all } = request.body ?? {};
+            const scenarios = all ? await loadScenarios(processName) : [scenario];
+            const problems = checkScenarios(scenarios);
+            if (!processName || problems.length) {
+                response.status(400).json({ error: processName ? problems.join('; ') : 'processName is required' });
+                return;
+            }
+            const results = [];
+            for (const one of scenarios)      // one after another: they may share application state
+                results.push(await runScenario(bpmnServer, processName, one, request.user?.userName));
+            response.json({ results });
+        }));
+        /** Recording: start, then complete waiting items one at a time. */
+        router.post('/test/start', awaitHandlerFactory(async (request, response) => {
+            const { processName, startNodeId, data } = request.body ?? {};
+            try {
+                response.json({ instance: summarize(await startTest(bpmnServer, processName, startNodeId, data ?? {}, request.user?.userName)) });
+            } catch (exc) {
+                response.status(422).json({ error: String(exc?.message ?? exc) });
+            }
+        }));
+        router.post('/test/invoke', awaitHandlerFactory(async (request, response) => {
+            const { instanceId, itemId, data } = request.body ?? {};
+            if (!String(instanceId || '').startsWith('test-')) {
+                response.status(400).json({ error: 'only test instances are completed here' });
+                return;
+            }
+            try {
+                response.json({ instance: summarize(await completeTest(bpmnServer, instanceId, itemId, data ?? {}, request.user?.userName)) });
+            } catch (exc) {
+                response.status(422).json({ error: String(exc?.message ?? exc), instance: summarize(await findTest(bpmnServer, instanceId).catch(() => null)) });
+            }
+        }));
+
+        /** A test instance, as the Test tab shows it: a scenario's earlier run. */
+        router.get('/test/instance/:id', awaitHandlerFactory(async (request, response) => {
+            const id = request.params.id;
+            const instance = id.startsWith('test-') ? await findTest(bpmnServer, id) : null;
+            if (!instance) {
+                response.status(404).json({ error: 'no such test instance' });
+                return;
+            }
+            response.json({ instance: summarize(instance) });
+        }));
+
+        /** What a scenario expects, checked on a test instance run step by step. */
+        router.post('/test/check', awaitHandlerFactory(async (request, response) => {
+            const { instanceId, expect } = request.body ?? {};
+            const instance = String(instanceId || '').startsWith('test-') ? await findTest(bpmnServer, instanceId) : null;
+            if (!instance) {
+                response.status(404).json({ error: 'no such test instance' });
+                return;
+            }
+            response.json({ checks: checkExpectations(expect, instance), instance: summarize(instance) });
+        }));
+
         // the editor's Problems list: checks the model being edited, as sent, without saving it
         router.post('/verify', awaitHandlerFactory(async (request, response) => {
             const { bpmn, processName } = request.body ?? {};
@@ -397,4 +579,35 @@ export class Model extends Common {
         }));
         return router;
     }
+}
+
+/** A new decision file: one decision table, named for the file, with an input, an output and a rule to start from. */
+function newDecision(name: string): string {
+    const id = /^[A-Za-z_]/.test(name) ? name.replace(/[^\w.-]/g, '_') : 'decision_' + name.replace(/[^\w.-]/g, '_');
+    const label = name.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" id="${id}_definitions" name="${label}" namespace="http://bpmn-server/dmn">
+  <decision id="${id}" name="${label}">
+    <decisionTable id="${id}_table" hitPolicy="FIRST">
+      <input id="${id}_input1" label="Input">
+        <inputExpression id="${id}_inputExpression1" typeRef="string">
+          <text>input1</text>
+        </inputExpression>
+      </input>
+      <output id="${id}_output1" label="Output" name="output1" typeRef="string" />
+      <rule id="${id}_rule1">
+        <inputEntry id="${id}_rule1_in1"><text>-</text></inputEntry>
+        <outputEntry id="${id}_rule1_out1"><text>"value"</text></outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="${id}_diagram">
+      <dmndi:DMNShape id="${id}_shape" dmnElementRef="${id}">
+        <dc:Bounds height="80" width="180" x="160" y="100" />
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
+`;
 }

@@ -1,0 +1,44 @@
+/* The decision editor page: the editor's header, then dmn-js filling the window. */
+#decision-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.decision-file {
+    color: #52575f;
+    font-size: 13px;
+}
+
+.decision-views {
+    display: flex;
+    gap: 4px;
+}
+
+.decision-views button {
+    font: inherit;
+    font-size: 13px;
+    padding: 4px 10px;
+    border: 1px solid #c4c8cf;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.decision-views button[aria-pressed="true"] {
+    background: #e8effa;
+    border-color: #1f62c8;
+}
+
+.decision-canvas {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    position: relative;
+}
+
+.decision-canvas .dmn-decision-table-container,
+.decision-canvas .dmn-literal-expression-container {
+    padding: 16px;
+}

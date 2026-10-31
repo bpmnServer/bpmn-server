@@ -1,6 +1,5 @@
 import express from 'express';
 import FS from 'node:fs';
-//import { ExecuteDecisionTable, ExecuteCondition, ExecuteExpression } from 'dmn-engine';
 
 import { BPMNServer, dateDiff, Behaviour_names   } from '../index.js';
 
@@ -25,6 +24,7 @@ import { BPMNServer, dateDiff, Behaviour_names   } from '../index.js';
 import { apiKeyAuth as loggedIn } from './middleware/apiKeyAuth.js';
 import { modelNameGuard } from './middleware/modelName.js';
 import { Common } from './common.js';
+import { invokeDecision } from './decisions.js';
 import { ViewHelper } from './ViewHelper.js';
 
 export class API extends Common {
@@ -658,24 +658,12 @@ export class API extends Common {
             }));
 
             router.put('/rules/invoke', loggedIn, awaitAppDelegateFactory(async (request, response) => {
-                /*
-                    * 
-                    * 
-                    export async function WebService(request, response) {
-                    console.log(request);
-                    console.log(response);
-                    let { definition, data, options, loadFrom } = request.body;
-                    response.json(Execute(request.body));
-                }
-                */
+                // evaluate a decision of the models folder: { decision, data } -> { decision, file, result }
                 try {
-                    throw new Error("Decision Table not supported this release.");
-                    // await response.json(ExecuteDecisionTable(request.body));
-                    //await WebService(request, response);
+                    response.json(await invokeDecision(this.bpmnServer, request.body));
                 }
                 catch (exc) {
-                    console.log(exc);
-                    response.json({ errors: exc.toString() });
+                    response.status(400).json({ errors: exc.message || String(exc) });
                 }
             }));
         // an unknown API path is the caller's mistake: answer it here, not with the UI's login redirect

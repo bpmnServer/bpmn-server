@@ -28,7 +28,8 @@ const DRAWN = /(^|\.)(isSequential|triggeredByEvent|isInterrupting|cancelActivit
 
 function modelFiles() {
     const tracked = execFileSync('git', ['ls-files', 'processes', 'test/processes'], { cwd: ROOT, encoding: 'utf8' })
-        .split('\n').filter(f => /\.bpmn$/.test(f)).map(f => path.join(ROOT, f));
+        .split('\n').filter(f => /\.bpmn$/.test(f)).map(f => path.join(ROOT, f))
+        .filter(f => fs.existsSync(f));     // a tracked file removed in the working tree is not a model any more
     const extra = process.env.READABLE_MODELS_EXTRA;
     if (!extra)
         return tracked;
@@ -119,6 +120,8 @@ async function shownFor(id) {
         if (!opened) break;
         await page.waitForTimeout(30);
     }
+    // code fields make their editor in an effect, just after they render
+    await page.waitForFunction(() => [...document.querySelectorAll('#js-properties-panel .bpmn-server-code-editor')].every(e => e.querySelector('.cm-editor')));
     return page.evaluate(() => {
         const panel = document.getElementById('js-properties-panel'), texts = [];
         panel.querySelectorAll('input:not([type=checkbox]), textarea').forEach(e => texts.push(e.value));
@@ -150,14 +153,20 @@ test('every value in the model files can be read in the properties panel', async
             const wanted = values.filter(v => !STRUCTURE.some(re => re.test(v.path)) && !(v.kind === 'boolean' && DRAWN.test(v.path)))
                 .filter(v => (checked.get(`${type} ${v.path}`) ?? 0) < PER_KIND);
             if (!wanted.length) continue;
-            const { texts, toggles } = await shownFor(id);
-            const shown = new Set(texts.map(norm));
+            let { texts, toggles } = await shownFor(id);
+            const isShown = (v, shown) => v.kind === 'boolean'
+                ? String(toggles[v.path.split('.').pop()]) === v.value || shown.has(v.value)   // a toggle, or a read-only field
+                : shown.has(norm(v.value)) || (v.name && shown.has(norm(v.name)));
+            let shown = new Set(texts.map(norm));
+            // under load a field can draw after the panel is read: read it once more before calling a value missing
+            if (wanted.some(v => !isShown(v, shown))) {
+                await page.waitForTimeout(500);
+                ({ texts, toggles } = await shownFor(id));
+                shown = new Set(texts.map(norm));
+            }
             for (const v of wanted) {
                 checked.set(`${type} ${v.path}`, (checked.get(`${type} ${v.path}`) ?? 0) + 1);
-                const ok = v.kind === 'boolean'
-                    ? String(toggles[v.path.split('.').pop()]) === v.value || shown.has(v.value)   // a toggle, or a read-only field
-                    : shown.has(norm(v.value)) || (v.name && shown.has(norm(v.name)));
-                if (!ok)
+                if (!isShown(v, shown))
                     unread.push(`${path.relative(ROOT, file)} ${id}: ${v.path} = ${JSON.stringify(v.value).slice(0, 60)} (${v.kind})`);
             }
         }

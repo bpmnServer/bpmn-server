@@ -3,7 +3,17 @@
 // bpmn-server reads them (the engine's own description, as the instance page's Model documentation shows it)
 // and their problems; then the flows that have conditions. Clicking an element goes back to the diagram with
 // it selected. It is rebuilt with each check of the model (Problems), so it follows unsaved edits.
-import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
+import { is, isAny, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
+import { dataObjectName, dataField, loadersOf } from '../properties/DataObjectGroup.jsx';
+
+const DATA_REFERENCES = ['bpmn:DataObjectReference', 'bpmn:DataStoreReference'];
+
+/** The data objects an element loads (connected to it either way), by name. */
+function loadedBy(bo) {
+    const refs = [...(bo.get('dataInputAssociations') || []).flatMap(a => a.get('sourceRef') || []),
+        ...(bo.get('dataOutputAssociations') || []).map(a => a.get('targetRef')).filter(Boolean)];
+    return [...new Set(refs.map(dataObjectName))];
+}
 
 const SEVERITY_ORDER = { error: 0, warning: 1, info: 2 };
 
@@ -23,7 +33,7 @@ function documentationOf(bo) {
  * the task they sit on; elements not reached from a start come last.
  */
 function inFlowOrder(container) {
-    const elements = (container.get('flowElements') || []).filter(e => !is(e, 'bpmn:SequenceFlow'));
+    const elements = (container.get('flowElements') || []).filter(e => !is(e, 'bpmn:SequenceFlow') && !isAny(e, DATA_REFERENCES));
     const flows = (container.get('flowElements') || []).filter(e => is(e, 'bpmn:SequenceFlow') && e.get('sourceRef') && e.get('targetRef'));
     const attached = new Map();
     for (const element of elements)
@@ -73,7 +83,7 @@ function el(tag, attrs = {}, ...children) {
 }
 
 export default class Report {
-    constructor(config, eventBus, bpmnjs, elementRegistry, canvas, selection, problems) {
+    constructor(config, eventBus, bpmnjs, elementRegistry, canvas, selection, problems, injector) {
         this._config = config || {};
         this._eventBus = eventBus;
         this._bpmnjs = bpmnjs;
@@ -81,12 +91,14 @@ export default class Report {
         this._canvas = canvas;
         this._selection = selection;
         this._problems = problems;
+        this._decisions = injector.get('decisions', false);
         this._root = document.querySelector(this._config.container);
         this._visible = false;
         if (!this._root)
             return;
         eventBus.on('problems.changed', () => { if (this._visible) this.render(); });
         eventBus.on('import.done', () => { if (this._visible) this.render(); });
+        eventBus.on('decisions.changed', () => { if (this._visible) this.render(); });
     }
 
     get visible() {
@@ -142,7 +154,9 @@ export default class Report {
                         el('a', { href: '#', onclick: event => { event.preventDefault(); this.reveal(bo.id); } }, bo.get('name') || bo.id),
                         el('span', { class: 'report-type' }, typeLabel(bo.$type), bo.get('name') ? ` · ${bo.id}` : '')),
                     documentation ? el('p', { class: 'report-documentation' }, documentation) : null,
+                    loadedBy(bo).length ? el('p', { class: 'report-loads' }, 'Loads ', loadedBy(bo).map(n => el('code', {}, dataField(n))).flatMap((c, i) => i ? [', ', c] : [c])) : null,
                     description(bo.id),
+                    is(bo, 'bpmn:BusinessRuleTask') ? this.decisionSection(bo) : null,
                     issueList(issuesOf(bo.id))),
                 ...children.flatMap(child => elementSection(child, depth + 1))
             ];
@@ -180,6 +194,20 @@ export default class Report {
                 documentationOf(process) ? el('p', { class: 'report-documentation' }, documentationOf(process)) : null,
                 description(process.id),
                 issueList(issuesOf(process.id)),
+                (() => {
+                    const refs = [];
+                    const walk = c => (c.get('flowElements') || []).forEach(e => { if (isAny(e, DATA_REFERENCES)) refs.push(e); if (is(e, 'bpmn:SubProcess')) walk(e); });
+                    walk(process);
+                    return refs.length ? [
+                        el('h3', { class: 'report-flows-title' }, 'Data objects'),
+                        el('table', { class: 'report-flows report-data-objects' },
+                            el('thead', {}, el('tr', {}, el('th', {}, 'Data object'), el('th', {}, 'In the data'), el('th', {}, 'Loaded when these run'))),
+                            el('tbody', {}, refs.map(ref => el('tr', { 'data-element-id': ref.id },
+                                el('td', {}, el('a', { href: '#', onclick: event => { event.preventDefault(); this.reveal(ref.id); } }, dataObjectName(ref))),
+                                el('td', {}, dataField(dataObjectName(ref))),
+                                el('td', {}, loadersOf(ref).map(e => e.get('name') || e.id).join(', ') || 'nothing: never loaded')))))
+                    ] : null;
+                })(),
                 inFlowOrder(process).flatMap(element => elementSection(element, 0)),
                 (() => {
                     const flows = conditionalFlows(process);
@@ -194,6 +222,39 @@ export default class Report {
     }
 }
 
+/** A business rule task's decision: its table (hit policy, inputs, outputs, rules) or expression, and where the result goes. */
+Report.prototype.decisionSection = function (bo) {
+    const ref = bo.get('camunda:decisionRef');
+    const result = bo.get('camunda:resultVariable');
+    const saved = result ? el('p', { class: 'report-loads' }, 'Result saved in ', el('code', {}, `data.${result}`),
+        bo.get('camunda:mapDecisionResult') ? ` (${bo.get('camunda:mapDecisionResult')})` : '') : null;
+    if (!ref)
+        return el('div', { class: 'report-decision' }, el('p', {}, 'No decision named.'));
+    const found = this._decisions?.find(ref);
+    if (!found || !found.decision)
+        return el('div', { class: 'report-decision' }, el('p', {}, 'Decision ', el('code', {}, ref),
+            this._decisions?.loaded ? ': not found in the models folder.' : '.'), saved);
+    const { file, decision } = found;
+    const title = el('p', { class: 'report-decision-title' }, 'Decision ', el('strong', {}, decision.name), ` · ${file.file}`);
+    if (decision.literal)
+        return el('div', { class: 'report-decision' }, title, el('p', {}, el('code', {}, `${decision.literal.variable} = ${decision.literal.text}`)), saved);
+    const t = decision.table;
+    if (!t)
+        return el('div', { class: 'report-decision' }, title, saved);
+    return el('div', { class: 'report-decision' }, title,
+        el('table', { class: 'report-flows report-decision-table' },
+            el('caption', {}, `${t.hitPolicy}${t.aggregation ? ' ' + t.aggregation : ''}`),
+            el('thead', {}, el('tr', {}, el('th', {}, '#'),
+                t.inputs.map(i => el('th', { class: 'decision-input' }, i.label && i.label !== i.expression ? `${i.label} (${i.expression})` : i.expression)),
+                t.outputs.map(o => el('th', { class: 'decision-output' }, o.name)),
+                el('th', {}, ''))),
+            el('tbody', {}, t.rules.map((r, n) => el('tr', {}, el('td', {}, String(n + 1)),
+                t.inputs.map((_, c) => el('td', { class: 'decision-input' }, r.inputs[c] ?? '')),
+                t.outputs.map((_, c) => el('td', { class: 'decision-output' }, r.outputs[c] ?? '')),
+                el('td', {}, r.description))))),
+        saved);
+};
+
 function summary(issues) {
     const count = severity => issues.filter(i => i.severity === severity).length;
     const parts = [['error', count('error')], ['warning', count('warning')]].filter(([, n]) => n)
@@ -201,4 +262,4 @@ function summary(issues) {
     return parts.length ? `Problems: ${parts.join(', ')}` : 'No problems found';
 }
 
-Report.$inject = ['config.report', 'eventBus', 'bpmnjs', 'elementRegistry', 'canvas', 'selection', 'problems'];
+Report.$inject = ['config.report', 'eventBus', 'bpmnjs', 'elementRegistry', 'canvas', 'selection', 'problems', 'injector'];

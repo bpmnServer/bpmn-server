@@ -500,3 +500,534 @@ body {
     .report-document { max-width: none; padding: 0; }
     .report-element { break-inside: avoid; }
 }
+
+/* ---- code fields: scripts and expressions */
+
+.bpmn-server-code-editor {
+    border: 1px solid var(--input-border-color, #c4c8cf);
+    border-radius: 2px;
+    background: #fff;
+    font-size: 12px;
+}
+
+.bpmn-server-code-editor .cm-editor {
+    max-height: 320px;
+}
+
+.bpmn-server-code-editor .cm-editor.cm-focused {
+    outline: 1px solid #1f62c8;
+}
+
+.bpmn-server-code-editor .cm-scroller {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.bpmn-server-code.has-error .bpmn-server-code-editor {
+    border-color: #b42318;
+}
+
+.bpmn-server-code.has-warning .bpmn-server-code-editor {
+    border-color: #b54708;
+}
+
+/* ---- the Test tab */
+
+.dock[data-tab="problems"] .dock-test,
+.dock[data-tab="report"] .dock-test,
+.dock[data-tab="test"] .dock-report,
+.dock[data-tab="test"] .problems-list {
+    display: none;
+}
+
+.test-panel {
+    display: flex;
+    min-height: 100%;
+    font-size: 13px;
+}
+
+.test-list {
+    flex: none;
+    width: 220px;
+    border-right: 1px solid #dcdfe4;
+    background: #f7f8fa;
+}
+
+.test-list-actions {
+    display: flex;
+    gap: 6px;
+    padding: 8px;
+}
+
+.test-list ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.test-list li {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 10px;
+    cursor: pointer;
+    border-top: 1px solid #eef0f3;
+}
+
+.test-list li.selected {
+    background: #e8eefa;
+    font-weight: 600;
+}
+
+.test-badge {
+    width: 16px;
+    text-align: center;
+    color: #6b7079;
+}
+
+.test-badge.ok { color: #067647; }
+.test-badge.failed { color: #b42318; }
+
+.test-main {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 16px 16px;
+}
+
+.test-status {
+    min-height: 18px;
+    color: #52575f;
+}
+
+.test-status.error,
+.test-error {
+    color: #b42318;
+}
+
+.test-hint {
+    color: #6b7079;
+}
+
+.test-panel button,
+.test-panel select,
+.test-panel input,
+.test-panel textarea {
+    font: inherit;
+}
+
+.test-panel button {
+    padding: 3px 10px;
+    border: 1px solid #c4c8cf;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.test-panel button.primary {
+    background: #1f62c8;
+    border-color: #1f62c8;
+    color: #fff;
+}
+
+.test-panel button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.test-editor-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.test-name {
+    flex: 1;
+    font-weight: 600;
+    padding: 4px 6px;
+}
+
+.test-editor fieldset {
+    border: 1px solid #e3e6eb;
+    border-radius: 4px;
+    margin: 0 0 8px;
+    padding: 6px 10px 8px;
+}
+
+.test-editor legend {
+    font-weight: 600;
+    padding: 0 4px;
+}
+
+.test-field {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 2px 8px;
+    align-items: start;
+    margin: 4px 0;
+}
+
+.test-field > span {
+    color: #52575f;
+    padding-top: 4px;
+}
+
+.test-json {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 12px;
+    resize: vertical;
+}
+
+.test-json.invalid {
+    border-color: #b42318;
+    outline-color: #b42318;
+}
+
+.test-json-error {
+    grid-column: 2;
+    color: #b42318;
+    font-size: 12px;
+}
+
+.test-step {
+    display: grid;
+    grid-template-columns: minmax(160px, 30%) 1fr auto;
+    gap: 6px;
+    align-items: start;
+    padding: 4px 0;
+    border-bottom: 1px solid #f0f2f5;
+}
+
+.test-step .test-field {
+    grid-template-columns: 1fr;
+    margin: 0;
+}
+
+.test-step .test-field > span {
+    display: none;
+}
+
+
+.test-step-actions {
+    display: flex;
+    gap: 2px;
+}
+
+.test-step.done .test-step-name {
+    color: #067647;
+}
+
+.test-step.pending {
+    background: #fffaeb;
+    border-radius: 4px;
+}
+
+.test-step.pending.failed {
+    background: #fef3f2;
+}
+
+.test-step-name {
+    padding-top: 4px;
+}
+
+.test-step-data {
+    padding-top: 4px;
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 12px;
+    color: #33373d;
+    overflow-wrap: anywhere;
+}
+
+.test-finished {
+    margin: 6px 0;
+}
+
+.test-result {
+    border-left: 4px solid #067647;
+    padding: 4px 12px;
+}
+
+.test-result.failed {
+    border-left-color: #b42318;
+}
+
+.test-result h4 {
+    margin: 4px 0;
+}
+
+.test-result h4 a {
+    font-size: 12px;
+    font-weight: normal;
+    margin-left: 8px;
+}
+
+.test-checks,
+.test-steps-result {
+    margin: 4px 0;
+    padding-left: 18px;
+}
+
+.test-checks .ok,
+.test-steps-result .ok { color: #067647; }
+.test-checks .failed,
+.test-steps-result .failed { color: #b42318; }
+
+.test-data,
+.test-log {
+    max-height: 240px;
+    overflow: auto;
+    background: #f7f8fa;
+    padding: 6px 8px;
+    font-size: 12px;
+}
+
+/* the path of a test run on the diagram */
+.djs-element.test-passed .djs-visual > :first-child {
+    stroke: #067647 !important;
+    stroke-width: 3px !important;
+}
+
+.djs-element.test-waiting .djs-visual > :first-child {
+    stroke: #dc6803 !important;
+    stroke-width: 3px !important;
+    stroke-dasharray: 6 3;
+}
+
+.djs-element.test-failed .djs-visual > :first-child {
+    stroke: #b42318 !important;
+    stroke-width: 3px !important;
+}
+
+/* the order a simulated run went in */
+.test-seq {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 9px;
+    box-sizing: border-box;
+    background: #067647;
+    color: #fff;
+    font: 600 11px/18px -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    text-align: center;
+}
+
+.test-seq.test-waiting {
+    background: #dc6803;
+}
+
+.test-seq.test-failed {
+    background: #b42318;
+}
+
+/* a flow's line (its first child is the arrowhead's <defs>) */
+.djs-connection.test-passed .djs-visual > path {
+    stroke: #067647 !important;
+    stroke-width: 2px !important;
+}
+
+.djs-connection.test-failed .djs-visual > path {
+    stroke: #b42318 !important;
+    stroke-width: 2px !important;
+}
+
+/* the items of a test run */
+.test-items table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.test-items th,
+.test-items td {
+    text-align: left;
+    padding: 3px 8px;
+    border-bottom: 1px solid #eef0f3;
+    white-space: nowrap;
+}
+
+.test-items tbody tr {
+    cursor: pointer;
+}
+
+.test-items tbody tr:hover {
+    background: #f0f4fb;
+}
+
+.test-item-status {
+    padding: 0 6px;
+    border-radius: 8px;
+    background: #e3f5ea;
+    color: #067647;
+}
+
+.test-item-status.wait {
+    background: #fdf0e1;
+    color: #b54708;
+}
+
+/* started, in a simulation: blue */
+.djs-element.test-started .djs-visual > :first-child {
+    stroke: #1f62c8 !important;
+    stroke-width: 3px !important;
+}
+
+.test-seq.test-started {
+    background: #1f62c8;
+}
+
+/* a scenario's kept runs */
+.test-runs {
+    margin-bottom: 8px;
+}
+
+.test-runs table {
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.test-runs td {
+    padding: 3px 10px 3px 0;
+    border-bottom: 1px solid #eef0f3;
+}
+
+.test-runs tr {
+    cursor: pointer;
+}
+
+.test-runs tr:hover {
+    background: #f0f4fb;
+}
+
+.test-runs tr.shown {
+    font-weight: 600;
+    background: #e8eefa;
+}
+
+/* a user task's form, in a step */
+.test-form {
+    display: grid;
+    gap: 4px;
+}
+
+.test-form-field {
+    display: grid;
+    grid-template-columns: minmax(100px, 35%) 1fr;
+    gap: 8px;
+    align-items: center;
+    margin: 0;
+}
+
+.test-form-field > span {
+    color: #52575f;
+}
+
+.test-form-field input[type="checkbox"] {
+    justify-self: start;
+}
+
+.test-form-other summary {
+    color: #52575f;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.test-form-other .test-field {
+    grid-template-columns: 1fr;
+}
+
+.test-form-other .test-field > span {
+    display: none;
+}
+
+/* A business rule task's decision: what it reads and gives, and a link to the decision editor. */
+.bpmn-server-decision-summary .bio-properties-panel-description {
+    margin: 0 0 6px;
+}
+
+.bpmn-server-decision-actions button {
+    font: inherit;
+    font-size: 12px;
+    padding: 3px 8px;
+    border: 1px solid #c4c8cf;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+}
+
+/* A decision table in the Report: inputs, then outputs, one row per rule. */
+.report-decision-title {
+    margin: 8px 0 4px;
+}
+
+.report-decision-table caption {
+    text-align: left;
+    font-size: 12px;
+    color: #52575f;
+    padding-bottom: 2px;
+}
+
+.report-decision-table th.decision-output,
+.report-decision-table td.decision-output {
+    background: #f3f7fd;
+}
+
+/* A bpmnlint finding names its rule, linked to the rule's documentation. */
+.problems-list .problem .rule {
+    margin-left: 8px;
+    font-size: 12px;
+    color: #52575f;
+    white-space: nowrap;
+}
+
+.problems-list .problem .rule-off {
+    margin-left: 8px;
+    font: inherit;
+    font-size: 12px;
+    padding: 1px 6px;
+    border: 1px solid #c4c8cf;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+}
+
+/* The Rules dialog: each bpmnlint rule's level for the team; changed rules are marked. */
+.lint-rules {
+    max-width: 640px;
+    width: calc(100% - 32px);
+    max-height: 80vh;
+    border: 1px solid #c4c8cf;
+    border-radius: 6px;
+    padding: 16px 20px;
+}
+
+.lint-rules h2 {
+    margin: 0 0 4px;
+    font-size: 16px;
+}
+
+.lint-rules p {
+    margin: 0 0 12px;
+    color: #52575f;
+}
+
+.lint-rules table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+}
+
+.lint-rules th,
+.lint-rules td {
+    text-align: left;
+    padding: 4px 8px;
+    border-bottom: 1px solid #eceef1;
+}
+
+.lint-rules td.default {
+    color: #52575f;
+}
+
+.lint-rules tr.changed td:first-child::after {
+    content: " (changed)";
+    color: #9a5b00;
+    font-size: 12px;
+}

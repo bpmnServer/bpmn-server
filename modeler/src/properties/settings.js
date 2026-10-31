@@ -40,9 +40,10 @@ export const CAMUNDA_GROUP_SET = {
     CamundaPlatform__HistoryCleanup: bo => isSet(processOf(bo), 'camunda:historyTimeToLive'),
     CamundaPlatform__Tasklist: bo => processOf(bo)?.get('camunda:isStartableInTasklist') === false,
     // replaced by bpmn-server's groups, which show only what the engine reads
-    CamundaPlatform__Implementation: bo => (bo.get('eventDefinitions') || []).some(d => any(d, ['camunda:class', 'camunda:expression', 'camunda:delegateExpression'])) || any(bo, ['camunda:class', 'camunda:expression', 'camunda:resultVariable',
-        'camunda:decisionRefBinding', 'camunda:decisionRefVersion', 'camunda:decisionRefVersionTag', 'camunda:decisionRefTenantId',
-        'camunda:mapDecisionResult']) || bo.get('camunda:type') === 'external' || extensions(bo, 'camunda:Connector').length > 0,
+    // (a business rule task's result variable and result mapping are in bpmn-server's Decision group)
+    CamundaPlatform__Implementation: bo => (bo.get('eventDefinitions') || []).some(d => any(d, ['camunda:class', 'camunda:expression', 'camunda:delegateExpression'])) || any(bo, ['camunda:class', 'camunda:expression',
+        'camunda:decisionRefBinding', 'camunda:decisionRefVersion', 'camunda:decisionRefVersionTag', 'camunda:decisionRefTenantId'])
+        || (!is(bo, 'bpmn:BusinessRuleTask') && any(bo, ['camunda:resultVariable', 'camunda:mapDecisionResult'])) || bo.get('camunda:type') === 'external' || extensions(bo, 'camunda:Connector').length > 0,
     CamundaPlatform__Script: bo => any(bo, ['camunda:resource', 'camunda:resultVariable']),
     CamundaPlatform__Form: bo => any(bo, ['camunda:formRef', 'camunda:formRefBinding', 'camunda:formRefVersion']),
     CamundaPlatform__CallActivity: bo => any(bo, ['camunda:calledElementBinding', 'camunda:calledElementVersion',

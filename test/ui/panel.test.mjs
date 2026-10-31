@@ -67,12 +67,12 @@ async function save(page, model) {
 }
 
 test('a flow condition is one JavaScript expression', async () => {
-    const model = await addModel('panel-condition', { sample: 'Buy Used Car' });
+    const model = await addModel('panel-condition', { xml: fs.readFileSync(path.join(FIXTURES, '..', 'fixtures', 'buy-used-car.bpmn'), 'utf8') });     // the tests' copy of the sample
     const { page, errors, close } = await openEditor(model);
     await select(page, 'flow_gw1_clean');
     await openGroup(page, 'Condition');
     const field = page.locator('#bio-properties-panel-conditionExpression');
-    assert.equal(await field.inputValue(), '$(item.data.needsCleaning=="Yes")');
+    assert.equal(await field.innerText(), '$(item.data.needsCleaning=="Yes")');
     // no condition type or script resource to choose; the language the file names is shown
     assert.deepEqual(await page.locator('#js-properties-panel select').evaluateAll(els => els.map(e => e.id)), ['bio-properties-panel-conditionLanguage']);
     assert.equal(await page.inputValue('#bio-properties-panel-conditionLanguage'), 'JavaScript');

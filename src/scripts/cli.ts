@@ -29,21 +29,42 @@ function removeBS(str:string):string {
 	return str;
 
 }
+// one reader for the whole session: lines typed (or piped in) ahead of a question wait for it, and the end of
+// the input quits
+const cl = readline.createInterface({input: process.stdin, output: process.stdout,terminal:false});
+const pending: string[] = [];
+let waiting: ((answer: string) => void) | null = null;
+let ended = false;
+cl.on('line', line => {
+	const answer = removeBS(line);
+	if (waiting) {
+		const res = waiting;
+		waiting = null;
+		res(answer);
+	}
+	else
+		pending.push(answer);
+});
+cl.on('close', () => {
+	ended = true;
+	if (waiting) waiting('q');
+});
+
 const question = function(q):Promise<string> {
 
-	const cl = readline.createInterface({input: process.stdin, output: process.stdout,terminal:false});
-
     console.log(q);
-    cl.setPrompt('>');
-    cl.prompt();
-  
-    return new Promise( (res, rej) => {
-        cl.on('line', answer => {
-			answer=removeBS(answer);
-	        res(answer);
-			cl.close();
-        })
-    });
+	if (ended)
+		process.stdout.write('>');
+	else {
+		cl.setPrompt('>');
+		cl.prompt();
+	}
+
+	if (pending.length)
+		return Promise.resolve(pending.shift());
+	if (ended)
+		return Promise.resolve('q');
+    return new Promise(res => { waiting = res; });
 }
 
 

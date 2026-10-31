@@ -106,3 +106,12 @@ test('errors show details without secrets', async () => {
   assert.ok(!res.text.includes('test-session-secret'));
   assert.ok(!/at .*\.js:\d+/.test(res.text), 'no stack trace');
 });
+
+test('the instance page documents each sequence flow once', async () => {
+  const page = await admin.get(`/instanceDetails?id=${instanceId}`);
+  assert.equal(page.status, 200, why(page));
+  const flows = page.text.slice(page.text.indexOf('Sequence Flows'));
+  // the conditional flow is listed (it has details), and once: the model was loaded twice, listing each flow twice
+  const rows = flows.match(/<td>ToApprove<\/td>/g) ?? [];
+  assert.equal(rows.length, 1, `ToApprove listed ${rows.length} times`);
+});

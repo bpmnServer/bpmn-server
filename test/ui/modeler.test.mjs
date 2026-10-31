@@ -152,7 +152,7 @@ test('a script added in the panel runs on its event', async () => {
     await select(page, 'Submit');
     await page.locator('.bio-properties-panel-group-header', { hasText: 'Scripts' }).locator('.bio-properties-panel-add-entry').click();
     await page.selectOption('[id$="-script-0-event"] select, select[id$="-script-0-event"]', 'end');
-    await page.fill('textarea[id$="-script-0-script"]', 'this.data.scripted = "yes";');
+    await page.fill('[id$="-script-0-script"]', 'this.data.scripted = "yes";');
     const xml = await save(page, model);
     assert.match(xml, /<camunda:executionListener event="end">\s*<camunda:script scriptFormat="JavaScript">this.data.scripted = "yes";<\/camunda:script>/);
 
@@ -177,4 +177,17 @@ test('the classic modeler is still there with MODELER=classic', async () => {
     } finally {
         delete process.env.MODELER;
     }
+});
+
+test('after a save, an edit shows the model has unsaved changes', async () => {
+    const model = await copyModel('edit-status');
+    const { page, context } = await openEditor(model);
+    await page.click('#js-save');
+    await page.waitForSelector('#js-save-status:text("Saved")');
+    await page.evaluate(() => {
+        const m = window.bpmnModeler;
+        m.get('modeling').updateProperties(m.get('elementRegistry').get('Submit'), { name: 'Changed' });
+    });
+    assert.equal(await page.locator('#js-save-status').innerText(), 'Unsaved changes');
+    await context.close();
 });

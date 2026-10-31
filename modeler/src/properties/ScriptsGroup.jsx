@@ -5,11 +5,12 @@
 // transformInput); a process fires start and end, with the execution as `this` (instance.data holds the
 // data). Scripts on sequence flows and transformOutput scripts are never run: they are shown when a model has
 // them, not offered.
-import { ListGroup, SelectEntry, TextAreaEntry, TextFieldEntry, isSelectEntryEdited, isTextAreaEntryEdited, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
+import { ListGroup, SelectEntry, TextFieldEntry, isSelectEntryEdited, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { addExtensionElement } from './extensions.js';
 import { formatEntry } from './FormatEntry.jsx';
+import { codeEntry } from './code/CodeEntry.jsx';
 
 /** How a listener is implemented when it has no script: Camunda's Java options, which bpmn-server does not run. */
 const JAVA = [['class', 'Java class'], ['expression', 'Expression'], ['delegateExpression', 'Delegate expression']];
@@ -72,33 +73,6 @@ function EventField({ element, id, listener }) {
     />;
 }
 
-function ScriptField({ element, id, listener }) {
-    const commandStack = useService('commandStack');
-    const bpmnFactory = useService('bpmnFactory');
-    const debounce = useService('debounceInput');
-    const translate = useService('translate');
-    const setValue = value => {
-        const script = listener.get('script');
-        if (script)
-            update(commandStack, element, script, { value });
-        else {
-            const created = bpmnFactory.create('camunda:Script', { scriptFormat: 'JavaScript', value });
-            created.$parent = listener;
-            update(commandStack, element, listener, { script: created });
-        }
-    };
-    return <TextAreaEntry
-        element={element}
-        id={id}
-        label={translate('Script')}
-        description={translate(scriptHelp(element))}
-        monospace
-        rows={6}
-        debounce={debounce}
-        getValue={() => listener.get('script')?.get('value') || ''}
-        setValue={setValue}
-    />;
-}
 
 /** A Java listener's implementation, shown so the entry is not mistaken for an empty script. */
 function JavaField({ element, id, listener, property, label }) {
@@ -134,7 +108,20 @@ export function ScriptsGroup(element, injector) {
                 ...JAVA.filter(([property]) => listener.get(property)).map(([property, label]) =>
                     ({ id: `${id}-${property}`, element, listener, property, label, component: JavaField, isEdited: isTextFieldEntryEdited })),
                 ...(listener.get('script') ? [formatEntry(element, { id: `${id}-format`, target: () => listener.get('script'), property: 'scriptFormat' })] : []),
-                { id: `${id}-script`, element, listener, component: ScriptField, isEdited: isTextAreaEntryEdited }
+                codeEntry(element, {
+                    id: `${id}-script`, label: 'Script', description: scriptHelp(element),
+                    getValue: () => listener.get('script')?.get('value') || '',
+                    setValue: (value, { commandStack, bpmnFactory }) => {
+                        const script = listener.get('script');
+                        if (script)
+                            update(commandStack, element, script, { value });
+                        else {
+                            const created = bpmnFactory.create('camunda:Script', { scriptFormat: 'JavaScript', value });
+                            created.$parent = listener;
+                            update(commandStack, element, listener, { script: created });
+                        }
+                    }
+                })
             ],
             autoFocusEntry: `${id}-script`,
             remove: () => {

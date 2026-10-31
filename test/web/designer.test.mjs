@@ -166,6 +166,15 @@ test('the modeler checks a model it is editing without saving it', async () => {
   assert.equal((await staff.request('POST', '/model/verify', { json: { bpmn } })).status, 403);
 });
 
+test("the editor lists the application's services for completion", async () => {
+  const res = await designer.get('/model/services');
+  assert.equal(res.status, 200, why(res));
+  const names = JSON.parse(res.text).services.map(s => `${s.name}:${s.kind}`);
+  for (const name of ['add:function', 'echo:function', 'getApprovers:function'])
+    assert.ok(names.includes(name), names.join());
+  assert.equal((await staff.get('/model/services')).status, 403);
+});
+
 test('models are exported for download', async () => {
   const page = await admin.get('/model/export');
   assert.equal(page.status, 200);
