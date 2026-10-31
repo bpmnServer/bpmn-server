@@ -23,6 +23,7 @@ import { Workflow } from './routes/workflow.js';
 import { EndUser } from './routes/endUser.js';
 import { Docs } from './routes/docs.js';
 import { Model } from './routes/model.js';
+import { Dashboards } from './routes/dashboards.js';
 import { API } from './routes/api.js';
 import { API2 } from './routes/api2.js';
 import { errorDetailsHandler } from './routes/middleware/errorDetails.js';
@@ -228,6 +229,7 @@ export class WebApp {
 		router.use('/webfonts', express.static(path.join(pkg('@fortawesome/fontawesome-free'), 'webfonts'), { maxAge: 31557600000 }));
 		this.app.use('/', router);
 
+		this.app.use('/dashboard', (new Dashboards(this)).config());
 		this.app.use('/', (new Workflow(this)).config());
 		this.app.use('/user', (new EndUser(this)).config());
 		this.app.use('/docs', (new Docs(this)).config());

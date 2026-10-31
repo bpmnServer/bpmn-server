@@ -1,0 +1,93 @@
+extends layout
+
+mixin taskRow(item)
+	tr
+		td
+			a(href=`/invokeItem?id=${item.id}&processName=${item.processName}&elementId=${item.elementId}`)= item.name || item.elementId
+		td= item.processName
+		td= item.fromNow
+		td= item.dueDate ? new Date(item.dueDate).toLocaleDateString() : ''
+
+block intro
+	p.dash-intro Tasks waiting for you, the ones you completed, and the processes you can start.
+
+block dash
+	.dash-grid
+		section.dash-card#my-tasks
+			h2 Assigned to me
+				span.count= mine.length
+			if mine.length
+				table
+					tr
+						th Task
+						th Process
+						th Waiting
+						th Due
+					each item in mine
+						+taskRow(item)
+			else
+				p.dash-empty No tasks are assigned to you.
+
+		section.dash-card#available-tasks
+			h2 Available to me
+				span.count= available.length
+			p.dash-muted Not assigned yet: for you, for one of your groups, or for anyone.
+			if available.length
+				table
+					tr
+						th Task
+						th Process
+						th Waiting
+						th Due
+					each item in available
+						+taskRow(item)
+			else
+				p.dash-empty Nothing is waiting for you or your groups.
+
+		section.dash-card#completed-tasks
+			h2 Recently completed
+				span.count= completed.length
+			if completed.length
+				table
+					tr
+						th Task
+						th Process
+						th Completed
+					each item in completed
+						tr
+							td= item.name || item.elementId
+							td
+								a(href=`/instanceDetails?id=${item.instanceId}`)= item.processName
+							td= item.fromNow
+			else
+				p.dash-empty You have not completed a task yet.
+
+		section.dash-card#start-events
+			h2 Start a process
+				span.count= starts.length
+			if starts.length
+				each start in starts
+					details.dash-start
+						summary
+							b= start.processName
+							if start.name !== start.processName
+								|  · #{start.name}
+						form(method='post', action='/dashboard/start')
+							input(type='hidden', name='_csrf', value=_csrf)
+							input(type='hidden', name='processName', value=start.processName)
+							input(type='hidden', name='startNodeId', value=start.startNodeId)
+							each field in start.fields
+								label(for=`${start.startNodeId}-${field.id}`)= field.label || field.id
+								if field.type === 'enum' && field.values && field.values.length
+									select(id=`${start.startNodeId}-${field.id}`, name=`field.${field.id}`)
+										each v in field.values
+											option(value=v.id, selected=(v.id === field.defaultValue))= v.name || v.id
+								else if field.type === 'boolean'
+									select(id=`${start.startNodeId}-${field.id}`, name=`field.${field.id}`)
+										option(value='true') Yes
+										option(value='false', selected=(field.defaultValue !== 'true')) No
+								else
+									input(id=`${start.startNodeId}-${field.id}`, name=`field.${field.id}`, type=(field.type === 'date' ? 'date' : field.type === 'long' ? 'number' : 'text'), value=field.defaultValue || '')
+							button.btn.btn-primary.btn-sm(type='submit') Start
+			else
+				p.dash-empty No process can be started by hand.

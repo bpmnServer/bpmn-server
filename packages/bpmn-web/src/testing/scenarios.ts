@@ -43,6 +43,12 @@ export async function saveScenarios(model: string, scenarios: Scenario[], userNa
     await ScenarioSet.updateOne({ model }, { $set: { scenarios, updatedAt: new Date(), updatedBy: userName } }, { upsert: true });
 }
 
+/** Each model's scenarios in summary: how many, when and by whom last saved. */
+export async function listScenarioSets(): Promise<{ model: string; count: number; updatedAt?: Date; updatedBy?: string }[]> {
+    const docs = await ScenarioSet.find({}, { model: 1, scenarios: 1, updatedAt: 1, updatedBy: 1 }).lean();
+    return docs.map(d => ({ model: d.model, count: (d.scenarios ?? []).length, updatedAt: d.updatedAt, updatedBy: d.updatedBy }));
+}
+
 /** Whether a body is a list of scenarios; the reasons when it is not. */
 export function checkScenarios(scenarios): string[] {
     if (!Array.isArray(scenarios))

@@ -1,0 +1,146 @@
+extends layout
+
+block intro
+	p.dash-intro The server, its users, and the operations the console offers: locks, hung items, backup, restart.
+
+block dash
+	.dash-grid
+		section.dash-card.wide#instances
+			h2 Instances
+			.dash-stats
+				.dash-stat
+					b= counts.running
+					span running
+				.dash-stat
+					b= counts.waiting
+					span waiting on a task
+				.dash-stat
+					b= counts.end
+					span ended
+				.dash-stat
+					b= counts.terminated
+					span cancelled
+				.dash-stat
+					b= counts.error
+					span failed
+
+		section.dash-card#server
+			h2 Server
+			dl
+				dt bpmn-web
+				dd= serverInfo.bpmnWeb
+				dt bpmn-server
+				dd= serverInfo.bpmnServer
+				dt Node.js
+				dd= serverInfo.node
+				dt Running for
+				dd= serverInfo.uptime
+				dt Database
+				dd: code= serverInfo.database
+				dt Models folder
+				dd: code= serverInfo.models
+				if serverInfo.serverId
+					dt Server id
+					dd= serverInfo.serverId
+			h2(style='margin-top:18px') Backup
+			p.dash-muted The models folder and the database (instances, models, users, test scenarios) as one JSON file.
+			a.btn.btn-default.btn-sm#backup(href='/dashboard/admin/backup') Download a backup
+			h2(style='margin-top:18px') Restart
+			if supervisor
+				p.dash-muted The server stops and #{supervisor} starts it again. Running work is given time to finish.
+				form.inline(method='post', action='/dashboard/admin/restart', onsubmit="return confirm('Restart the server?')")
+					input(type='hidden', name='_csrf', value=_csrf)
+					button.btn.btn-warning.btn-sm(type='submit') Restart the server
+			else
+				p.dash-muted Nothing restarts this server when it stops: run it under Docker, pm2 or systemd (or set RESTART_ON_EXIT=true for a supervisor of your own) to restart it from here.
+
+		section.dash-card#operations
+			h2 Locks
+				span.count= locks.length
+			if locks.length
+				table
+					tr
+						th Instance
+						th Server
+						th Held
+						th
+					each lock in locks
+						tr
+							td: code= lock.id
+							td= lock.server
+							td= lock.fromNow
+							td
+								form.inline(method='post', action='/dashboard/admin/locks/release')
+									input(type='hidden', name='_csrf', value=_csrf)
+									input(type='hidden', name='id', value=lock.id)
+									button.btn.btn-default.btn-xs(type='submit') Release
+				form.inline(method='post', action='/dashboard/admin/locks/release', onsubmit="return confirm('Release every lock?')")
+					input(type='hidden', name='_csrf', value=_csrf)
+					button.btn.btn-default.btn-sm(type='submit', style='margin-top:8px') Release all
+			else
+				p.dash-empty No instance is locked.
+			h2(style='margin-top:18px') Hung items
+				span.count= hung.length
+			p.dash-muted Items that started and never finished (a server stopped while running them).
+			if hung.length
+				table
+					tr
+						th Process
+						th Item
+						th Since
+						th
+					each item in hung
+						tr
+							td: a(href=`/instanceDetails?id=${item.instanceId}`)= item.processName
+							td= item.name || item.elementId
+							td= item.fromNow
+							td
+								form.inline(method='post', action='/dashboard/admin/recover')
+									input(type='hidden', name='_csrf', value=_csrf)
+									input(type='hidden', name='itemId', value=item.id)
+									input(type='hidden', name='instanceId', value=item.instanceId)
+									button.btn.btn-default.btn-xs(type='submit') Run again
+			else
+				p.dash-empty Nothing is hung.
+
+		section.dash-card#users
+			h2 Users
+				span.count= users.length
+			table
+				tr
+					th User
+					th Email
+					th Groups
+					th
+				each u in users
+					tr
+						td= u.userName
+						td= u.email
+						td= (u.userGroups || []).join(', ')
+						td: a(href=`/account/edit/${u._id}`) Edit
+			h2(style='margin-top:18px') Add a user
+			form.dash-form#add-user(method='post', action='/dashboard/admin/users')
+				input(type='hidden', name='_csrf', value=_csrf)
+				label(for='new-userName') User name
+				input#new-userName(name='userName', required)
+				label(for='new-email') Email
+				input#new-email(name='email', type='email', required)
+				label(for='new-password') Password
+				input#new-password(name='password', type='password', required, minlength='4')
+				label(for='new-groups') Groups
+				input#new-groups(name='userGroups', placeholder='e.g. Employee, Manager, DESIGNER, ADMIN')
+				button.btn.btn-primary.btn-sm(type='submit') Add user
+
+		section.dash-card#console
+			h2 Console commands
+			p.dash-muted
+				| The console does what these pages do and more, from a terminal:
+				code npm run cli
+				|  (in Docker:
+				code docker compose exec bpmn-web npm run cli
+				| ).
+			table
+				each c in commands
+					tr
+						td: code= c[0]
+						td= c[1]

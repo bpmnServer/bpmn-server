@@ -1,0 +1,25 @@
+extends ../base
+
+block nav
+	ul.nav.navbar-nav
+		li: a(href='/dashboard') My work
+		if isDesigner
+			li: a(href='/dashboard/design') Design
+		if isAdmin
+			li: a(href='/dashboard/admin') Administration
+		li: a(href='/') Workbench
+	ul.nav.navbar-nav.navbar-right
+		if user
+			li: a(href='/account')
+				i.fa.fa-user(aria-hidden='true')
+				| &nbsp; #{user.userName}
+		li: a(href='https://bpmnserver.github.io/docs/' target='docs') About
+
+block content
+	link(rel='stylesheet', href='/stylesheets/dashboards.css')
+	main.dash
+		h1= title
+		block intro
+		if message
+			p.dash-message= message
+		block dash
