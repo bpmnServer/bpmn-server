@@ -1,3 +1,4 @@
 ﻿/bpmn_server_volume
 /mongodb_volume
 
+/.env
