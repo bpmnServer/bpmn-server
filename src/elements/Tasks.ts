@@ -118,34 +118,69 @@ class ServiceTask extends Node {
         return desc;
     }
 }
-//    <bpmn2:businessRuleTask id="Task_1lcamp6" name="Vacation"  camunda:decisionRef="Vacation">
-
-
+//    <bpmn2:businessRuleTask id="Task_1" name="Vacation" camunda:decisionRef="Vacation" camunda:resultVariable="vacation">
+/**
+ * Evaluates the decision camunda:decisionRef names, in the models folder: the file `<ref>.dmn.xml`, or a decision
+ * with that id. Its inputs are read from the instance data and the task's input parameters (which take precedence);
+ * the result is the task's output, saved in the data by output parameters or camunda:resultVariable, shaped by
+ * camunda:mapDecisionResult (singleEntry, singleResult, collectEntries or resultList) when that is set.
+ */
 class BusinessRuleTask extends ServiceTask {
+    get decisionRef(): string { return camundaAttr(this.def, 'decisionRef'); }
+    get resultVariable(): string { return camundaAttr(this.def, 'resultVariable'); }
+    get mapDecisionResult(): string { return camundaAttr(this.def, 'mapDecisionResult'); }
+
     async run(item): Promise<NODE_ACTION> {
-        let businessRule;
         const token: Token = item.token;
-
-        const config= token.execution.server.configuration;
-        const path = config.definitionsPath;
-
-        //console.log('Business Rule Task'); //.loopCharacteristics.$attrs["camunda:collection"];
-        if (this.def.$attrs && this.def.$attrs["camunda:decisionRef"]) {
-
-            //throw new Error("Business Rule Task Not supported in this release.");
-            
-            businessRule = this.def.$attrs["camunda:decisionRef"];
-
-            const filePath=path+'/'+businessRule+'.dmn.xml';
-            token.log('..invoking business rule ' + businessRule + ' from ' + filePath);
-            const dmn=await new DMNEngine().load(filePath);
-
-            item.output = await dmn.evaluate(item.input);
-            token.log('..business rule ' + businessRule + ' evaluated');
+        const ref = this.decisionRef;
+        if (!ref) {
+            token.log('..business rule task has no decision (camunda:decisionRef); nothing evaluated');
+            return NODE_ACTION.end;
         }
+        const folder = token.execution.server.configuration.definitionsPath;
+        const found = await DMNEngine.find(folder, ref);
+        token.log(`..invoking business rule ${ref}: decision '${found.decision.name}' in ${found.filePath}`);
+        const dmn = await new DMNEngine({ log: message => token.log(message) }).load(found.filePath, found.decision.id);
+
+        const context = { ...(token.data || {}), ...(item.input || {}) };
+        const result = dmn.evaluate(context);
+        item.output = this.mapResult(result);
+        if (this.resultVariable)
+            token.data[this.resultVariable] = item.output;
+        token.log(`..business rule ${ref} evaluated: ${JSON.stringify(item.output)}`);
         return NODE_ACTION.end;
     }
 
+    /** The result as camunda:mapDecisionResult asks for it. */
+    mapResult(result) {
+        const list = result === null || result === undefined ? [] : Array.isArray(result) ? result : [result];
+        const single = (what: string) => {
+            if (list.length > 1)
+                throw new Error(`Decision '${this.decisionRef}': mapDecisionResult ${what} needs one result; ${list.length} rules matched.`);
+            return list.length ? list[0] : null;
+        };
+        const firstValue = (r) => r && typeof r === 'object' ? Object.values(r)[0] : r;
+        switch (this.mapDecisionResult) {
+            case 'singleEntry': return firstValue(single('singleEntry'));
+            case 'singleResult': return single('singleResult');
+            case 'collectEntries': return list.map(firstValue);
+            case 'resultList': return list;
+            default: return result;
+        }
+    }
+
+    describe() {
+        const desc = super.describe().filter(([label]) => label !== 'Service Delegate');
+        desc.push(['Decision', this.decisionRef || '(none)']);
+        if (this.resultVariable) desc.push(['Result variable', this.resultVariable]);
+        if (this.mapDecisionResult) desc.push(['Result mapping', this.mapDecisionResult]);
+        return desc;
+    }
+}
+
+/** A camunda: attribute, whether or not the Camunda descriptors are loaded. */
+function camundaAttr(def, name: string): string {
+    return (def && def.$attrs && def.$attrs['camunda:' + name]) || (def && def[name]) || '';
 }
 class SendTask extends ServiceTask {
 

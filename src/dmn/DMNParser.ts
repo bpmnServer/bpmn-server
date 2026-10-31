@@ -1,195 +1,199 @@
 /**
- * 
-2️⃣ Core Features
-Feature	Description
-DMN XML Parsing	Load and parse DMN XML files into an internal model.
-Condition Evaluation	Evaluate input data against conditions in the decision table.
-Hit Policy Handling	Implement standard DMN hit policies (e.g., FIRST, COLLECT, PRIORITY, SUM).
-Multiple Input Columns	Each rule row should match the corresponding input field automatically.
-Multiple Output Columns	The decision table should return structured output based on defined columns.
-Data Type Handling	Support numeric, boolean, string conditions.
-Performance Optimization	Ensure fast decision evaluation for large tables.
-Logging & Debugging	Track rule execution for debugging.
-Integration APIs	Provide REST/CLI/SDK for calling the engine.
-3️⃣ DMN Hit Policies to Support
-✔ FIRST → Return the first matching rule.
-✔ COLLECT → Return all matching rules.
-✔ PRIORITY → Use the highest-priority match.
-✔ RULE ORDER → Return matches in rule order.
-✔ UNIQUE → Ensure exactly one match (error if multiple).
-✔ SUM / MIN / MAX → Apply mathematical aggregation to numeric outputs.
-✔ COUNT → Count how many rules match.
-
-4️⃣ Inputs & Outputs
-Example DMN Table:
-
-Age	Income	Decision
->=18	>50000	"Approved"
-<18	-	"Rejected"
-✔ Inputs: { age: 20, income: 60000 }
-✔ Expected Output: { Decision: "Approved" }
-
-
+ * Reads a DMN file (DMN 1.1 to 1.5, as dmn-js and Camunda Modeler save it) into its decisions: decision tables
+ * and literal expressions, and the decisions each one requires.
+ *
+ * Cells are kept as their FEEL text; DMNEngine evaluates them.
  */
-
 import * as fs from 'fs';
+import * as path from 'path';
 import * as xml2js from 'xml2js';
-import {   unaryTest, evaluate as feelEvaluate  } from 'feelin';
+import { parseExpression, parseUnaryTests } from 'feelin';
 
-/**
- * 
- * 
-	✔ Parses DMN XML into structured JSON.
-	✔ Extracts input/output columns dynamically.
-	✔ Processes DMN hit policies correctly.
-	✔ Handles encoded XML characters (<, >, &).
- */
-    
-    class DMNParser {
-        static async loadDMNFile(filePath: string) {
-            const fileContent = fs.readFileSync(filePath, "utf-8");
-            const parser = new xml2js.Parser({ explicitArray: false });
-    
-            try {
-                const parsedXML = await parser.parseStringPromise(fileContent);
-                return DMNParser.convertDMNToJSON(parsedXML);
-            } catch (error) {
-                console.error("Error parsing DMN XML:", error);
-                throw new Error("Failed to parse DMN XML file.");
-            }
-        }
-    
-        static convertDMNToJSON(parsedXML: any): DecisionTable {
-            const decisionTable = parsedXML.definitions.decision.decisionTable;
-            const hitPolicy = decisionTable.$.hitPolicy;
-    
-            const inputColumns = decisionTable.input.map((input: any) => ({
-                
-                name: DMNParser.getInputField(input).name,
-                type: DMNParser.getInputField(input).type
-            }));
-    
-            const outputColumns = decisionTable.output.map((output: any) => ({
-                name: DMNParser.getOutputField(output).name,
-                type: DMNParser.getOutputField(output).type
-            }));
-    
-            const rules = decisionTable.rule.map((rule: any) => ({
-                conditions: rule.inputEntry.map((entry: any, index: number) => ({
-                    operator: DMNParser.extractOperator(entry.text),
-                    value: DMNParser.convertToType(entry.text, inputColumns[index].type)
-                })),
-                outcomes: rule.outputEntry.map((entry: any, index: number) =>
-                    DMNParser.convertToType(entry.text.replace(/"/g, ""), outputColumns[index].type)
-                )
-            }));
-    
-            return { hitPolicy, inputColumns, outputColumns, rules, defaultOutcome: {} };
-        }
-    
-        static extractOperator(conditionText: string): string {
+type InputClause = { id: string; label: string; expression: string; typeRef: string; values?: string };
+type OutputClause = { id: string; name: string; label: string; typeRef: string; values?: string };
+type Rule = { id: string; description: string; inputEntries: string[]; outputEntries: string[] };
 
-            if (conditionText.startsWith("{") && conditionText.endsWith("}")) {
-                try {
-                    let ret=feelEvaluate(conditionText.slice(1, -1)); // Remove { } and parse FEEL
-                    console.log('value is feel',conditionText,ret);
-                    return 'feel';
-                } catch (error) {
-                    console.error("❌ FEEL Parsing Error:", error);
-                }
-            }
-
-
-            const match = conditionText.match(/(>=|<=|==|!=|>|<)/);
-            return match ? match[0] : "=="; // Default to equality if no operator found
-        }
-    
-        static convertToType(value: string, type: string): any {
-
-            // Detect FEEL expressions wrapped in {}
-            if (value.startsWith("{") && value.endsWith("}")) {
-                return value.slice(1, -1);
-            }
-
-            const match = value.trim().match(/(>=|<=|==|!=|>|<)?\s*(-?\d+(\.\d+)?)/);
-    
-            if (match) {
-                const numValue = match[2].includes(".") ? parseFloat(match[2]) : parseInt(match[2], 10);
-                return numValue;
-            }
-        
-            if (type === "boolean") return value.toLowerCase() === "true";
-            return value;
-        }
-        static getInputField(inpt) {
-            /*
-                  <input id="i2" label="Income">
-        <inputExpression typeRef="integer">
-          <text>income</text>
-        </inputExpression>
-            */
-        return {id:inpt.$.id,label:inpt.$.label,type:inpt.inputExpression.$.typeRef,name:inpt.$.label};
-
-
-        }
-        static getOutputField(output) {
-            /*
-      <output id="OutputClause_1x57vxz" label="Max Amount" name="maxAmount" typeRef="number" />
-
-            */
-        return {id:output.$.id,name:output.$.name?output.$.name:output.$.label,type:output.$.typeRef};
-
-        }
-            // New: Generate human-readable documentation of rules
-    /**
-        ✅ Summary
-            ✅ Format rules in a human-readable structure.
-            ✅ Include hit policy, input conditions, and output values.
-            ✅ Display conditions per rule in a structured way.
-            ✔ Generates clear, structured documentation of DMN decision rules.
-            ✔ Formats conditions & outcomes properly.
-            ✔ Displays hit policy, input columns, and output columns.
-            ✔ Handles missing conditions gracefully (e.g., - for unrestricted conditions).
-    **/
-    static documentRules(decisionTable) {
-        let doc = `📄 **Decision Table Documentation**\n`;
-        doc += `===================================\n`;
-        doc += `🔹 **Hit Policy:** ${decisionTable.hitPolicy}\n`;
-        doc += `🔹 **Input Columns:** ${decisionTable.inputColumns.map(col => col.name+":"+col.type).join(", ")}\n`;
-        doc += `🔹 **Output Columns:** ${decisionTable.outputColumns.map(col => col.name+":"+col.type).join(", ")}\n\n`;
-        doc += `📌 **Rules:**\n`;
-        decisionTable.rules.forEach((rule, index) => {
-            doc += `\n🔸 **Rule ${index + 1}:**\n`;
-            doc += `   - **Conditions:**\n`;
-            rule.conditions.forEach((condition, colIndex) => {
-                doc += `     - ${decisionTable.inputColumns[colIndex].name} ${condition.operator} ${condition.value}\n`;
-            });
-            doc += `   - **Outcomes:**\n`;
-            rule.outcomes.forEach((outcome, colIndex) => {
-                doc += `     - ${decisionTable.outputColumns[colIndex].name}: ${outcome}\n`;
-            });
-        });
-        doc += `\n✅ **Default Outcome:**\n`;
-        for (const [key, value] of Object.entries(decisionTable.defaultOutcome)) {
-            doc += `   - ${key}: ${value}\n`;
-        }
-        return doc;
-    }
-
-    }
-    
-// Define DecisionTable and Condition types
 type DecisionTable = {
-    hitPolicy: string;
-    inputColumns: {name: string; type: string}[];
-    outputColumns:  {name: string; type: string}[]; 
-    rules: { conditions: Condition[]; outcomes: any[] }[];
-    defaultOutcome: Record<string, any>;
+    hitPolicy: string;          // UNIQUE (the default), FIRST, PRIORITY, ANY, COLLECT, RULE ORDER, OUTPUT ORDER
+    aggregation?: string;       // COLLECT only: SUM, MIN, MAX, COUNT
+    inputs: InputClause[];
+    outputs: OutputClause[];
+    rules: Rule[];
 };
 
-type Condition = {
-    operator: string; //"==" | "!=" | ">" | "<" | ">=" | "<=";
-    value: any;
+type Decision = {
+    id: string;
+    name: string;
+    requires: string[];         // ids of the decisions it requires
+    table?: DecisionTable;
+    literal?: { text: string; variable: string; typeRef: string };
 };
 
-export { DMNParser , DecisionTable , Condition};
+type DMNDefinitions = { id: string; name: string; decisions: Decision[] };
+
+/** A problem found in a DMN file: where it is and what is wrong. */
+type DMNIssue = { decisionId?: string; ruleId?: string; ruleIndex?: number; message: string };
+
+const HIT_POLICIES = ['UNIQUE', 'FIRST', 'PRIORITY', 'ANY', 'COLLECT', 'RULE ORDER', 'OUTPUT ORDER'];
+const AGGREGATIONS = ['SUM', 'MIN', 'MAX', 'COUNT'];
+
+const list = (v) => v === undefined ? [] : Array.isArray(v) ? v : [v];
+const attr = (node, name: string) => (node && node.$ && node.$[name]) || '';
+const text = (node) => {
+    const t = list(node && node.text)[0];
+    return (typeof t === 'string' ? t : (t && t._) || '').trim();
+};
+
+class DMNParser {
+    private static cache = new Map<string, { mtimeMs: number; definitions: DMNDefinitions }>();
+
+    /** Parse a DMN file; a parsed file is kept until it changes. */
+    static async loadFile(filePath: string): Promise<DMNDefinitions> {
+        const mtimeMs = fs.statSync(filePath).mtimeMs;
+        const cached = DMNParser.cache.get(filePath);
+        if (cached && cached.mtimeMs === mtimeMs)
+            return cached.definitions;
+        let definitions: DMNDefinitions;
+        try {
+            definitions = await DMNParser.parse(fs.readFileSync(filePath, 'utf-8'));
+        }
+        catch (exc) {
+            throw new Error(`The decision file ${path.basename(filePath)} can not be read: ${exc.message}`);
+        }
+        DMNParser.cache.set(filePath, { mtimeMs, definitions });
+        return definitions;
+    }
+
+    static async parse(xml: string): Promise<DMNDefinitions> {
+        const parser = new xml2js.Parser({ explicitArray: false, tagNameProcessors: [xml2js.processors.stripPrefix] });
+        const doc = await parser.parseStringPromise(xml);
+        const root = doc && doc.definitions;
+        if (!root)
+            throw new Error('not a DMN file: no <definitions>');
+        const decisions = list(root.decision).map(d => DMNParser.decision(d));
+        if (!decisions.length)
+            throw new Error('the file has no decision');
+        return { id: attr(root, 'id'), name: attr(root, 'name'), decisions };
+    }
+
+    private static decision(node): Decision {
+        const requires = list(node.informationRequirement)
+            .map(r => attr(r.requiredDecision, 'href').replace(/^.*#/, ''))
+            .filter(Boolean);
+        const decision: Decision = { id: attr(node, 'id'), name: attr(node, 'name') || attr(node, 'id'), requires };
+        if (node.decisionTable) {
+            const t = node.decisionTable;
+            const inputs: InputClause[] = list(t.input).map(i => ({
+                id: attr(i, 'id'),
+                label: attr(i, 'label'),
+                expression: text(i.inputExpression) || attr(i, 'label'),
+                typeRef: attr(i.inputExpression, 'typeRef'),
+                values: text(i.inputValues) || undefined
+            }));
+            const outputs: OutputClause[] = list(t.output).map((o, index) => ({
+                id: attr(o, 'id'),
+                name: attr(o, 'name') || attr(o, 'label') || `output${index + 1}`,
+                label: attr(o, 'label'),
+                typeRef: attr(o, 'typeRef'),
+                values: text(o.outputValues) || undefined
+            }));
+            const rules: Rule[] = list(t.rule).map(r => ({
+                id: attr(r, 'id'),
+                description: typeof r.description === 'string' ? r.description.trim() : '',
+                inputEntries: list(r.inputEntry).map(text),
+                outputEntries: list(r.outputEntry).map(text)
+            }));
+            let hitPolicy = (attr(t, 'hitPolicy') || 'UNIQUE').toUpperCase();
+            let aggregation = attr(t, 'aggregation').toUpperCase() || undefined;
+            if (AGGREGATIONS.includes(hitPolicy)) {     // hitPolicy="SUM", as bpmn-server's earlier evaluator read it
+                aggregation = hitPolicy;
+                hitPolicy = 'COLLECT';
+            }
+            decision.table = { hitPolicy, aggregation, inputs, outputs, rules };
+        }
+        else if (node.literalExpression) {
+            decision.literal = {
+                text: text(node.literalExpression),
+                variable: attr(node.variable, 'name') || decision.name,
+                typeRef: attr(node.variable, 'typeRef')
+            };
+        }
+        return decision;
+    }
+
+    /** What is wrong with a file's decisions: hit policies, rule sizes and FEEL that does not parse. */
+    static check(definitions: DMNDefinitions): DMNIssue[] {
+        const issues: DMNIssue[] = [];
+        const ids = new Set(definitions.decisions.map(d => d.id));
+        for (const d of definitions.decisions) {
+            const at = (message: string, rule?: Rule, ruleIndex?: number) =>
+                issues.push({ decisionId: d.id, ruleId: rule && rule.id, ruleIndex, message });
+            for (const r of d.requires)
+                if (!ids.has(r)) at(`Decision '${d.name}' requires '${r}', which is not in the file.`);
+            if (d.literal) {
+                if (!feelParses(d.literal.text, false)) at(`Decision '${d.name}': the expression does not parse as FEEL: ${d.literal.text}`);
+                continue;
+            }
+            if (!d.table) {
+                at(`Decision '${d.name}' is neither a decision table nor a literal expression; bpmn-server does not evaluate it.`);
+                continue;
+            }
+            const t = d.table;
+            if (!HIT_POLICIES.includes(t.hitPolicy))
+                at(`Decision '${d.name}': unknown hit policy '${t.hitPolicy}'.`);
+            if (t.aggregation && (t.hitPolicy !== 'COLLECT' || !AGGREGATIONS.includes(t.aggregation)))
+                at(`Decision '${d.name}': aggregation '${t.aggregation}' is only for the COLLECT hit policy (SUM, MIN, MAX, COUNT).`);
+            if ((t.hitPolicy === 'PRIORITY' || t.hitPolicy === 'OUTPUT ORDER') && !t.outputs.some(o => o.values))
+                at(`Decision '${d.name}': the ${t.hitPolicy} hit policy needs the output values listed, in order of priority.`);
+            t.inputs.forEach(i => {
+                if (!feelParses(i.expression, false)) at(`Decision '${d.name}': input '${i.label || i.expression}' does not parse as FEEL: ${i.expression}`);
+            });
+            t.rules.forEach((rule, index) => {
+                const n = `Decision '${d.name}' rule ${index + 1}`;
+                if (rule.inputEntries.length !== t.inputs.length || rule.outputEntries.length !== t.outputs.length)
+                    at(`${n} has ${rule.inputEntries.length} input and ${rule.outputEntries.length} output cells; the table has ${t.inputs.length} and ${t.outputs.length}.`, rule, index);
+                rule.inputEntries.forEach((cell, c) => {
+                    if (!feelParses(cell, true)) at(`${n}: '${cell}' (${columnName(t.inputs[c])}) is not a FEEL test.`, rule, index);
+                });
+                rule.outputEntries.forEach((cell, c) => {
+                    if (cell && !feelParses(cell, false)) at(`${n}: '${cell}' (${t.outputs[c] ? t.outputs[c].name : 'output ' + (c + 1)}) does not parse as FEEL.`, rule, index);
+                });
+            });
+        }
+        return issues;
+    }
+}
+
+/** An input column as a person reads it. */
+function columnName(input: InputClause) {
+    return input ? (input.label || input.expression) : 'an extra cell';
+}
+
+/** The FEEL text parses: as unary tests (an input cell) or as an expression. */
+function feelParses(source: string, unary: boolean): boolean {
+    const s = legacyTest(source);
+    if (unary && (s === '' || s === '-'))
+        return true;
+    try {
+        const tree = unary ? parseUnaryTests(s, {}, undefined) : parseExpression(s, {}, undefined);
+        let ok = true;
+        tree.iterate({ enter: n => { if (n.type.isError) ok = false; } });
+        return ok;
+    }
+    catch {
+        return false;
+    }
+}
+
+/** Input cells written for bpmn-server's earlier evaluator: `== 5` and `!= 5` are FEEL `5` and `not(5)`. */
+function legacyTest(source: string): string {
+    const s = (source || '').trim();
+    if (s.startsWith('=='))
+        return s.substring(2).trim();
+    if (s.startsWith('!='))
+        return `not(${s.substring(2).trim()})`;
+    return s;
+}
+
+export { DMNParser, legacyTest, HIT_POLICIES };
+export type { DMNDefinitions, Decision, DecisionTable, InputClause, OutputClause, Rule, DMNIssue };

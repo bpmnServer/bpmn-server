@@ -153,6 +153,43 @@ class Node extends Element {
      *      3.  Subprocess the parent node is fired as normal
      *              run method will fire the subprocess invoking a new token and will go into wait
      */
+    /**
+     * The data objects connected to this element by a data association, either way: their names, as the diagram
+     * shows them (the reference's name, else the data object's or data store's, else its id).
+     */
+    get dataObjectNames(): string[] {
+        const def = this.def || {};
+        const refs = [
+            ...(def.dataInputAssociations || []).flatMap(a => a.sourceRef || []),
+            ...(def.dataOutputAssociations || []).map(a => a.targetRef).filter(Boolean)
+        ];
+        const names = refs.map(ref => {
+            const target = ref.dataObjectRef || ref.dataStoreRef || ref;
+            return ref.name || target.name || target.id || ref.id;
+        }).filter(Boolean);
+        return [...new Set(names)];
+    }
+
+    /**
+     * Load the element's data objects into the instance data (appDelegate.loadDataObject), where they are saved
+     * with the instance: `data.client` for a data object 'client'. They load each time the element runs.
+     */
+    async loadDataObjects(item: Item) {
+        const names = this.dataObjectNames;
+        if (!names.length)
+            return;
+        const delegate = item.token.execution.appDelegate;
+        if (typeof delegate?.loadDataObject !== 'function') {
+            item.token.log(`..data objects ${names.join(', ')}: the application has no loadDataObject; not loaded`);
+            return;
+        }
+        for (const name of names) {
+            const value = await delegate.loadDataObject(name, item);
+            item.token.data[name] = value;
+            item.token.log(`..data object ${name} loaded`);
+        }
+    }
+
     async execute(item: Item) {
         item.token.logS('Node('+this.name+'|'+this.id+').execute: item=' + item.id+' token:'+item.token.id);
 
@@ -162,6 +199,7 @@ class Node extends Element {
         await this.doEvent(item, EXECUTION_EVENT.node_enter, ITEM_STATUS.enter);
 
         this.enter(item);   // no choice
+        await this.loadDataObjects(item);
         const behaviourlist = [];
         this.behaviours.forEach(b => { behaviourlist.push(b) });
 

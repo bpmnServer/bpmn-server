@@ -135,6 +135,15 @@ interface IAppDelegate {
      * @param item
      */
     serviceCalled(input: Record<string, unknown>, execution: IExecution, item: IItem): unknown;
+    /**
+     * Optional. Loads a data object of the model (a BPMN data object or data store, by its name) when an element
+     * connected to it runs (a data association, either way, e.g. a start event or a service task). The value is
+     * put in the instance data under the name (`data.client`) and saved with the instance like any data.
+     *
+     * @param name  the data object's name
+     * @param item  the running item: its element, token and the instance data (item.data)
+     */
+    loadDataObject?(name: string, item: IItem): unknown | Promise<unknown>;
 }
 
 export { ILogger, IAppDelegate, IConfiguration, IServiceProvider }

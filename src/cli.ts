@@ -46,7 +46,7 @@ async function verify(targets: string[], json: boolean): Promise<number> {
         if (!files.length)
             results.push({ file: target, valid: false, errors: 1, warnings: 0, issues: [{ severity: 'error', code: 'not-found', message: 'no .bpmn files' }] });
         for (const file of files) {
-            const result = await verifyModel(fs.readFileSync(file, 'utf8'), undefined, path.basename(file, '.bpmn'));
+            const result = await verifyModel(fs.readFileSync(file, 'utf8'), undefined, path.basename(file, '.bpmn'), { decisionsFolder: path.dirname(file) });
             results.push({ file, ...result });
         }
     }

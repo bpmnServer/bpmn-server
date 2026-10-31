@@ -11,15 +11,15 @@
     <bpmn2:scriptTask id="Activity_1jxktsd" name="Prepare Values" scriptFormat="JavaScript">
       <bpmn2:incoming>Flow_1jn0zxy</bpmn2:incoming>
       <bpmn2:outgoing>Flow_1hdpbvm</bpmn2:outgoing>
-      <bpmn2:script>data.creditScore=500;
-data.income=64000;</bpmn2:script>
+      <bpmn2:script>data.creditScore = data.creditScore ?? 650;
+data.income = data.income ?? 45000;</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="Flow_1hdpbvm" sourceRef="Activity_1jxktsd" targetRef="Activity_0px5w2d" />
-    <bpmn2:businessRuleTask id="Activity_0px5w2d" name="Business Rule" camunda:decisionRef="LoanApproval">
+    <bpmn2:businessRuleTask id="Activity_0px5w2d" name="Business Rule" camunda:decisionRef="loanApproval" camunda:resultVariable="loan">
       <bpmn2:extensionElements>
         <camunda:inputOutput>
-          <camunda:inputParameter name="credit_score">data.creditScore</camunda:inputParameter>
-          <camunda:inputParameter name="income">data.income</camunda:inputParameter>
+          <camunda:inputParameter name="credit_score">$data.creditScore</camunda:inputParameter>
+          <camunda:inputParameter name="income">$data.income</camunda:inputParameter>
         </camunda:inputOutput>
       </bpmn2:extensionElements>
       <bpmn2:incoming>Flow_1hdpbvm</bpmn2:incoming>

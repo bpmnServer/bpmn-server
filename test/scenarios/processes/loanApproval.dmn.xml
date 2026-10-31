@@ -14,7 +14,7 @@
       </input>
       <output id="o1" label="Approval Status" name="approvalStatus" typeRef="string">
         <outputValues id="UnaryTests_1k82mx8">
-          <text>"Approved","Rejected","Conditional Approval"</text>
+          <text>"Missing Credit","Missing Income","Approved","Conditional Approval","Rejected"</text>
         </outputValues>
       </output>
       <output id="OutputClause_1x57vxz" label="Max Amount" name="maxAmount" typeRef="number" />
@@ -72,12 +72,12 @@
           <text>"Conditional Approval"</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1j0ws51">
-          <text>$(.1 * income)</text>
+          <text>0.1 * income</text>
         </outputEntry>
       </rule>
       <rule>
         <inputEntry>
-          <text>{credit_score in [600 .. 700]}</text>
+          <text>[600..700]</text>
         </inputEntry>
         <inputEntry>
           <text>-</text>

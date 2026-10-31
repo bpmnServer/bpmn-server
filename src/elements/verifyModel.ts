@@ -5,6 +5,8 @@ import { ServiceTask, BusinessRuleTask, CallActivity } from './Tasks.js';
 import { ScriptHandler } from '../engine/ScriptHandler.js';
 import { Cron } from '../server/Cron.js';
 import type { IBPMNServer } from '../interfaces/server.js';
+import { DMNEngine } from '../dmn/DMNEngine.js';
+import { DMNParser } from '../dmn/DMNParser.js';
 
 /**
  * Static verification of a BPMN model: reports what would stop the engine from loading or
@@ -28,6 +30,11 @@ interface IModelIssue {
     processId?: string;
 }
 
+interface IVerifyOptions {
+    /** the folder of the decision files (`<name>.dmn.xml`) business rule tasks name; the server's definitionsPath by default */
+    decisionsFolder?: string;
+}
+
 interface IModelVerification {
     /** true when there are no errors; warnings do not make a model invalid */
     valid: boolean;
@@ -44,7 +51,12 @@ class ModelVerifier {
     /** the application's services provider, when it can be had without a running execution */
     services: any = null;
 
-    constructor(private server?: IBPMNServer) { }
+    constructor(private server?: IBPMNServer, private options: IVerifyOptions = {}) { }
+
+    get decisionsFolder(): string {
+        return this.options.decisionsFolder
+            || (this.server && this.server.configuration && this.server.configuration.definitionsPath) || null;
+    }
 
     add(severity: ModelIssueSeverity, code: string, message: string, element?) {
         const issue: IModelIssue = { severity, code, message };
@@ -101,6 +113,7 @@ class ModelVerifier {
             this.verifyContainer(proc);
         }
         this.processId = undefined;
+        this.verifyDataObjects(processes);
 
         // 3. diagram information, needed by the modeler and the previews
         this.verifyDiagram(root, processes);
@@ -112,6 +125,35 @@ class ModelVerifier {
                 await this.verifyExecutables(definition);
         }
         return this.result();
+    }
+
+    /**
+     * Data objects are loaded by the application (appDelegate.loadDataObject) when an element connected to them
+     * runs: one connected to nothing is never loaded, and an application without loadDataObject loads none.
+     */
+    verifyDataObjects(processes) {
+        const refs = [], connected = new Set();
+        const walk = container => (container.flowElements || []).forEach(e => {
+            if (is(e, 'bpmn:DataObjectReference') || is(e, 'bpmn:DataStoreReference'))
+                refs.push(e);
+            for (const a of e.dataInputAssociations || [])
+                (a.sourceRef || []).forEach(ref => connected.add(ref));
+            for (const a of e.dataOutputAssociations || [])
+                if (a.targetRef) connected.add(a.targetRef);
+            if (is(e, 'bpmn:SubProcess')) walk(e);
+        });
+        processes.forEach(walk);
+        const nameOf = ref => {
+            const target = ref.dataObjectRef || ref.dataStoreRef || ref;
+            return ref.name || target.name || target.id || ref.id;
+        };
+        for (const ref of refs)
+            if (!connected.has(ref))
+                this.add('warning', 'data-object-not-loaded', `Data object '${nameOf(ref)}' is not connected to an element, so it is never loaded.`, ref);
+        const delegate = this.server && this.server.appDelegate;
+        if (connected.size && delegate && typeof delegate.loadDataObject !== 'function')
+            this.add('warning', 'no-data-object-loader',
+                `The model uses data objects (${[...new Set([...connected].map(nameOf))].join(', ')}), but the application has no appDelegate.loadDataObject: they are not loaded.`);
     }
 
     verifyContainer(container) {
@@ -263,7 +305,7 @@ class ModelVerifier {
             if (checkScripts) proc.scripts.forEach((scripts, event) => scripts.forEach(s => this.checkScript(s, `process '${event}' script`, proc.def || proc)));
         });
 
-        definition.nodes.forEach(node => {
+        for (const node of definition.nodes.values()) {
             this.processId = node.processId;
             const def = node.def || {};
             if (checkScripts) {
@@ -296,9 +338,18 @@ class ModelVerifier {
                     this.add('info', 'service-not-found', `Service '${serviceName}' is not provided by the application's services; appDelegate.serviceCalled will handle it.`, def);
             }
 
+            // a parameter is an expression only with a leading $; without it, it is the text as written
+            const io = node.getBehaviour(Behaviour_names.CamundaIO) as any;
+            for (const p of (io && io.parameters) || [])
+                if (typeof p.value == 'string' && /^\s*(data|item|input|output)\.[\w.]+\s*$/.test(p.value))
+                    this.add('warning', 'parameter-is-text', `Parameter '${p.name}' is the text '${p.value.trim()}', not its value: write $${p.value.trim()} to read it.`, def);
+
+            if (node instanceof BusinessRuleTask)
+                await this.checkDecision(node, def);
+
             if (node instanceof CallActivity && node.calledElement && knownModels && !knownModels.has(node.calledElement))
                 this.add('warning', 'called-model-missing', `Called process '${node.calledElement}' is not a saved model.`, def);
-        });
+        }
 
         if (checkScripts) {
             definition.flows.forEach(flow => {
@@ -310,6 +361,44 @@ class ModelVerifier {
             });
         }
         this.processId = undefined;
+    }
+
+    /**
+     * A business rule task's decision: named, found in the decisions folder, readable and valid, and its result
+     * saved (a result variable or output parameters).
+     */
+    async checkDecision(node: BusinessRuleTask, def) {
+        const ref = node.decisionRef;
+        if (!ref) {
+            this.add('warning', 'decision-not-named', 'Business rule task does not name a decision (camunda:decisionRef); nothing is evaluated.', def);
+            return;
+        }
+        const io = node.getBehaviour(Behaviour_names.CamundaIO) as any;
+        const params = (io && io.parameters) || [];
+        if (!node.resultVariable && !params.some(p => p.isOutput()))
+            this.add('warning', 'decision-result-not-saved', `The result of decision '${ref}' is not saved: set a result variable or output parameters.`, def);
+        const folder = this.decisionsFolder;
+        if (!folder)
+            return;
+        let found;
+        try {
+            found = await DMNEngine.find(folder, ref);
+        }
+        catch (exc) {
+            const unreadable = /can not be read/.test(exc.message) && !/folder/.test(exc.message);
+            this.add('error', unreadable ? 'decision-invalid' : 'decision-not-found', exc.message, def);
+            return;
+        }
+        const file = found.filePath.split(/[\\/]/).pop();
+        for (const issue of DMNParser.check(found.definitions))
+            this.add('error', 'decision-invalid', `${file}: ${issue.message}`, def);
+        // with input parameters, a table input they do not set is read from the instance data
+        const inputs = params.filter(p => p.isInput()).map(p => p.name);
+        const table = found.decision.table;
+        if (inputs.length && table)
+            for (const input of table.inputs)
+                if (/^[A-Za-z_]\w*$/.test(input.expression) && !inputs.includes(input.expression))
+                    this.add('info', 'decision-input-from-data', `Decision input '${input.expression}' is not an input parameter of the task; it is read from the instance data.`, def);
     }
 
     checkScript(script: string, what: string, element) {
@@ -411,9 +500,9 @@ function resolvePath(provider, serviceName: string): boolean {
  * Verifies a BPMN model's XML. Pass the server to also check services and called models
  * against the application; without it only the model itself is checked.
  */
-async function verifyModel(source: string, server?: IBPMNServer, name = 'model'): Promise<IModelVerification> {
-    return await new ModelVerifier(server).verify(source, name);
+async function verifyModel(source: string, server?: IBPMNServer, name = 'model', options?: IVerifyOptions): Promise<IModelVerification> {
+    return await new ModelVerifier(server, options).verify(source, name);
 }
 
 export { verifyModel, ModelVerifier };
-export type { IModelIssue, IModelVerification, ModelIssueSeverity };
+export type { IModelIssue, IModelVerification, ModelIssueSeverity, IVerifyOptions };
