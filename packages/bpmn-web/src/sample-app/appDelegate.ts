@@ -1,7 +1,6 @@
 import fs from 'node:fs';
-import nodemailer from 'nodemailer';
 import {  Item, FLOW_ACTION , NODE_ACTION, IExecution , dateDiff } from './index.js';
-import { DefaultAppDelegate } from './index.js';
+import { WebAppDelegate } from '../runtime/WebAppDelegate.js';
 import { AppServices } from './appServices.js';
 import { AppUtils } from './appUtils.js';
 
@@ -14,7 +13,7 @@ const MULTI_APP_SERVICES =false;
 console.log('appDelegate from ', import.meta.filename);
 
 
-class MyAppDelegate extends DefaultAppDelegate{
+class MyAppDelegate extends WebAppDelegate{
     winSocket;
     appServices;
     appUtils;
@@ -53,88 +52,7 @@ class MyAppDelegate extends DefaultAppDelegate{
         }
         
     }
-    /**
-    * is fired on application startup
-    **/
-    async startUp(options) {
-
-        await super.startUp(options);
-		if (options['cron'] == false) {
-			return;
-		}
-
-        console.log('myserver started');
-
-        var query = { "items.status": "start" };
-
-        var list = await this.server.dataStore.findItems(query);
-        if (list.length > 0) {
-            this.server.logger.log("** There are " + list.length," items that seems to be hung");
-            console.log("** There are " + list.length," items that seems to be hung");
-            list.forEach(it=>{
-                console.log(`   item hung: '${it.elementId}' seq: ${it.seq} ${it.type} ${it.status} in process:'${it.processName}' - Instance id: '${it.instanceId}' `);
-            });
-        }
-
-        var list = await this.server.dataStore.locker.list();
-
-        let date=new Date();
-        date.setDate(date.getDate() -1);
-
-        var list = await this.server.dataStore.locker.delete({ time: { $lte: date } });
-
-        if (list.length > 0) {
-            console.log('Current locks ...', list.length);
-            for (var i = 0; i < list.length; i++) {
-                let item = list[i];
-                console.log('lock:', item.id, item.server, item.time,dateDiff(item.time));
-            }
-        }
-    
-
-    }
-    /**
-     * sends emails is called by Notification class
-     * 
-     * @param to
-     * @param subject
-     * @param text
-     */
-
-    async sendEmail(to, subject, text) {
-
-        let emailMsg;
-        if (process.env.EMAIL_ENABLE == 'true')
-        {
-            // send mail with defined transport object
-            const transporter = nodemailer.createTransport({
-                service: 'gmail',
-                auth: {
-                    user: process.env.SMTP_USER,
-                    pass: process.env.SMTP_PASSWORD
-                }
-            });
-
-            const info = await transporter.sendMail({
-                from: process.env.EMAIL_FROM,
-                to: to,
-                subject: subject,  //"Hello ?", // Subject line
-                text: text, // plain text body
-                html: text //"<b>Hello world?</b>", // html body
-            });
-            emailMsg=info.messageId;
-            console.log("Message sent: %s", info.messageId);
-        }
-        else
-            emailMsg='email disabled by .env';
-
-        let emailLog=process.env.EMAIL_LOG;
-        if(emailLog && emailLog!=='' ) {
-            let log=`\n\nto:${to}\n${subject}\n${text}\n${emailMsg}`;
-            fs.appendFileSync(emailLog,log);        
-        }
-        return emailMsg;
-    }
+    // startUp (housekeeping) and sendEmail (notifications) come from WebAppDelegate
 
     
     ///

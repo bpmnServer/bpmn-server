@@ -195,6 +195,20 @@ export class WebApp {
 	}
 
 	setupRoutes() {
+		const { api = true, ui = true } = this.application;
+		// API routers first: the UI router at '/' requires a session for every path it sees,
+		// which would send API-key callers to /login.
+		if (api) {
+			this.app.use('/api', (new API(this)).config());
+			this.app.use('/api2', (new API2(this)).config());
+			this.app.use('/admin/api', (new API(this)).adminConfig());
+			this.app.use('/admin/api2', (new API2(this)).adminConfig());
+		}
+		if (ui)
+			this.setupUiRoutes();
+	}
+
+	setupUiRoutes() {
 		var router = express.Router();
 		var root=path.join(__dirname,'../');
 		// a package's folder: in our node_modules, else in a parent's (npm workspaces install them at the root)
@@ -214,22 +228,6 @@ export class WebApp {
 		router.use('/webfonts', express.static(path.join(pkg('@fortawesome/fontawesome-free'), 'webfonts'), { maxAge: 31557600000 }));
 		this.app.use('/', router);
 
-
-
-
-
-
-
-
-
-
-
-		// API routers first: the UI router at '/' requires a session for every path it sees,
-		// which would send API-key callers to /login.
-		this.app.use('/api', (new API(this)).config());
-		this.app.use('/api2', (new API2(this)).config());
-		this.app.use('/admin/api', (new API(this)).adminConfig());
-		this.app.use('/admin/api2', (new API2(this)).adminConfig());
 		this.app.use('/', (new Workflow(this)).config());
 		this.app.use('/user', (new EndUser(this)).config());
 		this.app.use('/docs', (new Docs(this)).config());

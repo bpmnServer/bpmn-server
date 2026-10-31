@@ -14,6 +14,10 @@ export interface WorkflowApplication {
 	initialize?: (server: BPMNServer) => void;
 	/** A folder of element templates (Camunda 7 format, *.json) the model editor offers: configured tasks. */
 	elementTemplatesPath?: string;
+	/** The REST APIs (/api, /api2 and their /admin forms); default true. */
+	api?: boolean;
+	/** The web pages (tasks, instances, model editor, administration) and their files; default true. */
+	ui?: boolean;
 }
 
 export function defineWorkflowApplication(application: WorkflowApplication): WorkflowApplication {

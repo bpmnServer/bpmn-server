@@ -1,0 +1,13 @@
+# A MongoDB for this application, if you do not have one: docker compose up -d
+# Reachable from this machine only (127.0.0.1), without a password.
+services:
+  mongo:
+    image: mongo:8.0
+    command: ["--wiredTigerCacheSizeGB", "0.5"]
+    ports:
+      - 127.0.0.1:27017:27017
+    volumes:
+      - mongodb:/data/db
+    restart: unless-stopped
+volumes:
+  mongodb:

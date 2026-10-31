@@ -104,5 +104,15 @@
   },
   "engines": {
     "node": ">=20.0.0"
-  }
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.map",
+    "!dist/test",
+    "src/views",
+    "src/userAccess/views",
+    "public",
+    "emailTemplates",
+    "README.md"
+  ]
 }

@@ -3,9 +3,11 @@
  * bpmn-server command line.
  *
  *   bpmn-server verify <file-or-folder>... [--json]
+ *   bpmn-server init [folder] [options]
  *
  * verify: checks BPMN models with verifyModel (no server, no database), one line per issue;
  * exits 1 when a model has errors. `npx bpmn-server verify model.bpmn` needs no installation.
+ * init: creates an application on bpmn-server and bpmn-web (init.ts).
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -13,8 +15,10 @@ import { pathToFileURL } from 'node:url';
 
 import { verifyModel } from './elements/verifyModel.js';
 import type { IModelIssue } from './elements/verifyModel.js';
+import { init, INIT_USAGE } from './init.js';
 
 const USAGE = `usage: bpmn-server verify <file-or-folder>... [--json]
+       bpmn-server init [folder] [options]   (bpmn-server init --help)
 
   Checks BPMN 2.0 models the way bpmn-server loads and runs them: XML and
   references, structure, gateways, diagram, the engine's load, scripts,
@@ -69,6 +73,8 @@ export async function main(argv: string[]): Promise<number> {
         const targets = rest.filter(a => a !== '--json');
         if (targets.length) return await verify(targets, json);
     }
+    if (command === 'init')
+        return await init(rest);
     if (command === '--help' || command === '-h' || command === 'help') {
         console.log(USAGE);
         return 0;
