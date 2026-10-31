@@ -170,7 +170,11 @@ class Definition implements IDefinition{
             throw exc;
             return null;
         }
-        
+
+        // loading again starts over: the lists are filled below, flows appended, so a second load listed each flow twice
+        this.processes = new Map();
+        this.nodes = new Map();
+        this.flows = [];
 
         definition.rootElement.rootElements.forEach(e => {
             switch (e.$type) {
