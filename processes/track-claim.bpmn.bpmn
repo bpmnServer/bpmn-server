@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="TrackClaimDefinitions" targetNamespace="urn:insurance:claims">
+  <bpmn:process id="TrackClaim" name="Track a claim" isExecutable="true">
+    <bpmn:startEvent id="ClaimTrackingOpened" name="Claim Tracking Opened">
+      <bpmn:outgoing>ClaimTrackingOpenedToFollowUpTheClaim</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="FollowUpTheClaim" name="Follow up the claim" camunda:candidateGroups="claimsAgent">
+      <bpmn:incoming>ClaimTrackingOpenedToFollowUpTheClaim</bpmn:incoming>
+      <bpmn:incoming>OutcomeToFollowUpTheClaim</bpmn:incoming>
+      <bpmn:outgoing>FollowUpTheClaimToOutcome</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Outcome" name="Tracking outcome" default="OutcomeToTrackingClosed">
+      <bpmn:incoming>FollowUpTheClaimToOutcome</bpmn:incoming>
+      <bpmn:outgoing>OutcomeToFollowUpTheClaim</bpmn:outgoing>
+      <bpmn:outgoing>OutcomeToTrackingClosed</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="TrackingClosed" name="Tracking closed">
+      <bpmn:incoming>OutcomeToTrackingClosed</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="ClaimTrackingOpenedToFollowUpTheClaim" sourceRef="ClaimTrackingOpened" targetRef="FollowUpTheClaim" />
+    <bpmn:sequenceFlow id="FollowUpTheClaimToOutcome" sourceRef="FollowUpTheClaim" targetRef="Outcome" />
+    <bpmn:sequenceFlow id="OutcomeToFollowUpTheClaim" sourceRef="Outcome" targetRef="FollowUpTheClaim">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">$(data.status === 'Open')</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="OutcomeToTrackingClosed" sourceRef="Outcome" targetRef="TrackingClosed" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_TrackClaim">
+    <bpmndi:BPMNPlane id="BPMNPlane_TrackClaim" bpmnElement="TrackClaim">
+      <bpmndi:BPMNEdge id="OutcomeToTrackingClosed_di" bpmnElement="OutcomeToTrackingClosed">
+        <di:waypoint x="400" y="70" />
+        <di:waypoint x="507" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="OutcomeToFollowUpTheClaim_di" bpmnElement="OutcomeToFollowUpTheClaim">
+        <di:waypoint x="375" y="95" />
+        <di:waypoint x="375" y="140" />
+        <di:waypoint x="225" y="140" />
+        <di:waypoint x="225" y="110" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="FollowUpTheClaimToOutcome_di" bpmnElement="FollowUpTheClaimToOutcome">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="350" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="ClaimTrackingOpenedToFollowUpTheClaim_di" bpmnElement="ClaimTrackingOpenedToFollowUpTheClaim">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ClaimTrackingOpened_di" bpmnElement="ClaimTrackingOpened">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="FollowUpTheClaim_di" bpmnElement="FollowUpTheClaim">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Outcome_di" bpmnElement="Outcome" isMarkerVisible="true">
+        <dc:Bounds x="350" y="45" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TrackingClosed_di" bpmnElement="TrackingClosed">
+        <dc:Bounds x="507" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:message id="Message_04uwjgl" name="hotel_stay_period" />
+  <bpmn2:signal id="Signal_1wv5k67" name="confirm_stay_end" />
+  <bpmn2:collaboration id="Collaboration_0j6rsbk">
+    <bpmn2:participant id="Participant_1v6uv8j" processRef="rtp_test_msg_throw" />
+  </bpmn2:collaboration>
+  <bpmn2:process id="rtp_test_msg_throw" isExecutable="false">
+    <bpmn2:intermediateThrowEvent id="Event_04d5bzt" name="Hotel Stay">
+      <bpmn2:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="caseId">data.caseId</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1psk1k8</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0mnkxzq</bpmn2:outgoing>
+      <bpmn2:messageEventDefinition id="MessageEventDefinition_0sqol4b" messageRef="Message_04uwjgl" />
+    </bpmn2:intermediateThrowEvent>
+    <bpmn2:startEvent id="start_test_msg_throw" name="Start">
+      <bpmn2:outgoing>Flow_06l4doj</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:userTask id="pick_hotel" name="Pick Hotel">
+      <bpmn2:incoming>Flow_06l4doj</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1psk1k8</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:endEvent id="end_test_msg_throw" name="End">
+      <bpmn2:incoming>Flow_0o8o9p2</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:serviceTask id="request_review" name="Request Review">
+      <bpmn2:incoming>Flow_0k2hqc7</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0o8o9p2</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:intermediateCatchEvent id="hotel_stay_end" name="Stay End">
+      <bpmn2:incoming>Flow_0mnkxzq</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0k2hqc7</bpmn2:outgoing>
+      <bpmn2:signalEventDefinition id="SignalEventDefinition_0mfanux" signalRef="Signal_1wv5k67" />
+    </bpmn2:intermediateCatchEvent>
+    <bpmn2:sequenceFlow id="Flow_0o8o9p2" sourceRef="request_review" targetRef="end_test_msg_throw" />
+    <bpmn2:sequenceFlow id="Flow_0k2hqc7" sourceRef="hotel_stay_end" targetRef="request_review" />
+    <bpmn2:sequenceFlow id="Flow_0mnkxzq" sourceRef="Event_04d5bzt" targetRef="hotel_stay_end" />
+    <bpmn2:sequenceFlow id="Flow_1psk1k8" sourceRef="pick_hotel" targetRef="Event_04d5bzt" />
+    <bpmn2:sequenceFlow id="Flow_06l4doj" sourceRef="start_test_msg_throw" targetRef="pick_hotel" />
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0j6rsbk">
+      <bpmndi:BPMNShape id="Participant_1v6uv8j_di" bpmnElement="Participant_1v6uv8j" isHorizontal="true">
+        <dc:Bounds x="150" y="70" width="700" height="250" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_06l4doj_di" bpmnElement="Flow_06l4doj">
+        <di:waypoint x="238" y="170" />
+        <di:waypoint x="290" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1psk1k8_di" bpmnElement="Flow_1psk1k8">
+        <di:waypoint x="390" y="170" />
+        <di:waypoint x="442" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mnkxzq_di" bpmnElement="Flow_0mnkxzq">
+        <di:waypoint x="478" y="170" />
+        <di:waypoint x="532" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0k2hqc7_di" bpmnElement="Flow_0k2hqc7">
+        <di:waypoint x="568" y="170" />
+        <di:waypoint x="630" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0o8o9p2_di" bpmnElement="Flow_0o8o9p2">
+        <di:waypoint x="730" y="170" />
+        <di:waypoint x="792" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_110yadi_di" bpmnElement="Event_04d5bzt">
+        <dc:Bounds x="442" y="152" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="436" y="195" width="52" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0bxpx3u_di" bpmnElement="start_test_msg_throw">
+        <dc:Bounds x="202" y="152" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="208" y="195" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ukt6f4_di" bpmnElement="pick_hotel">
+        <dc:Bounds x="290" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0toitbo_di" bpmnElement="end_test_msg_throw">
+        <dc:Bounds x="792" y="152" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="800" y="195" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0c24c4b_di" bpmnElement="request_review">
+        <dc:Bounds x="630" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ntlx9v_di" bpmnElement="hotel_stay_end">
+        <dc:Bounds x="532" y="152" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="528" y="195" width="45" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

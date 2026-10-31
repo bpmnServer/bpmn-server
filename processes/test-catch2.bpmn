@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:message id="Message_08pk4qx" name="checkout_guest" />
+  <bpmn2:message id="Message_1w7u82r" />
+  <bpmn2:message id="Message_04uwjgl" name="hotel_stay_period" />
+  <bpmn2:signal id="Signal_1wv5k67" name="confirm_stay_end" />
+  <bpmn2:collaboration id="Collaboration_12m9l5z">
+    <bpmn2:participant id="Participant_1ptxcjh" processRef="rtp_test_msg_catch" />
+  </bpmn2:collaboration>
+  <bpmn2:process id="rtp_test_msg_catch" isExecutable="false">
+    <bpmn2:serviceTask id="welcome_guest" name="Welcome Guest" implementation="welcomeGuestService" camunda:delegateExpression="welcomeGuestService">
+      <bpmn2:incoming>Flow_059u8la</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_08kw2ja</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:startEvent id="test_msg_catch_start" name="Start">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">data.caseId= input.caseId;
+this.log(' caught message for caseId'+data.caseId);</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>Flow_059u8la</bpmn2:outgoing>
+      <bpmn2:messageEventDefinition id="MessageEventDefinition_0ltc8ia" messageRef="Message_04uwjgl" />
+    </bpmn2:startEvent>
+    <bpmn2:intermediateCatchEvent id="stay_period" name="Stay">
+      <bpmn2:incoming>Flow_08kw2ja</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0wxabew</bpmn2:outgoing>
+      <bpmn2:timerEventDefinition id="TimerEventDefinition_0zlqz9d">
+        <bpmn2:timeDuration xsi:type="bpmn2:tFormalExpression">PT2S</bpmn2:timeDuration>
+      </bpmn2:timerEventDefinition>
+    </bpmn2:intermediateCatchEvent>
+    <bpmn2:serviceTask id="check_out" name="Checkout" implementation="checkOutService" camunda:delegateExpression="checkOutService">
+      <bpmn2:incoming>Flow_0wxabew</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0zw279a</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:endEvent id="test_msg_catch_end" name="End">
+      <bpmn2:incoming>Flow_0zw279a</bpmn2:incoming>
+      <bpmn2:signalEventDefinition id="SignalEventDefinition_0txkcmd" signalRef="Signal_1wv5k67" />
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="Flow_0zw279a" sourceRef="check_out" targetRef="test_msg_catch_end" />
+    <bpmn2:sequenceFlow id="Flow_0wxabew" sourceRef="stay_period" targetRef="check_out" />
+    <bpmn2:sequenceFlow id="Flow_08kw2ja" sourceRef="welcome_guest" targetRef="stay_period" />
+    <bpmn2:sequenceFlow id="Flow_059u8la" sourceRef="test_msg_catch_start" targetRef="welcome_guest" />
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_12m9l5z">
+      <bpmndi:BPMNShape id="Participant_1ptxcjh_di" bpmnElement="Participant_1ptxcjh" isHorizontal="true">
+        <dc:Bounds x="80" y="-165" width="620" height="250" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_059u8la_di" bpmnElement="Flow_059u8la">
+        <di:waypoint x="168" y="-40" />
+        <di:waypoint x="240" y="-40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08kw2ja_di" bpmnElement="Flow_08kw2ja">
+        <di:waypoint x="340" y="-40" />
+        <di:waypoint x="402" y="-40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wxabew_di" bpmnElement="Flow_0wxabew">
+        <di:waypoint x="438" y="-40" />
+        <di:waypoint x="490" y="-40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zw279a_di" bpmnElement="Flow_0zw279a">
+        <di:waypoint x="590" y="-40" />
+        <di:waypoint x="642" y="-40" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_0v170j3_di" bpmnElement="welcome_guest">
+        <dc:Bounds x="240" y="-80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_18t96l8_di" bpmnElement="test_msg_catch_start">
+        <dc:Bounds x="132" y="-58" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="138" y="-15" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ykgw4q_di" bpmnElement="stay_period">
+        <dc:Bounds x="402" y="-58" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="409" y="-15" width="23" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0biviol_di" bpmnElement="check_out">
+        <dc:Bounds x="490" y="-80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1o5adrx_di" bpmnElement="test_msg_catch_end">
+        <dc:Bounds x="642" y="-58" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="650" y="-15" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>
