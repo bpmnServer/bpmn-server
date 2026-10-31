@@ -249,6 +249,11 @@ export default class TestPanel {
     }
 
     stop() {
+        // the run stays the scenario's last: its result and items are shown, and Simulate replays it
+        const live = this._live;
+        if (live?.instance)
+            this._results.set(live.scenario, { ...live.run, ok: live.checks ? live.checks.every(c => c.ok) : null,
+                checks: live.checks ?? [], steps: [], instance: live.instance });
         this._live = null;
         this.render();
         this._markCurrent();

@@ -62,7 +62,8 @@ function copyFile(from, to) {
 async function install() {
 
     
-    const pack = await import('../index.js');
+    // the application's configuration, and bpmn-server (re-exported)
+    const pack = await import('../sample-app/index.js');
 
     console.log('Installing a new Database');
 

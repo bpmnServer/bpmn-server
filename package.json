@@ -31,7 +31,8 @@
     "test:ui": "node --test --test-concurrency=1 \"test/ui/*.test.mjs\"",
     "test:web": "node --test --test-concurrency=1 \"test/web/*.test.mjs\"",
     "test:unit": "node --test apikey-auth.test.mjs web-security.test.mjs account-security.test.mjs dashboard-header.test.mjs error-details.test.mjs bpmn-svg.test.mjs architecture-boundary.test.mjs admin-route-boundary.test.mjs",
-    "lint:models": "node modeler/lint-models.mjs"
+    "lint:models": "node modeler/lint-models.mjs",
+    "demo:video": "npm run build:modeler && node test/demo/record-demo.mjs"
   },
   "dependencies": {
     "axios": "^1.18.1",

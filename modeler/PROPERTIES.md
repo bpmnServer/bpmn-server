@@ -37,46 +37,7 @@ Expressions and scripts see:
 | `appServices` | the application's services |
 | `appUtils`, `appDelegate` | the application's helpers |
 
-Conditions, inputs, outputs and the `# Model properties
-
-What the model editor's properties panel offers, by element, and what bpmn-server does with each setting
-when the process runs. Each setting is written to the model file in the Camunda 7 format (the `camunda:`
-namespace), so models also open in other BPMN tools.
-
-Every setting below was checked against bpmn-server's source, and the script events by running them
-(`test/web/script-events.test.mjs`).
-
-**How to read the tables**
-
-- **Field** is the panel's label; **Group** is the panel section it is in.
-- **In the file** is the XML attribute or element written.
-- Settings bpmn-server does not run are not offered. When a model has one anyway, the panel still shows it,
-  and the Problems list says it has no effect. They are listed at the end, in
-  [Settings bpmn-server does not run](#settings-bpmn-server-does-not-run).
-
-## Values: text, lists, expressions and scripts
-
-Many fields take a value that bpmn-server works out when the process runs:
-
-| You write | bpmn-server uses | Example |
-| --- | --- | --- |
-| Plain text | the text | `manager` |
-| Text with commas (assignment fields) | a list | `alice,bob` |
-| `$` and a JavaScript expression | the expression's value | `$data.requester` |
-| `#` and JavaScript (assignment fields) | what the code returns | `#data.approvers.join(',')` |
-
-Expressions and scripts see:
-
-| Name | What it is |
-| --- | --- |
-| `data` (`this.data`) | the instance data |
-| `input`, `output` | the item's input (from the task's inputs) and output (a service's result) |
-| `item` (`this`) | the item: the running task or event |
-| `instance` | the instance (in process scripts, `this` is the execution: use `instance.data`) |
-| `appServices` | the application's services |
-| `appUtils`, `appDelegate` | the application's helpers |
-
- fields are expressions. Scripts (script tasks, Scripts on events) are
+Conditions, inputs, outputs and the `$` fields are expressions. Scripts (script tasks, Scripts on events) are
 statements, which can be several lines.
 
 Script, condition and collection fields are code editors: they mark code that does not compile as you type

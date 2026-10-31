@@ -253,3 +253,19 @@ test('a scenario keeps its runs: after a reload its last run is shown and simula
     await page.waitForFunction(id => document.querySelector('.test-runs tr.shown')?.dataset.instanceId !== id, instanceId);
     await close();
 });
+
+test('a step-by-step run, closed, stays the scenario\'s last run: Simulate replays it', async () => {
+    const { page, errors, close } = await openTestTab();
+    await page.click('.test-new');
+    await page.fill('.test-name', 'Closed then simulated');
+    await page.click('.test-run');
+    await page.waitForSelector('.test-step.pending');
+    await runStep(page, 'Submit', { days: 2 });
+    await page.waitForSelector('.test-finished');
+    await page.click('.test-stop');
+    assert.equal(await page.locator('.test-simulate').isDisabled(), false);
+    await page.click('.test-simulate');
+    await page.waitForSelector('.test-status:text("Simulation done")', { timeout: 20000 });
+    assert.deepEqual(errors, []);
+    await close();
+});

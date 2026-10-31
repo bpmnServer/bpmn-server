@@ -29,3 +29,6 @@ src/tmp/
 !/modeler/**/*.js
 !/modeler/**/*.mjs
 /public/modeler/
+
+# demo videos (npm run demo:video)
+/test/demo/out
