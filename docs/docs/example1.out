@@ -1,0 +1,76 @@
+# Managing Data
+
+<!--include "include1.md" -->
+Some text here to be included
+
+## Heading 1
+
+line 1
+line 2
+
+### SubHeading A
+
+line 3
+
+## Heading 2
+
+Some more text
+
+<!--include -->
+
+
+<!--include "security.md/#demo-application-authentication-and-security" -->
+### Demo Application Authentication and Security
+
+Default installation, disables `User Authentication` and `Security Rules`
+To enable them, edit the .env file 
+
+```
+# -- Security Setting
+# if true, would direct users to login page, requires registration
+# valid values:	true	flase
+# set to false if you just want to run in DEV environment
+REQUIRE_AUTHENTICATION=false
+ENFORCE_SECURITY=false
+```
+To:
+```
+REQUIRE_AUTHENTICATION=true
+ENFORCE_SECURITY=true
+```
+
+This will utilize `passportjs` for security
+
+## Handling Access Control
+
+Here is a typical flow of a Process:
+
+1. User1 will `Start` Process `Request Vacation`
+2. System will store the initiator as `item.data.requester='User1'` 
+3. Since Task Request has `assignee=item.data.requester` only `User1` can invoke this task
+4. Once Task Request is completed by User1 , Task Approve will be created.
+5. `Task Approve` Need to be assigned to the requester supervisor
+    A Javascript event trigger on `start' will determine the supervisor userName and assign it the task
+```ts
+    item.assignee=appServices.getSupervisor(item.data.requester);
+```
+    Assuming appServices class contain such an async method that my call MongoDB
+    Alternatively; in the model editor 
+        `assignee` field `$(appServices.getSupervisor(this.data.requester))`
+
+7. To `Notify` the supervisor user, a JS trigger will invoke `notify` function
+
+<!--include --
+
+<!--include "include1.md#Heading 1" -->
+<!--include -->
+
+## Introduction
+
+`bpmn-server` relies on a Database to store workflow information.
+This makes it suitable for long-running workflows and multi-servers.
+
+Developers can query on data using [Data Query](#data-query)
+
+'bpmn-server' manages three collections in MongoDB:
+

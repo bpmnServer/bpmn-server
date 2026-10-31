@@ -1,0 +1,29 @@
+# How to pass one task output to another
+## Background
+Keep in mind a Task in model can have many instances like in the case with a loop
+## In Principle
+It is better to have the task publish its output to a data object that is can be accessed by others than to have another task seach for a particular task output
+
+## Recommended Solution
+Use `instance.data` object to capture output of particular task instances with unique variable names
+
+![](./task1-def.png)
+### 1. First Task 
+Task1 in the above example
+As a `serviceTask` return output of the method
+
+![](./appServices-add.png)
+
+
+### 2. Capture output into  `instance.data` object,
+ use a unique name for task or instance if you anticipate multiple instances, this is done using task1 `end`
+
+![](./task2-input.png)
+
+```js
+    data.task1Output=item.output;
+```
+### 3. Subsequent tasks (task2 in the above example) used the defined `instanced.data` object as an input
+```js
+$data.task1Output
+```

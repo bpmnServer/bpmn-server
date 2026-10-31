@@ -1,0 +1,67 @@
+digraph "Approval Process" {
+	Start [label=Start fillcolor=lightgreen shape=ellipse style=filled]
+	A [label="Stage A" fillcolor=lightblue shape=rectangle style=filled]
+	B [label="Stage B" fillcolor=lightblue shape=rectangle style=filled]
+	C [label="Stage C" fillcolor=lightblue shape=rectangle style=filled]
+	D [label="Stage D" fillcolor=lightblue shape=rectangle style=filled]
+	E [label="Stage E" fillcolor=lightblue shape=rectangle style=filled]
+	A_G0 [label="" fillcolor=yellow height=0.3 shape=diamond style=filled width=0.3]
+	A -> A_G0
+	"A_Treasury_Officers_Team_(2)" [label="Treasury Officers Team (2)" fillcolor=white shape=parallelogram style=filled]
+	A_G0 -> "A_Treasury_Officers_Team_(2)"
+	"A_RM_Team_(1)" [label="RM Team (1)" fillcolor=white shape=parallelogram style=filled]
+	A_G0 -> "A_RM_Team_(1)"
+	A_G1 [label="" fillcolor=yellow height=0.3 shape=diamond style=filled width=0.3]
+	A -> A_G1
+	"A_Finance_Team_(2)" [label="Finance Team (2)" fillcolor=white shape=parallelogram style=filled]
+	A_G1 -> "A_Finance_Team_(2)"
+	A_G2 [label="" fillcolor=yellow height=0.3 shape=diamond style=filled width=0.3]
+	A -> A_G2
+	"A_Operations_Head_Team_(1)" [label="Operations Head Team (1)" fillcolor=white shape=parallelogram style=filled]
+	A_G2 -> "A_Operations_Head_Team_(1)"
+	"A_Finance_Team_(1)" [label="Finance Team (1)" fillcolor=white shape=parallelogram style=filled]
+	A_G2 -> "A_Finance_Team_(1)"
+	A_G3 [label="" fillcolor=yellow height=0.3 shape=diamond style=filled width=0.3]
+	A -> A_G3
+	"A_Directors_Team_(1)" [label="Directors Team (1)" fillcolor=white shape=parallelogram style=filled]
+	A_G3 -> "A_Directors_Team_(1)"
+	A_G4 [label="" fillcolor=yellow height=0.3 shape=diamond style=filled width=0.3]
+	A -> A_G4
+	"A_HR_Head_Team_(1)" [label="HR Head Team (1)" fillcolor=white shape=parallelogram style=filled]
+	A_G4 -> "A_HR_Head_Team_(1)"
+	B_G0 [label="" fillcolor=yellow height=0.3 shape=diamond style=filled width=0.3]
+	B -> B_G0
+	"B_Risk_Officers_Team_(1)" [label="Risk Officers Team (1)" fillcolor=white shape=parallelogram style=filled]
+	B_G0 -> "B_Risk_Officers_Team_(1)"
+	"B_Compliance_Officers_Team_(2)" [label="Compliance Officers Team (2)" fillcolor=white shape=parallelogram style=filled]
+	B_G0 -> "B_Compliance_Officers_Team_(2)"
+	C_G0 [label="" fillcolor=yellow height=0.3 shape=diamond style=filled width=0.3]
+	C -> C_G0
+	"C_Treasury_Head_Team_(1)" [label="Treasury Head Team (1)" fillcolor=white shape=parallelogram style=filled]
+	C_G0 -> "C_Treasury_Head_Team_(1)"
+	"C_Finance_Controllers_Team_(1)" [label="Finance Controllers Team (1)" fillcolor=white shape=parallelogram style=filled]
+	C_G0 -> "C_Finance_Controllers_Team_(1)"
+	D_G0 [label="" fillcolor=yellow height=0.3 shape=diamond style=filled width=0.3]
+	D -> D_G0
+	"D_CFO_(1)" [label="CFO (1)" fillcolor=white shape=parallelogram style=filled]
+	D_G0 -> "D_CFO_(1)"
+	"D_Vice_President_Team_(2)" [label="Vice President Team (2)" fillcolor=white shape=parallelogram style=filled]
+	D_G0 -> "D_Vice_President_Team_(2)"
+	D_G1 [label="" fillcolor=yellow height=0.3 shape=diamond style=filled width=0.3]
+	D -> D_G1
+	"D_Senior_Ops_Team_(3)" [label="Senior Ops Team (3)" fillcolor=white shape=parallelogram style=filled]
+	D_G1 -> "D_Senior_Ops_Team_(3)"
+	E_G0 [label="" fillcolor=yellow height=0.3 shape=diamond style=filled width=0.3]
+	E -> E_G0
+	"E_Board_Member_(1)" [label="Board Member (1)" fillcolor=white shape=parallelogram style=filled]
+	E_G0 -> "E_Board_Member_(1)"
+	"E_CEO_(1)" [label="CEO (1)" fillcolor=white shape=parallelogram style=filled]
+	E_G0 -> "E_CEO_(1)"
+	"E_Regulator_(1)" [label="Regulator (1)" fillcolor=white shape=parallelogram style=filled]
+	E_G0 -> "E_Regulator_(1)"
+	Start -> A
+	A -> B
+	B -> C
+	C -> D
+	D -> E
+}

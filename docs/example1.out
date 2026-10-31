@@ -1,0 +1,37 @@
+# Managing Data
+
+<!--include "include1.md" -->
+Some text here to be included
+
+## Heading 1
+
+line 1
+line 2
+
+### SubHeading A
+
+line 3
+
+## Heading 2
+
+Some more text
+
+<!--include -->
+
+<!--include "include1.md#Heading 1" -->
+## Heading 1
+
+line 1
+line 2
+
+<!--include -->
+
+## Introduction
+
+`bpmn-server` relies on a Database to store workflow information.
+This makes it suitable for long-running workflows and multi-servers.
+
+Developers can query on data using [Data Query](#data-query)
+
+'bpmn-server' manages three collections in MongoDB:
+

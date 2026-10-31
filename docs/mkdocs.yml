@@ -1,0 +1,135 @@
+site_name:  bpmnServer docs
+docs_dir: docs
+site_dir: site
+repo_url: https://github.com/bpmnServer/bpmn-server
+theme:
+  name: material
+  favicon: favicon.ico
+  features:
+    - content.tooltips
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.breadcrumbs
+    - navigation.expand
+    - toc.integrate
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+    - navigation.footer
+  language: en
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline 
+        name: Switch to dark mode
+      primary: teal
+      accent: purple 
+    - scheme: slate 
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode    
+      primary: teal
+      accent: lime
+
+plugins:
+  - search
+markdown_extensions:
+  - toc:
+      permalink: "#" 
+  - attr_list
+  - abbr
+  - md_in_html
+  - tables
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - admonition
+  - pymdownx.arithmatex:
+      generic: true
+  - footnotes
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.mark
+
+use_directory_urls: true
+
+# Pages for features not released yet: shown by `mkdocs serve`, left out of `mkdocs build` and `gh-deploy`.
+# At release, move a page out of drafts/ and add it to the nav.
+draft_docs: |
+  drafts/
+
+
+nav:  
+- bpmn-server:
+  - Overview:  index.md
+  - "What's new in 3.x": whats-new-3.md
+  - 'Invoking Workflows': invokation.md 
+  - 'Workflow Execution': execution.md
+  - 'Scripting': scripting.md
+  - 'Security': security.md
+  - 'Data': data.md 
+  - 'Setup': setup.md 
+  - 'Checking models': verify.md
+  - 'Application Integration': customization.md 
+  - 'Advanced Topics': advanced.md
+  - 'Frequently Asked Questions': faq.md
+  - 'Site Map': map.md
+
+- Examples/Features:
+  - 'Service Task': examples/serviceTask.md
+  - 'Script Task': examples/scriptTask.md
+  - 'Conditional Flow': examples/conditionalFlow.md
+  - 'Scripts Listeners': examples/scriptEvents.md
+  - 'Gateways': examples/gateways.md
+  - 'Event Based Gateway': examples/ebg.md
+  - 'Multiple Start Events': examples/multiStartEvent.md
+  - 'Input Fields': examples/inputFields.md
+  - 'Boundary Events': examples/boundary-events.md
+  - 'Throwing/Catching Messages': examples/msg-throw-catch.md
+  - 'Throwing/Catching Signals': examples/signal-throw-catch.md
+  - 'Error/Escalate Events': examples/error_events.md
+  - 'Call Process': examples/callProcess.md
+  - 'Multi-instances (loop)': examples/loop.md
+  - 'UserTask Assignment': security.md
+  - 'Timers': timers.md
+  - 'SubProcess': examples/subProcess.md
+  - 'Transactions': examples/transactions.md
+  - 'Ad Hoc SubProcess': examples/adHoc.md
+ 
+- API:
+  - 'API Summary': api-summary.md
+  - 'API Example': examples//BuyCar-Server.md
+  - 'API': api/readme.md
+
+- Tutorial:
+  - 'Getting Started': tutorial/start.md
+  - 'Enable Security': tutorial/tutorial-security.md
+  - 'Start a Leave Application': tutorial/tutorial-user1.md
+  - 'Manager to Approve': tutorial/tutorial-manager1.md
+  - 'Let us review': tutorial/tutorial-review.md
+  - 'Execute the exercise from NodeJs': tutorial/tutorial-script.md
+
+
+- bpmn-web:
+  - 'install': bpmn-web.md
+  - 'Executing Example': examples/BuyCar-Web.md
+
+- bpmn-client:
+  - 'install': bpmn-client.md
+  - 'Executing Example': examples/BuyCar-Remote.md
+  - 'Client API': client-api.md
+
+not_in_nav: api/
