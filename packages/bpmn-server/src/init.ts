@@ -1,7 +1,8 @@
 /**
  * bpmn-server init: creates a workflow application on bpmn-server and bpmn-web.
  *
- *   npx bpmn-server init [folder] [--mongo <url>] [--port <n>] [--api-only | --ui-only] [--no-install] [--yes]
+ *   npx bpmn-server init [folder] [--mongo <url> | --memory] [--port <n>] [--api-only | --ui-only] [--no-auth]
+ *                        [--no-install] [--yes]
  *
  * The application owns its models (processes/), its delegate (src/appDelegate.ts), its settings
  * (src/config.ts) and .env; bpmn-server and bpmn-web are its dependencies, so `npm update` upgrades them.
@@ -23,13 +24,23 @@ export const INIT_USAGE = `usage: bpmn-server init [folder] [options]
   with bpmn-server and bpmn-web as its dependencies.
 
   --mongo <url>    the MongoDB database (default mongodb://localhost:27017/<folder>)
+  --memory         a MongoDB in the application's process, to try it without a
+                   database server (mongodb-memory-server; data is lost when it stops)
   --port <n>       the web server's port (default 3000)
   --api-only       the REST APIs without the web pages
   --ui-only        the web pages without the REST APIs
+  --no-auth        no sign-in and no security rules (development only); the APIs
+                   still need their keys
   --no-install     do not run npm install
   --yes            ask nothing; use the defaults`;
 
-interface InitOptions { folder: string; mongo: string; port: string; api: boolean; ui: boolean; install: boolean }
+/** The in-process MongoDB of --memory. */
+const MEMORY_SERVER_VERSION = '^10.4.3';
+
+interface InitOptions {
+    folder: string; mongo: string; memory: boolean; port: string;
+    api: boolean; ui: boolean; auth: boolean; install: boolean;
+}
 
 function parse(argv: string[]) {
     const flags = new Map<string, string | true>();
@@ -55,7 +66,9 @@ async function ask(options: InitOptions, folderGiven: boolean, flags: Map<string
     try {
         if (!folderGiven)
             options.folder = await question('Folder', options.folder);
-        if (!flags.has('--mongo'))
+        if (!flags.has('--mongo') && !flags.has('--memory'))
+            options.memory = (await question('Database: mongodb, or memory to try without one', 'mongodb')).toLowerCase().startsWith('mem');
+        if (!options.memory && !flags.has('--mongo'))
             options.mongo = await question('MongoDB', `mongodb://localhost:27017/${dbName(options.folder)}`);
         if (!flags.has('--port'))
             options.port = await question('Port', options.port);
@@ -64,6 +77,8 @@ async function ask(options: InitOptions, folderGiven: boolean, flags: Map<string
             options.api = parts !== 'ui';
             options.ui = parts !== 'api';
         }
+        if (!flags.has('--no-auth'))
+            options.auth = !(await question('Require sign-in and security rules? yes, or no for development', 'yes')).toLowerCase().startsWith('n');
     }
     finally {
         rl.close();
@@ -92,7 +107,15 @@ function copyTemplate(from: string, to: string, values: Record<string, string>) 
 function writeApplication(options: InitOptions) {
     const dir = path.resolve(options.folder);
     const name = path.basename(dir);
-    copyTemplate(TEMPLATE, dir, { __NAME__: name, __PORT__: options.port, __API__: String(options.api), __UI__: String(options.ui) });
+    copyTemplate(TEMPLATE, dir, {
+        __NAME__: name, __PORT__: options.port, __API__: String(options.api), __UI__: String(options.ui),
+        __RUN__: runSteps(options).join('\n'),
+        __SIGNIN__: options.auth
+            ? 'Sign in as `admin`, password `admin`, and **change the password**.'
+            : 'Sign-in is off (`REQUIRE_AUTHENTICATION=false` in `.env`): for development only. Set it and\n`ENFORCE_SECURITY` to `true` before anyone else can reach the server.',
+    });
+    if (options.memory)
+        fs.rmSync(path.join(dir, 'docker-compose.yml'));
 
     const pkg = {
         name: name.toLowerCase().replace(/[^a-z0-9._-]/g, '-'),
@@ -110,6 +133,7 @@ function writeApplication(options: InitOptions) {
             'bpmn-server': `^${ownVersion()}`,
             'bpmn-web': BPMN_WEB_VERSION,
             'tsx': '^4.20.0',
+            ...(options.memory ? { 'mongodb-memory-server': MEMORY_SERVER_VERSION } : {}),
         },
         devDependencies: {
             '@types/node': '^22.0.0',
@@ -125,7 +149,7 @@ function writeApplication(options: InitOptions) {
 
     const env = `# ${name}: machine settings and secrets. Not committed (.gitignore).
 PORT=${options.port}
-MONGO_DB_URL=${options.mongo}
+${options.memory ? '# memory: a MongoDB in the process, emptied when it stops; a mongodb://... URL keeps the data\n' : ''}MONGO_DB_URL=${options.memory ? 'memory' : options.mongo}
 
 # REST API keys (x-api-key): API_KEY runs processes, ADMIN_API_KEY also changes models
 API_KEY=${randomKey()}
@@ -135,8 +159,9 @@ API_SERVICE_USER_NAME=integration
 API_SERVICE_USER_GROUPS=SYSTEM
 
 SESSION_SECRET=${randomKey()}
-REQUIRE_AUTHENTICATION=true
-ENFORCE_SECURITY=true
+# false: no sign-in and no security rules, for development only
+REQUIRE_AUTHENTICATION=${options.auth}
+ENFORCE_SECURITY=${options.auth}
 
 # notifications: EMAIL_ENABLE=true sends them through gmail
 EMAIL_ENABLE=false
@@ -158,12 +183,18 @@ export async function init(argv: string[]): Promise<number> {
         console.error('--api-only and --ui-only: choose one');
         return 2;
     }
+    if (flags.has('--mongo') && flags.has('--memory')) {
+        console.error('--mongo and --memory: choose one');
+        return 2;
+    }
     const options: InitOptions = {
         folder: positional[0] ?? 'my-app',
         mongo: (flags.get('--mongo') as string) || '',
+        memory: flags.has('--memory'),
         port: (flags.get('--port') as string) || '3000',
         api: !flags.has('--ui-only'),
         ui: !flags.has('--api-only'),
+        auth: !flags.has('--no-auth'),
         install: !flags.has('--no-install'),
     };
     if (!flags.has('--yes') && process.stdin.isTTY)
@@ -191,9 +222,20 @@ export async function init(argv: string[]): Promise<number> {
     console.log(`
 Next:
   cd ${cd}${options.install ? '' : '\n  npm install'}
-  docker compose up -d     # a MongoDB at ${options.mongo}, if you do not have one
-  npm run setup            # the database's indexes and the first user (admin, password admin)
-  npm start                # http://localhost:${options.port}
+${runSteps(options).map(s => '  ' + s).join('\n')}
 `);
     return 0;
+}
+
+/** The commands that run the new application, with what each is for. */
+function runSteps(options: InitOptions): string[] {
+    const open = `npm start                # http://localhost:${options.port}`;
+    const signIn = options.auth ? ', then sign in as admin (password admin)' : '';
+    if (options.memory)
+        return [`${open}${signIn}; a MongoDB in memory, emptied when it stops`];
+    return [
+        `docker compose up -d     # a MongoDB at ${options.mongo}, if you do not have one`,
+        `npm run setup            # the database's indexes and the first user (admin, password admin)`,
+        `${open}${signIn}`,
+    ];
 }

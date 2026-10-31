@@ -5,12 +5,10 @@ A workflow application on [bpmn-server](https://bpmnserver.github.io/docs/) and 
 ## Run
 
 ```sh
-docker compose up -d     # a MongoDB, if you do not have one (MONGO_DB_URL in .env)
-npm run setup            # once: the database's indexes and the first user
-npm start                # http://localhost:__PORT__
+__RUN__
 ```
 
-Sign in as `admin`, password `admin`, and **change the password**.
+__SIGNIN__
 
 ## What is where
 

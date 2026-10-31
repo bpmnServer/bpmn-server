@@ -74,14 +74,35 @@ export async function setup(server: BPMNServer) {
 }
 
 /**
+ * MONGO_DB_URL=memory: a MongoDB in this process (the application's mongodb-memory-server), for trying
+ * bpmn-web without a database server; what it holds is gone when the process stops.
+ */
+async function startMemoryDatabase() {
+	const name = 'mongodb-memory-server';
+	let MongoMemoryServer;
+	try {
+		({ MongoMemoryServer } = await import(name));
+	}
+	catch {
+		throw new Error('MONGO_DB_URL=memory needs mongodb-memory-server: npm install mongodb-memory-server');
+	}
+	console.log('starting a MongoDB in memory (the first start downloads it): data is lost when the server stops');
+	const mongod = await MongoMemoryServer.create();
+	process.env.MONGO_DB_URL = mongod.getUri('bpmn');
+	process.once('exit', () => { mongod.stop().catch(() => {}); });
+}
+
+/**
  * Start bpmn-web for an application: the engine with the application's configuration and delegate,
  * the database prepared, and the web server listening on PORT (default 3000).
  *
  *   await start({ config, appDelegate: AppDelegate, api: true, ui: true });
  */
 export async function start(options: StartOptions = {}) {
+	if (process.env.MONGO_DB_URL === 'memory')
+		await startMemoryDatabase();
 	if (!process.env.MONGO_DB_URL)
-		throw new Error('MONGO_DB_URL is not set: name the MongoDB database in .env (MONGO_DB_URL=mongodb://localhost:27017/bpmn)');
+		throw new Error('MONGO_DB_URL is not set: name the MongoDB database in .env (MONGO_DB_URL=mongodb://localhost:27017/bpmn), or MONGO_DB_URL=memory to try without one');
 	const configuration = webConfiguration(options.config, options.appDelegate);
 	const templates = options.elementTemplatesPath ?? path.resolve('elementTemplates');
 	const application: WorkflowApplication = {

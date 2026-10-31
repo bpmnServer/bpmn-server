@@ -57,3 +57,52 @@ test('verify: a missing path is an error; no arguments prints the usage', () => 
   assert.match(none.stderr, /usage: bpmn-server verify/);
   assert.equal(run('--help').status, 0);
 });
+
+// init: an application on bpmn-server and bpmn-web, written without installing anything
+function init(...args) {
+  const dir = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-init-')), 'app');
+  const r = run('init', dir, '--yes', '--no-install', ...args);
+  assert.equal(r.status, 0, r.stdout + r.stderr);
+  const read = file => fs.readFileSync(path.join(dir, file), 'utf8');
+  return { dir, r, read, exists: file => fs.existsSync(path.join(dir, file)) };
+}
+
+test('init: a MongoDB application with sign-in, by default', () => {
+  const app = init('--port', '3050');
+  for (const file of ['package.json', '.env', '.gitignore', 'README.md', 'docker-compose.yml', 'tsconfig.json',
+    'src/index.ts', 'src/config.ts', 'src/appDelegate.ts', 'processes/Hello.bpmn'])
+    assert.ok(app.exists(file), file);
+  const env = app.read('.env');
+  assert.match(env, /^MONGO_DB_URL=mongodb:\/\/localhost:27017\/app$/m);
+  assert.match(env, /^REQUIRE_AUTHENTICATION=true$/m);
+  assert.match(env, /^API_KEY=[0-9a-f]{48}$/m);
+  const pkg = JSON.parse(app.read('package.json'));
+  assert.ok(pkg.dependencies['bpmn-web'] && pkg.dependencies['bpmn-server']);
+  assert.equal(pkg.dependencies['mongodb-memory-server'], undefined);
+  assert.match(app.read('src/index.ts'), /api: true,[\s\S]*ui: true,/);
+  assert.match(app.read('README.md'), /npm run setup[\s\S]*http:\/\/localhost:3050/);
+  assert.match(app.r.stdout, /docker compose up -d/);
+  assert.equal(run('verify', path.join(app.dir, 'processes')).status, 0, 'the sample model passes');
+});
+
+test('init: --memory, --no-auth and --api-only', () => {
+  const app = init('--memory', '--no-auth', '--api-only');
+  const env = app.read('.env');
+  assert.match(env, /^MONGO_DB_URL=memory$/m);
+  assert.match(env, /^REQUIRE_AUTHENTICATION=false$/m);
+  assert.match(env, /^ENFORCE_SECURITY=false$/m);
+  assert.ok(JSON.parse(app.read('package.json')).dependencies['mongodb-memory-server']);
+  assert.ok(!app.exists('docker-compose.yml'), 'no MongoDB to run');
+  assert.match(app.read('src/index.ts'), /api: true,[\s\S]*ui: false,/);
+  assert.doesNotMatch(app.r.stdout, /npm run setup|docker compose/);
+  assert.match(app.read('README.md'), /Sign-in is off/);
+});
+
+test('init: conflicting options and a folder in use are refused', () => {
+  assert.equal(run('init', 'x', '--memory', '--mongo', 'mongodb://h/db').status, 2);
+  assert.equal(run('init', 'x', '--api-only', '--ui-only').status, 2);
+  const app = init();
+  const again = run('init', app.dir, '--yes', '--no-install');
+  assert.equal(again.status, 1);
+  assert.match(again.stderr, /not empty/);
+});
