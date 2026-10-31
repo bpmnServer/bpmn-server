@@ -1,8 +1,16 @@
-// The Report view: the whole process as one document, from the model being edited. Each process, then its
-// elements in flow order (start to end, sub-processes inside their parent), with their documentation, how
-// bpmn-server reads them (the engine's own description, as the instance page's Model documentation shows it)
-// and their problems; then the flows that have conditions. Clicking an element goes back to the diagram with
-// it selected. It is rebuilt with each check of the model (Problems), so it follows unsaved edits.
+// The Report view: the whole process as one outline, from the model being edited, as its XML reads:
+//
+//   process: insuranceClaim, Insurance Claim Processing
+//       serviceTask: validate, Validate Claim
+//           implementation: validateClaim
+//           sequenceFlow: flow2
+//               targetRef: decision
+//
+// Each process, then its elements in flow order (start to end), each with its documentation, its settings
+// (`key: value`), the data objects it loads and its problems; nested under it: the boundary events attached to
+// it, a sub-process's elements (an event sub-process's, a loop's body), then its outgoing flows with their
+// targets and conditions. Clicking an id goes back to the diagram with it selected. It is rebuilt with each
+// check of the model (Problems), so it follows unsaved edits.
 import { is, isAny, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { dataObjectName, dataField, loadersOf } from '../properties/DataObjectGroup.jsx';
 
@@ -16,12 +24,6 @@ function loadedBy(bo) {
 }
 
 const SEVERITY_ORDER = { error: 0, warning: 1, info: 2 };
-
-/** 'bpmn:UserTask' -> 'User task' */
-function typeLabel(type) {
-    const name = String(type || '').replace(/^bpmn:/, '').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase();
-    return name.charAt(0).toUpperCase() + name.slice(1);
-}
 
 function documentationOf(bo) {
     return (bo?.get('documentation') || []).map(d => d.get('text')).filter(Boolean).join('\n');
@@ -66,6 +68,79 @@ function inFlowOrder(container) {
     for (const element of elements)
         if (!seen.has(element)) place(element);
     return ordered;
+}
+
+/** 'bpmn:UserTask' -> 'userTask', as the model's XML names it */
+const localName = type => { const name = String(type || '').replace(/^\w+:/, ''); return name.charAt(0).toLowerCase() + name.slice(1); };
+
+/** A setting's value in words: a reference by its name (or id), an expression by its body. */
+function valueOf(value) {
+    if (value === undefined || value === null || value === '') return undefined;
+    if (typeof value !== 'object') return String(value);
+    if (is(value, 'bpmn:Expression') || is(value, 'bpmn:FormalExpression')) return value.get('body');
+    return value.get?.('name') || value.id;
+}
+
+const SETTINGS = ['implementation', 'camunda:delegateExpression', 'camunda:expression', 'camunda:class', 'camunda:topic',
+    'camunda:initiator', 'camunda:assignee', 'camunda:candidateUsers', 'camunda:candidateGroups', 'camunda:dueDate',
+    'camunda:followUpDate', 'camunda:priority', 'camunda:formKey', 'calledElement', 'camunda:decisionRef',
+    'camunda:resultVariable', 'camunda:mapDecisionResult', 'messageRef', 'instantiate', 'scriptFormat'];
+
+/** An element's settings as `key: value` lines, from the model being edited: what bpmn-server reads of it. */
+function settingsOf(bo) {
+    const lines = [];
+    const add = (key, value) => {
+        const text = valueOf(value);
+        if (text !== undefined && !String(text).startsWith('##')) lines.push([key, String(text)]);
+    };
+    for (const key of SETTINGS)
+        if (bo.$descriptor?.propertiesByName?.[key] || bo.$attrs?.[key] !== undefined) add(key.replace(/^camunda:/, ''), bo.get(key));
+    if (is(bo, 'bpmn:ScriptTask')) add('script', bo.get('script'));
+    if (is(bo, 'bpmn:BoundaryEvent')) {
+        add('attachedToRef', bo.get('attachedToRef')?.id);
+        if (bo.get('cancelActivity') === false) add('cancelActivity', 'false (non-interrupting)');
+    }
+    for (const definition of bo.get('eventDefinitions') || []) {
+        const kind = localName(definition.$type).replace(/EventDefinition$/, '');
+        if (kind === 'timer') {
+            for (const [key, label] of [['timeDuration', 'duration'], ['timeCycle', 'cycle'], ['timeDate', 'date']])
+                if (definition.get(key)) add('timer', `${label} ${valueOf(definition.get(key))}`);
+            if (!['timeDuration', 'timeCycle', 'timeDate'].some(k => definition.get(k))) add('timer', '(no duration, cycle or date)');
+        }
+        else if (kind === 'message') add('message', definition.get('messageRef') || '(none named)');
+        else if (kind === 'signal') add('signal', definition.get('signalRef') || '(none named)');
+        else if (kind === 'error') add('error', definition.get('errorRef') ? `${valueOf(definition.get('errorRef'))}${definition.get('errorRef').get('errorCode') ? ` (code ${definition.get('errorRef').get('errorCode')})` : ''}` : '(any)');
+        else if (kind === 'escalation') add('escalation', definition.get('escalationRef') || '(any)');
+        else if (kind === 'conditional') add('condition', definition.get('condition'));
+        else add('event', kind);
+    }
+    const loop = bo.get('loopCharacteristics');
+    if (loop) {
+        if (is(loop, 'bpmn:MultiInstanceLoopCharacteristics')) {
+            add('loop', `multi-instance, ${loop.get('isSequential') ? 'one after another' : 'in parallel'}`);
+            add('collection', loop.get('camunda:collection'));
+            add('elementVariable', loop.get('camunda:elementVariable'));
+            add('loopCardinality', loop.get('loopCardinality'));
+            add('completionCondition', loop.get('completionCondition'));
+        }
+        else add('loop', 'standard');
+    }
+    for (const extension of bo.get('extensionElements')?.get('values') || []) {
+        if (is(extension, 'camunda:InputOutput')) {
+            for (const p of extension.get('inputParameters') || []) add(`input ${p.get('name')}`, p.get('value') ?? valueOf(p.get('definition')) ?? '');
+            for (const p of extension.get('outputParameters') || []) add(`output ${p.get('name')}`, p.get('value') ?? valueOf(p.get('definition')) ?? '');
+        }
+        else if (is(extension, 'camunda:FormData'))
+            for (const f of extension.get('fields') || [])
+                add('formField', `${f.get('id')} (${f.get('type') || 'string'})${f.get('label') && f.get('label') !== f.get('id') ? ` ${f.get('label')}` : ''}`);
+        else if (is(extension, 'camunda:ExecutionListener') || is(extension, 'camunda:TaskListener')) {
+            const script = extension.get('script');
+            add(`on ${extension.get('event')}`, script ? (script.get('value') ?? script.get('resource') ?? '') : extension.get('expression') ?? extension.get('class') ?? extension.get('delegateExpression'));
+        }
+        else if (is(extension, 'camunda:Properties'))
+            for (const p of extension.get('values') || []) add(`property ${p.get('name')}`, p.get('value'));
+    }
+    return lines;
 }
 
 function el(tag, attrs = {}, ...children) {
@@ -130,7 +205,6 @@ export default class Report {
         if (!this._root)
             return;
         const definitions = this._bpmnjs.getDefinitions();
-        const descriptions = this._problems?.descriptions || {};
         const issues = this._problems?.issues || [];
         const issuesOf = id => issues.filter(i => i.elementId === id)
             .sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]);
@@ -139,48 +213,50 @@ export default class Report {
         const issueList = list => list.length ? el('ul', { class: 'report-issues' },
             list.map(i => el('li', { class: `severity-${i.severity}` }, el('span', { class: 'severity' }, i.severity), ' ', i.message))) : null;
 
-        const description = id => {
-            const lines = descriptions[id] || [];
-            return lines.length ? el('dl', { class: 'report-description' },
-                lines.map(([label, value]) => [el('dt', {}, label), el('dd', {}, value)])) : null;
-        };
+        const link = bo => el('a', { href: '#', class: 'report-id', onclick: event => { event.preventDefault(); this.reveal(bo.id); } }, bo.id);
+        /** `type: id, name` */
+        const head = (tag, bo, extra = null) => el(tag, { class: 'report-head' },
+            el('span', { class: 'report-key' }, `${localName(bo.$type)}:`), ' ', link(bo),
+            bo.get('name') ? el('span', { class: 'report-name' }, `, ${bo.get('name')}`) : null, extra);
+        /** `key: value` lines; a value of several lines (a script) as a block */
+        const settings = lines => lines.length ? el('div', { class: 'report-settings' },
+            lines.map(([key, value]) => el('div', { class: 'report-line' },
+                el('span', { class: 'report-key' }, `${key}:`), ' ',
+                value.includes('\n') ? el('pre', { class: 'report-value' }, value) : el('span', { class: 'report-value' }, value)))) : null;
 
-        const elementSection = (bo, depth) => {
-            const documentation = documentationOf(bo);
-            const children = is(bo, 'bpmn:SubProcess') ? inFlowOrder(bo) : [];
-            return [
-                el('section', { class: 'report-element', 'data-element-id': bo.id, style: depth ? `margin-left:${depth * 24}px` : null },
-                    el('h3', {},
-                        el('a', { href: '#', onclick: event => { event.preventDefault(); this.reveal(bo.id); } }, bo.get('name') || bo.id),
-                        el('span', { class: 'report-type' }, typeLabel(bo.$type), bo.get('name') ? ` · ${bo.id}` : '')),
-                    documentation ? el('p', { class: 'report-documentation' }, documentation) : null,
-                    loadedBy(bo).length ? el('p', { class: 'report-loads' }, 'Loads ', loadedBy(bo).map(n => el('code', {}, dataField(n))).flatMap((c, i) => i ? [', ', c] : [c])) : null,
-                    description(bo.id),
-                    is(bo, 'bpmn:BusinessRuleTask') ? this.decisionSection(bo) : null,
-                    issueList(issuesOf(bo.id))),
-                ...children.flatMap(child => elementSection(child, depth + 1))
-            ];
-        };
-
-        const conditionalFlows = container => {
-            const all = [];
-            const walk = c => (c.get('flowElements') || []).forEach(e => {
-                if (is(e, 'bpmn:SequenceFlow') && (e.get('conditionExpression') || descriptions[e.id]?.length || issuesOf(e.id).length))
-                    all.push(e);
-                if (is(e, 'bpmn:SubProcess')) walk(e);
-            });
-            walk(container);
-            return all;
-        };
-
-        const flowRow = flow => {
+        /** An element's outgoing sequence flow: its target, its condition, whether it is the default; one back to an element placed before it is a loop. */
+        const flowSection = (flow, placed) => {
             const from = flow.get('sourceRef'), to = flow.get('targetRef');
-            const source = from?.get('default') === flow ? ' (default)' : '';
-            return el('tr', { 'data-element-id': flow.id },
-                el('td', {}, el('a', { href: '#', onclick: event => { event.preventDefault(); this.reveal(flow.id); } }, flow.get('name') || flow.id)),
-                el('td', {}, `${from?.get('name') || from?.id || '?'} → ${to?.get('name') || to?.id || '?'}${source}`),
-                el('td', {}, flow.get('conditionExpression')?.get('body') || ''),
-                el('td', {}, issueList(issuesOf(flow.id))));
+            const lines = [['targetRef', `${to?.id ?? '?'}${placed.has(to) ? ' (back to an earlier element: a loop)' : ''}`]];
+            const condition = flow.get('conditionExpression');
+            if (condition) lines.push(['conditionExpression', valueOf(condition) ?? '']);
+            if (from?.get('default') === flow) lines.push(['default', 'yes: taken when no other flow\'s condition holds']);
+            return el('section', { class: 'report-flow', 'data-element-id': flow.id },
+                head('div', flow), el('div', { class: 'report-body' }, settings(lines), issueList(issuesOf(flow.id))));
+        };
+
+        /**
+         * An element and what it holds, indented under it: its settings, the boundary events attached to it, the elements
+         * of a sub-process (an event sub-process too, and the body of a loop), then its outgoing flows.
+         */
+        const elementSection = (bo, placed) => {
+            placed.add(bo);
+            const documentation = documentationOf(bo);
+            const boundary = (bo.$parent?.get?.('flowElements') || []).filter(e => is(e, 'bpmn:BoundaryEvent') && e.get('attachedToRef') === bo);
+            const children = is(bo, 'bpmn:SubProcess') ? inFlowOrder(bo).filter(e => !is(e, 'bpmn:BoundaryEvent')) : [];
+            // the flows that leave it, by their sourceRef (a model need not list them as the element's outgoing)
+            const outgoing = (bo.$parent?.get?.('flowElements') || []).filter(f => is(f, 'bpmn:SequenceFlow') && f.get('sourceRef') === bo);
+            return el('section', { class: 'report-element', 'data-element-id': bo.id },
+                head('h3', bo, bo.get('triggeredByEvent') ? el('span', { class: 'report-type' }, 'event sub-process') : null),
+                el('div', { class: 'report-body' },
+                    documentation ? el('p', { class: 'report-documentation' }, documentation) : null,
+                    settings(settingsOf(bo)),
+                    loadedBy(bo).length ? el('p', { class: 'report-loads' }, 'Loads ', loadedBy(bo).map(n => el('code', {}, dataField(n))).flatMap((c, i) => i ? [', ', c] : [c])) : null,
+                    is(bo, 'bpmn:BusinessRuleTask') ? this.decisionSection(bo) : null,
+                    issueList(issuesOf(bo.id)),
+                    boundary.map(b => elementSection(b, placed)),
+                    children.map(child => elementSection(child, placed)),
+                    outgoing.map(flow => flowSection(flow, placed))));
         };
 
         const modelIssues = issues.filter(i => !i.elementId);
@@ -190,10 +266,15 @@ export default class Report {
                 el('p', { class: 'report-summary' }, summary(issues))),
             issueList(modelIssues),
             processes.map(process => el('section', { class: 'report-process', 'data-element-id': process.id },
-                el('h2', {}, process.get('name') || process.id, el('span', { class: 'report-type' }, `Process · ${process.id}`)),
+                head('h2', process),
                 documentationOf(process) ? el('p', { class: 'report-documentation' }, documentationOf(process)) : null,
-                description(process.id),
+                settings(settingsOf(process)),
                 issueList(issuesOf(process.id)),
+                (() => {
+                    const placed = new Set();
+                    return el('div', { class: 'report-body report-elements' },
+                        inFlowOrder(process).filter(e => !is(e, 'bpmn:BoundaryEvent') || !e.get('attachedToRef')).map(element => elementSection(element, placed)));
+                })(),
                 (() => {
                     const refs = [];
                     const walk = c => (c.get('flowElements') || []).forEach(e => { if (isAny(e, DATA_REFERENCES)) refs.push(e); if (is(e, 'bpmn:SubProcess')) walk(e); });
@@ -206,16 +287,6 @@ export default class Report {
                                 el('td', {}, el('a', { href: '#', onclick: event => { event.preventDefault(); this.reveal(ref.id); } }, dataObjectName(ref))),
                                 el('td', {}, dataField(dataObjectName(ref))),
                                 el('td', {}, loadersOf(ref).map(e => e.get('name') || e.id).join(', ') || 'nothing: never loaded')))))
-                    ] : null;
-                })(),
-                inFlowOrder(process).flatMap(element => elementSection(element, 0)),
-                (() => {
-                    const flows = conditionalFlows(process);
-                    return flows.length ? [
-                        el('h3', { class: 'report-flows-title' }, 'Conditions'),
-                        el('table', { class: 'report-flows' },
-                            el('thead', {}, el('tr', {}, el('th', {}, 'Flow'), el('th', {}, 'From → to'), el('th', {}, 'Condition'), el('th', {}, ''))),
-                            el('tbody', {}, flows.map(flowRow)))
                     ] : null;
                 })())));
         this._root.replaceChildren(content);
