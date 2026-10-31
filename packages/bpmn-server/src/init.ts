@@ -179,7 +179,8 @@ export async function init(argv: string[]): Promise<number> {
 
     if (options.install) {
         console.log('npm install ...');
-        const npm = spawnSync('npm', ['install'], { cwd: dir, stdio: 'inherit', shell: process.platform === 'win32' });
+        // one command line, no arguments: Windows runs npm.cmd only through a shell
+        const npm = spawnSync('npm install', { cwd: dir, stdio: 'inherit', shell: true });
         if (npm.status !== 0) {
             console.error('npm install failed; run it in the folder once the problem is fixed');
             return 1;
