@@ -1,0 +1,42 @@
+name: bpmn-server
+services:
+  bpmn-web:
+    image: ralphhanna/bpmn-web
+    ports:
+      - 3000:3000
+    environment:
+      MONGO_DB_URL: mongodb://mongo:27017/bpmn
+      REQUIRE_AUTHENTICATION: "true"
+      ENFORCE_SECURITY: "true"
+      # who /api2 calls run as
+      API_SERVICE_USER_NAME: integration
+      API_SERVICE_USER_GROUPS: SYSTEM
+      # from .env next to this file (up.cmd and up.sh create it with random values)
+      API_KEY: ${API_KEY:?run up.cmd or up.sh, or set API_KEY in .env}
+      ADMIN_API_KEY: ${ADMIN_API_KEY:?set ADMIN_API_KEY in .env}
+      SESSION_SECRET: ${SESSION_SECRET:?set SESSION_SECRET in .env}
+    volumes:
+      - processes:/app/processes
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: unless-stopped
+  mongo:
+    image: mongo:8.0
+    # not published to the host; add "ports: [27017:27017]" to reach it from outside (it has no password)
+    # its cache would otherwise take half the machine's memory
+    command: ["--wiredTigerCacheSizeGB", "0.5"]
+    volumes:
+      - mongodb:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+volumes:
+  # the database. A Docker volume, not a folder of this machine: on Windows and macOS, MongoDB hangs on a
+  # folder shared from the host.
+  mongodb:
+  # the models (the processes folder); filled from the image the first time
+  processes:
