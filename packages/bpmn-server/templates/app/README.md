@@ -22,7 +22,8 @@ Sign in as `admin`, password `admin`, and **change the password**.
 | `src/index.ts` | Starts bpmn-web: the APIs, the web pages, or both. |
 | `.env` | The database, the port and the generated keys. Not committed. |
 
-`npm run verify` checks the models in `processes/`.
+`npm run verify` checks the models in `processes/`. `npm run cli` opens the console: start processes,
+list and complete tasks, check locks, recover hung items, list users and set passwords (`spw`).
 
 ## The REST API
 

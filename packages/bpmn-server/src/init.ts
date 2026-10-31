@@ -103,6 +103,7 @@ function writeApplication(options: InitOptions) {
             start: 'tsx src/index.ts',
             dev: 'tsx watch src/index.ts',
             setup: 'tsx src/index.ts --setup',
+            cli: 'tsx src/index.ts --cli',
             verify: 'bpmn-server verify processes',
         },
         dependencies: {

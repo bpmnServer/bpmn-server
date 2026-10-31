@@ -254,6 +254,9 @@ class Execution extends ServerComponent implements IExecution {
                 token = t;
             }
         });
+        // the item records who completed it (it was created with the user of the call that reached it)
+        if (token && userName)
+            token.currentItem.userName = userName;
         this.info(JSON.stringify({type:'execution', label:'Invoke Item',
             action:'signalInput',
             id:token.currentNodeId,

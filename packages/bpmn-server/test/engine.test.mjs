@@ -24,6 +24,18 @@ test('a covered claim runs end to end: service, gateway, user task with its grou
   await server.shutdown();
 });
 
+test('a completed task records who completed it', async () => {
+  const { server } = await makeServer({ services: coverage(true) });
+  const started = await server.engine.start('property-claim', { claimId: 'C-4' }, null, 'clerk');
+  const task = started.instance.items.find(i => i.elementId === 'AssessClaim');
+  assert.equal(task.userName, 'clerk', 'created in the call that reached it');
+  const assessed = await server.engine.invoke({ 'items.id': task.id }, { assessment: 'pay' }, 'ana');
+  const done = assessed.instance.items.find(i => i.id === task.id);
+  assert.equal(done.status, 'end');
+  assert.equal(done.userName, 'ana');
+  await server.shutdown();
+});
+
 test('an uncovered claim takes the default flow and is rejected', async () => {
   const { server } = await makeServer({ services: coverage(false) });
   const done = await server.engine.start('property-claim', { claimId: 'C-2' });

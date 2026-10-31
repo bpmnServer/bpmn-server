@@ -21,6 +21,8 @@ export interface StartOptions {
 	elementTemplatesPath?: string;
 	/** Prepare the database (indexes, the first user) and stop: an app's `npm run setup`. */
 	setupOnly?: boolean;
+	/** The console instead of the web server (start processes, tasks, locks, users): an app's `npm run cli`. */
+	console?: boolean;
 }
 
 function isTrue(param) {
@@ -87,7 +89,7 @@ export async function start(options: StartOptions = {}) {
 		api: options.api ?? true,
 		ui: options.ui ?? true,
 		elementTemplatesPath: fs.existsSync(templates) ? templates : undefined,
-		serverOptions: options.setupOnly ? { cron: false } : {},
+		serverOptions: options.setupOnly || options.console ? { cron: false } : {},
 	};
 	const { WebApp } = await import('./app.js');
 	const webApp = new WebApp(application);
@@ -97,6 +99,11 @@ export async function start(options: StartOptions = {}) {
 		console.log('setup done: the database is ready; sign in as admin (password admin) and change the password');
 		await webApp.bpmnServer.shutdown();
 		process.exit(0);
+	}
+	if (options.console) {
+		const { runConsole } = await import('./console.js');
+		await runConsole(webApp.bpmnServer);
+		return webApp;
 	}
 	webApp.start();
 	return webApp;
