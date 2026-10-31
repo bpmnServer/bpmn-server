@@ -1,0 +1,339 @@
+strict digraph "dependency-cruiser output"{
+    rankdir="LR" splines="true" overlap="false" nodesep="0.16" ranksep="0.18" fontname="Helvetica-bold" fontsize="9" style="rounded,bold,filled" fillcolor="#ffffff" compound="true"
+    node [shape="box" style="rounded, filled" height="0.2" color="black" fillcolor="#ffffcc" fontcolor="black" fontname="Helvetica" fontsize="9"]
+    edge [arrowhead="normal" arrowsize="0.6" penwidth="2.0" color="#00000033" fontname="Helvetica" fontsize="9"]
+
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/API" {label="API" "src/API/API.ts" [label=<API.ts> tooltip="API.ts" URL="src/API/API.ts" fillcolor="#ddfeff"] } }
+    "src/API/API.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/API" {label="API" "src/API/AccessManager.ts" [label=<AccessManager.ts> tooltip="AccessManager.ts" URL="src/API/AccessManager.ts" fillcolor="#ddfeff"] } }
+    "src/API/AccessManager.ts" -> "src/interfaces/index.ts"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/API" {label="API" "src/API/SecureUser.ts" [label=<SecureUser.ts> tooltip="SecureUser.ts" URL="src/API/SecureUser.ts" fillcolor="#ddfeff"] } }
+    "src/API/SecureUser.ts" -> "src/datastore/QueryTranslator.ts"
+    "src/API/SecureUser.ts" -> "src/interfaces/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/API" {label="API" "src/API/index.ts" [label=<index.ts> tooltip="index.ts" URL="src/API/index.ts" fillcolor="#ddfeff"] } }
+    "src/API/index.ts" -> "src/API/API.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/API/index.ts" -> "src/API/SecureUser.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/common" {label="common" "src/common/DefaultConfiguration.ts" [label=<DefaultConfiguration.ts> tooltip="DefaultConfiguration.ts" URL="src/common/DefaultConfiguration.ts" fillcolor="#ddfeff"] } }
+    "src/common/DefaultConfiguration.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/common/DefaultConfiguration.ts" -> "src/datastore/ModelsDatastore.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/common/DefaultConfiguration.ts" -> "src/engine/DefaultAppDelegate.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/common/DefaultConfiguration.ts" -> "src/common/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/common" {label="common" "src/common/Logger.ts" [label=<Logger.ts> tooltip="Logger.ts" URL="src/common/Logger.ts" fillcolor="#ddfeff"] } }
+    "src/common/Logger.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/common" {label="common" "src/common/index.ts" [label=<index.ts> tooltip="index.ts" URL="src/common/index.ts" fillcolor="#ddfeff"] } }
+    "src/common/index.ts" -> "src/common/DefaultConfiguration.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/common/index.ts" -> "src/common/Logger.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/common/index.ts" -> "src/common/timer.ts" [arrowhead="inv"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/common" {label="common" "src/common/timer.ts" [label=<timer.ts> tooltip="timer.ts" URL="src/common/timer.ts" fillcolor="#ddfeff"] } }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/datastore" {label="datastore" "src/datastore/Aggregate.ts" [label=<Aggregate.ts> tooltip="Aggregate.ts" URL="src/datastore/Aggregate.ts" fillcolor="#ddfeff"] } }
+    "src/datastore/Aggregate.ts" -> "src/engine/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/datastore/Aggregate.ts" -> "src/engine/Execution.ts"
+    "src/datastore/Aggregate.ts" -> "src/interfaces/index.ts"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/datastore" {label="datastore" "src/datastore/DataStore.ts" [label=<DataStore.ts> tooltip="DataStore.ts" URL="src/datastore/DataStore.ts" fillcolor="#ddfeff"] } }
+    "src/datastore/DataStore.ts" -> "src/engine/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/datastore/DataStore.ts" -> "src/engine/Execution.ts"
+    "src/datastore/DataStore.ts" -> "src/interfaces/index.ts"
+    "src/datastore/DataStore.ts" -> "src/server/ServerComponent.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/datastore/DataStore.ts" -> "src/datastore/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/datastore/DataStore.ts" -> "src/datastore/Aggregate.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/datastore/DataStore.ts" -> "src/datastore/MongoDB.ts"
+    "src/datastore/DataStore.ts" -> "src/datastore/QueryTranslator.ts"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/datastore" {label="datastore" "src/datastore/InstanceLocker.ts" [label=<InstanceLocker.ts> tooltip="InstanceLocker.ts" URL="src/datastore/InstanceLocker.ts" fillcolor="#ddfeff"] } }
+    "src/datastore/InstanceLocker.ts" -> "src/datastore/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/datastore" {label="datastore" "src/datastore/ModelsData.ts" [label=<ModelsData.ts> tooltip="ModelsData.ts" URL="src/datastore/ModelsData.ts" fillcolor="#ddfeff"] } }
+    "src/datastore/ModelsData.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/datastore/ModelsData.ts" -> "src/interfaces/index.ts"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/datastore" {label="datastore" "src/datastore/ModelsDatastore.ts" [label=<ModelsDatastore.ts> tooltip="ModelsDatastore.ts" URL="src/datastore/ModelsDatastore.ts" fillcolor="#ddfeff"] } }
+    "src/datastore/ModelsDatastore.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/datastore/ModelsDatastore.ts" -> "src/interfaces/index.ts"
+    "src/datastore/ModelsDatastore.ts" -> "src/server/index.ts"
+    "src/datastore/ModelsDatastore.ts" -> "src/datastore/ModelsDatastoreDB.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/datastore" {label="datastore" "src/datastore/ModelsDatastoreDB.ts" [label=<ModelsDatastoreDB.ts> tooltip="ModelsDatastoreDB.ts" URL="src/datastore/ModelsDatastoreDB.ts" fillcolor="#ddfeff"] } }
+    "src/datastore/ModelsDatastoreDB.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/datastore/ModelsDatastoreDB.ts" -> "src/interfaces/index.ts"
+    "src/datastore/ModelsDatastoreDB.ts" -> "src/server/index.ts"
+    "src/datastore/ModelsDatastoreDB.ts" -> "src/server/ServerComponent.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/datastore/ModelsDatastoreDB.ts" -> "src/datastore/ModelsData.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/datastore/ModelsDatastoreDB.ts" -> "src/datastore/MongoDB.ts"
+    "src/datastore/ModelsDatastoreDB.ts" -> "src/datastore/QueryTranslator.ts"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/datastore" {label="datastore" "src/datastore/MongoDB.ts" [label=<MongoDB.ts> tooltip="MongoDB.ts" URL="src/datastore/MongoDB.ts" fillcolor="#ddfeff"] } }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/datastore" {label="datastore" "src/datastore/QueryTranslator.ts" [label=<QueryTranslator.ts> tooltip="QueryTranslator.ts" URL="src/datastore/QueryTranslator.ts" fillcolor="#ddfeff"] } }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/datastore" {label="datastore" "src/datastore/index.ts" [label=<index.ts> tooltip="index.ts" URL="src/datastore/index.ts" fillcolor="#ddfeff"] } }
+    "src/datastore/index.ts" -> "src/datastore/DataStore.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/datastore/index.ts" -> "src/datastore/InstanceLocker.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/datastore/index.ts" -> "src/datastore/ModelsData.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/datastore/index.ts" -> "src/datastore/ModelsDatastore.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/datastore/index.ts" -> "src/datastore/ModelsDatastoreDB.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/datastore/index.ts" -> "src/datastore/MongoDB.ts" [arrowhead="inv"]
+    "src/datastore/index.ts" -> "src/datastore/QueryTranslator.ts" [arrowhead="inv"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/dmn" {label="dmn" "src/dmn/DMNEngine.ts" [label=<DMNEngine.ts> tooltip="DMNEngine.ts" URL="src/dmn/DMNEngine.ts" fillcolor="#ddfeff"] } }
+    "src/dmn/DMNEngine.ts" -> "src/dmn/DMNParser.ts"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/dmn" {label="dmn" "src/dmn/DMNParser.ts" [label=<DMNParser.ts> tooltip="DMNParser.ts" URL="src/dmn/DMNParser.ts" fillcolor="#ddfeff"] } }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" "src/elements/Definition.ts" [label=<Definition.ts> tooltip="Definition.ts" URL="src/elements/Definition.ts" fillcolor="#ddfeff"] } }
+    "src/elements/Definition.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Definition.ts" -> "src/interfaces/index.ts"
+    "src/elements/Definition.ts" -> "src/interfaces/elements.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Definition.ts" -> "src/server/BPMNServer.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Definition.ts" -> "src/elements/NodeLoader.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" "src/elements/Element.ts" [label=<Element.ts> tooltip="Element.ts" URL="src/elements/Element.ts" fillcolor="#ddfeff"] } }
+    "src/elements/Element.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Element.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Element.ts" -> "src/engine/Execution.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Element.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Element.ts" -> "src/engine/Token.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Element.ts" -> "src/interfaces/elements.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Element.ts" -> "src/elements/behaviours/index.ts"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" "src/elements/Events.ts" [label=<Events.ts> tooltip="Events.ts" URL="src/elements/Events.ts" fillcolor="#ddfeff"] } }
+    "src/elements/Events.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Events.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Events.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Events.ts" -> "src/interfaces/index.ts"
+    "src/elements/Events.ts" -> "src/elements/behaviours/index.ts"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" "src/elements/Flow.ts" [label=<Flow.ts> tooltip="Flow.ts" URL="src/elements/Flow.ts" fillcolor="#ddfeff"] } }
+    "src/elements/Flow.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Flow.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Flow.ts" -> "src/engine/Execution.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Flow.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Flow.ts" -> "src/engine/Token.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Flow.ts" -> "src/interfaces/index.ts"
+    "src/elements/Flow.ts" -> "src/elements/behaviours/index.ts"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" "src/elements/Gateway.ts" [label=<Gateway.ts> tooltip="Gateway.ts" URL="src/elements/Gateway.ts" fillcolor="#ddfeff"] } }
+    "src/elements/Gateway.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Gateway.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Gateway.ts" -> "src/engine/Execution.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Gateway.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Gateway.ts" -> "src/engine/Token.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Gateway.ts" -> "src/elements/behaviours/index.ts"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" "src/elements/Node.ts" [label=<Node.ts> tooltip="Node.ts" URL="src/elements/Node.ts" fillcolor="#ddfeff"] } }
+    "src/elements/Node.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Node.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Node.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Node.ts" -> "src/engine/Token.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Node.ts" -> "src/interfaces/Enums.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Node.ts" -> "src/elements/behaviours/BehaviourLoader.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" "src/elements/NodeLoader.ts" [label=<NodeLoader.ts> tooltip="NodeLoader.ts" URL="src/elements/NodeLoader.ts" fillcolor="#ddfeff"] } }
+    "src/elements/NodeLoader.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/NodeLoader.ts" -> "src/interfaces/Enums.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" "src/elements/Process.ts" [label=<Process.ts> tooltip="Process.ts" URL="src/elements/Process.ts" fillcolor="#ddfeff"] } }
+    "src/elements/Process.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Process.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Process.ts" -> "src/engine/Execution.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Process.ts" -> "src/engine/Token.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Process.ts" -> "src/interfaces/index.ts"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" "src/elements/Tasks.ts" [label=<Tasks.ts> tooltip="Tasks.ts" URL="src/elements/Tasks.ts" fillcolor="#ddfeff"] } }
+    "src/elements/Tasks.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Tasks.ts" -> "src/dmn/DMNEngine.ts"
+    "src/elements/Tasks.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Tasks.ts" -> "src/engine/Token.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Tasks.ts" -> "src/interfaces/engine.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Tasks.ts" -> "src/interfaces/Enums.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Tasks.ts" -> "src/elements/Node.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Tasks.ts" -> "src/elements/Process.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" "src/elements/Transaction.ts" [label=<Transaction.ts> tooltip="Transaction.ts" URL="src/elements/Transaction.ts" fillcolor="#ddfeff"] } }
+    "src/elements/Transaction.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Transaction.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Transaction.ts" -> "src/engine/Token.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Transaction.ts" -> "src/interfaces/engine.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Transaction.ts" -> "src/interfaces/Enums.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Transaction.ts" -> "src/elements/Node.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/Transaction.ts" -> "src/elements/Process.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" subgraph "cluster_src/elements/behaviours" {label="behaviours" "src/elements/behaviours/Behaviour.ts" [label=<Behaviour.ts> tooltip="Behaviour.ts" URL="src/elements/behaviours/Behaviour.ts" fillcolor="#ddfeff"] } } }
+    "src/elements/behaviours/Behaviour.ts" -> "src/elements/behaviours/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/Behaviour.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" penwidth="1.0" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/Behaviour.ts" -> "src/index.ts"
+    "src/elements/behaviours/Behaviour.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" penwidth="1.0" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/Behaviour.ts" -> "src/elements/behaviours/Script.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" subgraph "cluster_src/elements/behaviours" {label="behaviours" "src/elements/behaviours/BehaviourLoader.ts" [label=<BehaviourLoader.ts> tooltip="BehaviourLoader.ts" URL="src/elements/behaviours/BehaviourLoader.ts" fillcolor="#ddfeff"] } } }
+    "src/elements/behaviours/BehaviourLoader.ts" -> "src/elements/behaviours/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/BehaviourLoader.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/BehaviourLoader.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/BehaviourLoader.ts" -> "src/elements/Node.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/BehaviourLoader.ts" -> "src/elements/behaviours/Error.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/BehaviourLoader.ts" -> "src/elements/behaviours/Escalation.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/BehaviourLoader.ts" -> "src/elements/behaviours/Script.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/BehaviourLoader.ts" -> "src/elements/behaviours/TransEvents.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" subgraph "cluster_src/elements/behaviours" {label="behaviours" "src/elements/behaviours/Error.ts" [label=<Error.ts> tooltip="Error.ts" URL="src/elements/behaviours/Error.ts" fillcolor="#ddfeff"] } } }
+    "src/elements/behaviours/Error.ts" -> "src/elements/behaviours/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/Error.ts" -> "src/elements/index.ts" [arrowhead="onormal" penwidth="1.0"]
+    "src/elements/behaviours/Error.ts" -> "src/index.ts"
+    "src/elements/behaviours/Error.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" penwidth="1.0" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/Error.ts" -> "src/interfaces/index.ts"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" subgraph "cluster_src/elements/behaviours" {label="behaviours" "src/elements/behaviours/Escalation.ts" [label=<Escalation.ts> tooltip="Escalation.ts" URL="src/elements/behaviours/Escalation.ts" fillcolor="#ddfeff"] } } }
+    "src/elements/behaviours/Escalation.ts" -> "src/elements/behaviours/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/Escalation.ts" -> "src/index.ts"
+    "src/elements/behaviours/Escalation.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/Escalation.ts" -> "src/interfaces/index.ts"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" subgraph "cluster_src/elements/behaviours" {label="behaviours" "src/elements/behaviours/Form.ts" [label=<Form.ts> tooltip="Form.ts" URL="src/elements/behaviours/Form.ts" fillcolor="#ddfeff"] } } }
+    "src/elements/behaviours/Form.ts" -> "src/elements/behaviours/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" subgraph "cluster_src/elements/behaviours" {label="behaviours" "src/elements/behaviours/IOBehaviour.ts" [label=<IOBehaviour.ts> tooltip="IOBehaviour.ts" URL="src/elements/behaviours/IOBehaviour.ts" fillcolor="#ddfeff"] } } }
+    "src/elements/behaviours/IOBehaviour.ts" -> "src/elements/behaviours/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/IOBehaviour.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/IOBehaviour.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" penwidth="1.0" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/IOBehaviour.ts" -> "src/engine/ScriptHandler.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" subgraph "cluster_src/elements/behaviours" {label="behaviours" "src/elements/behaviours/Loop.ts" [label=<Loop.ts> tooltip="Loop.ts" URL="src/elements/behaviours/Loop.ts" fillcolor="#ddfeff"] } } }
+    "src/elements/behaviours/Loop.ts" -> "src/elements/behaviours/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/Loop.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/Loop.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" subgraph "cluster_src/elements/behaviours" {label="behaviours" "src/elements/behaviours/MessageSignal.ts" [label=<MessageSignal.ts> tooltip="MessageSignal.ts" URL="src/elements/behaviours/MessageSignal.ts" fillcolor="#ddfeff"] } } }
+    "src/elements/behaviours/MessageSignal.ts" -> "src/elements/behaviours/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/MessageSignal.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" penwidth="1.0" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/MessageSignal.ts" -> "src/index.ts"
+    "src/elements/behaviours/MessageSignal.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" subgraph "cluster_src/elements/behaviours" {label="behaviours" "src/elements/behaviours/Script.ts" [label=<Script.ts> tooltip="Script.ts" URL="src/elements/behaviours/Script.ts" fillcolor="#ddfeff"] } } }
+    "src/elements/behaviours/Script.ts" -> "src/elements/behaviours/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/Script.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" subgraph "cluster_src/elements/behaviours" {label="behaviours" "src/elements/behaviours/Terminate.ts" [label=<Terminate.ts> tooltip="Terminate.ts" URL="src/elements/behaviours/Terminate.ts" fillcolor="#ddfeff"] } } }
+    "src/elements/behaviours/Terminate.ts" -> "src/elements/behaviours/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/Terminate.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/Terminate.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" subgraph "cluster_src/elements/behaviours" {label="behaviours" "src/elements/behaviours/Timer.ts" [label=<Timer.ts> tooltip="Timer.ts" URL="src/elements/behaviours/Timer.ts" fillcolor="#ddfeff"] } } }
+    "src/elements/behaviours/Timer.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/Timer.ts" -> "src/index.ts"
+    "src/elements/behaviours/Timer.ts" -> "src/engine/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/Timer.ts" -> "src/interfaces/index.ts"
+    "src/elements/behaviours/Timer.ts" -> "src/server/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/Timer.ts" -> "src/server/Cron.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/Timer.ts" -> "src/elements/behaviours/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" subgraph "cluster_src/elements/behaviours" {label="behaviours" "src/elements/behaviours/TransEvents.ts" [label=<TransEvents.ts> tooltip="TransEvents.ts" URL="src/elements/behaviours/TransEvents.ts" fillcolor="#ddfeff"] } } }
+    "src/elements/behaviours/TransEvents.ts" -> "src/elements/behaviours/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/TransEvents.ts" -> "src/elements/index.ts"
+    "src/elements/behaviours/TransEvents.ts" -> "src/index.ts"
+    "src/elements/behaviours/TransEvents.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/TransEvents.ts" -> "src/interfaces/index.ts"
+    "src/elements/behaviours/TransEvents.ts" -> "src/elements/Node.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" subgraph "cluster_src/elements/behaviours" {label="behaviours" "src/elements/behaviours/index.ts" [label=<index.ts> tooltip="index.ts" URL="src/elements/behaviours/index.ts" fillcolor="#ddfeff"] } } }
+    "src/elements/behaviours/index.ts" -> "src/elements/behaviours/Behaviour.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/index.ts" -> "src/elements/behaviours/BehaviourLoader.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/index.ts" -> "src/elements/behaviours/Form.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/index.ts" -> "src/elements/behaviours/IOBehaviour.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/index.ts" -> "src/elements/behaviours/Loop.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/index.ts" -> "src/elements/behaviours/MessageSignal.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/index.ts" -> "src/elements/behaviours/Script.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/index.ts" -> "src/elements/behaviours/Terminate.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/behaviours/index.ts" -> "src/elements/behaviours/Timer.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" "src/elements/index.ts" [label=<index.ts> tooltip="index.ts" URL="src/elements/index.ts" fillcolor="#ddfeff"] } }
+    "src/elements/index.ts" -> "src/elements/behaviours/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/index.ts" -> "src/elements/Definition.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/index.ts" -> "src/elements/Element.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/index.ts" -> "src/elements/Events.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/index.ts" -> "src/elements/Flow.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/index.ts" -> "src/elements/Gateway.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/index.ts" -> "src/elements/Node.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/index.ts" -> "src/elements/NodeLoader.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/index.ts" -> "src/elements/Process.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/index.ts" -> "src/elements/Tasks.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/elements/index.ts" -> "src/elements/Transaction.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/elements" {label="elements" "src/elements/js-bpmn-moddle.ts" [label=<js-bpmn-moddle.ts> tooltip="js-bpmn-moddle.ts" URL="src/elements/js-bpmn-moddle.ts" fillcolor="#ddfeff"] } }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/engine" {label="engine" "src/engine/DataHandler.ts" [label=<DataHandler.ts> tooltip="DataHandler.ts" URL="src/engine/DataHandler.ts" fillcolor="#ddfeff"] } }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/engine" {label="engine" "src/engine/DefaultAppDelegate.ts" [label=<DefaultAppDelegate.ts> tooltip="DefaultAppDelegate.ts" URL="src/engine/DefaultAppDelegate.ts" fillcolor="#ddfeff"] } }
+    "src/engine/DefaultAppDelegate.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/DefaultAppDelegate.ts" -> "src/elements/js-bpmn-moddle.ts"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/engine" {label="engine" "src/engine/Execution.ts" [label=<Execution.ts> tooltip="Execution.ts" URL="src/engine/Execution.ts" fillcolor="#ddfeff"] } }
+    "src/engine/Execution.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/Execution.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/Execution.ts" -> "src/server/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/Execution.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/Execution.ts" -> "src/engine/Loop.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/Execution.ts" -> "src/engine/Model.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/Execution.ts" -> "src/engine/Token.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/engine" {label="engine" "src/engine/Item.ts" [label=<Item.ts> tooltip="Item.ts" URL="src/engine/Item.ts" fillcolor="#ddfeff"] } }
+    "src/engine/Item.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/Item.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/Item.ts" -> "src/engine/Execution.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/Item.ts" -> "src/engine/Token.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/engine" {label="engine" "src/engine/Loop.ts" [label=<Loop.ts> tooltip="Loop.ts" URL="src/engine/Loop.ts" fillcolor="#ddfeff"] } }
+    "src/engine/Loop.ts" -> "src/engine/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/Loop.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/Loop.ts" -> "src/interfaces/index.ts"
+    "src/engine/Loop.ts" -> "src/engine/Execution.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/Loop.ts" -> "src/engine/Token.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/engine" {label="engine" "src/engine/Model.ts" [label=<Model.ts> tooltip="Model.ts" URL="src/engine/Model.ts" fillcolor="#ddfeff"] } }
+    "src/engine/Model.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/Model.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/engine" {label="engine" "src/engine/ScriptHandler.ts" [label=<ScriptHandler.ts> tooltip="ScriptHandler.ts" URL="src/engine/ScriptHandler.ts" fillcolor="#ddfeff"] } }
+    "src/engine/ScriptHandler.ts" -> "src/engine/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/ScriptHandler.ts" -> "src/interfaces/index.ts"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/engine" {label="engine" "src/engine/Token.ts" [label=<Token.ts> tooltip="Token.ts" URL="src/engine/Token.ts" fillcolor="#ddfeff"] } }
+    "src/engine/Token.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/Token.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/Token.ts" -> "src/interfaces/engine.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/Token.ts" -> "src/engine/Execution.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/Token.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/Token.ts" -> "src/engine/Loop.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/engine" {label="engine" "src/engine/index.ts" [label=<index.ts> tooltip="index.ts" URL="src/engine/index.ts" fillcolor="#ddfeff"] } }
+    "src/engine/index.ts" -> "src/engine/DataHandler.ts" [arrowhead="inv"]
+    "src/engine/index.ts" -> "src/engine/DefaultAppDelegate.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/index.ts" -> "src/engine/Execution.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/index.ts" -> "src/engine/Item.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/index.ts" -> "src/engine/Loop.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/index.ts" -> "src/engine/Model.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/index.ts" -> "src/engine/ScriptHandler.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/engine/index.ts" -> "src/engine/Token.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" "src/index.ts" [label=<index.ts> tooltip="index.ts" URL="src/index.ts" fillcolor="#ddfeff"] }
+    "src/index.ts" -> "src/API/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/index.ts" -> "src/common/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/index.ts" -> "src/datastore/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/index.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/index.ts" -> "src/engine/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/index.ts" -> "src/interfaces/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/index.ts" -> "src/server/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/interfaces" {label="interfaces" "src/interfaces/DataObjects.ts" [label=<DataObjects.ts> tooltip="DataObjects.ts" URL="src/interfaces/DataObjects.ts" fillcolor="#ddfeff"] } }
+    "src/interfaces/DataObjects.ts" -> "src/interfaces/Enums.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/interfaces" {label="interfaces" "src/interfaces/Enums.ts" [label=<Enums.ts> tooltip="Enums.ts" URL="src/interfaces/Enums.ts" fillcolor="#ddfeff"] } }
+    "src/interfaces/Enums.ts" -> "src/elements/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/interfaces" {label="interfaces" "src/interfaces/User.ts" [label=<User.ts> tooltip="User.ts" URL="src/interfaces/User.ts" fillcolor="#ddfeff"] } }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/interfaces" {label="interfaces" "src/interfaces/common.ts" [label=<common.ts> tooltip="common.ts" URL="src/interfaces/common.ts" fillcolor="#ddfeff"] } }
+    "src/interfaces/common.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/interfaces" {label="interfaces" "src/interfaces/datastore.ts" [label=<datastore.ts> tooltip="datastore.ts" URL="src/interfaces/datastore.ts" fillcolor="#ddfeff"] } }
+    "src/interfaces/datastore.ts" -> "src/interfaces/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/interfaces" {label="interfaces" "src/interfaces/elements.ts" [label=<elements.ts> tooltip="elements.ts" URL="src/interfaces/elements.ts" fillcolor="#ddfeff"] } }
+    "src/interfaces/elements.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/interfaces" {label="interfaces" "src/interfaces/engine.ts" [label=<engine.ts> tooltip="engine.ts" URL="src/interfaces/engine.ts" fillcolor="#ddfeff"] } }
+    "src/interfaces/engine.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/interfaces/engine.ts" -> "src/interfaces/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/interfaces/engine.ts" -> "src/interfaces/Enums.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/interfaces" {label="interfaces" "src/interfaces/index.ts" [label=<index.ts> tooltip="index.ts" URL="src/interfaces/index.ts" fillcolor="#ddfeff"] } }
+    "src/interfaces/index.ts" -> "src/interfaces/common.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/interfaces/index.ts" -> "src/interfaces/DataObjects.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/interfaces/index.ts" -> "src/interfaces/datastore.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/interfaces/index.ts" -> "src/interfaces/elements.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/interfaces/index.ts" -> "src/interfaces/engine.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/interfaces/index.ts" -> "src/interfaces/Enums.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/interfaces/index.ts" -> "src/interfaces/server.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/interfaces/index.ts" -> "src/interfaces/User.ts" [arrowhead="inv"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/interfaces" {label="interfaces" "src/interfaces/server.ts" [label=<server.ts> tooltip="server.ts" URL="src/interfaces/server.ts" fillcolor="#ddfeff"] } }
+    "src/interfaces/server.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/scripts" {label="scripts" "src/scripts/convertTomd.js" [label=<convertTomd.js> tooltip="no-orphans" URL="src/scripts/convertTomd.js" fillcolor="#ccffcc" fontcolor="orange" color="orange"] } }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/scripts" {label="scripts" "src/scripts/copy-readme.ts" [label=<copy-readme.ts> tooltip="no-orphans" URL="src/scripts/copy-readme.ts" fillcolor="#ccffcc" fontcolor="orange" color="orange"] } }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/scripts" {label="scripts" "src/scripts/example.ts" [label=<example.ts> tooltip="no-orphans" URL="src/scripts/example.ts" fillcolor="#ccffcc" fontcolor="orange" color="orange"] } }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/scripts" {label="scripts" "src/scripts/generate-toc.js" [label=<generate-toc.js> tooltip="no-orphans" URL="src/scripts/generate-toc.js" fillcolor="#ccffcc" fontcolor="orange" color="orange"] } }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/scripts" {label="scripts" "src/scripts/tsToApi.ts" [label=<tsToApi.ts> tooltip="no-orphans" URL="src/scripts/tsToApi.ts" fillcolor="#ccffcc" fontcolor="orange" color="orange"] } }
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/server" {label="server" "src/server/BPMNServer.ts" [label=<BPMNServer.ts> tooltip="BPMNServer.ts" URL="src/server/BPMNServer.ts" fillcolor="#ddfeff"] } }
+    "src/server/BPMNServer.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/server/BPMNServer.ts" -> "src/common/Logger.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/server/BPMNServer.ts" -> "src/server/Cron.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/server/BPMNServer.ts" -> "src/server/Engine.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/server" {label="server" "src/server/CacheManager.ts" [label=<CacheManager.ts> tooltip="CacheManager.ts" URL="src/server/CacheManager.ts" fillcolor="#ddfeff"] } }
+    "src/server/CacheManager.ts" -> "src/interfaces/index.ts"
+    "src/server/CacheManager.ts" -> "src/server/ServerComponent.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/server" {label="server" "src/server/Cron.ts" [label=<Cron.ts> tooltip="Cron.ts" URL="src/server/Cron.ts" fillcolor="#ddfeff"] } }
+    "src/server/Cron.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/server/Cron.ts" -> "src/common/Logger.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/server/Cron.ts" -> "src/server/ServerComponent.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/server" {label="server" "src/server/Engine.ts" [label=<Engine.ts> tooltip="Engine.ts" URL="src/server/Engine.ts" fillcolor="#ddfeff"] } }
+    "src/server/Engine.ts" -> "src/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/server/Engine.ts" -> "src/datastore/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/server/Engine.ts" -> "src/interfaces/index.ts"
+    "src/server/Engine.ts" -> "src/server/ServerComponent.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/server" {label="server" "src/server/Listener.ts" [label=<Listener.ts> tooltip="Listener.ts" URL="src/server/Listener.ts" fillcolor="#ddfeff"] } }
+    "src/server/Listener.ts" -> "src/interfaces/index.ts"
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/server" {label="server" "src/server/ServerComponent.ts" [label=<ServerComponent.ts> tooltip="ServerComponent.ts" URL="src/server/ServerComponent.ts" fillcolor="#ddfeff"] } }
+    "src/server/ServerComponent.ts" -> "src/interfaces/index.ts"
+    "src/server/ServerComponent.ts" -> "src/server/index.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    subgraph "cluster_src" {label="src" subgraph "cluster_src/server" {label="server" "src/server/index.ts" [label=<index.ts> tooltip="index.ts" URL="src/server/index.ts" fillcolor="#ddfeff"] } }
+    "src/server/index.ts" -> "src/server/BPMNServer.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/server/index.ts" -> "src/server/CacheManager.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/server/index.ts" -> "src/server/Cron.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/server/index.ts" -> "src/server/Engine.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+    "src/server/index.ts" -> "src/server/ServerComponent.ts" [xlabel="no-circular" tooltip="no-circular" arrowhead="normalnoneodot" fontcolor="orange" color="orange"]
+}

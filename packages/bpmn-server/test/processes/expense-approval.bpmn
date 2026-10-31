@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- An expense approval only staff may start: an employee submits (form: amount), a manager approves. -->
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="expense-approval-definitions" targetNamespace="http://ai-mde.dev/bpmn/test">
+  <bpmn:process id="ExpenseApproval" name="Expense approval" isExecutable="true">
+    <bpmn:documentation>Expenses are submitted by staff and approved by a manager.</bpmn:documentation>
+    <bpmn:startEvent id="ExpenseRaised" name="Expense raised" camunda:candidateGroups="staff">
+      <bpmn:outgoing>toSubmit</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="SubmitExpense" name="Submit expense" camunda:candidateGroups="staff">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="amount" label="Amount" type="long" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>toSubmit</bpmn:incoming>
+      <bpmn:outgoing>toApprove</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="ApproveExpense" name="Approve expense" camunda:candidateGroups="manager">
+      <bpmn:incoming>toApprove</bpmn:incoming>
+      <bpmn:outgoing>toPaid</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="ExpensePaid" name="Expense paid">
+      <bpmn:incoming>toPaid</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="toSubmit" sourceRef="ExpenseRaised" targetRef="SubmitExpense" />
+    <bpmn:sequenceFlow id="toApprove" sourceRef="SubmitExpense" targetRef="ApproveExpense" />
+    <bpmn:sequenceFlow id="toPaid" sourceRef="ApproveExpense" targetRef="ExpensePaid" />
+  </bpmn:process>
+</bpmn:definitions>

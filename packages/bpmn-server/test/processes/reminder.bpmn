@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A reminder: waits one second (a timer), then calls a service. -->
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="reminder-definitions" targetNamespace="http://ai-mde.dev/bpmn/test">
+  <bpmn:process id="Reminder" name="Reminder" isExecutable="true">
+    <bpmn:startEvent id="Requested">
+      <bpmn:outgoing>toWait</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:intermediateCatchEvent id="Wait" name="Wait a second">
+      <bpmn:incoming>toWait</bpmn:incoming>
+      <bpmn:outgoing>toRemind</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration>PT1S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:serviceTask id="Remind" name="Remind" implementation="remind">
+      <bpmn:incoming>toRemind</bpmn:incoming>
+      <bpmn:outgoing>toDone</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Done">
+      <bpmn:incoming>toDone</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="toWait" sourceRef="Requested" targetRef="Wait" />
+    <bpmn:sequenceFlow id="toRemind" sourceRef="Wait" targetRef="Remind" />
+    <bpmn:sequenceFlow id="toDone" sourceRef="Remind" targetRef="Done" />
+  </bpmn:process>
+</bpmn:definitions>

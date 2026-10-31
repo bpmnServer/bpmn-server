@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0fqpje6" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="7.2.0">
+  <bpmn:collaboration id="Collaboration_0q44ppb">
+    <bpmn:participant id="Participant_0zpon3h" processRef="Process_1so81jg" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_1so81jg" isExecutable="false">
+    <bpmn:subProcess id="SubProcess" name="SubProcess">
+      <bpmn:incoming>Flow_18xinq3</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ez1frs</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="[&#39;A&#39;,&#39;B&#39;,&#39;C&#39;]" />
+      <bpmn:startEvent id="Event_0an0xl3">
+        <bpmn:outgoing>Flow_09jx33a</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="Flow_09jx33a" sourceRef="Event_0an0xl3" targetRef="Sub_script" />
+      <bpmn:endEvent id="Event_1j62ljq">
+        <bpmn:incoming>Flow_0yr8zl8</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0yr8zl8" sourceRef="Sub_script" targetRef="Event_1j62ljq" />
+      <bpmn:scriptTask id="Sub_script" name="script">
+        <bpmn:incoming>Flow_09jx33a</bpmn:incoming>
+        <bpmn:outgoing>Flow_0yr8zl8</bpmn:outgoing>
+      </bpmn:scriptTask>
+    </bpmn:subProcess>
+    <bpmn:endEvent id="Event_0m985mm">
+      <bpmn:incoming>Flow_0ez1frs</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:startEvent id="StartEvent_1ohx91b">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">console.log("This is the start event");
+          this.token.appendData({records:[1,2,3,4,5]});
+          console.log('=====from script',this.token.data);
+          this.log("====This is the start event");</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_18xinq3</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_18xinq3" sourceRef="StartEvent_1ohx91b" targetRef="SubProcess" />
+    <bpmn:sequenceFlow id="Flow_0ez1frs" sourceRef="SubProcess" targetRef="Event_0m985mm" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0q44ppb">
+      <bpmndi:BPMNShape id="Participant_0zpon3h_di" bpmnElement="Participant_0zpon3h" isHorizontal="true">
+        <dc:Bounds x="180" y="110" width="560" height="270" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_18xinq3_di" bpmnElement="Flow_18xinq3">
+        <di:waypoint x="262" y="240" />
+        <di:waypoint x="294" y="240" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="212" y="129" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ez1frs_di" bpmnElement="Flow_0ez1frs">
+        <di:waypoint x="634" y="260" />
+        <di:waypoint x="676" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0m985mm_di" bpmnElement="Event_0m985mm">
+        <dc:Bounds x="676" y="242" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1ohx91b">
+        <dc:Bounds x="226" y="222" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="181" y="172" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ej3q6j_di" bpmnElement="SubProcess" isExpanded="true">
+        <dc:Bounds x="294" y="140" width="340" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0yr8zl8_di" bpmnElement="Flow_0yr8zl8">
+        <di:waypoint x="510" y="240" />
+        <di:waypoint x="546" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09jx33a_di" bpmnElement="Flow_09jx33a">
+        <di:waypoint x="358" y="240" />
+        <di:waypoint x="410" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0an0xl3_di" bpmnElement="Event_0an0xl3">
+        <dc:Bounds x="322" y="222" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1j62ljq_di" bpmnElement="Event_1j62ljq">
+        <dc:Bounds x="546" y="222" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1reewms_di" bpmnElement="Sub_script">
+        <dc:Bounds x="410" y="200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

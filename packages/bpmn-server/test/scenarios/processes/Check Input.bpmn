@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:collaboration id="Collaboration_0g3bn9r">
+    <bpmn2:participant id="Participant_0woiase" processRef="Process_1" />
+  </bpmn2:collaboration>
+  <bpmn2:process id="Process_1" isExecutable="false">
+    <bpmn2:startEvent id="StartEvent_1">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">item.data.list1=['a','b','c'];
+item.data.val1='abc';
+
+ appServices.echo({var1:50,var2:'some text'},this);
+item.data.val2='xyz';
+item.data.val3='value 3';
+item.data.objSample={x:1,y:2,Z:3};
+item.data.text1='my text is here';
+console.log(item.data);</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>Flow_0h1irvm</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:serviceTask id="Activity_1kddi0e" name="Check Input" camunda:delegateExpression="echo">
+      <bpmn2:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="text1">$(data.text1)</camunda:inputParameter>
+          <camunda:inputParameter name="list2">
+            <camunda:list>
+              <camunda:value>$(data.val1)</camunda:value>
+              <camunda:value>$(data.val2)</camunda:value>
+              <camunda:value>$(data.val3)</camunda:value>
+            </camunda:list>
+          </camunda:inputParameter>
+          <camunda:inputParameter name="map3">
+            <camunda:map>
+              <camunda:entry key="key1">1</camunda:entry>
+              <camunda:entry key="key2">2</camunda:entry>
+            </camunda:map>
+          </camunda:inputParameter>
+          <camunda:inputParameter name="list4">
+            <camunda:list>
+              <camunda:value>$data.val1</camunda:value>
+              <camunda:value>$data.val2</camunda:value>
+            </camunda:list>
+          </camunda:inputParameter>
+          <camunda:inputParameter name="text5">Just Text</camunda:inputParameter>
+          <camunda:inputParameter name="text6">$[data.val1,data.val2,data.val3]</camunda:inputParameter>
+          <camunda:inputParameter name="script1">
+            <camunda:script scriptFormat="JavaScript">{var1:1,var2:2}</camunda:script>
+          </camunda:inputParameter>
+          <camunda:outputParameter name="echoOutput">$data.text1</camunda:outputParameter>
+        </camunda:inputOutput>
+        <camunda:executionListener event="getInput">
+          <camunda:script scriptFormat="JavaScript">console.log('item input  ===',item.input
+,item.data);</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0h1irvm</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1xw39ty</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:endEvent id="Event_1gadigp">
+      <bpmn2:incoming>Flow_1xw39ty</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="Flow_1xw39ty" sourceRef="Activity_1kddi0e" targetRef="Event_1gadigp" />
+    <bpmn2:sequenceFlow id="Flow_0h1irvm" sourceRef="StartEvent_1" targetRef="Activity_1kddi0e" />
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0g3bn9r">
+      <bpmndi:BPMNShape id="Participant_0woiase_di" bpmnElement="Participant_0woiase" isHorizontal="true">
+        <dc:Bounds x="210" y="-330" width="428" height="230" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1xw39ty_di" bpmnElement="Flow_1xw39ty">
+        <di:waypoint x="468" y="-220" />
+        <di:waypoint x="500" y="-220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0h1irvm_di" bpmnElement="Flow_0h1irvm">
+        <di:waypoint x="316" y="-220" />
+        <di:waypoint x="368" y="-220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="280" y="-238" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0lvwyqx_di" bpmnElement="Activity_1kddi0e">
+        <dc:Bounds x="368" y="-260" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gadigp_di" bpmnElement="Event_1gadigp">
+        <dc:Bounds x="500" y="-238" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

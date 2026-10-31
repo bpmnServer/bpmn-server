@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A payment that arrives for no waiting claim starts this process: its start event catches the same
+     message (PaymentConfirmed) the property claim waits for. -->
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="payment-intake-definitions" targetNamespace="http://ai-mde.dev/bpmn/test">
+  <bpmn:message id="PaymentConfirmedMessage" name="PaymentConfirmed" />
+  <bpmn:process id="PaymentIntake" name="Payment intake" isExecutable="true">
+    <bpmn:startEvent id="PaymentArrived" name="Payment arrived">
+      <bpmn:outgoing>toFile</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="PaymentConfirmedMessage" />
+    </bpmn:startEvent>
+    <bpmn:userTask id="FilePayment" name="File the payment">
+      <bpmn:incoming>toFile</bpmn:incoming>
+      <bpmn:outgoing>toFiled</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Filed">
+      <bpmn:incoming>toFiled</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="toFile" sourceRef="PaymentArrived" targetRef="FilePayment" />
+    <bpmn:sequenceFlow id="toFiled" sourceRef="FilePayment" targetRef="Filed" />
+  </bpmn:process>
+</bpmn:definitions>

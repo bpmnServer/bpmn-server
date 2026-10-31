@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="Process_1" isExecutable="false">
+    <bpmn2:startEvent id="StartEvent_1">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">$py print(f"Hello {item['name']}, y")</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>Flow_01uaxfv</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="Flow_01uaxfv" sourceRef="StartEvent_1" targetRef="Activity_1uty3n6" />
+    <bpmn2:endEvent id="Event_0u2uwtq">
+      <bpmn2:incoming>Flow_04aacte</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="Flow_04aacte" sourceRef="Activity_1uty3n6" targetRef="Event_0u2uwtq" />
+    <bpmn2:serviceTask id="Activity_1uty3n6" name="Web Service Call" camunda:delegateExpression="webService">
+      <bpmn2:incoming>Flow_01uaxfv</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_04aacte</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">
+      <bpmndi:BPMNEdge id="Flow_01uaxfv_di" bpmnElement="Flow_01uaxfv">
+        <di:waypoint x="238" y="160" />
+        <di:waypoint x="270" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04aacte_di" bpmnElement="Flow_04aacte">
+        <di:waypoint x="370" y="160" />
+        <di:waypoint x="402" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0u2uwtq_di" bpmnElement="Event_0u2uwtq">
+        <dc:Bounds x="402" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_13w9d5s_di" bpmnElement="Activity_1uty3n6">
+        <dc:Bounds x="270" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="202" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

@@ -1,0 +1,161 @@
+import { NODE_ACTION, TOKEN_STATUS } from './Enums.js';
+import type { IItemData, IInstanceData } from './DataObjects.js';
+import { Element } from '../elements/Element.js';
+import { Node } from '../elements/Node.js';
+import { Item } from '../engine/Item.js';
+import { Token } from '../engine/Token.js';
+import type { ILogger, IAppDelegate } from './common.js';
+import type { IDefinition } from './elements.js';
+import type { IBPMNServer, IServerComponent } from './server.js';
+
+interface IScriptHandler {
+    evaluateExpression(scope: IItem|IToken, expression);
+    executeScript(scope: IItem|IExecution, script);
+
+}  
+interface IToken {
+    id: any;
+    type;
+    execution: IExecution;
+    dataPath: string;
+    startNodeId: any;
+    parentToken?: IToken;
+    //  branchNode?: any;
+    originItem: IItem;
+    path: IItem[];
+    loop;
+    currentNode: any;
+    processId: any;
+    status: TOKEN_STATUS;
+    data;
+    currentItem: IItem;
+    lastItem: IItem;
+    firstItem: Item;
+    childrenTokens: Token[];
+    itemsKey: any;
+
+    save(): {
+        id: any;
+        type;
+        status: TOKEN_STATUS;
+        dataPath: string;
+        loopId: any;
+        parentToken: any;
+        originItem: any;
+        startNodeId: any;
+        currentNode: any;
+    };
+    resume(): void;
+    stop(): void;
+    
+    processError(errorCode,callingEvent);
+    processEscalation(escalationCode,callingEvent);
+    processCancel(callingEvent);
+    
+
+    restored(): void;
+    getChildrenTokens(): any[];
+    preExecute(): Promise<boolean>;
+    preNext(): Promise<boolean>;
+    /**
+     * this is the primary exectuion method for a token
+     */
+    execute(inputData): Promise<any>;
+    appendData(inputData: any,item: IItem): void;
+    /**
+     *  is called by Gateways to cancel current token
+     *
+     * */
+    terminate(): void;
+    signal(data: any): Promise<any>;
+    getFullPath(fullPath?: any): Item[];
+    end(): Promise<void>;
+    goNext(): Promise<void>;
+    getSubProcessToken(): IToken;
+    log(...msg: any): void;
+    info(...msg: any): void;
+    error(msg: any): void;
+}
+
+interface IExecution extends IServerComponent {
+    instance: IInstanceData;
+    /** What the call running it does: `start`, `signal`, `assign`, `cancel`, … */
+    operation?: string;
+    server: IBPMNServer;
+    tokens: Map<any, IToken>;
+    definition: IDefinition;
+    appDelegate: IAppDelegate;
+    logger: ILogger;
+    process: any;
+    promises;
+    listener;
+    isLocked:boolean;
+
+    errors;
+    item;
+    messageMatchingKey;
+    worker;
+    userName;
+
+    id;
+    status;
+    action: NODE_ACTION;
+    options;
+    name;
+
+    getNodeById(id: any): Node;
+    getToken(id: number): IToken;
+    getItemsData(): IItemData[];
+    save(): Promise<void>;
+    end(): Promise<void>;
+    /**
+     *
+     * causes the execution to stop from running any further
+     * */
+    stop(): void;
+    terminate(): void;
+    execute(startNodeId?: any, inputData?: {}): Promise<void>;
+    /**
+     *
+     * invoke scenarios:
+     *      itemId
+     *      elementId   - but only one is active
+     *      elementId   - for a startEvent in a secondary process
+     *
+     * @param executionId
+     * @param inputData
+     */
+    signalItem(executionId: any, inputData: any,options?:{}): Promise<IExecution>;
+    signalEvent(executionId: any, inputData: any,options?:{}): Promise<IExecution>;
+    signalRepeatTimerEvent(executionId,prevItem, inputData:any,options?:{}): Promise<IExecution>;
+
+    getItems(query?: any): IItem[];
+    getState(): IInstanceData;
+    restored(): void;
+    resume(): void;
+    report(): void;
+    uids: {};
+    getNewId(scope: string): number;
+    getUUID(): any;
+    doExecutionEvent(process:any, event: any,eventDetails?:any): Promise<any>;
+    doItemEvent(item: any, event: any,eventDetails?: any): Promise<any>;
+    log(...msg: any): void;
+    logS(...msg: any): void;
+    logE(...msg: any): void;
+    info(...msg: any): void;
+    error(msg: any): void;
+    appendData(inputData: any,item:IItem, dataPath?: any,assignment?:any): void;
+    getData(dataPath: any): any;
+    processQueue(): any;
+//    getAndCreateData(dataPath: any, asArray?: boolean): any;
+}
+
+interface IItem extends IItemData {
+    element: Element;
+    token: Token;
+    context: IExecution;
+    node: Node;
+}
+
+
+export { IItem, IToken, IExecution , IScriptHandler}

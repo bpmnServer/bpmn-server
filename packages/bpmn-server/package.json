@@ -1,0 +1,58 @@
+{
+  "name": "bpmn-server",
+  "version": "3.2.0",
+  "description": "BPMN 2.0 Server including Modeling, Execution and Persistence, an open source for Node.js",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --build",
+    "test": "node --test --test-concurrency=1 \"test/*.test.mjs\"",
+    "clean": "rimraf dist",
+    "test:boundary": "node --test test/api-boundary.test.mjs",
+    "pretest": "tsc --build",
+    "test:scenarios": "mocha --config test/scenarios/.mocharc.json",
+    "bench": "node test/perf/bench.mjs",
+    "pretest:load": "tsc --build",
+    "test:load": "node --test --test-concurrency=1 \"test/load/*.test.mjs\""
+  },
+  "main": "dist/index.js",
+  "bin": {
+    "bpmn-server": "dist/cli.js"
+  },
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "!src/scripts",
+    "README.md",
+    "CHANGELOG.md",
+    "UPSTREAM.md"
+  ],
+  "dependencies": {
+    "@lukeed/uuid": "^2.0.1",
+    "bpmn-moddle": "^10.1.0",
+    "cron-parser": "^5.10.0",
+    "dayjs": "^1.11.23",
+    "eventemitter3": "^5.0.4",
+    "feelin": "^7.0.1",
+    "iso8601-duration": "^2.1.4",
+    "mongodb": "^7.6.0",
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.3.0",
+    "@types/xml2js": "^0.4.14",
+    "chai": "^6.2.2",
+    "mocha": "^11.7.6",
+    "mocha-cakes-2": "^3.3.0",
+    "rimraf": "^6.1.3",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
+  },
+  "overrides": {
+    "brace-expansion": "^5.0.9"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

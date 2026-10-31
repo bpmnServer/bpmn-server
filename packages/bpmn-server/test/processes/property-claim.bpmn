@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A property claim: coverage is verified by a service, a covered claim is assessed by a person,
+     then waits for the payment's confirmation (a message); an uncovered claim is rejected. -->
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="property-claim-definitions" targetNamespace="http://ai-mde.dev/bpmn/test">
+  <bpmn:message id="PaymentConfirmedMessage" name="PaymentConfirmed" />
+  <bpmn:process id="PropertyClaim" name="Property claim" isExecutable="true">
+    <bpmn:startEvent id="ClaimReceived" name="Claim received">
+      <bpmn:outgoing>toVerify</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="VerifyCoverage" name="Verify coverage" implementation="verifyCoverage">
+      <bpmn:incoming>toVerify</bpmn:incoming>
+      <bpmn:outgoing>toCovered</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Covered" name="Covered?" default="notCovered">
+      <bpmn:incoming>toCovered</bpmn:incoming>
+      <bpmn:outgoing>covered</bpmn:outgoing>
+      <bpmn:outgoing>notCovered</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="AssessClaim" name="Assess claim" camunda:candidateGroups="assessor">
+      <bpmn:incoming>covered</bpmn:incoming>
+      <bpmn:outgoing>toPayment</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:intermediateCatchEvent id="PaymentConfirmed" name="Payment confirmed">
+      <bpmn:incoming>toPayment</bpmn:incoming>
+      <bpmn:outgoing>toSettled</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="PaymentConfirmedMessage" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:endEvent id="Settled" name="Settled">
+      <bpmn:incoming>toSettled</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Rejected" name="Rejected">
+      <bpmn:incoming>notCovered</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="toVerify" sourceRef="ClaimReceived" targetRef="VerifyCoverage" />
+    <bpmn:sequenceFlow id="toCovered" sourceRef="VerifyCoverage" targetRef="Covered" />
+    <bpmn:sequenceFlow id="covered" sourceRef="Covered" targetRef="AssessClaim">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">$(data.covered === true)</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="notCovered" sourceRef="Covered" targetRef="Rejected" />
+    <bpmn:sequenceFlow id="toPayment" sourceRef="AssessClaim" targetRef="PaymentConfirmed" />
+    <bpmn:sequenceFlow id="toSettled" sourceRef="PaymentConfirmed" targetRef="Settled" />
+  </bpmn:process>
+</bpmn:definitions>

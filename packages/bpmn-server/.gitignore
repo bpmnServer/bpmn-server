@@ -1,0 +1,23 @@
+﻿.env
+/node_modules
+/obj
+/site
+*.log
+*.cmd
+*.sln
+*.njsproj
+*.njsproj.user
+*.txt
+*.bak
+tsconfig.tsbuildinfo
+/bin
+*.tgz
+*.bak
+# Transpiled JavaScript files from Typescript
+/dist
+# generated docs
+# Test coverage output
+/coverage
+
+
+

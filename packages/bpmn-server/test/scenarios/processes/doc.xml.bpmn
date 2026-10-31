@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                   xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                   xmlns:camunda="http://camunda.org/schema/1.0/bpmn"
+                   id="sample-diagram"
+                   targetNamespace="http://bpmn.io/schema/bpmn"
+                   xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+
+  <bpmn2:process id="DocumentApprovalProcess" name="Document Approval" isExecutable="true">
+
+    <bpmn2:startEvent id="StartEvent_1" name="Start Document Approval" />
+    <bpmn2:userTask id="ReviewTask" name="Review Document">
+      <bpmn2:extensionElements>
+        <camunda:taskListener event="assign">
+          <camunda:script scriptFormat="JavaScript">$(this.data.requester)</camunda:script>
+        </camunda:taskListener>
+      </bpmn2:extensionElements>
+    </bpmn2:userTask>
+    <bpmn2:exclusiveGateway id="ApprovalDecision" name="Approval Decision" />
+    <bpmn2:endEvent id="EndEvent_Approved" name="Document Approved" />
+    <bpmn2:endEvent id="EndEvent_Rejected" name="Document Rejected" />
+
+    <bpmn2:sequenceFlow id="flow1" sourceRef="StartEvent_1" targetRef="ReviewTask"/>
+    <bpmn2:sequenceFlow id="flow2" sourceRef="ReviewTask" targetRef="ApprovalDecision"/>
+    <bpmn2:sequenceFlow id="ApprovedFlow" sourceRef="ApprovalDecision" targetRef="EndEvent_Approved">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">
+        (data.approval == "Approved")
+      </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="RejectedFlow" sourceRef="ApprovalDecision" targetRef="EndEvent_Rejected">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">
+        (data.approval == "Rejected")
+      </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+
+  </bpmn2:process>
+
+  <bpmndi:BPMNDiagram id="Diagram_1">
+    <bpmndi:BPMNPlane id="Plane_1" bpmnElement="DocumentApprovalProcess">
+      <bpmndi:BPMNShape id="shape_start" bpmnElement="StartEvent_1">
+        <dc:Bounds x="100" y="100" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_review" bpmnElement="ReviewTask">
+        <dc:Bounds x="200" y="90" width="100" height="56"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_gateway" bpmnElement="ApprovalDecision">
+        <dc:Bounds x="350" y="95" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_end_approved" bpmnElement="EndEvent_Approved">
+        <dc:Bounds x="450" y="50" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_end_rejected" bpmnElement="EndEvent_Rejected">
+        <dc:Bounds x="450" y="150" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="edge_flow1" bpmnElement="flow1">
+        <di:waypoint x="136" y="118"/>
+        <di:waypoint x="200" y="118"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_flow2" bpmnElement="flow2">
+        <di:waypoint x="300" y="118"/>
+        <di:waypoint x="350" y="120"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_approved" bpmnElement="ApprovedFlow">
+        <di:waypoint x="400" y="120"/>
+        <di:waypoint x="450" y="68"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_rejected" bpmnElement="RejectedFlow">
+        <di:waypoint x="400" y="120"/>
+        <di:waypoint x="450" y="168"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

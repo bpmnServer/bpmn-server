@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    // Behaviour subclasses declare typed fields (e.g. `duration;`, `parameters: IOParameter[];`)
+    // while the base ctor populates them via init(). ES2022's default define-semantics would
+    // re-initialize those fields to undefined AFTER super() runs, clobbering init()'s values.
+    // The engine was authored against set-semantics, so keep them.
+    "useDefineForClassFields": false,
+    "sourceMap": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": false,
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "src/arch-map.ts", "src/scripts"]
+}
