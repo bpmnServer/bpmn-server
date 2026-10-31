@@ -1,11 +1,16 @@
 // The Test tab: scenarios of the model, run on the saved model (src/testing/scenarios.ts on the server).
 //
-// Start starts the process with the scenario's start data and shows the user tasks and events that wait as the
-// next steps, each with its data (prefilled from the scenario, else from the element's form fields) and the
-// instance page's button for it: Execute for a user task, Force for an event. Running a step completes it; what waits after it shows as the next steps, and so on until nothing waits. The data
-// chooses the branches; which step is run first chooses between elements that wait together. The steps run are
-// the scenario's steps, saved as they are run, so Run (and Run all) can repeat them without stopping: a new
-// instance each time. Simulate shows the last run on the diagram, element by element, with its sequence numbers.
+// Start opens the start form (the start event, its form fields or start data); starting it shows the user tasks
+// and events that wait as the next steps, each with its data (prefilled from the scenario, else from the
+// element's form fields) and the instance page's button for it: Execute for a user task, Force for an event.
+// Running a step completes it; what waits after it shows as the next steps, and so on until nothing waits. The
+// data chooses the branches; which step is run first chooses between elements that wait together. The steps run
+// are the scenario's steps, saved as they are run, so Run (and Run all) can repeat them without stopping: a new
+// instance each time. Checks run after a step or at the end: a node (how often, in what status), a data value, the
+// instance's status. Simulate shows the last run on the diagram one change at a time (Back, Step, Play).
+// Debug shows the instance's variables: change them before the next step, or go back to a step done (Restart
+// here: the engine's restart, from the save point the test instance keeps) with the variables as they are to be
+// there, and run it again. The outcome lists why the engine took its path (the log's decisions).
 // Each scenario keeps its runs (the latest RUNS_KEPT): when, how, the result and the instance, which stays in
 // the database; an earlier run can be opened again, its items, data and log shown and simulated.
 import { is } from 'bpmn-js/lib/util/ModelUtil';
@@ -50,8 +55,28 @@ function parse(text) {
         return { error: err.message };
     }
 }
-const list = text => text.split(',').map(s => s.trim()).filter(Boolean);
 const sameSteps = (a, b) => a.length <= b.length && a.every((step, i) => step.element === b[i].element);
+const clone = value => JSON.parse(JSON.stringify(value ?? {}));
+
+const CHECK_KINDS = [['node', 'Node'], ['data', 'Data'], ['status', 'Instance status']];
+const CHECK_OPS = ['=', '<>', '>', '<', '>=', '<='];
+const ITEM_STATUSES = ['', 'end', 'wait', 'start', 'terminated'];
+/** A value typed in: JSON when it reads as JSON (5, true, "x", {..}), else the text itself. */
+function parseValue(text) {
+    try { return JSON.parse(text); } catch { return text; }
+}
+const showValue = value => typeof value === 'string' ? value : JSON.stringify(value ?? '');
+
+/** The older `expect` (status, data, passes, avoids) as checks at the end (src/testing/scenarios.ts expectChecks). */
+function expectChecks(expect) {
+    if (!expect) return [];
+    return [
+        ...(expect.status ? [{ kind: 'status', status: expect.status }] : []),
+        ...Object.entries(expect.data ?? {}).map(([path, value]) => ({ kind: 'data', path, op: '=', value })),
+        ...(expect.passes ?? []).map(node => ({ kind: 'node', node })),
+        ...(expect.avoids ?? []).map(node => ({ kind: 'node', node, count: 0 })),
+    ];
+}
 
 export default class TestPanel {
     constructor(config, eventBus, bpmnjs, elementRegistry, canvas, overlays, selection) {
@@ -66,7 +91,10 @@ export default class TestPanel {
         this._scenarios = [];
         this._results = new Map();      // scenario -> the result of its last Run
         this._current = null;
-        this._live = null;              // a step-by-step run: { scenario, instance, done, checks, failed }
+        this._live = null;              // a step-by-step run: { scenario, instance, done, checks, stepChecks, failed, startData }
+        this._starting = null;          // the scenario whose start form is open
+        this._debug = false;            // Debug: the variables shown and changed, steps restarted
+        this._restarting = null;        // the done step whose Restart here is open: its index
         this._marked = [];
         this._visible = false;
         this._loaded = false;
@@ -116,8 +144,17 @@ export default class TestPanel {
     async _load() {
         try {
             const { scenarios } = await this._request('GET', `/model/scenarios/${encodeURIComponent(this._config.processName)}`);
+            // an older scenario's expect becomes its checks at the end
+            let migrated = false;
+            for (const scenario of scenarios)
+                if (scenario.expect) {
+                    scenario.checks = [...expectChecks(scenario.expect), ...(scenario.checks ?? [])];
+                    delete scenario.expect;
+                    migrated = true;
+                }
             this._scenarios = scenarios;
             this._current = scenarios[0] ?? null;
+            if (migrated) this._scheduleSave();
         } catch (err) {
             this._status(`Could not load the scenarios: ${err.message}`, true);
         }
@@ -176,16 +213,25 @@ export default class TestPanel {
 
     // ---- running step by step
 
+    /** Start: the start form opens (the start event, its data); starting it is `start`. */
+    openStart(scenario = this._current) {
+        if (!scenario) return;
+        this._starting = this._starting === scenario ? null : scenario;
+        this.render();
+    }
+
     /** Start the process: what waits shows as the next steps. */
     async start(scenario = this._current) {
         if (!scenario) return;
+        this._starting = null;
+        this._restarting = null;
         this._results.delete(scenario);
         try {
             await this._modelSaved();
             const { instance } = await this._request('POST', '/model/test/start', {
                 processName: this._config.processName, startNodeId: scenario.start?.startNodeId, data: scenario.start?.data ?? {}
             });
-            this._live = { scenario, instance, done: [], checks: null, failed: null,
+            this._live = { scenario, instance, done: [], checks: null, stepChecks: [], failed: null, startData: clone(instance.data),
                 run: { instanceId: instance.id, at: new Date().toISOString(), how: 'start', ok: null } };
             this._recordRun(scenario, this._live.run);
             await this._save();
@@ -212,7 +258,11 @@ export default class TestPanel {
             const { instance } = await this._request('POST', '/model/test/invoke', { instanceId: live.instance.id, itemId: item.id, data: value });
             live.instance = instance;
             live.failed = null;
-            live.done.push({ element: item.elementId, data: value });
+            // the checks due after this step
+            const { checks } = await this._request('POST', '/model/test/check', {
+                instanceId: instance.id, checks: live.scenario.checks ?? [], after: { element: item.elementId, name: item.name } });
+            live.stepChecks.push(...checks);
+            live.done.push({ element: item.elementId, data: value, itemId: item.id, after: clone(instance.data), checks });
             // the steps run are the scenario's; saved steps further on are kept while the run follows them
             const saved = live.scenario.steps ?? [];
             live.scenario.steps = sameSteps(live.done, saved) ? [...live.done, ...saved.slice(live.done.length)] : [...live.done];
@@ -233,7 +283,8 @@ export default class TestPanel {
         const live = this._live;
         if (!live || this._waiting(live.instance).length) return;
         try {
-            const { checks, instance } = await this._request('POST', '/model/test/check', { instanceId: live.instance.id, expect: live.scenario.expect });
+            const { checks: atEnd, instance } = await this._request('POST', '/model/test/check', { instanceId: live.instance.id, checks: live.scenario.checks ?? [] });
+            const checks = [...live.stepChecks, ...atEnd];
             live.checks = checks;
             live.instance = instance;
             live.run.ok = checks.every(c => c.ok);
@@ -255,6 +306,47 @@ export default class TestPanel {
             this._results.set(live.scenario, { ...live.run, ok: live.checks ? live.checks.every(c => c.ok) : null,
                 checks: live.checks ?? [], steps: [], instance: live.instance });
         this._live = null;
+        this.render();
+        this._markCurrent();
+    }
+
+    // ---- the debugger: the variables changed; a step done restarted
+
+    /** The instance's variables replaced; the next steps run with them (this run only: not part of the scenario). */
+    async applyVariables(data) {
+        const live = this._live;
+        try {
+            const { instance } = await this._request('POST', '/model/test/data', { instanceId: live.instance.id, data });
+            live.instance = instance;
+            this._status('Variables changed: the next steps run with them');
+        } catch (err) {
+            this._status(`The variables were not changed: ${err.message}`, true);
+        }
+        this.render();
+    }
+
+    /**
+     * Restart here: the instance goes back to an item (the engine's restart), with the variables given; a step waits
+     * again, another element runs again. The steps done after it are no longer done.
+     */
+    async restartAt(itemId, data, label) {
+        const live = this._live;
+        try {
+            const { instance } = await this._request('POST', '/model/test/restart', { instanceId: live.instance.id, itemId, data });
+            live.instance = instance;
+            const kept = new Set((instance.items || []).filter(i => i.status !== 'wait').map(i => i.id));
+            const at = live.done.findIndex(d => !kept.has(d.itemId));
+            if (at >= 0) live.done = live.done.slice(0, at);
+            live.stepChecks = live.done.flatMap(d => d.checks ?? []);
+            live.checks = null;
+            live.failed = null;
+            live.run.ok = null;
+            this._restarting = null;
+            this._status(`Back at ${label}: change what you need, then run it again`);
+            await this._finishIfDone();
+        } catch (err) {
+            this._status(`Could not restart at ${label}: ${err.message}`, true);
+        }
         this.render();
         this._markCurrent();
     }
@@ -421,24 +513,26 @@ export default class TestPanel {
         return this._results.get(scenario)?.instance ?? null;
     }
 
-    /** Simulate: play from the start; while playing, pause; paused, continue. */
+    /**
+     * Simulate: the last run on the diagram one change at a time, paused on the first: Step (and Back) one change,
+     * Play the rest (Pause), Stop. The status says what each change is.
+     */
     simulate() {
         const sim = this._simulation;
-        if (sim && !sim.paused) return this._pauseSimulation();
-        if (sim?.paused) return this._playSimulation();
+        if (sim) return sim.paused ? this._playSimulation() : this._pauseSimulation();
         const instance = this._lastRun();
         if (!instance) return;
         this._unmark();
-        this._simulation = { frames: this._simulationFrames(instance), index: 0, timer: null, paused: false };
-        this._status('Simulating the last run: blue started, green done, orange still waiting');
-        this._playSimulation();
+        this._simulation = { frames: this._simulationFrames(instance), index: 0, timer: null, paused: true };
+        this._stepSimulation();
+        this._simulationControls();
     }
 
     _playSimulation() {
         const sim = this._simulation;
         sim.paused = false;
         const next = () => {
-            if (this._simulation !== sim) return;
+            if (this._simulation !== sim || sim.paused) return;
             if (!this._stepSimulation()) return;
             sim.timer = setTimeout(next, SIMULATION_STEP);
         };
@@ -450,35 +544,59 @@ export default class TestPanel {
         const sim = this._simulation;
         clearTimeout(sim.timer);
         sim.paused = true;
-        this._status(`Paused at ${sim.index} of ${sim.frames.length}: Continue, or Step one at a time`);
+        this._simulationStatus();
         this._simulationControls();
     }
 
-    /** Show the next frame; false when there is none (the simulation is over). */
+    /** Show the next change; false when there is none (the simulation stays on its last, paused). */
     _stepSimulation() {
         const sim = this._simulation;
         if (!sim) return false;
         if (sim.index >= sim.frames.length) {
-            this._simulation = null;
-            this._status('Simulation done: blue started, green done, orange still waiting; the numbers are the order they started in');
+            clearTimeout(sim.timer);
+            sim.paused = true;
+            this._status(`Simulation done (${sim.frames.length} changes): blue started, green done, orange still waiting; the numbers are the order they started in`);
             this._simulationControls();
             return false;
         }
-        sim.frames[sim.index++]();
-        if (sim.paused) {
-            this._status(`Paused at ${sim.index} of ${sim.frames.length}: Continue, or Step one at a time`);
-            if (sim.index >= sim.frames.length) this._stepSimulation();
-        }
+        sim.frames[sim.index++].show();
+        this._simulationStatus();
+        this._simulationControls();
         return true;
     }
 
-    /** The Simulate button's label and the Step button, as the simulation stands. */
-    _simulationControls() {
-        const button = this._root?.querySelector('.test-simulate');
-        const step = this._root?.querySelector('.test-sim-step');
+    /** One change back: the diagram drawn again up to the change before. */
+    _backSimulation() {
         const sim = this._simulation;
-        if (button) button.textContent = !sim ? 'Simulate' : sim.paused ? 'Continue' : 'Pause';
-        if (step) step.hidden = !sim?.paused;
+        if (!sim || sim.index <= 1) return;
+        clearTimeout(sim.timer);
+        sim.paused = true;
+        this._unmark();
+        sim.index--;
+        sim.frames.slice(0, sim.index).forEach(frame => frame.show());
+        this._simulationStatus();
+        this._simulationControls();
+    }
+
+    _simulationStatus() {
+        const sim = this._simulation;
+        if (sim?.index) this._status(`${sim.index} of ${sim.frames.length}: ${sim.frames[sim.index - 1].text}`);
+    }
+
+    /** The simulation's buttons as it stands: Simulate, or Back, Step, Play/Pause and Stop. */
+    _simulationControls() {
+        const sim = this._simulation;
+        const button = this._root?.querySelector('.test-simulate');
+        if (button) button.textContent = !sim ? 'Simulate' : sim.paused ? 'Play' : 'Pause';
+        for (const [selector, shown, enabled] of [
+            ['.test-sim-back', sim, sim?.index > 1],
+            ['.test-sim-step', sim, sim && sim.index < sim.frames.length],
+            ['.test-sim-stop', sim, true]]) {
+            const node = this._root?.querySelector(selector);
+            if (!node) continue;
+            node.hidden = !shown;
+            node.disabled = !enabled;
+        }
     }
 
     /**
@@ -498,28 +616,31 @@ export default class TestPanel {
         const isFlow = item => flowSource.has(item.elementId);
         const sourceOf = item => flowSource.get(item.elementId);
         const open = [];        // started, not ended
-        const frames = [];
+        const frames = [];      // { show, text }
+        const name = item => this._label(item.elementId, item.name);
+        const frame = (item, marker, text, numbered = true) =>
+            frames.push({ show: () => this._simulateItem(item, marker, numbered ? number.get(item) : undefined), text });
         const end = item => {
             open.splice(open.indexOf(item), 1);
-            frames.push(() => this._simulateItem(item, 'test-passed', number.get(item)));
+            frame(item, 'test-passed', `${name(item)} done`);
         };
         for (const item of items) {
             if (isFlow(item)) {
                 // the element the flow leaves ends first (its latest item started before the flow)
                 const source = [...open].reverse().find(o => o.elementId === sourceOf(item));
                 if (source) end(source);
-                frames.push(() => this._simulateItem(item, 'test-passed'));
+                frame(item, 'test-passed', `flow ${name(item)} taken`, false);
                 continue;
             }
             open.push(item);
-            frames.push(() => this._simulateItem(item, 'test-started', number.get(item)));
+            frame(item, 'test-started', `${name(item)} started`);
         }
         // what nothing left: ended where it stopped (end events), or still waiting
         for (const item of [...open])
             if (item.status !== 'wait') end(item);
         // and what still waits shows as waiting
         for (const item of open.filter(i => i.status === 'wait'))
-            frames.push(() => this._simulateItem(item, 'test-waiting', number.get(item)));
+            frame(item, 'test-waiting', `${name(item)} waits`);
         return frames;
     }
 
@@ -539,10 +660,13 @@ export default class TestPanel {
         }
     }
 
+    /** Stop: the simulation ends, and the diagram shows the run as it ended. */
     _stopSimulation() {
-        clearTimeout(this._simulation?.timer);
+        const was = this._simulation;
+        clearTimeout(was?.timer);
         this._simulation = null;
         this._simulationControls();
+        if (was) this._markCurrent();
     }
 
     // ---- the diagram: the path taken
@@ -663,20 +787,26 @@ export default class TestPanel {
         const live = this._live?.scenario === scenario ? this._live : null;
         const starts = this._elements(['bpmn:StartEvent']).filter(e => is(e.$parent, 'bpmn:Process'));
         scenario.steps ??= [];
-        scenario.expect ??= {};
 
         return el('div', { class: 'test-editor' },
             el('div', { class: 'test-editor-actions' },
                 el('input', { class: 'test-name', 'aria-label': 'Scenario name', value: scenario.name, oninput: e => { scenario.name = e.target.value; changed(); } }),
-                el('button', { type: 'button', class: 'test-run primary', onclick: () => this.start(scenario),
-                    title: 'Start the process and run it step by step' }, live ? 'Start again' : 'Start'),
+                el('button', { type: 'button', class: `test-run primary${this._starting === scenario ? ' active' : ''}`, onclick: () => this.openStart(scenario),
+                    title: 'The start event and its data, then start the process and run it step by step' }, live ? 'Start again' : 'Start'),
                 el('button', { type: 'button', class: 'test-replay', onclick: () => this.replay(scenario), disabled: !scenario.steps.length,
                     title: 'Run the saved steps on a new instance without stopping, and check what is expected' }, 'Run'),
-                el('button', { type: 'button', class: 'test-sim-step', hidden: !this._simulation?.paused, onclick: () => this._stepSimulation(),
-                    title: 'Show the next change' }, 'Step'),
+                el('button', { type: 'button', class: 'test-sim-back', hidden: !this._simulation, disabled: !(this._simulation?.index > 1),
+                    onclick: () => this._backSimulation(), title: 'Back one change' }, '◀ Back'),
+                el('button', { type: 'button', class: 'test-sim-step', hidden: !this._simulation,
+                    onclick: () => { this._pauseSimulation(); this._stepSimulation(); }, title: 'The next change' }, 'Step ▶'),
                 el('button', { type: 'button', class: 'test-simulate', onclick: () => this.simulate(), disabled: !this._lastRun(scenario),
-                    title: 'Show the last run on the diagram, element by element, numbered in the order they ran; Pause and Continue while it plays' },
-                    !this._simulation ? 'Simulate' : this._simulation.paused ? 'Continue' : 'Pause'),
+                    title: 'Show the last run on the diagram one change at a time, numbered in the order they ran: Step, Back, or Play the rest' },
+                    !this._simulation ? 'Simulate' : this._simulation.paused ? 'Play' : 'Pause'),
+                el('button', { type: 'button', class: 'test-sim-stop', hidden: !this._simulation, onclick: () => this._stopSimulation(),
+                    title: 'End the simulation' }, 'Stop'),
+                el('button', { type: 'button', class: `test-debug${this._debug ? ' active' : ''}`, 'aria-pressed': String(this._debug),
+                    onclick: () => { this._debug = !this._debug; this._restarting = null; this.render(); },
+                    title: 'Show the variables while running step by step: change them, or go back to a step and run it again' }, 'Debug'),
                 el('button', { type: 'button', onclick: () => {
                     const copy = JSON.parse(JSON.stringify(scenario));
                     copy.name = `${scenario.name} (copy)`;
@@ -691,27 +821,96 @@ export default class TestPanel {
                     changed(); this._select(this._scenarios[0] ?? null);
                 } }, 'Delete')),
 
-            el('fieldset', {}, el('legend', {}, 'Start'),
-                starts.length > 1 ? el('label', { class: 'test-field' }, el('span', {}, 'Start event'),
-                    el('select', { onchange: e => { scenario.start = { ...scenario.start, startNodeId: e.target.value || undefined }; changed(); } },
-                        el('option', { value: '' }, '(the process\'s start)'),
-                        starts.map(s => el('option', { value: s.id, selected: s.id === scenario.start?.startNodeId }, s.get('name') || s.id)))) : null,
-                this._jsonField('Start data', scenario.start?.data, value => { scenario.start = { ...scenario.start, data: value }; changed(); })),
+            this._starting === scenario ? this._renderStart(scenario, starts) : null,
 
             live ? this._renderLiveSteps(live) : this._renderSavedSteps(scenario),
             this._renderRuns(scenario),
+            this._renderChecks(scenario));
+    }
 
-            el('fieldset', {}, el('legend', {}, 'Expected at the end (optional)'),
-                el('label', { class: 'test-field' }, el('span', {}, 'Status'),
-                    el('select', { class: 'test-expect-status', onchange: e => { scenario.expect.status = e.target.value || undefined; changed(); } },
-                        STATUSES.map(s => el('option', { value: s, selected: (scenario.expect.status ?? '') === s }, s || '(any)')))),
-                this._jsonField('Data has', scenario.expect.data, value => { scenario.expect.data = Object.keys(value).length ? value : undefined; changed(); }, { rows: 2 }),
-                el('label', { class: 'test-field' }, el('span', {}, 'Passes (element ids)'),
-                    el('input', { class: 'test-expect-passes', value: (scenario.expect.passes ?? []).join(', '), placeholder: 'e.g. Approve, Notify',
-                        oninput: e => { scenario.expect.passes = list(e.target.value); changed(); } })),
-                el('label', { class: 'test-field' }, el('span', {}, 'Does not pass'),
-                    el('input', { class: 'test-expect-avoids', value: (scenario.expect.avoids ?? []).join(', '),
-                        oninput: e => { scenario.expect.avoids = list(e.target.value); changed(); } }))));
+    /** The start form: the start event (when there are several), its form fields or the start data, and Start. */
+    _renderStart(scenario, starts) {
+        const changed = () => this._scheduleSave();
+        const startId = scenario.start?.startNodeId || starts[0]?.id;
+        const fields = startId ? this._formFields(startId) : [];
+        let read;
+        let input;
+        if (fields.length) {
+            const form = this._stepForm({ id: 'start', elementId: startId }, scenario.start?.data ?? {});
+            input = form.node;
+            read = () => form.read();
+        } else {
+            input = this._jsonField('Start data', scenario.start?.data, () => { }, { class: 'test-json test-start-data' });
+            read = () => parse(input.querySelector('textarea').value);
+        }
+        const go = () => {
+            const { value, error } = read();
+            if (error) return this._status(`The start data is not valid JSON: ${error}`, true);
+            scenario.start = { ...scenario.start, data: value };
+            changed();
+            this.start(scenario);
+        };
+        return el('fieldset', { class: 'test-start' }, el('legend', {}, 'Start'),
+            starts.length > 1 ? el('label', { class: 'test-field' }, el('span', {}, 'Start event'),
+                el('select', { class: 'test-start-event', onchange: e => { scenario.start = { ...scenario.start, startNodeId: e.target.value || undefined }; changed(); this.render(); } },
+                    starts.map(s => el('option', { value: s.id, selected: s.id === startId }, s.get('name') || s.id)))) : null,
+            input,
+            el('div', { class: 'test-start-actions' },
+                el('button', { type: 'button', class: 'test-start-go primary', onclick: go }, 'Start the process'),
+                el('button', { type: 'button', class: 'test-start-cancel', onclick: () => { this._starting = null; this.render(); } }, 'Cancel')));
+    }
+
+    /**
+     * The checks: each at the end or after a step; a node (by id or name: how many times it ran, in what status), a
+     * data value compared, the instance's status.
+     */
+    _renderChecks(scenario) {
+        scenario.checks ??= [];
+        const changed = () => this._scheduleSave();
+        const steps = this._elements(['bpmn:UserTask', 'bpmn:ReceiveTask', 'bpmn:Event']).filter(e => !is(e, 'bpmn:StartEvent') && !is(e, 'bpmn:EndEvent'));
+        const nodes = this._elements().filter(e => !is(e, 'bpmn:SequenceFlow') && !is(e, 'bpmn:DataObjectReference') && !is(e, 'bpmn:DataStoreReference') && !is(e, 'bpmn:DataObject'));
+        const option = (value, label, selected) => el('option', { value, selected: selected === value }, label);
+        const row = (check, i) => {
+            const set = (patch, again = false) => { Object.assign(check, patch); changed(); if (again) this.render(); };
+            const when = check.at === 'after' ? `after:${check.step}` : 'end';
+            const fields = check.kind === 'node' ? [
+                el('select', { class: 'test-check-node', 'aria-label': 'Node', onchange: e => set({ node: e.target.value }) },
+                    option('', '(choose a node)', check.node ?? ''),
+                    nodes.map(n => option(n.id, this._label(n.id), check.node))),
+                el('input', { class: 'test-check-count', type: 'number', min: '0', placeholder: 'times', 'aria-label': 'How many times (empty: at least once)',
+                    value: check.count ?? '', oninput: e => set({ count: e.target.value === '' ? undefined : Number(e.target.value) }) }),
+                el('select', { class: 'test-check-status', 'aria-label': 'Status', onchange: e => set({ status: e.target.value || undefined }) },
+                    ITEM_STATUSES.map(s => option(s, s || '(any status)', check.status ?? '')))
+            ] : check.kind === 'data' ? [
+                el('input', { class: 'test-check-path', placeholder: 'variable, or a.b', 'aria-label': 'Variable', value: check.path ?? '',
+                    oninput: e => set({ path: e.target.value }) }),
+                el('select', { class: 'test-check-op', 'aria-label': 'Comparison', onchange: e => set({ op: e.target.value }) },
+                    CHECK_OPS.map(op => option(op, op, check.op ?? '='))),
+                el('input', { class: 'test-check-value', placeholder: 'value', 'aria-label': 'Value', value: check.value === undefined ? '' : showValue(check.value),
+                    oninput: e => set({ value: parseValue(e.target.value) }) })
+            ] : [
+                el('select', { class: 'test-check-status', 'aria-label': 'Instance status', onchange: e => set({ status: e.target.value || undefined }) },
+                    STATUSES.map(s => option(s, s || '(choose)', check.status ?? '')))
+            ];
+            return el('div', { class: 'test-check-row' },
+                el('select', { class: 'test-check-at', 'aria-label': 'When', onchange: e => {
+                    const value = e.target.value;
+                    set(value === 'end' ? { at: undefined, step: undefined } : { at: 'after', step: value.slice(6) });
+                } },
+                    option('end', 'At the end', when),
+                    steps.map(s => option(`after:${s.id}`, `After ${this._label(s.id)}`, when))),
+                el('select', { class: 'test-check-kind', 'aria-label': 'What', onchange: e => set({ kind: e.target.value }, true) },
+                    CHECK_KINDS.map(([value, label]) => option(value, label, check.kind))),
+                fields,
+                el('button', { type: 'button', class: 'test-check-remove', title: 'Remove this check',
+                    onclick: () => { scenario.checks.splice(i, 1); changed(); this.render(); } }, '✕'));
+        };
+        return el('fieldset', { class: 'test-checks-editor' }, el('legend', {}, 'Checks'),
+            scenario.checks.length ? scenario.checks.map(row) : el('p', { class: 'test-hint' }, 'No checks: a run passes when its steps can be done.'),
+            el('button', { type: 'button', class: 'test-check-add', onclick: () => {
+                scenario.checks.push({ kind: 'node' });
+                changed(); this.render();
+            } }, 'Add check'));
     }
 
     /** The scenario's kept runs, newest first; one opens its instance here. */
@@ -733,10 +932,15 @@ export default class TestPanel {
     /** A run in progress: the steps done, then what waits now, each with its data and Run. */
     _renderLiveSteps(live) {
         const pending = this._waiting(live.instance);
+        const checkList = checks => checks?.length ? el('ul', { class: 'test-checks test-step-checks' }, checks.map(c =>
+            el('li', { class: c.ok ? 'ok' : 'failed' }, `${c.ok ? '✓' : '✗'} ${c.what}`, !c.ok && c.actual !== undefined ? ` (is ${JSON.stringify(c.actual)})` : ''))) : null;
         return el('fieldset', { class: 'test-steps live' }, el('legend', {}, 'Steps'),
-            live.done.map(step => el('div', { class: 'test-step done' },
+            live.done.map((step, i) => el('div', { class: 'test-step done', 'data-element-id': step.element },
                 el('span', { class: 'test-step-name' }, '✓ ', this._label(step.element)),
-                el('code', { class: 'test-step-data' }, JSON.stringify(step.data ?? {})))),
+                el('code', { class: 'test-step-data' }, JSON.stringify(step.data ?? {})),
+                checkList(step.checks),
+                this._debug ? this._renderDoneDebug(live, step, i) : null)),
+            this._debug ? this._renderVariables(live) : null,
             pending.length ? pending.map(item => {
                 const data = this._stepData(item);
                 let input, read;
@@ -763,6 +967,56 @@ export default class TestPanel {
                 el('button', { type: 'button', class: 'test-stop', onclick: () => this.stop() }, 'Close')),
             this._waitingInside(live.instance).length ? el('p', { class: 'test-hint test-inside' }, 'Also waiting, not a step here: ',
                 this._waitingInside(live.instance).map(i => this._label(i.elementId, i.name)).join(', ')) : null);
+    }
+
+    /**
+     * The variables as a table (name, value as JSON or text), changed and applied to the instance: the next steps
+     * run with them. `values` gives the starting values; `onApply` what Apply does (default: the instance's data).
+     */
+    _variablesTable(values, onApply, applyLabel = 'Apply') {
+        const rows = el('tbody', {});
+        const addRow = (name = '', value = '') => rows.append(el('tr', { class: 'test-variable' },
+            el('td', {}, el('input', { class: 'test-variable-name', 'aria-label': 'Variable', value: name })),
+            el('td', {}, el('input', { class: 'test-variable-value', 'aria-label': `Value of ${name || 'the variable'}`, value: name === '' && value === '' ? '' : showValue(value) })),
+            el('td', {}, el('button', { type: 'button', class: 'test-variable-remove', title: 'Remove this variable', onclick: e => e.target.closest('tr').remove() }, '✕'))));
+        for (const [name, value] of Object.entries(values ?? {})) addRow(name, value);
+        const read = () => {
+            const data = {};
+            for (const row of rows.querySelectorAll('tr')) {
+                const name = row.querySelector('.test-variable-name').value.trim();
+                if (name) data[name] = parseValue(row.querySelector('.test-variable-value').value);
+            }
+            return data;
+        };
+        return el('div', { class: 'test-variables-table' },
+            el('table', {}, el('thead', {}, el('tr', {}, el('th', {}, 'Variable'), el('th', {}, 'Value'), el('th', {}, ''))), rows),
+            el('div', { class: 'test-variables-actions' },
+                el('button', { type: 'button', class: 'test-variable-add', onclick: () => addRow() }, 'Add variable'),
+                el('button', { type: 'button', class: 'test-variables-apply primary', onclick: () => onApply(read()) }, applyLabel)));
+    }
+
+    /** Debug: the instance's variables now, changed before the next step. */
+    _renderVariables(live) {
+        return el('div', { class: 'test-variables' },
+            el('h5', {}, 'Variables now'),
+            el('p', { class: 'test-hint' }, 'Change them, then Apply: the next steps run with them. This run only: the scenario does not keep them.'),
+            this._variablesTable(live.instance.data, data => this.applyVariables(data)));
+    }
+
+    /** Debug, on a step done: the variables after it, and Restart here (back to it, with the variables as they are to be there). */
+    _renderDoneDebug(live, step, i) {
+        const before = i === 0 ? live.startData : live.done[i - 1].after;
+        const label = this._label(step.element);
+        return el('div', { class: 'test-step-debug' },
+            el('details', {}, el('summary', {}, 'Variables after this step'), el('pre', { class: 'test-data' }, JSON.stringify(step.after ?? {}, null, 2))),
+            this._restarting === i
+                ? el('div', { class: 'test-restart-form' },
+                    el('p', { class: 'test-hint' }, `Back to ${label}: the variables as they are to be when it runs again (as they were before it, to start from).`),
+                    this._variablesTable(before, data => this.restartAt(step.itemId, data, label), 'Restart here'),
+                    el('button', { type: 'button', class: 'test-restart-cancel', onclick: () => { this._restarting = null; this.render(); } }, 'Cancel'))
+                : el('button', { type: 'button', class: 'test-restart', disabled: !step.itemId,
+                    title: 'Go back to this step (the engine restarts the instance there) and run it again',
+                    onclick: () => { this._restarting = i; this.render(); } }, 'Restart here'));
     }
 
     /** Not running: the saved steps, which Run repeats; Start goes through them step by step. */
@@ -793,13 +1047,19 @@ export default class TestPanel {
                 el('li', { class: c.ok ? 'ok' : 'failed' }, `${c.ok ? '✓' : '✗'} ${c.what}`, !c.ok && c.actual !== undefined ? ` (is ${JSON.stringify(c.actual)})` : ''))) : null,
             instance ? [
                 el('details', { open: true }, el('summary', {}, 'Data'), el('pre', { class: 'test-data' }, JSON.stringify(instance.data ?? {}, null, 2))),
-                this._renderItems(instance),
+                instance.decisions?.length ? el('details', { class: 'test-decisions', open: true }, el('summary', {}, `Why: the engine's decisions (${instance.decisions.length})`),
+                    el('ol', {}, instance.decisions.map(d => el('li', {}, d)))) : null,
+                this._renderItems(instance, live),
                 el('details', {}, el('summary', {}, `Log (${instance.logs?.length ?? 0} lines)`), el('pre', { class: 'test-log' }, (instance.logs || []).join('\n')))
             ] : null);
     }
 
-    /** The run's items in the order they ran, numbered as Simulate numbers them; a row selects its element. */
-    _renderItems(instance) {
+    /**
+     * The run's items in the order they ran, numbered as Simulate numbers them; a row selects its element. Debugging a
+     * run step by step, an element done can be restarted (it runs again, with the variables as they are now).
+     */
+    _renderItems(instance, live = null) {
+        const restartable = item => live && this._debug && item.status === 'end' && !this._flowIds().has(item.elementId);
         const items = [...(instance.items || [])].sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0));
         const time = value => value ? new Date(value).toLocaleTimeString() : '';
         const select = elementId => {
@@ -810,7 +1070,7 @@ export default class TestPanel {
         };
         return el('details', { class: 'test-items', open: true }, el('summary', {}, `Items (${items.length})`),
             el('table', {},
-                el('thead', {}, el('tr', {}, ['#', 'Element', 'Name', 'Type', 'Status', 'Assignee', 'Started', 'Ended'].map(h => el('th', {}, h)))),
+                el('thead', {}, el('tr', {}, ['#', 'Element', 'Name', 'Type', 'Status', 'Assignee', 'Started', 'Ended', ''].map(h => el('th', {}, h)))),
                 el('tbody', {}, items.map((item, i) => el('tr', {
                     'data-element-id': item.elementId,
                     title: this._elementRegistry.get(item.elementId) ? 'Select it in the diagram' : null,
@@ -823,7 +1083,15 @@ export default class TestPanel {
                     el('td', {}, el('span', { class: `test-item-status ${item.status}` }, item.status)),
                     el('td', {}, item.assignee || ''),
                     el('td', {}, time(item.startedAt)),
-                    el('td', {}, time(item.endedAt)))))));
+                    el('td', {}, time(item.endedAt)),
+                    el('td', {}, restartable(item) ? el('button', { type: 'button', class: 'test-item-restart',
+                        title: 'Go back to this element and run it again, with the variables as they are now',
+                        onclick: e => { e.stopPropagation(); this.restartAt(item.id, live.instance.data, this._label(item.elementId, item.name)); } }, 'Restart') : null))))));
+    }
+
+    /** The model's sequence flows' ids (an item of one is not restarted). */
+    _flowIds() {
+        return new Set(this._elements(['bpmn:SequenceFlow']).map(f => f.id));
     }
 }
 

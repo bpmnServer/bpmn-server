@@ -1080,3 +1080,35 @@ pre.report-value {
     color: #9a5b00;
     font-size: 12px;
 }
+
+/* ---- the Test tab: start form, checks, debugger */
+.test-editor-actions { flex-wrap: wrap; }
+.test-panel button.active { background: #e8f0fc; border-color: #1f62c8; color: #1f62c8; }
+.test-panel button.primary.active { background: #174ea3; color: #fff; }
+.test-start { background: #f7f9fc; }
+.test-start-actions { display: flex; gap: 6px; margin-top: 6px; }
+
+.test-check-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 4px 0; }
+.test-check-row select, .test-check-row input { padding: 2px 4px; }
+.test-check-count { width: 70px; }
+.test-check-path, .test-check-value { width: 140px; }
+.test-check-add { margin-top: 4px; }
+.test-step-checks { margin: 4px 0 0 18px; font-size: 12px; }
+
+.test-variables { border: 1px dashed #b9c6da; border-radius: 4px; padding: 6px 10px; margin: 8px 0; background: #fbfcfe; }
+.test-variables h5 { margin: 0 0 2px; font-size: 13px; }
+.test-variables-table table { border-collapse: collapse; width: 100%; font-size: 12px; }
+.test-variables-table th { text-align: left; color: #52575f; font-weight: 600; padding: 2px 4px; }
+.test-variables-table td { padding: 2px 4px; }
+.test-variables-table td:nth-child(1) { width: 30%; }
+.test-variables-table input { width: 100%; box-sizing: border-box; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; }
+.test-variables-actions { display: flex; gap: 6px; margin-top: 4px; }
+.test-step-debug { margin: 4px 0 0 18px; font-size: 12px; }
+.test-restart-form { border-left: 3px solid #1f62c8; padding-left: 8px; margin-top: 4px; }
+
+.test-decisions ol { margin: 4px 0; padding-left: 22px; font-size: 12px; }
+.test-decisions li { margin: 2px 0; }
+/* a step's checks and its debugger take the step's whole width */
+.test-step > .test-step-checks,
+.test-step > .test-step-debug { grid-column: 1 / -1; }
+.test-check-node { max-width: 260px; }

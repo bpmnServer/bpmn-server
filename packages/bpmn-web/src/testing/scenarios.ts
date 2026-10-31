@@ -105,6 +105,8 @@ export function summarize(instance) {
             startedAt: i.startedAt, endedAt: i.endedAt, assignee: i.assignee
         })),
         logs: (instance.logs ?? []).slice(-300).map(l => typeof l === 'string' ? l : `${' '.repeat(Math.max(0, l.level ?? 0))}${l.message}`),
+        // why the engine took its path: the log's decision entries, in order
+        decisions: (instance.logs ?? []).filter(l => l?.type === 'decision').map(l => l.message),
     };
 }
 

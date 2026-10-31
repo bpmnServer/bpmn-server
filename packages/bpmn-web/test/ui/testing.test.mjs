@@ -1,5 +1,6 @@
-// The editor's Test tab: a scenario is run step by step (Run shows what waits; running a step shows what waits
-// next), its steps are kept, and Replay / Run all repeat them; the path is marked on the diagram.
+// The editor's Test tab: a scenario is started from its start form and run step by step (what waits shows as the
+// next steps), its steps are kept, Run / Run all repeat them, its checks run after a step or at the end; the
+// path is marked on the diagram and simulated one change at a time; Debug changes the variables and restarts a step.
 //   npm run test:ui
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -39,6 +40,34 @@ async function openTestTab(model = 'leave-request') {
     return { page, errors, close: () => context.close() };
 }
 
+/** Start: the start form opens; Start the process starts it. */
+async function startRun(page) {
+    await page.click('.test-run');
+    await page.click('.test-start-go');
+    await page.waitForSelector('.test-step.pending, .test-finished');
+}
+
+/** Add a check: the last row's When, What and fields. */
+async function addCheck(page, { at = 'end', kind, node, count, status, path, op, value }) {
+    await page.click('.test-check-add');
+    const row = page.locator('.test-check-row').last();
+    await row.locator('.test-check-at').selectOption(at);
+    await row.locator('.test-check-kind').selectOption(kind);
+    if (node !== undefined) await row.locator('.test-check-node').selectOption(node);
+    if (count !== undefined) await row.locator('.test-check-count').fill(String(count));
+    if (status !== undefined) await row.locator('.test-check-status').selectOption(status);
+    if (path !== undefined) await row.locator('.test-check-path').fill(path);
+    if (op !== undefined) await row.locator('.test-check-op').selectOption(op);
+    if (value !== undefined) await row.locator('.test-check-value').fill(String(value));
+}
+
+/** Simulate: it opens paused on the first change; Play shows the rest. */
+async function simulateAll(page) {
+    await page.click('.test-simulate');
+    await page.click('.test-simulate');
+    await page.waitForSelector('.test-status:text("Simulation done")', { timeout: 30000 });
+}
+
 const marked = (page, marker) => page.evaluate(m => [...document.querySelectorAll(`.djs-element.${m}`)].map(e => e.dataset.elementId).sort(), marker);
 const pendingNames = page => page.locator('.test-step.pending .test-step-name').allInnerTexts();
 
@@ -69,10 +98,13 @@ test('Run shows what waits; running a step shows what waits next, until the end'
     const { page, errors, close } = await openTestTab();
     await page.click('.test-new');
     await page.fill('.test-name', 'Long leave');
-    await page.selectOption('.test-expect-status', 'end');
-    await page.fill('.test-expect-passes', 'Approve');
+    await addCheck(page, { kind: 'status', status: 'end' });
+    await addCheck(page, { kind: 'node', node: 'Approve' });
     assert.equal(await page.locator('.test-run').innerText(), 'Start');
+    assert.equal(await page.locator('.test-start').count(), 0, 'the start form only when Start is clicked');
     await page.click('.test-run');
+    assert.equal(await page.locator('.test-start').isVisible(), true);
+    await page.click('.test-start-go');
 
     await page.waitForSelector('.test-step.pending');
     assert.deepEqual(await pendingNames(page), ['Submit request (Submit)']);
@@ -113,15 +145,13 @@ test('Run shows what waits; running a step shows what waits next, until the end'
 test('another run follows the saved steps, prefilled; a different choice changes the path', async () => {
     const { page, close } = await openTestTab();
     await page.locator('.test-list li', { hasText: 'Long leave' }).click();
-    await page.click('.test-run');
-    await page.waitForSelector('.test-step.pending');
+    await startRun(page);
     assert.equal(await page.locator('.test-step.pending [data-field="days"]').inputValue(), '10', 'the saved step');
 
     await page.click('.test-duplicate, .test-editor-actions button:has-text("Duplicate")');
     await page.fill('.test-name', 'Short leave');
-    await page.fill('.test-expect-passes', 'AutoApprove');
-    await page.click('.test-run');
-    await page.waitForSelector('.test-step.pending');
+    await page.locator('.test-check-node').selectOption('AutoApprove');
+    await startRun(page);
     await runStep(page, 'Submit', { days: 2 });         // 5 days or fewer: approved automatically, nothing waits
     await page.waitForSelector('.test-finished');
     await page.waitForSelector('.test-result.ok');
@@ -140,23 +170,27 @@ test('Run repeats the saved steps on a new instance; Simulate numbers its path; 
     await page.waitForSelector('.test-status:text("Short leave: passed")');     // this Run's result, not the kept one
     assert.deepEqual(await page.locator('.test-steps-result li').allInnerTexts(), ['✓ Submit']);
 
+    // one change at a time: it opens paused on the first
     await page.click('.test-simulate');
-    assert.equal(await page.locator('.test-simulate').innerText(), 'Pause');
-    await page.click('.test-simulate');                       // pause
-    assert.equal(await page.locator('.test-simulate').innerText(), 'Continue');
-    assert.equal(await page.locator('.test-sim-step').isVisible(), true);
-    const paused = await page.locator('.djs-element.test-started, .djs-element.test-passed').count();
+    assert.equal(await page.locator('.test-simulate').innerText(), 'Play');
+    assert.match(await page.locator('.test-status').innerText(), /^1 of \d+: Leave requested \(Requested\) started$/);
+    assert.equal(await page.locator('.test-sim-back').isDisabled(), true, 'nothing before the first');
+    const first = await page.locator('.djs-element.test-started, .djs-element.test-passed').count();
     await page.waitForTimeout(1200);
-    assert.equal(await page.locator('.djs-element.test-started, .djs-element.test-passed').count(), paused, 'nothing moves while paused');
-    await page.click('.test-sim-step');                      // one change
-    assert.match(await page.locator('.test-status').innerText(), /Paused at \d+ of \d+/);
-    await page.click('.test-simulate');                       // continue
+    assert.equal(await page.locator('.djs-element.test-started, .djs-element.test-passed').count(), first, 'nothing moves until Step or Play');
+    await page.click('.test-sim-step');
+    await page.click('.test-sim-step');
+    assert.match(await page.locator('.test-status').innerText(), /^3 of \d+: /);
+    await page.click('.test-sim-back');
+    assert.match(await page.locator('.test-status').innerText(), /^2 of \d+: /);
+    await page.click('.test-simulate');                       // play the rest
     await page.waitForSelector('.test-status:text("Simulation done")', { timeout: 20000 });
-    assert.equal(await page.locator('.test-simulate').innerText(), 'Simulate');
     const numbers = await page.evaluate(() => [...document.querySelectorAll('.test-seq')]
         .map(b => [b.closest('.djs-overlays').getAttribute('data-container-id'), Number(b.textContent)]));
     const order = numbers.sort((a, b) => a[1] - b[1]).map(([id]) => id);
     assert.deepEqual(order, ['Requested', 'Submit', 'LongLeave', 'AutoApprove', 'AutoApproved'], 'numbered in the order they ran');
+    await page.click('.test-sim-stop');
+    assert.equal(await page.locator('.test-simulate').innerText(), 'Simulate');
 
     await page.click('.test-run-all');
     await page.waitForSelector('.test-status:text("passed")');
@@ -190,8 +224,7 @@ test('a joining gateway waits by itself: it is shown, but is not a step to run',
     await web.bpmnServer.definitions.rebuild();
     const { page, errors, close } = await openTestTab('parallel-ui');
     await page.click('.test-new');
-    await page.click('.test-run');
-    await page.waitForSelector('.test-step.pending');
+    await startRun(page);
     assert.deepEqual(await pendingNames(page), ['Task A (A)', 'Task B (B)']);
 
     await runStep(page, 'A', {});
@@ -213,8 +246,7 @@ test('a joining gateway waits by itself: it is shown, but is not a step to run',
             if (s !== last[id]) { last[id] = s; if (s) window.simulated.push(`${id} ${s}`); }
         }), 30);
     });
-    await page.click('.test-simulate');
-    await page.waitForSelector('.test-status:text("Simulation done")', { timeout: 30000 });
+    await simulateAll(page);
     const simulated = await page.evaluate(() => { clearInterval(window.watch); return window.simulated; });
     const at = event => simulated.lastIndexOf(event);     // the simulation's, after the live run's marks
     // started (blue) and done (green) apart; what still waits turns waiting (orange) at the end
@@ -242,8 +274,7 @@ test('a scenario keeps its runs: after a reload its last run is shown and simula
     await page.waitForSelector('.test-result.ok');
     assert.ok((await page.locator('.test-items tbody tr').count()) > 5, 'its items');
     assert.equal(await page.locator('.test-simulate').isDisabled(), false, 'Simulate without running');
-    await page.click('.test-simulate');
-    await page.waitForSelector('.test-status:text("Simulation done")', { timeout: 30000 });
+    await simulateAll(page);
     assert.ok(await page.locator('.test-seq').count() > 3);
 
     // an earlier run opens too
@@ -258,14 +289,54 @@ test('a step-by-step run, closed, stays the scenario\'s last run: Simulate repla
     const { page, errors, close } = await openTestTab();
     await page.click('.test-new');
     await page.fill('.test-name', 'Closed then simulated');
-    await page.click('.test-run');
-    await page.waitForSelector('.test-step.pending');
+    await startRun(page);
     await runStep(page, 'Submit', { days: 2 });
     await page.waitForSelector('.test-finished');
     await page.click('.test-stop');
     assert.equal(await page.locator('.test-simulate').isDisabled(), false);
-    await page.click('.test-simulate');
-    await page.waitForSelector('.test-status:text("Simulation done")', { timeout: 20000 });
+    await simulateAll(page);
+    assert.deepEqual(errors, []);
+    await close();
+});
+
+test('debug: a check after a step; the variables changed; a step restarted and run again; why the engine went where it did', async () => {
+    const { page, errors, close } = await openTestTab();
+    await page.click('.test-new');
+    await page.fill('.test-name', 'Debugged');
+    await addCheck(page, { at: 'after:Submit', kind: 'data', path: 'days', op: '>', value: 5 });
+    await page.click('.test-debug');
+    await startRun(page);
+
+    await runStep(page, 'Submit', { days: 10 });
+    const done = page.locator('.test-step.done[data-element-id="Submit"]');
+    assert.deepEqual(await done.locator('.test-step-checks li').allInnerTexts(), ['✓ after Submit: data.days > 5']);
+    assert.deepEqual(await pendingNames(page), ['Approve request (Approve)'], 'a long leave: the manager');
+
+    // the variables now, one added, applied
+    const variables = page.locator('.test-variables');
+    const names = await variables.locator('.test-variable-name').evaluateAll(inputs => inputs.map(i => i.value));
+    assert.ok(names.includes('days'), names.join());
+    await variables.locator('.test-variable-add').click();
+    await variables.locator('.test-variable-name').last().fill('note');
+    await variables.locator('.test-variable-value').last().fill('checked');
+    await variables.locator('.test-variables-apply').click();
+    await page.waitForSelector('.test-status:text("Variables changed")');
+    assert.match(await page.locator('.test-result .test-data').first().innerText(), /"note": "checked"/);
+
+    // back to Submit: it waits again, and a short leave goes the other way
+    await done.locator('.test-restart').click();
+    await done.locator('.test-restart-form .test-variables-apply').click();
+    await page.waitForSelector('.test-status:text("Back at Submit request (Submit)")');
+    assert.equal(await page.locator('.test-step.done').count(), 0, 'no step done before it');
+    assert.deepEqual(await pendingNames(page), ['Submit request (Submit)']);
+    await runStep(page, 'Submit', { days: 2 });
+    await page.waitForSelector('.test-finished');
+    assert.deepEqual(await page.locator('.test-step.done .test-step-checks li').allInnerTexts(), ['✗ after Submit: data.days > 5 (is 2)']);
+
+    // why: the gateway's condition with the value it read
+    const why = await page.locator('.test-decisions').innerText();
+    assert.match(why, /condition .*days.* is false \(days=2\); not taken/);
+    assert.match(why, /takes its default flow/);
     assert.deepEqual(errors, []);
     await close();
 });
