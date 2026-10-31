@@ -2,6 +2,7 @@ import express from 'express';
 import FS from 'node:fs';
 import https from 'node:https';
 import path from 'node:path';
+import { createRequire } from 'node:module';
 
 import { BPMNServer   } from '../index.js';
 import { Common } from './common.js';
@@ -53,7 +54,7 @@ const awaitAppDelegateFactory = (middleware) => {
 // (the npm package does not ship docs/). The README comes with the package.
 var docsFolder = process.env.DOCS_PATH ? path.resolve(process.env.DOCS_PATH) + path.sep
     : path.resolve(import.meta.dirname, '../../../bpmn-server/docs') + path.sep;
-const packageReadme = path.resolve(import.meta.dirname, '../../node_modules/bpmn-server/README.md');
+export const packageReadme = path.join(path.dirname(createRequire(import.meta.url).resolve('bpmn-server/package.json')), 'README.md');
 export class Docs extends Common {
 
     constructor(app) {

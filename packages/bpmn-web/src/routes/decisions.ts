@@ -1,3 +1,4 @@
+import path from 'node:path';
 import * as bpmnServerPackage from 'bpmn-server';
 
 /**
@@ -16,5 +17,5 @@ export async function invokeDecision(server, body): Promise<{ decision: string; 
     const found = await DMNEngine.find(server.configuration.definitionsPath, ref.trim());
     const engine = await new DMNEngine().load(found.filePath, found.decision.id);
     const result = engine.evaluate((body.data && typeof body.data === 'object') ? body.data : {});
-    return { decision: found.decision.id, file: found.filePath.split(/[\/]/).pop(), result };
+    return { decision: found.decision.id, file: path.basename(found.filePath), result };
 }

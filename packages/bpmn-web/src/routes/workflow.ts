@@ -5,6 +5,7 @@ import path from 'node:path';
 import { BPMNServer, dateDiff, Behaviour_names   } from '../index.js';
 import { BPMNAPI , SecureUser } from '../index.js';
 import { Common } from './common.js';
+import { packageReadme } from './docs.js';
 import { ViewHelper } from './ViewHelper.js';
 import { runProcess } from './runErrors.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
@@ -68,7 +69,7 @@ export class Workflow extends Common {
         router.get('/readme_md', awaitAppDelegateFactory(async (request, response) => {
 
             let processName = request.params.process;
-            let fileName = path.resolve(import.meta.dirname, '../../node_modules/bpmn-server/README.md');
+            let fileName = packageReadme;
 
             let file = FS.readFileSync(fileName,
                 { encoding: 'utf8', flag: 'r' });
