@@ -66,15 +66,23 @@ markdown_extensions:
 
 use_directory_urls: true
 
+# Pages for features not released yet: shown by `mkdocs serve`, left out of `mkdocs build` and `gh-deploy`.
+# At release, move a page out of drafts/ and add it to the nav.
+draft_docs: |
+  drafts/
+
+
 nav:  
 - bpmn-server:
   - Overview:  index.md
+  - "What's new in 3.x": whats-new-3.md
   - 'Invoking Workflows': invokation.md 
   - 'Workflow Execution': execution.md
   - 'Scripting': scripting.md
   - 'Security': security.md
   - 'Data': data.md 
   - 'Setup': setup.md 
+  - 'Checking models': verify.md
   - 'Application Integration': customization.md 
   - 'Advanced Topics': advanced.md
   - 'Frequently Asked Questions': faq.md

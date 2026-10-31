@@ -1,5 +1,9 @@
 # bpmn-server Overview
 
+!!! note "bpmn-server 3"
+    Version 3 is an ES module for Node.js 20 and later, with a runtime API apart from model administration and a
+    model checker. Upgrading from 2.x? See [What's new in 3.x](whats-new-3.md).
+
 `bpmn-server` provides a Workflow component based on **Business Process Model and Notation** that can be easily integrated into your application.
 
 As workflow application can outlive Node.js applications, `bpmn-server` has out-of-the-box state presistence and variables, with concurrency across Node.js cluster and process instances

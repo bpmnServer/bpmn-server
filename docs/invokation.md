@@ -14,12 +14,19 @@ Since workflow require a User Interface, a web-app is required as front-end to i
 To Invoke a process from your code:
 
 API provides a security layer on top of the engine,See [Security](./security.md) for more details.
+Every call names the user it runs for: a principal your application has authenticated.
+
+```ts
+import { BPMNServer, BPMNAPI, Logger, SecureUser, SystemUser } from 'bpmn-server';
+import { configuration } from './configuration.js';
+```
 
 
 ```ts
-    const api = new BPMNAPI(new BPMNServer(configuration,new Logger({ toConsole: false}),{cron:false}));
+    const server = await BPMNServer.create(configuration, new Logger({ toConsole: false }), { cron: false });
+    const api = new BPMNAPI(server);
 
-    let response=await api.engine.start('Leave Request',{type:'Vacation'},SystemUser);
+    let response=await api.engine.start('Buy Used Car', {}, SystemUser);
 
     let instanceId=response.instance.id;
 
@@ -41,15 +48,11 @@ In real applications, you get userName and userGroups from you application UserA
 NPM package 'bpmn-client' provide access to bpmn-server using remotely using webServices
 ```ts
 
-const { BPMNServer } = require('bpmn-client');
+import { BPMNClient } from 'bpmn-client';
 
-test();
+const client = new BPMNClient(process.env.HOST, process.env.PORT, process.env.API_KEY);
 
-async function test() {
-
-    const client = new BPMNClient(process.env.HOST, process.env.PORT, process.env.API_KEY);
-
-    let response = await client.engine.start('Buy Used Car');
+let response = await client.engine.start('Buy Used Car');
 ``` 
 
 ### Async Execution
@@ -59,10 +62,11 @@ The default behaviour is that `engine.start` and `engine.invoke` will execute th
   1. Process has completed or Aborted; this happens when all active tokens come to completions
   2. All active tokens( threads) come to completion or **wait** state like in case of User Input, timers or Send Message
 
-However, if you change this behaviour, so the engine execution return without waiting.
+You can change this behaviour with the `noWait` option, so the call returns without waiting for the execution.
 
 ```ts
-    const api = new BPMNAPI(new BPMNServer(configuration,new Logger({ toConsole: false}),{cron:false}));
+    const server = await BPMNServer.create(configuration, new Logger({ toConsole: false }), { cron: false });
+    const api = new BPMNAPI(server);
 
     console.log('starting serviceTask');
     let response=await api.engine.start('serviceTask', { v1: 1, v2: 2 }, SystemUser, {noWait:true});

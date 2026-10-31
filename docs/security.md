@@ -11,16 +11,27 @@ In general Application Security deals with the following topics:
 
 BPMNServer does not provide user identification and authentication component, but relies on the calling application to authenticate the user. The companion package BPMN-web provides full authentication and identification as a mere demo.
 
+Every API call names the user it runs for: a principal your application built after authenticating the user
+(since 3.x, a call without one is refused; there is no default user).
+
 ### Web App example/ Server Side Scripts
 
 ```ts
+import { SecureUser, SystemUser } from 'bpmn-server';
 
-    const user1 =new SecureUser({ userName: 'user1', userGroups: ['Owner', 'Others']});
+const user1 = new SecureUser({ userName: 'user1', userGroups: ['Owner', 'Others'], tenantId: 'acme' });
 
+await api.engine.start(modelName, data, user1, options);
+```
 
-    await api.engine.start(modelName,data,{},user1,options);  
+`tenantId` keeps a tenant's instances and models apart: the user's calls see only its tenant's.
+`SystemUser` is for system work (setup scripts, scheduled jobs); security rules are not applied to it.
 
-``` 
+### Runtime and administration APIs
+
+`BPMNAPI` runs processes and reads models. Changing models (`save`, `delete`, `rename`, `export`) needs
+`BPMNAdminAPI`. Give the runtime API to the parts of the application that run processes (task lists, forms,
+integrations), so they can not change models; the admin API only to deployment and model administration.
 
 ### WebAPI/REST
 

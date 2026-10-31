@@ -6,13 +6,22 @@
 
 Service layer API, supporting access control has the following componets
 
-- [engine](./api/interfaces/IAPIEngine.md) BPMN Execution Engine
-- [data](./api/interfaces/IAPIData.md) Provides access to the BPMN datastore for instances
-- [model](./api/interfaces/IAPIModel.md) Provides access to BPMN models
+- [engine](./api/interfaces/IAPIEngine.md) BPMN Execution Engine: `start`, `invoke`, `assign`, `throwMessage`,
+  `throwSignal`, `startEvent`, `restart`, `upgrade`
+- [data](./api/interfaces/IAPIData.md) Provides access to the BPMN datastore for instances: `findItems`, `findItem`,
+  `findInstances`, `getPendingUserTasks`, `deleteInstances`
+- [model](./api/interfaces/IAPIModel.md) Reads BPMN models: `get`, `list`, `findEvents`, `findStartEvents`,
+  `getSource`, `load`, [`verifyModel`](verify.md)
+
+`BPMNAPI` is the runtime API: it runs processes and reads models. `BPMNAdminAPI` adds the model changes
+(`model.save`, `delete`, `rename`, `export`); give it only to deployment and model administration.
+
+Every call takes the user it runs for; see [Security](security.md).
 
 To access the service layer API:
 ```ts
-    const api = new BPMNAPI(new BPMNServer(configuration,new Logger({ toConsole: false}),{cron:false}));
+    const server = await BPMNServer.create(configuration, new Logger({ toConsole: false }), { cron: false });
+    const api = new BPMNAPI(server);
 
     console.log('---calling start----- ');
 
@@ -27,7 +36,7 @@ To access the service layer API:
     console.log('---calling invoke----- ');
     await api.engine.invoke({ id: response.id, "items.elementId": 'Request' }, {duration:'20 days'}, user1);
 
-    const items = await api.data.findItems({ id: response.id, "items.elementId": 'Request' },SecureUser.SystemUser());
+    const items = await api.data.findItems({ id: response.id, "items.elementId": 'Request' }, SystemUser);
 
 ```
 
