@@ -15,7 +15,7 @@ import { BPMNServer, BPMNAdminAPI, verifyModel, Definition } from '../index.js';
 import { Common } from './common.js';
 import { modelNameGuard, isSafeModelName } from './middleware/modelName.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
-import { loadScenarios, saveScenarios, checkScenarios, runScenario, startTest, completeTest, findTest, summarize, checkExpectations } from '../testing/scenarios.js';
+import { loadScenarios, saveScenarios, checkScenarios, runScenario, startTest, completeTest, findTest, summarize, expectChecks, checksAt, setTestData, restartTest } from '../testing/scenarios.js';
 
 
 const awaitHandlerFactory = (middleware) => {
@@ -555,15 +555,47 @@ export class Model extends Common {
             response.json({ instance: summarize(instance) });
         }));
 
-        /** What a scenario expects, checked on a test instance run step by step. */
+        /**
+         * A scenario's checks on a test instance run step by step: at the end (the default), or after a step
+         * (after: { element, name }): those of `checks` (and the older `expect`) due then.
+         */
         router.post('/test/check', awaitHandlerFactory(async (request, response) => {
-            const { instanceId, expect } = request.body ?? {};
+            const { instanceId, expect, checks, after } = request.body ?? {};
             const instance = String(instanceId || '').startsWith('test-') ? await findTest(bpmnServer, instanceId) : null;
             if (!instance) {
                 response.status(404).json({ error: 'no such test instance' });
                 return;
             }
-            response.json({ checks: checkExpectations(expect, instance), instance: summarize(instance) });
+            const all = [...expectChecks(expect), ...(Array.isArray(checks) ? checks : [])];
+            response.json({ checks: checksAt(all, after?.element ? after : 'end', instance), instance: summarize(instance) });
+        }));
+
+        /** The debugger: a test instance's data replaced (the next steps run with it). */
+        router.post('/test/data', awaitHandlerFactory(async (request, response) => {
+            const { instanceId, data } = request.body ?? {};
+            if (!String(instanceId || '').startsWith('test-')) {
+                response.status(400).json({ error: 'only test instances are changed here' });
+                return;
+            }
+            try {
+                response.json({ instance: summarize(await setTestData(bpmnServer, instanceId, data)) });
+            } catch (exc) {
+                response.status(422).json({ error: String(exc?.message ?? exc) });
+            }
+        }));
+
+        /** The debugger's Restart here: the test instance back at an item, with the variables given (data). */
+        router.post('/test/restart', awaitHandlerFactory(async (request, response) => {
+            const { instanceId, itemId, data } = request.body ?? {};
+            if (!String(instanceId || '').startsWith('test-')) {
+                response.status(400).json({ error: 'only test instances are restarted here' });
+                return;
+            }
+            try {
+                response.json({ instance: summarize(await restartTest(bpmnServer, instanceId, itemId, data, request.user?.userName)) });
+            } catch (exc) {
+                response.status(422).json({ error: String(exc?.message ?? exc), instance: summarize(await findTest(bpmnServer, instanceId).catch(() => null)) });
+            }
         }));
 
         // the editor's Problems list: checks the model being edited, as sent, without saving it

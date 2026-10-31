@@ -31,6 +31,7 @@ class DataStore extends ServerComponent  implements IDataStore {
 	inSaving = false;
 	promises = [];
 	locker: ILockManager;
+	/** A save point at each save (engine.restart goes back to one); an instance's flags.savePoints overrides it. */
 	enableSavePoints=false;
 	saveLogs=true;
 	saveSource=true;
@@ -127,10 +128,13 @@ class DataStore extends ServerComponent  implements IDataStore {
 				data: instance.data , parentItemId: instance.parentItemId
 			};
 
-			if (this.saveLogs===true)
+			// the instance's flags, else the data store's settings
+			if ((instance.flags?.saveLogs ?? this.saveLogs)===true)
 				saveObject['logs'] = instance.logs;
+			if (instance.flags)
+				saveObject['flags'] = instance.flags;
 
-			if (this.enableSavePoints===true && instance.items.length>0) {
+			if ((instance.flags?.savePoints ?? this.enableSavePoints)===true && instance.items.length>0) {
 				let lastItem=instance.items[instance.items.length-1].id;
 
 				let savePoint={id:lastItem,items:instance.items,loop:instance.loops,tokens:instance.tokens,data:instance.data}

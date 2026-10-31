@@ -762,6 +762,9 @@ class Token implements IToken {
     info(msg) {
         this.execution.info(msg);
     }
+    decision(msg) {
+        this.execution.decision(msg);
+    }
     error(msg) {
         this.execution.error(msg);
     }

@@ -6,6 +6,7 @@ import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } 
 import { Node } from './Node.js';
 import { BPMN_TYPE } from './NodeLoader.js';
 import { Item } from '../engine/Item.js';
+import { label } from './Flow.js';
 
 
 // ---------------------------------------------
@@ -33,6 +34,37 @@ class Gateway extends Node {
     /*  rule: DefaultFlow will only fire if no other flows are valid
      */
     async getOutbounds(item: Item): Promise<Item[]> {
+        const held = await this.flowsThatHold(item);
+        const chosen = this.choose(held, item);
+        this.explain(item, held, chosen);
+        return chosen;
+    }
+
+    /** Which of its flows the gateway takes, of those that hold (an exclusive gateway: one). */
+    choose(held: Item[], item: Item): Item[] {
+        return held;
+    }
+
+    /** The decision in words, for the instance's log: the flows taken and why, for a gateway that chooses. */
+    explain(item: Item, held: Item[], chosen: Item[]) {
+        const flows = this.outbounds.filter(f => f.type !== BPMN_TYPE.MessageFlow);
+        if (flows.length < 2) return;
+        const names = (list) => list.map(f => label(f.element ?? f)).join(', ');
+        const defaultFlow = this.def.default ? flows.find(f => f.id === this.def.default.id) : null;
+        const takesDefault = defaultFlow && chosen.some(c => c.element?.id === defaultFlow.id);
+        const gateway = `gateway ${label(this)}`;
+        if (!chosen.length)
+            item.token.decision(`${gateway}: no flow can be taken: none of its conditions held (${names(flows)}) and it has no default flow`);
+        else if (takesDefault)
+            item.token.decision(`${gateway}: none of the conditions of its other flows held (${names(flows.filter(f => f !== defaultFlow))}); takes its default flow ${label(defaultFlow)}`);
+        else if (chosen.length < held.length)
+            item.token.decision(`${gateway}: the conditions of ${names(held)} held; an exclusive gateway takes one, the first: ${names(chosen)}`);
+        else
+            item.token.decision(`${gateway}: takes ${names(chosen)}${chosen.length < flows.length ? ` of ${names(flows)}` : ' (all its flows)'}${defaultFlow ? `; its default flow ${label(defaultFlow)} only when no other holds` : ''}`);
+    }
+
+    /** The outgoing flows whose conditions hold; the default flow when none does. */
+    async flowsThatHold(item: Item): Promise<Item[]> {
 
         if (this.def.default) {
 
@@ -175,10 +207,13 @@ class Gateway extends Node {
                         t.currentItem.status = ITEM_STATUS.end;
                         await t.terminate();
                     });
+                    item.token.decision(`gateway ${label(this)} (exclusive) joins: the first branch arrived; the others are cancelled (at ${[...new Set(result.pendingTokens.map(t => label(t.currentNode)))].join(', ')})`);
 
                 }
                 else {
                     item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: result.pendingTokens.length = ' + result.pendingTokens.length + ' > 0 return NODE_ACTION.wait');
+                    const at = [...new Set(result.pendingTokens.map(t => label(t.currentNode)))].join(', ');
+                    item.token.decision(`gateway ${label(this)} joins its branches: waits for ${result.pendingTokens.length} still on the way (at ${at})`);
                     return NODE_ACTION.wait;
                 }
             }
@@ -206,6 +241,7 @@ class Gateway extends Node {
                 //item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: new Token created ');
 
                 item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: converged! all waiting tokens ended');
+                item.token.decision(`gateway ${label(this)} joins its branches: all have arrived; continues`);
 
                 const oldCurrentToken = item.token;
 
@@ -259,17 +295,12 @@ class Gateway extends Node {
  * */
 class XORGateway extends Gateway {
 
-    async getOutbounds(item) {
-
-        const outbounds = await super.getOutbounds(item);
-
-        if (outbounds.length > 1) {
+    choose(held: Item[], item: Item): Item[] {
+        if (held.length > 1) {
             item.token.log('..XORGateway : removed other outbounds , took the first');
-            return [outbounds[0]];
-
+            return [held[0]];
         }
-
-        return outbounds;
+        return held;
     }
 
 }
@@ -302,6 +333,7 @@ class EventBasedGateway extends Gateway {
                      {
 
                     endingItem.token.log(`..EventBasedGateway:<${self.id}>-- cancelling  ${token.currentNode.id} `);
+                    endingItem.token.decision(`event-based gateway ${label(self)}: ${label(endingItem.node)} happened first; ${label(token.currentNode)} is cancelled`);
 
                     await token.terminate();
                 }

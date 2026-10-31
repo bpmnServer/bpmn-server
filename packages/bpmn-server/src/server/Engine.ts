@@ -88,6 +88,8 @@ class Engine extends ServerComponent implements IEngine{
 			execution = new Execution(this.server,name, source);
 			// The caller may name the instance (an application whose record of it shares its id); unique, as any id.
 			if (options['instanceId']) execution.instance.id = String(options['instanceId']);
+			// the instance's own settings (save points, logs), saved with it
+			if (options['flags']) execution.instance.flags = { ...options['flags'] };
 			execution.svg = await definitions.getSVG(name);
 
 			if (options['parentItemId']) {

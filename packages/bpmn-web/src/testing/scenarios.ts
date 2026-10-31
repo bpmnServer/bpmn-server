@@ -4,8 +4,9 @@
  * A scenario starts the model with some data, then completes the elements that wait (user tasks, receive tasks,
  * catching and boundary events) one after another with the data each step gives: the data decides the
  * branches a gateway takes, and the order of the steps decides which of several waiting elements (an
- * event-based gateway's events, a boundary timer, parallel tasks) happens first. What is expected at the end
- * is optional: the instance's status, values its data must have, elements it must and must not pass.
+ * event-based gateway's events, a boundary timer, parallel tasks) happens first. Its checks are optional, each
+ * at the end or after a step: the instance's status, a node (how many times it ran, in what status), a data
+ * value (=, <>, >, <, >=, <=). The older `expect` (status, data, passes, avoids) is read as checks at the end.
  *
  * Scenarios are kept per model in the application's MongoDB (the users' database). Instances a run starts
  * are real instances, with ids starting test-, so they can be opened on the instance page.
@@ -19,10 +20,29 @@ export interface ScenarioStep {
     data?: Record<string, any>;
 }
 
+/** A check of a run: at its end, or after a step (each time that step's element is completed). */
+export interface Check {
+    at?: 'end' | 'after';
+    /** at 'after': the step's element, by id or name */
+    step?: string;
+    kind: 'status' | 'node' | 'data';
+    /** status: the instance's; node: its items' (optional) */
+    status?: string;
+    /** node: the element, by id or name */
+    node?: string;
+    /** node: how many times it ran (with status: in that status); none: at least once */
+    count?: number | null;
+    /** data: the value's path in the instance data (a.b.c) */
+    path?: string;
+    op?: '=' | '<>' | '>' | '<' | '>=' | '<=';
+    value?: any;
+}
+
 export interface Scenario {
     name: string;
     start?: { startNodeId?: string; data?: Record<string, any> };
     steps?: ScenarioStep[];
+    checks?: Check[];
     expect?: { status?: string; data?: Record<string, any>; passes?: string[]; avoids?: string[] };
 }
 
@@ -63,6 +83,11 @@ export function checkScenarios(scenarios): string[] {
             if (!step?.element) problems.push(`${at}, step ${j + 1}: no element`);
             if (step?.data !== undefined && (typeof step.data !== 'object' || Array.isArray(step.data))) problems.push(`${at}, step ${j + 1}: data must be an object`);
         });
+        if (s.checks !== undefined && !Array.isArray(s.checks)) problems.push(`${at}: checks must be a list`);
+        (Array.isArray(s.checks) ? s.checks : []).forEach((check, j) => {
+            if (!['status', 'node', 'data'].includes(check?.kind)) problems.push(`${at}, check ${j + 1}: kind must be status, node or data`);
+            if (check?.op !== undefined && !OPS.includes(check.op)) problems.push(`${at}, check ${j + 1}: op must be one of ${OPS.join(' ')}`);
+        });
     });
     return problems;
 }
@@ -96,10 +121,13 @@ export function isStep(item): boolean {
 const clone = value => JSON.parse(JSON.stringify(value ?? {}));
 const message = err => String(err?.message ?? err);
 
-/** Start an instance of the model for a test (the Test tab's recording, and runScenario). */
+/**
+ * Start an instance of the model for a test (the Test tab's recording, and runScenario): its flags keep save points
+ * (the debugger restarts it at a step) and its log (the decisions the engine took), whatever the data store's settings.
+ */
 export async function startTest(server, model: string, startNodeId: string | undefined, data, userName?: string) {
     const execution = await server.engine.start(model, clone(data), startNodeId || null, userName ?? null,
-        { instanceId: `test-${randomUUID()}` });
+        { instanceId: `test-${randomUUID()}`, flags: { savePoints: true, saveLogs: true } });
     return execution.instance;
 }
 
@@ -124,24 +152,123 @@ function contains(actual, expected): boolean {
     return JSON.stringify(actual) === JSON.stringify(expected);
 }
 
-export function checkExpectations(expect: Scenario['expect'], instance) {
-    const checks = [];
-    if (!expect) return checks;
-    const reached = new Set((instance?.items ?? []).map(i => i.elementId));
-    if (expect.status)
-        checks.push({ what: `status is ${expect.status}`, ok: instance?.status === expect.status, actual: instance?.status });
-    for (const [key, value] of Object.entries(expect.data ?? {}))
-        checks.push({ what: `data.${key} is ${JSON.stringify(value)}`, ok: contains(instance?.data?.[key], value), actual: instance?.data?.[key] });
-    for (const id of expect.passes ?? [])
-        checks.push({ what: `passes ${id}`, ok: reached.has(id) });
-    for (const id of expect.avoids ?? [])
-        checks.push({ what: `does not pass ${id}`, ok: !reached.has(id) });
-    return checks;
+const OPS = ['=', '<>', '>', '<', '>=', '<='];
+
+/** The older `expect`, as checks at the end. */
+export function expectChecks(expect: Scenario['expect']): Check[] {
+    if (!expect) return [];
+    return [
+        ...(expect.status ? [{ kind: 'status' as const, status: expect.status }] : []),
+        ...Object.entries(expect.data ?? {}).map(([path, value]) => ({ kind: 'data' as const, path, op: '=' as const, value })),
+        ...(expect.passes ?? []).map(node => ({ kind: 'node' as const, node })),
+        ...(expect.avoids ?? []).map(node => ({ kind: 'node' as const, node, count: 0 })),
+    ];
 }
 
-/** Run a scenario: start, complete each step's element, check what is expected. */
+/** Every check of a scenario: its checks, and its older expect. */
+export const scenarioChecks = (scenario: Scenario): Check[] => [...expectChecks(scenario?.expect), ...(scenario?.checks ?? [])];
+
+/** A value at a path of the data: a.b.c, items.0.name */
+function valueAt(data, path: string) {
+    return String(path ?? '').split('.').filter(Boolean).reduce((value, key) => value == null ? undefined : value[key], data);
+}
+
+/** Equal: numbers as numbers (5 and "5"), objects field by field (the expected ones), the rest as JSON. */
+function same(actual, expected): boolean {
+    const numbers = [actual, expected].every(v => v !== '' && v !== null && typeof v !== 'boolean' && typeof v !== 'object' && Number.isFinite(Number(v)));
+    if (numbers && (typeof actual === 'number' || typeof expected === 'number'))
+        return Number(actual) === Number(expected);
+    return contains(actual, expected);
+}
+
+function compare(actual, op: string, expected): boolean {
+    switch (op ?? '=') {
+        case '=': return same(actual, expected);
+        case '<>': return !same(actual, expected);
+    }
+    if (actual === undefined || actual === null) return false;
+    const numeric = Number.isFinite(Number(actual)) && Number.isFinite(Number(expected));
+    const [a, b] = numeric ? [Number(actual), Number(expected)] : [String(actual), String(expected)];
+    return op === '>' ? a > b : op === '<' ? a < b : op === '>=' ? a >= b : op === '<=' ? a <= b : false;
+}
+
+/** What a check says, in words. */
+export function describeCheck(check: Check): string {
+    const where = check.at === 'after' ? `after ${check.step}: ` : '';
+    if (check.kind === 'status') return `${where}status is ${check.status}`;
+    if (check.kind === 'node') {
+        const status = check.status ? `, ${check.status},` : '';
+        if (!hasCount(check)) return `${where}passes ${check.node}${status ? ` (${check.status})` : ''}`;
+        if (Number(check.count) === 0) return `${where}does not pass ${check.node}${status ? ` (${check.status})` : ''}`;
+        return `${where}passes ${check.node}${status} ${check.count} time${Number(check.count) === 1 ? '' : 's'}`;
+    }
+    const op = check.op ?? '=';
+    return `${where}data.${check.path} ${op === '=' ? 'is' : op === '<>' ? 'is not' : op} ${JSON.stringify(check.value)}`;
+}
+
+const hasCount = (check: Check) => check.count !== undefined && check.count !== null && check.count !== ('' as any);
+
+/** A check on an instance: { what, ok, actual }. */
+export function evaluateCheck(check: Check, instance) {
+    const what = describeCheck(check);
+    if (check.kind === 'status')
+        return { what, ok: instance?.status === check.status, actual: instance?.status };
+    if (check.kind === 'node') {
+        const runs = (instance?.items ?? []).filter(i => (i.elementId === check.node || i.name === check.node) && (!check.status || i.status === check.status));
+        const ok = hasCount(check) ? runs.length === Number(check.count) : runs.length > 0;
+        return { what, ok, actual: hasCount(check) && Number(check.count) > 0 ? runs.length : undefined };
+    }
+    const actual = valueAt(instance?.data, check.path);
+    return { what, ok: compare(actual, check.op, check.value), actual };
+}
+
+/** The checks due at the end, or after a step on an element (by id or name). */
+export function checksAt(checks: Check[], at: 'end' | { element: string; name?: string }, instance) {
+    return checks
+        .filter(c => at === 'end' ? (c.at ?? 'end') === 'end' : c.at === 'after' && (c.step === at.element || (at.name && c.step === at.name)))
+        .map(c => evaluateCheck(c, instance));
+}
+
+/** The older call: what `expect` and `checks` ask at the end. */
+export function checkExpectations(expect: Scenario['expect'], instance, checks: Check[] = []) {
+    return checksAt([...expectChecks(expect), ...checks], 'end', instance);
+}
+
+/** Change a test instance's data (the Test tab's debugger): under its lock, saved as a new version. */
+export async function setTestData(server, instanceId: string, data) {
+    if (!data || typeof data !== 'object' || Array.isArray(data))
+        throw new Error('the data must be an object');
+    const locker = server.dataStore.locker;
+    await locker.lock(instanceId);
+    try {
+        const loaded = await server.dataStore.loadInstance(instanceId);
+        if (!loaded) throw new Error(`no instance ${instanceId}`);
+        loaded.instance.data = clone(data);
+        await server.dataStore.saveInstance(loaded.instance);
+    }
+    finally {
+        await locker.release(instanceId);
+    }
+    return findTest(server, instanceId);
+}
+
+/**
+ * The debugger's Restart here: the test instance goes back to an item (engine.restart, with rewind, from the save
+ * point its flags keep where the item waited): a step waits again, another element runs again; what came after it is gone.
+ * With `data`, the instance's data is replaced first (the variables as they are to be at that point).
+ */
+export async function restartTest(server, instanceId: string, itemId: string, data?, userName?: string) {
+    if (data !== undefined)
+        await setTestData(server, instanceId, data);
+    const execution = await server.engine.restart({ id: instanceId, 'items.id': itemId }, {}, userName ?? null, { rewind: true });
+    return execution.instance;
+}
+
+/** Run a scenario: start, complete each step's element (with its checks after it), check the end. */
 export async function runScenario(server, model: string, scenario: Scenario, userName?: string) {
     const steps = [];
+    const all = scenarioChecks(scenario);
+    const checks = [];
     let instance, error = null;
     try {
         instance = await startTest(server, model, scenario.start?.startNodeId, scenario.start?.data, userName);
@@ -162,6 +289,7 @@ export async function runScenario(server, model: string, scenario: Scenario, use
         try {
             instance = await completeTest(server, instance.id, item.id, step.data, userName);
             steps.push({ index, element: step.element, ok: true });
+            checks.push(...checksAt(all, { element: item.elementId, name: item.name }, instance));
         }
         catch (err) {
             steps.push({ index, element: step.element, ok: false, error: message(err) });
@@ -171,7 +299,7 @@ export async function runScenario(server, model: string, scenario: Scenario, use
             break;
         }
     }
-    const checks = checkExpectations(scenario.expect, instance);
+    checks.push(...checksAt(all, 'end', instance));
     return {
         name: scenario.name,
         ok: !error && checks.every(c => c.ok),

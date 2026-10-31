@@ -156,3 +156,55 @@ test('testing is for designers', async () => {
     assert.equal((await staff.get('/model/scenarios/leave-request')).status, 403);
     assert.equal((await staff.request('POST', '/model/test/run', { json: { processName: 'leave-request', scenario: SHORT } })).status, 403);
 });
+
+test('checks after a step and at the end: a node\'s count and status, data compared', async () => {
+    const scenario = {
+        name: 'Long leave, checked as it goes',
+        steps: [{ element: 'Submit', data: { days: 10 } }, { element: 'Approve', data: { approved: true } }],
+        checks: [
+            { at: 'after', step: 'Submit', kind: 'node', node: 'Approve', status: 'wait', count: 1 },
+            { at: 'after', step: 'Submit', kind: 'data', path: 'days', op: '>', value: 5 },
+            { at: 'after', step: 'Submit request', kind: 'node', node: 'AutoApprove', count: 0 },
+            { kind: 'data', path: 'approved', op: '=', value: true },
+            { kind: 'data', path: 'days', op: '<>', value: '10' },
+            { kind: 'node', node: 'Approve request', status: 'end', count: 1 },
+        ],
+    };
+    const [result] = JSON.parse((await run({ scenario })).text).results;
+    assert.deepEqual(result.checks.map(c => [c.what, c.ok]), [
+        ['after Submit: passes Approve, wait, 1 time', true],
+        ['after Submit: data.days > 5', true],
+        ['after Submit request: does not pass AutoApprove', true],
+        ['data.approved is true', true],
+        ['data.days is not "10"', false],            // 10 and "10" are the same number
+        ['passes Approve request, end, 1 time', true],
+    ]);
+    assert.equal(result.ok, false);
+    const decisions = result.instance.logs.filter(l => /condition .* is true \(days=10\); taken/.test(l));
+    assert.equal(decisions.length, 1, 'the log gives the gateway\'s reason');
+});
+
+test('the debugger: the variables changed, then the run restarted at an earlier step', async () => {
+    const start = await designer.request('POST', '/model/test/start', { json: { processName: 'leave-request', data: { requester: 'sam' } } });
+    let { instance } = JSON.parse(start.text);
+    const submit = instance.items.find(i => i.elementId === 'Submit');
+    ({ instance } = JSON.parse((await designer.request('POST', '/model/test/invoke', { json: { instanceId: instance.id, itemId: submit.id, data: { days: 10 } } })).text));
+    assert.ok(instance.items.some(i => i.elementId === 'Approve' && i.status === 'wait'), 'a long leave waits for the manager');
+
+    const changed = await designer.request('POST', '/model/test/data', { json: { instanceId: instance.id, data: { ...instance.data, requester: 'kim' } } });
+    assert.equal(changed.status, 200, why(changed));
+    assert.equal(JSON.parse(changed.text).instance.data.requester, 'kim');
+
+    // back to Submit, as a short leave this time
+    const restarted = await designer.request('POST', '/model/test/restart', { json: { instanceId: instance.id, itemId: submit.id, data: { requester: 'kim', days: 2 } } });
+    assert.equal(restarted.status, 200, why(restarted));
+    ({ instance } = JSON.parse(restarted.text));
+    assert.deepEqual(instance.items.filter(i => i.status === 'wait').map(i => i.elementId), ['Submit'], 'Submit waits again');
+    assert.ok(!instance.items.some(i => i.elementId === 'Approve'), 'what came after it is gone');
+    ({ instance } = JSON.parse((await designer.request('POST', '/model/test/invoke', { json: { instanceId: instance.id, itemId: submit.id, data: { days: 2 } } })).text));
+    assert.equal(instance.status, 'end');
+    assert.ok(instance.items.some(i => i.elementId === 'AutoApprove'));
+
+    assert.equal((await designer.request('POST', '/model/test/data', { json: { instanceId: 'real-1', data: {} } })).status, 400, 'test instances only');
+    assert.equal((await designer.request('POST', '/model/test/restart', { json: { instanceId: 'real-1', itemId: 'x' } })).status, 400);
+});

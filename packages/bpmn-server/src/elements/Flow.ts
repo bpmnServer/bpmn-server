@@ -11,6 +11,20 @@ import { Element } from './Element.js';
 import { Node } from './Node.js';
 import type { IExecution } from '../interfaces/engine.js';
 
+/** An element in a decision's words: 'Name' (Id), or Id. */
+export const label = (element): string => element?.name ? `'${element.name}' (${element.id})` : String(element?.id ?? '?');
+
+/** The values of the data an expression reads (data.x, $data.x.y, item.data.z): "x=1, y=\"a\"". */
+export function valuesRead(expression, data): string {
+    const paths = new Set<string>();
+    for (const m of String(expression ?? '').matchAll(/\bdata\.([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)/g))
+        paths.add(m[1]);
+    if (!paths.size) return '';
+    const valueAt = (path: string) => path.split('.').reduce((v, k) => v == null ? undefined : v[k], data);
+    const text = [...paths].map(p => `${p}=${JSON.stringify(valueAt(p)) ?? 'undefined'}`).join(', ');
+    return ` (${text.length > 300 ? text.slice(0, 300) + '…' : text})`;
+}
+
 class Flow extends Element implements IFlow {
     from: Node;
     to: Node;
@@ -48,6 +62,10 @@ class Flow extends Element implements IFlow {
         item.token.log('Flow(' + this.name +'|'+ this.id + ').run: from='+this.from.name+' to=' + this.to.name + " find action... " );
         let action = FLOW_ACTION.take;
         let result = await this.evaluateCondition(item);
+        if (this.def.conditionExpression) {
+            const expression = this.def.conditionExpression.body;
+            item.token.decision(`flow ${label(this)} from ${label(this.from)} to ${label(this.to)}: condition ${expression} is ${result === true}${valuesRead(expression, item.token.data)}; ${result === true ? 'taken' : 'not taken'}`);
+        }
         if (result !== true) {
             action = FLOW_ACTION.discard;
             item.token.execution.doItemEvent(item, EXECUTION_EVENT.flow_discard,{flow:this.id});

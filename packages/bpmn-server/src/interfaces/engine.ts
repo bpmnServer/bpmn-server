@@ -143,6 +143,8 @@ interface IExecution extends IServerComponent {
     logS(...msg: any): void;
     logE(...msg: any): void;
     info(...msg: any): void;
+    /** Why the engine took a path, kept in the instance log as a decision entry. */
+    decision(...msg: any): void;
     error(msg: any): void;
     appendData(inputData: any,item:IItem, dataPath?: any,assignment?:any): void;
     getData(dataPath: any): any;

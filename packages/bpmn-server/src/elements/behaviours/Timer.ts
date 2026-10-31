@@ -168,6 +168,8 @@ class TimerBehaviour extends Behaviour {
         item.timeDue = await this.timeDue(item,timerModifier);
 
         item.token.log("timer is set at " + item.timeDue + " - "+ new Date(item.timeDue).toISOString());
+        const definition = this.duration ? `duration ${this.duration}` : this.timeCycle ? `cycle ${this.timeCycle}` : this.timeDate ? `date ${this.timeDate}` : 'no time';
+        item.token.decision(`timer ${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}: due at ${new Date(item.timeDue).toISOString()} (${timerModifier ? `the configuration's timers.forceTimersDelay, ${timerModifier} ms, instead of its ${definition}` : definition})`);
 
         const seconds = ((new Date(item.timeDue)).getTime()/1000) - (new Date().getTime()/1000);
 

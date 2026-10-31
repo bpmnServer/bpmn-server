@@ -254,8 +254,9 @@ class Execution extends ServerComponent implements IExecution {
                 token = t;
             }
         });
-        // the item records who completed it (it was created with the user of the call that reached it)
-        if (token && userName)
+        // the item records who completed it (it was created with the user of the call that reached it);
+        // a restart only goes back to it
+        if (token && userName && !options['restart'])
             token.currentItem.userName = userName;
         this.info(JSON.stringify({type:'execution', label:'Invoke Item',
             action:'signalInput',
@@ -334,12 +335,13 @@ class Execution extends ServerComponent implements IExecution {
     }
 
     /**
-     * 
+     *
      * restarting an already completed instance at a particular node
-     *      
+     *   options.rewind: an instance that has not ended goes back to the node too
+     *
      * @param itemId
      * @param inputData
-     * 
+     *
      */
 
 public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecution>  {
@@ -352,7 +354,7 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
     this.log('..restarting at :' + itemId);
 
     // check if instance has ended
-    if (this.instance.status!==EXECUTION_STATUS.end)
+    if (this.instance.status!==EXECUTION_STATUS.end && !options['rewind'])
     {
         this.error("***ERROR*** restart must be for an instance with end status, current instance has status of"+this.instance.status);
     }
@@ -745,9 +747,9 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
         this.listener.emit(event, payload);
         this.listener.emit('all', payload);
     }
-    /** The instance keeps its log lines only when they are saved (dataStore.saveLogs, the default). */
+    /** The instance keeps its log lines only when they are saved (its flags.saveLogs, else dataStore.saveLogs, the default). */
     private get keepLogs(): boolean {
-        return this.server?.dataStore?.saveLogs !== false;
+        return this.instance?.flags?.saveLogs ?? this.server?.dataStore?.saveLogs !== false;
     }
     private record(entry) {
         if (this.keepLogs) this.instance.logs.push(entry);
@@ -763,6 +765,10 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
     }
     info(...msg) {
         this.record(this.logger.info(...msg));
+    }
+    /** Why the engine took a path: kept in the instance's log, as a 'decision' entry. */
+    decision(...msg) {
+        this.record(typeof this.logger.decision === 'function' ? this.logger.decision(...msg) : this.logger.info('decision:', ...msg));
     }
     error(msg) {
         this.doExecutionEvent(this, EXECUTION_EVENT.process_error);

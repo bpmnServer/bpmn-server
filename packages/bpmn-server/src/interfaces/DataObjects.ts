@@ -46,6 +46,15 @@ interface IInstanceData {
     loops;
     parentItemId;   // used for subProcess Calls
     svg?;
+    flags?: IInstanceFlags;
+}
+
+/** An instance's own settings, given to engine.start (options.flags) and saved with it; unset, the data store's apply. */
+interface IInstanceFlags {
+    /** a save point at each save, so engine.restart can go back to any of its items (dataStore.enableSavePoints) */
+    savePoints?: boolean;
+    /** its log lines kept and saved (dataStore.saveLogs) */
+    saveLogs?: boolean;
 }
 
 
@@ -111,4 +120,4 @@ interface IProcessData {
     historyTimeToLive;
     isStartableInTasklist;
 }
-export { IItemData, IInstanceData , IDefinitionData, IElementData, IFlowData , IBpmnModelData, IProcessData, IEventData }
+export { IItemData, IInstanceData , IInstanceFlags, IDefinitionData, IElementData, IFlowData , IBpmnModelData, IProcessData, IEventData }

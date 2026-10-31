@@ -22,6 +22,7 @@ class InstanceObject implements IInstanceData {
     parentItemId;
     svg?: any;
     vars;
+    flags?;
 
 }
 /**

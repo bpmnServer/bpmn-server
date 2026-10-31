@@ -53,6 +53,10 @@ class Logger implements ILogger {
     info(...message) {
         return this.msg(this.toString(...message), 'info');
     }
+    /** Why the engine took a path, in words: a condition and its values, a default flow, a gateway waiting. */
+    decision(...message) {
+        return this.msg(this.toString(...message), 'decision');
+    }
     debug(...message)
     {
         return this.msg(this.toString(...message),'debug');

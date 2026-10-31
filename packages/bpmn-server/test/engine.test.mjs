@@ -322,3 +322,53 @@ test('start may name the instance (instanceId); the id is unique, as any', async
   await assert.rejects(server.engine.start('property-claim', {}, null, null, { instanceId: 'wi-42' }));
   await server.shutdown();
 });
+
+test('restart goes back to a task, which waits again; with rewind, also while the instance still waits; save points by the instance\'s flags', async () => {
+  const { server } = await makeServer({ services: coverage(true) });
+  assert.equal(server.dataStore.enableSavePoints, false, 'the store keeps none');
+  const started = await server.engine.start('property-claim', { claimId: 'C-5' }, null, null,
+    { instanceId: 'keep-1', flags: { savePoints: true, saveLogs: true } });
+  const task = started.instance.items.find(i => i.elementId === 'AssessClaim');
+  const assessed = await server.engine.invoke({ 'items.id': task.id }, { assessment: 'pay' }, 'ana');
+  assert.deepEqual(waiting(assessed), ['PaymentConfirmed']);
+
+  await assert.rejects(server.engine.restart({ 'items.id': task.id }, { assessment: 'review' }, 'bob'), /restart must be for an instance with end status/);
+
+  const back = await server.engine.restart({ 'items.id': task.id }, {}, 'bob', { rewind: true });
+  assert.deepEqual(waiting(back), ['AssessClaim'], 'back at the task: it waits again');
+  assert.equal(back.instance.items.filter(i => i.elementId === 'PaymentConfirmed').length, 0, 'what came after it is gone');
+  assert.equal(back.instance.items.find(i => i.elementId === 'AssessClaim').userName, null, 'nobody has completed it');
+
+  const again = await server.engine.invoke({ 'items.id': task.id }, { assessment: 'review' }, 'bob');
+  assert.equal(again.instance.data.assessment, 'review');
+  assert.deepEqual(waiting(again), ['PaymentConfirmed']);
+  assert.equal(again.instance.items.find(i => i.elementId === 'AssessClaim').userName, 'bob');
+
+  const [kept] = await server.dataStore.findInstances({ id: 'keep-1' }, 'full');
+  assert.deepEqual(kept.flags, { savePoints: true, saveLogs: true }, 'the flags are saved with the instance');
+  // an instance without the flag has no save points: the store's setting
+  await server.engine.start('property-claim', {}, null, null, { instanceId: 'other-1' });
+  const [saved] = await server.dataStore.findInstances({ id: 'other-1' }, 'full');
+  assert.equal(saved.savePoints, undefined);
+  // and saveLogs: false keeps no log lines
+  const quiet = await server.engine.start('property-claim', {}, null, null, { instanceId: 'quiet-1', flags: { saveLogs: false } });
+  assert.equal(quiet.instance.logs.length, 0);
+  await server.shutdown();
+});
+
+test('the instance log gives the reason for each decision: a condition with the values it read, a default flow, a timer', async () => {
+  const decisions = execution => execution.instance.logs.filter(l => l.type === 'decision').map(l => l.message);
+  const { server } = await makeServer({ services: coverage(false) });
+  const rejected = decisions(await server.engine.start('property-claim', {}));
+  assert.ok(rejected.some(d => /condition .*data\.covered === true.* is false \(covered=false\); not taken/.test(d)), rejected.join('\n'));
+  assert.ok(rejected.some(d => /gateway 'Covered\?' \(Covered\): none of the conditions of its other flows held .*takes its default flow/.test(d)), rejected.join('\n'));
+  await server.shutdown();
+
+  const covered = await makeServer({ services: coverage(true) });
+  const taken = decisions(await covered.server.engine.start('property-claim', {}));
+  assert.ok(taken.some(d => /is true \(covered=true\); taken/.test(d)));
+  assert.ok(taken.some(d => /gateway 'Covered\?' \(Covered\): takes covered of covered, notCovered/.test(d)));
+  const timed = decisions(await covered.server.engine.start('reminder', {}));
+  assert.ok(timed.some(d => /^timer .*: due at \d{4}-.*\((duration|cycle|date) /.test(d)), timed.join('\n'));
+  await covered.server.shutdown();
+});

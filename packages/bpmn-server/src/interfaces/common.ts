@@ -87,6 +87,8 @@ interface ILogger {
     debug(...message: any): void;
     warn(...message: any): void;
     log(...message: any): void;
+    /** Why the engine took a path (an instance log entry of type 'decision'); optional for older loggers. */
+    decision?(...message: any): any;
     error(err: any): void;
     reportError(err: any): void;
     save(filename: any): Promise<void>;
