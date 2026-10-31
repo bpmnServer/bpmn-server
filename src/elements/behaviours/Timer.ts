@@ -178,7 +178,7 @@ class TimerBehaviour extends Behaviour {
         if (cron && typeof cron.scheduleItemTimer === 'function')
             cron.scheduleItemTimer({ id: item.id, timeDue: item.timeDue, instanceId: item.token.execution.id }, expires);
         else
-            setTimeout(expires, seconds * 1000);
+            setLongTimeout(expires, seconds * 1000);
     }
     async expires() {
         let item = this['item'] as unknown as Item;
@@ -227,3 +227,13 @@ class TimerBehaviour extends Behaviour {
     resume() { }
 }
 export { TimerBehaviour}
+
+/** The longest delay setTimeout takes (about 24.8 days); it runs a longer one after 1 ms. */
+const MAX_DELAY = 2 ** 31 - 1;
+
+/** setTimeout for any delay: a longer one than it takes is waited out in steps. */
+function setLongTimeout(fire: () => void, ms: number) {
+    if (ms > MAX_DELAY)
+        return setTimeout(() => setLongTimeout(fire, ms - MAX_DELAY), MAX_DELAY);
+    return setTimeout(fire, Math.max(ms, 0));
+}

@@ -15,6 +15,52 @@ and here
 -->
 ## Unreleased
 
+### Data objects
+- A data object (or data store) connected to an element by a data association, either way, is loaded by the
+  application when the element runs: `appDelegate.loadDataObject(name, item)` (optional), its result put in the
+  instance data under the name the diagram shows (`data.client`) and saved with the instance. Later elements
+  read and change it like any data.
+- `verifyModel`: `data-object-not-loaded` (a data object connected to nothing) and `no-data-object-loader`
+  (the application has no `loadDataObject`).
+
+### Decisions (DMN)
+- Business rule tasks evaluate decisions as the DMN standard describes them, with FEEL (feelin) for input
+  expressions and cells: quoted text, ranges (`[600..700]`), lists (`"gold","platinum"`), `not(...)`,
+  comparisons, and FEEL expressions in output cells (`0.1 * income`). The earlier evaluator mis-read most of these.
+- Hit policies: UNIQUE (the default; more than one match is an error), FIRST, PRIORITY and OUTPUT ORDER (by the
+  output values' order), ANY, COLLECT with SUM, MIN, MAX or COUNT, RULE ORDER.
+- Columns are read by their input expression (they were read by their label). Values arrive typed by the
+  column (`"800"` from a form is 800 in an integer column).
+- A file may hold several decisions; decisions that require others (DRDs) and literal expression decisions
+  are evaluated.
+- `camunda:decisionRef` names a file (`<name>.dmn.xml`) or a decision id in the models folder.
+- The task's inputs are the instance data, overridden by its input parameters. `camunda:resultVariable` saves the
+  result in the data; `camunda:mapDecisionResult` (singleEntry, singleResult, collectEntries, resultList)
+  shapes it.
+- **Changed:** when no rule matches, a single-hit table's result is `null` (it was `{}`) and a multi-hit
+  table's is `[]`.
+- Parsed files are kept until they change. The log says which rules matched; a missing decision or a cell that
+  is not FEEL stops the task with a message that names it. No more console output.
+- `DMNEngine` and `DMNParser` are exported.
+- `verifyModel` checks business rule tasks against the models folder (or `options.decisionsFolder`; the CLI uses
+  the model's folder): `decision-not-named`, `decision-not-found`, `decision-invalid` (unknown hit policy,
+  cell counts, FEEL that does not parse), `decision-result-not-saved`, and `decision-input-from-data` (info).
+- `verifyModel`: `parameter-is-text`, an input or output parameter written like an expression without its `$`.
+- Samples: the Business Rules model and its loan approval table work (inputs had no `$`, the table had cells that
+  were not FEEL).
+
+### Timers
+- Timers more than 24.8 days away (setTimeout's limit, 2^31-1 ms) are waited out in steps everywhere. Cron did
+  this since 3.1.0; the timer's own fallback (a server without Cron) still passed the whole delay, which Node
+  runs after 1 ms. A test now covers start timers and waiting timers of 30 and 40 days. **3.0.x and earlier fire
+  such timers at once, and a start timer starts an instance every millisecond: upgrade.**
+- A model's start timer record (`events[].timeDue`) held a promise (the timer's async timeDue(), not awaited):
+  stored as `{}` by MongoDB, refused by the in-memory store, and an unhandled rejection for a `$` expression. It
+  is now the first due time, or null for an expression.
+
+### Definition
+- `Definition.load()` starts over when called again; a second load listed each flow twice.
+
 ### verifyModel
 - Checks multi-instance loop collections: they must compile as expressions (they are always evaluated).
 - Checks `appServices.<name>` in scripts and expressions against the application's services (when the services

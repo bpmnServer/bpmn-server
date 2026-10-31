@@ -1,4 +1,5 @@
 import { Definition } from '../elements/Definition.js';
+import { Cron } from '../server/Cron.js';
 import type { IProcessData, IBpmnModelData, IEventData } from '../interfaces/DataObjects.js';
 
 class BpmnModelData implements IBpmnModelData {
@@ -45,7 +46,7 @@ class BpmnModelData implements IBpmnModelData {
 
                 let timer = n.hasTimer();
                 if (timer) {
-                    event.timeDue = timer.timeDue();
+                    event.timeDue = firstDue(timer);
                     event.subType = 'Timer';
                     event.expression = timer.timeCycle;
                     if (!event.expression) 
@@ -121,3 +122,19 @@ class EventData implements IEventData  {
 
 
 export {ProcessData, EventData , BpmnModelData }
+
+/**
+ * When a start timer is first due, for the model's record: Cron schedules it from its expression. Computed here,
+ * not by the timer's async timeDue(), whose promise was stored in its place. An expression ($...) is evaluated
+ * only when the process runs: null here.
+ */
+function firstDue(timer): Date | string | null {
+    const expression = timer.timeCycle || timer.duration;
+    if (typeof expression === 'string' && expression && !expression.startsWith('$')) {
+        const seconds = Cron.timeDue(expression, null);
+        return Number.isFinite(seconds) ? new Date(Date.now() + seconds * 1000) : null;
+    }
+    if (typeof timer.timeDate === 'string' && timer.timeDate && !timer.timeDate.startsWith('$'))
+        return timer.timeDate;
+    return null;
+}
