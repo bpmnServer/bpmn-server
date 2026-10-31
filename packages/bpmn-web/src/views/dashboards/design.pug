@@ -2,12 +2,12 @@ extends layout
 
 mixin checks(m)
 	if m.errors
-		span.dash-badge.error #{m.errors} error#{m.errors === 1 ? '' : 's'}
+		span.dash-badge.is-error #{m.errors} error#{m.errors === 1 ? '' : 's'}
 	if m.warnings
 		|
-		span.dash-badge.warning #{m.warnings} warning#{m.warnings === 1 ? '' : 's'}
+		span.dash-badge.is-warning #{m.warnings} warning#{m.warnings === 1 ? '' : 's'}
 	if !m.errors && !m.warnings
-		span.dash-badge.ok OK
+		span.dash-badge.is-ok OK
 
 block intro
 	p.dash-intro The models, what their checks find, their tests, decisions and configured tasks.
@@ -41,6 +41,8 @@ block dash
 				a.btn.btn-default.btn-sm(href='/model/import') Import
 				|
 				a.btn.btn-default.btn-sm(href='/model/decision/new-decision') New decision
+				|  
+				a.btn.btn-default.btn-sm(href='/dashboard/catalog') Browse the catalog
 
 		section.dash-card#recent
 			h2 Recently changed

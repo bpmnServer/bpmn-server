@@ -1,0 +1,567 @@
+{
+  "format": "bpmn-server-catalog",
+  "version": 1,
+  "updated": "2026-10-31T17:35:08.680Z",
+  "entries": [
+    {
+      "id": "businessrules",
+      "name": "BusinessRules",
+      "description": "To demonstrate use of Business Rules",
+      "tags": [
+        "demo"
+      ],
+      "bpmn": "models/businessrules.bpmn",
+      "svg": "models/businessrules.svg",
+      "size": 7302,
+      "sha256": "b02975cfcf562aa764ea534e0ba16783ef85c9a4484009a249c706745d8f8adb",
+      "elements": {
+        "processes": 1,
+        "userTasks": 3,
+        "serviceTasks": 0,
+        "scriptTasks": 0,
+        "gateways": 0,
+        "timers": 0,
+        "messages": 0,
+        "subProcesses": 0
+      },
+      "services": [],
+      "verify": {
+        "errors": 0,
+        "warnings": 2,
+        "issues": [
+          {
+            "severity": "warning",
+            "code": "decision-not-named",
+            "elementId": "Task_16ijq52",
+            "message": "Business rule task does not name a decision (camunda:decisionRef); nothing is evaluated."
+          },
+          {
+            "severity": "warning",
+            "code": "decision-not-named",
+            "elementId": "Task_0z1yxdw",
+            "message": "Business rule task does not name a decision (camunda:decisionRef); nothing is evaluated."
+          }
+        ]
+      }
+    },
+    {
+      "id": "buy-used-car",
+      "name": "Buy Used Car",
+      "description": "Testing",
+      "tags": [
+        "test"
+      ],
+      "bpmn": "models/buy-used-car.bpmn",
+      "svg": "models/buy-used-car.svg",
+      "size": 8480,
+      "sha256": "1906878970353a248a3b7da690af147bf1a5eba89c8fa9d3b875fed0095de739",
+      "elements": {
+        "processes": 1,
+        "userTasks": 4,
+        "serviceTasks": 0,
+        "scriptTasks": 0,
+        "gateways": 2,
+        "timers": 0,
+        "messages": 0,
+        "subProcesses": 0
+      },
+      "services": [],
+      "verify": {
+        "errors": 0,
+        "warnings": 3,
+        "issues": [
+          {
+            "severity": "warning",
+            "code": "no-end-event",
+            "elementId": "Process_1",
+            "message": "Process has no end event."
+          },
+          {
+            "severity": "warning",
+            "code": "flow-without-condition",
+            "elementId": "InclusiveGateway_0g61pla",
+            "message": "Gateway splits into flows without a condition (Needs Repairs, Needs Cleaning); they are always taken. Add conditions or mark one as the default flow."
+          },
+          {
+            "severity": "warning",
+            "code": "no-outgoing",
+            "elementId": "UserTask_1e3pqng",
+            "message": "Element has no outgoing sequence flow; the path ends here without an end event."
+          }
+        ]
+      }
+    },
+    {
+      "id": "employee-expenses",
+      "name": "Employee Expenses",
+      "description": "a Business Expense Application to submit, approve and process Travel and Business Expses",
+      "tags": [
+        "demo"
+      ],
+      "bpmn": "models/employee-expenses.bpmn",
+      "svg": "models/employee-expenses.svg",
+      "size": 13546,
+      "sha256": "dad4bd1b60823d470bbf018a7c08947b4d0fa26c6a5236ed59deec465ad83384",
+      "elements": {
+        "processes": 1,
+        "userTasks": 5,
+        "serviceTasks": 1,
+        "scriptTasks": 0,
+        "gateways": 2,
+        "timers": 0,
+        "messages": 0,
+        "subProcesses": 0
+      },
+      "services": [],
+      "verify": {
+        "errors": 0,
+        "warnings": 2,
+        "issues": [
+          {
+            "severity": "warning",
+            "code": "flow-without-condition",
+            "elementId": "ExclusiveGateway_1d83flk",
+            "message": "Gateway splits into flows without a condition (Reviewed, Rejected by Finance); they are always taken. Add conditions or mark one as the default flow."
+          },
+          {
+            "severity": "warning",
+            "code": "flow-without-condition",
+            "elementId": "ExclusiveGateway_0fztzwc",
+            "message": "Gateway splits into flows without a condition (Rejected, Approved); they are always taken. Add conditions or mark one as the default flow."
+          }
+        ]
+      }
+    },
+    {
+      "id": "followup",
+      "name": "Followup",
+      "description": "Follow-up with reminders",
+      "tags": [
+        "demo"
+      ],
+      "bpmn": "models/followup.bpmn",
+      "svg": "models/followup.svg",
+      "size": 6145,
+      "sha256": "8087fd885a5205c09cf430f9232a7b8ed4a3ca81492207b7e383d944128a74d2",
+      "elements": {
+        "processes": 1,
+        "userTasks": 0,
+        "serviceTasks": 0,
+        "scriptTasks": 1,
+        "gateways": 0,
+        "timers": 1,
+        "messages": 2,
+        "subProcesses": 0
+      },
+      "services": [],
+      "verify": {
+        "errors": 1,
+        "warnings": 0,
+        "issues": [
+          {
+            "severity": "error",
+            "code": "timer-not-defined",
+            "elementId": "IntermediateThrowEvent_0j1lk78",
+            "message": "Timer event has no duration, cycle or date."
+          }
+        ]
+      }
+    },
+    {
+      "id": "got-mail",
+      "name": "Got Mail",
+      "description": "Sample Mail reader only to demonstrate BPMN",
+      "tags": [
+        "demo"
+      ],
+      "bpmn": "models/got-mail.bpmn",
+      "svg": "models/got-mail.svg",
+      "size": 7896,
+      "sha256": "777709d169f95692879f2cd531fbe0d6bc0b40763d524c3976a162057d73cd16",
+      "elements": {
+        "processes": 1,
+        "userTasks": 1,
+        "serviceTasks": 0,
+        "scriptTasks": 2,
+        "gateways": 2,
+        "timers": 0,
+        "messages": 1,
+        "subProcesses": 0
+      },
+      "services": [],
+      "verify": {
+        "errors": 0,
+        "warnings": 1,
+        "issues": [
+          {
+            "severity": "warning",
+            "code": "flow-without-condition",
+            "elementId": "ExclusiveGateway_1fvfhvz",
+            "message": "Gateway splits into flows without a condition (Junk, Not Junk); they are always taken. Add conditions or mark one as the default flow."
+          }
+        ]
+      }
+    },
+    {
+      "id": "help-desk",
+      "name": "Help Desk",
+      "description": "a Help Desk Application",
+      "tags": [
+        "demo"
+      ],
+      "bpmn": "models/help-desk.bpmn",
+      "svg": "models/help-desk.svg",
+      "size": 15153,
+      "sha256": "ba8c24034a2a10f42117cd1421bdffa975b3b2c6465b8937ea0acf07ad7c8637",
+      "elements": {
+        "processes": 1,
+        "userTasks": 7,
+        "serviceTasks": 1,
+        "scriptTasks": 0,
+        "gateways": 2,
+        "timers": 0,
+        "messages": 0,
+        "subProcesses": 0
+      },
+      "services": [],
+      "verify": {
+        "errors": 0,
+        "warnings": 2,
+        "issues": [
+          {
+            "severity": "warning",
+            "code": "flow-without-condition",
+            "elementId": "ExclusiveGateway_0ejauzs",
+            "message": "Gateway splits into flows without a condition (Verified by Customer, Case not resolved); they are always taken. Add conditions or mark one as the default flow."
+          },
+          {
+            "severity": "warning",
+            "code": "flow-without-condition",
+            "elementId": "ExclusiveGateway_06pmaep",
+            "message": "Gateway splits into flows without a condition (No, Needs escalation); they are always taken. Add conditions or mark one as the default flow."
+          }
+        ]
+      }
+    },
+    {
+      "id": "hungry",
+      "name": "Hungry",
+      "description": "What will be tonight, Steak or Pasta, simple BPMN Demo",
+      "tags": [
+        "demo"
+      ],
+      "bpmn": "models/hungry.bpmn",
+      "svg": "models/hungry.svg",
+      "size": 21554,
+      "sha256": "0e96317a14cd3e3f922fe3eb88ce41112134466497d65d47e5b208252fba91ea",
+      "elements": {
+        "processes": 1,
+        "userTasks": 5,
+        "serviceTasks": 0,
+        "scriptTasks": 0,
+        "gateways": 2,
+        "timers": 0,
+        "messages": 0,
+        "subProcesses": 0
+      },
+      "services": [],
+      "verify": {
+        "errors": 0,
+        "warnings": 1,
+        "issues": [
+          {
+            "severity": "warning",
+            "code": "flow-without-condition",
+            "elementId": "sid-433EEF5E-4740-4E48-9503-61C492767C56",
+            "message": "Gateway splits into flows without a condition (pasta, steak); they are always taken. Add conditions or mark one as the default flow."
+          }
+        ]
+      }
+    },
+    {
+      "id": "invest-in-stock",
+      "name": "Invest in Stock",
+      "description": "Testing of receiving messages",
+      "tags": [
+        "test"
+      ],
+      "bpmn": "models/invest-in-stock.bpmn",
+      "svg": "models/invest-in-stock.svg",
+      "size": 5878,
+      "sha256": "5eeef9df8303b8dfef56d7aca59a6fb00f72bbfb9bef7ff604c9e1866bff9469",
+      "elements": {
+        "processes": 1,
+        "userTasks": 1,
+        "serviceTasks": 0,
+        "scriptTasks": 0,
+        "gateways": 1,
+        "timers": 0,
+        "messages": 1,
+        "subProcesses": 0
+      },
+      "services": [],
+      "verify": {
+        "errors": 0,
+        "warnings": 1,
+        "issues": [
+          {
+            "severity": "warning",
+            "code": "flow-without-condition",
+            "elementId": "ExclusiveGateway_1d479bl",
+            "message": "Gateway splits into flows without a condition (Ignore, SequenceFlow_0ljbq2d); they are always taken. Add conditions or mark one as the default flow."
+          }
+        ]
+      }
+    },
+    {
+      "id": "invoicing",
+      "name": "Invoicing",
+      "description": "a Business Invoicing Application to submit billable hours on a monthly basis",
+      "tags": [
+        "demo"
+      ],
+      "bpmn": "models/invoicing.bpmn",
+      "svg": "models/invoicing.svg",
+      "size": 15441,
+      "sha256": "2aa88c9c4d10fdd682acdfb38fe41951de2bb9c7250b430dc5013d437c493657",
+      "elements": {
+        "processes": 2,
+        "userTasks": 2,
+        "serviceTasks": 3,
+        "scriptTasks": 0,
+        "gateways": 2,
+        "timers": 2,
+        "messages": 1,
+        "subProcesses": 0
+      },
+      "services": [],
+      "verify": {
+        "errors": 2,
+        "warnings": 2,
+        "issues": [
+          {
+            "severity": "error",
+            "code": "timer-not-defined",
+            "elementId": "IntermediateCatchEvent_0i2rmds",
+            "message": "Timer event has no duration, cycle or date."
+          },
+          {
+            "severity": "error",
+            "code": "timer-not-defined",
+            "elementId": "StartEvent_1ywnyyl",
+            "message": "Timer event has no duration, cycle or date."
+          },
+          {
+            "severity": "warning",
+            "code": "mixed-gateway",
+            "elementId": "ParallelGateway_0ybg30o",
+            "message": "Gateway both joins and splits flows; use two gateways to make the behaviour explicit."
+          },
+          {
+            "severity": "warning",
+            "code": "flow-without-condition",
+            "elementId": "ExclusiveGateway_1q3w14n",
+            "message": "Gateway splits into flows without a condition (Yes, Not Billable); they are always taken. Add conditions or mark one as the default flow."
+          }
+        ]
+      }
+    },
+    {
+      "id": "pizza",
+      "name": "pizza",
+      "description": "Time for some Pizza, Let us order pizza",
+      "tags": [
+        "demo"
+      ],
+      "bpmn": "models/pizza.bpmn",
+      "svg": "models/pizza.svg",
+      "size": 11772,
+      "sha256": "b423dd0cd227385ac6c1407920b431b0c2cc41ea409956317157b957e5f32370",
+      "elements": {
+        "processes": 1,
+        "userTasks": 4,
+        "serviceTasks": 0,
+        "scriptTasks": 0,
+        "gateways": 2,
+        "timers": 1,
+        "messages": 1,
+        "subProcesses": 0
+      },
+      "services": [],
+      "verify": {
+        "errors": 1,
+        "warnings": 2,
+        "issues": [
+          {
+            "severity": "error",
+            "code": "timer-not-defined",
+            "elementId": "IntermediateCatchEvent_1m0te3o",
+            "message": "Timer event has no duration, cycle or date."
+          },
+          {
+            "severity": "warning",
+            "code": "mixed-gateway",
+            "elementId": "EventBasedGateway_035xwj6",
+            "message": "Gateway both joins and splits flows; use two gateways to make the behaviour explicit."
+          },
+          {
+            "severity": "warning",
+            "code": "flow-without-condition",
+            "elementId": "ExclusiveGateway_1ekj4sq",
+            "message": "Gateway splits into flows without a condition (Yes, No); they are always taken. Add conditions or mark one as the default flow."
+          }
+        ]
+      }
+    },
+    {
+      "id": "process-invoices",
+      "name": "Process Invoices",
+      "description": "Testing",
+      "tags": [
+        "test"
+      ],
+      "bpmn": "models/process-invoices.bpmn",
+      "svg": "models/process-invoices.svg",
+      "size": 6596,
+      "sha256": "bcddb502522170461a0214dffac5a9615e8d3418b09481bdd3c5e3fbb2f986d7",
+      "elements": {
+        "processes": 2,
+        "userTasks": 0,
+        "serviceTasks": 1,
+        "scriptTasks": 1,
+        "gateways": 1,
+        "timers": 0,
+        "messages": 2,
+        "subProcesses": 0
+      },
+      "services": [],
+      "verify": {
+        "errors": 1,
+        "warnings": 4,
+        "issues": [
+          {
+            "severity": "error",
+            "code": "no-start-event",
+            "elementId": "Process_1y8bh24",
+            "message": "Process has no start event, so it can not be started."
+          },
+          {
+            "severity": "warning",
+            "code": "no-end-event",
+            "elementId": "Process_1g3n2qn",
+            "message": "Process has no end event."
+          },
+          {
+            "severity": "warning",
+            "code": "no-end-event",
+            "elementId": "Process_1y8bh24",
+            "message": "Process has no end event."
+          },
+          {
+            "severity": "warning",
+            "code": "no-outgoing",
+            "elementId": "ServiceTask_0z24tjo",
+            "message": "Element has no outgoing sequence flow; the path ends here without an end event."
+          },
+          {
+            "severity": "warning",
+            "code": "unreachable",
+            "elementId": "IntermediateCatchEvent_0zartcp",
+            "message": "Element has no incoming sequence flow and will never be reached."
+          }
+        ]
+      }
+    },
+    {
+      "id": "samplenew",
+      "name": "SampleNew",
+      "description": "Testing of new features Loop,Multi-instances",
+      "tags": [
+        "test"
+      ],
+      "bpmn": "models/samplenew.bpmn",
+      "svg": "models/samplenew.svg",
+      "size": 8556,
+      "sha256": "5e154e3aa49cfd81bf370aa17f62f616d4315b7dfe0a9644e50a707b4b766eef",
+      "elements": {
+        "processes": 1,
+        "userTasks": 1,
+        "serviceTasks": 2,
+        "scriptTasks": 0,
+        "gateways": 0,
+        "timers": 0,
+        "messages": 0,
+        "subProcesses": 0
+      },
+      "services": [],
+      "verify": {
+        "errors": 0,
+        "warnings": 0,
+        "issues": []
+      }
+    },
+    {
+      "id": "stock-expert",
+      "name": "Stock Expert",
+      "description": "Testing of sending messages",
+      "tags": [
+        "test"
+      ],
+      "bpmn": "models/stock-expert.bpmn",
+      "svg": "models/stock-expert.svg",
+      "size": 4908,
+      "sha256": "2d2a65e7f211f269ec0a32bf0d066c8d957f8d4ce051a546fadbd887b3684c85",
+      "elements": {
+        "processes": 1,
+        "userTasks": 1,
+        "serviceTasks": 2,
+        "scriptTasks": 0,
+        "gateways": 0,
+        "timers": 0,
+        "messages": 0,
+        "subProcesses": 0
+      },
+      "services": [],
+      "verify": {
+        "errors": 0,
+        "warnings": 0,
+        "issues": []
+      }
+    },
+    {
+      "id": "superproc",
+      "name": "SuperProc",
+      "description": "Testing of a process calling a subprocess",
+      "tags": [
+        "test"
+      ],
+      "bpmn": "models/superproc.bpmn",
+      "svg": "models/superproc.svg",
+      "size": 3172,
+      "sha256": "fc728fb16cba49272a8e0d3a3b3d22d6b1e3fc7380063804e846c6ecfd08dad2",
+      "elements": {
+        "processes": 1,
+        "userTasks": 0,
+        "serviceTasks": 0,
+        "scriptTasks": 0,
+        "gateways": 0,
+        "timers": 0,
+        "messages": 0,
+        "subProcesses": 1
+      },
+      "services": [],
+      "verify": {
+        "errors": 1,
+        "warnings": 0,
+        "issues": [
+          {
+            "severity": "error",
+            "code": "call-activity-no-target",
+            "elementId": "Task_193qjmt",
+            "message": "Call activity does not name the process it calls (calledElement)."
+          }
+        ]
+      }
+    }
+  ]
+}

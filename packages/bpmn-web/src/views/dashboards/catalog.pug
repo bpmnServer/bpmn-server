@@ -1,0 +1,84 @@
+extends layout
+
+block intro
+	p.dash-intro
+		| Ready-made models to start from. Import one into your models, then open it in the editor.
+		span.dash-muted  Catalog: #[code= location]#{updated ? ' · updated ' + new Date(updated).toLocaleDateString() : ''}
+
+block dash
+	if error
+		.dash-card
+			h2 The catalog can not be read
+			p= error
+			p.dash-muted Set CATALOG_URL to the catalog's address (a web address or a folder holding catalog.json).
+	else
+		.dash-catalog-filters
+			input#catalog-search(type='search', placeholder='Search models', aria-label='Search models')
+			select#catalog-tag(aria-label='Tag')
+				option(value='') All tags
+				each tag in tags
+					option(value=tag)= tag
+			span.dash-muted#catalog-count #{entries.length} models
+		.dash-catalog
+			each e in entries
+				article.dash-card.catalog-entry(data-search=`${e.name} ${e.description || ''} ${(e.tags || []).join(' ')}`.toLowerCase(), data-tags=(e.tags || []).join(','), id=`catalog-${e.id}`)
+					if e.svg
+						a.catalog-preview(href=`/dashboard/catalog/svg/${e.id}`, target='_blank', title='The diagram at full size')
+							img(src=`/dashboard/catalog/svg/${e.id}`, alt=`${e.name} diagram`, loading='lazy')
+					h2= e.name
+						each tag in e.tags || []
+							span.count= tag
+					p= e.description
+					if e.elements
+						p.dash-muted
+							- const el = e.elements
+							- const parts = [['user task', el.userTasks], ['service task', el.serviceTasks], ['script', el.scriptTasks], ['gateway', el.gateways], ['timer', el.timers], ['message', el.messages], ['sub-process', el.subProcesses]].filter(p => p[1])
+							= parts.map(p => p[1] + ' ' + p[0] + (p[1] === 1 ? '' : 's')).join(' · ')
+					if e.services && e.services.length
+						p.dash-muted Calls the services #[code= e.services.join(', ')]: your app delegate needs them.
+					if e.verify
+						if e.verify.errors
+							details.catalog-issues
+								summary
+									span.dash-badge.is-error #{e.verify.errors} error#{e.verify.errors === 1 ? '' : 's'}
+									if e.verify.warnings
+										|
+										span.dash-badge.is-warning #{e.verify.warnings} warning#{e.verify.warnings === 1 ? '' : 's'}
+									|  to fix after importing
+								ul
+									each i in e.verify.issues
+										li #[b= i.severity] #{i.message} #[span.dash-muted= i.elementId]
+						else if e.verify.warnings
+							details.catalog-issues
+								summary
+									span.dash-badge.is-warning #{e.verify.warnings} warning#{e.verify.warnings === 1 ? '' : 's'}
+								ul
+									each i in e.verify.issues
+										li #{i.message} #[span.dash-muted= i.elementId]
+						else
+							span.dash-badge.is-ok Checks pass
+					form.catalog-import(method='post', action='/dashboard/catalog/import')
+						input(type='hidden', name='_csrf', value=_csrf)
+						input(type='hidden', name='id', value=e.id)
+						label(for=`name-${e.id}`) Import as
+						input(id=`name-${e.id}`, name='name', value=(e.exists ? e.name + ' (catalog)' : e.name), required)
+						button.btn.btn-primary.btn-sm(type='submit') Import
+					if e.exists
+						p.dash-muted A model named #[b= e.name] is already in your models; it keeps its name, the import takes the one above.
+		script.
+			(function () {
+				var search = document.getElementById('catalog-search'), tag = document.getElementById('catalog-tag');
+				var count = document.getElementById('catalog-count');
+				function filter() {
+					var words = search.value.toLowerCase().split(/\s+/).filter(Boolean), shown = 0;
+					document.querySelectorAll('.catalog-entry').forEach(function (el) {
+						var ok = words.every(function (w) { return el.dataset.search.indexOf(w) >= 0; })
+							&& (!tag.value || el.dataset.tags.split(',').indexOf(tag.value) >= 0);
+						el.hidden = !ok;
+						if (ok) shown++;
+					});
+					count.textContent = shown + ' models';
+				}
+				search.addEventListener('input', filter);
+				tag.addEventListener('change', filter);
+			})();

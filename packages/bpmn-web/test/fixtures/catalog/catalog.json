@@ -1,0 +1,54 @@
+{
+  "format": "bpmn-server-catalog",
+  "version": 1,
+  "updated": "2026-10-31T00:00:00.000Z",
+  "entries": [
+    {
+      "id": "hello",
+      "name": "Hello",
+      "description": "A greeting: a start form, a service, a task",
+      "tags": [
+        "demo"
+      ],
+      "bpmn": "models/hello.bpmn",
+      "svg": null,
+      "sha256": "bc5bd3aaf1cfe8d72e017c418fadbb19eb430eb6b1d22ed6cc4f82164258ac79",
+      "elements": {
+        "processes": 1,
+        "userTasks": 1,
+        "serviceTasks": 1
+      },
+      "services": [
+        "greet"
+      ],
+      "verify": {
+        "errors": 0,
+        "warnings": 0,
+        "issues": []
+      }
+    },
+    {
+      "id": "tampered",
+      "name": "Tampered",
+      "description": "its file differs from its checksum",
+      "tags": [
+        "test"
+      ],
+      "bpmn": "models/hello.bpmn",
+      "svg": null,
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "verify": {
+        "errors": 1,
+        "warnings": 0,
+        "issues": [
+          {
+            "severity": "error",
+            "code": "timer-not-defined",
+            "elementId": "Wait",
+            "message": "Timer event has no duration, cycle or date."
+          }
+        ]
+      }
+    }
+  ]
+}

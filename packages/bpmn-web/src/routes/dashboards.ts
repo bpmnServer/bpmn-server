@@ -3,6 +3,7 @@
  *   /dashboard          my work: tasks waiting for me, tasks I completed, processes I can start
  *   /dashboard/design   designers: models and their problems, tests, decisions, templates
  *   /dashboard/admin    administrators: the server, users, operations (locks, hung items), backup, restart
+ *   /dashboard/catalog  designers: browse the model catalog (CATALOG_URL) and import its models
  */
 import express from 'express';
 import FS from 'node:fs';
@@ -18,6 +19,10 @@ import { listScenarioSets } from '../testing/scenarios.js';
 import { isAdminGroups, isDesignerGroups } from '../userAccess/roles.js';
 import User from '../userAccess/models/User.js';
 import { UserService } from '../userAccess/UserService.js';
+import { loadCatalog, findCatalogEntry, readCatalogFile, catalogLocation } from './catalog.js';
+import { isSafeModelName } from './middleware/modelName.js';
+import { bpmnToSvg } from './bpmnToSvg.js';
+import crypto from 'node:crypto';
 
 const handler = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
@@ -234,6 +239,55 @@ export class Dashboards extends Common {
                 return back(res, 'Nothing restarts this process when it stops (Docker, pm2, systemd, or RESTART_ON_EXIT=true), so it was not stopped.');
             res.send(`<p>Restarting (${by} starts the server again). <a href="/dashboard/admin">Back to the dashboard</a> in a few seconds.</p>`);
             setTimeout(() => process.kill(process.pid, 'SIGTERM'), 500);
+        }));
+
+        // ---- the model catalog (designers) ------------------------------------------------------------------
+        router.get('/catalog', this.isDesigner, handler(async (req, res) => {
+            let catalog = null, error = null;
+            try {
+                catalog = await loadCatalog();
+            }
+            catch (exc) {
+                error = exc.message;
+            }
+            const existing = new Set((await server.definitions.getList({})).map(m => m.name));
+            const entries = (catalog?.entries ?? []).map(e => ({ ...e, exists: existing.has(e.name) }));
+            const tags = [...new Set(entries.flatMap(e => e.tags ?? []))].sort();
+            render(req, res, 'catalog', {
+                title: 'Model catalog', entries, tags, error, location: catalogLocation(), updated: catalog?.updated,
+                message: req.query.message,
+            });
+        }));
+
+        router.get('/catalog/svg/:id', this.isDesigner, handler(async (req, res) => {
+            const entry = await findCatalogEntry(req.params.id);
+            if (!entry.svg)
+                return res.status(404).send('no diagram');
+            res.type('image/svg+xml').send(await readCatalogFile(entry.svg));
+        }));
+
+        // import a catalog model into the models folder, under its name or one given
+        router.post('/catalog/import', this.isDesigner, handler(async (req, res) => {
+            const again = (message: string) => res.redirect('/dashboard/catalog?message=' + encodeURIComponent(message));
+            let entry;
+            try {
+                entry = await findCatalogEntry(req.body.id);
+            }
+            catch (exc) {
+                return again(exc.message);
+            }
+            const name = String(req.body.name || entry.name).trim();
+            if (!isSafeModelName(name))
+                return again(`'${name}' can not be a model name.`);
+            if (FS.existsSync(path.join(folder(), name + '.bpmn')) && req.body.overwrite !== 'true')
+                return again(`A model named '${name}' exists: import it under another name.`);
+            const source = await readCatalogFile(entry.bpmn);
+            if (entry.sha256 && crypto.createHash('sha256').update(source).digest('hex') !== entry.sha256)
+                return again(`${entry.bpmn} is not the file the catalog describes (its checksum differs); nothing was imported.`);
+            const svg = await bpmnToSvg(source).catch(() => null);
+            await server.definitions.save(name, source, svg);
+            this.verified.delete(name);
+            res.redirect('/model/edit/' + encodeURIComponent(name));
         }));
 
         return router;
