@@ -1,0 +1,26 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    if cspHost
+      //- allow rendering inside the ITSM host iframe
+      meta(http-equiv="Content-Security-Policy" content=`frame-ancestors 'self' ${cspHost}`)
+    title= `${name} - Decision editor`
+    meta(name="csrf-token" content=_csrf)
+    script(src="/javascripts/csrf.js")
+    link(rel="stylesheet" href="/modeler/decision.css")
+  body
+    #decision-page(data-name=name data-exists=exists ? 'true' : 'false')
+      header.modeler-header
+        a.brand(href="/" title="Home")
+          img(src="https://demo.omniworkflow.com/web//images/omniworkflow_icon.png" alt="Home")
+        h1= name
+        span.decision-file= `${name}.dmn.xml`
+        span#js-save-status.modeler-status(role="status")
+        nav#js-views.decision-views(aria-label="Decisions")
+        nav.modeler-actions
+          button#js-save.primary(type="button" title="Ctrl+S") Save
+      #js-decision.decision-canvas
+    script#model-source(type="application/json")!= modelJson
+    script(src="/modeler/decision.js")

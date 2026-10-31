@@ -1,0 +1,49 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    if cspHost
+      //- allow rendering inside the ITSM host iframe
+      meta(http-equiv="Content-Security-Policy" content=`frame-ancestors 'self' ${cspHost}`)
+    title= `${processName} - Model editor`
+    meta(name="csrf-token" content=_csrf)
+    //- before the modeler: it adds the token to the modeler's save request
+    script(src="/javascripts/csrf.js")
+    link(rel="stylesheet" href="/modeler/modeler.css")
+  body
+    #modeler-page(data-process-name=processName)
+      header.modeler-header
+        a.brand(href="/" title="Home")
+          img(src="https://demo.omniworkflow.com/web//images/omniworkflow_icon.png" alt="Home")
+        h1= processName
+        span#js-save-status.modeler-status(role="status")
+        nav.modeler-actions
+          a(href=`/execute/${processName}` target="execute") Run
+          button#js-save-run(type="button") Save &amp; Run
+          button#js-save.primary(type="button" title="Ctrl+S") Save
+      .modeler-body
+        .modeler-main
+          #js-canvas.modeler-canvas
+          section#js-dock.dock
+            #js-dock-resizer.dock-resizer(title="Drag to resize")
+            .dock-bar(role="tablist")
+              button#js-tab-problems.dock-tab(type="button" role="tab" aria-selected="true" aria-controls="js-problems")
+                | Problems
+                span#js-problems-counts.problems-counts
+              button#js-tab-report.dock-tab(type="button" role="tab" aria-selected="false" aria-controls="js-report") Report
+              button#js-tab-test.dock-tab(type="button" role="tab" aria-selected="false" aria-controls="js-test") Test
+              span#js-problems-status.problems-status(role="status")
+              .dock-actions
+                button#js-lint-rules-open(type="button" title="The modeling rules (bpmnlint) checked for every designer") Rules
+                button#js-print(type="button" title="Print the report or save it as PDF") Print
+                button#js-dock-toggle(type="button" aria-expanded="true" title="Hide or show" aria-label="Hide or show the problems and report")
+            .dock-body
+              ul#js-problems.problems-list(role="tabpanel" aria-label="Problems")
+              #js-report.dock-report(role="tabpanel" aria-label="Report")
+              #js-test.dock-test(role="tabpanel" aria-label="Test")
+        #js-panel-resizer.modeler-resizer(title="Drag to resize the properties panel")
+          button#js-panel-toggle(type="button" title="Show or hide the properties panel" aria-label="Show or hide the properties panel")
+        #js-properties-panel.modeler-panel
+    script#model-source(type="application/json")!= modelJson
+    script(src="/modeler/modeler.js")

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decision Table Processor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function addRow() {
+            let table = document.getElementById("decisionTable");
+            let row = table.insertRow(-1);
+            for (let i = 0; i < table.rows[0].cells.length; i++) {
+                let cell = row.insertCell(i);
+                cell.contentEditable = "true";
+                cell.className = "border p-2";
+            }
+        }
+        
+        function processDecisionTable() {
+            let table = document.getElementById("decisionTable");
+            let inputValues = document.getElementById("inputValues").value.split(",").map(val => val.trim());
+            let result = "No matching rule found.";
+            
+            for (let i = 1; i < table.rows.length; i++) {
+                let row = table.rows[i];
+                let conditions = [];
+                let action = "";
+                
+                for (let j = 0; j < row.cells.length - 1; j++) {
+                    conditions.push(row.cells[j].innerText.trim());
+                }
+                action = row.cells[row.cells.length - 1].innerText.trim();
+                
+                if (conditions.every((c, index) => c === "ANY" || c === inputValues[index])) {
+                    result = action || "Action not specified.";
+                    break;
+                }
+            }
+            
+            document.getElementById("output").innerText = "Decision Output: " + result;
+        }
+    </script>
+</head>
+<body class="bg-gray-100 text-gray-900 p-6">
+    <div class="max-w-3xl mx-auto bg-white p-6 shadow-md rounded-lg">
+        <h1 class="text-2xl font-bold mb-4">Decision Table Processor</h1>
+        
+        <table id="decisionTable" class="w-full border-collapse border border-gray-300 mb-4">
+            <thead>
+                <tr>
+                    <th class="border p-2">Condition 1</th>
+                    <th class="border p-2">Condition 2</th>
+                    <th class="border p-2">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="border p-2" contenteditable="true">A</td>
+                    <td class="border p-2" contenteditable="true">B</td>
+                    <td class="border p-2" contenteditable="true">Action 1</td>
+                </tr>
+                <tr>
+                    <td class="border p-2" contenteditable="true">C</td>
+                    <td class="border p-2" contenteditable="true">ANY</td>
+                    <td class="border p-2" contenteditable="true">Action 2</td>
+                </tr>
+                <tr>
+                    <td class="border p-2" contenteditable="true">D</td>
+                    <td class="border p-2" contenteditable="true">E</td>
+                    <td class="border p-2" contenteditable="true">Action 3</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <button onclick="addRow()" class="bg-green-500 text-white px-4 py-2 rounded-lg mb-4">Add Row</button>
+        
+        <label class="block font-semibold">Input Values (comma-separated):</label>
+        <input id="inputValues" class="w-full p-2 border rounded-lg mb-4" type="text" placeholder="Enter values...">
+        
+        <button onclick="processDecisionTable()" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Process</button>
+        
+        <div id="output" class="mt-4 font-semibold text-lg"></div>
+    </div>
+</body>
+</html>
+
+

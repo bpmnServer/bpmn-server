@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+
+# Vérifie si l'utilisateur existe déjà
+if ! id "itsmworkflow" >/dev/null 2>&1; then
+    useradd --system --no-create-home --shell /usr/sbin/nologin itsmworkflow
+fi
+
+chown -R itsmworkflow:itsmworkflow /usr/share/itsmng-workflows/src 
+
+systemctl daemon-reload
+
+exit 0

@@ -1,0 +1,21 @@
+extends layout
+block content
+	h1 bpmn-server Workbench Sample WF Demo
+	include dashboardHeader.pug
+
+	script(type="text/javascript").
+		$( function() {
+			$( "#tabs" ).tabs();
+		} );
+
+	div(id="tab13s")
+		div(id="processes",style="border-bottom: solid;border-width: thin;")
+				include userModels.pug
+		div(id="tasks")
+			include userTasks.pug
+		div(id="instances")
+			include userInstances.pug
+
+		div(id='footer',style="padding-bottom:20px;")
+	
+	

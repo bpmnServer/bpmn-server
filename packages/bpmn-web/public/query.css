@@ -1,0 +1,268 @@
+body {
+    font-family: Arial, sans-serif;
+/*    display: flex; */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+}
+
+.container {
+    background: white;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    width: 80%;
+    /*max-width: 800px; */
+}
+
+.fields, .query-builder, .projection-builder, .results {
+    margin-bottom: 20px;
+}
+
+#field-list li {
+    background: #007bff;
+    color: white;
+    padding: 10px;
+    margin-bottom: 5px;
+    width: 150px;
+    max-width: fit-content;
+    cursor: grab;
+    border-radius: 3px;
+}
+
+#drop-zone {
+    min-height: 100px;
+    border: 2px dashed #007bff;
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.drop-zone .field {
+    background: #e0e0e0;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.field input {
+    margin-left: 10px;
+    padding: 5px;
+}
+
+.field .remove-field {
+    background: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 5px;
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+}
+
+button {
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+pre {
+    background: #f0f0f0;
+    padding: 10px;
+    border-radius: 3px;
+}
+
+.projection-builder {
+    margin-top: 20px;
+}
+
+#projection-list li {
+    background: #28a745;
+    color: white;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#projection-list li button {
+    background: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+#results-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#results-table th, #results-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#results-table th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+/* Existing styles */
+
+#results-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#results-table th, #results-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    vertical-align: top;
+}
+
+#results-table th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+.nested-table {
+    margin-top: 10px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.nested-table th, .nested-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    background-color: #fff;
+}
+
+.nested-table th {
+    background-color: #e0e0e0;
+}
+
+#drop-zone.drag-over {
+    background-color: #e6f7ff;
+    border-color: #007bff;
+}
+
+/* Existing styles */
+
+#results-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#results-table th, #results-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#results-table th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+.nested-table {
+    margin-top: 10px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.nested-table th, .nested-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    background-color: #fff;
+}
+
+.nested-table th {
+    background-color: #e0e0e0;
+}
+
+#drop-zone.drag-over {
+    background-color: #e6f7ff;
+    border-color: #007bff;
+}
+
+.collapse-button {
+    cursor: pointer;
+    padding: 2px 5px;
+    margin-right: 5px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 3px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Existing styles */
+
+#results-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#results-table th, #results-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#results-table th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+.nested-table {
+    margin-top: 10px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.nested-table th, .nested-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    background-color: #fff;
+}
+
+.nested-table th {
+    background-color: #e0e0e0;
+}
+
+#drop-zone.drag-over {
+    background-color: #e6f7ff;
+    border-color: #007bff;
+}
+
+.collapse-button {
+    cursor: pointer;
+    padding: 2px 5px;
+    margin-right: 5px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 3px;
+}
+
+.hidden-column {
+    display: none;
+}
+
+.hidden-row {
+    display: none;
+}

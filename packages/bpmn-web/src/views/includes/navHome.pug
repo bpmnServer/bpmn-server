@@ -1,0 +1,20 @@
+ul(class="nav navbar-nav workbench-navigation" aria-label="Workbench sections")
+	li
+		a(href='#processes') Models
+	li
+		a(href='#tasks') Pending Tasks
+	li
+		a(href='#instances') Instances
+		
+		
+ul(class="nav navbar-nav navbar-right")
+	if request.user 
+		li
+			a(href='/account') 	
+				i.fa.fa-user(aria-hidden='true') &nbsp; #{request.user.userName}
+
+	if request.user && request.isAdmin
+		li
+			a(href='/admin') Admin
+	li
+		a(href='https://bpmnserver.github.io/docs/' target="docs") About	

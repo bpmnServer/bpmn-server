@@ -1,0 +1,15 @@
+extends layoutHome
+
+block content
+	link(rel="stylesheet", href="/stylesheets/workbench-home.css")
+	main.workbench-home
+		h1 bpmn-server Workbench
+		p.workbench-intro Explore models, work on pending tasks, and follow running instances.
+		include includes/dashboardHeader.pug
+		div#workbench-sections
+			div#processes.workbench-section
+				include includes/processes.pug
+			div#tasks.workbench-section
+				include includes/tasks.pug
+			div#instances.workbench-section
+				include includes/instances.pug

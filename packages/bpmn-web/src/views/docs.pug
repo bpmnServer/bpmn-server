@@ -1,0 +1,16 @@
+extends layoutDocs
+block content
+	table(style="width:100%")
+		tr
+			if (sidebar)
+				td
+					div(style="height: 100%;width:220px; position:fixed;z-index:1;top:80px;left:10px;background-color:#eaeaea;overflow-x: hidden;")
+						zero-md 
+							template
+								xmp!=sidebar
+			td
+				div(style="position:absolute;left:250px")
+					zero-md 
+						template
+							xmp!=md
+		

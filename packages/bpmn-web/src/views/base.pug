@@ -1,0 +1,20 @@
+doctype html
+html
+  head
+    block title
+      title= title
+    include includes/head.pug
+    block head
+  body
+    header
+      nav.navbar.navbar-default(role="navigation")
+        .navbar-header
+          a.navbar-brand(href="/")
+            img(src="/images/omniworkflow_icon.png")
+        #navbarCollapse.collapse.navbar-collapse
+          block nav
+      .clearfix
+      .col-10.ml-sm-auto.px-4
+        include includes/flash.pug
+    block content
+    block footer

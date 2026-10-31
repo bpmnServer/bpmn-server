@@ -1,0 +1,12 @@
+extends ../layout
+
+block content
+	h3 Processes to Export
+		table
+			each proc in procs
+				tr 
+					a(vertical-align="top")
+					td 
+						a(href=`/model/download/${proc.name}.bpmn`) #{proc.name}.bpmn
+					td 
+						a(href=`/model/download/${proc.name}.svg`) #{proc.name}.svg

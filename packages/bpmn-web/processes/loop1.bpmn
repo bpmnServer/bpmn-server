@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="Process_1" isExecutable="false">
+    <bpmn2:startEvent id="StartEvent_1">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">this.data.n=5;</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>Flow_10t4k8w</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="Flow_10t4k8w" sourceRef="StartEvent_1" targetRef="Activity_0mzmj08" />
+    <bpmn2:endEvent id="Event_09xuxyt">
+      <bpmn2:incoming>Flow_0z980hn</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="Flow_0z980hn" sourceRef="Activity_0mzmj08" targetRef="Event_09xuxyt" />
+    <bpmn2:subProcess id="Activity_0mzmj08" name="Standard  Loop Task&#10;&#10;">
+      <bpmn2:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="JavaScript">console.log(" loop id ", this.token.loop.sequence);
+if (this.token.loop.sequence &gt; 5) 
+  this.token.loop.end();</camunda:script>
+        </camunda:executionListener>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_10t4k8w</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0z980hn</bpmn2:outgoing>
+      <bpmn2:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="[1,2]" />
+      <bpmn2:startEvent id="Event_143uaru">
+        <bpmn2:outgoing>Flow_0aw9d19</bpmn2:outgoing>
+      </bpmn2:startEvent>
+      <bpmn2:sequenceFlow id="Flow_0aw9d19" sourceRef="Event_143uaru" targetRef="Activity_18dzrjx" />
+      <bpmn2:endEvent id="Event_0ygnxva">
+        <bpmn2:incoming>Flow_1h9kmw7</bpmn2:incoming>
+      </bpmn2:endEvent>
+      <bpmn2:sequenceFlow id="Flow_1h9kmw7" sourceRef="Activity_18dzrjx" targetRef="Event_0ygnxva" />
+      <bpmn2:subProcess id="Activity_18dzrjx">
+        <bpmn2:incoming>Flow_0aw9d19</bpmn2:incoming>
+        <bpmn2:outgoing>Flow_1h9kmw7</bpmn2:outgoing>
+        <bpmn2:multiInstanceLoopCharacteristics camunda:collection="[1,2]" />
+        <bpmn2:endEvent id="Event_0j6hydw">
+          <bpmn2:incoming>Flow_1qv6q76</bpmn2:incoming>
+        </bpmn2:endEvent>
+        <bpmn2:sequenceFlow id="Flow_1qv6q76" sourceRef="Activity_1qe2z25" targetRef="Event_0j6hydw" />
+        <bpmn2:startEvent id="Event_08wtvbc">
+          <bpmn2:outgoing>Flow_1wv8m8i</bpmn2:outgoing>
+        </bpmn2:startEvent>
+        <bpmn2:sequenceFlow id="Flow_1wv8m8i" sourceRef="Event_08wtvbc" targetRef="Activity_1qe2z25" />
+        <bpmn2:userTask id="Activity_1qe2z25">
+          <bpmn2:incoming>Flow_1wv8m8i</bpmn2:incoming>
+          <bpmn2:outgoing>Flow_1qv6q76</bpmn2:outgoing>
+        </bpmn2:userTask>
+      </bpmn2:subProcess>
+    </bpmn2:subProcess>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">
+      <bpmndi:BPMNEdge id="Flow_0z980hn_di" bpmnElement="Flow_0z980hn">
+        <di:waypoint x="770" y="190" />
+        <di:waypoint x="802" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10t4k8w_di" bpmnElement="Flow_10t4k8w">
+        <di:waypoint x="78" y="180" />
+        <di:waypoint x="150" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="42" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_09xuxyt_di" bpmnElement="Event_09xuxyt">
+        <dc:Bounds x="802" y="172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17wy6vo_di" bpmnElement="Activity_0mzmj08" isExpanded="true">
+        <dc:Bounds x="150" y="-20" width="620" height="340" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1h9kmw7_di" bpmnElement="Flow_1h9kmw7">
+        <di:waypoint x="630" y="175" />
+        <di:waypoint x="702" y="175" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0aw9d19_di" bpmnElement="Flow_0aw9d19">
+        <di:waypoint x="248" y="175" />
+        <di:waypoint x="270" y="175" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_143uaru_di" bpmnElement="Event_143uaru">
+        <dc:Bounds x="211.66666666666669" y="157" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ygnxva_di" bpmnElement="Event_0ygnxva">
+        <dc:Bounds x="702" y="157" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1l3v1k6_di" bpmnElement="Activity_18dzrjx" isExpanded="true">
+        <dc:Bounds x="270" y="60" width="360" height="208" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1wv8m8i_di" bpmnElement="Flow_1wv8m8i">
+        <di:waypoint x="348" y="168" />
+        <di:waypoint x="440" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qv6q76_di" bpmnElement="Flow_1qv6q76">
+        <di:waypoint x="540" y="168" />
+        <di:waypoint x="562" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0j6hydw_di" bpmnElement="Event_0j6hydw">
+        <dc:Bounds x="562" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_08wtvbc_di" bpmnElement="Event_08wtvbc">
+        <dc:Bounds x="312" y="150" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_165n2es_di" bpmnElement="Activity_1qe2z25">
+        <dc:Bounds x="440" y="128" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

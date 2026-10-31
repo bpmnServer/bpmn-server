@@ -1,0 +1,24 @@
+<bpmn:process id="DocumentApprovalProcess" name="Document Approval">
+  <bpmn:startEvent id="StartEvent_1" name="Start Document Approval" />
+  <bpmn:userTask id="ReviewTask" name="Review Document">
+    <bpmn:extensionElements>
+      <camunda:taskListener event="assign">
+        <camunda:script scriptFormat="JavaScript">$(this.data.requester)</camunda:script>
+      </camunda:taskListener>
+    </bpmn:extensionElements>
+  </bpmn:userTask>
+  <bpmn:exclusiveGateway id="ApprovalDecision" name="Approval Decision">
+    <bpmn:sequenceFlow id="ApprovedFlow" sourceRef="ApprovalDecision" targetRef="EndEvent_Approved">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">
+        (data.approval == "Approved")
+      </bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="RejectedFlow" sourceRef="ApprovalDecision" targetRef="EndEvent_Rejected">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">
+        (data.approval == "Rejected")
+      </bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:exclusiveGateway>
+  <bpmn:endEvent id="EndEvent_Approved" name="Document Approved" />
+  <bpmn:endEvent id="EndEvent_Rejected" name="Document Rejected" />
+</bpmn:process>

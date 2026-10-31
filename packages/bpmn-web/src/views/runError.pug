@@ -1,0 +1,33 @@
+extends layout
+
+block content
+  .run-error(style="max-width:960px;margin:24px auto;")
+    if status === 409
+      h2 This task can not be completed
+    else
+      h2 The process stopped with an error
+    if processName
+      p Model:
+        strong= processName
+    .alert.alert-danger(role="alert" style="white-space:pre-wrap;")= message
+    if issues && issues.length
+      h3(style="font-size:18px;") What the checks find in the model
+      table.table.table-condensed
+        thead
+          tr
+            th Severity
+            th Problem
+            th Element
+        tbody
+          each issue in issues
+            tr
+              td= issue.severity
+              td= issue.message
+              td= issue.elementName || issue.elementId || ''
+    else if status !== 409
+      p The checks find nothing wrong in the model; the error comes from the data or the application's services.
+    p
+      if processName && canDesign
+        a.btn.btn-primary(href=`/model/edit/${encodeURIComponent(processName)}`) Open the model
+        | &nbsp;
+      a.btn.btn-default(href="/") Home

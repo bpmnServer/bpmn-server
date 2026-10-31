@@ -1,0 +1,16 @@
+extends ../layout
+
+block content
+
+
+	h3 Add New Model
+
+	form(name='ExecuteForm',action="/model/new",method="post")
+		input(type='hidden', name='_csrf', value=_csrf)
+		table
+			tr
+				td  Model Name:
+				td  
+					input(name='processName')
+				td  
+					input(type='submit')

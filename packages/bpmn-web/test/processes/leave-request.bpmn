@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="LeaveRequestDefinitions" targetNamespace="urn:bpmn-web:test">
+  <bpmn:process id="LeaveRequest" name="Leave request" isExecutable="true">
+    <bpmn:documentation>Test fixture for bpmn-web: a form task for staff, a condition, a manager approval or an automatic approval.</bpmn:documentation>
+    <bpmn:startEvent id="Requested" name="Leave requested" />
+    <bpmn:userTask id="Submit" name="Submit request" camunda:candidateGroups="staff">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="days" label="Days" type="long" />
+          <camunda:formField id="reason" label="Reason" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="LongLeave" name="More than 5 days?" default="ToAutoApprove" />
+    <bpmn:userTask id="Approve" name="Approve request" camunda:candidateGroups="manager" />
+    <bpmn:scriptTask id="AutoApprove" name="Approve automatically" scriptFormat="JavaScript">
+      <bpmn:script>data.approvedBy = 'system';</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id="Approved" name="Approved" />
+    <bpmn:endEvent id="AutoApproved" name="Approved automatically" />
+    <bpmn:sequenceFlow id="ToSubmit" sourceRef="Requested" targetRef="Submit" />
+    <bpmn:sequenceFlow id="ToGateway" sourceRef="Submit" targetRef="LongLeave" />
+    <bpmn:sequenceFlow id="ToApprove" name="yes" sourceRef="LongLeave" targetRef="Approve">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">$(Number(item.data.days) &gt; 5)</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="ToAutoApprove" name="no" sourceRef="LongLeave" targetRef="AutoApprove" />
+    <bpmn:sequenceFlow id="ToApproved" sourceRef="Approve" targetRef="Approved" />
+    <bpmn:sequenceFlow id="ToAutoApproved" sourceRef="AutoApprove" targetRef="AutoApproved" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_LeaveRequest">
+    <bpmndi:BPMNPlane id="BPMNPlane_LeaveRequest" bpmnElement="LeaveRequest">
+      <bpmndi:BPMNShape id="Requested_di" bpmnElement="Requested">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Submit_di" bpmnElement="Submit">
+        <dc:Bounds x="25" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="LongLeave_di" bpmnElement="LongLeave" isMarkerVisible="true">
+        <dc:Bounds x="50" y="325" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Approve_di" bpmnElement="Approve">
+        <dc:Bounds x="25" y="450" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AutoApprove_di" bpmnElement="AutoApprove">
+        <dc:Bounds x="25" y="590" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Approved_di" bpmnElement="Approved">
+        <dc:Bounds x="57" y="752" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AutoApproved_di" bpmnElement="AutoApproved">
+        <dc:Bounds x="57" y="892" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

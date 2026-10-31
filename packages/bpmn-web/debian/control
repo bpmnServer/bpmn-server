@@ -1,0 +1,13 @@
+Source: itsm-ng-workflows
+Section: web
+Priority: standard
+Maintainer: ITSM Dev Team <adminsys@itsm-ng.com>
+Build-Depends: debhelper (>= 9)
+Rules-Requires-Root: no
+Homepage: https://www.itsm-ng.org/
+
+Package: itsmng-workflows
+Architecture: all
+Depends: nodejs
+Recommends: redis-server
+Description: Workflow backend for workflow itsm-ng plugin

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:collaboration id="Collaboration_1u7i6jb">
+    <bpmn2:participant id="Participant_0f1s26z" processRef="Process_1" />
+  </bpmn2:collaboration>
+  <bpmn2:process id="Process_1" isExecutable="false">
+    <bpmn2:sequenceFlow id="Flow_to_proc" sourceRef="subProc_Group" targetRef="Activity_0wk3rin" />
+    <bpmn2:sequenceFlow id="Flow_1hozf68" sourceRef="Activity_0wk3rin" targetRef="Event_end" />
+    <bpmn2:subProcess id="subProc_Group" name="Group Approval">
+      <bpmn2:incoming>Flow_1go9te0</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_to_proc</bpmn2:outgoing>
+      <bpmn2:multiInstanceLoopCharacteristics isSequential="true" camunda:collection="$Object.keys(appServices.rules)" />
+      <bpmn2:startEvent id="Event_sub1_start">
+        <bpmn2:outgoing>Flow_1sq88vb</bpmn2:outgoing>
+      </bpmn2:startEvent>
+      <bpmn2:sequenceFlow id="Flow_1sq88vb" sourceRef="Event_sub1_start" targetRef="subProc_approv" />
+      <bpmn2:subProcess id="subProc_approv" name="Team Approval">
+        <bpmn2:incoming>Flow_1sq88vb</bpmn2:incoming>
+        <bpmn2:outgoing>Flow_15nobuu</bpmn2:outgoing>
+        <bpmn2:startEvent id="Event_sub2_start">
+          <bpmn2:outgoing>Flow_1eaz7ko</bpmn2:outgoing>
+        </bpmn2:startEvent>
+        <bpmn2:sequenceFlow id="Flow_1eaz7ko" sourceRef="Event_sub2_start" targetRef="Activity_Approve" />
+        <bpmn2:endEvent id="Event_sub2_end">
+          <bpmn2:incoming>Flow_1s8v55k</bpmn2:incoming>
+          <bpmn2:incoming>Flow_19lv8ak</bpmn2:incoming>
+        </bpmn2:endEvent>
+        <bpmn2:sequenceFlow id="Flow_1s8v55k" sourceRef="Activity_Approve" targetRef="Event_sub2_end" />
+        <bpmn2:userTask id="Activity_Approve" name="Approve">
+          <bpmn2:extensionElements>
+            <camunda:executionListener event="end">
+              <camunda:script scriptFormat="JavaScript">if (appServices.IsApprovalDone(this)==true)
+  return {escalation:'done'};</camunda:script>
+            </camunda:executionListener>
+          </bpmn2:extensionElements>
+          <bpmn2:incoming>Flow_1eaz7ko</bpmn2:incoming>
+          <bpmn2:outgoing>Flow_1s8v55k</bpmn2:outgoing>
+          <bpmn2:multiInstanceLoopCharacteristics camunda:collection="$appServices.getApprovers(this)" />
+        </bpmn2:userTask>
+        <bpmn2:boundaryEvent id="Event_escl" attachedToRef="Activity_Approve">
+          <bpmn2:outgoing>Flow_19lv8ak</bpmn2:outgoing>
+          <bpmn2:escalationEventDefinition id="EscalationEventDefinition_0gume6y" />
+        </bpmn2:boundaryEvent>
+        <bpmn2:sequenceFlow id="Flow_19lv8ak" sourceRef="Event_escl" targetRef="Event_sub2_end" />
+      </bpmn2:subProcess>
+      <bpmn2:endEvent id="Event_sub1_end">
+        <bpmn2:incoming>Flow_15nobuu</bpmn2:incoming>
+      </bpmn2:endEvent>
+      <bpmn2:sequenceFlow id="Flow_15nobuu" sourceRef="subProc_approv" targetRef="Event_sub1_end" />
+    </bpmn2:subProcess>
+    <bpmn2:sequenceFlow id="Flow_1ceebqu" sourceRef="StartEvent_1" targetRef="Activity_01735pj" />
+    <bpmn2:sequenceFlow id="Flow_1go9te0" sourceRef="Activity_01735pj" targetRef="subProc_Group" />
+    <bpmn2:scriptTask id="Activity_01735pj" name="Maker" scriptFormat="JavaScript">
+      <bpmn2:incoming>Flow_1ceebqu</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1go9te0</bpmn2:outgoing>
+      <bpmn2:script>console.log(appServices.rules);</bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:startEvent id="StartEvent_1">
+      <bpmn2:outgoing>Flow_1ceebqu</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:endEvent id="Event_end">
+      <bpmn2:incoming>Flow_1hozf68</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:serviceTask id="Activity_0wk3rin" name="Process">
+      <bpmn2:incoming>Flow_to_proc</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1hozf68</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1u7i6jb">
+      <bpmndi:BPMNShape id="Participant_0f1s26z_di" bpmnElement="Participant_0f1s26z" isHorizontal="true">
+        <dc:Bounds x="10" y="60" width="1360" height="530" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1go9te0_di" bpmnElement="Flow_1go9te0">
+        <di:waypoint x="270" y="295" />
+        <di:waypoint x="340" y="295" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ceebqu_di" bpmnElement="Flow_1ceebqu">
+        <di:waypoint x="108" y="295" />
+        <di:waypoint x="170" y="295" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hozf68_di" bpmnElement="Flow_1hozf68">
+        <di:waypoint x="1130" y="295" />
+        <di:waypoint x="1192" y="295" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bqvsa8_di" bpmnElement="Flow_to_proc">
+        <di:waypoint x="1000" y="295" />
+        <di:waypoint x="1030" y="295" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_129frc6_di" bpmnElement="subProc_Group" isExpanded="true">
+        <dc:Bounds x="340" y="140" width="660" height="370" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_15nobuu_di" bpmnElement="Flow_15nobuu">
+        <di:waypoint x="890" y="305" />
+        <di:waypoint x="922" y="305" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sq88vb_di" bpmnElement="Flow_1sq88vb">
+        <di:waypoint x="438" y="305" />
+        <di:waypoint x="510" y="305" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0xgks6j_di" bpmnElement="Event_sub1_start">
+        <dc:Bounds x="402" y="287" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0e1krax_di" bpmnElement="subProc_approv" isExpanded="true">
+        <dc:Bounds x="510" y="220" width="380" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1s8v55k_di" bpmnElement="Flow_1s8v55k">
+        <di:waypoint x="740" y="300" />
+        <di:waypoint x="802" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1eaz7ko_di" bpmnElement="Flow_1eaz7ko">
+        <di:waypoint x="578" y="300" />
+        <di:waypoint x="640" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19lv8ak_di" bpmnElement="Flow_19lv8ak">
+        <di:waypoint x="740" y="358" />
+        <di:waypoint x="740" y="380" />
+        <di:waypoint x="820" y="380" />
+        <di:waypoint x="820" y="318" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1okfyie_di" bpmnElement="Event_sub2_start">
+        <dc:Bounds x="541.6666666666667" y="282" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1wyu33h_di" bpmnElement="Event_sub2_end">
+        <dc:Bounds x="802" y="282" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jaczw3_di" bpmnElement="Activity_Approve">
+        <dc:Bounds x="640" y="260" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_05w365k_di" bpmnElement="Event_escl">
+        <dc:Bounds x="722" y="322" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0u3u3xv_di" bpmnElement="Event_sub1_end">
+        <dc:Bounds x="922" y="287" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_01c72mw_di" bpmnElement="Activity_01735pj">
+        <dc:Bounds x="170" y="255" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="72" y="277" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0pw9ww4_di" bpmnElement="Event_end">
+        <dc:Bounds x="1192" y="277" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_15l56zn_di" bpmnElement="Activity_0wk3rin">
+        <dc:Bounds x="1030" y="255" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

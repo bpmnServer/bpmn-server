@@ -1,0 +1,23 @@
+h3 Running Engines
+table
+	tr
+		td 
+			a(href=`/shutdown`)  Shutdown  
+		td 
+			a(href=`/restart`)  Restart 
+table
+	tr
+		td  Name
+		td  Duration
+		td  Case Id
+		td  last at
+
+	each engine in engines
+		tr
+			- var caseId;
+			- if (engine.execution.data) caseId = engine.execution.data.caseId;
+			-    
+			td  #{engine.execution.name}
+			td  #{engine.execution.fromNow}
+			td  #{caseId}
+			td  #{engine.execution.fromLast}

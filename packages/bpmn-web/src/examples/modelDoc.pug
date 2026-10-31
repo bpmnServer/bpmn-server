@@ -1,0 +1,101 @@
+- var color='1';
+    table
+        tr
+            th(colspan=5) Processes
+        tr
+            th() Id
+            th() name
+        each proc in docs.processes
+            tr
+                td #{proc.id}
+                td #{proc.name}
+                if (proc.description)
+                    each line in proc.description
+                        tr
+                            td
+                            td
+                            td #{line[0]}
+                            td #{line[1]}
+                if (proc.docs)
+                    each doc in proc.docs
+                        tr
+                            td
+                            td
+                            td Documentation:
+                            td #{doc.text}
+
+    table(class='colors')
+        tr
+            th(colspan=5) Nodes
+        tr(style="align:middle;")
+            th id
+            th name
+            th type
+            th feature
+            th details
+        each el in docs.elements
+            - if (color==1) 
+                -  color ='2';
+            - else
+                -  color=1;
+            tr(class=`color-${color}`)
+                td <b>#{el.id}</b>
+                td #{el.name}
+                td #{el.type}#{el.subType}
+                td
+                td
+                        each line in el.description
+                            tr(class=`color-${color}`)
+                                td 
+                                td
+                                td
+                                td  !{line[0]}
+                                td  !{line[1].replace('\n','<br />')}
+                        each behav in el.behaviours
+                            each line in behav
+                                tr(class=`color-${color}`)
+                                    td
+                                    td
+                                    td
+                                    td #{line[0]}
+                                    td !{line[1].replace("\n",'<br />')}
+                        if (el.docs)
+                            each doc in el.docs
+                                tr(class=`color-${color}`)
+                                    td
+                                    td
+                                    td
+                                    td Documentation:
+                                    td #{doc.text}
+    table
+        tr
+            th(colspan=5) Sequence Flows (only with some details)
+        tr
+            th id
+            th from 
+            th to
+            th feature
+            th details
+        each el in docs.flows
+
+            if (el.description.length >0)
+                tr
+                    td #{el.id}
+                    td #{el.from}
+                    td #{el.to}
+                    each line in el.description
+                        tr
+                            td
+                            td
+                            td
+                            td !{line[0]}
+                            td !{line[1]}
+                    if (el.docs)
+                        each doc in el.docs
+                            tr
+                                td
+                                td
+                                td Documentation:
+                                td #{doc.text}
+
+

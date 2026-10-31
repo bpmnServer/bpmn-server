@@ -1,0 +1,49 @@
+name: Release workflow
+
+on:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+
+jobs:
+  tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.ref_name }}
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+          
+      - name: Release ITSM-ng
+        run: |
+          rm -r .git*
+          cd /home/runner/work/itsm-workflows-bpmn
+          tar -czvf itsm-workflows-bpmn-${TAG}.tgz itsm-workflows-bpmn
+          mv itsm-workflows-bpmn-${TAG}.tgz /tmp
+
+      - name: Upload release
+        uses: actions/upload-artifact@v4
+        with:
+          name: itsm-workflows-bpmn-${{ github.ref_name }}.tgz
+          path: /tmp/itsm-workflows-bpmn-${{ github.ref_name }}.tgz
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: /tmp/itsm-workflows-bpmn-${{ github.ref_name }}.tgz
+          body: "New release is available"
+          name: ITSM-NG ${{ github.ref_name }}
+          draft: true
+          generate_release_notes: true

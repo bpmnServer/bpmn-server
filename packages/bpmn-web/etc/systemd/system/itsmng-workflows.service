@@ -1,0 +1,15 @@
+[Unit]
+Description=ITSM-NG BPMN workflow backend
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/share/itsmng-workflows/node_modules/.bin/ts-node src/scripts/setup.ts && /usr/share/itsmng-workflows/node_modules/.bin/ts-node src/app.ts
+Restart=always
+User=itsmworkflow
+StandardOutput=journal
+StandardError=journal
+WorkingDirectory=/usr/share/itsmng-workflows
+
+[Install]
+WantedBy=multi-user.target

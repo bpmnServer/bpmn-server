@@ -1,0 +1,45 @@
+{
+    "rules": [
+        {
+            "conditions": [{ "field": "age", "operator": ">=", "value": 18 }],
+            "outcome": "Adult",
+            "priority": 1
+        },
+        {
+            "conditions": [{ "field": "age", "operator": "<", "value": 18 }],
+            "outcome": "Minor",
+            "priority": 2
+        },
+        {
+            "conditions": [{ "field": "country", "operator": "IN", "value": ["US", "UK", "CA"] }],
+            "outcome": "English Speaker",
+            "priority": 3
+        },
+        {
+            "conditions": [{ "field": "country", "operator": "NOT IN", "value": ["US", "UK", "CA"] }],
+            "outcome": "Non-English Speaker",
+            "priority": 4
+        },
+        {
+            "conditions": [
+                {
+                    "type": "AND",
+                    "conditions": [
+                        { "field": "income", "operator": ">", "value": 50000 },
+                        { "field": "age", "operator": ">=", "value": 30 }
+                    ]
+                }
+            ],
+            "outcome": "High Income Adult",
+            "priority": 5
+        },
+        {
+            "conditions": [
+                { "field": "tags", "operator": "CONTAINS", "value": "VIP" }
+            ],
+            "outcome": "Premium User",
+            "priority": 6
+        }
+    ],
+    "defaultOutcome": "Unknown"
+}

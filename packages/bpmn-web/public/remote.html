@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB Query App</title>
+</head>
+<body>
+    <div class="container">
+        <h1>MongoDB Query App</h1>
+        <div class="fields">
+            <h2>Fields</h2>
+            <ul id="field-list">
+                <li draggable="true" data-field="name">name</li>
+                <li draggable="true" data-field="status">status</li>
+                <li draggable="true" data-field="items.type">items.type</li>
+            </ul>
+            <div>
+                <input type="text" id="custom-field" placeholder="Enter custom field name">
+                <button id="add-custom-field">Add Custom Field</button>
+            </div>
+        </div>
+        <div class="query-builder">
+            <h2>Query Builder</h2>
+            <div id="drop-zone" class="drop-zone"><span>Drag fields here</span></div>
+            <div>
+                <h3>Constructed Query:</h3>
+                <pre id="constructed-query"></pre>
+            </div>
+            <button id="execute-query">Execute Query</button>
+        </div>
+        <div class="projection-builder">
+            <h2>Projection</h2>
+            <div id="projection-fields">
+                <input type="text" id="projection-field" placeholder="Enter projection field">
+                <button id="add-projection-field">Add Projection Field</button>
+            </div>
+            <ul id="projection-list"></ul>
+        </div>
+        <div class="results">
+            <h2>Results</h2>
+            <table id="results-table">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+
+const myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+myHeaders.append("x-api-key", "12345");
+myHeaders.append("Cookie", "connect.sid=s%3A8uimLkO6hE1EKT6HYgxm3Ovtfe3EhXJO.ALNTTt%2Bz7glZTmcHGyiQk6X1YR2retU1TovR5SCwbEU");
+
+const raw = JSON.stringify({
+  "query": {
+    "data.caseId": 3030
+  }
+});
+
+const requestOptions = {
+  method: "GET",
+  headers: myHeaders,
+  body: raw,
+  redirect: "follow"
+};
+
+fetch("https://bpmn.omniworkflow.com/api2/model/list", requestOptions)
+  .then((response) => response.text())
+  .then((result) => console.log(result))
+  .catch((error) => console.error(error));
+    </script>
+    <script src="queryResults.js"></script>
+</body>
+</html>

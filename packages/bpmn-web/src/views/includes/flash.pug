@@ -1,0 +1,10 @@
+//- Flash messages — reads res.locals.info / successes / errors set by UserManager
+if info
+  for msg in info
+    div.alert.alert-success= msg.msg
+if successes
+  for success in successes
+    div.alert.alert-success= success.msg
+if errors
+  for error in errors
+    div.alert.alert-danger= error.msg

@@ -1,0 +1,1033 @@
+/* The editor page: a header, then the canvas and the properties panel side by side, filling the window. */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    color: #22242a;
+    background: #fff;
+}
+
+#modeler-page {
+    --panel-width: 360px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.modeler-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 16px;
+    height: 48px;
+    flex: none;
+    border-bottom: 1px solid #dcdfe4;
+    background: #f7f8fa;
+}
+
+.modeler-header .brand img {
+    height: 28px;
+    display: block;
+}
+
+.modeler-header h1 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.modeler-status {
+    color: #52575f;
+    font-size: 13px;
+}
+
+.modeler-status.error {
+    color: #b42318;
+}
+
+.modeler-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+
+.modeler-actions a,
+.modeler-actions button {
+    font: inherit;
+    padding: 6px 12px;
+    border: 1px solid #c4c8cf;
+    border-radius: 4px;
+    background: #fff;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modeler-actions .primary {
+    background: #1f62c8;
+    border-color: #1f62c8;
+    color: #fff;
+}
+
+.modeler-body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+
+.modeler-main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.modeler-canvas {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+}
+
+.modeler-resizer {
+    position: relative;
+    flex: none;
+    width: 6px;
+    cursor: col-resize;
+    background: #e8eaee;
+    touch-action: none;
+}
+
+.modeler-resizer:hover,
+.resizing .modeler-resizer {
+    background: #b9c3d3;
+}
+
+.modeler-resizer button {
+    position: absolute;
+    top: 8px;
+    right: 2px;
+    width: 20px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid #c4c8cf;
+    border-radius: 4px 0 0 4px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
+}
+
+.modeler-resizer button::before {
+    content: "\25B6";   /* points right: hide the panel */
+}
+
+.panel-collapsed .modeler-resizer button::before {
+    content: "\25C0";
+}
+
+.modeler-panel {
+    box-sizing: border-box;
+    flex: none;
+    width: var(--panel-width);
+    overflow: auto;
+    border-left: 1px solid #dcdfe4;
+}
+
+.panel-collapsed .modeler-panel {
+    display: none;
+}
+
+.panel-collapsed .modeler-resizer {
+    cursor: default;
+}
+
+.resizing {
+    user-select: none;
+}
+
+/* long help text wraps inside the panel instead of widening it */
+.modeler-panel .bio-properties-panel-description {
+    overflow-wrap: anywhere;
+}
+
+/* ---- the dock under the canvas: Problems and Report tabs, resizable */
+
+.dock {
+    --error: #b42318;
+    --warning: #b54708;
+    --info: #1f62c8;
+    --dock-height: 220px;
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+}
+
+.dock-resizer {
+    height: 5px;
+    cursor: row-resize;
+    background: #e8eaee;
+    touch-action: none;
+}
+
+.dock-resizer:hover,
+.resizing-dock .dock-resizer {
+    background: #b9c3d3;
+}
+
+.dock.collapsed .dock-resizer {
+    cursor: default;
+}
+
+.resizing-dock {
+    user-select: none;
+}
+
+.dock-bar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 8px 0 4px;
+    background: #f7f8fa;
+    border-bottom: 1px solid #dcdfe4;
+}
+
+.dock-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: none;
+    font: inherit;
+    font-weight: 600;
+    color: #52575f;
+    cursor: pointer;
+}
+
+.dock-tab[aria-selected="true"] {
+    color: #22242a;
+    border-bottom-color: #1f62c8;
+}
+
+.dock-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+}
+
+.dock-actions button {
+    font: inherit;
+    font-size: 13px;
+    padding: 3px 10px;
+    border: 1px solid #c4c8cf;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+}
+
+#js-dock-toggle::before {
+    content: "\25BE";      /* open: hide */
+}
+
+.dock.collapsed #js-dock-toggle::before {
+    content: "\25B4";
+}
+
+#js-print {
+    display: none;
+}
+
+.dock[data-tab="report"]:not(.collapsed) #js-print {
+    display: inline-block;
+}
+
+.dock-body {
+    height: var(--dock-height);
+    overflow: hidden;
+    position: relative;
+}
+
+.dock.collapsed .dock-body {
+    display: none;
+}
+
+.dock-body > [role="tabpanel"] {
+    position: absolute;
+    inset: 0;
+    overflow: auto;
+}
+
+.dock[data-tab="problems"] .dock-report,
+.dock[data-tab="report"] .problems-list {
+    display: none;
+}
+
+.problems-counts {
+    display: flex;
+    gap: 6px;
+    font-weight: normal;
+}
+
+.problems-counts .count {
+    min-width: 18px;
+    padding: 0 6px;
+    border-radius: 9px;
+    color: #fff;
+    font-size: 12px;
+    line-height: 18px;
+    text-align: center;
+}
+
+.problems-status {
+    margin-left: 8px;
+    color: #52575f;
+    font-size: 13px;
+}
+
+.problems-status.error {
+    color: var(--error);
+}
+
+.problems-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.problem {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    gap: 12px;
+    padding: 6px 16px;
+    border-top: 1px solid #eef0f3;
+    font-size: 13px;
+}
+
+.problem[tabindex] {
+    cursor: pointer;
+}
+
+.problem[tabindex]:hover,
+.problem:focus-visible {
+    background: #f0f4fb;
+    outline: none;
+}
+
+.problem .severity {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.problem .where {
+    color: #52575f;
+}
+
+.severity-error .severity { color: var(--error); }
+.severity-warning .severity { color: var(--warning); }
+.severity-info .severity { color: var(--info); }
+.count.severity-error { background: var(--error); }
+.count.severity-warning { background: var(--warning); }
+.count.severity-info { background: var(--info); }
+
+.djs-element.problem-error .djs-visual > :first-child {
+    stroke: #b42318 !important;
+}
+
+.djs-element.problem-warning .djs-visual > :first-child {
+    stroke: #b54708 !important;
+}
+
+.problem-badge {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 9px;
+    box-sizing: border-box;
+    background: #b54708;
+    color: #fff;
+    font: 600 11px/18px -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    text-align: center;
+    cursor: pointer;
+}
+
+.problem-badge.severity-error {
+    background: #b42318;
+}
+
+.problem-badge.severity-info {
+    background: #1f62c8;
+}
+
+
+/* ---- the report */
+
+.report-document {
+    max-width: 960px;
+    padding: 12px 24px 32px;
+}
+
+.report-title h1 {
+    font-size: 22px;
+    margin: 0 0 4px;
+}
+
+.report-summary {
+    color: #52575f;
+    margin: 0 0 16px;
+}
+
+.report-process > h2 {
+    font-size: 18px;
+    margin: 24px 0 8px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #dcdfe4;
+}
+
+.report-type {
+    margin-left: 10px;
+    font-size: 12px;
+    font-weight: normal;
+    color: #6b7079;
+}
+
+.report-element {
+    padding: 10px 0 10px 12px;
+    border-left: 3px solid #e3e6eb;
+    margin: 8px 0;
+}
+
+.report-element h3 {
+    font-size: 15px;
+    margin: 0 0 4px;
+}
+
+.report-element h3 a,
+.report-flows a {
+    color: #1f62c8;
+    text-decoration: none;
+}
+
+.report-element h3 a:hover,
+.report-flows a:hover {
+    text-decoration: underline;
+}
+
+.report-documentation {
+    margin: 4px 0;
+    white-space: pre-wrap;
+    color: #33373d;
+}
+
+.report-description {
+    display: grid;
+    grid-template-columns: minmax(120px, 25%) 1fr;
+    gap: 2px 12px;
+    margin: 6px 0;
+    font-size: 13px;
+}
+
+.report-description dt {
+    color: #52575f;
+}
+
+.report-description dd {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 12px;
+}
+
+.report-issues {
+    list-style: none;
+    padding: 0;
+    margin: 6px 0;
+    font-size: 13px;
+}
+
+.report-issues .severity {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.report-issues .severity-error .severity { color: #b42318; }
+.report-issues .severity-warning .severity { color: #b54708; }
+.report-issues .severity-info .severity { color: #1f62c8; }
+
+.report-flows-title {
+    font-size: 15px;
+    margin: 20px 0 6px;
+}
+
+.report-flows {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.report-flows th,
+.report-flows td {
+    text-align: left;
+    padding: 5px 8px;
+    border-bottom: 1px solid #eef0f3;
+    vertical-align: top;
+}
+
+.report-flows td:nth-child(3) {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 12px;
+}
+
+@media print {
+    /* the report only, at full length */
+    #modeler-page { height: auto; overflow: visible; }
+    .modeler-header, .modeler-canvas, .modeler-resizer, .modeler-panel, .dock-resizer, .dock-bar, .problems-list { display: none !important; }
+    .modeler-body, .modeler-main, .dock, .dock-body { display: block !important; height: auto !important; overflow: visible !important; }
+    .dock-body > [role="tabpanel"] { position: static; }
+    .dock-report { display: block !important; }
+    .report-document { max-width: none; padding: 0; }
+    .report-element { break-inside: avoid; }
+}
+
+/* ---- code fields: scripts and expressions */
+
+.bpmn-server-code-editor {
+    border: 1px solid var(--input-border-color, #c4c8cf);
+    border-radius: 2px;
+    background: #fff;
+    font-size: 12px;
+}
+
+.bpmn-server-code-editor .cm-editor {
+    max-height: 320px;
+}
+
+.bpmn-server-code-editor .cm-editor.cm-focused {
+    outline: 1px solid #1f62c8;
+}
+
+.bpmn-server-code-editor .cm-scroller {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.bpmn-server-code.has-error .bpmn-server-code-editor {
+    border-color: #b42318;
+}
+
+.bpmn-server-code.has-warning .bpmn-server-code-editor {
+    border-color: #b54708;
+}
+
+/* ---- the Test tab */
+
+.dock[data-tab="problems"] .dock-test,
+.dock[data-tab="report"] .dock-test,
+.dock[data-tab="test"] .dock-report,
+.dock[data-tab="test"] .problems-list {
+    display: none;
+}
+
+.test-panel {
+    display: flex;
+    min-height: 100%;
+    font-size: 13px;
+}
+
+.test-list {
+    flex: none;
+    width: 220px;
+    border-right: 1px solid #dcdfe4;
+    background: #f7f8fa;
+}
+
+.test-list-actions {
+    display: flex;
+    gap: 6px;
+    padding: 8px;
+}
+
+.test-list ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.test-list li {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 10px;
+    cursor: pointer;
+    border-top: 1px solid #eef0f3;
+}
+
+.test-list li.selected {
+    background: #e8eefa;
+    font-weight: 600;
+}
+
+.test-badge {
+    width: 16px;
+    text-align: center;
+    color: #6b7079;
+}
+
+.test-badge.ok { color: #067647; }
+.test-badge.failed { color: #b42318; }
+
+.test-main {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 16px 16px;
+}
+
+.test-status {
+    min-height: 18px;
+    color: #52575f;
+}
+
+.test-status.error,
+.test-error {
+    color: #b42318;
+}
+
+.test-hint {
+    color: #6b7079;
+}
+
+.test-panel button,
+.test-panel select,
+.test-panel input,
+.test-panel textarea {
+    font: inherit;
+}
+
+.test-panel button {
+    padding: 3px 10px;
+    border: 1px solid #c4c8cf;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.test-panel button.primary {
+    background: #1f62c8;
+    border-color: #1f62c8;
+    color: #fff;
+}
+
+.test-panel button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.test-editor-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.test-name {
+    flex: 1;
+    font-weight: 600;
+    padding: 4px 6px;
+}
+
+.test-editor fieldset {
+    border: 1px solid #e3e6eb;
+    border-radius: 4px;
+    margin: 0 0 8px;
+    padding: 6px 10px 8px;
+}
+
+.test-editor legend {
+    font-weight: 600;
+    padding: 0 4px;
+}
+
+.test-field {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 2px 8px;
+    align-items: start;
+    margin: 4px 0;
+}
+
+.test-field > span {
+    color: #52575f;
+    padding-top: 4px;
+}
+
+.test-json {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 12px;
+    resize: vertical;
+}
+
+.test-json.invalid {
+    border-color: #b42318;
+    outline-color: #b42318;
+}
+
+.test-json-error {
+    grid-column: 2;
+    color: #b42318;
+    font-size: 12px;
+}
+
+.test-step {
+    display: grid;
+    grid-template-columns: minmax(160px, 30%) 1fr auto;
+    gap: 6px;
+    align-items: start;
+    padding: 4px 0;
+    border-bottom: 1px solid #f0f2f5;
+}
+
+.test-step .test-field {
+    grid-template-columns: 1fr;
+    margin: 0;
+}
+
+.test-step .test-field > span {
+    display: none;
+}
+
+
+.test-step-actions {
+    display: flex;
+    gap: 2px;
+}
+
+.test-step.done .test-step-name {
+    color: #067647;
+}
+
+.test-step.pending {
+    background: #fffaeb;
+    border-radius: 4px;
+}
+
+.test-step.pending.failed {
+    background: #fef3f2;
+}
+
+.test-step-name {
+    padding-top: 4px;
+}
+
+.test-step-data {
+    padding-top: 4px;
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 12px;
+    color: #33373d;
+    overflow-wrap: anywhere;
+}
+
+.test-finished {
+    margin: 6px 0;
+}
+
+.test-result {
+    border-left: 4px solid #067647;
+    padding: 4px 12px;
+}
+
+.test-result.failed {
+    border-left-color: #b42318;
+}
+
+.test-result h4 {
+    margin: 4px 0;
+}
+
+.test-result h4 a {
+    font-size: 12px;
+    font-weight: normal;
+    margin-left: 8px;
+}
+
+.test-checks,
+.test-steps-result {
+    margin: 4px 0;
+    padding-left: 18px;
+}
+
+.test-checks .ok,
+.test-steps-result .ok { color: #067647; }
+.test-checks .failed,
+.test-steps-result .failed { color: #b42318; }
+
+.test-data,
+.test-log {
+    max-height: 240px;
+    overflow: auto;
+    background: #f7f8fa;
+    padding: 6px 8px;
+    font-size: 12px;
+}
+
+/* the path of a test run on the diagram */
+.djs-element.test-passed .djs-visual > :first-child {
+    stroke: #067647 !important;
+    stroke-width: 3px !important;
+}
+
+.djs-element.test-waiting .djs-visual > :first-child {
+    stroke: #dc6803 !important;
+    stroke-width: 3px !important;
+    stroke-dasharray: 6 3;
+}
+
+.djs-element.test-failed .djs-visual > :first-child {
+    stroke: #b42318 !important;
+    stroke-width: 3px !important;
+}
+
+/* the order a simulated run went in */
+.test-seq {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 9px;
+    box-sizing: border-box;
+    background: #067647;
+    color: #fff;
+    font: 600 11px/18px -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    text-align: center;
+}
+
+.test-seq.test-waiting {
+    background: #dc6803;
+}
+
+.test-seq.test-failed {
+    background: #b42318;
+}
+
+/* a flow's line (its first child is the arrowhead's <defs>) */
+.djs-connection.test-passed .djs-visual > path {
+    stroke: #067647 !important;
+    stroke-width: 2px !important;
+}
+
+.djs-connection.test-failed .djs-visual > path {
+    stroke: #b42318 !important;
+    stroke-width: 2px !important;
+}
+
+/* the items of a test run */
+.test-items table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.test-items th,
+.test-items td {
+    text-align: left;
+    padding: 3px 8px;
+    border-bottom: 1px solid #eef0f3;
+    white-space: nowrap;
+}
+
+.test-items tbody tr {
+    cursor: pointer;
+}
+
+.test-items tbody tr:hover {
+    background: #f0f4fb;
+}
+
+.test-item-status {
+    padding: 0 6px;
+    border-radius: 8px;
+    background: #e3f5ea;
+    color: #067647;
+}
+
+.test-item-status.wait {
+    background: #fdf0e1;
+    color: #b54708;
+}
+
+/* started, in a simulation: blue */
+.djs-element.test-started .djs-visual > :first-child {
+    stroke: #1f62c8 !important;
+    stroke-width: 3px !important;
+}
+
+.test-seq.test-started {
+    background: #1f62c8;
+}
+
+/* a scenario's kept runs */
+.test-runs {
+    margin-bottom: 8px;
+}
+
+.test-runs table {
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.test-runs td {
+    padding: 3px 10px 3px 0;
+    border-bottom: 1px solid #eef0f3;
+}
+
+.test-runs tr {
+    cursor: pointer;
+}
+
+.test-runs tr:hover {
+    background: #f0f4fb;
+}
+
+.test-runs tr.shown {
+    font-weight: 600;
+    background: #e8eefa;
+}
+
+/* a user task's form, in a step */
+.test-form {
+    display: grid;
+    gap: 4px;
+}
+
+.test-form-field {
+    display: grid;
+    grid-template-columns: minmax(100px, 35%) 1fr;
+    gap: 8px;
+    align-items: center;
+    margin: 0;
+}
+
+.test-form-field > span {
+    color: #52575f;
+}
+
+.test-form-field input[type="checkbox"] {
+    justify-self: start;
+}
+
+.test-form-other summary {
+    color: #52575f;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.test-form-other .test-field {
+    grid-template-columns: 1fr;
+}
+
+.test-form-other .test-field > span {
+    display: none;
+}
+
+/* A business rule task's decision: what it reads and gives, and a link to the decision editor. */
+.bpmn-server-decision-summary .bio-properties-panel-description {
+    margin: 0 0 6px;
+}
+
+.bpmn-server-decision-actions button {
+    font: inherit;
+    font-size: 12px;
+    padding: 3px 8px;
+    border: 1px solid #c4c8cf;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+}
+
+/* A decision table in the Report: inputs, then outputs, one row per rule. */
+.report-decision-title {
+    margin: 8px 0 4px;
+}
+
+.report-decision-table caption {
+    text-align: left;
+    font-size: 12px;
+    color: #52575f;
+    padding-bottom: 2px;
+}
+
+.report-decision-table th.decision-output,
+.report-decision-table td.decision-output {
+    background: #f3f7fd;
+}
+
+/* A bpmnlint finding names its rule, linked to the rule's documentation. */
+.problems-list .problem .rule {
+    margin-left: 8px;
+    font-size: 12px;
+    color: #52575f;
+    white-space: nowrap;
+}
+
+.problems-list .problem .rule-off {
+    margin-left: 8px;
+    font: inherit;
+    font-size: 12px;
+    padding: 1px 6px;
+    border: 1px solid #c4c8cf;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+}
+
+/* The Rules dialog: each bpmnlint rule's level for the team; changed rules are marked. */
+.lint-rules {
+    max-width: 640px;
+    width: calc(100% - 32px);
+    max-height: 80vh;
+    border: 1px solid #c4c8cf;
+    border-radius: 6px;
+    padding: 16px 20px;
+}
+
+.lint-rules h2 {
+    margin: 0 0 4px;
+    font-size: 16px;
+}
+
+.lint-rules p {
+    margin: 0 0 12px;
+    color: #52575f;
+}
+
+.lint-rules table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+}
+
+.lint-rules th,
+.lint-rules td {
+    text-align: left;
+    padding: 4px 8px;
+    border-bottom: 1px solid #eceef1;
+}
+
+.lint-rules td.default {
+    color: #52575f;
+}
+
+.lint-rules tr.changed td:first-child::after {
+    content: " (changed)";
+    color: #9a5b00;
+    font-size: 12px;
+}

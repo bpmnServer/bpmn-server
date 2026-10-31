@@ -1,0 +1,20 @@
+{
+  "extends": "bpmnlint:recommended",
+  "rules": {
+    "start-event-required": "off",
+    "end-event-required": "off",
+    "no-implicit-start": "off",
+    "no-implicit-end": "off",
+    "no-disconnected": "off",
+    "no-gateway-join-fork": "off",
+    "no-bpmndi": "off",
+    "event-based-gateway": "off",
+    "no-inclusive-gateway": "off",
+    "no-implicit-split": "warn",
+    "single-blank-start-event": "warn",
+    "label-required": "off",
+    "superfluous-label": "info",
+    "ad-hoc-sub-process": "warn",
+    "conditional-flows": "warn"
+  }
+}

@@ -1,0 +1,70 @@
+type:
+R:	root
+S:	Single
+L:	Literal	(quoted)
+T:	Text	
+B:	and/or
+():
+O:	Operator
+
+testVal("in (abc,'xyz-abc','another entry')", "abc" , true);    
+.root
+..T	in
+...()
+....list
+.....abc ...
+
+
+testVal("< 500", 20 , true);    
+.root
+..O	<
+...500
+
+testVal("> 200 or < 500", 20,true);  
+.root
+..B	or
+...O	<
+....200
+...O	<
+....500
+
+testVal("75", '75',true);    
+.root
+..S	75
+
+testVal("not in (abc,'xyz-abc') ",'abc');
+.root
+..O	not
+..T	in
+...()
+.....
+
+testVal("in (abc,'xyz-abc') and startsWith('a') ",'abc');    //  not , in, 'abc', 'xyz-abc'
+.root
+..or
+
+testVal("in (abc,'xyz-abc') and not startsWith('a') ",'abc');    //  not , in, 'abc', 'xyz-abc'
+.root
+..or
+
+testVal("in (abc,'xyz-abc') and startsWith('a')  and 3 ",'abc');    //  not , in, 'abc', 'xyz-abc'
+.root
+..or
+
+testVal("75", '75',true); 
+.root
+..or
+
+testVal("75", 'not 75', false); 
+.root
+..or
+
+testVal("'High'", 'High',true);    
+.root
+..or
+
+testVal("in (abc,'xyz-abc','another entry')", "abc",true);    
+.root
+..or
+
+testVal("between ( 95 , 2,500.0 )", 200,true);    

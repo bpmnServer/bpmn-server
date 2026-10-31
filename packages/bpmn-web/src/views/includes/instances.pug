@@ -1,0 +1,34 @@
+h3 Instances
+if !instances.length
+	p.empty-state No instances to show yet. Run a process from Models to create one.
+if user && user.isAdmin()
+	table
+		tr
+			form(action='/resetData', method='post')
+				input(type='hidden', name='_csrf', value=_csrf)
+				button(type='submit') Delete All Instances Data
+table
+	tr
+		td Name
+		td Case Id
+		td Started
+		td Ended
+		td Examine Log
+		if user && user.isAdmin()
+			td Delete
+	each instance in instances
+		- var ref = "/instanceDetails?id="+instance.id;
+		if user && user.isAdmin()
+		tr
+			td #{instance.name}
+			td #{instance.data ? instance.data.caseId : ''}
+			td #{instance.fromNow}
+			td #{instance.endFromNow} 
+			td
+				a(href=`${ref}`) Examine
+			if user && user.isAdmin()
+				td 
+					form(action='/deleteInstance', method='post')
+						input(type='hidden', name='_csrf', value=_csrf)
+						input(type='hidden', name='id', value=instance.id)
+						button(type='submit') Delete

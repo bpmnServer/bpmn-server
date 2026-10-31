@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext", "moduleResolution": "NodeNext",
+    "target": "ES2022", "lib": ["ES2022","DOM"],
+    "sourceMap": true, "declaration": true, "allowJs": true,
+    "esModuleInterop": true, "skipLibCheck": true, "strict": false,
+    "rootDir": "./src", "outDir": "./dist", "types": ["node"]
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules","dist","src/examples","src/scripts","src/tmp",
+              "src/sample-app/appServices.ts","src/sample-app/INSTALL_appDelegate.ts","src/sample-app/INSTALL_configuration.ts"]
+}

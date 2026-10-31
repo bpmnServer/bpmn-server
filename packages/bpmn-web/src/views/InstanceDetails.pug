@@ -1,0 +1,171 @@
+extends layout
+
+block content
+  link(rel="stylesheet", href="/stylesheets/instance-details.css")
+  - var docs = JSON.parse(definition || '{}');
+  - var info = (logs || []).filter(l => l.type === 'info');
+  include includes/dates.pug
+  - var lastAt = lastItem && (lastItem.endedAt || lastItem.startedAt);
+
+  script(type="text/javascript").
+    var jsonData = !{definition};
+    var decorations = !{decorations};
+    var startDate = new Date("!{instance.startedAt}");
+    function toggleDetails(panelId, buttonId) {
+      const panel = document.getElementById(panelId);
+      const button = document.getElementById(buttonId);
+      panel.hidden = !panel.hidden;
+      button.setAttribute('aria-expanded', String(!panel.hidden));
+      button.querySelector('.fa').className = panel.hidden ? 'fa fa-chevron-down' : 'fa fa-chevron-up';
+    }
+    function showDocs() { toggleDetails('docs', 'showDoc'); }
+    function showLogs() { toggleDetails('logs', 'showHide'); }
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('#logs table tr td').forEach(function (td) {
+        if (td.textContent.startsWith('debug:')) td.classList.add('log-debug');
+        if (td.textContent.startsWith('log:Action:')) td.classList.add('log-action');
+      });
+    });
+
+  main#instances.instance-page
+    header.instance-page-header
+      div
+        a.instance-back(href="/#instances")
+          i.fa.fa-arrow-left(aria-hidden="true")
+          | Back to instances
+        h1 #{title}
+        p.instance-subtitle #{instance.name}
+      span.instance-id(title=instance.id) ID: #{instance.id}
+
+    .instance-summary-grid
+      section.instance-card(aria-labelledby="instance-info-heading")
+        h2#instance-info-heading Instance information
+        dl.instance-facts
+          div
+            dt Model
+            dd #{instance.name}
+          div
+            dt Status
+            dd: span.status-badge(class=lastItem && lastItem.status === 'wait' ? 'status-wait' : 'status-end') #{lastItem ? lastItem.status : 'Unknown'}
+          div
+            dt Started
+            dd #{prettyDate(instance.startedAt) || '—'}
+          div
+            dt Ended
+            dd #{prettyDate(instance.endedAt) || '—'}
+          div
+            dt Last activity
+            dd #{prettyDate(lastAt) || '—'}
+          div
+            dt Last element
+            dd #{lastItem ? lastItem.elementId : '—'}
+      section.instance-card(aria-labelledby="instance-data-heading")
+        h2#instance-data-heading Instance data
+        if vars && vars.length
+          dl.instance-facts.instance-data
+            each v in vars
+              div
+                dt #{v.key}
+                dd #{v.value}
+        else
+          p.instance-empty No instance data.
+
+    section.instance-card.instance-diagram-card(aria-labelledby="diagram-heading")
+      .instance-card-heading
+        h2#diagram-heading Process diagram
+        .instance-toolbar
+          button#showTokens.btn.btn-default(type="button", onclick="$('.decor-token').toggle()")
+            i.fa.fa-map-marker(aria-hidden="true")
+            | Show tokens
+          button#startAnimation.btn.btn-default(type="button", onclick="startAnimation()")
+            i.fa.fa-play(aria-hidden="true")
+            | Show animation
+        span#animationStatus.instance-animation-status(role="status", aria-live="polite")
+      .instance-diagram
+        if svg
+          div!= svg
+        else
+          p.instance-empty Diagram unavailable for this instance.
+      script(type="application/json" id="jsonInfo")!= JSON.stringify(info)
+      script(type="application/json" id="animationItems")!= JSON.stringify((items || []).map(item => ({ id: item.elementId, seq: item.seq, type: item.type, status: item.status }))).replace(/</g, '\\u003c')
+
+    section.instance-card(aria-labelledby="items-heading")
+      .instance-card-heading
+        div
+          h2#items-heading Instance items
+          p.instance-hint Times are measured from the start of execution.
+      .instance-table-scroll
+        table#dataTable.instance-table
+          thead
+            tr
+              th(scope="col") Seq #
+              th(scope="col") Element ID
+              th(scope="col") Name
+              th(scope="col") Started
+              th(scope="col") Ended
+              th(scope="col") Status
+              th(scope="col") Type
+              th(scope="col") User
+              th(scope="col") Action
+              th(scope="col") Assignee
+              th(scope="col") Candidate users
+              th(scope="col") Candidate groups
+              th(scope="col") Due date
+              th(scope="col") Follow-up date
+              th(scope="col") Priority
+          tbody
+            - let seq = 0;
+            each item in (items || [])
+              - var ref = `?id=${encodeURIComponent(item.id)}&processName=${encodeURIComponent(instance.name)}&elementId=${encodeURIComponent(item.elementId)}`;
+              - var label = (item.status === 'wait' && item.type === 'bpmn:UserTask') ? 'Execute' : '';
+              - var label2 = (item.status === 'wait' && item.type === 'bpmn:UserTask') ? 'Assign' : '';
+              - if (user && user.isAdmin() && item.status === 'wait' && item.type.includes('Event')) label = 'Force';
+              - var key = item.itemKey ? `[${item.itemKey}]` : '';
+              - seq++;
+              tr
+                td #{seq}
+                td.instance-nowrap #{item.elementId}
+                td #{item.name} #{key}
+                td.instance-nowrap #{prettyDate(item.startedAt)}
+                td.instance-nowrap #{prettyDate(item.endedAt)}
+                td: span.status-badge(class=item.status === 'wait' ? 'status-wait' : 'status-end') #{item.status}
+                td.instance-nowrap #{item.type}
+                td #{item.userName}
+                td.instance-actions
+                  if label
+                    a.btn.btn-primary.btn-xs(href=`/invokeItem${ref}`) #{label}
+                    if label2
+                      a.btn.btn-default.btn-xs(href=`/assign${ref}`) #{label2}
+                td #{item.assignee}
+                td #{item.candidateUsers}
+                td #{item.candidateGroups}
+                td.instance-nowrap #{prettyDate(item.dueDate)}
+                td.instance-nowrap #{prettyDate(item.followUpDate)}
+                td #{item.priority}
+            if !items || !items.length
+              tr
+                td(colspan="15") No items to show.
+
+    section.instance-card.instance-collapsible(aria-labelledby="docs-heading")
+      .instance-card-heading
+        h2#docs-heading Model documentation
+        button#showDoc.btn.btn-default(type="button", onclick="showDocs()", aria-expanded="false", aria-controls="docs", aria-label="Toggle model documentation")
+          i.fa.fa-chevron-down(aria-hidden="true")
+      #docs.instance-table-scroll(hidden)
+        include includes/modelDoc.pug
+
+    section.instance-card.instance-collapsible(aria-labelledby="logs-heading")
+      .instance-card-heading
+        h2#logs-heading Instance logs
+        button#showHide.btn.btn-default(type="button", onclick="showLogs()", aria-expanded="false", aria-controls="logs", aria-label="Toggle instance logs")
+          i.fa.fa-chevron-down(aria-hidden="true")
+      #logs.instance-table-scroll(hidden)
+        table.instance-table
+          tbody
+            each log in (logs || [])
+              tr
+                td.instance-nowrap #{prettyDate(log.date)}
+                td #{log.message}
+            if !logs || !logs.length
+              tr
+                td(colspan="2") No logs to show.

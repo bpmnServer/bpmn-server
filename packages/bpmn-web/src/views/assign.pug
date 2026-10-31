@@ -1,0 +1,126 @@
+extends layout
+
+block content
+	include includes/dates.pug
+
+
+	h3 Assign Users/Groups to Item  <b>#{elementId}#{name} </b> - #{processName} 
+		
+
+	h4 Instance Data 
+	table
+		each v in vars
+			tr
+				td #{v.key}
+				td #{v.value}
+
+	h4 Assignment
+
+	form(name='InvokeForm',action="/assign",method="post")
+		input(type='hidden', name='_csrf', value=_csrf)
+		input(type='hidden',name='itemId',id='itemId',value=`${id}`)
+		table
+			tr
+				td(class='form-label')
+					label Assignee
+				td
+					input.form-control(name='assignee',type='text',value=((item.assignee || item.assignee !==null) ? item.assignee : ''))
+			tr
+				td(class='form-label')
+					label Candidate Users
+				td
+					input.form-control(name='candidateUsers',type='text',value=`${item.candidateUsers}`)
+			tr
+				td(class='form-label')
+					label Candidate Groups
+				td
+					input.form-control(name='candidateGroups',type='text',value=`${item.candidateGroups}`)
+			tr
+				td(class='form-label')
+					label  Due Date
+				td
+					input.form-control(name='dueDate',type='date',value=`${dueDate}`)
+			tr
+				td(class='form-label')
+					label Follow-up Date
+				td
+					input.form-control(name='followUpDate',type='date',value=`${followUpDate}`)
+			tr
+				td(class='form-label')
+					label  Priority
+				td
+					input.form-control(name='priority',type='text',value=`${item.priority}`)
+			tr
+				td
+					button.btn.btn.btn-primary(type='submit')
+						| Submit
+
+
+	h4 Instance Information
+	- let lastAt = (lastItem.endedAt) ? lastItem.endedAt : lastItem.startedAt;
+	- let items = instance.items;
+	table
+		tr 
+			td name:
+			td  #{instance.name}
+			td id:
+			td #{instance.id}
+		tr
+			td started At
+			td(class='startDate') #{prettyDate(instance.startedAt)}
+			td ended At
+			td #{prettyDate(instance.endedAt)}
+		tr
+			td lastAt
+			td #{prettyDate(lastAt)} 
+		tr
+			td lastItem
+			td #{lastItem.elementId}
+			td last status
+			td #{lastItem.status}
+
+				
+	h4 Instance Items
+
+	span Times shown are from the start of the Execution
+	table
+		tr
+			td seq
+			td Element Id
+			td Name
+			td Started
+			td Ended
+			td Status
+			td Type
+			td User
+				
+		- let seq=0;
+		each item in items
+			- var ref = "?id="+item.id+"&processName="+instance.name+"&elementId="+item.elementId;
+			- var label='';
+			- var label2='';
+			- if (item.type=='bpmn:UserTask' || item.type=='bpmn:StartEvent') 
+
+				- if (item.status=='wait' && item.type=='bpmn:UserTask') label= 'Execute';
+				- if (item.status=='wait' && item.type=='bpmn:UserTask') label2= 'Assign';
+				- if (item.status=='wait' && item.type.includes('Event')) label= 'Force';
+				- var assign='';
+				- if (item.candidateUsers) assign+='>Assigned to users:'+item.candidateUsers;
+				- if (item.candidateGroups) assign+=' groups:'+item.candidateGroups;
+				- if (item.assignee) assign+=' Assigned by:'+item.assignee;
+				- if (item.dueDate) assign+=' Due on:'+item.dueDate;
+				- seq++;
+					tr
+						td #{seq}
+						td #{item.elementId}
+						td #{item.name}
+						td(class='date') #{prettyDate(item.startedAt)}
+						td(class='date') #{prettyDate(item.endedAt)}
+						td #{item.status}
+						td #{item.type}
+						td #{item.userId}
+				if (!assign=='')
+					tr
+						td
+						td(colspan=8) #{assign}
+

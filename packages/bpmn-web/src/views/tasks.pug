@@ -1,0 +1,79 @@
+extends layoutHome
+
+block content
+	h1 bpmn-server Tasks Workbench
+	include includes/dashboardHeader.pug
+
+	script(type="text/javascript").
+		$( function() {
+			$( "#tabs" ).tabs();
+		} );
+
+
+	div(id="tab13s")
+		h3 Start New Processes
+		div(id="processes",style="border-bottom: solid;border-width: thin;height:200px;overflow-y:auto")
+			table
+				tr
+					th Model
+					th Event Name
+					th Lane
+					th Candidate Users
+					th Candidate Groups
+				each event in starts
+					- var ref = "/execute/"+event.modelName;
+
+					tr
+						td #{event.modelName} 
+						td #{event.name} - #{event.elementId}
+						td #{event.lane} - #{event.subType}
+						td
+							a(href=`${ref}`) Start
+						td #{event.candidateUsers}
+						td #{event.candidateGroups}
+						
+
+
+
+		div(id="tasks")
+			h3 Pending Tasks
+			table
+				tr
+					th Name -id
+					th Model
+					th Data
+					th Started
+					th Action 
+					th Assignee
+					th Candidate Users
+					th Candidate Groups
+					th Due date
+					th Follow-up date
+					th Priority
+				each item in items
+					- var ref = "/invokeItem?id="+item.id+"&processName="+item.processName+"&elementId="+item.elementId;
+					- var ref2 = "/assign?id="+item.id+"&processName="+item.processName+"&elementId="+item.elementId;
+
+					tr
+						td #{item.name} - #{item.elementId}
+						td #{item.processName} 
+						td #{JSON.stringify(item.data)}
+						td #{item.fromNow}
+						td
+							a(href=`${ref}`) Execute
+							<br />
+							a(href=`${ref2}`) Assign
+						td #{item.assignee}
+						td #{item.candidateUsers}
+						td #{item.candidateGroups}
+						td #{item.dueFrom}
+						td #{item.followFrom}
+						td #{item.priority}
+						
+
+
+		div(id="engines")
+		div(id="instances")
+		div(id='footer',style="padding-bottom:20px;")
+	
+	

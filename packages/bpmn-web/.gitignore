@@ -1,0 +1,34 @@
+﻿/node_modules
+/allure-results
+/obj
+/docs/api
+/tmp
+./package-lock.json
+*.log
+*.map
+*.d.ts
+**/*.js
+/bin
+/dist
+.env
+*.njsproj
+.vscode
+*.bak
+*.cmd
+*.tsbuildinfo
+docker/mongodb_volume
+docker/bpmn_server_volume
+
+# Playwright screenshots
+/test/ui/screenshots
+
+# uploads written by older imports
+src/tmp/
+
+# the model editor's source is JavaScript; its build output is generated (npm run build:modeler)
+!/modeler/**/*.js
+!/modeler/**/*.mjs
+/public/modeler/
+
+# demo videos (npm run demo:video)
+/test/demo/out

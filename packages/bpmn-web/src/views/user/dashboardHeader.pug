@@ -1,0 +1,20 @@
+form(name='searchTasks',action="/setUser",method="get")
+
+	if process.env.REQUIRE_AUTHENTICATION === 'false'
+		- var forUserName=request.user.userName;
+		- var forUserGroups=request.user.userGroups;
+		if request.session.forUser
+			- forUserName=request.session.forUser.userName;
+			- forUserGroups=request.session.forUser.userGroups;
+		tr
+			td  Show Data for User:
+			td
+				input(type="text",name="forUserName",id="forUserName",value=`${forUserName}`)
+			td  User Groups:
+			td 
+				input(type="text",name="forUserGroups",id="forUserGroups",value=`${forUserGroups}`)
+			td  
+				input(type='submit',value='Apply')
+
+
+

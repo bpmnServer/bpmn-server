@@ -1,0 +1,40 @@
+div.tasks-content
+	h3 Pending Tasks
+	if !waiting.length
+		p.empty-state There are no pending tasks for this user.
+	table
+		tr
+			th Name -id
+			th Model
+			th CaseId
+			th Started
+			th Action 
+			th Assignee
+			th Candidate Users
+			th Candidate Groups
+			th Due date
+			th Follow-up date
+			th Priority
+		each item in waiting
+			- var ref1 = "/invokeItem?id="+item.id+"&processName="+item.processName+"&elementId="+item.elementId;
+			- var ref2 = "/assign?id="+item.id+"&processName="+item.processName+"&elementId="+item.elementId;
+			- var caseId=item.instanceData?item.instanceData.caseId:(item.data ? item.data.caseId : '');
+
+			tr
+				td #{item.name} - #{item.elementId}
+				td #{item.processName} 
+				td #{caseId}
+				td #{item.fromNow}
+				td
+					//- assignment is optional: whoever may see a task (assignee, candidate, unassigned) may execute it
+					a(href=`${ref1}`) Execute
+					<br />
+					a(href=`${ref2}`) Assign
+				td #{item.assignee}
+				if user && user.isAdmin()
+					td #{item.candidateUsers}
+					td #{item.candidateGroups}
+				td #{item.dueFrom}
+				td #{item.followFrom}
+				td #{item.priority}
+						

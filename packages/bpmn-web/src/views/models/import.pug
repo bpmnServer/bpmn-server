@@ -1,0 +1,23 @@
+extends ../layout
+
+block content
+	h3 Import Processes 
+	div(id="processes")
+		form(name='ExecuteForm',action="/model/import",method="post", enctype="multipart/form-data" )
+			input(type='hidden', name='_csrf', value=_csrf)
+			table
+				tr 
+					a(vertical-align="top")
+					td
+						input(type='file' name='fileUploaded')
+					td
+						input(type='submit',value='Import')
+	script.
+		// lusca checks the CSRF token before the multipart body is read, so the upload sends it as a header
+		document.forms.ExecuteForm.addEventListener('submit', async function (event) {
+			event.preventDefault();
+			const form = event.target;
+			const response = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'X-CSRF-Token': form._csrf.value } });
+			if (response.redirected) window.location = response.url;
+			else document.open(), document.write(await response.text()), document.close();
+		});

@@ -1,0 +1,23 @@
+extends ../../../views/layout
+
+block content
+  .pb-2.mt-2.mb-4.border-bottom
+    h3 User Administration
+
+  table
+   tr 
+      td UserName
+      td Email
+      td Name
+      td Email Verified
+      td User Groups
+   each user in users 
+    tr 
+     td #{user.userName}
+     td #{user.email}
+     td #{user.name}
+     td #{user.emailVerified}
+     td #{user.userGroups}
+     td 
+      a(href=`/account/edit/${user.id}`) Edit
+	 

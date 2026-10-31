@@ -1,0 +1,160 @@
+section.models-workspace(aria-labelledby="models-heading")
+  .models-heading
+    div
+      h2#models-heading Models
+      p Browse a process, inspect its diagram, then open or run it.
+    if canDesign
+      .models-create
+        a.btn.btn-primary(href="/model/new")
+          i.fa.fa-plus(aria-hidden="true")
+          | New model
+        a.btn.btn-default(href="/model/import")
+          i.fa.fa-upload(aria-hidden="true")
+          | Import
+  .models-layout
+    aside.models-sidebar(aria-label="Model catalog")
+      label(for="model-search") Search models
+      input#model-search.form-control(type="search", placeholder="Search by name", autocomplete="off")
+      p#model-count.models-count(aria-live="polite")
+      select#process.form-control(size=18, aria-label="Select a model", data-current-process=request.session.processName || "")
+        each proc in procs
+          option(value=proc)= proc
+      p#model-empty.models-empty(hidden) No models match your search.
+    section.models-detail(aria-label="Selected model")
+      .models-detail-bar
+        div
+          span.models-eyebrow BPMN model
+          h3#selected-model-name Select a model
+        .models-actions
+          if canDesign
+            a#modelLink.btn.btn-primary(href="#")
+              i.fa.fa-pencil-square-o(aria-hidden="true")
+              | Open model
+            a#execLink.btn.btn-default(href="#")
+              i.fa.fa-play(aria-hidden="true")
+              | Run process
+          else
+            a#execLink.btn.btn-primary(href="#")
+              i.fa.fa-play(aria-hidden="true")
+              | Start process
+          if canDesign
+            .details-menu
+              button.btn.btn-default(type="button", aria-expanded="false", aria-controls="model-more-actions")
+                i.fa.fa-ellipsis-h(aria-hidden="true")
+                | More
+                i.fa.fa-caret-down(aria-hidden="true")
+              #model-more-actions.details-menu-items(hidden)
+                a#execInputLink(href="#") Run with options
+                a#renameLink(href="#") Rename
+                a(href="/model/export") Export
+                a#deleteLink.details-danger(href="#") Delete model
+      .models-preview-shell
+        .models-zoom-controls(role="group", aria-label="Diagram zoom")
+          button#diagram-zoom-out.btn.btn-default(type="button", aria-label="Zoom out", title="Zoom out")
+            i.fa.fa-search-minus(aria-hidden="true")
+          button#diagram-zoom-reset.btn.btn-default(type="button", aria-label="Reset zoom", title="Reset zoom") 100%
+          button#diagram-zoom-in.btn.btn-default(type="button", aria-label="Zoom in", title="Zoom in")
+            i.fa.fa-search-plus(aria-hidden="true")
+        .models-preview
+          a#diagram-link(href="#", target="_blank", rel="noopener", aria-label="Open full-size diagram in a new tab")
+            img#svg(alt="Selected BPMN process diagram")
+          p Preview unavailable for this model.
+      p.models-preview-caption Use the zoom buttons to inspect the diagram here, or select it to open at full size.
+
+script.
+  (function () {
+    const select = document.getElementById('process');
+    const search = document.getElementById('model-search');
+    const allModels = Array.from(select.options).map(option => option.value);
+    const currentProcess = select.dataset.currentProcess;
+    const preview = document.getElementById('svg');
+    const previewLink = document.getElementById('diagram-link');
+    const previewBox = document.querySelector('.models-preview');
+    const zoomControls = document.querySelector('.models-zoom-controls');
+    const zoomOut = document.getElementById('diagram-zoom-out');
+    const zoomReset = document.getElementById('diagram-zoom-reset');
+    const zoomIn = document.getElementById('diagram-zoom-in');
+    const zoomLevels = [0.5, 0.75, 1, 1.25, 1.5, 2, 3];
+    let zoomIndex = 2;
+    const menu = document.querySelector('.details-menu');
+    const menuButton = menu && menu.querySelector('button');
+    const menuItems = document.getElementById('model-more-actions');
+
+    function setZoom(index) {
+      const centerX = (previewBox.scrollLeft + previewBox.clientWidth / 2) / (previewBox.scrollWidth || 1);
+      const centerY = (previewBox.scrollTop + previewBox.clientHeight / 2) / (previewBox.scrollHeight || 1);
+      zoomIndex = Math.max(0, Math.min(index, zoomLevels.length - 1));
+      const percent = zoomLevels[zoomIndex] * 100;
+      previewLink.style.width = percent + '%';
+      previewLink.style.height = percent + '%';
+      zoomReset.textContent = percent + '%';
+      zoomOut.disabled = zoomIndex === 0;
+      zoomIn.disabled = zoomIndex === zoomLevels.length - 1;
+      requestAnimationFrame(() => {
+        previewBox.scrollLeft = previewBox.scrollWidth * centerX - previewBox.clientWidth / 2;
+        previewBox.scrollTop = previewBox.scrollHeight * centerY - previewBox.clientHeight / 2;
+      });
+    }
+
+    function updateSelection() {
+      const name = select.value;
+      document.getElementById('selected-model-name').textContent = name || 'Select a model';
+      const urls = {
+        execLink: '/execute/', execInputLink: '/executeInput/',
+        modelLink: '/model/edit/', renameLink: '/model/rename/', deleteLink: '/model/delete/'
+      };
+      Object.keys(urls).forEach(id => {
+        const link = document.getElementById(id);
+        if (link) {
+          link.href = name ? urls[id] + encodeURIComponent(name) + '/' : '#';
+          link.setAttribute('aria-disabled', name ? 'false' : 'true');
+        }
+      });
+      if (name) {
+        const url = '/model/getSVg/' + encodeURIComponent(name);
+        preview.src = url;
+        previewLink.href = url;
+        previewBox.classList.remove('preview-unavailable');
+        zoomControls.hidden = false;
+      } else {
+        preview.removeAttribute('src');
+        previewLink.href = '#';
+        previewBox.classList.add('preview-unavailable');
+        zoomControls.hidden = true;
+      }
+      setZoom(2);
+    }
+
+    search.addEventListener('input', function () {
+      const previous = select.value;
+      const matching = allModels.filter(name => name.toLocaleLowerCase().includes(search.value.trim().toLocaleLowerCase()));
+      select.replaceChildren(...matching.map(name => new Option(name, name)));
+      select.value = matching.includes(previous) ? previous : (matching[0] || '');
+      document.getElementById('model-count').textContent = matching.length + ' of ' + allModels.length + ' models';
+      document.getElementById('model-empty').hidden = matching.length !== 0;
+      updateSelection();
+    });
+    select.addEventListener('change', updateSelection);
+    preview.addEventListener('error', () => {
+      previewBox.classList.add('preview-unavailable');
+      zoomControls.hidden = true;
+    });
+    zoomOut.addEventListener('click', () => setZoom(zoomIndex - 1));
+    zoomReset.addEventListener('click', () => setZoom(2));
+    zoomIn.addEventListener('click', () => setZoom(zoomIndex + 1));
+    if (menuButton) {
+      menuButton.addEventListener('click', () => {
+        menuItems.hidden = !menuItems.hidden;
+        menuButton.setAttribute('aria-expanded', String(!menuItems.hidden));
+      });
+      document.addEventListener('click', event => {
+        if (!menu.contains(event.target)) {
+          menuItems.hidden = true;
+          menuButton.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+    select.value = allModels.includes(currentProcess) ? currentProcess : (allModels[0] || '');
+    document.getElementById('model-count').textContent = allModels.length + ' models';
+    updateSelection();
+  })();

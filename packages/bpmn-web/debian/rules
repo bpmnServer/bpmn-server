@@ -1,0 +1,29 @@
+#!/usr/bin/make -f
+
+# Variables
+NAME = itsm-workflows-bpmn
+VERSION = 1.0.0
+TARBALL = $(NAME)-v$(VERSION).tgz
+URL = https://github.com/itsmng/$(NAME)/releases/download/v$(VERSION)/$(TARBALL)
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	# Download and extract the source
+	wget $(URL)
+	tar xvf $(TARBALL)
+
+override_dh_auto_install:
+	# Remove unused files
+	rm 	$(NAME)/CHANGELOG.md \
+		$(NAME)/Dockerfile* \
+		$(NAME)/docker-compose.yml
+
+	# ITSM-NG Source code
+	# Install files into the appropriate directories
+	mkdir -p usr/share/itsmng-workflows
+	cp -r $(NAME)/* usr/share/itsmng-workflows
+	rm -r usr/share/itsmng-workflows/etc
+override_dh_gencontrol:
+	dh_gencontrol -- -v$(VERSION)

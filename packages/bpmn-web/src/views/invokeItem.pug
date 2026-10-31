@@ -1,0 +1,42 @@
+extends layout
+
+block content
+	div(class="container")
+		h3 Invoking Item  <strong>#{node.name}</strong> of <strong>#{processName}</strong>
+	p Item Id: #{id}
+
+	h4 Data 
+	table(class="table table-striped table-bordered")
+		each v in vars
+			tr
+				td(style="width:200px;") <strong>#{v.key}</strong>
+				td #{v.value}
+
+	div(class="form-container")
+	
+	
+		form(name='InvokeForm',action="/invokeItem",method="post")
+			input(type='hidden', name='_csrf', value=_csrf)
+			input(type='hidden',name='itemId',id='itemId',value=`${id}`)
+			input(type='hidden',name='returnTo',id='returnTo',value=`${returnTo}`)
+
+			each field in fields
+				- if (field.label===undefined) field.label=field.id;
+				.form-group(style="max-width:400px;")
+					label(for="#{field.id}")
+							<strong>#{field.label}</strong>
+					
+					if (field.type=='enum')
+						select(name=`${field.id}`,class="form-control")
+							each v in (field['$children'])
+								if (v.$type=='camunda:value')
+									if (v.id == field.defaultValue)
+										option(value=`${v.id}` selected) #{v.name}
+									else
+										option(value=`${v.id}`) #{v.name}
+					else if (field.type=='date')
+						input(name=`${field.id}` type='date' class="form-control")
+					else
+						input(name=`${field.id}` class="form-control")
+			button.btn.btn-primary(type="submit") Submit
+			

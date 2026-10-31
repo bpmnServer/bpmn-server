@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
+    <!-- Sequence Flow -->
+    <line id="flow1" x1="100" y1="100" x2="300" y2="100" stroke="black" stroke-width="2" />
+    
+    <!-- Token -->
+    <circle id="token" cx="100" cy="100" r="10" fill="red" />
+  
+  </svg>
+  
+  <script>
+    const token = document.getElementById('token');
+    const path = document.getElementById('flow1');
+  
+    // Animation function
+    let progress = 0;
+    function animateToken() {
+      if (progress > 1) progress = 0; // Reset progress after one cycle
+      const x = 100 + (200 * progress); // Linear interpolation
+      token.setAttribute('cx', x);
+      progress += 0.01; // Increase progress
+      requestAnimationFrame(animateToken); // Recursive call
+    }
+  
+    // Start animation
+    animateToken();
+  </script>
+  
