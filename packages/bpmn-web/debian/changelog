@@ -1,5 +1,0 @@
-itsm-ng-workflows (1.0-1) stable; urgency=medium
-
-    * First debian package base on 1.0 of ITSM-NG workflow backend
-
- -- ITSM-NG Dev team <contact@itsm-ng.com>  Mon, 03 Feb 2025 10:25:00 +0200

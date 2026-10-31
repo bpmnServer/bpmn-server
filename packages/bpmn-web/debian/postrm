@@ -1,7 +1,0 @@
-#!/bin/sh
-#set -e
-
-deluser itsmworkflow
-delgroup itsmworkflow
-
-exit 0
