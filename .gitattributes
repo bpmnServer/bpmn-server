@@ -1,0 +1,22 @@
+# Normalize line endings: store and check out LF everywhere. This removes the
+# core.autocrlf=true "LF will be replaced by CRLF" phantom diffs across the repo.
+#
+# One-time step after adding this file (NOT done automatically):
+#   git add --renormalize .
+#   git commit -m "Normalize line endings via .gitattributes"
+#
+* text=auto eol=lf
+
+# Binary assets — never normalize (would corrupt them).
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.woff  binary
+*.woff2 binary
+*.ttf  binary
+*.eot  binary
+*.otf  binary
+*.pdf  binary
+*.dcm  binary
