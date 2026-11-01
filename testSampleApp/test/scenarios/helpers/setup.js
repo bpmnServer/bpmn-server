@@ -2,7 +2,7 @@
 // use them; and the scenarios' database emptied and its indexes made, before any of them runs.
 import { expect, assert } from 'chai';
 import { MongoClient } from 'mongodb';
-import { BPMNServer, Logger } from '../../../dist/index.js';
+import { BPMNServer, Logger } from 'bpmn-web';
 import { configuration, MONGO_URL, DATABASE } from '../testConfiguration.js';
 
 process.env.NODE_ENV = 'test';

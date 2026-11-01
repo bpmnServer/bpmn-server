@@ -23,6 +23,7 @@ npm run cli               # the console
 | `scripts/` | `setupDemoUsers.ts` (`npm run setup:users`). |
 | `index.ts` | Starts bpmn-web with the above. |
 | `test/` | bpmn-web's tests, run against this app (`npm test`, `npm run test:ui`). |
+| `test/scenarios/` | the engine's feature scenarios, on this app's delegate (`npm run test:scenarios`). |
 
 The tests use their own database and a copy of `test/processes`; they reach bpmn-web's built modules in
 `../packages/bpmn-web/dist`, so build bpmn-web first (`npm run build` at the root).

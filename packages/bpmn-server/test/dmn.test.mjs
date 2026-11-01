@@ -205,7 +205,7 @@ test('verifyModel checks business rule tasks: decision named, found, valid, and 
 });
 
 test('the Business Rules sample runs: loan approval by its decision table', async () => {
-  const samples = path.join(import.meta.dirname, 'scenarios', 'processes');
+  const samples = path.join(import.meta.dirname, 'fixtures', 'dmn');
   const made = await makeServer({ services: {} });
   fs.copyFileSync(path.join(samples, 'Business Rules.bpmn.bpmn'), path.join(made.dir, 'business-rules.bpmn'));
   fs.copyFileSync(path.join(samples, 'loanApproval.dmn.xml'), path.join(made.dir, 'loanApproval.dmn.xml'));
