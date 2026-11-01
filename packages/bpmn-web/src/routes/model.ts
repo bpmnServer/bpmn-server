@@ -559,6 +559,16 @@ export class Model extends Common {
             }
             response.json({ instance: summarize(instance) });
         }));
+        /** A run deleted: its test instance removed from the database (test instances only). */
+        router.delete('/test/instance/:id', awaitHandlerFactory(async (request, response) => {
+            const id = request.params.id;
+            if (!id.startsWith('test-')) {
+                response.status(400).json({ error: 'only test instances are deleted here' });
+                return;
+            }
+            await bpmnServer.dataStore.deleteInstances({ id });
+            response.json({ deleted: id });
+        }));
 
         /**
          * A scenario's checks on a test instance run step by step: at the end (the default), or after a step

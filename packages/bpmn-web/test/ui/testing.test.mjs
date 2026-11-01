@@ -137,6 +137,7 @@ test('Run shows what waits; running a step shows what waits next, until the end'
 
     // the steps run are the scenario's
     await page.click('.test-stop');
+    await page.click('.test-tab-design');
     assert.deepEqual(await page.locator('.test-step.saved .test-step-name').allInnerTexts(), ['Submit request (Submit)', 'Approve request (Approve)']);
     assert.deepEqual(errors, []);
     await close();
@@ -157,6 +158,7 @@ test('another run follows the saved steps, prefilled; a different choice changes
     await page.waitForSelector('.test-result.ok');
     assert.deepEqual(await marked(page, 'test-passed'), ['AutoApprove', 'AutoApproved', 'LongLeave', 'Requested', 'Submit']);
     await page.click('.test-stop');
+    await page.click('.test-tab-design');
     assert.deepEqual(await page.locator('.test-step.saved .test-step-name').allInnerTexts(), ['Submit request (Submit)'], 'the path taken, not the one copied');
     await page.waitForTimeout(1000);     // saved after a pause
     await close();
@@ -269,6 +271,7 @@ test('a scenario keeps its runs: after a reload its last run is shown and simula
     const listed = await page.locator('.test-list li').evaluateAll(lis => lis.map(li => li.innerText.replace(/\s+/g, ' ').trim()));
     assert.ok(listed.includes('✓ Long leave'), listed.join(' | '));
     await page.locator('.test-list li', { hasText: 'Long leave' }).click();
+    await page.click('.test-tab-runs');
     await page.waitForSelector(`.test-runs tr.shown[data-instance-id="${instanceId}"]`);
     assert.match(await page.locator('.test-runs tr.shown').innerText(), /✓.*Run/s);
     await page.waitForSelector('.test-result.ok');
@@ -304,8 +307,8 @@ test('debug: a check after a step; the variables changed; a step restarted and r
     await page.click('.test-new');
     await page.fill('.test-name', 'Debugged');
     await addCheck(page, { at: 'after:Submit', kind: 'data', path: 'days', op: '>', value: 5 });
-    await page.click('.test-debug');
     await startRun(page);
+    await page.click('.test-debug');
 
     await runStep(page, 'Submit', { days: 10 });
     const done = page.locator('.test-step.done[data-element-id="Submit"]');
@@ -337,6 +340,42 @@ test('debug: a check after a step; the variables changed; a step restarted and r
     const why = await page.locator('.test-decisions').innerText();
     assert.match(why, /condition .*days.* is false \(days=2\); not taken/);
     assert.match(why, /takes its default flow/);
+    assert.deepEqual(errors, []);
+    await close();
+});
+
+test('the runs: a kept run debugged again and restarted at a step; a run deleted; all cleared', async () => {
+    const { page, errors, close } = await openTestTab();
+    await page.locator('.test-list li', { hasText: 'Long leave' }).click();
+    assert.equal(await page.locator('.test-tab-design').getAttribute('aria-selected'), 'true', 'a scenario opens on its design');
+    await page.click('.test-replay');                           // a run: the Runs section shows it
+    await page.waitForSelector('.test-result.ok');
+    assert.equal(await page.locator('.test-tab-runs').getAttribute('aria-selected'), 'true');
+    assert.equal(await page.locator('.test-instance-link').getAttribute('target'), '_blank');
+
+    // Debug on a kept run: its steps done, from its items; Restart here goes back to one
+    await page.click('.test-debug');
+    await page.waitForSelector('.test-step.done[data-element-id="Approve"]');
+    assert.deepEqual(await page.locator('.test-step.done .test-step-name').allInnerTexts(), ['✓ Submit request (Submit)', '✓ Approve request (Approve)']);
+    const approve = page.locator('.test-step.done[data-element-id="Approve"]');
+    await approve.locator('.test-restart').click();
+    await approve.locator('.test-restart-form .test-variables-apply').click();
+    await page.waitForSelector('.test-status:text("Back at Approve request (Approve)")');
+    assert.deepEqual(await pendingNames(page), ['Approve request (Approve)'], 'Approve waits again');
+
+    // a run deleted: gone from the list, its instance too
+    const before = await page.locator('.test-runs tbody tr').count();
+    const deleted = await page.locator('.test-runs tr.shown').getAttribute('data-instance-id');
+    await page.click('.test-run-delete');
+    await page.waitForSelector('.test-status:text("Run deleted")');
+    assert.equal(await page.locator('.test-runs tbody tr').count(), before - 1);
+    assert.equal(await web.bpmnServer.dataStore.findInstance({ id: deleted }, 'summary').catch(() => null), null, 'its instance is deleted');
+
+    // Clear all: every run of every scenario
+    await page.click('.test-clear-all');
+    await page.waitForSelector('.test-status:text("runs cleared")');
+    assert.equal(await page.locator('.test-runs tbody tr').count(), 0);
+    assert.equal(await page.locator('.test-clear-all').isDisabled(), true);
     assert.deepEqual(errors, []);
     await close();
 });

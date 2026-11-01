@@ -1147,3 +1147,20 @@ pre.report-value {
 .element-behaviour-key { display: inline-block; min-width: 76px; color: #6b7079; }
 .element-behaviour-type { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; }
 .element-behaviour-note { margin: 6px 0 0; color: #33373d; }
+
+/* ---- the Test tab's organization: the list (New, Run all, Clear all), a scenario's Design and Runs */
+.test-list-actions { flex-wrap: wrap; }
+.test-sections { display: flex; gap: 2px; border-bottom: 1px solid #dcdfe4; margin: 2px 0 10px; }
+.test-section-tab { border: 1px solid transparent !important; border-bottom: none !important; border-radius: 4px 4px 0 0 !important;
+    background: none !important; padding: 5px 14px !important; color: #52575f; margin-bottom: -1px; }
+.test-section-tab.selected { border-color: #dcdfe4 !important; background: #fff !important; color: #1d2127; font-weight: 600; }
+.test-design-actions, .test-run-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 0 0 8px; }
+.test-run-actions { padding: 6px 0; border-top: 1px solid #eef0f3; border-bottom: 1px solid #eef0f3; }
+.test-instance-link { padding: 3px 10px; border: 1px solid #c4c8cf; border-radius: 4px; color: #1d2127; text-decoration: none; background: #fff; }
+.test-instance-link:hover { background: #f0f4fb; }
+table.test-runs { border-collapse: collapse; font-size: 12px; margin-bottom: 8px; width: 100%; }
+.test-run-state { color: #6b7079; }
+.test-editor details { margin: 6px 0; }
+.test-editor details > summary { cursor: pointer; font-weight: 600; padding: 2px 0; }
+.test-editor details > summary::marker { content: '+ '; color: #6b7079; }
+.test-editor details[open] > summary::marker { content: '− '; }
