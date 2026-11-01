@@ -3,6 +3,7 @@ import { Node } from '../Node.js';
 import { Behaviour } from './Behaviour.js';
 import type { Item } from "../../engine/Item.js";
 import { ScriptHandler } from "../../engine/ScriptHandler.js";
+import { evaluateText } from "../../engine/Expressions.js";
 
 /*
  * will prepare input at start
@@ -102,11 +103,8 @@ JavaScript| { 'key1': 'val1', 'key2': 'val2' , 'key3': [item.data.myExistingVar,
         else if (this.subType == 'camunda:script') {
             val = await item.context.scriptHandler.evaluateExpression(item, this.value);
         }        
-        else { // just text
-            if ((this.value.startsWith('$')))
-                val = await item.context.scriptHandler.evaluateExpression(item, this.value.substring(1));
-            else
-                val=this.value;
+        else { // just text: an expression ($js, ${js}) evaluated, ${...} parts filled in, else as written
+            val = await evaluateText(item.context.scriptHandler, item, this.value);
         }
 
         return val;

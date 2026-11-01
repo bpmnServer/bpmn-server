@@ -15,6 +15,17 @@ and here
 -->
 ## Unreleased
 
+### Expressions: ${...}
+- `${js}` as a whole value is an expression, like `$js` and `$(js)`: conditions, assignments, timers,
+  input parameters, loop collections.
+- A text with `${...}` parts has each part's value filled in: `Order ${data.id} for ${data.customer}` (input
+  parameters), `${data.region}-managers,auditors` (assignments, split at commas after), `PT${data.hours}H` (timers).
+  An application's own script handler gets each part through its `evaluateExpression`.
+- The model check compiles the `${...}` parts too, and reports Camunda habits: JUEL operators
+  (`expression-juel`: `gt`, `and`, `eq`, ... with the JavaScript to write), names an expression does not have
+  (`expression-unknown-name`: `amount` is `data.amount`), and a `${` without its `}` (`template-not-closed`).
+  Input parameters are now checked as well.
+
 ### Data objects
 - A data object (or data store) connected to an element by a data association, either way, is loaded by the
   application when the element runs: `appDelegate.loadDataObject(name, item)` (optional), its result put in the
