@@ -72,6 +72,13 @@ export default class LintRules {
             link.rel = 'noopener';
             link.textContent = rule.name;
             name.append(link);
+            // what the rule checks, under its name
+            if (rule.description) {
+                const description = document.createElement('div');
+                description.className = 'lint-rule-description';
+                description.textContent = rule.description;
+                name.append(description);
+            }
             const select = document.createElement('select');
             select.setAttribute('aria-label', `Level of ${rule.name}`);
             for (const [value, label] of LEVELS)

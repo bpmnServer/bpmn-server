@@ -78,12 +78,46 @@ for (const [name, rule] of Object.entries(RULES))
 const resolver = new StaticResolver(cache);
 const SEVERITY = { error: 'error', warn: 'warning', info: 'info' };
 
-/** Every rule: its level as the editor ships it (bpmnlintrc.json over bpmnlint's recommended), and its documentation. */
+/**
+ * What each rule checks, in a line (bpmnlint's rules carry only a documentation link); for one off here, why: most
+ * are bpmn-server's own checks (verifyModel's codes), or what bpmn-server runs as it is.
+ */
+const DESCRIPTIONS = {
+    'ad-hoc-sub-process': 'An ad-hoc sub-process has no start or end events and no flows inside it.',
+    'conditional-flows': 'When an element that is not a gateway has several outgoing flows, each has a condition.',
+    'end-event-required': 'Every process and sub-process has an end event. Off: bpmn-server checks it (no-end-event).',
+    'event-based-gateway': 'An event-based gateway is followed only by catching events or receive tasks.',
+    'event-sub-process-typed-start-event': 'An event sub-process starts with a typed start event (timer, message, signal, error, ...).',
+    'fake-join': 'A task with several incoming flows does not join them: each arrival runs it again. A gateway joins.',
+    'global': 'Each message, signal, error and escalation has a name, one of each name, and is used by an element.',
+    'label-required': 'Every element has a name. Off: the ids stand in for names.',
+    'link-event': 'Link events come in pairs: each throwing link has a catching link of the same name.',
+    'no-bpmndi': 'Every element is drawn in the diagram. Off: bpmn-server checks it (not-in-diagram).',
+    'no-complex-gateway': 'Complex gateways are not used.',
+    'no-disconnected': 'No element stands apart, without incoming and outgoing flows. Off: bpmn-server checks it (unreachable).',
+    'no-duplicate-sequence-flows': 'No two flows connect the same two elements.',
+    'no-gateway-join-fork': 'A gateway either joins or splits flows, not both. Off: bpmn-server runs such a gateway and warns (mixed-gateway).',
+    'no-implicit-end': 'A path ends at an end event, not at an element without outgoing flows. Off: bpmn-server checks it (no-outgoing).',
+    'no-implicit-split': 'Flows split at a gateway, not by several unconditional flows leaving a task.',
+    'no-implicit-start': 'Every element but a start event has an incoming flow. Off: bpmn-server checks it (unreachable).',
+    'no-inclusive-gateway': 'Inclusive gateways are not used. Off: bpmn-server runs them.',
+    'no-overlapping-elements': 'Elements in the diagram do not overlap.',
+    'single-blank-start-event': 'A process has at most one blank (untyped) start event.',
+    'single-event-definition': 'An event has one definition at most (one timer, or one message, ...).',
+    'start-event-required': 'Every process and sub-process has a start event. Off: bpmn-server checks it (no-start-event).',
+    'sub-process-blank-start-event': 'A sub-process starts with a blank start event.',
+    'superfluous-gateway': 'A gateway with one incoming and one outgoing flow does nothing: it can go.',
+    'superfluous-label': 'A label adds something: a start or end event is not named like the flow next to it.',
+    'superfluous-termination': 'A terminate end event is used only where another path could still be running.',
+};
+
+/** Every rule: its level as the editor ships it (bpmnlintrc.json over bpmnlint's recommended), what it checks, and its documentation. */
 export function ruleDefaults() {
     return Object.keys(RULES).sort().map(name => ({
         name,
         level: config.rules[name] ?? recommended.rules[name] ?? 'off',
-        url: RULES[name]().meta?.documentation?.url
+        url: RULES[name]().meta?.documentation?.url,
+        description: DESCRIPTIONS[name] ?? ''
     }));
 }
 

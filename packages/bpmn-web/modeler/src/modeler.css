@@ -1040,7 +1040,7 @@ pre.report-value {
 
 /* The Rules dialog: each bpmnlint rule's level for the team; changed rules are marked. */
 .lint-rules {
-    max-width: 640px;
+    max-width: 760px;
     width: calc(100% - 32px);
     max-height: 80vh;
     border: 1px solid #c4c8cf;
@@ -1069,16 +1069,25 @@ pre.report-value {
     text-align: left;
     padding: 4px 8px;
     border-bottom: 1px solid #eceef1;
+    vertical-align: top;
 }
 
 .lint-rules td.default {
     color: #52575f;
 }
 
-.lint-rules tr.changed td:first-child::after {
+.lint-rules tr.changed td:first-child > a::after {
     content: " (changed)";
     color: #9a5b00;
     font-size: 12px;
+}
+
+/* what a rule checks, under its name */
+.lint-rule-description {
+    margin-top: 2px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #52575f;
 }
 
 /* ---- the Test tab: start form, checks, debugger */

@@ -123,6 +123,11 @@ test('a finding turns its rule off for everyone; the Rules dialog turns it on ag
     const row = page.locator('#js-lint-rules tr[data-rule="fake-join"]');
     assert.match(await row.getAttribute('class'), /changed/);
     assert.equal(await row.locator('td.default').innerText(), 'Warning');
+    // under each rule's name, what it checks
+    assert.match(await row.locator('.lint-rule-description').innerText(), /does not join them: each arrival runs it again/);
+    const described = await page.locator('#js-lint-rules tbody tr').evaluateAll(rows =>
+        rows.filter(r => !r.querySelector('.lint-rule-description')?.textContent.trim()).map(r => r.dataset.rule));
+    assert.deepEqual(described, [], 'every rule is described');
     await row.locator('select').selectOption('warn');
     await page.waitForFunction(() => !document.querySelector('#js-lint-rules tr[data-rule="fake-join"]').classList.contains('changed'));
     assert.deepEqual(saved(), {});
