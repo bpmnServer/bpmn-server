@@ -1,5 +1,6 @@
 import { Definition } from '../elements/Definition.js';
 import { Cron } from '../server/Cron.js';
+import { isEvaluated } from '../engine/Expressions.js';
 import type { IProcessData, IBpmnModelData, IEventData } from '../interfaces/DataObjects.js';
 
 class BpmnModelData implements IBpmnModelData {
@@ -130,11 +131,11 @@ export {ProcessData, EventData , BpmnModelData }
  */
 function firstDue(timer): Date | string | null {
     const expression = timer.timeCycle || timer.duration;
-    if (typeof expression === 'string' && expression && !expression.startsWith('$')) {
+    if (typeof expression === 'string' && expression && !isEvaluated(expression)) {
         const seconds = Cron.timeDue(expression, null);
         return Number.isFinite(seconds) ? new Date(Date.now() + seconds * 1000) : null;
     }
-    if (typeof timer.timeDate === 'string' && timer.timeDate && !timer.timeDate.startsWith('$'))
+    if (typeof timer.timeDate === 'string' && timer.timeDate && !isEvaluated(timer.timeDate))
         return timer.timeDate;
     return null;
 }

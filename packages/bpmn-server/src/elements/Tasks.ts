@@ -9,6 +9,7 @@ import { IExecution } from '../interfaces/engine.js';
 import { EXECUTION_STATUS } from '../interfaces/Enums.js';
 import { Item } from '../engine/Item.js';
 import { ScriptHandler } from '../engine/ScriptHandler.js';
+import { expressionScript, templateParts, evaluateTemplate } from '../engine/Expressions.js';
 import type { IAppDelegate, IServiceProvider } from '../interfaces/common.js';
 
 import { DMNEngine } from '../dmn/DMNEngine.js';
@@ -228,20 +229,19 @@ class UserTask extends Node {
         if (!exp)
             return;
         var val;
-        if (exp.startsWith('$'))
+        if (expressionScript(exp) !== null)
         {
             val = await item.context.scriptHandler.evaluateExpression(item, exp);
         }
         else if (exp.startsWith('#')) {
             val = await item.context.scriptHandler.executeScript(item, 'return '+exp.substring(1));
         }
-        else if (exp.includes(","))
-        {
-            const arr=exp.split(",");
-            val=arr;
-        }
         else
-            val=exp;
+        {
+            // a text with ${...} parts is filled in first: group-${data.region}, ${data.a},${data.b}
+            const text = templateParts(exp) ? await evaluateTemplate(item.context.scriptHandler, item, exp) : exp;
+            val = text.includes(",") ? text.split(",") : text;
+        }
 
         if (dateFormat)
             val=new Date(val);

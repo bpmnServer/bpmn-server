@@ -28,6 +28,19 @@ Scripts are passed parameters values to the context:
 
 ### Model Expressions 
 
+A value in a model is read one of three ways:
+
+| Written as | Read as | Example |
+|---|---|---|
+| `$js`, `$(js)` or `${js}` (the whole value) | an expression: the JavaScript's value, of its own type | `${data.amount > 1000}`, `$(data.requester)` |
+| a text with `${...}` parts | the text, each part's value in its place | `Order ${data.id} for ${data.customer}` |
+| anything else | the text as written (a list when it has commas, for assignments) | `managers,auditors` |
+
+Expressions are JavaScript, and they see `data`, `item`, `instance`, `input`, `output`, `appServices`,
+`appUtils` and `appDelegate`, not each process variable by name. Coming from Camunda, write
+`${data.amount > 1000 && data.approved}` rather than `${amount gt 1000 and approved}`: the model check
+(`bpmn-server verify`, the editor's Problems) reports JUEL operators and names an expression does not have.
+
 #### conditional flow examples:
 
 
@@ -50,6 +63,7 @@ Scripts are passed parameters values to the context:
 For duration timers
 ```
     $appServices.dateAdd(item.dateStarted,10,'days')
+    PT${data.reminderHours}H
 ```   
 
 
@@ -70,7 +84,9 @@ User Task Assignment properties can be JavaScript expression, in this case they 
 
 For example:
 
-`assignee` 	`$(this.data.requester)`
+`assignee` 	`$(this.data.requester)` or `${data.requester}`
+
+`candidateGroups`	`${data.region}-managers,auditors` (filled in, then split at the commas)
 
 ### Model Listeners
 

@@ -5,6 +5,7 @@ import { Node } from '../Node.js';
 import { NODE_ACTION, FLOW_ACTION, EXECUTION_EVENT, TOKEN_STATUS, ITEM_STATUS } from '../../interfaces/Enums.js';
 import { Item } from '../../engine/Item.js';
 import { ScriptHandler } from '../../engine/ScriptHandler.js';
+import { evaluateText } from '../../engine/Expressions.js';
 import { Behaviour } from './Behaviour.js';
 import { Cron } from '../../server/Cron.js';
 import { NODE_SUBTYPE } from '../../interfaces/Enums.js';
@@ -108,8 +109,8 @@ class TimerBehaviour extends Behaviour {
         else {
             if (this.duration) {
 
-                if (this.duration.startsWith('$')) 
-                    this.duration= await item.context.scriptHandler.evaluateExpression(item,this.duration);
+                // an expression ($js, ${js}) or a text with ${...} parts (PT${data.days}D)
+                this.duration= await evaluateText(item.context.scriptHandler, item, this.duration);
 
                 //seconds = toSeconds((parse(this.duration)));
                 seconds= Cron.timeDue(this.duration, null);
@@ -118,8 +119,7 @@ class TimerBehaviour extends Behaviour {
             }
             else if (this.timeCycle) {
 
-                if (this.timeCycle.startsWith('$')) 
-                    this.timeCycle= await item.context.scriptHandler.evaluateExpression(item,this.timeCycle);
+                this.timeCycle= await evaluateText(item.context.scriptHandler, item, this.timeCycle);
 
                 //seconds = toSeconds((parse(this.timeCycle)));
                 seconds = Cron.timeDue(this.timeCycle, null);
@@ -128,10 +128,7 @@ class TimerBehaviour extends Behaviour {
                 timeDue = dayjs(timeDue).add(seconds,'s').toDate();
             }
             else if (this.timeDate) {
-                    let timeDate=this.timeDate;
-                    if (timeDate.startsWith('$')) {
-                        timeDate= await item.context.scriptHandler.evaluateExpression(item,timeDate);
-                        }
+                    let timeDate= await evaluateText(item.context.scriptHandler, item, this.timeDate);
                 timeDue=timeDate;
             }
         }

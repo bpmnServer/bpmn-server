@@ -2,6 +2,7 @@ import { Execution } from './Execution.js';
 import { Item } from './Item.js';
 import { Token } from './Token.js';
 import type { IScriptHandler } from '../interfaces/engine.js';
+import { expressionScript, scriptOf, templateParts, evaluateTemplate } from './Expressions.js';
 import { spawn } from 'child_process';
 
     
@@ -12,7 +13,8 @@ class ScriptHandler implements IScriptHandler{
 	**	these expression are strings with $
     * scenarios:
     *       String          =>as is
-    *       $javaScript     =>evaulated
+    *       $javaScript     =>evaulated ($js, $(js) or ${js})
+    *       a ${js} b       =>the text, each ${js} evaluated in its place
     *       a , b , c       =>array
     *       dateString      =>convert to date
     * Examples:
@@ -32,16 +34,14 @@ class ScriptHandler implements IScriptHandler{
         if (!exp)
             return;
         var val;
-        
-        if (exp.startsWith('$')) {
+
+        if (expressionScript(exp) !== null) {
             val =await this.evaluateExpression(item, exp);
         }
-        else if (exp.includes(",")) {
-            const arr = exp.split(",");
-            val = arr;
+        else {
+            const text = templateParts(exp) ? await evaluateTemplate(this, item, exp) : exp;
+            val = text.includes(",") ? text.split(",") : text;
         }
-        else
-            val = exp;
 
         if (dateFormat)
             val = new Date(val);
@@ -65,8 +65,7 @@ class ScriptHandler implements IScriptHandler{
 
         if (!expression)
             return;
-        if ((expression.startsWith('$')))
-            script=expression.substring(1);
+        script=scriptOf(expression);       // $js, $(js) or ${js}; any other text is the script itself
 
         try {
             var js = ScriptHandler.getJSvars(scope) + `

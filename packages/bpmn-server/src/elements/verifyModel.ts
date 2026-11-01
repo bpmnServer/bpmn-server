@@ -3,6 +3,7 @@ import { Definition } from './Definition.js';
 import { Behaviour_names } from './behaviours/BehaviourLoader.js';
 import { ServiceTask, BusinessRuleTask, CallActivity } from './Tasks.js';
 import { ScriptHandler } from '../engine/ScriptHandler.js';
+import { expressionScript, scriptOf, templateParts, isEvaluated, freeNames } from '../engine/Expressions.js';
 import { Cron } from '../server/Cron.js';
 import type { IBPMNServer } from '../interfaces/server.js';
 import { DMNEngine } from '../dmn/DMNEngine.js';
@@ -44,6 +45,15 @@ interface IModelVerification {
 }
 
 const SEVERITY_ORDER = { error: 0, warning: 1, info: 2 };
+
+/** The names an expression has (data, item, instance, ...): those ScriptHandler declares for an item. */
+const EXPRESSION_SCOPE = new Set([...ScriptHandler.getJSvars({}).matchAll(/var\s+(\w+)\s*=/g)].map(m => m[1]));
+
+/** JUEL's word operators, and what JavaScript writes instead. */
+const JUEL_OPERATORS = {
+    eq: '===', ne: '!==', lt: '<', gt: '>', le: '<=', ge: '>=',
+    and: '&&', or: '||', not: '!', div: '/', mod: '%', empty: '!value (or value == null)',
+};
 
 class ModelVerifier {
     issues: IModelIssue[] = [];
@@ -315,8 +325,8 @@ class ModelVerifier {
                 const attrs = def.$attrs || {};
                 for (const attr of ['assignee', 'candidateGroups', 'candidateUsers', 'dueDate', 'followUpDate', 'priority']) {
                     const exp = attrs['camunda:' + attr];
-                    if (typeof exp == 'string' && exp.startsWith('$'))
-                        this.checkExpression(exp, attr, def);
+                    if (typeof exp == 'string' && isEvaluated(exp))
+                        this.checkValue(exp, attr, def);
                     else if (typeof exp == 'string' && exp.startsWith('#'))
                         this.checkScript('return ' + exp.substring(1), attr, def);
                 }
@@ -340,9 +350,13 @@ class ModelVerifier {
 
             // a parameter is an expression only with a leading $; without it, it is the text as written
             const io = node.getBehaviour(Behaviour_names.CamundaIO) as any;
-            for (const p of (io && io.parameters) || [])
+            for (const p of (io && io.parameters) || []) {
                 if (typeof p.value == 'string' && /^\s*(data|item|input|output)\.[\w.]+\s*$/.test(p.value))
                     this.add('warning', 'parameter-is-text', `Parameter '${p.name}' is the text '${p.value.trim()}', not its value: write $${p.value.trim()} to read it.`, def);
+                // an input parameter's text is evaluated as an expression, or its ${...} parts filled in
+                else if (checkScripts && typeof p.value == 'string' && !p.subType && p.isInput && p.isInput())
+                    this.checkValue(p.value, `parameter '${p.name}'`, def);
+            }
 
             if (node instanceof BusinessRuleTask)
                 await this.checkDecision(node, def);
@@ -431,14 +445,44 @@ class ModelVerifier {
     }
 
     checkExpression(expression: string, what: string, element) {
-        const script = expression.startsWith('$') ? expression.substring(1) : expression;
+        const script = scriptOf(expression);
         this.checkServiceReferences(script, what, element);
+        const names = freeNames(script).filter(name => !EXPRESSION_SCOPE.has(name) && !(name in globalThis));
+        // Camunda's JUEL (${amount gt 100 and approved}): its operators are not JavaScript
+        const juel = names.filter(name => JUEL_OPERATORS[name]);
+        if (juel.length) {
+            const use = juel.map(op => `'${op}' with ${JUEL_OPERATORS[op]}`).join(', ');
+            this.add('error', 'expression-juel', `The ${what} expression is written in JUEL (Camunda); expressions here are JavaScript: replace ${use}.`, element);
+            return;
+        }
         try {
             Function(ScriptHandler.getJSvars({}) + `return (${script});`);
         }
         catch (exc) {
             this.add('error', 'expression-syntax', `The ${what} expression does not compile: ${exc.message}`, element);
+            return;
         }
+        // Camunda reads process variables by name (${amount}); here they are in data (data.amount)
+        for (const name of names)
+            this.add('warning', 'expression-unknown-name', `The ${what} expression reads '${name}', which expressions do not have: process data is data.${name}; `
+                + `expressions also see ${[...EXPRESSION_SCOPE].join(', ')}.`, element);
+    }
+
+    /** A text with ${...} parts: each part is an expression. */
+    checkTemplate(text: string, what: string, element) {
+        for (const part of templateParts(text) || [])
+            if (typeof part != 'string')
+                this.checkExpression('${' + part.script + '}', what, element);
+    }
+
+    /** A value evaluated only when it is an expression ($js, ${js}) or has ${...} parts; any other text is as written. */
+    checkValue(value: string, what: string, element) {
+        if (expressionScript(value) !== null)
+            this.checkExpression(value, what, element);
+        else if (templateParts(value))
+            this.checkTemplate(value, what, element);
+        else if (value.includes('${'))
+            this.add('warning', 'template-not-closed', `The ${what} has a '\${' without its '}': it is the text as written, not filled in.`, element);
     }
 
     checkTimer(timer, element, checkScripts: boolean) {
@@ -446,8 +490,8 @@ class ModelVerifier {
         for (const [kind, value] of checks) {
             if (!value) continue;
             const text = String(value).trim();
-            if (text.startsWith('$')) {
-                if (checkScripts) this.checkExpression(text, `timer ${kind}`, element);
+            if (isEvaluated(text)) {      // $js, ${js}, or a text with ${...} parts (PT${data.days}D)
+                if (checkScripts) this.checkValue(text, `timer ${kind}`, element);
             }
             else if (kind == 'date' ? isNaN(new Date(text).getTime()) : Cron.timeDue(text, null) == null)
                 this.add('error', 'timer-invalid', `Timer ${kind} '${text}' is not a valid ${kind == 'date' ? 'ISO 8601 date' : 'ISO 8601 duration or cron expression'}.`, element);
