@@ -325,7 +325,6 @@ export class Model extends Common {
         router.get('/getSvg/:process', awaitHandlerFactory(async (request, response) => {
 
             let processName = request.params.process;
-            let fileName = import.meta.dirname + '/../processes/' + processName + '.svg';
 
             let svg = await definitions.getSVG(processName);
             if (!svg) {     // models saved without a preview, e.g. imported before previews were generated

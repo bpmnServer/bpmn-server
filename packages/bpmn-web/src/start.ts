@@ -104,6 +104,9 @@ export async function start(options: StartOptions = {}) {
 	if (!process.env.MONGO_DB_URL)
 		throw new Error('MONGO_DB_URL is not set: name the MongoDB database in .env (MONGO_DB_URL=mongodb://localhost:27017/bpmn), or MONGO_DB_URL=memory to try without one');
 	const configuration = webConfiguration(options.config, options.appDelegate);
+	// an application without models yet starts with an empty models folder
+	if (configuration.definitionsPath)
+		fs.mkdirSync(configuration.definitionsPath, { recursive: true });
 	const templates = options.elementTemplatesPath ?? path.resolve('elementTemplates');
 	const application: WorkflowApplication = {
 		configuration,

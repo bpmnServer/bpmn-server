@@ -6,4 +6,5 @@ export {
 	type WorkflowApplication,
 } from './runtime/WorkflowApplication.js';
 export { WebAppDelegate } from './runtime/WebAppDelegate.js';
+export { UserService } from './userAccess/UserService.js';
 export { start, setup, webConfiguration, type StartOptions } from './start.js';

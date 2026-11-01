@@ -7,6 +7,5 @@
     "rootDir": "./src", "outDir": "./dist", "types": ["node"]
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules","dist","src/scripts",
-              "src/sample-app/appServices.ts","src/sample-app/INSTALL_appDelegate.ts","src/sample-app/INSTALL_configuration.ts"]
+  "exclude": ["node_modules","dist","src/scripts"]
 }
