@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { layoutProcess } from 'bpmn-auto-layout';
-import { bpmnToSvg } from '../../dist/routes/bpmnToSvg.js';
+import { bpmnToSvg } from '../../../packages/bpmn-web/dist/routes/bpmnToSvg.js';
 
 const simple = fs.readFileSync('test/processes/test-exclusive-gateway.bpmn', 'utf8');
 

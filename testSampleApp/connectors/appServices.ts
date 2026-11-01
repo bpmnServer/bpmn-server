@@ -1,6 +1,6 @@
 import * as readline from 'node:readline';
 import axios from 'axios';
-import { ApprovalManager } from './ApprovalManager.js';
+import { ApprovalManager } from '../delegates/ApprovalManager.js';
 
 const cl = readline.createInterface(process.stdin, process.stdout);
 const question = function (q) {

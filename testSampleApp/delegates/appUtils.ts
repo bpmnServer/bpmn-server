@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import pug from 'pug';
-import { BPMNAPI, BPMNServer, DefaultAppDelegate, Logger, SecureUser } from '../index.js';
+import { BPMNAPI, BPMNServer, DefaultAppDelegate, Logger, SecureUser } from 'bpmn-web';
 
 /**
 	is called by a script 

@@ -1,0 +1,9 @@
+node_modules/
+.env
+*.log
+
+# Playwright screenshots
+/test/ui/screenshots
+
+# demo videos (npm run demo:video)
+/test/demo/out

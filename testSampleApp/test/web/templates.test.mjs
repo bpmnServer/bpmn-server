@@ -8,8 +8,8 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { startWebApp, why } from '../support/webApp.mjs';
 
-const ROOT = path.resolve(import.meta.dirname, '..', '..');
-const { checkTemplate, loadTemplateCatalog } = await import(pathToFileURL(path.join(ROOT, 'dist', 'routes', 'elementTemplates.js')));
+const WEB = path.resolve(import.meta.dirname, '..', '..', '..', 'packages', 'bpmn-web');
+const { checkTemplate, loadTemplateCatalog } = await import(pathToFileURL(path.join(WEB, 'dist', 'routes', 'elementTemplates.js')));
 
 const template = (...properties) => ({ id: 't', name: 'T', appliesTo: ['bpmn:ServiceTask'], properties });
 const services = { add() { }, notify: { email() { } } };

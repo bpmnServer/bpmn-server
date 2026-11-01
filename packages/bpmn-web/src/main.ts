@@ -23,14 +23,11 @@ function warnBootConfig() {
 setupEnvVars();
 warnBootConfig();
 
-// Load application-owned configuration only in the executable composition root,
-// after environment variables have been established.
-const [{ WebApp }, { sampleWorkflowApplication }] = await Promise.all([
-	import('./app.js'),
-	import('./sample-app/index.js'),
-]);
+// bpmn-web on its own, with its defaults (models in ./processes, WebAppDelegate); an application calls
+// start() with its own settings, delegate and connectors (testSampleApp/index.ts). Loaded after the
+// environment variables are established.
+const { start } = await import('./start.js');
 
-const webApp = new WebApp(sampleWorkflowApplication);
-webApp.start();
+const webApp = await start();
 
 export default webApp.app;

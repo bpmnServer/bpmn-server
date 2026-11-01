@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import User from '../../dist/userAccess/models/User.js';
-import { UserController } from '../../dist/userAccess/controllers/user.js';
+import User from '../../../packages/bpmn-web/dist/userAccess/models/User.js';
+import { UserController } from '../../../packages/bpmn-web/dist/userAccess/controllers/user.js';
 
 test('self-service account updates ignore a forged target ID and group claim', async () => {
   const findById = User.findById;

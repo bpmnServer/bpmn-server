@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 // Everything pulled through bpmn-web's OWN index barrel -> proves the bpmn-web -> bpmn-server v3 ESM link
-import { BPMNServer, Configuration, ModelsDatastore, DataStore, NoCacheManager, Logger, ScriptHandler } from '../../dist/index.js';
-import { MyAppDelegate } from '../../dist/sample-app/appDelegate.js';
+import { BPMNServer, Configuration, ModelsDatastore, DataStore, NoCacheManager, Logger, ScriptHandler } from '../../../packages/bpmn-web/dist/index.js';
+import { AppDelegate } from '../../delegates/appDelegate.ts';
 import { MemoryMongoDB } from './MemoryMongoDB.mjs';
 import { fileURLToPath } from 'node:url';
 
@@ -15,7 +15,7 @@ const configuration = new Configuration({
   database: { MongoDB: { db_url: 'memory://', db: 'bpmn' } },
   logger: (s) => new Logger(s),
   definitions: (s) => new ModelsDatastore(s),
-  appDelegate: (s) => new MyAppDelegate(s),      // <-- bpmn-web's delegate
+  appDelegate: (s) => new AppDelegate(s),        // <-- the application's delegate, on bpmn-web's WebAppDelegate
   dataStore: (s) => { const ds = new DataStore(s); ds.db = new MemoryMongoDB(ds.dbConfiguration, logger); return ds; },
   scriptHandler: () => new ScriptHandler(),
   cacheManager: (s) => new NoCacheManager(s),
@@ -24,7 +24,7 @@ const server = new BPMNServer(configuration, logger, { cron: false });
 
 test.before(async () => { await server.dataStore.install(); });
 
-test('bpmn-web config + MyAppDelegate drive the migrated engine end-to-end', async () => {
+test('bpmn-web config + the app delegate drive the migrated engine end-to-end', async () => {
   const resp = await server.engine.start('simple', { caseId: 100 });
   assert.ok(resp.execution, 'execution returned through bpmn-web wiring');
   assert.ok(resp.instance.id);

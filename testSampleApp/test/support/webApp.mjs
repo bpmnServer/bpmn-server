@@ -1,5 +1,6 @@
-// Starts bpmn-web in-process for the HTTP and UI tests: its own MongoDB database (dropped on stop),
-// its own definitions folder (a copy of test/processes), no timers, authentication on, and three users.
+// Starts testSampleApp (its settings, delegate and connectors on bpmn-web) in-process for the HTTP and UI
+// tests: its own MongoDB database (dropped on stop), its own definitions folder (a copy of test/processes),
+// no timers, authentication on, and three users.
 //
 //   const web = await startWebApp();
 //   const admin = await web.login('admin');
@@ -12,6 +13,8 @@ import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
+/** bpmn-web's package: the tests reach its built modules (dist/) as well as its public API. */
+const WEB = path.join(ROOT, '..', 'packages', 'bpmn-web');
 export const FIXTURES = path.join(ROOT, 'test', 'processes');
 export const PASSWORD = 'Test-password-1';
 export const API_KEY = 'test-api-key';
@@ -68,12 +71,18 @@ export async function startWebApp({ env = {} } = {}) {
     const quiet = !process.env.TEST_VERBOSE;
     const restoreConsole = quiet ? silenceConsole() : () => { };
 
-    const { WebApp } = await import(fileUrl('dist/app.js'));
-    const { sampleWorkflowApplication } = await import(fileUrl('dist/sample-app/index.js'));
-    const { default: User } = await import(fileUrl('dist/userAccess/models/User.js'));
+    const { WebApp } = await import(fileUrl(WEB, 'dist/app.js'));
+    const { webConfiguration } = await import(fileUrl(WEB, 'dist/start.js'));
+    const { default: User } = await import(fileUrl(WEB, 'dist/userAccess/models/User.js'));
+    const { config, connectorsPath } = await import(fileUrl(ROOT, 'settings/config.ts'));
+    const { AppDelegate } = await import(fileUrl(ROOT, 'delegates/appDelegate.ts'));
     const mongoose = (await import('mongoose')).default;
 
-    const webApp = new WebApp({ ...sampleWorkflowApplication, serverOptions: { cron: false } });
+    const webApp = new WebApp({
+        configuration: webConfiguration(config(), AppDelegate),
+        elementTemplatesPath: connectorsPath,
+        serverOptions: { cron: false },
+    });
     const bpmnServer = webApp.bpmnServer;
     await bpmnServer.ready;
     await bpmnServer.dataStore.install?.();
@@ -123,8 +132,8 @@ export async function startWebApp({ env = {} } = {}) {
     return web;
 }
 
-function fileUrl(relative) {
-    return 'file:///' + path.join(ROOT, relative).replace(/\\/g, '/');
+function fileUrl(base, relative) {
+    return 'file:///' + path.join(base, relative).replace(/\\/g, '/');
 }
 
 /** The app logs every request and engine step; keep the test output readable. */

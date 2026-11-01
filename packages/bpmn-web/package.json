@@ -24,15 +24,8 @@
     "cli": "node --import tsx src/scripts/cli.ts",
     "setup": "node --import tsx src/scripts/setup.ts",
     "clean": "tsc --build --clean",
-    "test": "npm run test:unit && npm run test:client && npm run test:engine && npm run test:web",
-    "test:client": "node --test \"test/client/*.test.mjs\"",
-    "test:engine": "node --test \"test/engine/*.test.mjs\"",
-    "pretest:ui": "npm run build:modeler",
-    "test:ui": "node --test --test-concurrency=1 \"test/ui/*.test.mjs\"",
-    "test:web": "node --test --test-concurrency=1 \"test/web/*.test.mjs\"",
-    "test:unit": "node --test \"test/unit/*.test.mjs\"",
     "lint:models": "node modeler/lint-models.mjs",
-    "demo:video": "npm run build:modeler && node test/demo/record-demo.mjs"
+    "test": "npm --prefix ../../testSampleApp test"
   },
   "dependencies": {
     "axios": "^1.18.1",

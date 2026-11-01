@@ -4,12 +4,13 @@
   "workspaces": [
     "packages/bpmn-server",
     "packages/bpmn-client",
-    "packages/bpmn-web"
+    "packages/bpmn-web",
+    "testSampleApp"
   ],
   "scripts": {
     "build": "npm run build -w bpmn-server -w bpmn-client -w bpmn-web",
-    "test": "npm test -w bpmn-server -w bpmn-client -w bpmn-web",
-    "start": "npm start -w bpmn-web",
+    "test": "npm test -w bpmn-server -w bpmn-client -w test-sample-app",
+    "start": "npm start -w test-sample-app",
     "docs": "cd docs && npm run start"
   },
   "overrides": {

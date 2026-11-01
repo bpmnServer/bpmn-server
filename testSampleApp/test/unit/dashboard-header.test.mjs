@@ -1,8 +1,9 @@
+import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import pug from 'pug';
 
-const template = 'src/views/includes/dashboardHeader.pug';
+const template = fileURLToPath(new URL('../../../packages/bpmn-web/src/views/includes/dashboardHeader.pug', import.meta.url));
 
 test('dashboard renders without request.user when authentication is disabled', () => {
   const previous = process.env.REQUIRE_AUTHENTICATION;

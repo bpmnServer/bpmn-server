@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { describeError, errorDetailsHandler, redactSecrets } from '../../dist/routes/middleware/errorDetails.js';
+import { describeError, errorDetailsHandler, redactSecrets } from '../../../packages/bpmn-web/dist/routes/middleware/errorDetails.js';
 
 function fakeResponse() {
   const res = { statusCode: 200, body: undefined, contentType: undefined, headersSent: false };

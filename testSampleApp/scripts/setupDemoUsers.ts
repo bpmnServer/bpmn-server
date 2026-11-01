@@ -1,10 +1,11 @@
-import { SystemUser } from '../';
-import { configuration } from '../sample-app/configuration.js';
-import { BPMNServer, Logger ,SecureUser,BPMNAPI} from '../';
+import { SystemUser, BPMNServer, Logger, SecureUser, BPMNAPI, UserService, webConfiguration } from 'bpmn-web';
 
-import { UserService } from "../userAccess/UserService";
   
 
+import { config } from '../settings/config.js';
+import { AppDelegate } from '../delegates/appDelegate.js';
+
+const configuration = webConfiguration(config(), AppDelegate);
 const logger = new Logger({ toConsole: false });
 const server = new BPMNServer(configuration, logger, { cron: false });
 const userService =new UserService();

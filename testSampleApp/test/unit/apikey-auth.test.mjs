@@ -2,7 +2,7 @@
 //   node --test apikey-auth.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { apiKeyAuth, timingSafeEqualStr } from '../../dist/routes/middleware/apiKeyAuth.js';
+import { apiKeyAuth, timingSafeEqualStr } from '../../../packages/bpmn-web/dist/routes/middleware/apiKeyAuth.js';
 
 function mockReqRes(headers = {}, query = {}, originalUrl = '/api/status') {
   const state = { statusCode: 200, body: undefined, nextCalled: false };

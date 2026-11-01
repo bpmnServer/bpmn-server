@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { Common } from '../../dist/routes/common.js';
-import { configuredApiUser } from '../../dist/routes/middleware/apiKeyAuth.js';
-import User from '../../dist/userAccess/models/User.js';
-import { isSafeModelName, modelNameGuard } from '../../dist/routes/middleware/modelName.js';
+import { Common } from '../../../packages/bpmn-web/dist/routes/common.js';
+import { configuredApiUser } from '../../../packages/bpmn-web/dist/routes/middleware/apiKeyAuth.js';
+import User from '../../../packages/bpmn-web/dist/userAccess/models/User.js';
+import { isSafeModelName, modelNameGuard } from '../../../packages/bpmn-web/dist/routes/middleware/modelName.js';
 
 function gateRequest(user, authenticated = true) {
   const state = { next: false, status: 200 };

@@ -1,10 +1,8 @@
 import fs from 'node:fs';
-import {  Item, FLOW_ACTION , NODE_ACTION, IExecution , dateDiff } from './index.js';
-import { WebAppDelegate } from '../runtime/WebAppDelegate.js';
-import { AppServices } from './appServices.js';
+import { Item, IExecution, WebAppDelegate } from 'bpmn-web';
+import { AppServices } from '../connectors/appServices.js';
 import { AppUtils } from './appUtils.js';
 
-import * as Mailer from '../userAccess/config/mail.js';
 
 var seq = 1;
 
@@ -13,7 +11,7 @@ const MULTI_APP_SERVICES =false;
 console.log('appDelegate from ', import.meta.filename);
 
 
-class MyAppDelegate extends WebAppDelegate{
+class AppDelegate extends WebAppDelegate{
     winSocket;
     appServices;
     appUtils;
@@ -151,4 +149,4 @@ const SAMPLE_CLIENTS = {
 class Utils {
 
 }
-export {MyAppDelegate}
+export {AppDelegate}

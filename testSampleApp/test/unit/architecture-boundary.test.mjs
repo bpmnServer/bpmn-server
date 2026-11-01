@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-import { WebApp, defineWorkflowApplication } from '../../dist/index.js';
+import { WebApp, defineWorkflowApplication } from '../../../packages/bpmn-web/dist/index.js';
 
 test('public package exports reusable composition API', () => {
   assert.equal(typeof WebApp, 'function');
@@ -13,6 +13,6 @@ test('public package exports reusable composition API', () => {
 });
 
 test('reusable WebApp does not import the bundled sample application', () => {
-  const source = fs.readFileSync(new URL('../../src/app.ts', import.meta.url), 'utf8');
+  const source = fs.readFileSync(new URL('../../../packages/bpmn-web/src/app.ts', import.meta.url), 'utf8');
   assert.doesNotMatch(source, /from ['"][^'"]*(?:\/sample-app\/|\/WorkflowApp\/)[^'"]*['"]/);
 });

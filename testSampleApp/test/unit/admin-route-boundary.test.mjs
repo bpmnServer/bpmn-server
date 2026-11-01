@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { API } from '../../dist/routes/api.js';
-import { API2 } from '../../dist/routes/api2.js';
+import { API } from '../../../packages/bpmn-web/dist/routes/api.js';
+import { API2 } from '../../../packages/bpmn-web/dist/routes/api2.js';
 
 const webApp = { bpmnServer: {} };
 const paths = (router) => router.stack.map((layer) => layer.route?.path).filter(Boolean);

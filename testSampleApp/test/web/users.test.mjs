@@ -6,12 +6,12 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { startWebApp, why } from '../support/webApp.mjs';
 
-const ROOT = path.resolve(import.meta.dirname, '..', '..');
+const WEB = path.resolve(import.meta.dirname, '..', '..', '..', 'packages', 'bpmn-web');
 
 let web, admin, designer, staff, User;
 test.before(async () => {
     web = await startWebApp();
-    ({ default: User } = await import(pathToFileURL(path.join(ROOT, 'dist', 'userAccess', 'models', 'User.js'))));
+    ({ default: User } = await import(pathToFileURL(path.join(WEB, 'dist', 'userAccess', 'models', 'User.js'))));
     [admin, designer, staff] = await Promise.all([web.login('admin'), web.login('designer'), web.login('staff')]);
 });
 test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0)); });

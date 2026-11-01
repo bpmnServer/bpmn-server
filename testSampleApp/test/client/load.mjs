@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
-const JS_DIR = fileURLToPath(new URL('../../public/javascripts/', import.meta.url));
+const JS_DIR = fileURLToPath(new URL('../../../packages/bpmn-web/public/javascripts/', import.meta.url));
 
 function makeChainable() {
   const chain = new Proxy(function () {}, {

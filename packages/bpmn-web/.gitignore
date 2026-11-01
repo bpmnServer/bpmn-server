@@ -19,8 +19,6 @@
 docker/mongodb_volume
 docker/bpmn_server_volume
 
-# Playwright screenshots
-/test/ui/screenshots
 
 # uploads written by older imports
 src/tmp/
@@ -30,5 +28,3 @@ src/tmp/
 !/modeler/**/*.mjs
 /public/modeler/
 
-# demo videos (npm run demo:video)
-/test/demo/out
