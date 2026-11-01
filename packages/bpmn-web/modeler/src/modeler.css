@@ -1112,3 +1112,29 @@ pre.report-value {
 .test-step > .test-step-checks,
 .test-step > .test-step-debug { grid-column: 1 / -1; }
 .test-check-node { max-width: 260px; }
+
+/* ---- getting around: the model and element drop-downs beside the model's name */
+.modeler-pickers { display: flex; gap: 6px; align-items: center; margin-left: 12px; min-width: 0; }
+.modeler-picker { max-width: 260px; padding: 3px 6px; border: 1px solid #c4c8cf; border-radius: 4px; background: #fff; font: inherit; font-size: 13px; }
+#js-element-picker { max-width: 320px; }
+
+/*
+ * the properties panel: a field's help (its description) shows when the field is hovered or in use, over what follows.
+ * What is not help stays in view: a warning on a setting bpmn-server does not use (a disabled entry, a loop setting
+ * it ignores), a decision's summary, what loads a data object.
+ */
+#js-properties-panel .bio-properties-panel-entry { position: relative; }
+#js-properties-panel .bio-properties-panel-entry:where(:not(:has(input:disabled, textarea:disabled, [contenteditable="false"])):not(.bpmn-server-decision-summary):not([data-entry-id="dataObject-loaders"]):not([data-entry-id="multiInstance-loopCardinality"]):not([data-entry-id="multiInstance-completionCondition"]):not([data-entry-id="multiInstance-camunda-elementVariable"])) > .bio-properties-panel-description {
+    display: none; position: absolute; left: 0; right: 0; top: 100%; z-index: 10; margin-top: 2px;
+    padding: 6px 8px; background: #fff; border: 1px solid #d0d5dc; border-radius: 4px; box-shadow: 0 2px 8px rgba(16, 24, 40, 0.12);
+}
+#js-properties-panel .bio-properties-panel-entry:hover > .bio-properties-panel-description,
+#js-properties-panel .bio-properties-panel-entry:focus-within > .bio-properties-panel-description { display: block; }
+
+/* ---- the selected element's behaviour, above the properties panel */
+.element-behaviour { margin: 8px 10px 4px; padding: 8px 10px; background: #f6f8fb; border: 1px solid #e1e6ee; border-radius: 6px; font-size: 12.5px; }
+.element-behaviour-summary { margin: 0 0 6px; font-weight: 600; color: #1d2127; }
+.element-behaviour-line { line-height: 1.6; }
+.element-behaviour-key { display: inline-block; min-width: 76px; color: #6b7079; }
+.element-behaviour-type { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; }
+.element-behaviour-note { margin: 6px 0 0; color: #33373d; }

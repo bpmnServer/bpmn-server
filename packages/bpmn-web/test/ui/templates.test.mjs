@@ -8,6 +8,14 @@ import path from 'node:path';
 import { chromium } from 'playwright';
 import { startWebApp, PASSWORD, FIXTURES } from '../support/webApp.mjs';
 
+/** Open a properties group, unless the editor has (it opens the groups that have values). */
+async function openGroup(page, label) {
+    const header = page.locator('.bio-properties-panel-group-header', { hasText: label }).first();
+    await page.waitForTimeout(100);      // the panel settles: groups with values open
+    if (!/\bopen\b/.test(await header.getAttribute('class')))
+        await header.click();
+}
+
 let web, browser;
 test.before(async () => {
     web = await startWebApp();
@@ -90,7 +98,7 @@ test('a service task made from a template calls its service and stores the resul
     assert.deepEqual((await openChooser(page)).sort(), ['Add two numbers', 'Echo'], 'the service task templates only');
     await page.locator('.element-template-chooser .entry', { hasText: 'Add two numbers' }).click();
 
-    await page.locator('.bio-properties-panel-group-header', { hasText: 'Custom properties' }).click();
+    await openGroup(page, 'Custom properties');
     await page.getByLabel('First number').fill('2');
     await page.getByLabel('Second number').fill('$data.fee');
     const xml = await save(page, model);
@@ -110,7 +118,7 @@ test('a user task made from a template is assigned, dated and scripted as the te
     await select(page, 'Approve');
     assert.deepEqual((await openChooser(page)).sort(), ['Manager approval', 'Review by requester']);
     await page.locator('.element-template-chooser .entry', { hasText: 'Manager approval' }).click();
-    await page.locator('.bio-properties-panel-group-header', { hasText: 'Custom properties' }).click();
+    await openGroup(page, 'Custom properties');
     await page.getByLabel('Priority').selectOption('80');
     const xml = await save(page, model);
     assert.match(xml, /<bpmn:userTask id="Approve"[^>]*camunda:candidateGroups="manager"/);

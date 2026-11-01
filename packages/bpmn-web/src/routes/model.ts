@@ -341,6 +341,11 @@ export class Model extends Common {
             response.send(svg);
 
         }));
+        // the models' names, for the editor's model drop-down
+        router.get('/names', awaitHandlerFactory(async (request, response) => {
+            const names = (await bpmnServer.definitions.getList({})).map(m => m.name ?? m).sort((a, b) => String(a).localeCompare(String(b)));
+            response.json({ names });
+        }));
         // the editor's element templates; read on each request, so a template added to the folder shows on reload
         router.get('/templates', awaitHandlerFactory(async (request, response) => {
             let services;

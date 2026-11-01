@@ -47,6 +47,7 @@ async function selectTask() {
         m.get('selection').select(m.get('elementRegistry').get('Activity_0px5w2d'));
     });
     const header = page.locator('.bio-properties-panel-group-header', { hasText: 'Decision' }).first();
+    await page.waitForTimeout(100);      // the panel settles: the editor opens the groups that have values
     if (!/\bopen\b/.test(await header.getAttribute('class')))
         await header.click();
 }

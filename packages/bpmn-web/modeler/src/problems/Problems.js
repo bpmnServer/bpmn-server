@@ -41,10 +41,11 @@ export default class Problems {
             }
         });
 
-        eventBus.on('import.done', () => this.check());
-        eventBus.on('lintRules.changed', () => this.check());
-        eventBus.on('commandStack.changed', () => this._schedule());
-        eventBus.on(['selection.changed', 'propertiesPanel.updated'], () => this._showDiagnostics());
+        // a listener returns nothing: a value (check's promise) would stop the event for the listeners after it
+        eventBus.on('import.done', () => { this.check(); });
+        eventBus.on('lintRules.changed', () => { this.check(); });
+        eventBus.on('commandStack.changed', () => { this._schedule(); });
+        eventBus.on(['selection.changed', 'propertiesPanel.updated'], () => { this._showDiagnostics(); });
     }
 
     /** The current issues, as verifyModel returned them. */

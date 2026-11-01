@@ -52,6 +52,14 @@ const select = (page, id) => page.evaluate(id => {
 }, id);
 const groupHeader = (page, label) => page.locator('.bio-properties-panel-group-header', { hasText: label }).first();
 
+/** Open a properties group, unless the editor has (it opens the groups that have values). */
+async function openGroup(page, label) {
+    const header = page.locator('.bio-properties-panel-group-header', { hasText: label }).first();
+    await page.waitForTimeout(100);      // the panel settles: groups with values open
+    if (!/\bopen\b/.test(await header.getAttribute('class')))
+        await header.click();
+}
+
 async function save(page, model) {
     const saved = page.waitForResponse(r => r.request().method() === 'POST' && r.url().endsWith(`/model/edit/${model}`));
     await page.click('#js-save');
@@ -124,13 +132,13 @@ test('user assignment and start permissions are saved as the engine reads them',
     const { page, errors, context } = await openEditor(model);
 
     await select(page, 'Submit');
-    await groupHeader(page, 'User assignment').click();
+    await openGroup(page, 'User assignment');
     await page.fill('#bio-properties-panel-assignment-candidateUsers', 'alice,bob');
     await page.fill('#bio-properties-panel-assignment-dueDate', '$data.dueDate');
 
     const start = await page.evaluate(() => window.bpmnModeler.get('elementRegistry').filter(e => e.type === 'bpmn:StartEvent')[0].id);
     await select(page, start);
-    await groupHeader(page, 'Who can start').click();
+    await openGroup(page, 'Who can start');
     await page.fill('#bio-properties-panel-start-candidateGroups', 'staff');
 
     const xml = await save(page, model);

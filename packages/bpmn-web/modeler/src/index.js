@@ -20,6 +20,8 @@ import BpmnServerPropertiesModule from './properties/index.js';
 import ProblemsModule from './problems/index.js';
 import ReportModule from './report/index.js';
 import TestModule from './testing/index.js';
+import { setupNavigation } from './navigation.js';
+import ElementBehaviour from './properties/ElementBehaviour.js';
 import DecisionsModule from './decisions/index.js';
 import LintRulesModule from './lint/index.js';
 
@@ -43,9 +45,12 @@ const modeler = new BpmnModeler({
         ReportModule,
         TestModule,
         DecisionsModule,
-        LintRulesModule
+        LintRulesModule,
+        { __init__: ['elementBehaviour'], elementBehaviour: ['type', ElementBehaviour] }
     ],
     report: { container: '#js-report', processName },
+    // what the selected element does, above the properties panel
+    elementBehaviour: { parent: '#js-properties-panel' },
     scriptContext: { servicesUrl: '/model/services' },
     decisions: { url: '/model/decisions' },
     lint: { url: '/model/lint-rules', button: '#js-lint-rules-open' },
@@ -56,6 +61,9 @@ const modeler = new BpmnModeler({
 });
 window.bpmnModeler = modeler;
 window.BPMNModeler = modeler;     // the classic modeler's name for it, used by hosts
+
+// the model and element drop-downs; the properties panel opens what is set
+setupNavigation(modeler, { processName, header: document.querySelector('.modeler-header'), panel: '#js-properties-panel' });
 
 
 let changed = false;

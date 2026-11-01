@@ -43,6 +43,7 @@ async function select(id) {
 
 async function openGroup(label) {
     const header = page.locator('.bio-properties-panel-group-header', { hasText: label }).first();
+    await page.waitForTimeout(100);      // the panel settles: the editor opens the groups that have values
     if (!/\bopen\b/.test(await header.getAttribute('class')))
         await header.click();
 }
