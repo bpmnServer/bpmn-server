@@ -1,0 +1,573 @@
+{
+  "name": "openfga",
+  "title": "Openfga",
+  "source": "https://raw.githubusercontent.com/openfga/api/main/docs/openapiv2/apidocs.swagger.json",
+  "authentication": "bearer",
+  "operations": [
+    {
+      "connector": "openfga.GetConfiguration",
+      "title": "[Experimental] Get AuthZEN PDP configuration and capabilities",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/.well-known/authzen-configuration/{store_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true,
+          "description": "The store ID for which to retrieve configuration.\nFollowing the AuthZEN spec's multi-tenant pattern, each store has its own discovery endpoint."
+        }
+      ]
+    },
+    {
+      "connector": "openfga.ListStores",
+      "title": "List all stores",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/stores",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "page_size",
+          "in": "query",
+          "required": false
+        },
+        {
+          "name": "continuation_token",
+          "in": "query",
+          "required": false
+        },
+        {
+          "name": "name",
+          "in": "query",
+          "required": false,
+          "description": "The name parameter instructs the API to only include results that match that name./nMultiple results may be returned. Only exact matches are returned; substring matches and regexes are not be evaluated."
+        }
+      ]
+    },
+    {
+      "connector": "openfga.CreateStore",
+      "title": "Create a store",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/stores",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/CreateStoreRequest"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "openfga.GetStore",
+      "title": "Get a store",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/stores/{store_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "openfga.DeleteStore",
+      "title": "Delete a store",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/stores/{store_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "openfga.Evaluation",
+      "title": "[Experimental] Evaluate whether a subject can perform an action on a resource",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/access/v1/evaluation",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/EvaluationBody"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "openfga.Evaluations",
+      "title": "[Experimental] Check whether one or more users are authorized to access resources",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/access/v1/evaluations",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/EvaluationsBody"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "openfga.ActionSearch",
+      "title": "[Experimental] Search for actions a subject can perform on a resource",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/access/v1/search/action",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/ActionSearchBody"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "openfga.ResourceSearch",
+      "title": "[Experimental] Search for resources a subject has access to",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/access/v1/search/resource",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/ResourceSearchBody"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "openfga.SubjectSearch",
+      "title": "[Experimental] Search for subjects with access to a resource",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/access/v1/search/subject",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/SubjectSearchBody"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "openfga.ReadAssertions",
+      "title": "Get assertions for a model",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/assertions/{authorization_model_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "authorization_model_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "openfga.WriteAssertions",
+      "title": "Upsert assertions for a model",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/assertions/{authorization_model_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "authorization_model_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/WriteAssertionsBody"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "openfga.ReadAuthorizationModels",
+      "title": "Get all authorization models",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/authorization-models",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "page_size",
+          "in": "query",
+          "required": false
+        },
+        {
+          "name": "continuation_token",
+          "in": "query",
+          "required": false
+        }
+      ]
+    },
+    {
+      "connector": "openfga.WriteAuthorizationModel",
+      "title": "Create a new authorization model",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/authorization-models",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/WriteAuthorizationModelBody"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "openfga.ReadAuthorizationModel",
+      "title": "Get an authorization model by its ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/authorization-models/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "openfga.BatchCheck",
+      "title": "Check multiple authorizations in a single request",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/batch-check",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/BatchCheckBody"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "openfga.ReadChanges",
+      "title": "Get all tuple changes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/changes",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "required": false
+        },
+        {
+          "name": "page_size",
+          "in": "query",
+          "required": false
+        },
+        {
+          "name": "continuation_token",
+          "in": "query",
+          "required": false
+        },
+        {
+          "name": "start_time",
+          "in": "query",
+          "required": false,
+          "description": "Start date and time of changes to read.\nFormat: ISO 8601 timestamp (e.g., 2022-01-01T00:00:00Z)\nIf a `continuation_token` is provided along side `start_time`, the `continuation_token` takes precedence over `start_time`."
+        }
+      ]
+    },
+    {
+      "connector": "openfga.Check",
+      "title": "Check user authorization",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/check",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/CheckBody"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "openfga.Expand",
+      "title": "Expand relationships in userset tree format",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/expand",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/ExpandBody"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "openfga.ListObjects",
+      "title": "List objects a user is related to",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/list-objects",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/ListObjectsBody"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "openfga.ListUsers",
+      "title": "List all users with a relationship to an object",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/list-users",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/ListUsersBody"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "openfga.Read",
+      "title": "Get stored relationship tuples",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/read",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/ReadBody"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "openfga.StreamedListObjects",
+      "title": "Stream all objects with a user relationship",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/streamed-list-objects",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/StreamedListObjectsBody"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "openfga.Write",
+      "title": "Add or delete tuples",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/stores/{store_id}/write",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "store_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/WriteBody"
+          }
+        }
+      ]
+    }
+  ]
+}

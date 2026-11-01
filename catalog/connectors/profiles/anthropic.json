@@ -1,0 +1,8 @@
+{
+  "name": "anthropic",
+  "title": "Anthropic",
+  "source": "https://raw.githubusercontent.com/anthropics/anthropic-openapi/main/openapi.yaml",
+  "authentication": "apiKey",
+  "operations": [],
+  "error": "404 Not Found"
+}

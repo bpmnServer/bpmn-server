@@ -1,0 +1,8 @@
+{
+  "name": "datadog",
+  "title": "Datadog",
+  "source": "https://raw.githubusercontent.com/DataDog/datadog-api-client-python/master/openapi.yaml",
+  "authentication": "apiKey",
+  "operations": [],
+  "error": "404 Not Found"
+}

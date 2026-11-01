@@ -1,0 +1,328 @@
+{
+  "name": "circleci",
+  "title": "Circleci",
+  "source": "https://api.apis.guru/v2/specs/circleci.com/v1/openapi.json",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "circleci.get_me",
+      "title": "Provides information about the signed in user.\n",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/me",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "circleci.get_project_username_project",
+      "title": "Build summary for each of the last 30 builds for a single git repo.\n",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/project/{username}/{project}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "circleci.post_project_username_project",
+      "title": "Triggers a new build, returns a summary of the build.\n",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/project/{username}/{project}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "build_parameters": {
+                    "$ref": "#/components/schemas/BuildParameters"
+                  },
+                  "parallel": {
+                    "$ref": "#/components/schemas/Parallel"
+                  },
+                  "revision": {
+                    "$ref": "#/components/schemas/Revision"
+                  },
+                  "tag": {
+                    "$ref": "#/components/schemas/Tag"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "circleci.delete_project_username_project_build-cache",
+      "title": "Clears the cache for a project.\n",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/project/{username}/{project}/build-cache",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "circleci.get_project_username_project_checkout-key",
+      "title": "Lists checkout keys.\n",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/project/{username}/{project}/checkout-key",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "circleci.post_project_username_project_checkout-key",
+      "title": "Creates a new checkout key.\nOnly usable with a user API token.\n",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/project/{username}/{project}/checkout-key",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "enum": [
+                  "deploy-key",
+                  "github-user-key"
+                ],
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "circleci.delete_project_username_project_checkout-key_fingerprint",
+      "title": "Delete a checkout key.\n",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/project/{username}/{project}/checkout-key/{fingerprint}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "circleci.get_project_username_project_checkout-key_fingerprint",
+      "title": "Get a checkout key.\n",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/project/{username}/{project}/checkout-key/{fingerprint}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "circleci.get_project_username_project_envvar",
+      "title": "Lists the environment variables for :project\n",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/project/{username}/{project}/envvar",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "circleci.post_project_username_project_envvar",
+      "title": "Creates a new environment variable\n",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/project/{username}/{project}/envvar",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "circleci.delete_project_username_project_envvar_name",
+      "title": "Deletes the environment variable named ':name'\n",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/project/{username}/{project}/envvar/{name}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "circleci.get_project_username_project_envvar_name",
+      "title": "Gets the hidden value of environment variable :name\n",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/project/{username}/{project}/envvar/{name}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "circleci.post_project_username_project_ssh-key",
+      "title": "Create an ssh key used to access external systems that require SSH key-based authentication\n",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/project/{username}/{project}/ssh-key",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "Content-Type",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "enum": [
+              "application/json"
+            ],
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "hostname": {
+                    "type": "string"
+                  },
+                  "private_key": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "circleci.post_project_username_project_tree_branch",
+      "title": "Triggers a new build, returns a summary of the build.\nOptional build parameters can be set using an experimental API.\n\nNote: For more about build parameters, read about [using parameterized builds](https://circleci.com/docs/parameterized-builds/)\n",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/project/{username}/{project}/tree/{branch}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "build_parameters": {
+                    "$ref": "#/components/schemas/BuildParameters"
+                  },
+                  "parallel": {
+                    "$ref": "#/components/schemas/Parallel"
+                  },
+                  "revision": {
+                    "$ref": "#/components/schemas/Revision"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "circleci.get_project_username_project_build_num",
+      "title": "Full details for a single build. The response includes all of the fields from the build summary.\nThis is also the payload for the [notification webhooks](/docs/configuration/#notify), in which case this object is the value to a key named 'payload'.\n",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/project/{username}/{project}/{build_num}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "circleci.get_project_username_project_build_num_artifacts",
+      "title": "List the artifacts produced by a given build.\n",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/project/{username}/{project}/{build_num}/artifacts",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "circleci.post_project_username_project_build_num_cancel",
+      "title": "Cancels the build, returns a summary of the build.\n",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/project/{username}/{project}/{build_num}/cancel",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "circleci.post_project_username_project_build_num_retry",
+      "title": "Retries the build, returns a summary of the new build.\n",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/project/{username}/{project}/{build_num}/retry",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "circleci.get_project_username_project_build_num_tests",
+      "title": "Provides test metadata for a build\nNote: [Learn how to set up your builds to collect test metadata](https://circleci.com/docs/test-metadata/)\n",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/project/{username}/{project}/{build_num}/tests",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "circleci.get_projects",
+      "title": "List of all the projects you're following on CircleCI, with build information organized by branch.\n",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/projects",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "circleci.get_recent-builds",
+      "title": "Build summary for each of the last 30 recent builds, ordered by build_num.\n",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/recent-builds",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "circleci.post_user_heroku-key",
+      "title": "Adds your Heroku API key to CircleCI, takes apikey as form param name.\n",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://circleci.com/api/v1",
+      "path": "/user/heroku-key",
+      "authentication": "apiKey",
+      "parameters": []
+    }
+  ]
+}

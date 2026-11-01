@@ -1,0 +1,3341 @@
+{
+  "name": "appwrite",
+  "title": "Appwrite",
+  "source": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/appwrite.io/server/0.9.3/openapi.yaml",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "appwrite.accountDelete",
+      "title": "Delete Account",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/account",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.accountGet",
+      "title": "Get Account",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/account",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.accountUpdateEmail",
+      "title": "Update Account Email",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/account/email",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "description": "User email.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "password": {
+                    "description": "User password. Must be between 6 to 32 chars.",
+                    "type": "string",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.accountGetLogs",
+      "title": "Get Account Logs",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/account/logs",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.accountUpdateName",
+      "title": "Update Account Name",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/account/name",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "description": "User name. Max length: 128 chars.",
+                    "type": "string",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.accountUpdatePassword",
+      "title": "Update Account Password",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/account/password",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "oldPassword": {
+                    "description": "Old user password. Must be between 6 to 32 chars.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "password": {
+                    "description": "New user password. Must be between 6 to 32 chars.",
+                    "type": "string",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "password"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.accountGetPrefs",
+      "title": "Get Account Preferences",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/account/prefs",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.accountUpdatePrefs",
+      "title": "Update Account Preferences",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/account/prefs",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "prefs": {
+                    "description": "Prefs key-value JSON object.",
+                    "type": "object",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "prefs"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.accountCreateRecovery",
+      "title": "Create Password Recovery",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/account/recovery",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "description": "User email.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "url": {
+                    "description": "URL to redirect the user back to your app from the recovery email. Only URLs from hostnames in your project platform list are allowed. This requirement helps to prevent an [open redirect](https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.",
+                    "type": "string",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "email",
+                  "url"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.accountUpdateRecovery",
+      "title": "Complete Password Recovery",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/account/recovery",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "password": {
+                    "description": "New password. Must be between 6 to 32 chars.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "passwordAgain": {
+                    "description": "New password again. Must be between 6 to 32 chars.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "secret": {
+                    "description": "Valid reset token.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "userId": {
+                    "description": "User account UID address.",
+                    "type": "string",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "userId",
+                  "secret",
+                  "password",
+                  "passwordAgain"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.accountDeleteSessions",
+      "title": "Delete All Account Sessions",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/account/sessions",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.accountGetSessions",
+      "title": "Get Account Sessions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/account/sessions",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.accountDeleteSession",
+      "title": "Delete Account Session",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/account/sessions/{sessionId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "sessionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[SESSION_ID]"
+          },
+          "description": "Session unique ID. Use the string 'current' to delete the current device session."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.accountGetSession",
+      "title": "Get Session By ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/account/sessions/{sessionId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "sessionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[SESSION_ID]"
+          },
+          "description": "Session unique ID. Use the string 'current' to get the current device session."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.accountCreateVerification",
+      "title": "Create Email Verification",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/account/verification",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "url": {
+                    "description": "URL to redirect the user back to your app from the verification email. Only URLs from hostnames in your project platform list are allowed. This requirement helps to prevent an [open redirect](https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.",
+                    "type": "string",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "url"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.accountUpdateVerification",
+      "title": "Complete Email Verification",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/account/verification",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "secret": {
+                    "description": "Valid verification token.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "userId": {
+                    "description": "User unique ID.",
+                    "type": "string",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "userId",
+                  "secret"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.avatarsGetBrowser",
+      "title": "Get Browser Icon",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/avatars/browsers/{code}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "code",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "aa"
+          },
+          "description": "Browser Code."
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 100,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Image width. Pass an integer between 0 to 2000. Defaults to 100."
+        },
+        {
+          "name": "height",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 100,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Image height. Pass an integer between 0 to 2000. Defaults to 100."
+        },
+        {
+          "name": "quality",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 100,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Image quality. Pass an integer between 0 to 100. Defaults to 100."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.avatarsGetCreditCard",
+      "title": "Get Credit Card Icon",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/avatars/credit-cards/{code}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "code",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "amex"
+          },
+          "description": "Credit Card Code. Possible values: amex, argencard, cabal, censosud, diners, discover, elo, hipercard, jcb, mastercard, naranja, targeta-shopping, union-china-pay, visa, mir, maestro."
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 100,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Image width. Pass an integer between 0 to 2000. Defaults to 100."
+        },
+        {
+          "name": "height",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 100,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Image height. Pass an integer between 0 to 2000. Defaults to 100."
+        },
+        {
+          "name": "quality",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 100,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Image quality. Pass an integer between 0 to 100. Defaults to 100."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.avatarsGetFavicon",
+      "title": "Get Favicon",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/avatars/favicon",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "format": "url",
+            "type": "string",
+            "x-example": "https://example.com"
+          },
+          "description": "Website URL which you want to fetch the favicon from."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.avatarsGetFlag",
+      "title": "Get Country Flag",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/avatars/flags/{code}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "code",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "af"
+          },
+          "description": "Country Code. ISO Alpha-2 country code format."
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 100,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Image width. Pass an integer between 0 to 2000. Defaults to 100."
+        },
+        {
+          "name": "height",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 100,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Image height. Pass an integer between 0 to 2000. Defaults to 100."
+        },
+        {
+          "name": "quality",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 100,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Image quality. Pass an integer between 0 to 100. Defaults to 100."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.avatarsGetImage",
+      "title": "Get Image from URL",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/avatars/image",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "format": "url",
+            "type": "string",
+            "x-example": "https://example.com"
+          },
+          "description": "Image URL which you want to crop."
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 400,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Resize preview image width, Pass an integer between 0 to 2000."
+        },
+        {
+          "name": "height",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 400,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Resize preview image height, Pass an integer between 0 to 2000."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.avatarsGetInitials",
+      "title": "Get User Initials",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/avatars/initials",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "name",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "",
+            "type": "string",
+            "x-example": "[NAME]"
+          },
+          "description": "Full Name. When empty, current user name or email will be used. Max length: 128 chars."
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 500,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Image width. Pass an integer between 0 to 2000. Defaults to 100."
+        },
+        {
+          "name": "height",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 500,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Image height. Pass an integer between 0 to 2000. Defaults to 100."
+        },
+        {
+          "name": "color",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "",
+            "type": "string"
+          },
+          "description": "Changes text color. By default a random color will be picked and stay will persistent to the given name."
+        },
+        {
+          "name": "background",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "",
+            "type": "string"
+          },
+          "description": "Changes background color. By default a random color will be picked and stay will persistent to the given name."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.avatarsGetQR",
+      "title": "Get QR Code",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/avatars/qr",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "text",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[TEXT]"
+          },
+          "description": "Plain text to be converted to QR code image."
+        },
+        {
+          "name": "size",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 400,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "QR code size. Pass an integer between 0 to 1000. Defaults to 400."
+        },
+        {
+          "name": "margin",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 1,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Margin from edge. Pass an integer between 0 to 10. Defaults to 1."
+        },
+        {
+          "name": "download",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": false,
+            "type": "boolean",
+            "x-example": false
+          },
+          "description": "Return resulting image with 'Content-Disposition: attachment ' headers for the browser to start downloading it. Pass 0 for no header, or 1 for otherwise. Default value is set to 0."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.databaseListCollections",
+      "title": "List Collections",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/database/collections",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "",
+            "type": "string",
+            "x-example": "[SEARCH]"
+          },
+          "description": "Search term to filter your list results. Max length: 256 chars."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 25,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 0,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Results offset. The default value is 0. Use this param to manage pagination."
+        },
+        {
+          "name": "orderType",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "ASC",
+            "type": "string",
+            "x-example": "ASC"
+          },
+          "description": "Order result by ASC or DESC order."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.databaseCreateCollection",
+      "title": "Create Collection",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/database/collections",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "description": "Collection name. Max length: 128 chars.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "read": {
+                    "description": "An array of strings with read permissions. By default no user is granted with any read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  },
+                  "rules": {
+                    "description": "Array of [rule objects](/docs/rules). Each rule define a collection field name, data type and validation.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  },
+                  "write": {
+                    "description": "An array of strings with write permissions. By default no user is granted with any write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "name",
+                  "read",
+                  "write",
+                  "rules"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.databaseDeleteCollection",
+      "title": "Delete Collection",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/database/collections/{collectionId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "collectionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[COLLECTION_ID]"
+          },
+          "description": "Collection unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.databaseGetCollection",
+      "title": "Get Collection",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/database/collections/{collectionId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "collectionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[COLLECTION_ID]"
+          },
+          "description": "Collection unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.databaseUpdateCollection",
+      "title": "Update Collection",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/database/collections/{collectionId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "collectionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[COLLECTION_ID]"
+          },
+          "description": "Collection unique ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "description": "Collection name. Max length: 128 chars.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "read": {
+                    "description": "An array of strings with read permissions. By default inherits the existing read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  },
+                  "rules": {
+                    "description": "Array of [rule objects](/docs/rules). Each rule define a collection field name, data type and validation.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  },
+                  "write": {
+                    "description": "An array of strings with write permissions. By default inherits the existing write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.databaseListDocuments",
+      "title": "List Documents",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/database/collections/{collectionId}/documents",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "collectionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[COLLECTION_ID]"
+          },
+          "description": "Collection unique ID. You can create a new collection with validation rules using the Database service [server integration](/docs/server/database#createCollection)."
+        },
+        {
+          "name": "filters",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "description": "Array of filter strings. Each filter is constructed from a key name, comparison operator (=, !=, >, <, <=, >=) and a value. You can also use a dot (.) separator in attribute names to filter by child document attributes. Examples: 'name=John Doe' or 'category.$id>=5bed2d152c362'."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 25,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Maximum number of documents to return in response.  Use this value to manage pagination. By default will return maximum 25 results. Maximum of 100 results allowed per request."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 0,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Offset value. The default value is 0. Use this param to manage pagination."
+        },
+        {
+          "name": "orderField",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "",
+            "type": "string",
+            "x-example": "[ORDER_FIELD]"
+          },
+          "description": "Document field that results will be sorted by."
+        },
+        {
+          "name": "orderType",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "ASC",
+            "type": "string",
+            "x-example": "DESC"
+          },
+          "description": "Order direction. Possible values are DESC for descending order, or ASC for ascending order."
+        },
+        {
+          "name": "orderCast",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "string",
+            "type": "string",
+            "x-example": "int"
+          },
+          "description": "Order field type casting. Possible values are int, string, date, time or datetime. The database will attempt to cast the order field to the value you pass here. The default value is a string."
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "",
+            "type": "string",
+            "x-example": "[SEARCH]"
+          },
+          "description": "Search query. Enter any free text search. The database will try to find a match against all document attributes and children. Max length: 256 chars."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.databaseCreateDocument",
+      "title": "Create Document",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/database/collections/{collectionId}/documents",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "collectionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[COLLECTION_ID]"
+          },
+          "description": "Collection unique ID. You can create a new collection with validation rules using the Database service [server integration](/docs/server/database#createCollection)."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "data": {
+                    "description": "Document data as JSON object.",
+                    "type": "object",
+                    "x-example": null
+                  },
+                  "parentDocument": {
+                    "description": "Parent document unique ID. Use when you want your new document to be a child of a parent document.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "parentProperty": {
+                    "description": "Parent document property name. Use when you want your new document to be a child of a parent document.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "parentPropertyType": {
+                    "description": "Parent document property connection type. You can set this value to **assign**, **append** or **prepend**, default value is assign. Use when you want your new document to be a child of a parent document.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "read": {
+                    "description": "An array of strings with read permissions. By default only the current user is granted with read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  },
+                  "write": {
+                    "description": "An array of strings with write permissions. By default only the current user is granted with write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.databaseDeleteDocument",
+      "title": "Delete Document",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/database/collections/{collectionId}/documents/{documentId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "collectionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[COLLECTION_ID]"
+          },
+          "description": "Collection unique ID. You can create a new collection with validation rules using the Database service [server integration](/docs/server/database#createCollection)."
+        },
+        {
+          "name": "documentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[DOCUMENT_ID]"
+          },
+          "description": "Document unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.databaseGetDocument",
+      "title": "Get Document",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/database/collections/{collectionId}/documents/{documentId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "collectionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[COLLECTION_ID]"
+          },
+          "description": "Collection unique ID. You can create a new collection with validation rules using the Database service [server integration](/docs/server/database#createCollection)."
+        },
+        {
+          "name": "documentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[DOCUMENT_ID]"
+          },
+          "description": "Document unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.databaseUpdateDocument",
+      "title": "Update Document",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/database/collections/{collectionId}/documents/{documentId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "collectionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[COLLECTION_ID]"
+          },
+          "description": "Collection unique ID. You can create a new collection with validation rules using the Database service [server integration](/docs/server/database#createCollection)."
+        },
+        {
+          "name": "documentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[DOCUMENT_ID]"
+          },
+          "description": "Document unique ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "data": {
+                    "description": "Document data as JSON object.",
+                    "type": "object",
+                    "x-example": null
+                  },
+                  "read": {
+                    "description": "An array of strings with read permissions. By default inherits the existing read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  },
+                  "write": {
+                    "description": "An array of strings with write permissions. By default inherits the existing write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "data"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.functionsList",
+      "title": "List Functions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/functions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "",
+            "type": "string",
+            "x-example": "[SEARCH]"
+          },
+          "description": "Search term to filter your list results. Max length: 256 chars."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 25,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 0,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Results offset. The default value is 0. Use this param to manage pagination."
+        },
+        {
+          "name": "orderType",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "ASC",
+            "type": "string",
+            "x-example": "ASC"
+          },
+          "description": "Order result by ASC or DESC order."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.functionsCreate",
+      "title": "Create Function",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/functions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "events": {
+                    "description": "Events list.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  },
+                  "execute": {
+                    "description": "An array of strings with execution permissions. By default no user is granted with any execute permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  },
+                  "name": {
+                    "description": "Function name. Max length: 128 chars.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "runtime": {
+                    "description": "Execution runtime.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "schedule": {
+                    "description": "Schedule CRON syntax.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "timeout": {
+                    "description": "Function maximum execution time in seconds.",
+                    "type": "integer",
+                    "x-example": null
+                  },
+                  "vars": {
+                    "description": "Key-value JSON object.",
+                    "type": "object",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "name",
+                  "execute",
+                  "runtime"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.functionsDelete",
+      "title": "Delete Function",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/functions/{functionId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "functionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[FUNCTION_ID]"
+          },
+          "description": "Function unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.functionsGet",
+      "title": "Get Function",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/functions/{functionId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "functionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[FUNCTION_ID]"
+          },
+          "description": "Function unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.functionsUpdate",
+      "title": "Update Function",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/functions/{functionId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "functionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[FUNCTION_ID]"
+          },
+          "description": "Function unique ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "events": {
+                    "description": "Events list.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  },
+                  "execute": {
+                    "description": "An array of strings with execution permissions. By default no user is granted with any execute permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  },
+                  "name": {
+                    "description": "Function name. Max length: 128 chars.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "schedule": {
+                    "description": "Schedule CRON syntax.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "timeout": {
+                    "description": "Function maximum execution time in seconds.",
+                    "type": "integer",
+                    "x-example": null
+                  },
+                  "vars": {
+                    "description": "Key-value JSON object.",
+                    "type": "object",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "name",
+                  "execute"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.functionsListExecutions",
+      "title": "List Executions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/functions/{functionId}/executions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "functionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[FUNCTION_ID]"
+          },
+          "description": "Function unique ID."
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "",
+            "type": "string",
+            "x-example": "[SEARCH]"
+          },
+          "description": "Search term to filter your list results. Max length: 256 chars."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 25,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 0,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Results offset. The default value is 0. Use this param to manage pagination."
+        },
+        {
+          "name": "orderType",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "ASC",
+            "type": "string",
+            "x-example": "ASC"
+          },
+          "description": "Order result by ASC or DESC order."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.functionsCreateExecution",
+      "title": "Create Execution",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/functions/{functionId}/executions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "functionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[FUNCTION_ID]"
+          },
+          "description": "Function unique ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "data": {
+                    "description": "String of custom data to send to function.",
+                    "type": "string",
+                    "x-example": null
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.functionsGetExecution",
+      "title": "Get Execution",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/functions/{functionId}/executions/{executionId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "functionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[FUNCTION_ID]"
+          },
+          "description": "Function unique ID."
+        },
+        {
+          "name": "executionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[EXECUTION_ID]"
+          },
+          "description": "Execution unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.functionsUpdateTag",
+      "title": "Update Function Tag",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/functions/{functionId}/tag",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "functionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[FUNCTION_ID]"
+          },
+          "description": "Function unique ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "tag": {
+                    "description": "Tag unique ID.",
+                    "type": "string",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "tag"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.functionsListTags",
+      "title": "List Tags",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/functions/{functionId}/tags",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "functionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[FUNCTION_ID]"
+          },
+          "description": "Function unique ID."
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "",
+            "type": "string",
+            "x-example": "[SEARCH]"
+          },
+          "description": "Search term to filter your list results. Max length: 256 chars."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 25,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 0,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Results offset. The default value is 0. Use this param to manage pagination."
+        },
+        {
+          "name": "orderType",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "ASC",
+            "type": "string",
+            "x-example": "ASC"
+          },
+          "description": "Order result by ASC or DESC order."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.functionsCreateTag",
+      "title": "Create Tag",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/functions/{functionId}/tags",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "functionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[FUNCTION_ID]"
+          },
+          "description": "Function unique ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "code": {
+                    "description": "Gzip file with your code package. When used with the Appwrite CLI, pass the path to your code directory, and the CLI will automatically package your code. Use a path that is within the current directory.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "command": {
+                    "description": "Code execution command.",
+                    "type": "string",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "command",
+                  "code"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.functionsDeleteTag",
+      "title": "Delete Tag",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/functions/{functionId}/tags/{tagId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "functionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[FUNCTION_ID]"
+          },
+          "description": "Function unique ID."
+        },
+        {
+          "name": "tagId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[TAG_ID]"
+          },
+          "description": "Tag unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.functionsGetTag",
+      "title": "Get Tag",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/functions/{functionId}/tags/{tagId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "functionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[FUNCTION_ID]"
+          },
+          "description": "Function unique ID."
+        },
+        {
+          "name": "tagId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[TAG_ID]"
+          },
+          "description": "Tag unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.healthGet",
+      "title": "Get HTTP",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/health",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.healthGetAntiVirus",
+      "title": "Get Anti virus",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/health/anti-virus",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.healthGetCache",
+      "title": "Get Cache",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/health/cache",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.healthGetDB",
+      "title": "Get DB",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/health/db",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.healthGetQueueCertificates",
+      "title": "Get Certificate Queue",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/health/queue/certificates",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.healthGetQueueFunctions",
+      "title": "Get Functions Queue",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/health/queue/functions",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.healthGetQueueLogs",
+      "title": "Get Logs Queue",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/health/queue/logs",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.healthGetQueueTasks",
+      "title": "Get Tasks Queue",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/health/queue/tasks",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.healthGetQueueUsage",
+      "title": "Get Usage Queue",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/health/queue/usage",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.healthGetQueueWebhooks",
+      "title": "Get Webhooks Queue",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/health/queue/webhooks",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.healthGetStorageLocal",
+      "title": "Get Local Storage",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/health/storage/local",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.healthGetTime",
+      "title": "Get Time",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/health/time",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.localeGet",
+      "title": "Get User Locale",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/locale",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.localeGetContinents",
+      "title": "List Continents",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/locale/continents",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.localeGetCountries",
+      "title": "List Countries",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/locale/countries",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.localeGetCountriesEU",
+      "title": "List EU Countries",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/locale/countries/eu",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.localeGetCountriesPhones",
+      "title": "List Countries Phone Codes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/locale/countries/phones",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.localeGetCurrencies",
+      "title": "List Currencies",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/locale/currencies",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.localeGetLanguages",
+      "title": "List Languages",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/locale/languages",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "appwrite.storageListFiles",
+      "title": "List Files",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/storage/files",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "",
+            "type": "string",
+            "x-example": "[SEARCH]"
+          },
+          "description": "Search term to filter your list results. Max length: 256 chars."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 25,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 0,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Results offset. The default value is 0. Use this param to manage pagination."
+        },
+        {
+          "name": "orderType",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "ASC",
+            "type": "string",
+            "x-example": "ASC"
+          },
+          "description": "Order result by ASC or DESC order."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.storageCreateFile",
+      "title": "Create File",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/storage/files",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "file": {
+                    "description": "Binary file.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "read": {
+                    "description": "An array of strings with read permissions. By default only the current user is granted with read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  },
+                  "write": {
+                    "description": "An array of strings with write permissions. By default only the current user is granted with write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.storageDeleteFile",
+      "title": "Delete File",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/storage/files/{fileId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "fileId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[FILE_ID]"
+          },
+          "description": "File unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.storageGetFile",
+      "title": "Get File",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/storage/files/{fileId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "fileId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[FILE_ID]"
+          },
+          "description": "File unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.storageUpdateFile",
+      "title": "Update File",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/storage/files/{fileId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "fileId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[FILE_ID]"
+          },
+          "description": "File unique ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "read": {
+                    "description": "An array of strings with read permissions. By default no user is granted with any read permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  },
+                  "write": {
+                    "description": "An array of strings with write permissions. By default no user is granted with any write permissions. [learn more about permissions](/docs/permissions) and get a full list of available permissions.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "read",
+                  "write"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.storageGetFileDownload",
+      "title": "Get File for Download",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/storage/files/{fileId}/download",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "fileId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[FILE_ID]"
+          },
+          "description": "File unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.storageGetFilePreview",
+      "title": "Get File Preview",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/storage/files/{fileId}/preview",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "fileId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[FILE_ID]"
+          },
+          "description": "File unique ID"
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 0,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Resize preview image width, Pass an integer between 0 to 4000."
+        },
+        {
+          "name": "height",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 0,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Resize preview image height, Pass an integer between 0 to 4000."
+        },
+        {
+          "name": "gravity",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "center",
+            "type": "string",
+            "x-example": "center"
+          },
+          "description": "Image crop gravity. Can be one of center,top-left,top,top-right,left,right,bottom-left,bottom,bottom-right"
+        },
+        {
+          "name": "quality",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 100,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Preview image quality. Pass an integer between 0 to 100. Defaults to 100."
+        },
+        {
+          "name": "borderWidth",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 0,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Preview image border in pixels. Pass an integer between 0 to 100. Defaults to 0."
+        },
+        {
+          "name": "borderColor",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "",
+            "type": "string"
+          },
+          "description": "Preview image border color. Use a valid HEX color, no # is needed for prefix."
+        },
+        {
+          "name": "borderRadius",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 0,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Preview image border radius in pixels. Pass an integer between 0 to 4000."
+        },
+        {
+          "name": "opacity",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 1,
+            "format": "float",
+            "type": "number",
+            "x-example": 0
+          },
+          "description": "Preview image opacity. Only works with images having an alpha channel (like png). Pass a number between 0 to 1."
+        },
+        {
+          "name": "rotation",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 0,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Preview image rotation in degrees. Pass an integer between 0 and 360."
+        },
+        {
+          "name": "background",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "",
+            "type": "string"
+          },
+          "description": "Preview image background color. Only works with transparent images (png). Use a valid HEX color, no # is needed for prefix."
+        },
+        {
+          "name": "output",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "",
+            "type": "string",
+            "x-example": "jpg"
+          },
+          "description": "Output format type (jpeg, jpg, png, gif and webp)."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.storageGetFileView",
+      "title": "Get File for View",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/storage/files/{fileId}/view",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "fileId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[FILE_ID]"
+          },
+          "description": "File unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.teamsList",
+      "title": "List Teams",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/teams",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "",
+            "type": "string",
+            "x-example": "[SEARCH]"
+          },
+          "description": "Search term to filter your list results. Max length: 256 chars."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 25,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 0,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Results offset. The default value is 0. Use this param to manage pagination."
+        },
+        {
+          "name": "orderType",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "ASC",
+            "type": "string",
+            "x-example": "ASC"
+          },
+          "description": "Order result by ASC or DESC order."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.teamsCreate",
+      "title": "Create Team",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/teams",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "description": "Team name. Max length: 128 chars.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "roles": {
+                    "description": "Array of strings. Use this param to set the roles in the team for the user who created it. The default role is **owner**. A role can be any string. Learn more about [roles and permissions](/docs/permissions). Max length for each role is 32 chars.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.teamsDelete",
+      "title": "Delete Team",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/teams/{teamId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "teamId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[TEAM_ID]"
+          },
+          "description": "Team unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.teamsGet",
+      "title": "Get Team",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/teams/{teamId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "teamId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[TEAM_ID]"
+          },
+          "description": "Team unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.teamsUpdate",
+      "title": "Update Team",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/teams/{teamId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "teamId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[TEAM_ID]"
+          },
+          "description": "Team unique ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "description": "Team name. Max length: 128 chars.",
+                    "type": "string",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.teamsGetMemberships",
+      "title": "Get Team Memberships",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/teams/{teamId}/memberships",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "teamId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[TEAM_ID]"
+          },
+          "description": "Team unique ID."
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "",
+            "type": "string",
+            "x-example": "[SEARCH]"
+          },
+          "description": "Search term to filter your list results. Max length: 256 chars."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 25,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 0,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Results offset. The default value is 0. Use this param to manage pagination."
+        },
+        {
+          "name": "orderType",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "ASC",
+            "type": "string",
+            "x-example": "ASC"
+          },
+          "description": "Order result by ASC or DESC order."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.teamsCreateMembership",
+      "title": "Create Team Membership",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/teams/{teamId}/memberships",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "teamId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[TEAM_ID]"
+          },
+          "description": "Team unique ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "description": "New team member email.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "name": {
+                    "description": "New team member name. Max length: 128 chars.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "roles": {
+                    "description": "Array of strings. Use this param to set the user roles in the team. A role can be any string. Learn more about [roles and permissions](/docs/permissions). Max length for each role is 32 chars.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  },
+                  "url": {
+                    "description": "URL to redirect the user back to your app from the invitation email.  Only URLs from hostnames in your project platform list are allowed. This requirement helps to prevent an [open redirect](https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html) attack against your project API.",
+                    "type": "string",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "email",
+                  "roles",
+                  "url"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.teamsDeleteMembership",
+      "title": "Delete Team Membership",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/teams/{teamId}/memberships/{membershipId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "teamId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[TEAM_ID]"
+          },
+          "description": "Team unique ID."
+        },
+        {
+          "name": "membershipId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[MEMBERSHIP_ID]"
+          },
+          "description": "Membership ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.teamsUpdateMembershipRoles",
+      "title": "Update Membership Roles",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/teams/{teamId}/memberships/{membershipId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "teamId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[TEAM_ID]"
+          },
+          "description": "Team unique ID."
+        },
+        {
+          "name": "membershipId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[MEMBERSHIP_ID]"
+          },
+          "description": "Membership ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "roles": {
+                    "description": "Array of strings. Use this param to set the user roles in the team. A role can be any string. Learn more about [roles and permissions](/docs/permissions). Max length for each role is 32 chars.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "roles"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.teamsUpdateMembershipStatus",
+      "title": "Update Team Membership Status",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/teams/{teamId}/memberships/{membershipId}/status",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "teamId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[TEAM_ID]"
+          },
+          "description": "Team unique ID."
+        },
+        {
+          "name": "membershipId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[MEMBERSHIP_ID]"
+          },
+          "description": "Membership ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "secret": {
+                    "description": "Secret key.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "userId": {
+                    "description": "User unique ID.",
+                    "type": "string",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "userId",
+                  "secret"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.usersList",
+      "title": "List Users",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/users",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "",
+            "type": "string",
+            "x-example": "[SEARCH]"
+          },
+          "description": "Search term to filter your list results. Max length: 256 chars."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 25,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Results limit value. By default will return maximum 25 results. Maximum of 100 results allowed per request."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 0,
+            "format": "int32",
+            "type": "integer",
+            "x-example": 0
+          },
+          "description": "Results offset. The default value is 0. Use this param to manage pagination."
+        },
+        {
+          "name": "orderType",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "ASC",
+            "type": "string",
+            "x-example": "ASC"
+          },
+          "description": "Order result by ASC or DESC order."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.usersCreate",
+      "title": "Create User",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/users",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "description": "User email.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "name": {
+                    "description": "User name. Max length: 128 chars.",
+                    "type": "string",
+                    "x-example": null
+                  },
+                  "password": {
+                    "description": "User password. Must be between 6 to 32 chars.",
+                    "type": "string",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.usersDelete",
+      "title": "Delete User",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/users/{userId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[USER_ID]"
+          },
+          "description": "User unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.usersGet",
+      "title": "Get User",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/users/{userId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[USER_ID]"
+          },
+          "description": "User unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.usersGetLogs",
+      "title": "Get User Logs",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/users/{userId}/logs",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[USER_ID]"
+          },
+          "description": "User unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.usersGetPrefs",
+      "title": "Get User Preferences",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/users/{userId}/prefs",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[USER_ID]"
+          },
+          "description": "User unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.usersUpdatePrefs",
+      "title": "Update User Preferences",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/users/{userId}/prefs",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[USER_ID]"
+          },
+          "description": "User unique ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "prefs": {
+                    "description": "Prefs key-value JSON object.",
+                    "type": "object",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "prefs"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.usersDeleteSessions",
+      "title": "Delete User Sessions",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/users/{userId}/sessions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[USER_ID]"
+          },
+          "description": "User unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.usersGetSessions",
+      "title": "Get User Sessions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/users/{userId}/sessions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[USER_ID]"
+          },
+          "description": "User unique ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.usersDeleteSession",
+      "title": "Delete User Session",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/users/{userId}/sessions/{sessionId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[USER_ID]"
+          },
+          "description": "User unique ID."
+        },
+        {
+          "name": "sessionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[SESSION_ID]"
+          },
+          "description": "User unique session ID."
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.usersUpdateStatus",
+      "title": "Update User Status",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/users/{userId}/status",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[USER_ID]"
+          },
+          "description": "User unique ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "status": {
+                    "description": "User Status code. To activate the user pass 1, to block the user pass 2 and for disabling the user pass 0",
+                    "type": "integer",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "status"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "appwrite.usersUpdateVerification",
+      "title": "Update Email Verification",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://appwrite.io/v1",
+      "path": "/users/{userId}/verification",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-example": "[USER_ID]"
+          },
+          "description": "User unique ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "emailVerification": {
+                    "description": "User Email Verification Status.",
+                    "type": "boolean",
+                    "x-example": null
+                  }
+                },
+                "required": [
+                  "emailVerification"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

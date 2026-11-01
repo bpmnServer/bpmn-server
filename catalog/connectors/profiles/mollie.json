@@ -1,0 +1,3053 @@
+{
+  "name": "mollie",
+  "title": "Mollie",
+  "source": "https://raw.githubusercontent.com/mollie/openapi/main/specs.yaml",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "mollie.oauth-generate-tokens",
+      "title": "Generate tokens",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/oauth2/tokens",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "Authorization",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The OAuth client ID and client secret as\n[basic access credentials](https://en.wikipedia.org/wiki/Basic_access_authentication).\n\nPseudo code: `\"Basic \" + toBase64(client_id + \":\" + client_secret)`\n\nFor example: `Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==`"
+        },
+        {
+          "name": "Content-Type",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "This header value must match the type of the request body you send, if there is a request body. For example, if you send the request body as JSON, this header must be set to `application/json`, and if you send it as form encoded you must set this header to `application/x-www-form-urlencoded`."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "grant_type"
+                ],
+                "properties": {
+                  "grant_type": {
+                    "$ref": "#/components/schemas/oauth-grant-type",
+                    "description": "If you wish to exchange your authorization code for an app access token, use grant type\n`authorization_code`. If you wish to renew your app access token with your refresh token, use grant type\n`refresh_token`."
+                  },
+                  "code": {
+                    "type": "string",
+                    "description": "The authorization code you received when creating the authorization. Only use this field when using\ngrant type `authorization_code`.",
+                    "example": "auth_..."
+                  },
+                  "refresh_token": {
+                    "type": "string",
+                    "description": "The refresh token you received when creating the authorization. Only use this field when using grant\ntype `refresh_token`.",
+                    "example": "refresh_..."
+                  },
+                  "redirect_uri": {
+                    "type": "string",
+                    "description": "The URL the merchant is sent back to once the request has been authorized. It must match the URL you set\nwhen registering your app.",
+                    "example": "https://example.com/redirect"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.oauth-revoke-tokens",
+      "title": "Revoke tokens",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/oauth2/tokens",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "Authorization",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The OAuth client ID and client secret as\n[basic access credentials](https://en.wikipedia.org/wiki/Basic_access_authentication).\n\nPseudo code: `\"Basic \" + toBase64(client_id + \":\" + client_secret)`\n\nFor example: `Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==`"
+        },
+        {
+          "name": "Content-Type",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "This header value must match the type of the request body you send, if there is a request body. For example, if you send the request body as JSON, this header must be set to `application/json`, and if you send it as form encoded you must set this header to `application/x-www-form-urlencoded`."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "token_type_hint",
+                  "token"
+                ],
+                "properties": {
+                  "token_type_hint": {
+                    "$ref": "#/components/schemas/oauth-token-type-hint",
+                    "description": "The type of token you want to revoke."
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "The token you want to revoke.",
+                    "example": "access_..."
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-balances",
+      "title": "List balances",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/balances",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "currency",
+          "in": "query",
+          "schema": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "EUR"
+          },
+          "description": "Optionally only return balances with the given currency. For example: `EUR`."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-balance",
+      "title": "Get balance",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/balances/{balanceId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.get-primary-balance",
+      "title": "Get primary balance",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/balances/primary",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.get-balance-report",
+      "title": "Get balance report",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/balances/{balanceId}/report",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "2024-01-01"
+          },
+          "description": "The start date of the report, in `YYYY-MM-DD` format. The from date is\n'inclusive', and in Central European Time. This means a report with for example `from=2024-01-01` will\ninclude transactions from 2024-01-01 0:00:00 CET and onwards."
+        },
+        {
+          "name": "until",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "2024-02-01"
+          },
+          "description": "The end date of the report, in `YYYY-MM-DD` format. The until date is 'exclusive', and in Central European Time.\nThis means a report with for example `until=2024-02-01` will include transactions up until\n2024-01-31 23:59:59 CET."
+        },
+        {
+          "name": "grouping",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/balance-report-grouping"
+          },
+          "description": "You can retrieve reports in two different formats. With the `status-balances` format, transactions are grouped\nby status (e.g. `pending`, `available`), then by transaction type, and then by other sub-groupings where\navailable (e.g. payment method).\n\nWith the `transaction-categories` format, transactions are grouped by\ntransaction type, then by status, and then again by other sub-groupings where available."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-balance-transactions",
+      "title": "List balance transactions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/balances/{balanceId}/transactions",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.list-settlements",
+      "title": "List settlements",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/settlements",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "balanceId",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/balanceToken",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "Provide the token of the balance to filter the settlements by. This is\nthe balance token that the settlement was settled to."
+        },
+        {
+          "name": "year",
+          "in": "query",
+          "schema": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "2025"
+          },
+          "description": "Provide the year to query the settlements. Must be used combined with `month` parameter"
+        },
+        {
+          "name": "month",
+          "in": "query",
+          "schema": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "1"
+          },
+          "description": "Provide the month to query the settlements. Must be used combined with `year` parameter"
+        },
+        {
+          "name": "currencies",
+          "in": "query",
+          "schema": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "$ref": "#/components/schemas/currencies",
+            "examples": [
+              "EUR",
+              "EUR,GBP"
+            ]
+          },
+          "description": "Provides the currencies to retrieve the settlements. It accepts multiple currencies in a comma-separated format."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-settlement",
+      "title": "Get settlement",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/settlements/{settlementId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.get-open-settlement",
+      "title": "Get open settlement",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/settlements/open",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.get-next-settlement",
+      "title": "Get next settlement",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/settlements/next",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.list-settlement-payments",
+      "title": "List settlement payments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/settlements/{settlementId}/payments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/paymentToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate\nthe result set."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-settlement-captures",
+      "title": "List settlement captures",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/settlements/{settlementId}/captures",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/captureToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate\nthe result set."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-settlement-refunds",
+      "title": "List settlement refunds",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/settlements/{settlementId}/refunds",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/refundToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate\nthe result set."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-settlement-chargebacks",
+      "title": "List settlement chargebacks",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/settlements/{settlementId}/chargebacks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/chargebackToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate the\nresult set."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-invoices",
+      "title": "List invoices",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/invoices",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "reference",
+          "in": "query",
+          "schema": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "2024.10000"
+          },
+          "description": "Filter for an invoice with a specific invoice reference, for example\n`2024.10000`."
+        },
+        {
+          "name": "year",
+          "in": "query",
+          "schema": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": 2024
+          },
+          "description": "Filter for invoices of a specific year, for example `2024`."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-invoice",
+      "title": "Get invoice",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/invoices/{invoiceId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.list-permissions",
+      "title": "List permissions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/permissions",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.get-permission",
+      "title": "Get permission",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/permissions/{permissionId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.get-organization",
+      "title": "Get organization",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/organizations/{organizationId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.get-current-organization",
+      "title": "Get current organization",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/organizations/me",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.get-partner-status",
+      "title": "Get partner status",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/organizations/me/partner",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.create-profile",
+      "title": "Create profile",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/profiles",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/profile-request"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-profiles",
+      "title": "List profiles",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/profiles",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.get-profile",
+      "title": "Get profile",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/profiles/{profileId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.update-profile",
+      "title": "Update profile",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/profiles/{profileId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The profile's name, this will usually reflect the trade name or brand name of the profile's website or\napplication.",
+                    "example": "My new website name"
+                  },
+                  "website": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The URL to the profile's website or application. Only `https` or `http` URLs are allowed. No `@` signs\nare allowed.",
+                    "example": "https://example.com"
+                  },
+                  "email": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The email address associated with the profile's trade name or brand.\n\nIf the domain contains non-ASCII characters, encode it as Punycode per [RFC 3492](https://www.rfc-editor.org/rfc/rfc3492).",
+                    "example": "test@mollie.com"
+                  },
+                  "phone": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The phone number associated with the profile's trade name or brand.",
+                    "example": "+31208202071"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The products or services offered by the profile's website or application.",
+                    "example": "My website description",
+                    "maxLength": 500
+                  },
+                  "countriesOfActivity": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "A list of countries where you expect that the majority of the profile's customers reside,\nin [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) format.",
+                    "example": [
+                      "NL",
+                      "GB"
+                    ]
+                  },
+                  "businessCategory": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The industry associated with the profile's trade name or brand. Please refer to the\n[business category list](common-data-types) for all possible options.",
+                    "example": "OTHER_MERCHANDISE"
+                  },
+                  "mode": {
+                    "$ref": "#/components/schemas/mode",
+                    "description": "Updating a profile from `test` mode to `live` mode will trigger a verification process, where we review\nthe profile before it can start accepting payments."
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.delete-profile",
+      "title": "Delete profile",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/profiles/{profileId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.get-current-profile",
+      "title": "Get current profile",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/profiles/me",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.get-onboarding-status",
+      "title": "Get onboarding status",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/onboarding/me",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.submit-onboarding-data",
+      "title": "Submit onboarding data",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/onboarding/me",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "organization": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "The name of the organization.",
+                        "example": "Mollie B.V."
+                      },
+                      "address": {
+                        "$ref": "#/components/schemas/address",
+                        "description": "The address of the organization."
+                      },
+                      "registrationNumber": {
+                        "type": "string",
+                        "description": "The registration number of the organization at their local chamber of commerce.",
+                        "example": "30204462"
+                      },
+                      "vatNumber": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The VAT number of the organization, if based in the European Union or in The United Kingdom. VAT\nnumbers are verified against the international registry *VIES*.\n\nThe field can be omitted for merchants residing in other countries.",
+                        "example": "NL815839091B01"
+                      },
+                      "vatRegulation": {
+                        "$ref": "#/components/schemas/onboarding-vat-regulation"
+                      }
+                    }
+                  },
+                  "profile": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "The profile's name, this will usually reflect the trade name or brand name of the profile's website\nor application.",
+                        "example": "Mollie"
+                      },
+                      "url": {
+                        "type": "string",
+                        "description": "The URL to the profile's website or application. Only `https` or `http` URLs are allowed. No `@`\nsigns are allowed.",
+                        "example": "https://www.mollie.com"
+                      },
+                      "email": {
+                        "type": "string",
+                        "description": "The email address associated with the profile's trade name or brand.\n\nIf the domain contains non-ASCII characters, encode it as Punycode per [RFC 3492](https://www.rfc-editor.org/rfc/rfc3492).",
+                        "example": "info@mollie.com"
+                      },
+                      "phone": {
+                        "type": "string",
+                        "description": "The phone number associated with the profile's trade name or brand.",
+                        "example": "+31208202070"
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The products or services offered by the profile's website or application.",
+                        "example": "Payment service provider"
+                      },
+                      "businessCategory": {
+                        "type": "string",
+                        "description": "The industry associated with the profile's trade name or brand. Please refer to the\n[business category list](common-data-types) for all possible options.",
+                        "example": "MONEY_SERVICES"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-capabilities",
+      "title": "List capabilities",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/capabilities",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.list-clients",
+      "title": "List clients",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/clients",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.get-client",
+      "title": "Get client",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/clients/{organizationId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.create-client-link",
+      "title": "Create client link",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/client-links",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/client-link-request"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.create-webhook",
+      "title": "Create a webhook",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/webhooks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "A name that identifies the webhook.",
+                    "example": "Webhook #1"
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "The URL Mollie will send the events to. This URL must be publicly accessible.",
+                    "example": "https://mollie.com/"
+                  },
+                  "eventTypes": {
+                    "oneOf": [
+                      {
+                        "type": "array",
+                        "description": "The list of events to enable for this webhook. You may specify `'*'` to add all events, except those\nthat require explicit selection.",
+                        "items": {
+                          "$ref": "#/components/schemas/webhook-event-types"
+                        }
+                      },
+                      {
+                        "$ref": "#/components/schemas/webhook-event-types"
+                      }
+                    ]
+                  },
+                  "testmode": {
+                    "$ref": "#/components/schemas/oauth-testmode-create"
+                  }
+                },
+                "required": [
+                  "name",
+                  "url",
+                  "eventTypes"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-webhooks",
+      "title": "List all webhooks",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/webhooks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "eventTypes",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/webhook-event-types"
+          },
+          "description": "Used to filter out only the webhooks that are subscribed to certain types of events."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.update-webhook",
+      "title": "Update a webhook",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/webhooks/{webhookId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "A name that identifies the webhook.",
+                    "example": "Webhook #1"
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "The URL Mollie will send the events to. This URL must be publicly accessible.",
+                    "example": "https://mollie.com/"
+                  },
+                  "eventTypes": {
+                    "oneOf": [
+                      {
+                        "type": "array",
+                        "description": "The list of events to enable for this webhook. You may specify `'*'` to add all events, except those\nthat require explicit selection.",
+                        "items": {
+                          "$ref": "#/components/schemas/webhook-event-types"
+                        }
+                      },
+                      {
+                        "$ref": "#/components/schemas/webhook-event-types"
+                      }
+                    ]
+                  },
+                  "testmode": {
+                    "$ref": "#/components/schemas/testmode-patch"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-webhook",
+      "title": "Get a webhook",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/webhooks/{webhookId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.delete-webhook",
+      "title": "Delete a webhook",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/webhooks/{webhookId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "testmode": {
+                    "$ref": "#/components/schemas/oauth-testmode"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.test-webhook",
+      "title": "Test a webhook",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/webhooks/{webhookId}/ping",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "testmode": {
+                    "$ref": "#/components/schemas/oauth-testmode"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-webhook-event",
+      "title": "Get a Webhook Event",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/events/{webhookEventId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.create-connect-balance-transfer",
+      "title": "Create a Connect balance transfer",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/connect/balance-transfers",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/entity-balance-transfer"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-connect-balance-transfers",
+      "title": "List all Connect balance transfers",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/connect/balance-transfers",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.get-connect-balance-transfer",
+      "title": "Get a Connect balance transfer",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/connect/balance-transfers/{balanceTransferId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.create-payment",
+      "title": "Create payment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/payment-request"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-payments",
+      "title": "List payments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/paymentToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate\nthe result set."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-payment",
+      "title": "Get payment",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payments/{paymentId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.update-payment",
+      "title": "Update payment",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payments/{paymentId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "$ref": "#/components/schemas/description"
+                  },
+                  "redirectUrl": {
+                    "$ref": "#/components/schemas/redirectUrl"
+                  },
+                  "cancelUrl": {
+                    "$ref": "#/components/schemas/cancelUrl"
+                  },
+                  "webhookUrl": {
+                    "$ref": "#/components/schemas/webhookUrl"
+                  },
+                  "metadata": {
+                    "$ref": "#/components/schemas/metadata"
+                  },
+                  "method": {
+                    "$ref": "#/components/schemas/method-request"
+                  },
+                  "locale": {
+                    "$ref": "#/components/schemas/locale-2"
+                  },
+                  "dueDate": {
+                    "$ref": "#/components/schemas/dueDate"
+                  },
+                  "restrictPaymentMethodsToCountry": {
+                    "$ref": "#/components/schemas/restrictPaymentMethodsToCountry"
+                  },
+                  "testmode": {
+                    "$ref": "#/components/schemas/testmode-patch"
+                  },
+                  "issuer": {
+                    "$ref": "#/components/schemas/issuer"
+                  },
+                  "billingAddress": {
+                    "$ref": "#/components/schemas/billingAddress"
+                  },
+                  "shippingAddress": {
+                    "$ref": "#/components/schemas/shippingAddress"
+                  },
+                  "billingEmail": {
+                    "type": "string",
+                    "example": "test@example.com"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.cancel-payment",
+      "title": "Cancel payment",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payments/{paymentId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "testmode": {
+                    "$ref": "#/components/schemas/testmode-create"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.release-authorization",
+      "title": "Release payment authorization",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payments/{paymentId}/release-authorization",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileId": {
+                    "$ref": "#/components/schemas/profileId"
+                  },
+                  "testmode": {
+                    "$ref": "#/components/schemas/testmode-create"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-unmatched-credit-transfers",
+      "title": "List unmatched credit transfers",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/unmatched-credit-transfers",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.get-unmatched-credit-transfer",
+      "title": "Get unmatched credit transfer",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/unmatched-credit-transfers/{unmatchedCreditTransferId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.match-unmatched-credit-transfer",
+      "title": "Match unmatched credit transfer",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/unmatched-credit-transfers/{unmatchedCreditTransferId}/match",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/unmatched-credit-transfer-match-request"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.return-unmatched-credit-transfer",
+      "title": "Return unmatched credit transfer",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/unmatched-credit-transfers/{unmatchedCreditTransferId}/return",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.create-session",
+      "title": "Create Checkout Session",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/sessions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/session-request"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-session",
+      "title": "Get Checkout Session",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/sessions/{sessionId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.list-methods",
+      "title": "List payment methods",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/methods",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "sequenceType",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/sequence-type"
+          },
+          "description": "Set this parameter to `first` to only return the enabled methods that\ncan be used for the first payment of a recurring sequence.\n\nSet it to `recurring` to only return enabled methods that can be used for recurring payments or subscriptions."
+        },
+        {
+          "name": "amount",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/amount"
+          },
+          "description": "If supplied, only payment methods that support the amount and currency\nare returned.\n\nExample: `/v2/methods?amount[value]=100.00&amount[currency]=USD`"
+        },
+        {
+          "name": "resource",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/method-resource-parameter"
+          },
+          "description": "**⚠️ We no longer recommend using the Orders API. Please refer to the [Payments API](payments-api) instead.**\n\nIndicate if you will use the result for the [Create order](create-order)\nor the [Create payment](create-payment) endpoint.\n\nWhen passing the value `orders`, the result will include payment methods\nthat are only available for payments created via the Orders API."
+        },
+        {
+          "name": "billingCountry",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "example": "DE"
+          },
+          "description": "The country taken from your customer's billing address in ISO 3166-1 alpha-2 format. This parameter can be used\nto check whether your customer is eligible for certain payment methods, for example for Klarna.\n\nExample: `/v2/methods?resource=orders&billingCountry=DE`"
+        },
+        {
+          "name": "includeWallets",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/method-include-wallets-parameter"
+          },
+          "description": "A comma-separated list of the wallets you support in your checkout. Wallets often require wallet specific code\nto check if they are available on the shoppers device, hence the need to indicate your support."
+        },
+        {
+          "name": "orderLineCategories",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/line-categories"
+          },
+          "description": "A comma-separated list of the line categories you support in your checkout.\n\nExample: `/v2/methods?orderLineCategories=eco,meal`"
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-all-methods",
+      "title": "List all payment methods",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/methods/all",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "amount",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/amount"
+          },
+          "description": "If supplied, only payment methods that support the amount and currency\nare returned.\n\nExample: `/v2/methods/all?amount[value]=100.00&amount[currency]=USD`"
+        },
+        {
+          "name": "sequenceType",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/sequence-type"
+          },
+          "description": "Set this parameter to `first` to only return the methods that\ncan be used for the first payment of a recurring sequence.\n\nSet it to `recurring` to only return methods that can be used for recurring payments or subscriptions."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-method",
+      "title": "Get payment method",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/methods/{methodId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "currency",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "example": "EUR"
+          },
+          "description": "If provided, the `minimumAmount` and `maximumAmount` will be converted\nto the given currency. An error is returned if the currency is not supported by the payment method."
+        },
+        {
+          "name": "sequenceType",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/sequence-type"
+          },
+          "description": "Set this parameter to `first` to only return the methods that\ncan be used for the first payment of a recurring sequence.\n\nSet it to `recurring` to only return methods that can be used for recurring payments or subscriptions."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.enable-method",
+      "title": "Enable payment method",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/profiles/{profileId}/methods/{methodId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.disable-method",
+      "title": "Disable payment method",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/profiles/{profileId}/methods/{methodId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.enable-method-issuer",
+      "title": "Enable payment method issuer",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/profiles/{profileId}/methods/{methodId}/issuers/{issuerId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "contractId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When enabling a voucher issuer, an inbetween party may be involved which you have a contract with.\nProvide the contract ID for the first time you enable an issuer via this contractor.\n\nYou can update the contract ID as long as it is not approved yet, by repeating the API call with a\ndifferent contract ID.",
+                    "example": "ideal"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.disable-method-issuer",
+      "title": "Disable payment method issuer",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/profiles/{profileId}/methods/{methodId}/issuers/{issuerId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.create-refund",
+      "title": "Create payment refund",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payments/{paymentId}/refunds",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/refund-request"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-refunds",
+      "title": "List payment refunds",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payments/{paymentId}/refunds",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/refundToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate the\nresult set."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-refund",
+      "title": "Get payment refund",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payments/{paymentId}/refunds/{refundId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.cancel-refund",
+      "title": "Cancel payment refund",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payments/{paymentId}/refunds/{refundId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.list-all-refunds",
+      "title": "List all refunds",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/refunds",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/refundToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate the\nresult set."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-chargebacks",
+      "title": "List payment chargebacks",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payments/{paymentId}/chargebacks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/chargebackToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate the\nresult set."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-chargeback",
+      "title": "Get payment chargeback",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payments/{paymentId}/chargebacks/{chargebackId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.list-all-chargebacks",
+      "title": "List all chargebacks",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/chargebacks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/chargebackToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate the\nresult set."
+        },
+        {
+          "name": "profileId",
+          "in": "query",
+          "schema": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "$ref": "#/components/schemas/profileToken"
+          },
+          "description": "The identifier referring to the [profile](get-profile) you wish to\nretrieve chargebacks for.\n\nMost API credentials are linked to a single profile. In these cases the\n`profileId` is already implied.\n\nTo retrieve all chargebacks across the organization, use an\norganization-level API credential and omit the `profileId` parameter."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.create-capture",
+      "title": "Create capture",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payments/{paymentId}/captures",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/entity-capture"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-captures",
+      "title": "List captures",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payments/{paymentId}/captures",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/captureToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate the\nresult set."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-capture",
+      "title": "Get capture",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payments/{paymentId}/captures/{captureId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.request-apple-pay-payment-session",
+      "title": "Request Apple Pay payment session",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/wallets/applepay/sessions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "validationUrl": {
+                    "type": "string",
+                    "example": "https://apple-pay-gateway-cert.apple.com/paymentservices/paymentSession",
+                    "description": "The validationUrl you got from the\n[ApplePayValidateMerchant event](https://developer.apple.com/documentation/apple_pay_on_the_web/applepayvalidatemerchantevent).\n\nA list of all\n[valid host names](https://developer.apple.com/documentation/apple_pay_on_the_web/setting_up_your_server)\nfor merchant validation is available. You should white list these in your application and reject any\n`validationUrl`s that have a host name not in the list."
+                  },
+                  "domain": {
+                    "type": "string",
+                    "description": "The domain of your web shop, that is visible in the browser's location bar. For example\n`pay.myshop.com`.",
+                    "example": "pay.myshop.com"
+                  },
+                  "profileId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "$ref": "#/components/schemas/profileToken",
+                    "description": "The identifier referring to the [profile](get-profile) this entity belongs to.\n\nMost API credentials are linked to a single profile. In these cases the `profileId` must not be sent in\nthe creation request. For organization-level credentials such as OAuth access tokens however, the\n`profileId` parameter is required."
+                  }
+                },
+                "required": [
+                  "validationUrl",
+                  "domain"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.create-payment-link",
+      "title": "Create payment link",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payment-links",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "resource": {
+                    "type": "string",
+                    "description": "Indicates the response contains a payment link object. Will always contain the string `payment-link` for this\nendpoint.",
+                    "readOnly": true,
+                    "example": "payment-link"
+                  },
+                  "id": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/paymentLinkToken"
+                      }
+                    ],
+                    "description": "The identifier uniquely referring to this payment link. Example: `pl_4Y0eZitmBnQ6IDoMqZQKh`.",
+                    "readOnly": true
+                  },
+                  "mode": {
+                    "$ref": "#/components/schemas/mode"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "A short description of the payment link. The description is visible in the Dashboard and will be shown on the\ncustomer's bank or card statement when possible.",
+                    "maxLength": 255,
+                    "example": "Chess Board"
+                  },
+                  "amount": {
+                    "$ref": "#/components/schemas/amount-nullable",
+                    "description": "The amount of the payment link. If no amount is provided initially, the customer will be prompted to enter an\namount."
+                  },
+                  "minimumAmount": {
+                    "$ref": "#/components/schemas/amount-nullable",
+                    "description": "The minimum amount of the payment link. This property is only allowed when there is no amount provided. The\ncustomer will be prompted to enter a value greater than or equal to the minimum amount."
+                  },
+                  "archived": {
+                    "type": "boolean",
+                    "description": "Whether the payment link is archived. Customers will not be able to complete payments on archived payment links.",
+                    "example": false,
+                    "readOnly": true
+                  },
+                  "redirectUrl": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The URL your customer will be redirected to after completing the payment process. If no redirect URL is provided,\nthe customer will be shown a generic message after completing the payment.",
+                    "example": "https://webshop.example.org/payment-links/redirect/"
+                  },
+                  "webhookUrl": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The webhook URL where we will send payment status updates to.\n\nThe webhookUrl is optional, but without a webhook you will miss out on important status changes to any payments\nresulting from the payment link.\n\nThe webhookUrl must be reachable from Mollie's point of view, so you cannot use `localhost`. If you want to use\nwebhook during development on `localhost`, you must use a tool like ngrok to have the webhooks delivered to your\nlocal machine.",
+                    "example": "https://webshop.example.org/payment-links/webhook/"
+                  },
+                  "lines": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Optionally provide the order lines for the payment. Each line contains details such as a description of the item\nordered and its price.\n\nAll lines must have the same currency as the payment.\n\nRequired for payment methods `billie`, `in3`, `klarna`, `riverty` and `voucher`.",
+                    "items": {
+                      "$ref": "#/components/schemas/payment-line-item"
+                    }
+                  },
+                  "billingAddress": {
+                    "$ref": "#/components/schemas/payment-address",
+                    "description": "The customer's billing address details. We advise to provide these details to improve fraud protection and\nconversion.\n\nShould include `email` or a valid postal address consisting of `streetAndNumber`, `postalCode`, `city` and\n`country`.\n\nRequired for payment method `in3`, `klarna`, `billie` and `riverty`."
+                  },
+                  "shippingAddress": {
+                    "$ref": "#/components/schemas/payment-address",
+                    "description": "The customer's shipping address details. We advise to provide these details to improve fraud protection and\nconversion.\n\nShould include `email` or a valid postal address consisting of `streetAndNumber`, `postalCode`, `city` and\n`country`."
+                  },
+                  "profileId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The identifier referring to the [profile](get-profile) this entity belongs to.\n\nMost API credentials are linked to a single profile. In these cases the `profileId` must not be sent in the creation\nrequest. For organization-level credentials such as OAuth access tokens however, the `profileId` parameter is\nrequired.",
+                    "example": "pfl_QkEhN94Ba"
+                  },
+                  "reusable": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Indicates whether the payment link is reusable. If this field is set to `true`, customers can make multiple\npayments using the same link.\n\nIf no value is specified, the field defaults to `false`, allowing only a single payment per link.",
+                    "example": false
+                  },
+                  "createdAt": {
+                    "$ref": "#/components/schemas/created-at"
+                  },
+                  "paidAt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The date and time the payment link became paid, in ISO 8601 format.",
+                    "example": "2025-12-24T11:00:16+00:00",
+                    "readOnly": true
+                  },
+                  "expiresAt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The date and time the payment link is set to expire, in ISO 8601 format. If no expiry date was provided up front,\nthe payment link will not expire automatically.",
+                    "example": "2025-12-24T11:00:16+00:00"
+                  },
+                  "allowedMethods": {
+                    "$ref": "#/components/schemas/payment-link-methods"
+                  },
+                  "applicationFee": {
+                    "type": "object",
+                    "description": "With Mollie Connect you can charge fees on payment links that your app is processing on behalf of other Mollie\nmerchants.\n\nIf you use OAuth to create payment links on a connected merchant's account, you can charge a fee using this\n`applicationFee` parameter. If a payment on the payment link succeeds, the fee will be deducted from the merchant's balance and sent\nto your own account balance.",
+                    "required": [
+                      "amount",
+                      "description"
+                    ],
+                    "properties": {
+                      "amount": {
+                        "$ref": "#/components/schemas/amount",
+                        "description": "The fee that you wish to charge.\n\nBe careful to leave enough space for Mollie's own fees to be deducted as well. For example, you cannot charge\na €0.99 fee on a €1.00 payment."
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "The description of the application fee. This will appear on settlement reports towards both you and the\nconnected merchant.",
+                        "maxLength": 255,
+                        "example": "Platform fee"
+                      }
+                    }
+                  },
+                  "sequenceType": {
+                    "$ref": "#/components/schemas/payment-link-sequence-type",
+                    "description": "If set to `first`, a payment mandate is established right after a payment is made by the customer.\n\nDefaults to `oneoff`, which is a regular payment link and will not establish a mandate after payment.\n\nThe mandate ID can be retrieved by making a call to the\n[Payment Link Payments Endpoint](get-payment-link-payments)."
+                  },
+                  "customerId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "**Only relevant when `sequenceType` is set to `first`**\n\nThe ID of the [customer](get-customer) the payment link is being created for. If a value is not provided,\nthe customer will be required to input relevant information which will be used to establish a mandate after\nthe payment is made.",
+                    "example": "cst_XimFHuaEzd"
+                  },
+                  "testmode": {
+                    "$ref": "#/components/schemas/testmode-create"
+                  },
+                  "_links": {
+                    "type": "object",
+                    "description": "An object with several relevant URLs. Every URL object will contain an `href` and a `type` field.",
+                    "required": [
+                      "self",
+                      "paymentLink"
+                    ],
+                    "properties": {
+                      "self": {
+                        "$ref": "#/components/schemas/url"
+                      },
+                      "paymentLink": {
+                        "$ref": "#/components/schemas/url",
+                        "description": "The URL your customer should visit to make the payment. This is where you should redirect the customer to."
+                      }
+                    },
+                    "readOnly": true
+                  }
+                },
+                "required": [
+                  "description"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-payment-links",
+      "title": "List payment links",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payment-links",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/paymentLinkToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate the\nresult set."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-payment-link",
+      "title": "Get payment link",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payment-links/{paymentLinkId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.update-payment-link",
+      "title": "Update payment link",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payment-links/{paymentLinkId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "description": "A short description of the payment link. The description is visible in the Dashboard and will be shown\non the customer's bank or card statement when possible.\n\nUpdating the description does not affect any previously existing payments created for this payment link.",
+                    "maxLength": 255,
+                    "example": "Chess Board"
+                  },
+                  "minimumAmount": {
+                    "$ref": "#/components/schemas/amount",
+                    "description": "The minimum amount of the payment link. This property is only allowed when there is no amount provided.\nThe customer will be prompted to enter a value greater than or equal to the minimum amount."
+                  },
+                  "archived": {
+                    "type": "boolean",
+                    "description": "Whether the payment link is archived. Customers will not be able to complete payments on archived\npayment links.",
+                    "example": false
+                  },
+                  "allowedMethods": {
+                    "$ref": "#/components/schemas/payment-link-methods"
+                  },
+                  "lines": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Optionally provide the order lines for the payment. Each line contains details such as a description of the item\nordered and its price.\n\nAll lines must have the same currency as the payment.\n\nRequired for payment methods `billie`, `in3`, `klarna`, `riverty` and `voucher`.",
+                    "items": {
+                      "$ref": "#/components/schemas/payment-line-item"
+                    }
+                  },
+                  "billingAddress": {
+                    "$ref": "#/components/schemas/payment-address",
+                    "description": "The customer's billing address details. We advise to provide these details to improve fraud protection and\nconversion.\n\nShould include `email` or a valid postal address consisting of `streetAndNumber`, `postalCode`, `city` and\n`country`.\n\nRequired for payment method `in3`, `klarna`, `billie` and `riverty`."
+                  },
+                  "shippingAddress": {
+                    "$ref": "#/components/schemas/payment-address",
+                    "description": "The customer's shipping address details. We advise to provide these details to improve fraud protection and\nconversion.\n\nShould include `email` or a valid postal address consisting of `streetAndNumber`, `postalCode`, `city` and\n`country`."
+                  },
+                  "testmode": {
+                    "$ref": "#/components/schemas/testmode-patch"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.delete-payment-link",
+      "title": "Delete payment link",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payment-links/{paymentLinkId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "testmode": {
+                    "$ref": "#/components/schemas/testmode"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-payment-link-payments",
+      "title": "Get payment link payments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payment-links/{paymentLinkId}/payments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/paymentToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate the\nresult set."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-terminals",
+      "title": "List terminals",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/terminals",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/terminalToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate the\nresult set."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-terminal",
+      "title": "Get terminal",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/terminals/{terminalId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.terminals-request-pairing-code",
+      "title": "Request terminal pairing code",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/terminals/pairing-codes",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profileId": {
+                    "type": "string",
+                    "description": "The ID of the profile to pair the terminal with.",
+                    "example": "pfl_jA9bC4DkFj3G"
+                  }
+                },
+                "required": [
+                  "profileId"
+                ]
+              },
+              "example": {
+                "profileId": "pfl_jA9bC4DkFj3G"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.terminals-list-pairing-codes",
+      "title": "List terminal pairing codes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/terminals/pairing-codes",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "profileId",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "example": "pfl_QkEhN94Ba"
+          },
+          "description": "The identifier referring to the [profile](get-profile) you wish to retrieve pairing codes for."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.terminals-get-pairing-code",
+      "title": "Get terminal pairing code",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/terminals/pairing-codes/{pairingCodeId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.terminals-revoke-pairing-code",
+      "title": "Revoke terminal pairing code",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/terminals/pairing-codes/{pairingCodeId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.payment-create-route",
+      "title": "Create a delayed route",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payments/{paymentId}/routes",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/route-create-request"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.payment-list-routes",
+      "title": "List payment routes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payments/{paymentId}/routes",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.payment-get-route",
+      "title": "Get a delayed route",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payments/{paymentId}/routes/{routeId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.create-customer",
+      "title": "Create customer",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/customers",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/entity-customer"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-customers",
+      "title": "List customers",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/customers",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/customerToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate the\nresult set."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-customer",
+      "title": "Get customer",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/customers/{customerId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.update-customer",
+      "title": "Update customer",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/customers/{customerId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/entity-customer"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "testmode": {
+                        "$ref": "#/components/schemas/testmode-patch"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.delete-customer",
+      "title": "Delete customer",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/customers/{customerId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "testmode": {
+                    "$ref": "#/components/schemas/testmode"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.create-customer-payment",
+      "title": "Create customer payment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/customers/{customerId}/payments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-customer-payments",
+      "title": "List customer payments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/customers/{customerId}/payments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/paymentToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate\nthe result set."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.create-mandate",
+      "title": "Create mandate",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/customers/{customerId}/mandates",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/mandate-request"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-mandates",
+      "title": "List mandates",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/customers/{customerId}/mandates",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/mandateToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate the\nresult set."
+        },
+        {
+          "name": "scopes",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/mandate-scopes"
+            }
+          },
+          "description": "Returns only mandates that include the specified scopes."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-mandate",
+      "title": "Get mandate",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/customers/{customerId}/mandates/{mandateId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.revoke-mandate",
+      "title": "Revoke mandate",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/customers/{customerId}/mandates/{mandateId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "testmode": {
+                    "$ref": "#/components/schemas/testmode"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.create-subscription",
+      "title": "Create subscription",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/customers/{customerId}/subscriptions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/subscription-request",
+                "required": [
+                  "amount",
+                  "interval",
+                  "description"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-subscriptions",
+      "title": "List customer subscriptions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/customers/{customerId}/subscriptions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/subscriptionToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate the\nresult set."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-subscription",
+      "title": "Get subscription",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/customers/{customerId}/subscriptions/{subscriptionId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.update-subscription",
+      "title": "Update subscription",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/customers/{customerId}/subscriptions/{subscriptionId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "amount": {
+                    "$ref": "#/components/schemas/amount",
+                    "description": "Update the amount for future payments of this subscription."
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "The subscription's description will be used as the description of the resulting individual payments and so showing\nup on the bank statement of the consumer.\n\n**Please note:** the description needs to be unique for the Customer in case it has multiple active subscriptions.",
+                    "example": "Subscription of streaming channel"
+                  },
+                  "interval": {
+                    "type": "string",
+                    "description": "Interval to wait between payments, for example `1 month` or `14 days`.\n\nThe maximum interval is one year (`12 months`, `52 weeks`, or `365 days`).\n\nPossible values: `... days`, `... weeks`, `... months`.",
+                    "pattern": "^\\d+ (days?|weeks?|months?)$",
+                    "example": "1 months"
+                  },
+                  "startDate": {
+                    "type": "string",
+                    "description": "The start date of the subscription in `YYYY-MM-DD` format.",
+                    "example": "2025-01-01"
+                  },
+                  "times": {
+                    "type": "integer",
+                    "description": "Total number of payments for the subscription. Once this number of payments is reached, the subscription is\nconsidered completed.\n\nTest mode subscriptions will get canceled automatically after 10 payments.",
+                    "example": 6
+                  },
+                  "metadata": {
+                    "$ref": "#/components/schemas/metadata",
+                    "description": "Provide any data you like, for example a string or a JSON object. We will save the data alongside the\nentity. Whenever you fetch the entity with our API, we will also include the metadata. You can use up to\napproximately 1kB.\n\nAny metadata added to the subscription will be automatically forwarded to the payments generated for it."
+                  },
+                  "webhookUrl": {
+                    "type": "string",
+                    "description": "We will call this URL for any payment status changes of payments resulting from this subscription.\n\nThis webhook will receive **all** events for the subscription's payments. This may include payment\nfailures as well. Be sure to verify the payment's subscription ID and its status.",
+                    "example": "https://example.com/webhook"
+                  },
+                  "mandateId": {
+                    "type": "string",
+                    "$ref": "#/components/schemas/mandateToken",
+                    "description": "The mandate used for this subscription, if any."
+                  },
+                  "testmode": {
+                    "$ref": "#/components/schemas/testmode-patch"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.cancel-subscription",
+      "title": "Cancel subscription",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/customers/{customerId}/subscriptions/{subscriptionId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "testmode": {
+                    "$ref": "#/components/schemas/testmode"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-all-subscriptions",
+      "title": "List all subscriptions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/subscriptions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "profileId",
+          "in": "query",
+          "schema": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "pfl_QkEhN94Ba"
+          },
+          "description": "The identifier referring to the [profile](get-profile) you wish to retrieve subscriptions for.\n\nMost API credentials are linked to a single profile. In these cases the `profileId` is already implied.\n\nTo retrieve all subscriptions across the organization, use an organization-level API credential and omit the\n`profileId` parameter."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-subscription-payments",
+      "title": "List subscription payments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/customers/{customerId}/subscriptions/{subscriptionId}/payments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/paymentToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate\nthe result set."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.create-sales-invoice",
+      "title": "Create sales invoice",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/sales-invoices",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/sales-invoice-request"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-sales-invoices",
+      "title": "List sales invoices",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/sales-invoices",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.get-sales-invoice",
+      "title": "Get sales invoice",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/sales-invoices/{salesInvoiceId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.update-sales-invoice",
+      "title": "Update sales invoice",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/sales-invoices/{salesInvoiceId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/update-values-sales-invoice"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "testmode": {
+                        "$ref": "#/components/schemas/testmode-patch"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.delete-sales-invoice",
+      "title": "Delete sales invoice",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/sales-invoices/{salesInvoiceId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/delete-values-sales-invoice"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-business-accounts",
+      "title": "List business accounts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/business-accounts/accounts",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "iban",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "example": "NL95MLLE1234567890"
+          },
+          "description": "Filter the results by IBAN. Only the business account with an exact match is returned."
+        },
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/businessAccountToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate\nthe result set."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-business-account",
+      "title": "Get business account",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/business-accounts/accounts/{businessAccountId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.list-business-account-transactions",
+      "title": "List transactions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/business-accounts/accounts/{businessAccountId}/transactions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "creditDebitIndicator",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/credit-debit-indicator"
+          },
+          "description": "Filter the transactions by whether they credited or debited the account balance."
+        },
+        {
+          "name": "processedAfter",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-02-01T00:00:00+00:00"
+          },
+          "description": "Filter the transactions to only include those processed on or after this date and time. Filters on the\n`processedAt` property.\n\nCannot be combined with `from`."
+        },
+        {
+          "name": "processedBefore",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-02-26T23:59:59+00:00"
+          },
+          "description": "Filter the transactions to only include those processed on or before this date and time. Filters on the\n`processedAt` property.\n\nCannot be combined with `from`."
+        },
+        {
+          "name": "from",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/businessAccountTransactionToken"
+          },
+          "description": "Provide an ID to start the result set from the item with the given ID and onwards. This allows you to paginate\nthe result set.\n\nCannot be combined with `processedAfter` or `processedBefore`."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-business-account-transaction",
+      "title": "Get transaction",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/business-accounts/accounts/{businessAccountId}/transactions/{transactionId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.create-transfer",
+      "title": "Create transfer",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/business-accounts/transfers",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Client-Signature",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "A cryptographic signature of the request payload, used to verify the authenticity of the transfer request."
+        },
+        {
+          "name": "X-Client-Signed-At",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The timestamp (in ISO 8601 format) indicating when the client signed the request. Used in conjunction with\n`X-Client-Signature` for request verification."
+        },
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "A unique value used to identify this request and prevent duplicate transfers. UUIDv4 is recommended to\nguarantee uniqueness across multiple processes or servers. If two requests are received with the same\nidempotency key, the second request will be discarded.\n\nView the [public documentation](https://docs.mollie.com/reference/api-idempotency#using-an-idempotency-key)\nto learn more."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/transfer-request"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-transfer",
+      "title": "Get transfer",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/business-accounts/transfers/{businessAccountsTransferId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.verify-payee",
+      "title": "Verify Payee",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/business-accounts/payee-verifications",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/verification-of-payee-request"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.create-draft-transfer",
+      "title": "Create draft transfer",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/business-accounts/draft-transfers",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/create-draft-transfer-request"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-draft-transfers",
+      "title": "List draft transfers",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/business-accounts/draft-transfers",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/draft-transfer-status"
+          },
+          "description": "Filter the list by draft transfer status. Omit to return draft transfers in any status."
+        }
+      ]
+    },
+    {
+      "connector": "mollie.get-draft-transfer",
+      "title": "Get draft transfer",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/business-accounts/draft-transfers/{draftTransferId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.cancel-draft-transfer",
+      "title": "Cancel draft transfer",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/business-accounts/draft-transfers/{draftTransferId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "testmode": {
+                    "$ref": "#/components/schemas/testmode"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.create-payout",
+      "title": "Create payout",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payouts",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/payout-request"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "mollie.list-payouts",
+      "title": "List payouts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payouts",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.get-payout",
+      "title": "Get payout",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payouts/{payoutId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "mollie.cancel-payout",
+      "title": "Cancel payout",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.mollie.com",
+      "path": "/v2/payouts/{payoutId}",
+      "authentication": "apiKey",
+      "parameters": []
+    }
+  ]
+}

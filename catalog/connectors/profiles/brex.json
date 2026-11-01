@@ -1,0 +1,8 @@
+{
+  "name": "brex",
+  "title": "Brex",
+  "source": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/brex.com/payments/0.1/openapi.yaml",
+  "authentication": "oauth-client-credentials-flow",
+  "operations": [],
+  "error": "404 Not Found"
+}

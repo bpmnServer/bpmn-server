@@ -1,0 +1,5137 @@
+{
+  "name": "confluence",
+  "title": "Confluence",
+  "source": "https://dac-static.atlassian.com/cloud/confluence/swagger.v3.json",
+  "authentication": "bearer",
+  "operations": [
+    {
+      "connector": "confluence.getAuditRecords",
+      "title": "Get audit records",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/audit",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "startDate",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filters the results to the records on or after the `startDate`.\nThe `startDate` must be specified as [epoch time](https://www.epochconverter.com/) in milliseconds."
+        },
+        {
+          "name": "endDate",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filters the results to the records on or before the `endDate`.\nThe `endDate` must be specified as [epoch time](https://www.epochconverter.com/) in milliseconds."
+        },
+        {
+          "name": "searchString",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filters the results to records that have string property values\nmatching the `searchString`."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the returned records."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 1000
+          },
+          "description": "The maximum number of records to return per page.\nNote, this may be restricted by fixed system limits."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.createAuditRecord",
+      "title": "Create audit record",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/audit",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditRecordCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.exportAuditRecords",
+      "title": "Export audit records",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/audit/export",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "startDate",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filters the exported results to the records on or after the `startDate`.\nThe `startDate` must be specified as [epoch time](https://www.epochconverter.com/) in milliseconds."
+        },
+        {
+          "name": "endDate",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filters the exported results to the records on or before the `endDate`.\nThe `endDate` must be specified as [epoch time](https://www.epochconverter.com/) in milliseconds."
+        },
+        {
+          "name": "searchString",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filters the exported results to records that have string property values\nmatching the `searchString`."
+        },
+        {
+          "name": "format",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "default": "csv",
+            "enum": [
+              "csv",
+              "zip"
+            ]
+          },
+          "description": "The format of the export file for the audit records."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getRetentionPeriod",
+      "title": "Get retention period",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/audit/retention",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "confluence.setRetentionPeriod",
+      "title": "Set retention period",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/audit/retention",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RetentionPeriod"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getAuditRecordsForTimePeriod",
+      "title": "Get audit records for time period",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/audit/since",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "number",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "default": 3
+          },
+          "description": "The number of units for the time period."
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "default": "MONTHS",
+            "enum": [
+              "NANOS",
+              "MICROS",
+              "MILLIS",
+              "SECONDS",
+              "MINUTES",
+              "HOURS",
+              "HALF_DAYS",
+              "DAYS",
+              "WEEKS",
+              "MONTHS",
+              "YEARS",
+              "DECADES",
+              "CENTURIES"
+            ]
+          },
+          "description": "The unit of time that the time period is measured in."
+        },
+        {
+          "name": "searchString",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filters the results to records that have string property values\nmatching the `searchString`."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the returned records."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 1000
+          },
+          "description": "The maximum number of records to return per page.\nNote, this may be restricted by fixed system limits."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.archivePages",
+      "title": "Archive pages",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/archive",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "pages": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int64",
+                          "description": "The `id` of the page to be archived."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.publishSharedDraft",
+      "title": "Publish shared draft",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/blueprint/instance/{draftId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "draftId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the draft page that was created from a blueprint.\nYou can find the `draftId` in the Confluence application by\nopening the draft page and checking the page URL."
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "default": "draft"
+          },
+          "description": "The status of the content to be updated, i.e. the draft. This is set\nto 'draft' by default, so you shouldn't need to specify it."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentBlueprintDraft"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.publishLegacyDraft",
+      "title": "Publish legacy draft",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/blueprint/instance/{draftId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "draftId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the draft page that was created from a blueprint.\nYou can find the `draftId` in the Confluence application by\nopening the draft page and checking the page URL."
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "default": "draft"
+          },
+          "description": "The status of the content to be updated, i.e. the draft. This is set\nto 'draft' by default, so you shouldn't need to specify it."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentBlueprintDraft"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.searchContentByCQL",
+      "title": "Search content by CQL",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/search",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "cql",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The CQL string that is used to find the requested content."
+        },
+        {
+          "name": "cqlcontext",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The space, content, and content status to execute the search against.\nSpecify this as an object with the following properties:\n\n- `spaceKey` Key of the space to search against. Optional.\n- `contentId` ID of the content to search against. Optional. Must\nbe in the space spacified by `spaceKey`.\n- `contentStatuses` Content statuses to search against. Optional."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Pointer to a set of search results, returned as part of the `next` or `prev` URL from the previous search call."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 25
+          },
+          "description": "The maximum number of content objects to return per page.\nNote, this may be restricted by fixed system limits."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.deletePageTree",
+      "title": "Delete page tree",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/pageTree",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content which forms root of the page tree, to be deleted."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.movePage",
+      "title": "Move a page to a new location relative to a target page",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{pageId}/move/{position}/{targetId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "pageId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the page to be moved"
+        },
+        {
+          "name": "position",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "before",
+              "after",
+              "append"
+            ]
+          },
+          "description": "The position to move the page to relative to the target page:\n* `before` - move the page under the same parent as the target, before the target in the list of children\n* `after` - move the page under the same parent as the target, after the target in the list of children\n* `append` - move the page to be a child of the target"
+        },
+        {
+          "name": "targetId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the target page for this operation"
+        }
+      ]
+    },
+    {
+      "connector": "confluence.createOrUpdateAttachments",
+      "title": "Create or update attachment",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/child/attachment",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content to add the attachment to."
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "default": "current",
+            "enum": [
+              "current",
+              "draft"
+            ]
+          },
+          "description": "The status of the content that the attachment is being added to.\nThis should always be set to 'current'."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file",
+                  "minorEdit"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "The relative location and name of the attachment to be added to\nthe content.",
+                    "format": "binary"
+                  },
+                  "comment": {
+                    "type": "string",
+                    "description": "The comment for the attachment that is being added.\nIf you specify a comment, then every file must have a comment and\nthe comments must be in the same order as the files. Alternatively,\ndon't specify any comments.",
+                    "format": "binary"
+                  },
+                  "minorEdit": {
+                    "type": "string",
+                    "description": "If `minorEdits` is set to 'true', no notification email or activity stream\nwill be generated when the attachment is added to the content.",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.createAttachment",
+      "title": "Create attachment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/child/attachment",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content to add the attachment to."
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "default": "current",
+            "enum": [
+              "current",
+              "draft"
+            ]
+          },
+          "description": "The status of the content that the attachment is being added to."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file",
+                  "minorEdit"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "The relative location and name of the attachment to be added to\nthe content.",
+                    "format": "binary"
+                  },
+                  "comment": {
+                    "type": "string",
+                    "description": "The comment for the attachment that is being added.\nIf you specify a comment, then every file must have a comment and\nthe comments must be in the same order as the files. Alternatively,\ndon't specify any comments.",
+                    "format": "binary"
+                  },
+                  "minorEdit": {
+                    "type": "string",
+                    "description": "If `minorEdits` is set to 'true', no notification email or activity stream\nwill be generated when the attachment is added to the content.",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.updateAttachmentProperties",
+      "title": "Update attachment properties",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/child/attachment/{attachmentId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content that the attachment is attached to."
+        },
+        {
+          "name": "attachmentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the attachment to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttachmentPropertiesUpdateBody"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.updateAttachmentData",
+      "title": "Update attachment data",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/child/attachment/{attachmentId}/data",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content that the attachment is attached to."
+        },
+        {
+          "name": "attachmentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the attachment to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file",
+                  "minorEdit"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "description": "The relative location and name of the attachment to be added to\nthe content.",
+                    "format": "binary"
+                  },
+                  "comment": {
+                    "type": "string",
+                    "description": "The comment for the attachment that is being added.\nIf you specify a comment, then every file must have a comment and\nthe comments must be in the same order as the files. Alternatively,\ndon't specify any comments.",
+                    "format": "binary"
+                  },
+                  "minorEdit": {
+                    "type": "string",
+                    "description": "If `minorEdits` is set to 'true', no notification email or activity stream\nwill be generated when the attachment is added to the content.",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.downloadAttatchment",
+      "title": "Get URI to download attachment",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/child/attachment/{attachmentId}/download",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content that the attachment is attached to."
+        },
+        {
+          "name": "attachmentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the attachment to download."
+        },
+        {
+          "name": "version",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "The version of the attachment. If this parameter is absent, the redirect URI will download the latest version of the attachment."
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "The statuses allowed on the retrieved attachment. If this parameter is absent, it will default to `current`."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getContentDescendants",
+      "title": "Get content descendants",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/descendant",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content to be queried for its descendants."
+        },
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "attachment",
+                "comment",
+                "page"
+              ]
+            }
+          },
+          "description": "A multi-value parameter indicating which properties of the children to\nexpand, where:\n\n- `attachment` returns all attachments for the content.\n- `comments` returns all comments for the content.\n- `page` returns all child pages of the content.\n- `whiteboard` returns all child whiteboards of the content.\n- `database` returns all child databases of the content.\n- `embed` returns all child embeds of the content.\n- `folder` returns all child folders of the content."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getDescendantsOfType",
+      "title": "Get content descendants by type",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/descendant/{type}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content to be queried for its descendants."
+        },
+        {
+          "name": "type",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "page",
+              "comment",
+              "attachment"
+            ]
+          },
+          "description": "The type of descendants to return."
+        },
+        {
+          "name": "depth",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "default": "all",
+            "enum": [
+              "all",
+              "root",
+              "<any positive integer argument in the range of 1 and 100>"
+            ]
+          },
+          "description": "Filter the results to descendants upto a desired level of the content. Note, the maximum value supported is 100. root level of the content means immediate (level 1) descendants of the type requested. all represents returning all descendants of the type requested."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the returned content."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 25
+          },
+          "description": "The maximum number of content to return per page. Note,\nthis may be restricted by fixed system limits."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getMacroBodyByMacroId",
+      "title": "Get macro body by macro ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/history/{version}/macro/id/{macroId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID for the content that contains the macro."
+        },
+        {
+          "name": "version",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "The version of the content that contains the macro. Specifying `0` as the `version` will return\nthe macro body for the latest content version."
+        },
+        {
+          "name": "macroId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the macro. This is usually passed by the app that the\nmacro is in. Otherwise, find the macro ID by querying the desired\ncontent and version, then expanding the body in storage format.\nFor example, '/content/196611/version/7?expand=content.body.storage'."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getAndConvertMacroBodyByMacroId",
+      "title": "Get macro body by macro ID and convert the representation synchronously",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/history/{version}/macro/id/{macroId}/convert/{to}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID for the content that contains the macro."
+        },
+        {
+          "name": "version",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "The version of the content that contains the macro. Specifying `0` as the `version` will return\nthe macro body for the latest content version."
+        },
+        {
+          "name": "macroId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the macro. This is usually passed by the app that the\nmacro is in. Otherwise, find the macro ID by querying the desired\ncontent and version, then expanding the body in storage format.\nFor example, '/content/196611/version/7?expand=content.body.storage'."
+        },
+        {
+          "name": "to",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The content representation to return the macro in."
+        },
+        {
+          "name": "spaceKeyContext",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The space key used for resolving embedded content (page includes,\nfiles, and links) in the content body. For example, if the source content\ncontains the link `<ac:link><ri:page ri:content-title=\"Example page\" /><ac:link>`\nand the `spaceKeyContext=TEST` parameter is provided, then the link\nwill be converted to a link to the \"Example page\" page in the \"TEST\" space."
+        },
+        {
+          "name": "embeddedContentRender",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "default": "current",
+            "enum": [
+              "current",
+              "version-at-save"
+            ]
+          },
+          "description": "Mode used for rendering embedded content, like attachments.\n\n- `current` renders the embedded content using the latest version.\n- `version-at-save` renders the embedded content using the version at\nthe time of save."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getAndAsyncConvertMacroBodyByMacroId",
+      "title": "Get macro body by macro ID and convert representation Asynchronously",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/history/{version}/macro/id/{macroId}/convert/async/{to}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID for the content that contains the macro."
+        },
+        {
+          "name": "version",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "The version of the content that contains the macro. Specifying `0` as the `version` will return\nthe macro body for the latest content version."
+        },
+        {
+          "name": "macroId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the macro. For apps, this is passed to the macro by the Connect/Forge framework.\nOtherwise, find the macro ID by querying the desired\ncontent and version, then expanding the body in storage format.\nFor example, '/content/196611/version/7?expand=content.body.storage'."
+        },
+        {
+          "name": "to",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "export_view",
+              "view",
+              "styled_view"
+            ]
+          },
+          "description": "The content representation to return the macro in.\nCurrently, the following conversions are allowed:\n\n- `export_view`\n- `styled_view`\n- `view`"
+        },
+        {
+          "name": "allowCache",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": "Controls whether conversion results are cached and reused for identical requests.\n\n- `false`: Each request creates a new conversion task, even if an identical request was made previously.\n- `true`: Enables caching behavior for identical requests from the same user.\n  - If no cached result exists, a new conversion task is created\n  - If a cached result exists, the existing task is marked as RERUNNING and will complete with status COMPLETED\n  - Returns the same task ID for identical requests, allowing you to retrieve the cached result\n\nFor large macros that are slow to convert and for which it is acceptable to show cached data, set this field to `true`."
+        },
+        {
+          "name": "spaceKeyContext",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The space key used for resolving embedded content (page includes,\nfiles, and links) in the content body. For example, if the source content\ncontains the link `<ac:link><ri:page ri:content-title=\"Example page\" /><ac:link>`\nand the `spaceKeyContext=TEST` parameter is provided, then the link\nwill be converted to a link to the \"Example page\" page in the \"TEST\" space."
+        },
+        {
+          "name": "embeddedContentRender",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "default": "current",
+            "enum": [
+              "current",
+              "version-at-save"
+            ]
+          },
+          "description": "Mode used for rendering embedded content, like attachments.\n\n- `current` renders the embedded content using the latest version.\n- `version-at-save` renders the embedded content using the version at\nthe time of save."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.addLabelsToContent",
+      "title": "Add labels to content",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/label",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content that will have labels added to it."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/LabelCreateArray"
+                  },
+                  {
+                    "$ref": "#/components/schemas/LabelCreate"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.removeLabelFromContentUsingQueryParameter",
+      "title": "Remove label from content using query parameter",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/label",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content that the label will be removed from."
+        },
+        {
+          "name": "name",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the label to be removed."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.removeLabelFromContent",
+      "title": "Remove label from content",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/label/{label}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content that the label will be removed from."
+        },
+        {
+          "name": "label",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the label to be removed."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getWatchesForPage",
+      "title": "Get watches for page",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/notification/child-created",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content to be queried for its watches."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the returned watches."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 200
+          },
+          "description": "The maximum number of watches to return per page.\nNote, this may be restricted by fixed system limits."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getWatchesForSpace",
+      "title": "Get watches for space",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/notification/created",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content to be queried for its watches."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the returned watches."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 200
+          },
+          "description": "The maximum number of watches to return per page.\nNote, this may be restricted by fixed system limits."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.copyPageHierarchy",
+      "title": "Copy page hierarchy",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/pagehierarchy/copy",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CopyPageHierarchyRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.copyPage",
+      "title": "Copy single page",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/copy",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CopyPageRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.checkContentPermission",
+      "title": "Check content permissions",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/permission/check",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content to check permissions against."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentPermissionRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getRestrictions",
+      "title": "Get restrictions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/restriction",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content to be queried for its restrictions."
+        },
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "restrictions.user",
+                "read.restrictions.user",
+                "update.restrictions.user",
+                "restrictions.group",
+                "read.restrictions.group",
+                "update.restrictions.group",
+                "content"
+              ]
+            }
+          },
+          "description": "A multi-value parameter indicating which properties of the content\nrestrictions to expand. By default, the following objects are expanded:\n`restrictions.user`, `restrictions.group`.\n\n- `restrictions.user` returns the piece of content that the restrictions are\napplied to.\n- `restrictions.group` returns the piece of content that the restrictions are\napplied to.\n- `content` returns the piece of content that the restrictions are\napplied to."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the users and groups in the returned restrictions."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 100
+          },
+          "description": "The maximum number of users and the maximum number of groups, in the\nreturned restrictions, to return per page. Note, this may be restricted\nby fixed system limits."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.updateRestrictions",
+      "title": "Update restrictions",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/restriction",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content to update restrictions for."
+        },
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "restrictions.user",
+                "read.restrictions.user",
+                "update.restrictions.user",
+                "restrictions.group",
+                "read.restrictions.group",
+                "update.restrictions.group",
+                "content"
+              ]
+            }
+          },
+          "description": "A multi-value parameter indicating which properties of the content\nrestrictions (returned in response) to expand.\n\n- `restrictions.user` returns the users that the restrictions apply to.\nExpanded by default.\n- `restrictions.group` returns the groups that the restrictions apply to.\nExpanded by default.\n- `content` returns the piece of content that the restrictions are\napplied to."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentRestrictionAddOrUpdateArray"
+              },
+              "examples": {
+                "replaceUserLists": {
+                  "summary": "Replace the read and update user lists",
+                  "description": "Both editors are included in the read list. Existing group restrictions are preserved.",
+                  "value": {
+                    "results": [
+                      {
+                        "operation": "update",
+                        "restrictions": {
+                          "user": {
+                            "results": [
+                              {
+                                "accountId": "<account-id-1>"
+                              },
+                              {
+                                "accountId": "<account-id-2>"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      {
+                        "operation": "read",
+                        "restrictions": {
+                          "user": {
+                            "results": [
+                              {
+                                "accountId": "<account-id-1>"
+                              },
+                              {
+                                "accountId": "<account-id-2>"
+                              },
+                              {
+                                "accountId": "<viewer-account-id>"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "clearUpdateUsers": {
+                  "summary": "Clear the update user list",
+                  "description": "Clears the update user list. For callers without super-admin permissions,\nthis requires that no update group restrictions exist; otherwise the\nrequest returns `400`. Omitted group lists and all read restrictions\nremain unchanged.",
+                  "value": {
+                    "results": [
+                      {
+                        "operation": "update",
+                        "restrictions": {
+                          "user": {
+                            "results": []
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.addRestrictions",
+      "title": "Add restrictions",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/restriction",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content to add restrictions to."
+        },
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "restrictions.user",
+                "read.restrictions.user",
+                "update.restrictions.user",
+                "restrictions.group",
+                "read.restrictions.group",
+                "update.restrictions.group",
+                "content"
+              ]
+            }
+          },
+          "description": "A multi-value parameter indicating which properties of the content\nrestrictions (returned in response) to expand.\n\n- `restrictions.user` returns the users that the restrictions apply to.\nExpanded by default.\n- `restrictions.group` returns the groups that the restrictions apply to.\nExpanded by default.\n- `content` returns the piece of content that the restrictions are\napplied to."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentRestrictionAddOrUpdateArray"
+              },
+              "examples": {
+                "addUsers": {
+                  "summary": "Add two users to the update restrictions",
+                  "value": {
+                    "results": [
+                      {
+                        "operation": "update",
+                        "restrictions": {
+                          "user": {
+                            "results": [
+                              {
+                                "accountId": "<account-id-1>"
+                              },
+                              {
+                                "accountId": "<account-id-2>"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "addGroup": {
+                  "summary": "Add a group to the read restrictions",
+                  "value": {
+                    "results": [
+                      {
+                        "operation": "read",
+                        "restrictions": {
+                          "group": {
+                            "results": [
+                              {
+                                "id": "<group-id>"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.deleteRestrictions",
+      "title": "Delete restrictions",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/restriction",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content to remove restrictions from."
+        },
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "restrictions.user",
+                "read.restrictions.user",
+                "update.restrictions.user",
+                "restrictions.group",
+                "read.restrictions.group",
+                "update.restrictions.group",
+                "content"
+              ]
+            }
+          },
+          "description": "A multi-value parameter indicating which properties of the content\nrestrictions (returned in response) to expand.\n\n- `restrictions.user` returns the users that the restrictions apply to.\nExpanded by default.\n- `restrictions.group` returns the groups that the restrictions apply to.\nExpanded by default.\n- `content` returns the piece of content that the restrictions are\napplied to."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getRestrictionsByOperation",
+      "title": "Get restrictions by operation",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/restriction/byOperation",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content to be queried for its restrictions."
+        },
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "restrictions.user",
+                "restrictions.group",
+                "content"
+              ]
+            }
+          },
+          "description": "A multi-value parameter indicating which properties of the content\nrestrictions to expand.\n\n- `restrictions.user` returns the users that the restrictions apply to.\nExpanded by default.\n- `restrictions.group` returns the groups that the restrictions apply to.\nExpanded by default.\n- `content` returns the piece of content that the restrictions are\napplied to."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getRestrictionsForOperation",
+      "title": "Get restrictions for operation",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/restriction/byOperation/{operationKey}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content to be queried for its restrictions."
+        },
+        {
+          "name": "operationKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "read",
+              "update"
+            ]
+          },
+          "description": "The operation type of the restrictions to be returned."
+        },
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "restrictions.user",
+                "restrictions.group",
+                "content"
+              ]
+            }
+          },
+          "description": "A multi-value parameter indicating which properties of the content\nrestrictions to expand.\n\n- `restrictions.user` returns the users that the restrictions apply to.\nExpanded by default.\n- `restrictions.group` returns the groups that the restrictions apply to.\nExpanded by default.\n- `content` returns the piece of content that the restrictions are\napplied to."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the users and groups in the returned restrictions."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 100
+          },
+          "description": "The maximum number of users and the maximum number of groups, in the\nreturned restrictions, to return per page. Note, this may be restricted\nby fixed system limits."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getIndividualGroupRestrictionStatusByGroupId",
+      "title": "Get content restriction status for group",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/restriction/byOperation/{operationKey}/byGroupId/{groupId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content that the restriction applies to."
+        },
+        {
+          "name": "operationKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "read",
+              "update"
+            ]
+          },
+          "description": "The operation that the restriction applies to."
+        },
+        {
+          "name": "groupId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The id of the group to be queried for whether the content restriction\napplies to it."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.addGroupToContentRestrictionByGroupId",
+      "title": "Add group to content restriction",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/restriction/byOperation/{operationKey}/byGroupId/{groupId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content that the restriction applies to."
+        },
+        {
+          "name": "operationKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "read",
+              "update"
+            ]
+          },
+          "description": "The operation that the restriction applies to."
+        },
+        {
+          "name": "groupId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The groupId of the group to add to the content restriction."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.removeGroupFromContentRestriction",
+      "title": "Remove group from content restriction",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/restriction/byOperation/{operationKey}/byGroupId/{groupId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content that the restriction applies to."
+        },
+        {
+          "name": "operationKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "read",
+              "update"
+            ]
+          },
+          "description": "The operation that the restriction applies to."
+        },
+        {
+          "name": "groupId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The id of the group to remove from the content restriction."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getContentRestrictionStatusForUser",
+      "title": "Get content restriction status for user",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/restriction/byOperation/{operationKey}/user",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content that the restriction applies to."
+        },
+        {
+          "name": "operationKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The operation that is restricted."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.addUserToContentRestriction",
+      "title": "Add user to content restriction",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/restriction/byOperation/{operationKey}/user",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content that the restriction applies to."
+        },
+        {
+          "name": "operationKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The operation that the restriction applies to."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.removeUserFromContentRestriction",
+      "title": "Remove user from content restriction",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/restriction/byOperation/{operationKey}/user",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content that the restriction applies to."
+        },
+        {
+          "name": "operationKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "read",
+              "update"
+            ]
+          },
+          "description": "The operation that the restriction applies to."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getContentState",
+      "title": "Get content state",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/state",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The id of the content whose content state is of interest."
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "default": "current",
+            "enum": [
+              "current",
+              "draft",
+              "archived"
+            ]
+          },
+          "description": "Set status to one of [current,draft,archived]. Default value is current."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.setContentState",
+      "title": "Set the content state of a content and publishes a new version of the content.",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/state",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Id of the content whose content state is to be set."
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "current",
+              "draft"
+            ]
+          },
+          "description": "Status of content onto which state will be placed. If draft, then draft state will change.\nIf current, state will be placed onto a new version of the content with same body as previous version."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentStateRestInput"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.removeContentState",
+      "title": "Removes the content state of a content and publishes a new version.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/state",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Id of the content whose content state is to be set."
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "current",
+              "draft"
+            ]
+          },
+          "description": "status of content state from which to delete state. Can be draft or archived"
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getAvailableContentStates",
+      "title": "Gets available content states for content.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/state/available",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "id of content to get available states for"
+        }
+      ]
+    },
+    {
+      "connector": "confluence.restoreContentVersion",
+      "title": "Restore content version",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/version",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content for which the history will be restored."
+        },
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "A multi-value parameter indicating which properties of the content to expand. By default, the `content`\nobject is expanded.\n\n- `collaborators` returns the users that collaborated on the version.\n- `content` returns the content for the version."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionRestore"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.deleteContentVersion",
+      "title": "Delete content version",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content/{id}/version/{versionNumber}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content that the version will be deleted from."
+        },
+        {
+          "name": "versionNumber",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "The number of the version to be deleted. The version number starts\nfrom 1 up to current version."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getCustomContentStates",
+      "title": "Get Custom Content States",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/content-states",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "confluence.asyncConvertContentBodyRequest",
+      "title": "Asynchronously convert content body",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/contentbody/convert/async/{to}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "to",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "export_view"
+            ]
+          },
+          "description": "The name of the target format for the content body."
+        },
+        {
+          "name": "spaceKeyContext",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The space key used for resolving embedded content (page includes,\nfiles, and links) in the content body. For example, if the source content\ncontains the link `<ac:link><ri:page ri:content-title=\"Example page\" /><ac:link>`\nand the `spaceKeyContext=TEST` parameter is provided, then the link\nwill be converted to a link to the \"Example page\" page in the \"TEST\" space."
+        },
+        {
+          "name": "contentIdContext",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The content ID used to find the space for resolving embedded content\n(page includes, files, and links) in the content body. For example,\nif the source content contains the link `<ac:link><ri:page ri:content-title=\"Example page\" /><ac:link>`\nand the `contentIdContext=123` parameter is provided, then the link\nwill be converted to a link to the \"Example page\" page in the same space\nthat has the content with ID=123. Note, `spaceKeyContext` will be ignored\nif this parameter is provided."
+        },
+        {
+          "name": "allowCache",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": "Controls whether conversion results are cached and reused for identical requests.\n\n- `false`: Each request creates a new conversion task, even if an identical request was made previously.\n- `true`: Enables caching behavior for identical requests from the same user.\n  - If no cached result exists, a new conversion task is created\n  - If a cached result exists, the existing task is marked as RERUNNING and will complete with status COMPLETED\n  - Returns the same task ID for identical requests, allowing you to retrieve the cached result"
+        },
+        {
+          "name": "embeddedContentRender",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "default": "current",
+            "enum": [
+              "current",
+              "version-at-save"
+            ]
+          },
+          "description": "Mode used for rendering embedded content, like attachments.\n\n- `current` renders the embedded content using the latest version.\n- `version-at-save` renders the embedded content using the version at\nthe time of save."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentBodyCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.asyncConvertContentBodyResponse",
+      "title": "Get asynchronously converted content body from the id or the current status of the task.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/contentbody/convert/async/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The asyncId of the macro task to get the converted body."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.bulkAsyncConvertContentBodyRequest",
+      "title": "Create asynchronous content body conversion tasks in bulk",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/contentbody/convert/async/bulk/tasks",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkContentBodyConversionInput"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.bulkAsyncConvertContentBodyResponse",
+      "title": "Get asynchronous content body conversion task result in bulk",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/contentbody/convert/async/bulk/tasks",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "ids",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "The asyncIds of the conversion tasks."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getAllLabelContent",
+      "title": "Get label information",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/label",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "name",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "default": null
+          },
+          "description": "Name of the label to query."
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "default": null,
+            "enum": [
+              "page",
+              "blogpost",
+              "attachment",
+              "page_template"
+            ]
+          },
+          "description": "The type of contents that are to be returned."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting offset for the results."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int32",
+            "default": 200
+          },
+          "description": "The number of results to be returned."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getGroups",
+      "title": "Get groups",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/group",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the returned groups."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 200
+          },
+          "description": "The maximum number of groups to return per page.\nNote, this may be restricted by fixed system limits."
+        },
+        {
+          "name": "accessType",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "default": null,
+            "enum": [
+              "user",
+              "admin",
+              "site-admin"
+            ]
+          },
+          "description": "The group permission level for which to filter results."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.createGroup",
+      "title": "Create new user group",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/group",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupName"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getGroupByGroupId",
+      "title": "Get group",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/group/by-id",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The id of the group."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.removeGroupById",
+      "title": "Delete user group",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/group/by-id",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Id of the group to delete."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.searchGroups",
+      "title": "Search groups by partial query",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/group/picker",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "query",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "the search term used to query results."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the returned groups."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 200
+          },
+          "description": "The maximum number of groups to return per page.\nNote, this is restricted to a maximum limit of 200 groups."
+        },
+        {
+          "name": "shouldReturnTotalSize",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": "Whether to include total size parameter in the results.\nNote, fetching total size property is an expensive operation; use it if your use case needs this value."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getGroupMembersByGroupId",
+      "title": "Get group members",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/group/{groupId}/membersByGroupId",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "groupId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The id of the group to be queried for its members."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the returned users."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 200
+          },
+          "description": "The maximum number of users to return per page.\nNote, this may be restricted by fixed system limits."
+        },
+        {
+          "name": "shouldReturnTotalSize",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": "Whether to include total size parameter in the results.\nNote, fetching total size property is an expensive operation; use it if your use case needs this value."
+        },
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "operations",
+                "personalSpace",
+                "isExternalCollaborator"
+              ]
+            }
+          },
+          "description": "A multi-value parameter indicating which properties of the user to\nexpand.\n\n  - `operations` returns the operations that the user is allowed to do.\n  - `personalSpace` returns the user's personal space, if it exists.\n  - `isExternalCollaborator`(@deprecated) see `isGuest` in response to find out whether the user is a guest."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.addUserToGroupByGroupId",
+      "title": "Add member to group by groupId",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/group/userByGroupId",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "groupId",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "GroupId of the group whose membership is updated"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountId"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.removeMemberFromGroupByGroupId",
+      "title": "Remove member from group using group id",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/group/userByGroupId",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "groupId",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Id of the group whose membership is updated."
+        },
+        {
+          "name": "accountId",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The account ID of the user. The accountId uniquely identifies the user across all Atlassian products.\nFor example, `384093:32b4d9w0-f6a5-3535-11a3-9c8c88d10192`."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getTasks",
+      "title": "Get long-running tasks",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/longtask",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "key",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the tasks."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the returned tasks."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 100
+          },
+          "description": "The maximum number of tasks to return per page. Note, this may be\nrestricted by fixed system limits."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getTask",
+      "title": "Get long-running task",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/longtask/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the task."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.findTargetFromSource",
+      "title": "Find target entities related to a source entity",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/relation/{relationName}/from/{sourceType}/{sourceKey}/to/{targetType}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "relationName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the relationship. This method supports relationships created via\n[Create relationship](#api-wiki-rest-api-relation-relationname-from-sourcetype-sourcekey-to-targettype-targetkey-put).\nNote, this method does not support 'like' or 'favourite' relationships."
+        },
+        {
+          "name": "sourceType",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "user",
+              "content",
+              "space"
+            ]
+          },
+          "description": "The source entity type of the relationship."
+        },
+        {
+          "name": "sourceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier for the source entity:\n\n- If `sourceType` is `user`, then specify either `current` (logged-in user), the user key of the user, or\nthe account ID of the user. Note that the user key has been deprecated in favor of the account ID for this parameter. See the\n[migration guide](https://developer.atlassian.com/cloud/confluence/deprecation-notice-user-privacy-api-migration-guide/)\nfor details.\n- If `sourceType` is 'content', then specify the content ID.\n- If `sourceType` is 'space', then specify the space key."
+        },
+        {
+          "name": "targetType",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "user",
+              "content",
+              "space"
+            ]
+          },
+          "description": "The target entity type of the relationship."
+        },
+        {
+          "name": "sourceStatus",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The status of the source. This parameter is only used when the\n`sourceType` is 'content'."
+        },
+        {
+          "name": "targetStatus",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The status of the target. This parameter is only used when the\n`targetType` is 'content'."
+        },
+        {
+          "name": "sourceVersion",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "The version of the source. This parameter is only used when the\n`sourceType` is 'content' and the `sourceStatus` is 'historical'."
+        },
+        {
+          "name": "targetVersion",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "The version of the target. This parameter is only used when the\n`targetType` is 'content' and the `targetStatus` is 'historical'."
+        },
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "relationData",
+                "source",
+                "target"
+              ]
+            }
+          },
+          "description": "A multi-value parameter indicating which properties of the response\nobject to expand.\n\n- `relationData` returns information about the relationship, such as\nwho created it and when it was created.\n- `source` returns the source entity.\n- `target` returns the target entity."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the returned relationships."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 25
+          },
+          "description": "The maximum number of relationships to return per page.\nNote, this may be restricted by fixed system limits."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getRelationship",
+      "title": "Find relationship from source to target",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/relation/{relationName}/from/{sourceType}/{sourceKey}/to/{targetType}/{targetKey}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "relationName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the relationship. This method supports the 'favourite'\n(i.e. 'save for later') relationship as well as any other relationship\ntypes created via [Create relationship](#api-wiki-rest-api-relation-relationname-from-sourcetype-sourcekey-to-targettype-targetkey-put)."
+        },
+        {
+          "name": "sourceType",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "user",
+              "content",
+              "space"
+            ]
+          },
+          "description": "The source entity type of the relationship. This must be 'user', if\nthe `relationName` is 'favourite'."
+        },
+        {
+          "name": "sourceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "- The identifier for the source entity:\n\n- If `sourceType` is `user`, then specify either `current` (logged-in user), the user key of the user, or\nthe account ID of the user. Note that the user key has been deprecated in favor of the account ID for this parameter. See the\n[migration guide](https://developer.atlassian.com/cloud/confluence/deprecation-notice-user-privacy-api-migration-guide/)\nfor details.\n- If `sourceType` is 'content', then specify the content ID.\n- If `sourceType` is 'space', then specify the space key."
+        },
+        {
+          "name": "targetType",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "user",
+              "content",
+              "space"
+            ]
+          },
+          "description": "The target entity type of the relationship. This must be 'space' or\n'content', if the `relationName` is 'favourite'."
+        },
+        {
+          "name": "targetKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier for the target entity:\n\n- If `targetType` is `user`, then specify either `current` (logged-in user), the user key of the user, or\nthe account ID of the user. Note that the user key has been deprecated in favor of the account ID for this parameter. See the\n[migration guide](https://developer.atlassian.com/cloud/confluence/deprecation-notice-user-privacy-api-migration-guide/)\nfor details.\n- If `targetType` is 'content', then specify the content ID.\n- If `targetType` is 'space', then specify the space key."
+        },
+        {
+          "name": "sourceStatus",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The status of the source. This parameter is only used when the\n`sourceType` is 'content'."
+        },
+        {
+          "name": "targetStatus",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The status of the target. This parameter is only used when the\n`targetType` is 'content'."
+        },
+        {
+          "name": "sourceVersion",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "The version of the source. This parameter is only used when the\n`sourceType` is 'content' and the `sourceStatus` is 'historical'."
+        },
+        {
+          "name": "targetVersion",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "The version of the target. This parameter is only used when the\n`targetType` is 'content' and the `targetStatus` is 'historical'."
+        },
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "relationData",
+                "source",
+                "target"
+              ]
+            }
+          },
+          "description": "A multi-value parameter indicating which properties of the response\nobject to expand.\n\n- `relationData` returns information about the relationship, such as\nwho created it and when it was created.\n- `source` returns the source entity.\n- `target` returns the target entity."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.createRelationship",
+      "title": "Create relationship",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/relation/{relationName}/from/{sourceType}/{sourceKey}/to/{targetType}/{targetKey}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "relationName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the relationship. This method supports the 'favourite'\n(i.e. 'save for later') relationship. You can also specify any other\nvalue for this parameter to create a custom relationship type."
+        },
+        {
+          "name": "sourceType",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "user",
+              "content",
+              "space"
+            ]
+          },
+          "description": "The source entity type of the relationship. This must be 'user', if\nthe `relationName` is 'favourite'."
+        },
+        {
+          "name": "sourceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "- The identifier for the source entity:\n\n- If `sourceType` is `user`, then specify either `current` (logged-in user), the user key of the user, or\nthe account ID of the user. Note that the user key has been deprecated in favor of the account ID for this parameter. See the\n[migration guide](https://developer.atlassian.com/cloud/confluence/deprecation-notice-user-privacy-api-migration-guide/)\nfor details.\n- If `sourceType` is 'content', then specify the content ID.\n- If `sourceType` is 'space', then specify the space key."
+        },
+        {
+          "name": "targetType",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "user",
+              "content",
+              "space"
+            ]
+          },
+          "description": "The target entity type of the relationship. This must be 'space' or\n'content', if the `relationName` is 'favourite'."
+        },
+        {
+          "name": "targetKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "- The identifier for the target entity:\n\n- If `targetType` is `user`, then specify either `current` (logged-in user), the user key of the user, or\nthe account ID of the user. Note that the user key has been deprecated in favor of the account ID for this parameter. See the\n[migration guide](https://developer.atlassian.com/cloud/confluence/deprecation-notice-user-privacy-api-migration-guide/)\nfor details.\n- If `targetType` is 'content', then specify the content ID.\n- If `targetType` is 'space', then specify the space key."
+        },
+        {
+          "name": "sourceStatus",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The status of the source. This parameter is only used when the\n`sourceType` is 'content'."
+        },
+        {
+          "name": "targetStatus",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The status of the target. This parameter is only used when the\n`targetType` is 'content'."
+        },
+        {
+          "name": "sourceVersion",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "The version of the source. This parameter is only used when the\n`sourceType` is 'content' and the `sourceStatus` is 'historical'."
+        },
+        {
+          "name": "targetVersion",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "The version of the target. This parameter is only used when the\n`targetType` is 'content' and the `targetStatus` is 'historical'."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.deleteRelationship",
+      "title": "Delete relationship",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/relation/{relationName}/from/{sourceType}/{sourceKey}/to/{targetType}/{targetKey}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "relationName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the relationship."
+        },
+        {
+          "name": "sourceType",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "user",
+              "content",
+              "space"
+            ]
+          },
+          "description": "The source entity type of the relationship. This must be 'user', if\nthe `relationName` is 'favourite'."
+        },
+        {
+          "name": "sourceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "- The identifier for the source entity:\n\n- If `sourceType` is `user`, then specify either `current` (logged-in user), the user key of the user, or\nthe account ID of the user. Note that the user key has been deprecated in favor of the account ID for this parameter. See the\n[migration guide](https://developer.atlassian.com/cloud/confluence/deprecation-notice-user-privacy-api-migration-guide/)\nfor details.\n- If `sourceType` is 'content', then specify the content ID.\n- If `sourceType` is 'space', then specify the space key."
+        },
+        {
+          "name": "targetType",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "user",
+              "content",
+              "space"
+            ]
+          },
+          "description": "The target entity type of the relationship. This must be 'space' or\n'content', if the `relationName` is 'favourite'."
+        },
+        {
+          "name": "targetKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "- The identifier for the target entity:\n\n- If `targetType` is `user`, then specify either `current` (logged-in user), the user key of the user, or\nthe account ID of the user. Note that the user key has been deprecated in favor of the account ID for this parameter. See the\n[migration guide](https://developer.atlassian.com/cloud/confluence/deprecation-notice-user-privacy-api-migration-guide/)\nfor details.\n- If `targetType` is 'content', then specify the content ID.\n- If `targetType` is 'space', then specify the space key."
+        },
+        {
+          "name": "sourceStatus",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The status of the source. This parameter is only used when the\n`sourceType` is 'content'."
+        },
+        {
+          "name": "targetStatus",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The status of the target. This parameter is only used when the\n`targetType` is 'content'."
+        },
+        {
+          "name": "sourceVersion",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "The version of the source. This parameter is only used when the\n`sourceType` is 'content' and the `sourceStatus` is 'historical'."
+        },
+        {
+          "name": "targetVersion",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "The version of the target. This parameter is only used when the\n`targetType` is 'content' and the `targetStatus` is 'historical'."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.findSourcesForTarget",
+      "title": "Find source entities related to a target entity",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/relation/{relationName}/to/{targetType}/{targetKey}/from/{sourceType}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "relationName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the relationship. This method supports relationships created via\n[Create relationship](#api-wiki-rest-api-relation-relationname-from-sourcetype-sourcekey-to-targettype-targetkey-put).\nNote, this method does not support 'like' or 'favourite' relationships."
+        },
+        {
+          "name": "sourceType",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "user",
+              "content",
+              "space"
+            ]
+          },
+          "description": "The source entity type of the relationship."
+        },
+        {
+          "name": "targetType",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "user",
+              "content",
+              "space"
+            ]
+          },
+          "description": "The target entity type of the relationship."
+        },
+        {
+          "name": "targetKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier for the target entity:\n\n- If `targetType` is `user`, then specify either `current` (logged-in user), the user key of the user, or\nthe account ID of the user. Note that the user key has been deprecated in favor of the account ID for this parameter. See the\n[migration guide](https://developer.atlassian.com/cloud/confluence/deprecation-notice-user-privacy-api-migration-guide/)\nfor details.\n- If `targetType` is 'content', then specify the content ID.\n- If `targetType` is 'space', then specify the space key."
+        },
+        {
+          "name": "sourceStatus",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The status of the source. This parameter is only used when the\n`sourceType` is 'content'."
+        },
+        {
+          "name": "targetStatus",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The status of the target. This parameter is only used when the\n`targetType` is 'content'."
+        },
+        {
+          "name": "sourceVersion",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "The version of the source. This parameter is only used when the\n`sourceType` is 'content' and the `sourceStatus` is 'historical'."
+        },
+        {
+          "name": "targetVersion",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "The version of the target. This parameter is only used when the\n`targetType` is 'content' and the `targetStatus` is 'historical'."
+        },
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "relationData",
+                "source",
+                "target"
+              ]
+            }
+          },
+          "description": "A multi-value parameter indicating which properties of the response\nobject to expand.\n\n- `relationData` returns information about the relationship, such as\nwho created it and when it was created.\n- `source` returns the source entity.\n- `target` returns the target entity."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the returned relationships."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 25
+          },
+          "description": "The maximum number of relationships to return per page.\nNote, this may be restricted by fixed system limits."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.searchByCQL",
+      "title": "Search content",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/search",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "cql",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The CQL query to be used for the search. See\n[Advanced Searching using CQL](https://developer.atlassian.com/cloud/confluence/advanced-searching-using-cql/)\nfor instructions on how to build a CQL query."
+        },
+        {
+          "name": "cqlcontext",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The space, content, and content status to execute the search\nagainst.\n\n- `spaceKey` Key of the space to search against. Optional.\n- `contentId` ID of the content to search against. Optional. Must be\nin the space specified by `spaceKey`.\n- `contentStatuses` Content statuses to search against. Optional.\n\nSpecify these values in an object. For example,\n`cqlcontext={%22spaceKey%22:%22TEST%22, %22contentId%22:%22123%22}`"
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Pointer to a set of search results, returned as part of the `next` or `prev` URL from the previous search call."
+        },
+        {
+          "name": "next",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        {
+          "name": "prev",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 25
+          },
+          "description": "The maximum number of content objects to return per page.\nNote, this may be restricted by fixed system limits."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The start point of the collection to return"
+        },
+        {
+          "name": "includeArchivedSpaces",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": "Whether to include content from archived spaces in the results."
+        },
+        {
+          "name": "excludeCurrentSpaces",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": "Whether to exclude current spaces and only show archived spaces."
+        },
+        {
+          "name": "excerpt",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "default": "highlight",
+            "enum": [
+              "highlight",
+              "indexed",
+              "none",
+              "highlight_unescaped",
+              "indexed_unescaped"
+            ]
+          },
+          "description": "The excerpt strategy to apply to the result"
+        },
+        {
+          "name": "sitePermissionTypeFilter",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "default": "none",
+            "enum": [
+              "all",
+              "externalCollaborator",
+              "none"
+            ]
+          },
+          "description": "Filters users by permission type. Use `none` to default to licensed users, `externalCollaborator`\nfor external/guest users, and `all` to include all permission types."
+        },
+        {
+          "name": "_",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.searchUser",
+      "title": "Search users",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/search/user",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "cql",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The CQL query to be used for the search. See\n[Advanced Searching using CQL](https://developer.atlassian.com/cloud/confluence/advanced-searching-using-cql/)\nfor instructions on how to build a CQL query.\n\nExample queries:\n          cql=type=user will return up to 10k users\n          cql=user=\"1234\" will return user with accountId \"1234\"\n          You can also use IN, NOT IN, != operators\n          cql=user IN (\"12\", \"34\") will return users with accountids \"12\" and \"34\"\n          cql=user.fullname~jo will return users with nickname/full name starting with \"jo\"\n          cql=user.accountid=\"123\" will return user with accountId \"123\""
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the returned users."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 25
+          },
+          "description": "The maximum number of user objects to return per page.\nNote, this may be restricted by fixed system limits."
+        },
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "A multi-value parameter indicating which properties of the user to expand.\n\n- `operations` returns the operations for the user, which are used\nwhen setting permissions.\n- `personalSpace` returns the personal space of the user."
+        },
+        {
+          "name": "sitePermissionTypeFilter",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "default": "none",
+            "enum": [
+              "all",
+              "externalCollaborator",
+              "none"
+            ]
+          },
+          "description": "Filters users by permission type. Use `none` to default to licensed users, `externalCollaborator`\nfor external/guest users, and `all` to include all permission types."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getLookAndFeelSettings",
+      "title": "Get look and feel settings",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/settings/lookandfeel",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space for which the look and feel settings will be\nreturned. If this is not set, only the global look and feel settings\nare returned."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.updateLookAndFeel",
+      "title": "Select look and feel settings",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/settings/lookandfeel",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LookAndFeelSelection"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.updateLookAndFeelSettings",
+      "title": "Update look and feel settings",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/settings/lookandfeel/custom",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space for which the look and feel settings will be\nupdated. If this is not set, the global look and feel settings will\nbe updated."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LookAndFeel"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.resetLookAndFeelSettings",
+      "title": "Reset look and feel settings",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/settings/lookandfeel/custom",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space for which the look and feel settings will be\nreset. If this is not set, the global look and feel settings will\nbe reset."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getSystemInfo",
+      "title": "Get system info",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/settings/systemInfo",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "confluence.getThemes",
+      "title": "Get themes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/settings/theme",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the returned themes."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 100
+          },
+          "description": "The maximum number of themes to return per page.\nNote, this may be restricted by fixed system limits."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getGlobalTheme",
+      "title": "Get global theme",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/settings/theme/selected",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "confluence.getTheme",
+      "title": "Get theme",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/settings/theme/{themeKey}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "themeKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the theme to be returned."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.createSpace",
+      "title": "Create space",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpaceCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.createPrivateSpace",
+      "title": "Create private space",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space/_private",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpaceCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.updateSpace",
+      "title": "Update space",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space/{spaceKey}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpaceUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.deleteSpace",
+      "title": "Delete space",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space/{spaceKey}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to delete."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.addPermissionToSpace",
+      "title": "Add new permission to space",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space/{spaceKey}/permission",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to be queried for its content."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpacePermissionRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.addCustomContentPermissions",
+      "title": "Add new custom content permission to space",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space/{spaceKey}/permission/custom-content",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to be queried for its content."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpacePermissionCustomContent"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.removePermission",
+      "title": "Remove a space permission",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space/{spaceKey}/permission/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to be queried for its content."
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Id of the permission to be deleted."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getSpaceSettings",
+      "title": "Get space settings",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space/{spaceKey}/settings",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to be queried for its settings."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.updateSpaceSettings",
+      "title": "Update space settings",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space/{spaceKey}/settings",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space whose settings will be updated."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpaceSettingsUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getSpaceContentStates",
+      "title": "Get space suggested content states",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space/{spaceKey}/state",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to be queried for its content state settings."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getContentStateSettings",
+      "title": "Get content state settings for space",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space/{spaceKey}/state/settings",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to be queried for its content state settings."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getContentsWithState",
+      "title": "Get content in space with given content state",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space/{spaceKey}/state/content",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to be queried for its content state settings."
+        },
+        {
+          "name": "state-id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "The id of the content state to filter content by"
+        },
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "A multi-value parameter indicating which properties of the content to expand.\nOptions include: space, version, history, children, etc.\n\nEx: space,version"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 0,
+            "format": "int32",
+            "default": 25
+          },
+          "description": "Maximum number of results to return"
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0,
+            "format": "int32"
+          },
+          "description": "Number of result to start returning. (0 indexed)"
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getSpaceTheme",
+      "title": "Get space theme",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space/{spaceKey}/theme",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to be queried for its theme."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.setSpaceTheme",
+      "title": "Set space theme",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space/{spaceKey}/theme",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to set the theme for."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThemeUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.resetSpaceTheme",
+      "title": "Reset space theme",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space/{spaceKey}/theme",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to reset the theme for."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getWatchersForSpace",
+      "title": "Get space watchers",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space/{spaceKey}/watch",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to get watchers."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The start point of the collection to return."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The limit of the number of items to return, this may be restricted by fixed system limits."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getLabelsForSpace",
+      "title": "Get Space Labels",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space/{spaceKey}/label",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to get labels for."
+        },
+        {
+          "name": "prefix",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "global",
+              "my",
+              "team"
+            ]
+          },
+          "description": "Filters the results to labels with the specified prefix. If this parameter\nis not specified, then labels with any prefix will be returned.\n\n- `global` prefix is used by labels that are on content within the provided space.\n- `my` prefix can be explicitly added by a user when adding a label\nvia the UI, e.g. 'my:example-label'.\n- `team` prefix is used for labels applied to the space."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the returned labels."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 200
+          },
+          "description": "The maximum number of labels to return per page. Note,\nthis may be restricted by fixed system limits."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.addLabelsToSpace",
+      "title": "Add labels to a space",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space/{spaceKey}/label",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to add labels to."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LabelCreate"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.deleteLabelFromSpace",
+      "title": "Remove label from a space",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/space/{spaceKey}/label",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to remove a labels from."
+        },
+        {
+          "name": "name",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the label to remove"
+        },
+        {
+          "name": "prefix",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The prefix of the label to remove. If not provided defaults to global."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.updateContentTemplate",
+      "title": "Update content template",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/template",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentTemplateUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.createContentTemplate",
+      "title": "Create content template",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/template",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContentTemplateCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getBlueprintTemplates",
+      "title": "Get blueprint templates",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/template/blueprint",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to be queried for templates. If the `spaceKey`\nis not specified, global blueprint templates will be returned."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the returned templates."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 25
+          },
+          "description": "The maximum number of templates to return per page.\nNote, this may be restricted by fixed system limits."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getContentTemplates",
+      "title": "Get content templates",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/template/page",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to be queried for templates. If the `spaceKey`\nis not specified, global templates will be returned."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the returned templates."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 25
+          },
+          "description": "The maximum number of templates to return per page.\nNote, this may be restricted by fixed system limits."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getContentTemplate",
+      "title": "Get content template",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/template/{contentTemplateId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "contentTemplateId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content template to be returned."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.removeTemplate",
+      "title": "Remove template",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/template/{contentTemplateId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "contentTemplateId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the template to be deleted."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getUser",
+      "title": "Get user",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "accountId",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The account ID of the user. The accountId uniquely identifies the user across all Atlassian products.\nFor example, `384093:32b4d9w0-f6a5-3535-11a3-9c8c88d10192`."
+        },
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "operations",
+                "personalSpace",
+                "isExternalCollaborator"
+              ]
+            }
+          },
+          "description": "A multi-value parameter indicating which properties of the user to\nexpand.\n\n  - `operations` returns the operations that the user is allowed to do.\n  - `personalSpace` returns the user's personal space, if it exists.\n  - `isExternalCollaborator`(@deprecated) see `isGuest` in response to find out whether the user is a guest."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getAnonymousUser",
+      "title": "Get anonymous user",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/anonymous",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "operations"
+              ]
+            }
+          },
+          "description": "A multi-value parameter indicating which properties of the user to\nexpand.\n\n  - `operations` returns the operations that the user is allowed to do."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getCurrentUser",
+      "title": "Get current user",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/current",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "operations",
+                "personalSpace",
+                "isExternalCollaborator"
+              ]
+            }
+          },
+          "description": "A multi-value parameter indicating which properties of the user to\nexpand.\n\n  - `operations` returns the operations that the user is allowed to do.\n  - `personalSpace` returns the user's personal space, if it exists.\n  - `isExternalCollaborator`(@deprecated) see `isGuest` in response to find out whether the user is a guest."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getGroupMembershipsForUser",
+      "title": "Get group memberships for user",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/memberof",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "accountId",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The account ID of the user. The accountId uniquely identifies the user across all Atlassian products.\nFor example, `384093:32b4d9w0-f6a5-3535-11a3-9c8c88d10192`."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the returned groups."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 200
+          },
+          "description": "The maximum number of groups to return per page.\nNote, this may be restricted by fixed system limits."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getBulkUserLookup",
+      "title": "Get multiple users using ids",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/bulk",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "accountId",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "A list of accountId's of users to be returned."
+        },
+        {
+          "name": "expand",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "operations",
+                "personalSpace",
+                "isExternalCollaborator"
+              ]
+            }
+          },
+          "description": "A multi-value parameter indicating which properties of the user to\nexpand.\n\n  - `operations` returns the operations that the user is allowed to do.\n  - `personalSpace` returns the user's personal space, if it exists.\n  - `isExternalCollaborator`(@deprecated) use `isGuest` instead to return whether the user is a guest."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getContentWatchStatus",
+      "title": "Get content watch status",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/watch/content/{contentId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "contentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content to be queried for whether the specified user is\nwatching it."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.addContentWatcher",
+      "title": "Add content watcher",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/watch/content/{contentId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "contentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content to add the watcher to."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.removeContentWatcher",
+      "title": "Remove content watcher",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/watch/content/{contentId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "X-Atlassian-Token",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "default": "no-check"
+          },
+          "description": "Note, you must add header when making a\nrequest, as this operation has XSRF protection."
+        },
+        {
+          "name": "contentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content to remove the watcher from."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.isWatchingLabel",
+      "title": "Get label watch status",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/watch/label/{labelName}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "labelName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the label to be queried for whether the specified user is\nwatching it."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.addLabelWatcher",
+      "title": "Add label watcher",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/watch/label/{labelName}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "X-Atlassian-Token",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "default": "no-check"
+          },
+          "description": "Note, you must add header when making a\nrequest, as this operation has XSRF protection."
+        },
+        {
+          "name": "labelName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the label to add the watcher to."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.removeLabelWatcher",
+      "title": "Remove label watcher",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/watch/label/{labelName}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "labelName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the label to remove the watcher from."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.isWatchingSpace",
+      "title": "Get space watch status",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/watch/space/{spaceKey}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to be queried for whether the specified user is\nwatching it."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.addSpaceWatcher",
+      "title": "Add space watcher",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/watch/space/{spaceKey}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "X-Atlassian-Token",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "default": "no-check"
+          },
+          "description": "Note, you must add header when making a\nrequest, as this operation has XSRF protection."
+        },
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to add the watcher to."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.removeSpaceWatch",
+      "title": "Remove space watch",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/watch/space/{spaceKey}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "spaceKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the space to remove the watcher from."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getPrivacyUnsafeUserEmail",
+      "title": "Get user email address",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/email",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "accountId",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The account ID of the user, which uniquely identifies the user across all Atlassian products.\nFor example, `384093:32b4d9w0-f6a5-3535-11a3-9c8c88d10192`. Required."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getPrivacyUnsafeUserEmailBulk",
+      "title": "Get user email addresses in batch",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/email/bulk",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "accountId",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "The account IDs of the users."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getModules",
+      "title": "Get modules",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/atlassian-connect/1/app/module/dynamic",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "confluence.registerModules",
+      "title": "Register modules",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/atlassian-connect/1/app/module/dynamic",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "*/*": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectModules"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.removeModules",
+      "title": "Remove modules",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/atlassian-connect/1/app/module/dynamic",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "moduleKey",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "The key of the module to remove. To include multiple module keys, provide multiple copies of this parameter.\nFor example, `moduleKey=dynamic-attachment-entity-property&moduleKey=dynamic-select-field`.\nNonexistent keys are ignored."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getViews",
+      "title": "Get views",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/analytics/content/{contentId}/views",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "contentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content to get the views for."
+        },
+        {
+          "name": "fromDate",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The number of views for the content since the date."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getViewers",
+      "title": "Get viewers",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/analytics/content/{contentId}/viewers",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "contentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the content to get the viewers for."
+        },
+        {
+          "name": "fromDate",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The number of views for the content since the date."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getUserProperties",
+      "title": "Get user properties",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/{userId}/property",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The account ID of the user to be queried for its properties."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          },
+          "description": "The starting index of the returned properties."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "maximum": 25,
+            "type": "integer",
+            "format": "int32",
+            "default": 5
+          },
+          "description": "The maximum number of properties to return per page.\nNote, this may be restricted by fixed system limits."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.getUserProperty",
+      "title": "Get user property",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/{userId}/property/{key}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The account ID of the user to be queried for its properties."
+        },
+        {
+          "name": "key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[-_a-zA-Z0-9]+$"
+          },
+          "description": "The key of the user property."
+        }
+      ]
+    },
+    {
+      "connector": "confluence.updateUserProperty",
+      "title": "Update user property",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/{userId}/property/{key}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The account ID of the user. The accountId uniquely identifies the user across all Atlassian\nproducts. For example, 384093:32b4d9w0-f6a5-3535-11a3-9c8c88d10192"
+        },
+        {
+          "name": "key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[-_a-zA-Z0-9]+$"
+          },
+          "description": "The key of the user property."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserPropertyUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.createUserProperty",
+      "title": "Create user property by key",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/{userId}/property/{key}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The account ID of the user. The accountId uniquely identifies the user across all Atlassian\nproducts. For example, 384093:32b4d9w0-f6a5-3535-11a3-9c8c88d10192"
+        },
+        {
+          "name": "key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[-_a-zA-Z0-9]+$"
+          },
+          "description": "The key of the user property."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserPropertyCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "confluence.deleteUserProperty",
+      "title": "Delete user property",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "//your-domain.atlassian.net",
+      "path": "/wiki/rest/api/user/{userId}/property/{key}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "userId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The account ID of the user. The accountId uniquely identifies the user across all Atlassian\nproducts. For example, 384093:32b4d9w0-f6a5-3535-11a3-9c8c88d10192"
+        },
+        {
+          "name": "key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "pattern": "^[-_a-zA-Z0-9]+$"
+          },
+          "description": "The key of the user property."
+        }
+      ]
+    }
+  ]
+}

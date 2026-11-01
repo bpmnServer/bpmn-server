@@ -1,0 +1,1487 @@
+{
+  "name": "algolia",
+  "title": "Algolia",
+  "source": "https://raw.githubusercontent.com/algolia/api-clients-automation/main/docs/bundled/search.yml",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "algolia.customGet",
+      "title": "Send requests to the Algolia REST API",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/{path}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.customPost",
+      "title": "Send requests to the Algolia REST API",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/{path}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.customPut",
+      "title": "Send requests to the Algolia REST API",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/{path}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.customDelete",
+      "title": "Send requests to the Algolia REST API",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/{path}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.searchSingleIndex",
+      "title": "Search an index",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/query",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/searchParams"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.search",
+      "title": "Search multiple queries",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/*/queries",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "searchMethodParams",
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "requests": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/SearchQuery"
+                    }
+                  },
+                  "strategy": {
+                    "$ref": "#/components/schemas/searchStrategy"
+                  }
+                },
+                "required": [
+                  "requests"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.searchForFacetValues",
+      "title": "Search for facet values",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/facets/{facetName}/query",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "facetName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Facet attribute in which to search for values.\n\nThis attribute must be included in the `attributesForFaceting` index setting with the `searchable()` modifier.\n"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "searchForFacetValuesRequest",
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "facetQuery": {
+                    "$ref": "#/components/schemas/facetQuery"
+                  },
+                  "maxFacetHits": {
+                    "$ref": "#/components/schemas/maxFacetHits"
+                  },
+                  "params": {
+                    "$ref": "#/components/schemas/paramsAsString"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.browse",
+      "title": "Browse for records",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/browse",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/browseParams"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.saveObject",
+      "title": "Add a new record (with auto-generated object ID)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "objectID": "blackTShirt",
+                  "name": "Black T-shirt",
+                  "color": "#000000"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.deleteIndex",
+      "title": "Delete an index",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.getObject",
+      "title": "Retrieve a record",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/{objectID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "attributesToRetrieve",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Attributes to include with the records in the response.\nThis is useful to reduce the size of the API response.\nBy default, all retrievable attributes are returned.\n\n`objectID` is always retrieved.\n\nAttributes included in `unretrievableAttributes`\nwon't be retrieved unless the request is authenticated with the admin API key.\n"
+        }
+      ]
+    },
+    {
+      "connector": "algolia.addOrUpdateObject",
+      "title": "Add or replace a record",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/{objectID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  "objectID": "blackTShirt",
+                  "name": "Black T-shirt",
+                  "color": "#000000"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.deleteObject",
+      "title": "Delete a record",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/{objectID}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.deleteBy",
+      "title": "Delete records matching a filter",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/deleteByQuery",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/deleteByParams"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.clearObjects",
+      "title": "Delete all records from an index",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/clear",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.partialUpdateObject",
+      "title": "Add or update attributes",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/{objectID}/partial",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "createIfNotExists",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": true
+          },
+          "description": "Whether to create a new record if it doesn't exist."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "description": "Attributes to update.",
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.batch",
+      "title": "Batch indexing operations on one index",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/batch",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/batchWriteParams"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.multipleBatch",
+      "title": "Batch indexing operations on multiple indices",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/*/batch",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "batchParams",
+                "description": "Batch parameters.",
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "requests": {
+                    "type": "array",
+                    "items": {
+                      "title": "multipleBatchRequest",
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "action": {
+                          "$ref": "#/components/schemas/action"
+                        },
+                        "indexName": {
+                          "$ref": "#/components/schemas/indexName"
+                        },
+                        "body": {
+                          "type": "object",
+                          "description": "Operation arguments (varies with specified `action`)."
+                        }
+                      },
+                      "required": [
+                        "action",
+                        "indexName"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "requests"
+                ]
+              },
+              "examples": {
+                "batch": {
+                  "summary": "Batch indexing request to two indices",
+                  "value": {
+                    "requests": [
+                      {
+                        "action": "addObject",
+                        "indexName": "contacts",
+                        "body": {
+                          "name": "Betty Jane McCamey",
+                          "company": "Vita Foods Inc.",
+                          "email": "betty@mccamey.com"
+                        }
+                      },
+                      {
+                        "action": "addObject",
+                        "indexName": "public_contacts",
+                        "body": {
+                          "name": "Gayla Geimer",
+                          "company": "Ortman McCain Co.",
+                          "email": "gayla@geimer.com"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.getObjects",
+      "title": "Retrieve records",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/*/objects",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "getObjectsParams",
+                "description": "Request parameters.",
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "requests": {
+                    "type": "array",
+                    "items": {
+                      "title": "getObjectsRequest",
+                      "description": "Request body for retrieving records.",
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "objectID",
+                        "indexName"
+                      ],
+                      "properties": {
+                        "indexName": {
+                          "type": "string",
+                          "description": "Index from which to retrieve the records.",
+                          "example": "books"
+                        },
+                        "objectID": {
+                          "type": "string",
+                          "description": "Object ID for the record to retrieve.",
+                          "example": "product-1"
+                        },
+                        "attributesToRetrieve": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Attributes to retrieve.\nIf not specified, all retrievable attributes are returned.\n",
+                          "example": [
+                            "author",
+                            "title",
+                            "content"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "requests"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.getSettings",
+      "title": "Retrieve index settings",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/settings",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.setSettings",
+      "title": "Update index settings",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/settings",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/indexSettings"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.getSynonym",
+      "title": "Retrieve a synonym",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/synonyms/{objectID}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.saveSynonym",
+      "title": "Create or replace a synonym",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/synonyms/{objectID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/synonymHit"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.deleteSynonym",
+      "title": "Delete a synonym",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/synonyms/{objectID}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.saveSynonyms",
+      "title": "Create or replace synonyms",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/synonyms/batch",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/synonymHits"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.clearSynonyms",
+      "title": "Delete all synonyms",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/synonyms/clear",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.searchSynonyms",
+      "title": "Search for synonyms",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/synonyms/search",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "searchSynonymsParams",
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "hitsPerPage": {
+                    "$ref": "#/components/schemas/hitsPerPage"
+                  },
+                  "page": {
+                    "$ref": "#/components/schemas/page"
+                  },
+                  "query": {
+                    "$ref": "#/components/schemas/query"
+                  },
+                  "type": {
+                    "$ref": "#/components/schemas/SynonymType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.listApiKeys",
+      "title": "List API keys",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/keys",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.addApiKey",
+      "title": "Create an API key",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/keys",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/apiKey"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.getApiKey",
+      "title": "Retrieve API key permissions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/keys/{key}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.updateApiKey",
+      "title": "Update an API key",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/keys/{key}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/apiKey"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.deleteApiKey",
+      "title": "Delete an API key",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/keys/{key}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.restoreApiKey",
+      "title": "Restore an API key",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/keys/{key}/restore",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.getRule",
+      "title": "Retrieve a rule",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/rules/{objectID}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.saveRule",
+      "title": "Create or replace a rule",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/rules/{objectID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/rule"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.deleteRule",
+      "title": "Delete a rule",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/rules/{objectID}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.saveRules",
+      "title": "Create or update rules",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/rules/batch",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "description": "Rules to add or replace.",
+                "items": {
+                  "$ref": "#/components/schemas/rule"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.clearRules",
+      "title": "Delete all rules",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/rules/clear",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.searchRules",
+      "title": "Search for rules",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/rules/search",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "searchRulesParams",
+                "type": "object",
+                "description": "Rules search parameters.",
+                "additionalProperties": false,
+                "properties": {
+                  "anchoring": {
+                    "$ref": "#/components/schemas/anchoring"
+                  },
+                  "context": {
+                    "type": "string",
+                    "description": "Only return rules that match the context (exact match).",
+                    "example": "mobile"
+                  },
+                  "enabled": {
+                    "oneOf": [
+                      {
+                        "type": "boolean",
+                        "description": "If `true`, return only enabled rules.\nIf `false`, return only inactive rules.\nBy default, _all_ rules are returned.\n"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "default": null
+                  },
+                  "hitsPerPage": {
+                    "$ref": "#/components/schemas/parameters_hitsPerPage"
+                  },
+                  "page": {
+                    "$ref": "#/components/schemas/parameters_page"
+                  },
+                  "query": {
+                    "$ref": "#/components/schemas/parameters_query"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.batchDictionaryEntries",
+      "title": "Add or delete dictionary entries",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/dictionaries/{dictionaryName}/batch",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "batchDictionaryEntriesParams",
+                "description": "Request body for updating dictionary entries.",
+                "type": "object",
+                "required": [
+                  "requests"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "requests": {
+                    "type": "array",
+                    "description": "List of additions and deletions to your dictionaries.",
+                    "items": {
+                      "title": "batchDictionaryEntriesRequest",
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "action",
+                        "body"
+                      ],
+                      "properties": {
+                        "action": {
+                          "$ref": "#/components/schemas/dictionaryAction"
+                        },
+                        "body": {
+                          "$ref": "#/components/schemas/dictionaryEntry"
+                        }
+                      }
+                    }
+                  },
+                  "clearExistingDictionaryEntries": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Whether to replace all custom entries in the dictionary with the ones sent with this request."
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.searchDictionaryEntries",
+      "title": "Search dictionary entries",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/dictionaries/{dictionaryName}/search",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "searchDictionaryEntriesParams",
+                "description": "Search parameter.",
+                "type": "object",
+                "required": [
+                  "query"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "query": {
+                    "$ref": "#/components/schemas/query"
+                  },
+                  "hitsPerPage": {
+                    "$ref": "#/components/schemas/hitsPerPage"
+                  },
+                  "language": {
+                    "$ref": "#/components/schemas/supportedLanguage"
+                  },
+                  "page": {
+                    "$ref": "#/components/schemas/page"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.getDictionarySettings",
+      "title": "Retrieve dictionary settings",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/dictionaries/*/settings",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.setDictionarySettings",
+      "title": "Update dictionary settings",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/dictionaries/*/settings",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "dictionarySettingsParams",
+                "type": "object",
+                "additionalProperties": false,
+                "description": "Turn on or off the built-in Algolia stop words for a specific language.\n",
+                "required": [
+                  "disableStandardEntries"
+                ],
+                "properties": {
+                  "disableStandardEntries": {
+                    "$ref": "#/components/schemas/standardEntries"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.getDictionaryLanguages",
+      "title": "List available languages",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/dictionaries/*/languages",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.assignUserId",
+      "title": "Assign or move a user ID",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/clusters/mapping",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "assignUserIdParams",
+                "type": "object",
+                "description": "Assign userID parameters.",
+                "additionalProperties": false,
+                "properties": {
+                  "cluster": {
+                    "$ref": "#/components/schemas/clusterName"
+                  }
+                },
+                "required": [
+                  "cluster"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.listUserIds",
+      "title": "List user IDs",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/clusters/mapping",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.batchAssignUserIds",
+      "title": "Assign multiple userIDs",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/clusters/mapping/batch",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "batchAssignUserIdsParams",
+                "type": "object",
+                "description": "Assign userID parameters.",
+                "additionalProperties": false,
+                "properties": {
+                  "cluster": {
+                    "$ref": "#/components/schemas/clusterName"
+                  },
+                  "users": {
+                    "type": "array",
+                    "description": "User IDs to assign.",
+                    "example": [
+                      "einstein",
+                      "bohr",
+                      "feynman"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "cluster",
+                  "users"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.getTopUserIds",
+      "title": "Get top user IDs",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/clusters/mapping/top",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.getUserId",
+      "title": "Retrieve user ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/clusters/mapping/{userID}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.removeUserId",
+      "title": "Delete user ID",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/clusters/mapping/{userID}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.listClusters",
+      "title": "List clusters",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/clusters",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.searchUserIds",
+      "title": "Search for user IDs",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/clusters/mapping/search",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "searchUserIdsParams",
+                "type": "object",
+                "description": "OK",
+                "additionalProperties": false,
+                "properties": {
+                  "query": {
+                    "type": "string"
+                  },
+                  "clusterName": {
+                    "$ref": "#/components/schemas/clusterName"
+                  },
+                  "hitsPerPage": {
+                    "$ref": "#/components/schemas/hitsPerPage"
+                  },
+                  "page": {
+                    "$ref": "#/components/schemas/page"
+                  }
+                },
+                "required": [
+                  "query"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.hasPendingMappings",
+      "title": "Get migration and user mapping status",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/clusters/mapping/pending",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "getClusters",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Whether to include the cluster's pending mapping state in the response."
+        }
+      ]
+    },
+    {
+      "connector": "algolia.getSources",
+      "title": "List allowed sources",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/security/sources",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "algolia.replaceSources",
+      "title": "Replace allowed sources",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/security/sources",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/sources"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.appendSource",
+      "title": "Add a source",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/security/sources/append",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/source"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.deleteSource",
+      "title": "Delete a source",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/security/sources/{source}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "source",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "10.0.0.1/32"
+          },
+          "description": "IP address range of the source."
+        }
+      ]
+    },
+    {
+      "connector": "algolia.getLogs",
+      "title": "Retrieve log entries",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/logs",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "indexName",
+          "in": "query",
+          "schema": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": "Index for which to retrieve log entries.\nBy default, log entries are retrieved for all indices.\n"
+        },
+        {
+          "name": "length",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 10,
+            "maximum": 1000
+          },
+          "description": "Maximum number of entries to retrieve."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 0
+          },
+          "description": "First log entry to retrieve. The most recent entries are listed first."
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/logType"
+          },
+          "description": "Type of log entries to retrieve.\nBy default, all log entries are retrieved.\n"
+        }
+      ]
+    },
+    {
+      "connector": "algolia.getAppTask",
+      "title": "Check application task status",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/task/{taskID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1506303845001
+          },
+          "description": "Unique task identifier."
+        }
+      ]
+    },
+    {
+      "connector": "algolia.getTask",
+      "title": "Check task status",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/task/{taskID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1506303845001
+          },
+          "description": "Unique task identifier."
+        }
+      ]
+    },
+    {
+      "connector": "algolia.operationIndex",
+      "title": "Copy or move an index",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes/{indexName}/operation",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "operationIndexParams",
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "destination": {
+                    "$ref": "#/components/schemas/indexName"
+                  },
+                  "operation": {
+                    "$ref": "#/components/schemas/operationType"
+                  },
+                  "scope": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/scopeType"
+                    },
+                    "description": "**Only for copying.**\n\nIf you specify a scope, only the selected scopes are copied. Records and the other scopes are left unchanged.\nIf you omit the `scope` parameter, everything is copied: records, settings, synonyms, and rules.\n"
+                  }
+                },
+                "required": [
+                  "operation",
+                  "destination"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "algolia.listIndices",
+      "title": "List indices",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://{appId}.algolia.net",
+      "path": "/1/indexes",
+      "authentication": "apiKey",
+      "parameters": []
+    }
+  ]
+}

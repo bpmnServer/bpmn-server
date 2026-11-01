@@ -9,7 +9,6 @@ history (`git subtree add` from the local repos). Local only.
     > bpmn-web
 2.  install
 
-npx ?
 
 npx bpmn-server init my-app          # or: npm create bpmn-app my-app
 

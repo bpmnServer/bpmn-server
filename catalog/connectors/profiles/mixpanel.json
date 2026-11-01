@@ -1,0 +1,8 @@
+{
+  "name": "mixpanel",
+  "title": "Mixpanel",
+  "source": "https://raw.githubusercontent.com/mixpanel/docs/main/openapi/src/ingestion.openapi.yaml",
+  "authentication": "basic",
+  "operations": [],
+  "error": "404 Not Found"
+}

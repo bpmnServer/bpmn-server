@@ -1,0 +1,46 @@
+{
+  "name": "vonage-sms",
+  "title": "Vonage Sms",
+  "source": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/nexmo.com/sms/1.2.0/openapi.yaml",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "vonage-sms.send-an-sms",
+      "title": "Send an SMS",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://rest.nexmo.com/sms",
+      "path": "/{format}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "format",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "default": "json",
+            "enum": [
+              "json",
+              "xml"
+            ],
+            "example": "json",
+            "type": "string"
+          },
+          "description": "The format of the response"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/NewMessage"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

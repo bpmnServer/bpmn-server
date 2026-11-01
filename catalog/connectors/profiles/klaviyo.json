@@ -1,0 +1,8 @@
+{
+  "name": "klaviyo",
+  "title": "Klaviyo",
+  "source": "https://raw.githubusercontent.com/klaviyo/klaviyo-api-node/main/openapi/openapi.yaml",
+  "authentication": "apiKey",
+  "operations": [],
+  "error": "404 Not Found"
+}

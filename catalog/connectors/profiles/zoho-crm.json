@@ -1,0 +1,262 @@
+{
+  "name": "zoho-crm",
+  "title": "Zoho Crm",
+  "source": "https://raw.githubusercontent.com/ballerina-platform/openapi-connectors/main/openapi/zoho.crm.rest/openapi.yaml",
+  "authentication": "oauth-client-credentials-flow",
+  "operations": [
+    {
+      "connector": "zoho-crm.listRecords",
+      "title": "Get the list of available records from a module.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://www.zohoapis.com/crm/v2",
+      "path": "/{module_api_name}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "module_api_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Module name. Leads, Accounts, Contacts, Deals, Campaigns, Tasks, Cases, Events, Calls, Solutions, Products, Vendors, Price Books, Quotes, Sales Orders, Purchase Orders, Invoices, Activities, and custom modules."
+        }
+      ]
+    },
+    {
+      "connector": "zoho-crm.addRecord",
+      "title": "Add new records to a module.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://www.zohoapis.com/crm/v2",
+      "path": "/{module_api_name}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "module_api_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Module name. Leads, Accounts, Contacts, Deals, Campaigns, Tasks, Cases, Events, Calls, Solutions, Products, Vendors, Price Books, Quotes, Sales Orders, Purchase Orders, Invoices, Activities, and custom modules."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "zoho-crm.updateRecord",
+      "title": "Update existing record in the module.",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://www.zohoapis.com/crm/v2",
+      "path": "/{module_api_name}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "module_api_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Module name. Leads, Accounts, Contacts, Deals, Campaigns, Tasks, Cases, Events, Calls, Solutions, Products, Vendors, Price Books, Quotes, Sales Orders, Purchase Orders, Invoices, Activities, and custom modules."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "zoho-crm.getRecord",
+      "title": "Get a record from a module.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://www.zohoapis.com/crm/v2",
+      "path": "/{module_api_name}/{record_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "module_api_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Module name. Leads, Accounts, Contacts, Deals, Campaigns, Tasks, Cases, Events, Calls, Solutions, Products, Vendors, Price Books, Quotes, Sales Orders, Purchase Orders, Invoices, Activities, and custom modules."
+        },
+        {
+          "name": "record_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Record ID"
+        }
+      ]
+    },
+    {
+      "connector": "zoho-crm.deleteRecord",
+      "title": "Delete existing record in the module.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://www.zohoapis.com/crm/v2",
+      "path": "/{module_api_name}/{record_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "module_api_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Module name. Leads, Accounts, Contacts, Deals, Campaigns, Tasks, Cases, Events, Calls, Solutions, Products, Vendors, Price Books, Quotes, Sales Orders, Purchase Orders, Invoices, Activities, and custom modules."
+        },
+        {
+          "name": "record_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Record ID"
+        }
+      ]
+    },
+    {
+      "connector": "zoho-crm.searchRecords",
+      "title": "Retrieve the records that match your search criteria.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://www.zohoapis.com/crm/v2",
+      "path": "/{module_api_name}/search",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "module_api_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Module name. Leads, Accounts, Contacts, Deals, Campaigns, Tasks, Cases, Events, Calls, Solutions, Products, Vendors, Price Books, Quotes, Sales Orders, Purchase Orders, Invoices, Activities, and custom modules."
+        },
+        {
+          "name": "criteria",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Performs search by following the shown criteria"
+        },
+        {
+          "name": "email",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Performs module search by email. All the email fields of a particular module will be searched and listed."
+        },
+        {
+          "name": "phone",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Performs module search by phone number. All the phone fields of a particular module will be searched and listed."
+        },
+        {
+          "name": "word",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Performs global search by word."
+        },
+        {
+          "name": "converted",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "To get the list of converted records. Default value is false."
+        },
+        {
+          "name": "approved",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "To get the list of approved records. Default value is true."
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "To get the list of records from the respective pages. Default value for page is 1."
+        },
+        {
+          "name": "per_page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "To get the list of records available per page. The default and the maximum possible value is 200."
+        }
+      ]
+    },
+    {
+      "connector": "zoho-crm.convertLead",
+      "title": "Convert a lead into a contact or an account.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://www.zohoapis.com/crm/v2",
+      "path": "/Leads/{record_id}/actions/convert",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "record_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Record ID"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadData"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

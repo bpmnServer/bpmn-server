@@ -1,0 +1,61 @@
+{
+  "name": "clickup",
+  "title": "Clickup",
+  "source": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/clickup.com/1.0.0/openapi.yaml",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "clickup.List All Questions",
+      "title": "List All Questions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://polls.apiblueprint.org",
+      "path": "/questions",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "clickup.Create a New Question",
+      "title": "Create a New Question",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://polls.apiblueprint.org",
+      "path": "/questions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "example": {
+                  "choices": [
+                    "Swift",
+                    "Python",
+                    "Objective-C",
+                    "Ruby"
+                  ],
+                  "question": "Favourite programming language?"
+                },
+                "properties": {
+                  "choices": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "question": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

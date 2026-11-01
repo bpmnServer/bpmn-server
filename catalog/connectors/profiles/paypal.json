@@ -1,0 +1,665 @@
+{
+  "name": "paypal",
+  "title": "Paypal",
+  "source": "https://raw.githubusercontent.com/paypal/paypal-rest-api-specifications/main/openapi/payments_payment_v2.json",
+  "authentication": "oauth-client-credentials-flow",
+  "operations": [
+    {
+      "connector": "paypal.authorizations.get",
+      "title": "Show details for authorized payment",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api-m.paypal.com",
+      "path": "/v2/payments/authorizations/{authorization_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "authorization_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2147483647,
+            "pattern": "^[\\S\\s]*$"
+          },
+          "description": "The ID of the authorized payment for which to show details."
+        }
+      ]
+    },
+    {
+      "connector": "paypal.authorizations.capture",
+      "title": "Capture authorized payment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api-m.paypal.com",
+      "path": "/v2/payments/authorizations/{authorization_id}/capture",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "authorization_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2147483647,
+            "pattern": "^[\\S\\s]*$"
+          },
+          "description": "The PayPal-generated ID for the authorized payment to capture."
+        },
+        {
+          "name": "Prefer",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2147483647,
+            "pattern": "^[\\S\\s]*$",
+            "default": "return=minimal"
+          },
+          "description": "The preferred server response upon successful completion of the request. Value is:<ul><li><code>return=minimal</code>. The server returns a minimal response to optimize communication between the API caller and the server. A minimal response includes the <code>id</code>, <code>status</code> and HATEOAS links.</li><li><code>return=representation</code>. The server returns a complete resource representation, including the current state of the resource.</li></ul>"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/capture_request"
+              },
+              "examples": {
+                "authorizations_capture": {
+                  "summary": "Capture Authorized Payment",
+                  "description": "Captures an authorized payment, by ID.",
+                  "value": {
+                    "amount": {
+                      "value": "10.99",
+                      "currency_code": "USD"
+                    },
+                    "invoice_id": "INVOICE-123",
+                    "final_capture": true,
+                    "note_to_payer": "If the ordered color is not available, we will substitute with a different color free of charge.",
+                    "soft_descriptor": "Bob's Custom Sweaters"
+                  }
+                },
+                "authorizations_capture_200_idempotent_response": {
+                  "summary": "Capture Authorized Payment - 200 idempotent response",
+                  "description": "Captures an authorized payment, by ID.",
+                  "value": {
+                    "amount": {
+                      "value": "1.00",
+                      "currency_code": "USD"
+                    },
+                    "invoice_id": "CaptureInvoice-10142024",
+                    "final_capture": false
+                  }
+                },
+                "authorizations_capture_empty_request": {
+                  "summary": "Capture Authorized Payment with an empty request",
+                  "description": "Captures an authorized payment, by ID.",
+                  "value": {}
+                },
+                "authorizations_capture_with_prefer_header": {
+                  "summary": "Capture Authorized Payment with Prefer Request Header",
+                  "description": "Captures an authorized payment, by ID. Includes the `Prefer` request header.",
+                  "value": {
+                    "amount": {
+                      "value": "10.99",
+                      "currency_code": "USD"
+                    },
+                    "invoice_id": "INVOICE-123",
+                    "final_capture": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "paypal.authorizations.reauthorize",
+      "title": "Reauthorize authorized payment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api-m.paypal.com",
+      "path": "/v2/payments/authorizations/{authorization_id}/reauthorize",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "authorization_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2147483647,
+            "pattern": "^[\\S\\s]*$"
+          },
+          "description": "The PayPal-generated ID for the authorized payment to reauthorize."
+        },
+        {
+          "name": "Prefer",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2147483647,
+            "pattern": "^[\\S\\s]*$",
+            "default": "return=minimal"
+          },
+          "description": "The preferred server response upon successful completion of the request. Value is:<ul><li><code>return=minimal</code>. The server returns a minimal response to optimize communication between the API caller and the server. A minimal response includes the <code>id</code>, <code>status</code> and HATEOAS links.</li><li><code>return=representation</code>. The server returns a complete resource representation, including the current state of the resource.</li></ul>"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/reauthorize_request"
+              },
+              "examples": {
+                "authorizations_reauthorize": {
+                  "summary": "Reauthorize Authorized Payment",
+                  "description": "Reauthorizes an authorized payment, by ID. The honor period for the authorized payment has expired.",
+                  "value": {
+                    "amount": {
+                      "value": "10.99",
+                      "currency_code": "USD"
+                    }
+                  }
+                },
+                "authorizations_reauthorize_200_idempotent_response": {
+                  "summary": "Reauthorize Authorized Payment - 200 idempotent response",
+                  "description": "Reauthorizes an authorized payment, by ID. The honor period for the authorized payment has expired.",
+                  "value": {
+                    "amount": {
+                      "value": "10.99",
+                      "currency_code": "USD"
+                    }
+                  }
+                },
+                "authorizations_reauthorize_empty_request": {
+                  "summary": "Reauthorize Authorized Payment with an empty request",
+                  "description": "Reauthorizes an authorized payment, by ID. The honor period for the authorized payment has expired.",
+                  "value": {}
+                },
+                "authorizations_reauthorize_with_prefer_header": {
+                  "summary": "Reauthorize Authorized Payment with Prefer Request Header",
+                  "description": "Reauthorizes an authorized payment, by ID. The honor period for the authorized payment has expired. Includes the `Prefer` request header.",
+                  "value": {
+                    "amount": {
+                      "value": "10.99",
+                      "currency_code": "USD"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "paypal.authorizations.void",
+      "title": "Void authorized payment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api-m.paypal.com",
+      "path": "/v2/payments/authorizations/{authorization_id}/void",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "authorization_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2147483647,
+            "pattern": "^[\\S\\s]*$"
+          },
+          "description": "The PayPal-generated ID for the authorized payment to void."
+        },
+        {
+          "name": "Prefer",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2147483647,
+            "pattern": "^[\\S\\s]*$",
+            "default": "return=minimal"
+          },
+          "description": "The preferred server response upon successful completion of the request. Value is:<ul><li><code>return=minimal</code>. The server returns a minimal response to optimize communication between the API caller and the server. A minimal response includes the <code>id</code>, <code>status</code> and HATEOAS links.</li><li><code>return=representation</code>. The server returns a complete resource representation, including the current state of the resource.</li></ul>"
+        }
+      ]
+    },
+    {
+      "connector": "paypal.captures.get",
+      "title": "Show captured payment details",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api-m.paypal.com",
+      "path": "/v2/payments/captures/{capture_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "capture_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2147483647,
+            "pattern": "^[\\S\\s]*$"
+          },
+          "description": "The PayPal-generated ID for the captured payment for which to show details."
+        }
+      ]
+    },
+    {
+      "connector": "paypal.captures.refund",
+      "title": "Refund captured payment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api-m.paypal.com",
+      "path": "/v2/payments/captures/{capture_id}/refund",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "capture_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2147483647,
+            "pattern": "^[\\S\\s]*$"
+          },
+          "description": "The PayPal-generated ID for the captured payment to refund."
+        },
+        {
+          "name": "Prefer",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2147483647,
+            "pattern": "^[\\S\\s]*$",
+            "default": "return=minimal"
+          },
+          "description": "The preferred server response upon successful completion of the request. Value is:<ul><li><code>return=minimal</code>. The server returns a minimal response to optimize communication between the API caller and the server. A minimal response includes the <code>id</code>, <code>status</code> and HATEOAS links.</li><li><code>return=representation</code>. The server returns a complete resource representation, including the current state of the resource.</li></ul>"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/refund_request"
+              },
+              "examples": {
+                "captures_refund_200_idempotent_response": {
+                  "summary": "Refund Captured Payment - 200 idempotent response",
+                  "description": "Refunds a captured payment, by ID. For a full refund, include an empty payload in the request body. For a partial refund, include an `amount` object.",
+                  "value": {
+                    "amount": {
+                      "value": "1.00",
+                      "currency_code": "USD"
+                    },
+                    "invoice_id": "RefundInvoice-123",
+                    "custom_id": "RefundCustom-123"
+                  }
+                },
+                "captures_refund_empty_request": {
+                  "summary": "Refund Captured Payment with an empty request",
+                  "description": "Refunds a captured payment, by ID. For a full refund, include an empty payload in the request body. For a partial refund, include an `amount` object.",
+                  "value": {}
+                },
+                "captures_refund_with_prefer_header": {
+                  "summary": "Refund Captured Payment",
+                  "description": "Refunds a captured payment, by ID. For a full refund, include an empty payload in the request body. For a partial refund, include an `amount` object.",
+                  "value": {
+                    "amount": {
+                      "value": "10.99",
+                      "currency_code": "USD"
+                    },
+                    "invoice_id": "INVOICE-123",
+                    "note": "Defective product"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "paypal.find.eligible.methods",
+      "title": "Find a list of eligible payment methods.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api-m.paypal.com",
+      "path": "/v2/payments/find-eligible-methods",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/find_eligible_methods_request"
+              },
+              "examples": {
+                "find_eligible_payment_methods_exclude_payment_sources": {
+                  "summary": "Eligible Payment Methods - Exclude listed payment methods",
+                  "description": "Eligible Payment Methods - Exclude listed payment methods",
+                  "value": {
+                    "customer": {
+                      "country_code": "US",
+                      "channel": {
+                        "browser_type": "SAFARI",
+                        "device_type": "MOBILE",
+                        "client_os": "IOS"
+                      }
+                    },
+                    "purchase_units": [
+                      {
+                        "amount": {
+                          "currency_code": "USD",
+                          "value": "100.00"
+                        }
+                      }
+                    ],
+                    "preferences": {
+                      "payment_source_constraint": {
+                        "constraint_type": "EXCLUDE",
+                        "payment_sources": [
+                          "PAYPAL"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "find_eligible_payment_methods_for_partner_with_multiple_seller_purchase": {
+                  "summary": "Eligible Payment Methods for a customer who is purchasing from multiple sellers",
+                  "description": "Eligible Payment Methods for a customer who is purchasing from multiple sellers.",
+                  "value": {
+                    "customer": {
+                      "country_code": "US",
+                      "channel": {
+                        "browser_type": "SAFARI",
+                        "device_type": "MOBILE",
+                        "client_os": "IOS"
+                      }
+                    },
+                    "purchase_units": [
+                      {
+                        "payee": {
+                          "merchant_id": "NGHNXQ95SRMUY"
+                        },
+                        "amount": {
+                          "currency_code": "USD",
+                          "value": "200.00"
+                        }
+                      },
+                      {
+                        "payee": {
+                          "merchant_id": "2DDJ3PFG2VFFA"
+                        },
+                        "amount": {
+                          "currency_code": "USD",
+                          "value": "300.00"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "find_eligible_payment_methods_merchant_sharing_user_agent_instead_of_channel": {
+                  "summary": "Eligible Payment Methods with User-Agent header",
+                  "description": "Eligible Payment Methods for merchant sharing User-Agent instead of channel.",
+                  "value": {
+                    "customer": {
+                      "country_code": "US"
+                    },
+                    "purchase_units": [
+                      {
+                        "amount": {
+                          "currency_code": "USD",
+                          "value": "100.00"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "find_eligible_payment_methods_not_requiring_payment_tokens": {
+                  "summary": "Eligible Payment Methods without payment token information",
+                  "description": "Eligible Payment Methods without payment token information.",
+                  "value": {
+                    "customer": {
+                      "country_code": "US",
+                      "channel": {
+                        "browser_type": "Safari",
+                        "device_type": "Mobile",
+                        "client_os": "iOs 16,3"
+                      }
+                    },
+                    "purchase_units": [
+                      {
+                        "payee": {
+                          "merchant_id": "NGHNXQ95SRMUY"
+                        },
+                        "amount": {
+                          "currency_code": "USD",
+                          "value": "200.00"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "find_eligible_payment_methods_with_account_details_searchedBy_email_only_honey_account_found": {
+                  "summary": "Customer recognition using customer email and phone number",
+                  "description": "Eligible payment methods along with PayPal and Venmo account confirmation for merchants sharing customer email and phone number.",
+                  "value": {
+                    "customer": {
+                      "country_code": "US",
+                      "email": "customer12345@gmail.com",
+                      "phone": {
+                        "country_code": "1",
+                        "national_number": "1234567890"
+                      }
+                    },
+                    "purchase_units": [
+                      {
+                        "amount": {
+                          "currency_code": "USD",
+                          "value": "200.00"
+                        }
+                      }
+                    ],
+                    "preferences": {
+                      "include_account_details": true,
+                      "payment_source_constraint": {
+                        "constraint_type": "INCLUDE",
+                        "payment_sources": [
+                          "PAYPAL",
+                          "VENMO"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "find_eligible_payment_methods_with_account_details_searchedBy_email_phone_only_paypal_account_found": {
+                  "summary": "Customer recognition using customer email and phone number",
+                  "description": "Eligible payment methods along with PayPal and Venmo account confirmation for merchants sharing customer email and phone number.",
+                  "value": {
+                    "customer": {
+                      "country_code": "US",
+                      "email": "customer12345@gmail.com",
+                      "phone": {
+                        "country_code": "1",
+                        "national_number": "1234567890"
+                      }
+                    },
+                    "purchase_units": [
+                      {
+                        "amount": {
+                          "currency_code": "USD",
+                          "value": "200.00"
+                        }
+                      }
+                    ],
+                    "preferences": {
+                      "include_account_details": true,
+                      "payment_source_constraint": {
+                        "constraint_type": "INCLUDE",
+                        "payment_sources": [
+                          "PAYPAL",
+                          "VENMO"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "find_eligible_payment_methods_with_account_details_searchedBy_email_phone_only_venmo_account_found": {
+                  "summary": "Customer recognition using customer email and phone number",
+                  "description": "Eligible payment methods along with PayPal and Venmo account confirmation for merchants sharing customer email and phone number.",
+                  "value": {
+                    "customer": {
+                      "country_code": "US",
+                      "email": "customer12345@gmail.com",
+                      "phone": {
+                        "country_code": "1",
+                        "national_number": "1234567890"
+                      }
+                    },
+                    "purchase_units": [
+                      {
+                        "amount": {
+                          "currency_code": "USD",
+                          "value": "200.00"
+                        }
+                      }
+                    ],
+                    "preferences": {
+                      "include_account_details": true,
+                      "payment_source_constraint": {
+                        "constraint_type": "INCLUDE",
+                        "payment_sources": [
+                          "PAYPAL",
+                          "VENMO"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "find_eligible_payment_methods_with_account_details_searchedBy_email_phone_paypal_venmo_accounts_found": {
+                  "summary": "Customer recognition using customer email and phone number",
+                  "description": "Eligible payment methods along with PayPal and Venmo account confirmation for merchants sharing customer email and phone number.",
+                  "value": {
+                    "customer": {
+                      "country_code": "US",
+                      "email": "customer12345@gmail.com",
+                      "phone": {
+                        "country_code": "1",
+                        "national_number": "1234567890"
+                      }
+                    },
+                    "purchase_units": [
+                      {
+                        "amount": {
+                          "currency_code": "USD",
+                          "value": "200.00"
+                        }
+                      }
+                    ],
+                    "preferences": {
+                      "include_account_details": true,
+                      "payment_source_constraint": {
+                        "constraint_type": "INCLUDE",
+                        "payment_sources": [
+                          "PAYPAL",
+                          "VENMO"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "find_eligible_payment_methods_with_payment_tokens": {
+                  "summary": "Eligible Payment Methods - with payment tokens",
+                  "description": "Eligible Payment Methods for merchant with payment token information.",
+                  "value": {
+                    "customer": {
+                      "country_code": "US",
+                      "id": "customer_4029352050",
+                      "channel": {
+                        "browser_type": "Safari",
+                        "device_type": "Mobile",
+                        "client_os": "iOs 16,3"
+                      }
+                    },
+                    "purchase_units": [
+                      {
+                        "payee": {
+                          "merchant_id": "NGHNXQ95SRMUY"
+                        },
+                        "amount": {
+                          "currency_code": "USD",
+                          "value": "200.00"
+                        }
+                      }
+                    ],
+                    "preferences": {
+                      "include_vault_tokens": true,
+                      "payment_source_constraint": {
+                        "constraint_type": "INCLUDE",
+                        "payment_sources": [
+                          "PAYPAL",
+                          "VENMO"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "paypal.refunds.get",
+      "title": "Show refund details",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api-m.paypal.com",
+      "path": "/v2/payments/refunds/{refund_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "refund_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 2147483647,
+            "pattern": "^[\\S\\s]*$"
+          },
+          "description": "The PayPal-generated ID for the refund for which to show details."
+        }
+      ]
+    }
+  ]
+}

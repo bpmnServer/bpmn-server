@@ -1,0 +1,2247 @@
+{
+  "name": "figma",
+  "title": "Figma",
+  "source": "https://raw.githubusercontent.com/figma/rest-api-spec/main/openapi/openapi.yaml",
+  "authentication": "bearer",
+  "operations": [
+    {
+      "connector": "figma.getFile",
+      "title": "Get file JSON",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File to export JSON from. This can be a file key or branch key. Use `GET /v1/files/:key` with the `branch_data` query param to get the branch key."
+        },
+        {
+          "name": "version",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "A specific version ID to get. Omitting this will get the current version of the file."
+        },
+        {
+          "name": "ids",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Comma separated list of nodes that you care about in the document. If specified, only a subset of the document will be returned corresponding to the nodes listed, their children, and everything between the root node and the listed nodes.\n\nNote: There may be other nodes included in the returned JSON that are outside the ancestor chains of the desired nodes. The response may also include dependencies of anything in the nodes' subtrees. For example, if a node subtree contains an instance of a local component that lives elsewhere in that file, that component and its ancestor chain will also be included.\n\nFor historical reasons, top-level canvas nodes are always returned, regardless of whether they are listed in the `ids` parameter. This quirk may be removed in a future version of the API."
+        },
+        {
+          "name": "depth",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Positive integer representing how deep into the document tree to traverse. For example, setting this to 1 returns only Pages, setting it to 2 returns Pages and all top level objects on each page. Not setting this parameter returns all nodes."
+        },
+        {
+          "name": "geometry",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Set to \"paths\" to export vector data."
+        },
+        {
+          "name": "plugin_data",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "A comma separated list of plugin IDs and/or the string \"shared\". Any data present in the document written by those plugins will be included in the result in the `pluginData` and `sharedPluginData` properties."
+        },
+        {
+          "name": "branch_data",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": "Returns branch metadata for the requested file. If the file is a branch, the main file's key will be included in the returned response. If the file has branches, their metadata will be included in the returned response. Default: false."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getFileNodes",
+      "title": "Get file JSON for specific nodes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/nodes",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File to export JSON from. This can be a file key or branch key. Use `GET /v1/files/:key` with the `branch_data` query param to get the branch key."
+        },
+        {
+          "name": "ids",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "A comma separated list of node IDs to retrieve and convert."
+        },
+        {
+          "name": "version",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "A specific version ID to get. Omitting this will get the current version of the file."
+        },
+        {
+          "name": "depth",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Positive integer representing how deep into the node tree to traverse. For example, setting this to 1 will return only the children directly underneath the desired nodes. Not setting this parameter returns all nodes.\n\nNote: this parameter behaves differently from the same parameter in the `GET /v1/files/:key` endpoint. In this endpoint, the depth will be counted starting from the desired node rather than the document root node."
+        },
+        {
+          "name": "geometry",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Set to \"paths\" to export vector data."
+        },
+        {
+          "name": "plugin_data",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "A comma separated list of plugin IDs and/or the string \"shared\". Any data present in the document written by those plugins will be included in the result in the `pluginData` and `sharedPluginData` properties."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getImages",
+      "title": "Render images of file nodes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/images/{file_key}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File to export images from. This can be a file key or branch key. Use `GET /v1/files/:key` with the `branch_data` query param to get the branch key."
+        },
+        {
+          "name": "ids",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "A comma separated list of node IDs to render."
+        },
+        {
+          "name": "version",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "A specific version ID to get. Omitting this will get the current version of the file."
+        },
+        {
+          "name": "scale",
+          "in": "query",
+          "schema": {
+            "type": "number",
+            "minimum": 0.01,
+            "maximum": 4
+          },
+          "description": "A number between 0.01 and 4, the image scaling factor."
+        },
+        {
+          "name": "format",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "jpg",
+              "png",
+              "svg",
+              "pdf"
+            ],
+            "default": "png"
+          },
+          "description": "A string enum for the image output format."
+        },
+        {
+          "name": "svg_outline_text",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": true
+          },
+          "description": "Whether text elements are rendered as outlines (vector paths) or as `<text>` elements in SVGs.\n\nRendering text elements as outlines guarantees that the text looks exactly the same in the SVG as it does in the browser/inside Figma.\n\nExporting as `<text>` allows text to be selectable inside SVGs and generally makes the SVG easier to read. However, this relies on the browser's rendering engine which can vary between browsers and/or operating systems. As such, visual accuracy is not guaranteed as the result could look different than in Figma."
+        },
+        {
+          "name": "svg_include_id",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": "Whether to include id attributes for all SVG elements. Adds the layer name to the `id` attribute of an svg element."
+        },
+        {
+          "name": "svg_include_node_id",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": "Whether to include node id attributes for all SVG elements. Adds the node id to a `data-node-id` attribute of an svg element."
+        },
+        {
+          "name": "svg_simplify_stroke",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": true
+          },
+          "description": "Whether to simplify inside/outside strokes and use stroke attribute if possible instead of `<mask>`."
+        },
+        {
+          "name": "contents_only",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": true
+          },
+          "description": "Whether content that overlaps the node should be excluded from rendering. Passing false (i.e., rendering overlaps) may increase processing time, since more of the document must be included in rendering."
+        },
+        {
+          "name": "use_absolute_bounds",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": "Use the full dimensions of the node regardless of whether or not it is cropped or the space around it is empty. Use this to export text nodes without cropping."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getImageFills",
+      "title": "Get image fills",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/images",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File to get image URLs from. This can be a file key or branch key. Use `GET /v1/files/:key` with the `branch_data` query param to get the branch key."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getFileMeta",
+      "title": "Get file metadata",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/meta",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File to get metadata for. This can be a file key or branch key. Use `GET /v1/files/:key` with the `branch_data` query param to get the branch key."
+        }
+      ]
+    },
+    {
+      "connector": "figma.postFileDuplicate",
+      "title": "Duplicate a file",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/duplicate",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key of the main file or branch to duplicate."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "folder_id": {
+                    "type": "string",
+                    "description": "The ID of the folder to create the duplicated file in."
+                  }
+                },
+                "required": [
+                  "folder_id"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "figma.postTeam",
+      "title": "Create a team",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/teams",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTeamRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "figma.getTeam",
+      "title": "Get a team",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/teams/{team_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "team_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the team."
+        }
+      ]
+    },
+    {
+      "connector": "figma.postTeamInvites",
+      "title": "Invite users to a team",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/teams/{team_id}/invites",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "team_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the team to invite users to."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InviteTeamMembersRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "figma.getTeamProjects",
+      "title": "[Deprecated] Get projects in a team",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/teams/{team_id}/projects",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "team_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of the team to list projects from"
+        }
+      ]
+    },
+    {
+      "connector": "figma.getProjectMeta",
+      "title": "[Deprecated] Get project metadata",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/projects/{project_id}/meta",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "project_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of the project to get metadata for."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getProjectFiles",
+      "title": "[Deprecated] Get files in a project",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/projects/{project_id}/files",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "project_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of the project to list files from"
+        },
+        {
+          "name": "branch_data",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": "Returns branch metadata in the response for each main file with a branch inside the project."
+        }
+      ]
+    },
+    {
+      "connector": "figma.postTeamFolder",
+      "title": "Create a folder",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/teams/{team_id}/folders",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "team_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the team in which to create the folder."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFolderRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "figma.getTeamFolders",
+      "title": "Get top-level folders in a team",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v2/teams/{team_id}/folders",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "team_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of the team to list folders from"
+        }
+      ]
+    },
+    {
+      "connector": "figma.getFolderFolders",
+      "title": "Get subfolders in a folder",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v2/folders/{folder_id}/folders",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "folder_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of the parent folder to list subfolders from"
+        }
+      ]
+    },
+    {
+      "connector": "figma.getFolderFiles",
+      "title": "Get files in a folder",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v2/folders/{folder_id}/files",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "folder_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of the folder to list files from"
+        },
+        {
+          "name": "branch_data",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": "Returns branch metadata in the response for each main file with a branch inside the folder."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getFolderMeta",
+      "title": "Get folder metadata",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v2/folders/{folder_id}/meta",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "folder_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of the folder to get metadata for"
+        }
+      ]
+    },
+    {
+      "connector": "figma.getFileVersions",
+      "title": "Get versions of a file",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/versions",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File to get version history from. This can be a file key or branch key. Use `GET /v1/files/:key` with the `branch_data` query param to get the branch key."
+        },
+        {
+          "name": "page_size",
+          "in": "query",
+          "schema": {
+            "type": "number",
+            "maximum": 50
+          },
+          "description": "The number of items returned in a page of the response. If not included, `page_size` is `30`."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "A version ID for one of the versions in the history. Gets versions before this ID. Used for paginating. If the response is not paginated, this link returns the same data in the current response."
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "A version ID for one of the versions in the history. Gets versions after this ID. Used for paginating. If the response is not paginated, this property is not included."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getComments",
+      "title": "Get comments in a file",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/comments",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File to get comments from. This can be a file key or branch key. Use `GET /v1/files/:key` with the `branch_data` query param to get the branch key."
+        },
+        {
+          "name": "as_md",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "If enabled, will return comments as their markdown equivalents when applicable."
+        }
+      ]
+    },
+    {
+      "connector": "figma.postComment",
+      "title": "Add a comment to a file",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/comments",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File to add comments in. This can be a file key or branch key. Use `GET /v1/files/:key` with the `branch_data` query param to get the branch key."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "description": "The text contents of the comment to post."
+                  },
+                  "comment_id": {
+                    "type": "string",
+                    "description": "The ID of the comment to reply to, if any. This must be a root comment. You cannot reply to other replies (a comment that has a parent_id)."
+                  },
+                  "client_meta": {
+                    "description": "The position where to place the comment.",
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/Vector"
+                      },
+                      {
+                        "$ref": "#/components/schemas/FrameOffset"
+                      },
+                      {
+                        "$ref": "#/components/schemas/Region"
+                      },
+                      {
+                        "$ref": "#/components/schemas/FrameOffsetRegion"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "message"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "figma.deleteComment",
+      "title": "Delete a comment",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/comments/{comment_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File to delete comment from. This can be a file key or branch key. Use `GET /v1/files/:key` with the `branch_data` query param to get the branch key."
+        },
+        {
+          "name": "comment_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Comment id of comment to delete"
+        }
+      ]
+    },
+    {
+      "connector": "figma.getCommentReactions",
+      "title": "Get reactions for a comment",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/comments/{comment_id}/reactions",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File to get comment containing reactions from. This can be a file key or branch key. Use `GET /v1/files/:key` with the `branch_data` query param to get the branch key."
+        },
+        {
+          "name": "comment_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of comment to get reactions from."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination, retrieved from the response of the previous call."
+        }
+      ]
+    },
+    {
+      "connector": "figma.postCommentReaction",
+      "title": "Add a reaction to a comment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/comments/{comment_id}/reactions",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File to post comment reactions to. This can be a file key or branch key. Use `GET /v1/files/:key` with the `branch_data` query param to get the branch key."
+        },
+        {
+          "name": "comment_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of comment to react to."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "emoji": {
+                    "$ref": "#/components/schemas/Emoji"
+                  }
+                },
+                "required": [
+                  "emoji"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "figma.deleteCommentReaction",
+      "title": "Delete a reaction",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/comments/{comment_id}/reactions",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File to delete comment reaction from. This can be a file key or branch key. Use `GET /v1/files/:key` with the `branch_data` query param to get the branch key."
+        },
+        {
+          "name": "comment_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of comment to delete reaction from."
+        },
+        {
+          "name": "emoji",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Emoji"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "figma.getMe",
+      "title": "Get current user",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/me",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "figma.getTeamComponents",
+      "title": "Get team components",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/teams/{team_id}/components",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "team_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Id of the team to list components from."
+        },
+        {
+          "name": "page_size",
+          "in": "query",
+          "schema": {
+            "type": "number",
+            "default": 30
+          },
+          "description": "Number of items to return in a paged list of results. Defaults to 30. Maximum of 1000."
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Cursor indicating which id after which to start retrieving components for. Exclusive with before. The cursor value is an internally tracked integer that doesn't correspond to any Ids."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Cursor indicating which id before which to start retrieving components for. Exclusive with after. The cursor value is an internally tracked integer that doesn't correspond to any Ids."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getFileComponents",
+      "title": "Get file components",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/components",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File to list components from. This must be a main file key, not a branch key, as it is not possible to publish from branches."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getComponent",
+      "title": "Get component",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/components/{key}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The unique identifier of the component."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getTeamComponentSets",
+      "title": "Get team component sets",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/teams/{team_id}/component_sets",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "team_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Id of the team to list component sets from."
+        },
+        {
+          "name": "page_size",
+          "in": "query",
+          "schema": {
+            "type": "number",
+            "default": 30
+          },
+          "description": "Number of items to return in a paged list of results. Defaults to 30."
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Cursor indicating which id after which to start retrieving component sets for. Exclusive with before. The cursor value is an internally tracked integer that doesn't correspond to any Ids."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Cursor indicating which id before which to start retrieving component sets for. Exclusive with after. The cursor value is an internally tracked integer that doesn't correspond to any Ids."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getFileComponentSets",
+      "title": "Get file component sets",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/component_sets",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File to list component sets from. This must be a main file key, not a branch key, as it is not possible to publish from branches."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getComponentSet",
+      "title": "Get component set",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/component_sets/{key}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The unique identifier of the component set."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getTeamStyles",
+      "title": "Get team styles",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/teams/{team_id}/styles",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "team_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Id of the team to list styles from."
+        },
+        {
+          "name": "page_size",
+          "in": "query",
+          "schema": {
+            "type": "number",
+            "default": 30
+          },
+          "description": "Number of items to return in a paged list of results. Defaults to 30."
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Cursor indicating which id after which to start retrieving styles for. Exclusive with before. The cursor value is an internally tracked integer that doesn't correspond to any Ids."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Cursor indicating which id before which to start retrieving styles for. Exclusive with after. The cursor value is an internally tracked integer that doesn't correspond to any Ids."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getFileStyles",
+      "title": "Get file styles",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/styles",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File to list styles from. This must be a main file key, not a branch key, as it is not possible to publish from branches."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getStyle",
+      "title": "Get style",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/styles/{key}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The unique identifier of the style."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getWebhooks",
+      "title": "Get webhooks by context or plan",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v2/webhooks",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "context",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Context to create the resource on. Should be \"team\", \"project\", or \"file\"."
+        },
+        {
+          "name": "context_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The id of the context that you want to get attached webhooks for. If you're using context_id, you cannot use plan_api_id."
+        },
+        {
+          "name": "plan_api_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The id of your plan. Use this to get all webhooks for all contexts you have access to. If you're using plan_api_id, you cannot use context or context_id. When you use plan_api_id, the response is paginated."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "If you're using plan_api_id, this is the cursor to use for pagination. If you're using context or context_id, this parameter is ignored. Provide the next_page or prev_page value from the previous response to get the next or previous page of results."
+        }
+      ]
+    },
+    {
+      "connector": "figma.postWebhook",
+      "title": "Create a webhook",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v2/webhooks",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "event_type": {
+                    "$ref": "#/components/schemas/WebhookV2Event"
+                  },
+                  "team_id": {
+                    "type": "string",
+                    "description": "Team id to receive updates about. This is deprecated, use 'context' and 'context_id' instead.",
+                    "deprecated": true
+                  },
+                  "context": {
+                    "type": "string",
+                    "description": "Context to create the webhook for. Must be \"team\", \"project\", or \"file\"."
+                  },
+                  "context_id": {
+                    "type": "string",
+                    "description": "The id of the context you want to receive updates about."
+                  },
+                  "endpoint": {
+                    "type": "string",
+                    "description": "The HTTP endpoint that will receive a POST request when the event triggers. Max length 2048 characters."
+                  },
+                  "passcode": {
+                    "type": "string",
+                    "description": "String that will be passed back to your webhook endpoint to verify that it is being called by Figma. Max length 100 characters."
+                  },
+                  "status": {
+                    "$ref": "#/components/schemas/WebhookV2Status",
+                    "description": "State of the webhook, including any error state it may be in"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "User provided description or name for the webhook. Max length 150 characters."
+                  }
+                },
+                "required": [
+                  "event_type",
+                  "endpoint",
+                  "passcode",
+                  "context",
+                  "context_id"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "figma.getWebhook",
+      "title": "Get a webhook",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v2/webhooks/{webhook_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "webhook_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of webhook to get"
+        }
+      ]
+    },
+    {
+      "connector": "figma.putWebhook",
+      "title": "Update a webhook",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v2/webhooks/{webhook_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "webhook_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of webhook to update"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "event_type": {
+                    "$ref": "#/components/schemas/WebhookV2Event"
+                  },
+                  "endpoint": {
+                    "type": "string",
+                    "description": "The HTTP endpoint that will receive a POST request when the event triggers. Max length 2048 characters."
+                  },
+                  "passcode": {
+                    "type": "string",
+                    "description": "String that will be passed back to your webhook endpoint to verify that it is being called by Figma. Max length 100 characters."
+                  },
+                  "status": {
+                    "$ref": "#/components/schemas/WebhookV2Status",
+                    "description": "State of the webhook, including any error state it may be in"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "User provided description or name for the webhook. Max length 150 characters."
+                  }
+                },
+                "required": [
+                  "event_type",
+                  "team_id",
+                  "endpoint",
+                  "passcode"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "figma.deleteWebhook",
+      "title": "Delete a webhook",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v2/webhooks/{webhook_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "webhook_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of webhook to delete"
+        }
+      ]
+    },
+    {
+      "connector": "figma.getTeamWebhooks",
+      "title": "[Deprecated] Get team webhooks",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v2/teams/{team_id}/webhooks",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "team_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of team to get webhooks for"
+        }
+      ]
+    },
+    {
+      "connector": "figma.getWebhookRequests",
+      "title": "Get webhook requests",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v2/webhooks/{webhook_id}/requests",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "webhook_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The id of the webhook subscription you want to see events from"
+        }
+      ]
+    },
+    {
+      "connector": "figma.getActivityLogs",
+      "title": "Get activity logs",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/activity_logs",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "events",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Event type(s) to include in the response. Can have multiple values separated by comma. All events are returned by default."
+        },
+        {
+          "name": "start_time",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Unix timestamp of the least recent event to include. This param defaults to one year ago if unspecified."
+        },
+        {
+          "name": "end_time",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Unix timestamp of the most recent event to include. This param defaults to the current timestamp if unspecified."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Maximum number of events to return. This param defaults to 1000 if unspecified."
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "default": "asc"
+          },
+          "description": "Event order by timestamp. This param can be either \"asc\" (default) or \"desc\"."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getDeveloperLogs",
+      "title": "Get developer logs",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/developer_logs",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token_type": {
+                    "type": "string",
+                    "description": "Filter by the type of token used for authentication.",
+                    "enum": [
+                      "plan_access_token",
+                      "developer_token",
+                      "oauth_token"
+                    ]
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "Filter by token value(s). Multiple values can be separated by commas."
+                  },
+                  "token_name": {
+                    "type": "string",
+                    "description": "Filter by token name prefix(es). Multiple values can be separated by commas."
+                  },
+                  "user_email": {
+                    "type": "string",
+                    "description": "Filter by user email prefix(es). Multiple values can be separated by commas."
+                  },
+                  "ip_address": {
+                    "type": "string",
+                    "description": "Filter by IP address prefix(es). Multiple values can be separated by commas."
+                  },
+                  "event_source": {
+                    "type": "string",
+                    "description": "Filter by event source.",
+                    "enum": [
+                      "rest_api",
+                      "mcp_server"
+                    ]
+                  },
+                  "date_range": {
+                    "type": "string",
+                    "description": "Filter by date range.",
+                    "enum": [
+                      "last_24h",
+                      "last_7d",
+                      "last_30d"
+                    ],
+                    "default": "last_30d"
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "description": "Maximum number of entries to return.",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 25
+                  },
+                  "cursor": {
+                    "type": "string",
+                    "description": "A cursor returned from a previous request, used for pagination."
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "figma.getAiUsageDaily",
+      "title": "Get daily AI credit usage",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/ai_usage/daily",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The first day to include, inclusive, as a `YYYY-MM-DD` calendar date (UTC). Required. Must be on or after `2025-12-01` and no more than 366 days before the current UTC day."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The last day to include, inclusive, as a `YYYY-MM-DD` calendar date (UTC). Required. Must be on or after `start_date` and the current UTC day or earlier."
+        },
+        {
+          "name": "user_email",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Restrict the results to a single Figma user, identified by email. When omitted, rows for every user in the plan with usage in the range are returned. An email that matches no Figma user returns a 400."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "default": 1000
+          },
+          "description": "Maximum number of rows to return. This param defaults to 1000 if unspecified, and may not exceed 1000."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "An opaque cursor returned from a previous request, used for pagination."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getPayments",
+      "title": "Get payments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/payments",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "plugin_payment_token",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Short-lived token returned from \"getPluginPaymentTokenAsync\" in the plugin payments API and used to authenticate to this endpoint. Read more about generating this token through \"Calling the Payments REST API from a plugin or widget\" below."
+        },
+        {
+          "name": "user_id",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the user to query payment information about. You can get the user ID by having the user OAuth2 to the Figma REST API."
+        },
+        {
+          "name": "community_file_id",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the Community file to query a user's payment information on. You can get the Community file ID from the file's Community page (look for the number after \"file/\" in the URL). Provide exactly one of \"community_file_id\", \"plugin_id\", or \"widget_id\"."
+        },
+        {
+          "name": "plugin_id",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the plugin to query a user's payment information on. You can get the plugin ID from the plugin's manifest, or from the plugin's Community page (look for the number after \"plugin/\" in the URL). Provide exactly one of \"community_file_id\", \"plugin_id\", or \"widget_id\"."
+        },
+        {
+          "name": "widget_id",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the widget to query a user's payment information on. You can get the widget ID from the widget's manifest, or from the widget's Community page (look for the number after \"widget/\" in the URL). Provide exactly one of \"community_file_id\", \"plugin_id\", or \"widget_id\"."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getLocalVariables",
+      "title": "Get local variables",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/variables/local",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File to get variables from. This can be a file key or branch key. Use `GET /v1/files/:key` with the `branch_data` query param to get the branch key."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getPublishedVariables",
+      "title": "Get published variables",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/variables/published",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File to get variables from. This must be a main file key, not a branch key, as it is not possible to publish from branches."
+        }
+      ]
+    },
+    {
+      "connector": "figma.postVariables",
+      "title": "Create/modify/delete variables",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/variables",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File to modify variables in. This can be a file key or branch key. Use `GET /v1/files/:key` with the `branch_data` query param to get the branch key."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "minProperties": 1,
+                "properties": {
+                  "variableCollections": {
+                    "type": "array",
+                    "description": "For creating, updating, and deleting variable collections.",
+                    "items": {
+                      "$ref": "#/components/schemas/VariableCollectionChange"
+                    }
+                  },
+                  "variableModes": {
+                    "type": "array",
+                    "description": "For creating, updating, and deleting modes within variable collections.",
+                    "items": {
+                      "$ref": "#/components/schemas/VariableModeChange"
+                    }
+                  },
+                  "variables": {
+                    "type": "array",
+                    "description": "For creating, updating, and deleting variables.",
+                    "items": {
+                      "$ref": "#/components/schemas/VariableChange"
+                    }
+                  },
+                  "variableModeValues": {
+                    "type": "array",
+                    "description": "For setting a specific value, given a variable and a mode.",
+                    "items": {
+                      "$ref": "#/components/schemas/VariableModeValue"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "figma.getDevResources",
+      "title": "Get dev resources",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/dev_resources",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The file to get the dev resources from. This must be a main file key, not a branch key."
+        },
+        {
+          "name": "node_ids",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Comma separated list of nodes that you care about in the document. If specified, only dev resources attached to these nodes will be returned. If not specified, all dev resources in the file will be returned."
+        }
+      ]
+    },
+    {
+      "connector": "figma.postDevResources",
+      "title": "Create dev resources",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/dev_resources",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "dev_resources": {
+                    "type": "array",
+                    "description": "An array of dev resources.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "The name of the dev resource."
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "The URL of the dev resource."
+                        },
+                        "file_key": {
+                          "type": "string",
+                          "description": "The file key where the dev resource belongs."
+                        },
+                        "node_id": {
+                          "type": "string",
+                          "description": "The target node to attach the dev resource to."
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "url",
+                        "file_key",
+                        "node_id"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "dev_resources"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "figma.putDevResources",
+      "title": "Update dev resources",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/dev_resources",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "dev_resources": {
+                    "type": "array",
+                    "description": "An array of dev resources.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "Unique identifier of the dev resource"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "The name of the dev resource."
+                        },
+                        "url": {
+                          "type": "string",
+                          "description": "The URL of the dev resource."
+                        }
+                      },
+                      "required": [
+                        "id"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "dev_resources"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "figma.deleteDevResource",
+      "title": "Delete dev resource",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/files/{file_key}/dev_resources/{dev_resource_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The file to delete the dev resource from. This must be a main file key, not a branch key."
+        },
+        {
+          "name": "dev_resource_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The id of the dev resource to delete."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getLibraryAnalyticsComponentActions",
+      "title": "Get library analytics component action data.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/analytics/libraries/{file_key}/component/actions",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File key of the library to fetch analytics data for."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor indicating what page of data to fetch. Obtained from prior API call."
+        },
+        {
+          "name": "group_by",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "component",
+              "team"
+            ]
+          },
+          "description": "A dimension to group returned analytics data by."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "ISO 8601 date string (YYYY-MM-DD) of the earliest week to include. Dates are rounded back to the nearest start of a week. Defaults to one year prior."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "ISO 8601 date string (YYYY-MM-DD) of the latest week to include. Dates are rounded forward to the nearest end of a week. Defaults to the latest computed week."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getLibraryAnalyticsComponentUsages",
+      "title": "Get library analytics component usage data.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/analytics/libraries/{file_key}/component/usages",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File key of the library to fetch analytics data for."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor indicating what page of data to fetch. Obtained from prior API call."
+        },
+        {
+          "name": "group_by",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "component",
+              "file"
+            ]
+          },
+          "description": "A dimension to group returned analytics data by."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getLibraryAnalyticsStyleActions",
+      "title": "Get library analytics style action data.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/analytics/libraries/{file_key}/style/actions",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File key of the library to fetch analytics data for."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor indicating what page of data to fetch. Obtained from prior API call."
+        },
+        {
+          "name": "group_by",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "style",
+              "team"
+            ]
+          },
+          "description": "A dimension to group returned analytics data by."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "ISO 8601 date string (YYYY-MM-DD) of the earliest week to include. Dates are rounded back to the nearest start of a week. Defaults to one year prior."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "ISO 8601 date string (YYYY-MM-DD) of the latest week to include. Dates are rounded forward to the nearest end of a week. Defaults to the latest computed week."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getLibraryAnalyticsStyleUsages",
+      "title": "Get library analytics style usage data.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/analytics/libraries/{file_key}/style/usages",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File key of the library to fetch analytics data for."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor indicating what page of data to fetch. Obtained from prior API call."
+        },
+        {
+          "name": "group_by",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "style",
+              "file"
+            ]
+          },
+          "description": "A dimension to group returned analytics data by."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getLibraryAnalyticsVariableActions",
+      "title": "Get library analytics variable action data.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/analytics/libraries/{file_key}/variable/actions",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File key of the library to fetch analytics data for."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor indicating what page of data to fetch. Obtained from prior API call."
+        },
+        {
+          "name": "group_by",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "variable",
+              "team"
+            ]
+          },
+          "description": "A dimension to group returned analytics data by."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "ISO 8601 date string (YYYY-MM-DD) of the earliest week to include. Dates are rounded back to the nearest start of a week. Defaults to one year prior."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "ISO 8601 date string (YYYY-MM-DD) of the latest week to include. Dates are rounded forward to the nearest end of a week. Defaults to the latest computed week."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getLibraryAnalyticsVariableUsages",
+      "title": "Get library analytics variable usage data.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/analytics/libraries/{file_key}/variable/usages",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "file_key",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "File key of the library to fetch analytics data for."
+        },
+        {
+          "name": "cursor",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor indicating what page of data to fetch. Obtained from prior API call."
+        },
+        {
+          "name": "group_by",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "variable",
+              "file"
+            ]
+          },
+          "description": "A dimension to group returned analytics data by."
+        }
+      ]
+    },
+    {
+      "connector": "figma.getOEmbed",
+      "title": "Get oEmbed data",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.figma.com",
+      "path": "/v1/oembed",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The URL of the Figma file or published Make site to retrieve oEmbed data for."
+        },
+        {
+          "name": "maxwidth",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 800
+          },
+          "description": "Maximum width of the embed in pixels. Defaults to 800. The response width will be adjusted to maintain a 16:9 aspect ratio with maxheight."
+        },
+        {
+          "name": "maxheight",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 450
+          },
+          "description": "Maximum height of the embed in pixels. Defaults to 450. The response height will be adjusted to maintain a 16:9 aspect ratio with maxwidth."
+        }
+      ]
+    }
+  ]
+}

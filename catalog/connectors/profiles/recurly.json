@@ -1,0 +1,2900 @@
+{
+  "name": "recurly",
+  "title": "Recurly",
+  "source": "https://raw.githubusercontent.com/recurly/recurly-client-node/master/openapi/api.yaml",
+  "authentication": "basic",
+  "operations": [
+    {
+      "connector": "recurly.list_sites",
+      "title": "List sites",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/sites",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_site",
+      "title": "Fetch a site",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/sites/{site_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_accounts",
+      "title": "List a site's accounts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_account",
+      "title": "Create an account",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_account",
+      "title": "Fetch an account",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.update_account",
+      "title": "Update an account",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.deactivate_account",
+      "title": "Deactivate an account",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "redact",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Permanently removes all personally identifiable information (PII) from this account after it has been deactivated, to fulfill a data subject's right to erasure under GDPR and similar privacy regulations (e.g. CCPA). Cannot be undone."
+        }
+      ]
+    },
+    {
+      "connector": "recurly.redact_account",
+      "title": "Redact an account (GDPR Right to Erasure)",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/redact",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_account_acquisition",
+      "title": "Fetch an account's acquisition data",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/acquisition",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.update_account_acquisition",
+      "title": "Update an account's acquisition data",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/acquisition",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountAcquisitionUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.remove_account_acquisition",
+      "title": "Remove an account's acquisition data",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/acquisition",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.reactivate_account",
+      "title": "Reactivate an inactive account",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/reactivate",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_account_balance",
+      "title": "Fetch an account's balance and past due status",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/balance",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_billing_info",
+      "title": "Fetch an account's billing information",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/billing_info",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.update_billing_info",
+      "title": "Set an account's billing information",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/billing_info",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingInfoCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.remove_billing_info",
+      "title": "Remove an account's billing information",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/billing_info",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.verify_billing_info",
+      "title": "Verify an account's credit card billing information",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/billing_info/verify",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingInfoVerify"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.verify_billing_info_cvv",
+      "title": "Verify an account's credit card billing cvv",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/billing_info/verify_cvv",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingInfoVerifyCVV"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.list_billing_infos",
+      "title": "Get the list of billing information associated with an account",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/billing_infos",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_billing_info",
+      "title": "Add new billing information on an account",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/billing_infos",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingInfoCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_a_billing_info",
+      "title": "Fetch a billing info",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/billing_infos/{billing_info_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.update_a_billing_info",
+      "title": "Update an account's billing information",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/billing_infos/{billing_info_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingInfoCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.remove_a_billing_info",
+      "title": "Remove an account's billing information",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/billing_infos/{billing_info_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.verify_billing_infos",
+      "title": "Verify a billing information's credit card",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/billing_infos/{billing_info_id}/verify",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingInfoVerify"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.verify_billing_infos_cvv",
+      "title": "Verify a billing information's credit card cvv",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/billing_infos/{billing_info_id}/verify_cvv",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingInfoVerifyCVV"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.list_account_coupon_redemptions",
+      "title": "List the coupon redemptions for an account",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/coupon_redemptions",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_active_coupon_redemptions",
+      "title": "List the coupon redemptions that are active on an account",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/coupon_redemptions/active",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_coupon_redemption",
+      "title": "Generate an active coupon redemption on an account or subscription",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/coupon_redemptions/active",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponRedemptionCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.remove_coupon_redemption",
+      "title": "Delete the active coupon redemption from an account",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/coupon_redemptions/active",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_coupon_redemption",
+      "title": "Show the coupon redemption",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/coupon_redemptions/{coupon_redemption_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.remove_coupon_redemption_by_id",
+      "title": "Delete the coupon redemption",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/coupon_redemptions/{coupon_redemption_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_account_credit_payments",
+      "title": "List an account's credit payments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/credit_payments",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_account_external_account",
+      "title": "List external accounts for an account",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/external_accounts",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_account_external_account",
+      "title": "Create an external account",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/external_accounts",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalAccountCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_account_external_account",
+      "title": "Get an external account for an account",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/external_accounts/{external_account_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.update_account_external_account",
+      "title": "Update an external account",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/external_accounts/{external_account_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalAccountUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.delete_account_external_account",
+      "title": "Delete an external account for an account",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/external_accounts/{external_account_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_account_external_invoices",
+      "title": "List the external invoices on an account",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/external_invoices",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_account_invoices",
+      "title": "List an account's invoices",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/invoices",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_invoice",
+      "title": "Create an invoice for pending line items",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/invoices",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvoiceCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.preview_invoice",
+      "title": "Preview new invoice for pending line items",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/invoices/preview",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvoiceCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.list_account_line_items",
+      "title": "List an account's line items",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/line_items",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_line_item",
+      "title": "Create a new line item for the account",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/line_items",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LineItemCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.list_account_notes",
+      "title": "List an account's notes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/notes",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_account_note",
+      "title": "Create an account note",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/notes",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountNoteCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_account_note",
+      "title": "Fetch an account note",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/notes/{account_note_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.remove_account_note",
+      "title": "Delete an account note",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/notes/{account_note_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_shipping_addresses",
+      "title": "Fetch a list of an account's shipping addresses",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/shipping_addresses",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_shipping_address",
+      "title": "Create a new shipping address for the account",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/shipping_addresses",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShippingAddressCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_shipping_address",
+      "title": "Fetch an account's shipping address",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/shipping_addresses/{shipping_address_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.update_shipping_address",
+      "title": "Update an account's shipping address",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/shipping_addresses/{shipping_address_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShippingAddressUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.remove_shipping_address",
+      "title": "Remove an account's shipping address",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/shipping_addresses/{shipping_address_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_account_subscriptions",
+      "title": "List an account's subscriptions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/subscriptions",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_account_transactions",
+      "title": "List an account's transactions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/transactions",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_child_accounts",
+      "title": "List an account's child accounts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/accounts",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_account_acquisition",
+      "title": "List a site's account acquisition data",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/acquisitions",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_coupons",
+      "title": "List a site's coupons",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/coupons",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_coupon",
+      "title": "Create a new coupon",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/coupons",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_coupon",
+      "title": "Fetch a coupon",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/coupons/{coupon_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.update_coupon",
+      "title": "Update an active coupon",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/coupons/{coupon_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.deactivate_coupon",
+      "title": "Expire a coupon",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/coupons/{coupon_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.generate_unique_coupon_codes",
+      "title": "Generate unique coupon codes",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/coupons/{coupon_id}/generate",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponBulkCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.generate_unique_coupon_codes_sync",
+      "title": "Generate unique coupon codes synchronously",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/coupons/{coupon_id}/generate_sync",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponBulkCreateSync"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.restore_coupon",
+      "title": "Restore an inactive coupon",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/coupons/{coupon_id}/restore",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CouponUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.list_unique_coupon_codes",
+      "title": "List unique coupon codes associated with a bulk coupon",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/coupons/{coupon_id}/unique_coupon_codes",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_credit_payments",
+      "title": "List a site's credit payments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/credit_payments",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_credit_payment",
+      "title": "Fetch a credit payment",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/credit_payments/{credit_payment_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_custom_field_definitions",
+      "title": "List a site's custom field definitions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/custom_field_definitions",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "related_type",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/RelatedTypeEnum"
+          },
+          "description": "Filter by related type."
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_custom_field_definition",
+      "title": "Fetch an custom field definition",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/custom_field_definitions/{custom_field_definition_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_general_ledger_account",
+      "title": "Create a new general ledger account",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/general_ledger_accounts",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeneralLedgerAccountCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.list_general_ledger_accounts",
+      "title": "List a site's general ledger accounts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/general_ledger_accounts",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_general_ledger_account",
+      "title": "Fetch a general ledger account",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/general_ledger_accounts/{general_ledger_account_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.update_general_ledger_account",
+      "title": "Update a general ledger account",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/general_ledger_accounts/{general_ledger_account_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeneralLedgerAccountUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_performance_obligation",
+      "title": "Get a single Performance Obligation.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/performance_obligations/{performance_obligation_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_performance_obligations",
+      "title": "Get a site's Performance Obligations",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/performance_obligations",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_invoice_template_accounts",
+      "title": "List an invoice template's associated accounts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoice_templates/{invoice_template_id}/accounts",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_items",
+      "title": "List a site's items",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/items",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_item",
+      "title": "Create a new item",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/items",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_item",
+      "title": "Fetch an item",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/items/{item_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.update_item",
+      "title": "Update an active item",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/items/{item_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.deactivate_item",
+      "title": "Deactivate an item",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/items/{item_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.reactivate_item",
+      "title": "Reactivate an inactive item",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/items/{item_id}/reactivate",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_measured_unit",
+      "title": "List a site's measured units",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/measured_units",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_measured_unit",
+      "title": "Create a new measured unit",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/measured_units",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MeasuredUnitCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_measured_unit",
+      "title": "Fetch a measured unit",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/measured_units/{measured_unit_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.update_measured_unit",
+      "title": "Update a measured unit",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/measured_units/{measured_unit_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MeasuredUnitUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.remove_measured_unit",
+      "title": "Remove a measured unit",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/measured_units/{measured_unit_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_external_products",
+      "title": "List a site's external products",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_products",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_external_product",
+      "title": "Create an external product",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_products",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalProductCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_external_product",
+      "title": "Fetch an external product",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_products/{external_product_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.update_external_product",
+      "title": "Update an external product",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_products/{external_product_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalProductUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.deactivate_external_products",
+      "title": "Deactivate an external product",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_products/{external_product_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_external_product_external_product_references",
+      "title": "List the external product references for an external product",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_products/{external_product_id}/external_product_references",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_external_product_external_product_reference",
+      "title": "Create an external product reference on an external product",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_products/{external_product_id}/external_product_references",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalProductReferenceCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_external_product_external_product_reference",
+      "title": "Fetch an external product reference",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_products/{external_product_id}/external_product_references/{external_product_reference_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.deactivate_external_product_external_product_reference",
+      "title": "Deactivate an external product reference",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_products/{external_product_id}/external_product_references/{external_product_reference_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_external_subscription",
+      "title": "Create an external subscription",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_subscriptions",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalSubscriptionCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.list_external_subscriptions",
+      "title": "List the external subscriptions on a site",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_subscriptions",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_external_subscription",
+      "title": "Fetch an external subscription",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_subscriptions/{external_subscription_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.put_external_subscription",
+      "title": "Update an external subscription",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_subscriptions/{external_subscription_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalSubscriptionUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.list_external_subscription_external_invoices",
+      "title": "List the external invoices on an external subscription",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_subscriptions/{external_subscription_id}/external_invoices",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_external_invoice",
+      "title": "Create an external invoice",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_subscriptions/{external_subscription_id}/external_invoices",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalInvoiceCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.list_invoices",
+      "title": "List a site's invoices",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoices",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_invoice",
+      "title": "Fetch an invoice",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoices/{invoice_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.update_invoice",
+      "title": "Update an invoice",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoices/{invoice_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvoiceUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_invoice_pdf",
+      "title": "Fetch an invoice as a PDF",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoices/{invoice_id}.pdf",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.apply_credit_balance",
+      "title": "Apply available credit to a pending or past due charge invoice",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoices/{invoice_id}/apply_credit_balance",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.collect_invoice",
+      "title": "Collect a pending or past due, automatic invoice",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoices/{invoice_id}/collect",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvoiceCollect"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.mark_invoice_failed",
+      "title": "Mark an open invoice as failed",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoices/{invoice_id}/mark_failed",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.mark_invoice_successful",
+      "title": "Mark an open invoice as successful",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoices/{invoice_id}/mark_successful",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.reopen_invoice",
+      "title": "Reopen a closed, manual invoice",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoices/{invoice_id}/reopen",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.void_invoice",
+      "title": "Void a credit invoice.",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoices/{invoice_id}/void",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.record_external_transaction",
+      "title": "Record an external payment for a manual invoices.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoices/{invoice_id}/transactions",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalTransaction"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.list_invoice_line_items",
+      "title": "List an invoice's line items",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoices/{invoice_id}/line_items",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_invoice_coupon_redemptions",
+      "title": "List the coupon redemptions applied to an invoice",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoices/{invoice_id}/coupon_redemptions",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_related_invoices",
+      "title": "List an invoice's related credit or charge invoices",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoices/{invoice_id}/related_invoices",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.refund_invoice",
+      "title": "Refund an invoice",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoices/{invoice_id}/refund",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvoiceRefund"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.create_invoice_retry",
+      "title": "Create an invoice for revenue recovery",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoices/recovery",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoveryInvoiceCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.list_line_items",
+      "title": "List a site's line items",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/line_items",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_line_item",
+      "title": "Fetch a line item",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/line_items/{line_item_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.remove_line_item",
+      "title": "Delete an uninvoiced line item",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/line_items/{line_item_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_plans",
+      "title": "List a site's plans",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/plans",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_plan",
+      "title": "Create a plan",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/plans",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlanCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_plan",
+      "title": "Fetch a plan",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/plans/{plan_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.update_plan",
+      "title": "Update a plan",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/plans/{plan_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlanUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.remove_plan",
+      "title": "Remove a plan",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/plans/{plan_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_plan_add_ons",
+      "title": "List a plan's add-ons",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/plans/{plan_id}/add_ons",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_plan_add_on",
+      "title": "Create an add-on",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/plans/{plan_id}/add_ons",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddOnCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_plan_add_on",
+      "title": "Fetch a plan's add-on",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/plans/{plan_id}/add_ons/{add_on_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.update_plan_add_on",
+      "title": "Update an add-on",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/plans/{plan_id}/add_ons/{add_on_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddOnUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.remove_plan_add_on",
+      "title": "Remove an add-on",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/plans/{plan_id}/add_ons/{add_on_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_price_segments",
+      "title": "List a site's price segments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/price_segments",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_price_segment",
+      "title": "Fetch a price segment",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/price_segments/{price_segment_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_add_ons",
+      "title": "List a site's add-ons",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/add_ons",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_add_on",
+      "title": "Fetch an add-on",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/add_ons/{add_on_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_shipping_methods",
+      "title": "List a site's shipping methods",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/shipping_methods",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_shipping_method",
+      "title": "Create a new shipping method",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/shipping_methods",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShippingMethodCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_shipping_method",
+      "title": "Fetch a shipping method",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/shipping_methods/{shipping_method_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.update_shipping_method",
+      "title": "Update an active Shipping Method",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/shipping_methods/{shipping_method_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShippingMethodUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.deactivate_shipping_method",
+      "title": "Deactivate a shipping method",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/shipping_methods/{shipping_method_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_subscriptions",
+      "title": "List a site's subscriptions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_subscription",
+      "title": "Create a new subscription",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriptionCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_subscription",
+      "title": "Fetch a subscription",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.update_subscription",
+      "title": "Update a subscription",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriptionUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.terminate_subscription",
+      "title": "Terminate a subscription",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "refund",
+          "in": "query",
+          "schema": {
+            "default": "none",
+            "$ref": "#/components/schemas/RefundTypeEnum"
+          },
+          "description": "The type of refund to perform:\n\n* `full` - Performs a full refund of the last invoice for the current subscription term.\n* `partial` - Prorates a refund based on the amount of time remaining in the current bill cycle.\n* `none` - Terminates the subscription without a refund.\n\nIn the event that the most recent invoice is a $0 invoice paid entirely by credit, Recurly will apply the credit back to the customer’s account.\n\nYou may also terminate a subscription with no refund and then manually refund specific invoices.\n"
+        },
+        {
+          "name": "charge",
+          "in": "query",
+          "schema": {
+            "default": true,
+            "type": "boolean"
+          },
+          "description": "Applicable only if the subscription has usage based add-ons and unbilled usage logged for the current billing cycle. If true, current billing cycle unbilled usage is billed on the final invoice. If false, Recurly will create a negative usage record for current billing cycle usage that will zero out the final invoice line items."
+        }
+      ]
+    },
+    {
+      "connector": "recurly.cancel_subscription",
+      "title": "Cancel a subscription",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}/cancel",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriptionCancel"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.reactivate_subscription",
+      "title": "Reactivate a canceled subscription",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}/reactivate",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.pause_subscription",
+      "title": "Pause subscription",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}/pause",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriptionPause"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.resume_subscription",
+      "title": "Resume subscription",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}/resume",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.convert_trial",
+      "title": "Convert trial subscription",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}/convert_trial",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_preview_renewal",
+      "title": "Fetch a preview of a subscription's renewal invoice(s)",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}/preview_renewal",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_subscription_change",
+      "title": "Fetch a subscription's pending change",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}/change",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_subscription_change",
+      "title": "Create a new subscription change",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}/change",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriptionChangeCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.remove_subscription_change",
+      "title": "Delete the pending subscription change",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}/change",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.preview_subscription_change",
+      "title": "Preview a new subscription change",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}/change/preview",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscriptionChangeCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.list_subscription_invoices",
+      "title": "List a subscription's invoices",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}/invoices",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_subscription_line_items",
+      "title": "List a subscription's line items",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}/line_items",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_subscription_coupon_redemptions",
+      "title": "List the coupon redemptions for a subscription",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}/coupon_redemptions",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_subscription_coupon_redemption",
+      "title": "Show the coupon redemption for a subscription",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}/coupon_redemptions/{coupon_redemption_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.remove_subscription_coupon_redemption",
+      "title": "Delete the coupon redemption from a subscription",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}/coupon_redemptions/{coupon_redemption_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_usage",
+      "title": "List a subscription add-on's usage records",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}/add_ons/{add_on_id}/usage",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_usage",
+      "title": "Log a usage record on this subscription add-on",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/subscriptions/{subscription_id}/add_ons/{add_on_id}/usage",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsageCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_usage",
+      "title": "Get a usage record",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/usage/{usage_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.update_usage",
+      "title": "Update a usage record",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/usage/{usage_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsageCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.remove_usage",
+      "title": "Delete a usage record.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/usage/{usage_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_transactions",
+      "title": "List a site's transactions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/transactions",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_transaction",
+      "title": "Fetch a transaction",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/transactions/{transaction_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_unique_coupon_code",
+      "title": "Fetch a unique coupon code",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/unique_coupon_codes/{unique_coupon_code_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.deactivate_unique_coupon_code",
+      "title": "Deactivate a unique coupon code",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/unique_coupon_codes/{unique_coupon_code_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.reactivate_unique_coupon_code",
+      "title": "Restore a unique coupon code",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/unique_coupon_codes/{unique_coupon_code_id}/restore",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_purchase",
+      "title": "Create a new purchase",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/purchases",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PurchaseCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.preview_purchase",
+      "title": "Preview a new purchase",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/purchases/preview",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PurchaseCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.create_pending_purchase",
+      "title": "Create a pending purchase",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/purchases/pending",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PurchaseCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.create_authorize_purchase",
+      "title": "Authorize a purchase",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/purchases/authorize",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PurchaseCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.create_capture_purchase",
+      "title": "Capture a purchase",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/purchases/{transaction_id}/capture",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.cancelPurchase",
+      "title": "Cancel Purchase",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/purchases/{transaction_id}/cancel/",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_export_dates",
+      "title": "List the dates that have an available export to download.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/export_dates",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_export_files",
+      "title": "List of the export files that are available to download.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/export_dates/{export_date}/export_files",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_dunning_campaigns",
+      "title": "List the dunning campaigns for a site",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/dunning_campaigns",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_dunning_campaign",
+      "title": "Create a new dunning campaign",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/dunning_campaigns",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DunningCampaignCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_dunning_campaign",
+      "title": "Fetch a dunning campaign",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/dunning_campaigns/{dunning_campaign_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.update_dunning_campaign",
+      "title": "Update a dunning campaign",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/dunning_campaigns/{dunning_campaign_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DunningCampaignUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.deactivate_dunning_campaign",
+      "title": "Deactivate a dunning campaign",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/dunning_campaigns/{dunning_campaign_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_dunning_campaign_email_templates",
+      "title": "List the custom email templates assignable to a dunning campaign interval",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/dunning_campaigns/email_templates",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.put_dunning_campaign_bulk_update",
+      "title": "Assign a dunning campaign to multiple plans",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/dunning_campaigns/{dunning_campaign_id}/bulk_update",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DunningCampaignsBulkUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.list_invoice_templates",
+      "title": "Show the invoice templates for a site",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoice_templates",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_invoice_template",
+      "title": "Fetch an invoice template",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/invoice_templates/{invoice_template_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_external_invoices",
+      "title": "List the external invoices on a site",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_invoices",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.show_external_invoice",
+      "title": "Fetch an external invoice",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_invoices/{external_invoice_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_external_subscription_external_payment_phases",
+      "title": "List the external payment phases on an external subscription",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_subscriptions/{external_subscription_id}/external_payment_phases",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_external_subscription_external_payment_phase",
+      "title": "Fetch an external payment phase",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/external_subscriptions/{external_subscription_id}/external_payment_phases/{external_payment_phase_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_entitlements",
+      "title": "List entitlements granted to an account",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/entitlements",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_account_external_subscriptions",
+      "title": "List an account's external subscriptions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/accounts/{account_id}/external_subscriptions",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.get_business_entity",
+      "title": "Fetch a business entity",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/business_entities/{business_entity_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_business_entities",
+      "title": "List business entities",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/business_entities",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.list_gift_cards",
+      "title": "List gift cards",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/gift_cards",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.create_gift_card",
+      "title": "Create gift card",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/gift_cards",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GiftCardCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.get_gift_card",
+      "title": "Fetch a gift card",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/gift_cards/{gift_card_id}",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "recurly.preview_gift_card",
+      "title": "Preview gift card",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/gift_cards/preview",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GiftCardCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.redeem_gift_card",
+      "title": "Redeem gift card",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/gift_cards/{redemption_code}/redeem",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GiftCardRedeem"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "recurly.list_business_entity_invoices",
+      "title": "List a business entity's invoices",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://v3.recurly.com",
+      "path": "/business_entities/{business_entity_id}/invoices",
+      "authentication": "basic",
+      "parameters": []
+    }
+  ]
+}

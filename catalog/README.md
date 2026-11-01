@@ -4,18 +4,17 @@ Ready-made BPMN models that bpmn-web users browse and import (Catalog, `/dashboa
 
 ```
 catalog/
-  entries.json      what you write: id, name, description, tags of each model
+  connectors/        OpenAPI connector catalog and connector design notes
   models/<id>.bpmn  the models
   models/<id>.svg   their diagrams (build.mjs draws them)
-  catalog.json      what bpmn-web reads (build.mjs writes it)
+  models/catalog.json  model catalog
   build.mjs
 ```
 
 ## Add or change a model
 
-1. Put the model in `models/<id>.bpmn` (`id`: lower case, dashes).
-2. Add it to `entries.json`: `{ "id", "name" (the model's name once imported), "description", "tags": ["demo"] }`.
-3. Build (from the repository root, after `npm run build`): `node catalog/build.mjs`.
+Put the model files in `models/<name>.bpmn` and `models/<name>.svg`, then add `{ "name", "title", "tags" }`
+to `models/catalog.json`.
 
 `build.mjs` checks each model as `npx bpmn-server verify` does, and records in `catalog.json` its errors and
 warnings, the services it calls (an importing application's app delegate needs them), what it is made of,
@@ -23,9 +22,8 @@ its size and its SHA-256 (bpmn-web refuses a file that does not match it).
 
 ## Publish
 
-Copy `catalog.json` and `models/` to the web server. bpmn-web reads the catalog at `CATALOG_URL`: a web
-address (default `https://catalog.omniworkflow.com/`, where `catalog.json` is then
-`https://catalog.omniworkflow.com/catalog.json`) or a local folder.
+Copy `models/catalog.json` and the model files to the web server. bpmn-web reads the catalog at `CATALOG_URL`: a web
+address or a local folder containing the model catalog.
 
 ## From the 2021 catalog
 

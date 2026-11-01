@@ -1,0 +1,1106 @@
+{
+  "name": "freshdesk",
+  "title": "Freshdesk",
+  "source": "https://raw.githubusercontent.com/ccl-consulting/freshdesk-openapi-definitions/main/swagger.yaml",
+  "authentication": "basic",
+  "operations": [
+    {
+      "connector": "freshdesk.get_tickets",
+      "title": "List all tickets",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/tickets",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.get_ticket_fields",
+      "title": "List all ticket fields",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/ticket_fields",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.get_ticket-forms",
+      "title": "List all ticket forms",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/ticket-forms",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.delete_conversations_id",
+      "title": "Delete a conversation",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/conversations/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_contacts",
+      "title": "List all contacts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/contacts",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.delete_contacts_id",
+      "title": "Soft Delete a Contact",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/contacts/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.delete_contacts_id_hard_delete",
+      "title": "Permanently Delete a Contact",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/contacts/{id}/hard_delete",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_contact_fields",
+      "title": "List all contacts fields",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/contact_fields",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.delete_contact_field_id",
+      "title": "Delete a contact field",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/contact_field/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_agents",
+      "title": "View Agents",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/agents",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.delete_agents_id",
+      "title": "Delete an Agent",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/agents/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_account",
+      "title": "View Account",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/account",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.get_jobs_jobID",
+      "title": "View a job",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/jobs/{jobID}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "jobID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_skills",
+      "title": "List all skills",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/skills",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.delete_skills_id",
+      "title": "Delete a Skill",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/skills/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_roles_rolesID",
+      "title": "View a role",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/roles/{rolesID}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "rolesID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_roles",
+      "title": "List all roles",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/roles",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.get_groups",
+      "title": "List all groups",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/groups",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.post_groups",
+      "title": "Create a Group",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/groups",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/groups_body"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_groups_id",
+      "title": "View a group",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/groups/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.put_groups_id",
+      "title": "Update a group",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/groups/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/groups_id_body"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.delete_groups_id",
+      "title": "Delete a group",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/groups/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_admin_groups",
+      "title": "List all Admin-Groups",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/admin/groups",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.delete_admin_groups_id",
+      "title": "Delete a group",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/admin/groups/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_companies",
+      "title": "List all Companies",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/companies",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.delete_companies_id",
+      "title": "Delete a company",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/companies/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_company_fields",
+      "title": "List all Companies Fields",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/company_fields",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.delete_company_fields_id",
+      "title": "Delete a company field",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/company_fields/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.delete_custom_objects_schemas_schema-id_records_record-id",
+      "title": "Delete a record",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/custom_objects/schemas/schema-id/records/{record-id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "record-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_canned_response_folders",
+      "title": "List All Folders",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/canned_response_folders",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.get_discussions_categories",
+      "title": "List All Forum Categories",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/discussions/categories",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.delete_discussions_categories_id",
+      "title": "Delete a Discussion Category",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/discussions/categories/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Discussion Category ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.delete_discussions_forums_id",
+      "title": "Delete a Discussion Forum",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/discussions/forums/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Discussion Forum ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.delete_discussions_forums_forum_id_follow",
+      "title": "Unmonitor Forum",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/discussions/forums/{forum_id}/follow",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "forum_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Discussion Forum ID"
+        },
+        {
+          "name": "user_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "User ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.delete_discussions_topics_id",
+      "title": "Delete a Topic",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/discussions/topics/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Topic ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.delete_discussions_topics_topic_id_follow",
+      "title": "Unmonitor topic",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/discussions/topics/{topic_id}/follow",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "topic_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Topic ID"
+        },
+        {
+          "name": "user_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "User ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.delete_discussions_comments_id",
+      "title": "Delete a comment",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/discussions/comments/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Comment ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_solutions_categories",
+      "title": "List all Solution Categories",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/solutions/categories",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.delete_solutions_categories_id",
+      "title": "Delete a Solution Category",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/solutions/categories/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Solution Category ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.delete_solutions_folders_id",
+      "title": "Delete a Solution Folder",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/solutions/folders/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Solution Folder ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.delete_solutions_articles_id",
+      "title": "Delete a Solution Article",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/solutions/articles/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Solution Article ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_surveys",
+      "title": "List all Surveys",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/surveys",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.get_surveys_satisfaction_ratings",
+      "title": "View all Satisfaction Ratings",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/surveys/satisfaction_ratings",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.get_time_entries",
+      "title": "List all Time entries",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/time_entries",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.post_tickets_ticketID_time_entries",
+      "title": "Create a Time Entry",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/tickets/{ticketID}/time_entries",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ticketID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ticketID_time_entries_body"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.put_time_entries_timeID",
+      "title": "Update a Time Entry",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/time_entries/{timeID}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "timeID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 2
+          },
+          "description": "Provide ID"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/time_entries_timeID_body"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.delete_time_entries_timeID",
+      "title": "Delete a Time Entry",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/time_entries/{timeID}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "timeID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 2
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.put_time_entries_timeID_toggle_timer",
+      "title": "Start/Stop Timer",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/time_entries/{timeID}/toggle_timer",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "timeID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 2
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_email_configs_emailID",
+      "title": "View an Email Config",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/email_configs/{emailID}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "emailID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_email_configs",
+      "title": "List All Email Configs",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/email_configs",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.get_email_mailboxes",
+      "title": "List All Email Mailboxes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/email/mailboxes",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.delete_email_mailboxes_id",
+      "title": "Delete an Email Mailboxes",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/email/mailboxes/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Mailboxes ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_email_settings",
+      "title": "View Mailbox Settings",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/email/settings",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.get_notifications_email_bcc",
+      "title": "View Automatic Bcc emails",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/notifications/email/bcc",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.get_products_productID",
+      "title": "View a Product",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/products/{productID}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "productID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_products",
+      "title": "List All Products",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/products",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.get_business_hours_businesshoursID",
+      "title": "View a Business Hour",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/business_hours/{businesshoursID}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "businesshoursID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Provide ID"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_business_hours",
+      "title": "List All Business Hours",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/business_hours",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.get_scenario_automations.json",
+      "title": "List All Scenario Automations",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/scenario_automations.json",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.get_sla_policies",
+      "title": "List All SLA Policies",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/sla_policies",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "freshdesk.delete_automations_automation_type_id_rules_id",
+      "title": "Delete an Automation Rule",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/automations/{automation_type_id}/rules/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "automation_type_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "Type id of the automation"
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "example": 42
+          },
+          "description": "ID of the automation rule"
+        }
+      ]
+    },
+    {
+      "connector": "freshdesk.get_settings_helpdesk",
+      "title": "Settings are configured through the Admin page of the Freshdesk web app.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://ccl-consulting.freshdesk.com/api/v2",
+      "path": "/settings/helpdesk",
+      "authentication": "basic",
+      "parameters": []
+    }
+  ]
+}

@@ -1,0 +1,4146 @@
+{
+  "name": "bamboohr",
+  "title": "Bamboohr",
+  "source": "https://raw.githubusercontent.com/konfig-sdks/openapi-examples/main/bamboohr/openapi.yaml",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "bamboohr.Employees_getDirectory",
+      "title": "Get Employee Directory",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/directory",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.EmployeeFiles_addCategory",
+      "title": "Add Employee File Category",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/files/categories",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostNewEmployeeFileCategory"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.EmployeeFiles_updateEmployeeFile",
+      "title": "Update Employee File",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{id}/files/{fileId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "default": 0
+          },
+          "description": "{id} is an employee ID. The special employee ID of zero (0) means to use the employee ID associated with the API key (if any)."
+        },
+        {
+          "name": "fileId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{fileId} is the ID of the employee file being updated."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeFileUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.EmployeeFiles_removeFile",
+      "title": "Delete Employee File",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{id}/files/{fileId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "default": 0
+          },
+          "description": "{id} is an employee ID. The special employee ID of zero (0) means to use the employee ID associated with the API key (if any)."
+        },
+        {
+          "name": "fileId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{fileId} is the ID of the employee file being deleted."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.EmployeeFiles_getEmployeeFile",
+      "title": "Get an Employee File",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{id}/files/{fileId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "default": 0
+          },
+          "description": "{id} is an employee ID. The special employee ID of zero (0) means to use the employee ID associated with the API key (if any)."
+        },
+        {
+          "name": "fileId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{fileId} is the ID of the employee file being retrieved."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.EmployeeFiles_uploadFile",
+      "title": "Upload Employee File",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{id}/files",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "default": 0
+          },
+          "description": "{id} is an employee ID. The special employee ID of zero (0) means to use the employee ID associated with the API key (if any)."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.CompanyFiles_createCategory",
+      "title": "Add Company File Category",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/files/categories",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewCompanyFileCategory"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.CompanyFiles_updateFile",
+      "title": "Update Company File",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/files/{fileId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "fileId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{fileId} is the ID of the employee file being updated."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyFileUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.CompanyFiles_removeFile",
+      "title": "Delete Company File",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/files/{fileId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "fileId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{fileId} is the ID of the company file being deleted."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.CompanyFiles_getFile",
+      "title": "Get an Company File",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/files/{fileId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "fileId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{fileId} is the ID of the company file being retrieved."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.CompanyFiles_uploadFile",
+      "title": "Upload Company File",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/files",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.Reports_companyReport",
+      "title": "Get company report",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/reports/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is a report ID."
+        },
+        {
+          "name": "format",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The output format for the report. Supported formats: CSV, PDF, XLS, XML, JSON"
+        },
+        {
+          "name": "fd",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "yes=apply standard duplicate field filtering, no=return the raw results with no duplicate filtering. Default value is \"yes\""
+        },
+        {
+          "name": "onlyCurrent",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean",
+            "default": true
+          },
+          "description": "Setting to false will return future dated values from history table fields."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Reports_requestCustomReport",
+      "title": "Request a custom report",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/reports/custom",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "format",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The output format for the report. Supported formats: CSV, PDF, XLS, XML, JSON"
+        },
+        {
+          "name": "onlyCurrent",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean",
+            "default": true
+          },
+          "description": "Limits the report to only current employees. Setting to false will include future-dated employees in the report."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestCustomReport"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TabularData_getEmployeeTableRows",
+      "title": "Gets table rows for a given employee and table combination",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{id}/tables/{table}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the employee ID."
+        },
+        {
+          "name": "table",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Table name"
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TabularData_addTableRow",
+      "title": "Adds a table row",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{id}/tables/{table}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the employee ID."
+        },
+        {
+          "name": "table",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Table name"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TabularData_updateRow",
+      "title": "Updates a table row.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{id}/tables/{table}/{rowId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the employee ID."
+        },
+        {
+          "name": "table",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Table name"
+        },
+        {
+          "name": "rowId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Row ID"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TabularData_deleteRow",
+      "title": "Deletes a table row",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{id}/tables/{table}/{rowId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the employee ID."
+        },
+        {
+          "name": "table",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Table name"
+        },
+        {
+          "name": "rowId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Row ID"
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TabularData_updateRow",
+      "title": "Updates a table row.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1_1/employees/{id}/tables/{table}/{rowId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the employee ID."
+        },
+        {
+          "name": "table",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Table name"
+        },
+        {
+          "name": "rowId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Row ID"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TabularData_addRow",
+      "title": "Adds a table row",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1_1/employees/{id}/tables/{table}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the employee ID."
+        },
+        {
+          "name": "table",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Table name"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TabularData_getChangedTableRows",
+      "title": "Gets all updated employee table data",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/changed/tables/{table}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "table",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Table name"
+        },
+        {
+          "name": "since",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "URL encoded iso8601 timestamp"
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.AccountInformation_updateListFieldValues",
+      "title": "Add or Update Values for List Fields",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/meta/lists/{listFieldId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "listFieldId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListFieldValues"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeOff_requestCreation",
+      "title": "Add a Time Off Request",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{employeeId}/time_off/request",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeOffRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeOff_changeRequestStatus",
+      "title": "Change a Request Status",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_off/requests/{requestId}/status",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "requestId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/request"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeOff_listEmployeeTimeOffPolicies",
+      "title": "List Time Off Policies for Employee",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{employeeId}/time_off/policies",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeOff_assignEmployeePolicies",
+      "title": "Assign Time Off Policies for an Employee",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{employeeId}/time_off/policies",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeOff_listEmployeePolicies",
+      "title": "List Time Off Policies for Employee, Version 1.1",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1_1/employees/{employeeId}/time_off/policies",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeOff_assignEmployeePoliciesV11",
+      "title": "Assign Time Off Policies for an Employee, Version 1.1",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1_1/employees/{employeeId}/time_off/policies",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeOff_estimateFutureTimeOffBalances",
+      "title": "Estimate Future Time Off Balances",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{employeeId}/time_off/calculator",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "end",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Photos_getEmployeePhoto",
+      "title": "Get an employee photo",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{employeeId}/photo/{size}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID for the employee you are getting the photo for."
+        },
+        {
+          "name": "size",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "original",
+              "large",
+              "medium",
+              "xs",
+              "tiny"
+            ]
+          },
+          "description": "Photo size"
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Photos_storeNewEmployeePhoto",
+      "title": "Store a new employee photo",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{employeeId}/photo",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID for the employee you are setting the photo for."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.LastChangeInformation_getChangedEmployeeIds",
+      "title": "Gets all updated employee IDs",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/changed",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "since",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "URL encoded iso8601 timestamp"
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Use one of these in the {type} variable in the URL: \"inserted\", \"updated\", \"deleted\""
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Login_userCredentials",
+      "title": "User Login",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/login",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Benefits_getDeductionTypesAll",
+      "title": "Get benefit deduction types",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/benefits/settings/deduction_types/all",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.Benefits_listCompanyBenefits",
+      "title": "Get a list of company benefits",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/benefit/company_benefit",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.Benefits_addNewCompanyBenefit",
+      "title": "Add a new company benefit",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/benefit/company_benefit",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/BenefitsAddNewCompanyBenefitRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Benefits_getCompanyBenefit",
+      "title": "Get a company benefit",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/benefit/company_benefit/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the company benefit ID."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Benefits_updateCompanyBenefit",
+      "title": "Update a company benefit",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/benefit/company_benefit/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the company benefit ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BenefitsUpdateCompanyBenefitRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Benefits_deleteCompanyBenefit",
+      "title": "Delete a company benefit",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/benefit/company_benefit/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the company benefit ID."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Benefits_listCompanyBenefitTypes",
+      "title": "Get a list of company benefit types",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/benefit/company_benefit/type",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.Benefits_listEmployeeBenefits",
+      "title": "Get a list of employee benefits",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/benefit/employee_benefit",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeBenefitFilters"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Benefits_addEmployeeBenefit",
+      "title": "Add an employee benefit",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/benefit/employee_benefit",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BenefitsAddEmployeeBenefitRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Benefits_getCoverages",
+      "title": "Get benefit coverages",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/benefitcoverages",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.Benefits_getEmployeeDependent",
+      "title": "Get employee dependent",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employeedependents/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the employee dependent ID."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Benefits_updateDependentInformation",
+      "title": "Update an employee dependent",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employeedependents/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the employee dependent ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Benefits_listEmployeeDependents",
+      "title": "Get all employee dependents",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employeedependents",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeid",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{employeeid} is the employee ID. Supplying this ID limits the response to the specific employee."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Benefits_createEmployeeDependent",
+      "title": "Add an employee dependent",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employeedependents",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Benefits_getBenefitPlans",
+      "title": "Get benefit plans",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/benefitplans",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.Benefits_listBenefitPlanCoverages",
+      "title": "Get benefit plan coverages",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/benefitplancoverages",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.Benefits_getBenefitGroups",
+      "title": "Get benefit groups",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/benefitgroups",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.Benefits_getBenefitGroupEmployees",
+      "title": "Get benefit group employees",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/benefitgroupemployees",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.Benefits_addBenefitGroupEmployee",
+      "title": "Add a benefit group employee",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/benefitgroupemployees",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BenefitGroupEmployee"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Benefits_getGroupPlans",
+      "title": "Get benefit group plans",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/benefitgroupplans",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.Benefits_getGroupPlanCosts",
+      "title": "Get benefit group plan costs",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/benefitgroupplancosts",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.Benefits_getDeductionsByPlan",
+      "title": "Get employee deductions by benefit plan",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employee/deductions/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the benefit plan ID."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Benefits_getBenefitPlanDeductionsByEmployee",
+      "title": "Get benefit plan deductions by employee",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employee/plans/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the employee ID."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Benefits_getEmployeeBenefitDeductions",
+      "title": "Get benefit deductions for employee",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/payroll/deductions/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the employee ID."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Payroll_getDefaultWithholdings",
+      "title": "Get an employee's default withholdings",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employee_withholding/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the employee."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Payroll_addEmployeeWithholdings",
+      "title": "Add an employee's default withholdings",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employee_withholding/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the employee id."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeWithholding"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Payroll_clearEmployeeWithholdings",
+      "title": "Clear an employee's default withholdings",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employee_withholding/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the employee id."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Payroll_employeeDirectDepositInfo",
+      "title": "Get an employee's direct deposit information",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employee_direct_deposit_accounts/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the employee."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Payroll_addEmployeeDirectDepositInfo",
+      "title": "Add an employee's direct deposit information",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employee_direct_deposit_accounts/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the employee id."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeDeposit"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Payroll_clearEmployeeDirectDeposit",
+      "title": "Clear an employee's direct deposit information",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employee_direct_deposit_accounts/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the employee ID."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Payroll_getUnpaidPaystubs",
+      "title": "Get an employee's unpaid paystubs",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employee_unpaid_pay_stubs/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the employee."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Payroll_clearEmployeeUnpaidPaystubs",
+      "title": "Clear an employee's unpaid paystubs",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employee_unpaid_pay_stubs/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the employee id."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Payroll_addEmployeeUnpaidPaystubs",
+      "title": "Add an employee's unpaid paystubs",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employee_unpaid_pay_stubs",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeUnpaidPaystub"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Payroll_getPaystub",
+      "title": "Get an employee's paystub",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employee_pay_stub/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the paystub (record) ID."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Payroll_deleteEmployeePaystub",
+      "title": "Delete an employee's paystub",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employee_pay_stub/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the paystub (record) ID."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Payroll_addEmployeePaystub",
+      "title": "Add an employee's paystub",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employee_pay_stub",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeePaystub"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Hours_getHourRecord",
+      "title": "Get an hour record",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/timetracking/record/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is the time tracking ID used to originally create the record."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Hours_recordAddition",
+      "title": "Add an hour record",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/timetracking/add",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeTrackingRecord"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Hours_editHourRecord",
+      "title": "Edit an hour record",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/timetracking/adjust",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HoursEditHourRecordRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Hours_deleteHourRecord",
+      "title": "Delete an hour record",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/timetracking/delete/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The time tracking id is the id that was used to track the record up to 36 characters in length. (i.e. UUID)."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Hours_bulkRecordEdit",
+      "title": "Bulk add/edit hour records",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/timetracking/record",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeTrackingRecordBulk"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTracking_approveEmployeeTimesheets",
+      "title": "Approve employee timesheets",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/timesheets/approve",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeTrackingApproveEmployeeTimesheetsRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTracking_approveEmployeeTimesheets",
+      "title": "Approve timesheets for employees that are currently clocked in",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/timesheets/clock_out_and_approve",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeTrackingApproveEmployeeTimesheetsRequest1"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTracking_getTimesheetsByIds",
+      "title": "Get timesheets by ids",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/timesheets",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeTrackingGetTimesheetsByIdsRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTracking_clockInEmployee",
+      "title": "Clock in (employee id optional)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/clock_in/{employeeId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{employeeId} is id of the employee clocking out"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeTrackingClockInEmployeeRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTracking_clockOutEmployee",
+      "title": "Clock out (employee id optional)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/clock_out/{employeeId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{employeeId} is id of the employee clocking out"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeTrackingClockOutEmployeeRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTracking_storeDailyEntries",
+      "title": "Store daily entries",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/daily_entries",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeTrackingStoreDailyEntriesRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTracking_storeClockEntries",
+      "title": "Store clock entries",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/clock_entries",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeTrackingStoreClockEntriesRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTracking_deleteClockEntries",
+      "title": "Delete clock entries",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/clock_entries",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeTrackingDeleteClockEntriesRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTracking_employeeTimesheetGet",
+      "title": "Get a timesheet for an employee",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/employee/{employeeId}/timesheet/{timesheetId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "id of employee to whom the timesheet belongs."
+        },
+        {
+          "name": "timesheetId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "timesheetId is the id to whom the timesheet belongs."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTracking_getDailyEntry",
+      "title": "Get a daily entry",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/employee/{employeeId}/daily_entries/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "id of employee to whom the daily entry belongs."
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "the id to whom the daily entry belongs."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTracking_getClockEntry",
+      "title": "Get a clock entry",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/employee/{employeeId}/clock_entries/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "id of employee to whom the clock entry belongs."
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "the id to whom the clock entry belongs."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTracking_employeeClockedIn",
+      "title": "Is employee clocked in?",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/employee/{employeeId}/is_clocked_in",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "id of employee to whom the clock entry belongs."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTracking_clockOutEmployeeAtSpecificTime",
+      "title": "Clock out an employee at a specific time",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/employee/{employeeId}/clock_out/datetime",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "id of the employee to whom the projects belong."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeTrackingClockOutEmployeeAtSpecificTimeRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTracking_editClockedInEntryData",
+      "title": "Edit information on the currently clocked in entry",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/employee/{employeeId}/clock_in/data",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "id of the employee to whom the projects belong."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeTrackingEditClockedInEntryDataRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTracking_listEmployeeProjects",
+      "title": "Get projects an employee can log time to",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/employee/{employeeId}/projects",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "id of the employee to whom the projects belong."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTracking_getProjectTasks",
+      "title": "Get tasks for a project",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/employee/{employeeId}/projects/{projectId}/tasks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "id of the employee to whom the projects belong."
+        },
+        {
+          "name": "projectId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "id of the project to which the tasks belong."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTrackingPrivateBeta_listTimesheetEntries",
+      "title": "Get Timesheet Entries",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/timesheet_entries",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "start",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "YYYY-MM-DD. Only show timesheet entries on/after the specified start date. Must be within the last 365 days."
+        },
+        {
+          "name": "end",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "YYYY-MM-DD. Only show timesheet entries on/before the specified end date. Must be within the last 365 days."
+        },
+        {
+          "name": "employeeIds",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "A comma separated list of employee IDs. When specified, only entries that match these employee IDs are returned."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTrackingPrivateBeta_addEditClockEntries",
+      "title": "Add/Edit Timesheet Clock Entries",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/clock_entries/store",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeTrackingPrivateBetaAddEditClockEntriesRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTrackingPrivateBeta_deleteTimeSheetEntries",
+      "title": "Delete Timesheet Clock Entries",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/clock_entries/delete",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeTrackingPrivateBetaDeleteTimeSheetEntriesRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTrackingPrivateBeta_addEditHourEntries",
+      "title": "Add/Edit Timesheet Hour Entries",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/hour_entries/store",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeTrackingPrivateBetaAddEditHourEntriesRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTrackingPrivateBeta_deleteHourEntries",
+      "title": "Delete Timesheet Hour Entries",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/hour_entries/delete",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeTrackingPrivateBetaDeleteHourEntriesRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTrackingPrivateBeta_addTimesheetClockIn",
+      "title": "Add Timesheet Clock-In Entry",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/employees/{employeeId}/clock_in",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "id of the employee to clock in."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeTrackingPrivateBetaAddTimesheetClockInRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTrackingPrivateBeta_addClockOut",
+      "title": "Add Timesheet Clock-Out Entry",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/employees/{employeeId}/clock_out",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "id of the employee to clock out."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTrackingPrivateBeta_listEmployeeProjects",
+      "title": "Get Employee Projects",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/employees/{employeeId}/projects",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "id of the employee to retrieve projects for."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeTrackingPrivateBeta_createProjectTask",
+      "title": "Create a Time Tracking Project",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_tracking/projects",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeTrackingPrivateBetaCreateProjectTaskRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_getAllAggregateInfo",
+      "title": "Get All Aggregate Goal Info",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/performance/employees/{employeeId}/goals/aggregate",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID used to generate the aggregate information."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_getAllAggregateInfo",
+      "title": "Get All Aggregate Goal Info, Version 1.1",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1_1/performance/employees/{employeeId}/goals/aggregate",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID used to generate the aggregate information."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_getAllAggregateInfo",
+      "title": "Get All Aggregate Goal Info, Version 1.2",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1_2/performance/employees/{employeeId}/goals/aggregate",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID used to generate the aggregate information."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_getGoalAggregateInfo",
+      "title": "Get Aggregate Goal Info",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/performance/employees/{employeeId}/goals/{goalId}/aggregate",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID with whom the goal is associated."
+        },
+        {
+          "name": "goalId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "goalId is the Goal ID used to generate the aggregate information."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_updateGoalSharing",
+      "title": "Update Goal Sharing",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/performance/employees/{employeeId}/goals/{goalId}/sharedWith",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID with whom the goal is associated."
+        },
+        {
+          "name": "goalId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "goalId is the goal ID for the specified employee."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoalsUpdateGoalSharingRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_updateProgress",
+      "title": "Update Goal Progress",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/performance/employees/{employeeId}/goals/{goalId}/progress",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "employeeId is the employee ID with whom the goal is associated."
+        },
+        {
+          "name": "goalId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "goalId is the goal ID for the specified employee."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoalsUpdateProgressRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_statusCount",
+      "title": "Get Goal Status Counts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/performance/employees/{employeeId}/goals/filters",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID to whom the goals are assigned."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_countPerStatus",
+      "title": "Get Goal Status Counts, Version 1.1",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1_1/performance/employees/{employeeId}/goals/filters",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID to whom the goals are assigned."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_determinePermission",
+      "title": "Can Create a Goal",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/performance/employees/{employeeId}/goals/canCreateGoals",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID with whom the goal is associated."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_getEmployeeGoals",
+      "title": "Get Goals",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/performance/employees/{employeeId}/goals",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID to whom the goals are assigned."
+        },
+        {
+          "name": "filter",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "A filter that can be applied to only show the goals that are in a certain state."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_createEmployeeGoal",
+      "title": "Create Goal",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/performance/employees/{employeeId}/goals",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID with whom the goal is associated."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewGoal"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_updateEmployeeGoal",
+      "title": "Update Goal",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/performance/employees/{employeeId}/goals/{goalId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID with whom the goal is associated."
+        },
+        {
+          "name": "goalId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "goalId is the goal ID for the specified employee."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Goal"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_deleteById",
+      "title": "Delete Goal",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/performance/employees/{employeeId}/goals/{goalId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID with whom the goal is associated."
+        },
+        {
+          "name": "goalId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "goalId is the goal ID for the specified employee."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_updateEmployeeGoalV11",
+      "title": "Update Goal, V1.1",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1_1/performance/employees/{employeeId}/goals/{goalId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID with whom the goal is associated."
+        },
+        {
+          "name": "goalId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "goalId is the goal ID for the specified employee."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateGoalV1_1"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_closeGoal",
+      "title": "Close Goal",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/performance/employees/{employeeId}/goals/{goalId}/close",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID with whom the goal is associated."
+        },
+        {
+          "name": "goalId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "goalId is the goal ID for the specified employee."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoalsCloseGoalRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_reopenGoal",
+      "title": "Reopen a Goal",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/performance/employees/{employeeId}/goals/{goalId}/reopen",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID with whom the goal is associated."
+        },
+        {
+          "name": "goalId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "goalId is the goal ID for the specified employee."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_shareOptionsGet",
+      "title": "Available Goal Sharing Options",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/performance/employees/{employeeId}/goals/shareOptions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID to get sharing options for."
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The search term used to filter employees returned. Will search name, employee ID and email."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Limit will restrict results to specified number."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_getAlignableOptions",
+      "title": "Alignable Goal Options",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/performance/employees/{employeeId}/goals/alignmentOptions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID to get alignable goal options for."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoalsGetAlignableOptionsRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_getComments",
+      "title": "Get Goal Comments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/performance/employees/{employeeId}/goals/{goalId}/comments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID with whom the goal is associated."
+        },
+        {
+          "name": "goalId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "goalId is the goal ID for the specified employee."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_createComment",
+      "title": "Create Goal Comment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/performance/employees/{employeeId}/goals/{goalId}/comments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID with whom the goal is associated."
+        },
+        {
+          "name": "goalId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "goalId is the goal ID for the specified employee."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_updateComment",
+      "title": "Update Goal Comment",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/performance/employees/{employeeId}/goals/{goalId}/comments/{commentId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID with whom the goal is associated."
+        },
+        {
+          "name": "goalId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "goalId is the goal ID for the specified employee."
+        },
+        {
+          "name": "commentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "commentId is the comment ID for the specified goal."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Goals_deleteComment",
+      "title": "Delete Goal Comment",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/performance/employees/{employeeId}/goals/{goalId}/comments/{commentId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "employeeId is the employee ID with whom the goal is associated."
+        },
+        {
+          "name": "goalId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "goalId is the goal ID for the specified employee."
+        },
+        {
+          "name": "commentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "commentId is the ID of a specific comment for the specified goal."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.ApplicantTracking_getJobSummaries",
+      "title": "Get Job Summaries",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/applicant_tracking/jobs",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "statusGroups",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ALL",
+              "DRAFT_AND_OPEN",
+              "Open",
+              "Filled",
+              "Draft",
+              "Deleted",
+              "On Hold",
+              "Canceled"
+            ]
+          },
+          "description": "A list of status groups to filter positions by."
+        },
+        {
+          "name": "sortBy",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "count",
+              "title",
+              "lead",
+              "created",
+              "status"
+            ]
+          },
+          "description": "A specific field to sort the results by."
+        },
+        {
+          "name": "sortOrder",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "description": "Order by which to sort results."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.ApplicantTracking_listApplications",
+      "title": "Get Applications",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/applicant_tracking/applications",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "The page number"
+        },
+        {
+          "name": "jobId",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "A Job Id to limit results to"
+        },
+        {
+          "name": "applicationStatusId",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Application status id to filter by."
+        },
+        {
+          "name": "applicationStatus",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ALL",
+              "ALL_ACTIVE",
+              "NEW",
+              "ACTIVE",
+              "INACTIVE",
+              "HIRED"
+            ]
+          },
+          "description": "A list of application status groups to filter by."
+        },
+        {
+          "name": "jobStatusGroups",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ALL",
+              "DRAFT_AND_OPEN",
+              "Open",
+              "Filled",
+              "Draft",
+              "Deleted",
+              "On Hold",
+              "Canceled"
+            ]
+          },
+          "description": "A list of position status groups to filter by."
+        },
+        {
+          "name": "searchString",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "A general search criteria by which to find applications."
+        },
+        {
+          "name": "sortBy",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "first_name",
+              "job_title",
+              "rating",
+              "phone",
+              "status",
+              "last_updated",
+              "created_date"
+            ]
+          },
+          "description": "A specific field to sort the results by."
+        },
+        {
+          "name": "sortOrder",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "description": "Order by which to sort results."
+        },
+        {
+          "name": "newSince",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Only get applications newer than a given UTC timestamp, for example 2024-01-01 13:00:00"
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.ApplicantTracking_getApplicationDetails",
+      "title": "Get Application Details",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/applicant_tracking/applications/{applicationId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "applicationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "default": 0
+          },
+          "description": "The ID of the application to look up details."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.ApplicantTracking_addApplicationComment",
+      "title": "Add Application Comment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/applicant_tracking/applications/{applicationId}/comments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "applicationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "default": 0
+          },
+          "description": "The ID of the application to add a comment to."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicantTrackingAddApplicationCommentRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.ApplicantTracking_listStatuses",
+      "title": "Get Statuses",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/applicant_tracking/statuses",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.ApplicantTracking_changeApplicantStatus",
+      "title": "Change Applicant's Status",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/applicant_tracking/applications/{applicationId}/status",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "applicationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "default": 0
+          },
+          "description": "The ID of the application to add a comment to."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicantTrackingChangeApplicantStatusRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.ApplicantTracking_getCompanyLocations",
+      "title": "Get Company Locations",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/applicant_tracking/locations",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.ApplicantTracking_getHiringLeads",
+      "title": "Get Hiring Leads",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/applicant_tracking/hiring_leads",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.ApplicantTracking_createNewApplication",
+      "title": "Add New Candidate",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/applicant_tracking/application",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicantTrackingCreateNewApplicationRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.ApplicantTracking_createNewJobOpening",
+      "title": "Add New Job Opening",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/applicant_tracking/job_opening",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicantTrackingCreateNewJobOpeningRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Training_getTypes",
+      "title": "List Training Types",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/training/type",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.Training_typeAddition",
+      "title": "Add Training Type",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/training/type",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrainingTypeAdditionRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Training_updateType",
+      "title": "Update Training Type",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/training/type/{trainingTypeId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "trainingTypeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "default": 0
+          },
+          "description": "The ID of the training type to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrainingUpdateTypeRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Training_removeType",
+      "title": "Delete Training Type",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/training/type/{trainingTypeId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "trainingTypeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "default": 0
+          },
+          "description": "The ID of the training type to delete."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Training_categoryList",
+      "title": "List Training Categories",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/training/category",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.Training_addCategory",
+      "title": "Add Training Category",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/training/category",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrainingAddCategoryRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Training_updateCategory",
+      "title": "Update Training Category",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/training/category/{trainingCategoryId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "trainingCategoryId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "default": 0
+          },
+          "description": "The ID of the training category to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrainingUpdateCategoryRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Training_deleteCategory",
+      "title": "Delete Training Category",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/training/category/{trainingCategoryId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "trainingCategoryId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "default": 0
+          },
+          "description": "The ID of the training category to delete."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Training_listEmployeeTrainings",
+      "title": "List Employee Trainings",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/training/record/employee/{employeeId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "default": 0
+          },
+          "description": "The ID of the employee to get a list of trainings for."
+        },
+        {
+          "name": "trainingTypeId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "default": 0
+          },
+          "description": "The training type id is optional. Not supplying a training type id will return the collection of all training records for the employee."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Training_addEmployeeTrainingRecord",
+      "title": "Add New Employee Training Record",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/training/record/employee/{employeeId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "default": 0
+          },
+          "description": "The ID of the employee to add a training record to."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrainingAddEmployeeTrainingRecordRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Training_updateEmployeeTrainingRecord",
+      "title": "Update Employee Training Record",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/training/record/{employeeTrainingRecordId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeTrainingRecordId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "default": 0
+          },
+          "description": "The ID of the training record to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrainingUpdateEmployeeTrainingRecordRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Training_deleteEmployeeRecord",
+      "title": "Delete Employee Training Record",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/training/record/{employeeTrainingRecordId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "employeeTrainingRecordId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "default": 0
+          },
+          "description": "The ID of the training record to delete."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Webhooks_listMonitorFields",
+      "title": "Get monitor fields",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/webhooks/monitor_fields",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.Webhooks_getWebhookLogs",
+      "title": "Get Webhook Logs",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/webhooks/{id}/log",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The webhook ID to get logs about."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Employees_getEmployeeData",
+      "title": "Get Employee",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "fields",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "default": "firstName,lastName"
+          },
+          "description": "{fields} is a comma separated list of values taken from the official list of field names. "
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "default": 0
+          },
+          "description": "{id} is an employee ID. The special employee ID of zero (0) means to use the employee ID associated with the API key (if any)."
+        },
+        {
+          "name": "onlyCurrent",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean",
+            "default": true
+          },
+          "description": "Setting to false will return future dated values from history table fields."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Employees_updateEmployee",
+      "title": "Update Employee",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is an employee ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Employee"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Employees_createNewEmployee",
+      "title": "Add Employee",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/postNewEmployee"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.EmployeeFiles_listFilesAndCategories",
+      "title": "List employee files and categories",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{id}/files/view",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "default": 0
+          },
+          "description": "{id} is an employee ID. The special employee ID of zero (0) means to use the employee ID associated with the API key (if any)."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.CompanyFiles_listFilesAndCategories",
+      "title": "List company files and categories",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/files/view",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.AccountInformation_getFieldList",
+      "title": "Get a list of fields",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/meta/fields",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.AccountInformation_discoverTableFields",
+      "title": "Get a list of tabular fields",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/meta/tables",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.AccountInformation_getListFields",
+      "title": "Get details for list fields",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/meta/lists",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.AccountInformation_getUserList",
+      "title": "Get a List of Users",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/meta/users",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.TimeOff_getTimeOffTypes",
+      "title": "Get Time Off Types",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/meta/time_off/types",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "mode",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "set to 'request' to get a list of all time off types with which this user can create a time off request. The default is to return the list of time off types the user has permissions on. This distinction is important, as employees can request time off for types that they don't have permission to view balances and requests for."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeOff_getPolicies",
+      "title": "Get Time Off Policies",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/meta/time_off/policies",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.TimeOff_getTimeOffRequests",
+      "title": "Get Time Off Requests",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_off/requests",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "A particular request ID to limit the response to."
+        },
+        {
+          "name": "action",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Limit to requests that the user has a particular level of access to. Legal values are: \"view\" or \"approve\". Defaults to view."
+        },
+        {
+          "name": "employeeId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "A particular employee ID to limit the response to."
+        },
+        {
+          "name": "start",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "YYYY-MM-DD. Only show time off that occurs on/after the specified start date."
+        },
+        {
+          "name": "end",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "YYYY-MM-DD. Only show time off that occurs on/before the specified end date."
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "A comma separated list of time off types IDs to include limit the response to. If omitted, requests of all types are included."
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "A comma separated list of request status values to include. If omitted, requests of all status values are included. Legal values are \"approved\", \"denied\", \"superceded\", \"requested\", \"canceled\"."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeOff_addTimeOffHistoryItem",
+      "title": "Add a Time Off History Item For Time Off Request",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{employeeId}/time_off/history",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeOffHistory"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeOff_balanceAdjustmentPut",
+      "title": "Adjust Time Off Balance",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/employees/{employeeId}/time_off/balance_adjustment",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdjustTimeOffBalance"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.TimeOff_getWhosOutList",
+      "title": "Get a list of Who's Out",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/time_off/whos_out",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "start",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "A date in the form YYYY-MM-DD - defaults to the current date."
+        },
+        {
+          "name": "end",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "A date in the form YYYY-MM-DD - defaults to 14 days from the start date."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Webhooks_addNewWebhook",
+      "title": "Add Webhook",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/webhooks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Webhooks_getUserList",
+      "title": "Gets as list of webhooks for the user API key.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/webhooks",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bamboohr.Webhooks_getUserWebhook",
+      "title": "Get Webhook",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/webhooks/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The webhook ID to display details about."
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Webhooks_updateWebhookById",
+      "title": "Update Webhook",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/webhooks/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is a webhook ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "bamboohr.Webhooks_deleteWebhook",
+      "title": "Delete Webhook",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bamboohr.com/api/gateway.php",
+      "path": "/{companyDomain}/v1/webhooks/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "{id} is an webhook ID that is associated with the User API key."
+        }
+      ]
+    }
+  ]
+}

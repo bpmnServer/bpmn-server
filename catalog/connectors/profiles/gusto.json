@@ -1,0 +1,4685 @@
+{
+  "name": "gusto",
+  "title": "Gusto",
+  "source": "https://raw.githubusercontent.com/konfig-sdks/openapi-examples/main/gusto/embedded-payroll/openapi.yaml",
+  "authentication": "oauth-client-credentials-flow",
+  "operations": [
+    {
+      "connector": "gusto.Introspection_getCurrentAccessTokenInfo",
+      "title": "Get info about the current access token",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/token_info",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Introspection_exchangeRefreshToken",
+      "title": "Refresh access token",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/oauth/token",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntrospectionExchangeRefreshTokenRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Companies_createPartnerManagedCompany",
+      "title": "Create a partner managed company",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/partner_managed_companies",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompaniesCreatePartnerManagedCompanyRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "user": {
+                      "first_name": "Frank",
+                      "last_name": "Ocean",
+                      "email": "frank@example.com",
+                      "phone": "2345558899"
+                    },
+                    "company": {
+                      "name": "Frank's Ocean, LLC",
+                      "trade_name": "Frank’s Ocean",
+                      "ein": "123456789"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Companies_getCompany",
+      "title": "Get a company",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Companies_migrateToEmbeddedPayroll",
+      "title": "Migrate company to embedded payroll",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/partner_managed_companies/{company_uuid}/migrate",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompaniesMigrateToEmbeddedPayrollRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Companies_acceptTermsOfService",
+      "title": "Accept terms of service for a company user",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/partner_managed_companies/{company_uuid}/accept_terms_of_service",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompaniesAcceptTermsOfServiceRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Companies_getTermsOfServiceStatus",
+      "title": "Retrieve terms of service status for a company user",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/partner_managed_companies/{company_uuid}/retrieve_terms_of_service",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompaniesGetTermsOfServiceStatusRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Invoices_getInvoicingDataForCompanies",
+      "title": "Retrieve invoicing data for companies",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/invoices/{invoice_period}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "company_uuids",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter companies returned in the active_companies response, will return an error if company not active during provided invoice period. i.e. `?company_uuids=781922d8-e780-4b6b-bf74-ee303166d022,bbbca930-7322-491c-ba7f-98707a52a9c5`"
+        }
+      ]
+    },
+    {
+      "connector": "gusto.FederalTaxDetails_getAttributes",
+      "title": "Get Federal Tax Details",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/federal_tax_details",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.FederalTaxDetails_updateAttributes",
+      "title": "Update Federal Tax Details",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/federal_tax_details",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FederalTaxDetailsUpdateAttributesRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "version": "6cb95e00540706ca48d4577b3c839fbe",
+                    "tax_payer_type": "LLP",
+                    "taxable_as_scorp": false,
+                    "filing_form": "944",
+                    "has_ein": true,
+                    "ein_verified": false,
+                    "legal_name": "Acme Corp."
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.IndustrySelection_getCompanyIndustrySelection",
+      "title": "Get a company industry selection",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/industry_selection",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.IndustrySelection_updateCompanyIndustrySelection",
+      "title": "Update a company industry selection",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/industry_selection",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IndustrySelectionUpdateCompanyIndustrySelectionRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "title": "Computer Training",
+                    "naics_code": "611420",
+                    "sic_codes": [
+                      "8243"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Companies_createAdmin",
+      "title": "Create an admin for the company",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/admins",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompaniesCreateAdminRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "first_name": "John",
+                    "last_name": "Smith",
+                    "email": "jsmith99@gmail.com"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Companies_getAllAdmins",
+      "title": "Get all the admins at a company",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/admins",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Signatories_createSignatoryWithCompleteInformation",
+      "title": "Create a signatory",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/signatories",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignatoriesCreateSignatoryWithCompleteInformationRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Signatories_getCompanySignatories",
+      "title": "Get all company signatories",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/signatories",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Signatories_createInvite",
+      "title": "Invite a signatory",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/signatories/invite",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignatoriesCreateInviteRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Signatories_update",
+      "title": "Update a signatory",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/signatories/{signatory_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignatoriesUpdateRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Signatories_deleteSignatory",
+      "title": "Delete a signatory",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/signatories/{signatory_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Companies_getOnboardingStatus",
+      "title": "Get the company's onboarding status",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/onboarding_status",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Companies_finishOnboarding",
+      "title": "Finish company onboarding",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/finish_onboarding",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Companies_getCustomFields",
+      "title": "Get the custom fields of a company",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/custom_fields",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Flows_generateLink",
+      "title": "Create a flow",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/flows",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FlowsGenerateLinkRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "flow_type": "company_onboarding"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Locations_createCompanyLocation",
+      "title": "Create a company location",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/locations",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationsCreateCompanyLocationRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "phone_number": "8009360383",
+                    "street_1": "425 2nd Street",
+                    "street_2": "Suite 602",
+                    "city": "San Francisco",
+                    "state": "CA",
+                    "zip": "94107",
+                    "country": "USA"
+                  }
+                }
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationsCreateCompanyLocationRequest1"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "phone_number": "8009360383",
+                    "street_1": "425 2nd Street",
+                    "street_2": "Suite 602",
+                    "city": "San Francisco",
+                    "state": "CA",
+                    "zip": "94107",
+                    "country": "USA"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Locations_getCompanyLocations",
+      "title": "Get company locations",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/locations",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Locations_getById",
+      "title": "Get a location",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/locations/{location_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Locations_updateLocation",
+      "title": "Update a location",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/locations/{location_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocationsUpdateLocationRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "version": "1928d0c378e519e9c03fb959bc959a6b",
+                    "phone_number": "8009360383",
+                    "street_1": "425 2nd Street",
+                    "street_2": "Suite 602",
+                    "city": "San Francisco",
+                    "state": "CA",
+                    "zip": "94107",
+                    "country": "USA"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Locations_getMinimumWages",
+      "title": "Get minimum wages for a location",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/locations/{location_uuid}/minimum_wages",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.BankAccounts_createVerificationDeposits",
+      "title": "Create a company bank account",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/bank_accounts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankAccountsCreateVerificationDepositsRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "routing_number": "115092013",
+                    "account_type": "Checking",
+                    "account_number": "9775014007"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.BankAccounts_listCompanyBankAccounts",
+      "title": "Get all company bank accounts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/bank_accounts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.BankAccounts_verifyMicroDeposits",
+      "title": "Verify a company bank account",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/bank_accounts/{bank_account_uuid}/verify",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankAccountsVerifyMicroDepositsRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "deposit_1": 0.02,
+                    "deposit_2": 0.42
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.ExternalPayrolls_createNewPayroll",
+      "title": "Create a new external payroll for a company",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/external_payrolls",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalPayrollsCreateNewPayrollRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "check_date": "2022-06-01",
+                    "payment_period_start_date": "2022-05-15",
+                    "payment_period_end_date": "2022-05-30"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.ExternalPayrolls_listForCompany",
+      "title": "Get external payrolls for a company",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/external_payrolls",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.ExternalPayrolls_getById",
+      "title": "Get an external payroll",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/external_payrolls/{external_payroll_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.ExternalPayrolls_deletePayroll",
+      "title": "Delete an external payroll",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/external_payrolls/{external_payroll_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.ExternalPayrolls_updatePayrollItems",
+      "title": "Update an external payroll",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/external_payrolls/{external_payroll_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalPayrollsUpdatePayrollItemsRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "replace_fields": true,
+                    "external_payroll_items": [
+                      {
+                        "employee_uuid": "403c6ee3-5f58-40ef-a117-ff7175cd9ee3",
+                        "earnings": [
+                          {
+                            "hours": "0.0",
+                            "amount": "200.00",
+                            "earning_type": "CompanyPayType",
+                            "earning_id": 1
+                          },
+                          {
+                            "hours": "0.0",
+                            "amount": "5000.00",
+                            "earning_type": "CompanyEarningType",
+                            "earning_id": 2
+                          }
+                        ],
+                        "benefits": [
+                          {
+                            "company_contribution_amount": "300.0",
+                            "employee_deduction_amount": "300.0",
+                            "benefit_id": 10
+                          },
+                          {
+                            "company_contribution_amount": "50.0",
+                            "employee_deduction_amount": "100.0",
+                            "benefit_id": 21
+                          }
+                        ],
+                        "taxes": [
+                          {
+                            "amount": "20.0",
+                            "tax_id": 1
+                          },
+                          {
+                            "amount": "100.0",
+                            "tax_id": 2
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.ExternalPayrolls_getTaxSuggestions",
+      "title": "Get tax suggestions for an external payroll",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/external_payrolls/{external_payroll_id}/calculate_taxes",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.ExternalPayrolls_getTaxLiabilities",
+      "title": "Get tax liabilities",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/external_payrolls/tax_liabilities",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.ExternalPayrolls_updateTaxLiabilities",
+      "title": "Update tax liabilities",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/external_payrolls/tax_liabilities",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExternalPayrollsUpdateTaxLiabilitiesRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "liability_selections": [
+                      {
+                        "tax_id": 1,
+                        "last_unpaid_external_payroll_uuid": "7985032c-ee3a-4e98-af27-d56551eb5f1c",
+                        "unpaid_liability_amount": 50
+                      },
+                      {
+                        "tax_id": 2,
+                        "last_unpaid_external_payroll_uuid": "5ed14dbb-958f-47c8-b16e-c4fed82dc486",
+                        "unpaid_liability_amount": 400
+                      },
+                      {
+                        "tax_id": 8,
+                        "last_unpaid_external_payroll_uuid": null,
+                        "unpaid_liability_amount": 0
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.ExternalPayrolls_finalizeTaxLiabilities",
+      "title": "Finalize tax liabilities options and convert into processed payrolls",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/external_payrolls/tax_liabilities/finish",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.PaymentConfigs_getCompanyPaymentConfigs",
+      "title": "Get a company's payment configs",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/payment_configs",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.PaymentConfigs_updateCompanyPaymentConfigs",
+      "title": "Update a company's payment configs",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/payment_configs",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentConfigsUpdateCompanyPaymentConfigsRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "fast_payment_limit": "5000",
+                    "payment_speed": "2-day"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.PaySchedules_createNew",
+      "title": "Create a new pay schedule",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/pay_schedules",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaySchedulesCreateNewRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "version": "68934a3e9455fa72420237eb05902327",
+                    "frequency": "Twice per month",
+                    "anchor_pay_date": "2021-10-15",
+                    "anchor_end_of_pay_period": "2021-10-15",
+                    "day_1": 15,
+                    "day_2": 31,
+                    "custom_name": "demo pay schedule",
+                    "auto_pilot": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.PaySchedules_listForCompany",
+      "title": "Get the pay schedules for a company",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/pay_schedules",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.PaySchedules_previewPayScheduleDates",
+      "title": "Preview pay schedule dates",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/pay_schedules/preview",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "frequency",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "Every week",
+              "Every other week",
+              "Twice per month",
+              "Monthly"
+            ]
+          },
+          "description": "The frequency that employees on this pay schedule are paid with Gusto."
+        },
+        {
+          "name": "anchor_pay_date",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "example": "2020-05-15"
+          },
+          "description": "The first date that employees on this pay schedule are paid with Gusto."
+        },
+        {
+          "name": "anchor_end_of_pay_period",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "example": "2020-05-08"
+          },
+          "description": "The last date of the first pay period. This can be the same date as the anchor pay date."
+        },
+        {
+          "name": "day_1",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "An integer between 1 and 31 indicating the first day of the month that employees are paid. This field is only relevant for pay schedules with the “Twice per month” and “Monthly” frequencies. It will be null for pay schedules with other frequencies."
+        },
+        {
+          "name": "day_2",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "An integer between 1 and 31 indicating the second day of the month that employees are paid. This field is the second pay date for pay schedules with the \"Twice per month\" frequency. For semi-monthly pay schedules, set this field to 31. For months shorter than 31 days, we will set the second pay date to the last day of the month. It will be null for pay schedules with other frequencies."
+        }
+      ]
+    },
+    {
+      "connector": "gusto.PaySchedules_getDetails",
+      "title": "Get a pay schedule",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/pay_schedules/{pay_schedule_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.PaySchedules_updatePaySchedule",
+      "title": "Update a pay schedule",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/pay_schedules/{pay_schedule_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaySchedulesUpdatePayScheduleRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "version": "68934a3e9455fa72420237eb05902327",
+                    "frequency": "Twice per month",
+                    "anchor_pay_date": "2021-10-15",
+                    "anchor_end_of_pay_period": "2021-10-15",
+                    "day_1": 15,
+                    "day_2": 31,
+                    "custom_name": "demo pay schedule",
+                    "auto_pilot": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.PaySchedules_getPayPeriods",
+      "title": "Get pay periods for a company",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/pay_periods",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.PaySchedules_getUnprocessedTerminationPayPeriods",
+      "title": "Get termination pay periods for a company",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/pay_periods/unprocessed_termination_pay_periods",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.PaySchedules_getAssignments",
+      "title": "Get pay schedule assignments for a company",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/pay_schedules/assignments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.PaySchedules_previewAssignmentsForCompany",
+      "title": "Preview pay schedule assignments for a company",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/pay_schedules/assignment_preview",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Pay-Schedule-Assignment-Body"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "type": "by_employee",
+                    "employees": {
+                      "employee_uuid": "f0238368-f2cf-43e2-9a07-b0265f2cec69",
+                      "pay_schedule_uuid": "c277ac52-9871-4a96-a1e6-0c449684602a"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.PaySchedules_assignEmployeesToSchedules",
+      "title": "Assign pay schedules for a company",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/pay_schedules/assign",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Pay-Schedule-Assignment-Body"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "type": "by_employee",
+                    "employees": {
+                      "employee_uuid": "f0238368-f2cf-43e2-9a07-b0265f2cec69",
+                      "pay_schedule_uuid": "c277ac52-9871-4a96-a1e6-0c449684602a"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Employees_createEmployee",
+      "title": "Create an employee",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/employees",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeesCreateEmployeeRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "first_name": "Soren",
+                    "middle_initial": "A",
+                    "last_name": "Kierkegaard",
+                    "date_of_birth": "1995-05-05",
+                    "email": "knight0faith@example.com",
+                    "ssn": "123456294"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Employees_listCompanyEmployees",
+      "title": "Get employees of a company",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/employees",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "terminated",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Filters employees by the provided boolean"
+        },
+        {
+          "name": "include",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "all_compensations",
+              "custom_fields"
+            ]
+          },
+          "description": "Include the requested attribute(s) in each employee response, multiple options are comma separated. Available options:\n- all_compensations: Include all effective dated compensations for each job instead of only the current compensation\n- custom_fields: Include employees' custom fields"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeesListCompanyEmployeesRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Departments_createDepartment",
+      "title": "Create a department",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/departments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepartmentsCreateDepartmentRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "title": "Stage Hand"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Departments_getAllWithEmployees",
+      "title": "Get all departments of a company",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/departments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Departments_getDepartmentByUuid",
+      "title": "Get a department",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/departments/{department_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Departments_updateDepartment",
+      "title": "Update a department",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/departments/{department_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepartmentsUpdateDepartmentRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "title": "Backup Dancer",
+                    "version": "db0edd04aaac4506f7edab03ac855d56"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Departments_deleteDepartment",
+      "title": "Delete a department",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/departments/{department_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Departments_addPeopleToDepartment",
+      "title": "Add people to a department",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/departments/{department_uuid}/add",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepartmentsAddPeopleToDepartmentRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Departments_removePeopleFromDepartment",
+      "title": "Remove people from a department",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/departments/{department_uuid}/remove",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepartmentsRemovePeopleFromDepartmentRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Employees_getEmployeeById",
+      "title": "Get an employee",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "include",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "all_compensations",
+              "custom_fields"
+            ]
+          },
+          "description": "Include the requested attribute(s) in each employee response, multiple options are comma separated. Available options:\n- all_compensations: Include all effective dated compensations for each job instead of only the current compensation\n- custom_fields: Include employees' custom fields"
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Employees_updateEmployee",
+      "title": "Update an employee",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeesUpdateEmployeeRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "version": "db0edd04aaac4506f7edab03ac855d56",
+                    "first_name": "Soren",
+                    "middle_initial": "A",
+                    "last_name": "Kierkegaard",
+                    "date_of_birth": "1995-05-05",
+                    "email": "knight0faith@example.com",
+                    "ssn": "123456294",
+                    "two_percent_shareholder": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Employees_deleteOnboardingEmployee",
+      "title": "Delete an onboarding employee",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeEmployments_createTermination",
+      "title": "Create an employee termination",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/terminations",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeEmploymentsCreateTerminationRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "effective_date": "2020-06-30",
+                    "run_termination_payroll": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.EmployeeEmployments_listEmployeeTerminations",
+      "title": "Get terminations for an employee",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/terminations",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeEmployments_deleteTermination",
+      "title": "Delete an employee termination",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/terminations",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeEmployments_updateTermination",
+      "title": "Update an employee termination",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/terminations/{employee_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeEmploymentsUpdateTerminationRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "version": "1928d0c378e519e9c03fb959bc959a6b",
+                    "effective_date": "2020-06-30",
+                    "run_termination_payroll": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.EmployeeEmployments_createRehire",
+      "title": "Create an employee rehire",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/rehire",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Rehire-Body"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "effective_date": "2023-06-30",
+                    "work_location_uuid": "b6ae9d93-d4b8-4119-8c96-dba595dd8c30",
+                    "file_new_hire_report": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.EmployeeEmployments_updateRehire",
+      "title": "Update an employee rehire",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/rehire",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeEmploymentsUpdateRehireRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "version": "1928d0c378e519e9c03fb959bc959a6b",
+                    "effective_date": "2023-06-30",
+                    "work_location_uuid": "b6ae9d93-d4b8-4119-8c96-dba595dd8c30",
+                    "file_new_hire_report": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.EmployeeEmployments_getRehire",
+      "title": "Get an employee rehire",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/rehire",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeEmployments_removeRehire",
+      "title": "Delete an employee rehire",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/rehire",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeEmployments_getHistory",
+      "title": "Get employment history for an employee",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/employment_history",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeAddresses_getHomeAddresses",
+      "title": "Get an employee's home addresses",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/home_addresses",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeAddresses_createHomeAddress",
+      "title": "Create an employee's home address",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/home_addresses",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeAddressesCreateHomeAddressRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "street_1": "300 3rd Street",
+                    "street_2": null,
+                    "city": "San Francisco",
+                    "state": "CA",
+                    "zip": "94107",
+                    "effective_date": "2021-01-01",
+                    "courtesy_withholding": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.EmployeeAddresses_getHomeAddress",
+      "title": "Get an employee's home address",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/home_addresses/{home_address_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeAddresses_updateHomeAddress",
+      "title": "Update an employee's home address",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/home_addresses/{home_address_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeAddressesUpdateHomeAddressRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "version": "fe75bd065ff48b91c35fe8ff842f986c",
+                    "street_1": "300 3rd Street",
+                    "street_2": null,
+                    "city": "San Francisco",
+                    "state": "CA",
+                    "zip": "94107",
+                    "effective_date": "2021-01-01",
+                    "courtesy_withholding": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.EmployeeAddresses_deleteHome",
+      "title": "Delete an employee's home address",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/home_addresses/{home_address_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeAddresses_listWorkAddresses",
+      "title": "Get an employee's work addresses",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/work_addresses",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeAddresses_createWorkAddress",
+      "title": "Create an employee work address",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/work_addresses",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeAddressesCreateWorkAddressRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "location_uuid": "6a119be7-b4b0-4e27-aaa0-89d5f2524635",
+                    "effective_date": "2023-05-15"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.EmployeeAddresses_getWorkAddress",
+      "title": "Get an employee work address",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/work_addresses/{work_address_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeAddresses_updateWorkAddress",
+      "title": "Update an employee work address",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/work_addresses/{work_address_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeAddressesUpdateWorkAddressRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "version": "e6db1baa29d3df1eb307ff6a12c778da",
+                    "location_uuid": "6a119be7-b4b0-4e27-aaa0-89d5f2524635",
+                    "effective_date": "2023-05-15"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.EmployeeAddresses_deleteWorkAddress",
+      "title": "Delete an employee's work address",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/work_addresses/{work_address_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Employees_getCustomFields",
+      "title": "Get an employee's custom fields",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/custom_fields",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Employees_getOnboardingStatus",
+      "title": "Get the employee's onboarding status",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/onboarding_status",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Employees_updateOnboardingStatus",
+      "title": "Update the employee's onboarding status",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/onboarding_status",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeesUpdateOnboardingStatusRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Employees_completeOnboarding",
+      "title": "Finish onboarding an employee",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/finish_onboarding",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeTaxSetup_getFederalTaxesById",
+      "title": "Get an employee's federal taxes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_uuid}/federal_taxes",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeTaxSetup_updateFederalTaxes",
+      "title": "Update an employee's federal taxes",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_uuid}/federal_taxes",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeTaxSetupUpdateFederalTaxesRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "version": "56a489ce86ed6c1b0f0cecc4050a0b01",
+                    "filing_status": "Single",
+                    "extra_withholding": "0.0",
+                    "two_jobs": true,
+                    "dependents_amount": "0.0",
+                    "other_income": "0.0",
+                    "deductions": "0.0",
+                    "w4_data_type": "rev_2020_w4"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.EmployeeTaxSetup_getStateTaxes",
+      "title": "Get an employee's state taxes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_uuid}/state_taxes",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeTaxSetup_updateStateTaxes",
+      "title": "Update an employee's state taxes",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_uuid}/state_taxes",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeTaxSetupUpdateStateTaxesRequest"
+              },
+              "examples": {
+                "Employee-State-Taxes-Update-Example": {
+                  "value": {
+                    "states": [
+                      {
+                        "state": "CA",
+                        "questions": [
+                          {
+                            "key": "filing_status",
+                            "answers": [
+                              {
+                                "value": "M",
+                                "valid_from": "2010-01-01",
+                                "valid_up_to": null
+                              }
+                            ]
+                          },
+                          {
+                            "key": "withholding_allowance",
+                            "answers": [
+                              {
+                                "value": 2,
+                                "valid_from": "2010-01-01",
+                                "valid_up_to": null
+                              }
+                            ]
+                          },
+                          {
+                            "key": "additional_withholding",
+                            "answers": [
+                              {
+                                "value": "25.0",
+                                "valid_from": "2010-01-01",
+                                "valid_up_to": null
+                              }
+                            ]
+                          },
+                          {
+                            "key": "file_new_hire_report",
+                            "answers": [
+                              {
+                                "value": true,
+                                "valid_from": "2010-01-01",
+                                "valid_up_to": null
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.EmployeePaymentMethod_createBankAccount",
+      "title": "Create an employee bank account",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/bank_accounts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeePaymentMethodCreateBankAccountRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "name": "BoA Checking Account",
+                    "routing_number": "266905059",
+                    "account_number": "5809431207",
+                    "account_type": "Checking"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.EmployeePaymentMethod_listBankAccounts",
+      "title": "Get all employee bank accounts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/bank_accounts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeePaymentMethodListBankAccountsRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.EmployeePaymentMethod_deleteBankAccount",
+      "title": "Delete an employee bank account",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/bank_accounts/{bank_account_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeePaymentMethod_getBankAccounts",
+      "title": "Get an employee's payment method",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/payment_method",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeePaymentMethod_updatePaymentMethod",
+      "title": "Update an employee's payment method",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/payment_method",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeePaymentMethodUpdatePaymentMethodRequest"
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "version": "63859768485e218ccf8a449bb60f14ed",
+                    "type": "Direct Deposit",
+                    "split_by": "Amount",
+                    "splits": [
+                      {
+                        "uuid": "e88f9436-b74e-49a8-87e9-777b9bfe715e",
+                        "name": "BoA Checking Account",
+                        "priority": 1,
+                        "split_amount": 500
+                      },
+                      {
+                        "uuid": "0d2b7f73-05d6-4184-911d-269edeecc30a",
+                        "name": "Chase Checking Account",
+                        "priority": 2,
+                        "split_amount": 1000
+                      },
+                      {
+                        "uuid": "1531e824-8d9e-4bd8-9f90-0d04608125d7",
+                        "name": "US Bank Checking Account",
+                        "priority": 3,
+                        "split_amount": null
+                      }
+                    ]
+                  }
+                },
+                "example-2": {
+                  "value": {
+                    "version": "63859768485e218ccf8a449bb60f14ed",
+                    "type": "Direct Deposit",
+                    "split_by": "Percentage",
+                    "splits": [
+                      {
+                        "uuid": "e88f9436-b74e-49a8-87e9-777b9bfe715e",
+                        "name": "BoA Checking Account",
+                        "priority": 1,
+                        "split_amount": 60
+                      },
+                      {
+                        "uuid": "0d2b7f73-05d6-4184-911d-269edeecc30a",
+                        "name": "Chase Checking Account",
+                        "priority": 2,
+                        "split_amount": 40
+                      }
+                    ]
+                  }
+                },
+                "example-3": {
+                  "value": {
+                    "version": "63859768485e218ccf8a449bb60f14ed",
+                    "type": "Check"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.JobsAndCompensations_createJob",
+      "title": "Create a job",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/jobs",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobsAndCompensationsCreateJobRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "title": "Regional Manager",
+                    "hire_date": "2020-12-21"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.JobsAndCompensations_getEmployeeJobs",
+      "title": "Get jobs for an employee",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/jobs",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "include",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "all_compensations"
+            ]
+          },
+          "description": "Available options:\n- all_compensations: Include all effective dated compensations for each job instead of only the current compensation"
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Employees_getTimeOffActivities",
+      "title": "Get employee time off activities",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_uuid}/time_off_activities",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.JobsAndCompensations_getJobDetails",
+      "title": "Get a job",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/jobs/{job_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "include",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "all_compensations"
+            ]
+          },
+          "description": "Available options:\n- all_compensations: Include all effective dated compensations for the job instead of only the current compensation"
+        }
+      ]
+    },
+    {
+      "connector": "gusto.JobsAndCompensations_updateJob",
+      "title": "Update a job",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/jobs/{job_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobsAndCompensationsUpdateJobRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "title": "Regional Manager",
+                    "version": "gr78930htutrz444kuytr3s5hgxykuveb523fwl8sir",
+                    "hire_date": "2020-12-21"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.JobsAndCompensations_deleteJobById",
+      "title": "Delete an individual job",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/jobs/{job_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.JobsAndCompensations_getJobCompensations",
+      "title": "Get compensations for a job",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/jobs/{job_id}/compensations",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "include",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "all_compensations"
+            ]
+          },
+          "description": "Available options:\n- all_compensations: Include all effective dated compensations for each job instead of only the current compensation"
+        }
+      ]
+    },
+    {
+      "connector": "gusto.JobsAndCompensations_createCompensation",
+      "title": "Create a compensation",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/jobs/{job_id}/compensations",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobsAndCompensationsCreateCompensationRequest"
+              },
+              "examples": {
+                "Exempt": {
+                  "value": {
+                    "rate": "60000.00",
+                    "payment_unit": "Year",
+                    "flsa_status": "Exempt"
+                  }
+                },
+                "Minimum Wage Adjusted": {
+                  "value": {
+                    "effective_date": "2023-01-01",
+                    "rate": "7.00",
+                    "payment_unit": "Hour",
+                    "flsa_status": "Nonexempt",
+                    "adjust_for_minimum_wage": true,
+                    "minimum_wages": [
+                      {
+                        "uuid": "340832db-ab28-4112-9e10-28dd1711835f"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.JobsAndCompensations_getCompensationById",
+      "title": "Get a compensation",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/compensations/{compensation_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.JobsAndCompensations_updateCompensation",
+      "title": "Update a compensation",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/compensations/{compensation_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobsAndCompensationsUpdateCompensationRequest"
+              },
+              "examples": {
+                "Exempt": {
+                  "value": {
+                    "version": "98jr3289h3298hr9329gf9egskt3kagri32qqgiqe3872",
+                    "rate": "60000.00",
+                    "payment_unit": "Year",
+                    "flsa_status": "Exempt"
+                  }
+                },
+                "Minimum Wage Adjusted": {
+                  "value": {
+                    "version": "98jr3289h3298hr9329gf9egskt3kagri32qqgiqe3872",
+                    "rate": "7.00",
+                    "payment_unit": "Hour",
+                    "flsa_status": "Nonexempt",
+                    "adjust_for_minimum_wage": true,
+                    "minimum_wages": [
+                      {
+                        "uuid": "340832db-ab28-4112-9e10-28dd1711835f"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.JobsAndCompensations_removeCompensation",
+      "title": "Delete a compensation",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/compensations/{compensation_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EarningTypes_createCustomEarningType",
+      "title": "Create a custom earning type",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/earning_types",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EarningTypesCreateCustomEarningTypeRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "name": "Gym Membership Stipend"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.EarningTypes_getAll",
+      "title": "Get all earning types for a company",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/earning_types",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EarningTypes_updateType",
+      "title": "Update an earning type",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/earning_types/{earning_type_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EarningTypesUpdateTypeRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "name": "Gym Membership Stipend"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.EarningTypes_deactivateType",
+      "title": "Deactivate an earning type",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/earning_types/{earning_type_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Contractors_createNewContractor",
+      "title": "Create a contractor",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/contractors",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContractorsCreateNewContractorRequest"
+              },
+              "examples": {
+                "Create an Individual contractor": {
+                  "value": {
+                    "type": "Individual",
+                    "wage_type": "Fixed",
+                    "first_name": "Johnson",
+                    "last_name": "Johnson",
+                    "start_date": "2020-04-01",
+                    "self_onboarding": true,
+                    "email": "johnson@johnson.com",
+                    "file_new_hire_report": "true,",
+                    "work_state": "CA"
+                  }
+                },
+                "Create a Business contractor": {
+                  "value": {
+                    "type": "Business",
+                    "wage_type": "Fixed",
+                    "business_name": "Johnson-Johnson Contractors",
+                    "start_date": "2020-04-01"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Contractors_getCompanyContractors",
+      "title": "Get contractors of a company",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/contractors",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Contractors_getById",
+      "title": "Get a contractor",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/contractors/{contractor_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Contractors_updateContractor",
+      "title": "Update a contractor",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/contractors/{contractor_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContractorsUpdateContractorRequest"
+              },
+              "examples": {
+                "Update an Individual Contractor": {
+                  "value": {
+                    "version": "b48c46abfed1487b873b442334b3c4ff",
+                    "start_date": "2021-01-01",
+                    "first_name": "Chanel",
+                    "last_name": "Boyle",
+                    "middle_initial": "X",
+                    "wage_type": "Hourly",
+                    "hourly_rate": "20.00",
+                    "is_active": true
+                  }
+                },
+                "Update a Business Contractor": {
+                  "value": {
+                    "version": "b48c46abfed1487b873b442334b3c4ff",
+                    "start_date": "2020-01-11",
+                    "business_name": "Contracting Solutions",
+                    "ein": "991113334",
+                    "wage_type": "Fixed",
+                    "is_active": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Contractors_deleteContractor",
+      "title": "Delete a contractor",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/contractors/{contractor_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.ContractorPaymentMethod_createBankAccount",
+      "title": "Create a contractor bank account",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/contractors/{contractor_uuid}/bank_accounts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContractorPaymentMethodCreateBankAccountRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "name": "BoA Checking Account",
+                    "routing_number": "266905059",
+                    "account_number": "5809431207",
+                    "account_type": "Checking"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.ContractorPaymentMethod_listBankAccounts",
+      "title": "Get all contractor bank accounts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/contractors/{contractor_uuid}/bank_accounts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Webhooks_createSubscription",
+      "title": "Create a webhook subscription",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/webhook_subscriptions",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhooksCreateSubscriptionRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "url": "https://partner-app.com/subscriber",
+                    "subscription_types": [
+                      "Company",
+                      "Employee"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Webhooks_listSubscriptions",
+      "title": "List webhook subscriptions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/webhook_subscriptions",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Webhooks_updateSubscription",
+      "title": "Update a webhook subscription",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/webhook_subscriptions/{webhook_subscription_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhooksUpdateSubscriptionRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "subscription_types": [
+                      "Company",
+                      "Employee"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Webhooks_getSubscription",
+      "title": "Get a webhook subscription",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/webhook_subscriptions/{webhook_subscription_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Webhooks_deleteSubscriptionByUuid",
+      "title": "Delete a webhook subscription",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/webhook_subscriptions/{webhook_subscription_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Webhooks_verifySubscriptionToken",
+      "title": "Verify the webhook subscription",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/webhook_subscriptions/{webhook_subscription_uuid}/verify",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhooksVerifySubscriptionTokenRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "verification_token": "asefasedfe23e234easd"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Webhooks_requestVerificationToken",
+      "title": "Request the webhook subscription verification_token",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/webhook_subscriptions/{webhook_subscription_uuid}/request_verification_token",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.ContractorForms_listAll",
+      "title": "Get all contractor forms",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/contractors/{contractor_uuid}/forms",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.ContractorForms_getByIdForm",
+      "title": "Get a contractor form",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/contractors/{contractor_uuid}/forms/{form_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.ContractorForms_getPdfLink",
+      "title": "Get the contractor form pdf",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/contractors/{contractor_uuid}/forms/{form_id}/pdf",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.ContractorForms_create1099Form",
+      "title": "Generate a 1099 form [DEMO]",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/sandbox/generate_1099",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContractorFormsCreate1099FormRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.EmployeeForms_generateW2Document",
+      "title": "Generate a W2 form [DEMO]",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/sandbox/generate_w2",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeFormsGenerateW2DocumentRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.ContractorPaymentMethod_getContractorPaymentMethod",
+      "title": "Get a contractor's payment method",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/contractors/{contractor_uuid}/payment_method",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.ContractorPaymentMethod_updateBankAccount",
+      "title": "Update a contractor's payment method",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/contractors/{contractor_uuid}/payment_method",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContractorPaymentMethodUpdateBankAccountRequest"
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "version": "63859768485e218ccf8a449bb60f14ed",
+                    "type": "Direct Deposit"
+                  }
+                },
+                "example-3": {
+                  "value": {
+                    "version": "63859768485e218ccf8a449bb60f14ed",
+                    "type": "Check"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Contractors_getOnboardingStatus",
+      "title": "Get the contractor's onboarding status",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/contractors/{contractor_uuid}/onboarding_status",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Contractors_changeOnboardingStatus",
+      "title": "Change the contractor's onboarding status",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/contractors/{contractor_uuid}/onboarding_status",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContractorsChangeOnboardingStatusRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Contractors_getAddress",
+      "title": "Get a contractor address",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/contractors/{contractor_uuid}/address",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Contractors_updateAddress",
+      "title": "Update a contractor's address",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/contractors/{contractor_uuid}/address",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContractorsUpdateAddressRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "version": "fe75bd065ff48b91c35fe8ff842f986c",
+                    "street_1": "300 3rd Street",
+                    "street_2": null,
+                    "city": "San Francisco",
+                    "state": "CA",
+                    "zip": "94107"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Payrolls_createOffCyclePayroll",
+      "title": "Create an off-cycle payroll",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/payrolls",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollsCreateOffCyclePayrollRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Payrolls_getCompanyPayrolls",
+      "title": "Get all payrolls for a company",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/payrolls",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "processing_statuses",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "unprocessed",
+              "processed"
+            ]
+          },
+          "description": "Whether to include processed and/or unprocessed payrolls in the response, defaults to processed, for multiple attributes comma separate the values, i.e. `?processing_statuses=processed,unprocessed`"
+        },
+        {
+          "name": "payroll_types",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "regular",
+              "off_cycle",
+              "external"
+            ]
+          },
+          "description": "Whether to include regular and/or off_cycle payrolls in the response, defaults to regular, for multiple attributes comma separate the values, i.e. `?payroll_types=regular,off_cycle`"
+        },
+        {
+          "name": "include",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "totals",
+              "payroll_status_meta"
+            ]
+          },
+          "description": "Include the requested attribute in the response. In v2023-04-01 totals are no longer included by default. For multiple attributes comma separate the values, i.e. `?include=totals,payroll_status_meta`"
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Return payrolls whose pay period is after the start date"
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Return payrolls whose pay period is before the end date"
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Payrolls_approvedReversals",
+      "title": "Get approved payroll reversals",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/payroll_reversals",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Payrolls_getSinglePayroll",
+      "title": "Get a single payroll",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/payrolls/{payroll_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "include",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "benefits",
+              "deductions",
+              "taxes",
+              "payroll_status_meta"
+            ]
+          },
+          "description": "Include the requested attribute in the response, for multiple attributes comma separate the values, i.e. `?include=benefits,deductions,taxes`"
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Payrolls_updatePayrollById",
+      "title": "Update a payroll by ID",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/payrolls/{payroll_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollsUpdatePayrollByIdRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Payrolls_deleteUnprocessedPayroll",
+      "title": "Delete a payroll",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/payrolls/{payroll_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "async",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "When true, request an asynchronous delete of the payroll."
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Payrolls_prepareForUpdate",
+      "title": "Prepare a payroll for update",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/payrolls/{payroll_id}/prepare",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Payrolls_getSingleReceipt",
+      "title": "Get a single payroll receipt",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/payrolls/{payroll_uuid}/receipt",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.TimeOffPolicies_calculateAccruingTimeOffHours",
+      "title": "Calculate accruing time off hours",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/payrolls/{payroll_id}/employees/{employee_id}/calculate_accruing_time_off_hours",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeOffPoliciesCalculateAccruingTimeOffHoursRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "regular_hours_worked": 30.25,
+                    "overtime_hours_worked": 10,
+                    "double_overtime_hours_worked": 0,
+                    "pto_hours_used": 5.5,
+                    "sick_hours_used": 0
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Payrolls_getAllPayrollBlockers",
+      "title": "Get all payroll blockers for a company",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/payrolls/blockers",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Payrolls_skipPayroll",
+      "title": "Skip a payroll",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/payrolls/skip",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollsSkipPayrollRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "payroll_type": "Regular",
+                    "start_date": "2023-05-26",
+                    "end_date": "2023-06-25",
+                    "pay_schedule_uuid": "85100524-4b42-4d2d-bd62-9d864f9aea64"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Payrolls_calculateGrossUp",
+      "title": "Calculate gross up",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/payrolls/{payroll_uuid}/gross_up",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollsCalculateGrossUpRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "employee_uuid": "be48c41e-142d-4116-9430-5aba2313fac7",
+                    "net_pay": "1000.00"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.ContractorPayments_getSingleReceipt",
+      "title": "Get a single contractor payment receipt",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/contractor_payments/{contractor_payment_uuid}/receipt",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.ContractorPayments_fundContractorPayment",
+      "title": "Fund a contractor payment [DEMO]",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/contractor_payments/{contractor_payment_uuid}/fund",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Payrolls_calculateGrossUp",
+      "title": "Calculate a payroll",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/payrolls/{payroll_id}/calculate",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Payrolls_submitPayroll",
+      "title": "Submit payroll",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/payrolls/{payroll_id}/submit",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Payrolls_cancelPayrollTransition",
+      "title": "Cancel a payroll",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/payrolls/{payroll_id}/cancel",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.ContractorPayments_createPayment",
+      "title": "Create a contractor payment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/contractor_payments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContractorPaymentsCreatePaymentRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.ContractorPayments_getWithinTimePeriodTotals",
+      "title": "Get contractor payments for a company",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/contractor_payments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "2020-01-01"
+          },
+          "description": "The time period for which to retrieve contractor payments"
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "2020-12-31"
+          },
+          "description": "The time period for which to retrieve contractor payments"
+        },
+        {
+          "name": "contractor_uuid",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The UUID of the contractor. When specified, will load all payments for that contractor."
+        },
+        {
+          "name": "group_by_date",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Display contractor payments results group by check date if set to true."
+        }
+      ]
+    },
+    {
+      "connector": "gusto.ContractorPayments_getSinglePayment",
+      "title": "Get a single contractor payment",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/contractor_payments/{contractor_payment_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.ContractorPayments_cancelPayment",
+      "title": "Cancel a contractor payment",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/contractor_payments/{contractor_payment_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.CompanyForms_getAllForms",
+      "title": "Get all company forms",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/forms",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.CompanyForms_getFormById",
+      "title": "Get a company form",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/forms/{form_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.CompanyForms_getPdfLink",
+      "title": "Get a company form pdf",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/forms/{form_id}/pdf",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.CompanyForms_signForm",
+      "title": "Sign a company form",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/forms/{form_id}/sign",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyFormsSignFormRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "signature_text": "Jane Smith",
+                    "agree": true,
+                    "signed_by_ip_address": "192.168.0.1"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.EmployeeForms_getAllEmployeeForms",
+      "title": "Get all employee forms",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/forms",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeForms_getFormById",
+      "title": "Get an employee form",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/forms/{form_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeForms_getPdfLink",
+      "title": "Get the employee form pdf",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/forms/{form_id}/pdf",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeForms_signForm",
+      "title": "Sign an employee form",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/forms/{form_id}/sign",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeFormsSignFormRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "signature_text": "Jane Smith",
+                    "agree": true,
+                    "signed_by_ip_address": "192.168.0.1"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Payrolls_getEmployeePayStub",
+      "title": "Get an employee pay stub (pdf)",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/payrolls/{payroll_id}/employees/{employee_id}/pay_stub",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Payrolls_getEmployeePayStubs",
+      "title": "Get an employee's pay stubs",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/pay_stubs",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.GeneratedDocuments_getDocumentByRequestUuid",
+      "title": "Get a generated document",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/generated_documents/{document_type}/{request_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Payrolls_generatePrintableChecks",
+      "title": "Generate payroll printable checks (pdf)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/payrolls/{payroll_id}/generated_documents/printable_payroll_checks",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayrollsGeneratePrintableChecksRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.CompanyBenefits_createBenefit",
+      "title": "Create a company benefit",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/company_benefits",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyBenefitsCreateBenefitRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.CompanyBenefits_getBenefitsForCompany",
+      "title": "Get benefits for a company",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_id}/company_benefits",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "enrollment_count",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Whether to return employee enrollment count"
+        }
+      ]
+    },
+    {
+      "connector": "gusto.CompanyBenefits_getBenefitById",
+      "title": "Get a company benefit",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/company_benefits/{company_benefit_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "with_employee_benefits",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Whether to return employee benefits associated with the benefit"
+        }
+      ]
+    },
+    {
+      "connector": "gusto.CompanyBenefits_updateBenefit",
+      "title": "Update a company benefit",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/company_benefits/{company_benefit_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyBenefitsUpdateBenefitRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "version": "98jr3289h3298hr9329gf9egskt3kagri32qqgiqe3872",
+                    "active": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.CompanyBenefits_deleteBenefit",
+      "title": "Delete a company benefit",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/company_benefits/{company_benefit_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.CompanyBenefits_listSupportedBenefits",
+      "title": "Get all benefits supported by Gusto",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/benefits",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.CompanyBenefits_getSupportedBenefitById",
+      "title": "Get a supported benefit by ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/benefits/{benefit_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.CompanyBenefits_getBenefitSummaryById",
+      "title": "Get company benefit summary by company benefit id.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/company_benefits/{company_benefit_id}/summary",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "start_date",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "example": "2022-01-01"
+          },
+          "description": "The start date for which to retrieve company benefit summary"
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "example": "2022-12-31"
+          },
+          "description": "The end date for which to retrieve company benefit summary"
+        },
+        {
+          "name": "detailed",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Display employee payroll item summary"
+        }
+      ]
+    },
+    {
+      "connector": "gusto.CompanyBenefits_getBenefitFieldsRequirementsById",
+      "title": "Get benefit fields requirements by ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/benefits/{benefit_id}/requirements",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeBenefits_createBenefitRecord",
+      "title": "Create an employee benefit",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/employee_benefits",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeBenefitsCreateBenefitRecordRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "company_benefit_uuid": "f68abb42-431e-4392-bc3f-2795627e00f3",
+                    "active": true,
+                    "employee_deduction": "100.00",
+                    "contribution": {
+                      "type": "amount",
+                      "value": "100.00"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.EmployeeBenefits_getAllForEmployee",
+      "title": "Get all benefits for an employee",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/employee_benefits",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeBenefits_getEmployeeBenefitById",
+      "title": "Get an employee benefit",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employee_benefits/{employee_benefit_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeBenefits_updateBenefitRecord",
+      "title": "Update an employee benefit",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employee_benefits/{employee_benefit_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeBenefitsUpdateBenefitRecordRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "version": "09j3d29jqdpj92109j9j2d90dq",
+                    "employee_deduction": "250.00"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.EmployeeBenefits_deleteById",
+      "title": "Delete an employee benefit",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employee_benefits/{employee_benefit_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.EmployeeBenefits_createYtdBenefitAmountsFromDifferentCompany",
+      "title": "Create year-to-date benefit amounts from a different company",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/ytd_benefit_amounts_from_different_company",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Garnishments_createGarnishment",
+      "title": "Create a garnishment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/garnishments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GarnishmentsCreateGarnishmentRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "description": "Back taxes",
+                    "amount": "150.00",
+                    "court_ordered": true,
+                    "recurring": true,
+                    "deduct_as_percentage": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.Garnishments_getEmployeeGarnishments",
+      "title": "Get garnishments for an employee",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/employees/{employee_id}/garnishments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Garnishments_getGarnishment",
+      "title": "Get a garnishment",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/garnishments/{garnishment_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Garnishments_updateGarnishment",
+      "title": "Update a garnishment",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/garnishments/{garnishment_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GarnishmentsUpdateGarnishmentRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "version": "52b7c567242cb7452e89ba2bc02cb476",
+                    "active": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.BankAccounts_createFromPlaidToken",
+      "title": "Create a bank account from a plaid processor token",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/plaid/processor_token",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankAccountsCreateFromPlaidTokenRequest"
+              },
+              "examples": {
+                "Create a company bank account": {
+                  "value": {
+                    "owner_type": "Company",
+                    "owner_id": "ef279fbd-0fc6-4cf1-a977-6939d621c429",
+                    "processor_token": "processor-sandbox-0asd1-a92nc"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.TaxRequirements_getStateRequirements",
+      "title": "Get State Tax Requirements",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/tax_requirements/{state}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "state",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "2-letter US state abbreviation"
+        },
+        {
+          "name": "scheduling",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "When true, return \"new\" requirement sets with valid `effective_from` dates that are available to save new effective dated values."
+        }
+      ]
+    },
+    {
+      "connector": "gusto.TaxRequirements_updateStateTaxes",
+      "title": "Update State Tax Requirements",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/tax_requirements/{state}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "state",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "2-letter US state abbreviation"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxRequirementsUpdateStateTaxesRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "requirement_sets": [
+                      {
+                        "key": "registrations",
+                        "effective_from": null,
+                        "state": "GA",
+                        "requirements": [
+                          {
+                            "key": "71653ec0-00b5-4c66-a58b-22ecf21704c5",
+                            "value": "1233214-AB"
+                          },
+                          {
+                            "key": "6c0911ab-5860-412e-bdef-6437cd881df5",
+                            "value": "474747-22"
+                          }
+                        ]
+                      },
+                      {
+                        "key": "taxrates",
+                        "effective_from": "2022-01-01",
+                        "state": "GA",
+                        "requirements": [
+                          {
+                            "key": "e0ac2284-8d30-4100-ae23-f85f9574868b",
+                            "value": "0.05"
+                          }
+                        ]
+                      },
+                      {
+                        "key": "depositschedules",
+                        "effective_from": "2022-01-01",
+                        "state": "GA",
+                        "requirements": [
+                          {
+                            "key": "6ddfcbeb-94d3-4003-bfc2-8c6e1ca9f70c",
+                            "value": "Semi-weekly"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.TaxRequirements_getStates",
+      "title": "Get All Tax Requirement States",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/tax_requirements",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.ContractorPayments_previewDebitDate",
+      "title": "Preview contractor payment debit date",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/contractor_payments/preview",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContractorPaymentsPreviewDebitDateRequest"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ContractorPaymentsPreviewDebitDateRequest1"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.TimeOffPolicies_getPolicy",
+      "title": "Get a time off policy",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/time_off_policies/{time_off_policy_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.TimeOffPolicies_updatePolicy",
+      "title": "Update a time off policy",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/time_off_policies/{time_off_policy_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeOffPoliciesUpdatePolicyRequest"
+              },
+              "examples": {
+                "example": {
+                  "value": {
+                    "name": "Hourly Vacation Policy",
+                    "accrual_method": "per_hour_paid",
+                    "accrual_rate": "4.0",
+                    "accrual_rate_unit": "80.0",
+                    "paid_out_on_termination": true,
+                    "accrual_waiting_period_days": 30,
+                    "carryover_limit_hours": "200.0",
+                    "max_accrual_hours_per_year": "120.0",
+                    "max_hours": "240.0"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.TimeOffPolicies_getAllPolicies",
+      "title": "Get all time off policies",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/time_off_policies",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.TimeOffPolicies_createPolicy",
+      "title": "Create a time off policy",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/time_off_policies",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeOffPoliciesCreatePolicyRequest"
+              },
+              "examples": {
+                "Unlimited Policy": {
+                  "value": {
+                    "name": "Unlimited Vacation Policy",
+                    "policy_type": "vacation",
+                    "accrual_method": "unlimited"
+                  }
+                },
+                "Hourly Policy": {
+                  "value": {
+                    "name": "Test Vacation Hourly Policy",
+                    "policy_type": "vacation",
+                    "accrual_method": "per_hour_paid",
+                    "accrual_rate": "4.0",
+                    "accrual_rate_unit": "80.0",
+                    "paid_out_on_termination": true,
+                    "accrual_waiting_period_days": 30,
+                    "carryover_limit_hours": "200.0",
+                    "max_accrual_hours_per_year": "120.0",
+                    "max_hours": "240.0"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.TimeOffPolicies_addEmployeesToPolicy",
+      "title": "Add employees to a time off policy",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/time_off_policies/{time_off_policy_uuid}/add_employees",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeOffPoliciesAddEmployeesToPolicyRequest"
+              },
+              "examples": {
+                "Unlimited Policy": {
+                  "value": {
+                    "employee": [
+                      {
+                        "uuid": "56c672b4-3918-45cd-a3bb-a62ae0ff1307"
+                      },
+                      {
+                        "uuid": "28e7a45d-32dd-4925-a82a-9a3ccc6d302c"
+                      },
+                      {
+                        "uuid": "f60650da-ba18-417a-b2ab-3c9b6f0fe4f2"
+                      }
+                    ]
+                  }
+                },
+                "Fixed/Hourly Policy": {
+                  "value": {
+                    "employee": [
+                      {
+                        "uuid": "56c672b4-3918-45cd-a3bb-a62ae0ff1307",
+                        "balance": "40.0"
+                      },
+                      {
+                        "uuid": "28e7a45d-32dd-4925-a82a-9a3ccc6d302c",
+                        "balance": "40.0"
+                      },
+                      {
+                        "uuid": "f60650da-ba18-417a-b2ab-3c9b6f0fe4f2",
+                        "balance": "20.0"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.TimeOffPolicies_removeEmployees",
+      "title": "Remove employees from a time off policy",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/time_off_policies/{time_off_policy_uuid}/remove_employees",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeOffPoliciesRemoveEmployeesRequest"
+              },
+              "examples": {
+                "example": {
+                  "value": {
+                    "employee": [
+                      {
+                        "uuid": "56c672b4-3918-45cd-a3bb-a62ae0ff1307"
+                      },
+                      {
+                        "uuid": "28e7a45d-32dd-4925-a82a-9a3ccc6d302c"
+                      },
+                      {
+                        "uuid": "f60650da-ba18-417a-b2ab-3c9b6f0fe4f2"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.HolidayPayPolicies_getCompanyPolicy",
+      "title": "Get a company's holiday pay policy",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/holiday_pay_policy",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.HolidayPayPolicies_createCompanyPolicy",
+      "title": "Create a holiday pay policy for a company",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/holiday_pay_policy",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HolidayPayPoliciesCreateCompanyPolicyRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "federal_holidays": {
+                      "mlk_day": {
+                        "selected": true
+                      },
+                      "memorial_day": {
+                        "selected": true
+                      },
+                      "independence_day": {
+                        "selected": true
+                      },
+                      "veterans_day": {
+                        "selected": true
+                      },
+                      "thanksgiving": {
+                        "selected": true
+                      },
+                      "christmas_day": {
+                        "selected": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.HolidayPayPolicies_updatePolicy",
+      "title": "Update a company's holiday pay policy",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/holiday_pay_policy",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HolidayPayPoliciesUpdatePolicyRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "version": "1b37938b017c7fd7116bada007072290",
+                    "federal_holidays": {
+                      "mlk_day": {
+                        "selected": true
+                      },
+                      "memorial_day": {
+                        "selected": true
+                      },
+                      "independence_day": {
+                        "selected": true
+                      },
+                      "veterans_day": {
+                        "selected": true
+                      },
+                      "thanksgiving": {
+                        "selected": true
+                      },
+                      "christmas_day": {
+                        "selected": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.HolidayPayPolicies_deletePolicy",
+      "title": "Delete a company's holiday pay policy",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/holiday_pay_policy",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.HolidayPayPolicies_addEmployeesToPolicy",
+      "title": "Add employees to a company's holiday pay policy",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/holiday_pay_policy/add",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HolidayPayPoliciesAddEmployeesToPolicyRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "version": "1b37938b017c7fd7116bada007072290",
+                    "employees": [
+                      {
+                        "uuid": "1ca3cd25-3eda-48c6-ac88-f0e7fb91a15a"
+                      },
+                      {
+                        "uuid": "fe977550-6621-4cfc-b4af-60b6af58c8ef"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.HolidayPayPolicies_removeEmployees",
+      "title": "Remove employees from a company's holiday pay policy",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/holiday_pay_policy/remove",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HolidayPayPoliciesRemoveEmployeesRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "version": "1b37938b017c7fd7116bada007072290",
+                    "employees": [
+                      {
+                        "uuid": "1ca3cd25-3eda-48c6-ac88-f0e7fb91a15a"
+                      },
+                      {
+                        "uuid": "fe977550-6621-4cfc-b4af-60b6af58c8ef"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.HolidayPayPolicies_previewCompanyPaidHolidays",
+      "title": "Preview a company's paid holidays",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/paid_holidays",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HolidayPayPoliciesPreviewCompanyPaidHolidaysRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "year": "2023"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.TimeOffPolicies_updateEmployeeBalance",
+      "title": "Update employee time off hour balances",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/time_off_policies/{time_off_policy_uuid}/balance",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimeOffPoliciesUpdateEmployeeBalanceRequest"
+              },
+              "examples": {
+                "example": {
+                  "value": {
+                    "employee": [
+                      {
+                        "uuid": "56c672b4-3918-45cd-a3bb-a62ae0ff1307",
+                        "balance": "54.0"
+                      },
+                      {
+                        "uuid": "28e7a45d-32dd-4925-a82a-9a3ccc6d302c",
+                        "balance": "80.0"
+                      },
+                      {
+                        "uuid": "f60650da-ba18-417a-b2ab-3c9b6f0fe4f2",
+                        "balance": "26.0"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "gusto.TimeOffPolicies_deactivatePolicy",
+      "title": "Deactivate a time off policy",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/time_off_policies/{time_off_policy_uuid}/deactivate",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Notifications_getDetails",
+      "title": "Get a notification's details",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/notifications/{notification_uuid}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.Events_get30DayEvents",
+      "title": "Get all events",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/events",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.RecoveryCases_listForCompany",
+      "title": "Get all recovery cases for a company",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/recovery_cases",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.RecoveryCases_initiateRedebit",
+      "title": "Initiate a redebit for a recovery case",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/recovery_cases/{recovery_case_uuid}/redebit",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "gusto.AchTransactions_getAllForCompany",
+      "title": "Get all ACH transactions for a company",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.gusto-demo.com",
+      "path": "/v1/companies/{company_uuid}/ach_transactions",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    }
+  ]
+}

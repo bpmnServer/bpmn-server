@@ -1,0 +1,2810 @@
+{
+  "name": "coda",
+  "title": "Coda",
+  "source": "https://coda.io/apis/v1/openapi.json",
+  "authentication": "bearer",
+  "operations": [
+    {
+      "connector": "coda.listCategories",
+      "title": "Get doc categories",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/categories",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.listDocs",
+      "title": "List available docs",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "isOwner",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Show only docs owned by the user."
+        },
+        {
+          "name": "isPublished",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Show only published docs."
+        },
+        {
+          "name": "sourceDoc",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Show only docs copied from the specified doc ID."
+        },
+        {
+          "name": "isStarred",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "If true, returns docs that are starred. If false, returns docs that are not starred."
+        },
+        {
+          "name": "inGallery",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Show only docs visible within the gallery."
+        },
+        {
+          "name": "workspaceId",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Show only docs belonging to the given workspace."
+        },
+        {
+          "name": "folderId",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Show only docs belonging to the given folder."
+        },
+        {
+          "name": "minimumAccess",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/AccessTypeNotNone"
+          },
+          "description": "Show only docs where the user has at least this access. Uses the same access values as doc permissions (`readonly`, `comment`, `write`). `write` includes both editors and managers.\n"
+        }
+      ]
+    },
+    {
+      "connector": "coda.createDoc",
+      "title": "Create doc",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.getDoc",
+      "title": "Get info about a doc",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.deleteDoc",
+      "title": "Delete doc",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.updateDoc",
+      "title": "Update doc",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.getSharingMetadata",
+      "title": "Get sharing metadata",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/acl/metadata",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.getPermissions",
+      "title": "List permissions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/acl/permissions",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.addPermission",
+      "title": "Add permission",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/acl/permissions",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPermissionRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.deletePermission",
+      "title": "Delete permission",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/acl/permissions/{permissionId}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.searchPrincipals",
+      "title": "Search principals",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/acl/principals/search",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.getAclSettings",
+      "title": "Get ACL settings",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/acl/settings",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.updateAclSettings",
+      "title": "Update ACL settings",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/acl/settings",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAclSettingsRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.publishDoc",
+      "title": "Publish doc",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/publish",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocPublish"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.unpublishDoc",
+      "title": "Unpublish doc",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/publish",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.listPages",
+      "title": "List pages",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/pages",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.createPage",
+      "title": "Create a page",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/pages",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PageCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.getPage",
+      "title": "Get a page",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/pages/{pageIdOrName}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.updatePage",
+      "title": "Update a page",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/pages/{pageIdOrName}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PageUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.deletePage",
+      "title": "Delete a page",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/pages/{pageIdOrName}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.listPageContent",
+      "title": "List page content",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/pages/{pageIdOrName}/content",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.deletePageContent",
+      "title": "Delete page content",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/pages/{pageIdOrName}/content",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PageContentDelete"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.beginPageContentExport",
+      "title": "Begin content export",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/pages/{pageIdOrName}/export",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BeginPageContentExportRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.getPageContentExportStatus",
+      "title": "Content export status",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/pages/{pageIdOrName}/export/{requestId}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.listTables",
+      "title": "List tables",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/tables",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.getTable",
+      "title": "Get a table",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/tables/{tableIdOrName}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "useUpdatedTableLayouts",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Return \"detail\" and \"form\" for the `layout` field of detail and form layouts respectively (instead of \"masterDetail\" for both)"
+        }
+      ]
+    },
+    {
+      "connector": "coda.listColumns",
+      "title": "List columns",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/tables/{tableIdOrName}/columns",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 25
+          },
+          "description": "Maximum number of results to return in this query."
+        },
+        {
+          "name": "visibleOnly",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "If true, returns only visible columns for the table. This parameter only applies to base tables, and not views."
+        }
+      ]
+    },
+    {
+      "connector": "coda.listRows",
+      "title": "List table rows",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/tables/{tableIdOrName}/rows",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "query",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Query used to filter returned rows, specified as `<column_id_or_name>:<value>`. If you'd like to use a column name instead of an ID, you must quote it (e.g., `\"My Column\":123`). Also note that `value` is a JSON value; if you'd like to use a string, you must surround it in quotes (e.g., `\"groceries\"`).\n"
+        },
+        {
+          "name": "sortBy",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/RowsSortBy"
+          },
+          "description": "Specifies the sort order of the rows returned. If left unspecified, rows are returned by creation time ascending. \"UpdatedAt\" sort ordering is the order of rows based upon when they were last updated. This does not include updates to calculated values. \"Natural\" sort ordering is the order that the rows appear in the table view in the application. This ordering is only meaningfully defined for rows that are visible (unfiltered). Because of this, using this sort order will imply visibleOnly=true, that is, to only return visible rows. If you pass sortBy=natural and visibleOnly=false explicitly, this will result in a Bad Request error as this condition cannot be satisfied.\n"
+        },
+        {
+          "name": "valueFormat",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/ValueFormat"
+          },
+          "description": "The format that cell values are returned as."
+        },
+        {
+          "name": "visibleOnly",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "If true, returns only visible rows and columns for the table."
+        }
+      ]
+    },
+    {
+      "connector": "coda.upsertRows",
+      "title": "Insert/upsert rows",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/tables/{tableIdOrName}/rows",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "disableParsing",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "If true, the API will not attempt to parse the data in any way."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RowsUpsert"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.deleteRows",
+      "title": "Delete multiple rows",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/tables/{tableIdOrName}/rows",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RowsDelete"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.getRow",
+      "title": "Get a row",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/tables/{tableIdOrName}/rows/{rowIdOrName}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "valueFormat",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/ValueFormat"
+          },
+          "description": "The format that cell values are returned as."
+        }
+      ]
+    },
+    {
+      "connector": "coda.updateRow",
+      "title": "Update row",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/tables/{tableIdOrName}/rows/{rowIdOrName}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "disableParsing",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "If true, the API will not attempt to parse the data in any way."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RowUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.deleteRow",
+      "title": "Delete row",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/tables/{tableIdOrName}/rows/{rowIdOrName}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.pushButton",
+      "title": "Push a button",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/tables/{tableIdOrName}/rows/{rowIdOrName}/buttons/{columnIdOrName}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.getColumn",
+      "title": "Get a column",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/tables/{tableIdOrName}/columns/{columnIdOrName}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.listFormulas",
+      "title": "List formulas",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/formulas",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.getFormula",
+      "title": "Get a formula",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/formulas/{formulaIdOrName}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.listControls",
+      "title": "List controls",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/controls",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.getControl",
+      "title": "Get a control",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/controls/{controlIdOrName}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.listCustomDocDomains",
+      "title": "List custom doc domains",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/${docId}/domains",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.addCustomDocDomain",
+      "title": "Add custom domain",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/${docId}/domains",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddCustomDocDomainRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.deleteCustomDocDomain",
+      "title": "Deletes a custom domain",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/domains/{customDocDomain}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.updateCustomDocDomain",
+      "title": "Updates a custom domain",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/domains/{customDocDomain}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomDocDomainRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.getCustomDocDomainProvider",
+      "title": "Gets custom doc domains providers",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/domains/provider/{customDocDomain}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.listFolders",
+      "title": "List folders",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/folders",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "workspaceId",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Show only folders belonging to the given workspace."
+        },
+        {
+          "name": "isStarred",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "If true, returns folders that are starred. If false, returns folders that are not starred. If not specified, returns all folders."
+        }
+      ]
+    },
+    {
+      "connector": "coda.createFolder",
+      "title": "Create folder",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/folders",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFolderRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.listFolderChildren",
+      "title": "List folder children",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/folders/{folderId}/children",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.getFolder",
+      "title": "Get folder",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/folders/{folderId}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.updateFolder",
+      "title": "Update folder",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/folders/{folderId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateFolderRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.deleteFolder",
+      "title": "Delete folder",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/folders/{folderId}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.whoami",
+      "title": "Get user info",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/whoami",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.resolveBrowserLink",
+      "title": "Resolve browser link",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/resolveBrowserLink",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "url",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "url"
+          },
+          "description": "The browser link to try to resolve."
+        },
+        {
+          "name": "degradeGracefully",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "By default, attempting to resolve the Superhuman Docs URL of a deleted object will result in an error. If this flag is set, the next-available object, all the way up to the doc itself, will be resolved.\n"
+        }
+      ]
+    },
+    {
+      "connector": "coda.getMutationStatus",
+      "title": "Get mutation status",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/mutationStatus/{requestId}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.triggerWebhookAutomation",
+      "title": "Trigger automation",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/docs/{docId}/hooks/automation/{ruleId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookTriggerPayload"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookTriggerPayload"
+              }
+            },
+            "text/plain": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.listDocAnalytics",
+      "title": "List doc analytics",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/analytics/docs",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5000,
+            "default": 1000
+          },
+          "description": "Maximum number of results to return in this query."
+        }
+      ]
+    },
+    {
+      "connector": "coda.listPageAnalytics",
+      "title": "List page analytics",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/analytics/docs/{docId}/pages",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5000,
+            "default": 1000
+          },
+          "description": "Maximum number of results to return in this query."
+        }
+      ]
+    },
+    {
+      "connector": "coda.listDocAnalyticsSummary",
+      "title": "Get doc analytics summary",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/analytics/docs/summary",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.listPackAnalytics",
+      "title": "List Pack analytics",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/analytics/packs",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5000,
+            "default": 1000
+          },
+          "description": "Maximum number of results to return in this query."
+        }
+      ]
+    },
+    {
+      "connector": "coda.listPackAnalyticsSummary",
+      "title": "Get Pack analytics summary",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/analytics/packs/summary",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.listPackFormulaAnalytics",
+      "title": "List Pack formula analytics",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/analytics/packs/{packId}/formulas",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "packFormulaNames",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "A list of Pack formula names (case-sensitive) for which to retrieve analytics."
+        },
+        {
+          "name": "packFormulaTypes",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PackFormulaType"
+            }
+          },
+          "description": "A list of Pack formula types corresponding to the `packFormulaNames`. If specified, this must have the same length as `packFormulaNames`."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5000,
+            "default": 1000
+          },
+          "description": "Maximum number of results to return in this query."
+        }
+      ]
+    },
+    {
+      "connector": "coda.getAnalyticsLastUpdated",
+      "title": "Get analytics last updated day",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/analytics/updated",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.listWorkspaceMembers",
+      "title": "List workspace users",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/workspaces/{workspaceId}/users",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "includedRoles",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkspaceUserRole"
+            }
+          },
+          "description": "Show only the members that match the included roles. Multiple roles can be specified with a comma-delimited list."
+        }
+      ]
+    },
+    {
+      "connector": "coda.changeUserRole",
+      "title": "Updates user role",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/workspaces/{workspaceId}/users/role",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeRole"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.listWorkspaceRoleActivity",
+      "title": "List workspace roles",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/workspaces/{workspaceId}/roles",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.listPacks",
+      "title": "List Packs",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "accessType",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/PackAccessType"
+          },
+          "description": "Deprecated, use accessTypes instead. Filter to only return the Packs for which the current user has this access type"
+        },
+        {
+          "name": "accessTypes",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PackAccessType"
+            }
+          },
+          "description": "Filter to only return the Packs for which the current user has these access types."
+        },
+        {
+          "name": "sortBy",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/PacksSortBy"
+          },
+          "description": "The sort order of the Packs returned."
+        }
+      ]
+    },
+    {
+      "connector": "coda.createPack",
+      "title": "Create Pack",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePackRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.getPack",
+      "title": "Get a single Pack",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.updatePack",
+      "title": "Update Pack",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePackRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.deletePack",
+      "title": "Delete Pack",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.getPackConfigurationSchema",
+      "title": "Gets the JSON Schema for Pack configuration.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/configurations/schema",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.listPackVersions",
+      "title": "List the versions for a Pack.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/versions",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.getNextPackVersion",
+      "title": "Get the next valid version for a Pack.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/nextVersion",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetNextPackVersionRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.getPackVersionDiffs",
+      "title": "Get the difference between two Pack versions.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/versions/{basePackVersion}/diff/{targetPackVersion}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.registerPackVersion",
+      "title": "Register Pack version",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/versions/{packVersion}/register",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterPackVersionRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.packVersionUploadComplete",
+      "title": "Pack version upload complete",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/versions/{packVersion}/uploadComplete",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePackVersionRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.createPackRelease",
+      "title": "Create a new Pack release.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/releases",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePackReleaseRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.listPackReleases",
+      "title": "List the releases for a Pack.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/releases",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.updatePackRelease",
+      "title": "Update an existing Pack release.",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/releases/{packReleaseId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePackReleaseRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.listPackReviews",
+      "title": "List Pack reviews",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/reviews",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 25
+          },
+          "description": "Maximum number of results to return."
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/PackReviewStatus"
+          },
+          "description": "Filter reviews by status."
+        }
+      ]
+    },
+    {
+      "connector": "coda.createPackReview",
+      "title": "Create Pack review",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/reviews",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePackReviewRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.cancelPackReview",
+      "title": "Cancel pending Pack review",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/reviews/pending/cancel",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.getPackListingDraft",
+      "title": "Get Pack listing draft",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/listingDraft",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.upsertPackListingDraft",
+      "title": "Upsert Pack listing draft",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/listingDraft",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertPackListingDraftRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.deletePackListingDraft",
+      "title": "Delete Pack listing draft",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/listingDraft",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.setPackOauthConfig",
+      "title": "Set the OAuth configurations of the Pack.",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/oauthConfig",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetPackOauthConfigRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.getPackOauthConfig",
+      "title": "Retrieve the OAuth configuration of the Pack.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/oauthConfig",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.setPackSystemConnection",
+      "title": "Set the system connection credentials of the Pack.",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/systemConnection",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetPackSystemConnectionRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.patchPackSystemConnection",
+      "title": "Patch the system connection credentials of the Pack.",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/systemConnection",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchPackSystemConnectionRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.getPackSystemConnection",
+      "title": "Retrieve the system connection metadata of the Pack.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/systemConnection",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.getPackPermissions",
+      "title": "List permissions for a Pack",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/permissions",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.addPackPermission",
+      "title": "Add a permission for Pack",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/permissions",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPackPermissionRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.deleteUserPackPermission",
+      "title": "Delete a user's own permissions for Pack",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/permissions",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.deletePackPermission",
+      "title": "Delete a permission for Pack",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/permissions/{permissionId}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.listUserPackInvitations",
+      "title": "List pending Pack invitations for the current user",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/invitations",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.listPackInvitations",
+      "title": "List invitations for a Pack",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/invitations",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.createPackInvitation",
+      "title": "Create an invitation for Pack",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/invitations",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePackInvitationRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.updatePackInvitation",
+      "title": "Update an invitation for Pack",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/invitations/{invitationId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePackInvitationRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.deletePackInvitation",
+      "title": "Revoke an invitation for Pack",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/invitations/{invitationId}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.replyToPackInvitation",
+      "title": "Reply to a Pack invitation",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/invitations/{invitationId}/reply",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HandlePackInvitationRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.listPackMakers",
+      "title": "List makers for Pack",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/makers",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.addPackMaker",
+      "title": "Add a maker for Pack",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/maker",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPackMakerRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.deletePackMaker",
+      "title": "Delete a maker for Pack",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/maker/{loginId}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.listPackCategories",
+      "title": "List categories for Pack",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/categories",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.addPackCategory",
+      "title": "Add a category for Pack",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/category",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPackCategoryRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.deletePackCategory",
+      "title": "Delete a category for Pack",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/category/{categoryName}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.uploadPackAsset",
+      "title": "Upload a Pack asset.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/uploadAsset",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadPackAssetRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.uploadPackSourceCode",
+      "title": "Upload Pack source code.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/uploadSourceCode",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadPackSourceCodeRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.packAssetUploadComplete",
+      "title": "Pack asset upload complete",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/assets/{packAssetId}/assetType/{packAssetType}/uploadComplete",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.packSourceCodeUploadComplete",
+      "title": "Pack source code upload complete",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/versions/{packVersion}/sourceCode/uploadComplete",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PackSourceCodeUploadCompleteRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.getPackSourceCode",
+      "title": "get the source code for a Pack version.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/versions/{packVersion}/sourceCode",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.listPackListings",
+      "title": "List the Pack listings accessible to a user.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/listings",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "sortBy",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/PackListingsSortBy"
+          },
+          "description": "Specify a sort order for the returned Pack listings returned."
+        },
+        {
+          "name": "orderBy",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/PackListingsSortBy"
+          },
+          "description": "Deprecated: use sortBy instead."
+        },
+        {
+          "name": "installContext",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "$ref": "#/components/schemas/PackListingInstallContextType"
+          },
+          "description": "Type of installation context for which Pack information is being requested."
+        }
+      ]
+    },
+    {
+      "connector": "coda.getPackListing",
+      "title": "Get detailed listing information for a Pack.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/listing",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "workspaceId",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of the target workspace (if applicable) for checking installation privileges."
+        },
+        {
+          "name": "docId",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of the target document for checking installation privileges"
+        },
+        {
+          "name": "ingestionId",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of the target ingestion for checking limit settings"
+        },
+        {
+          "name": "installContext",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "$ref": "#/components/schemas/PackListingInstallContextType"
+          },
+          "description": "Type of installation context for which Pack information is being requested."
+        },
+        {
+          "name": "releaseChannel",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "$ref": "#/components/schemas/IngestionPackReleaseChannel"
+          },
+          "description": "Release channel for which Pack information is being requested."
+        },
+        {
+          "name": "includeViewerPackRelationship",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Include the requesting viewer's relationship to the Pack creator. Defaults to false."
+        }
+      ]
+    },
+    {
+      "connector": "coda.listPackLogs",
+      "title": "Retrieve the logs of a Pack.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/docs/{docId}/logs",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 25,
+            "maximum": 100
+          },
+          "description": "Maximum number of results to return in this query."
+        },
+        {
+          "name": "logTypes",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PackLogType"
+            }
+          },
+          "description": "Only return logs of the given types."
+        },
+        {
+          "name": "beforeTimestamp",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Only return logs before the given time (non-inclusive).\n"
+        },
+        {
+          "name": "afterTimestamp",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Only return logs after the given time (non-inclusive).\n"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          },
+          "description": "Specifies if the logs will be returned in time desc or asc. Default is desc.\n"
+        },
+        {
+          "name": "q",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "x-allow-empty": true
+          },
+          "description": "A search query that follows Lucene syntax.\n"
+        },
+        {
+          "name": "requestIds",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Only return logs matching provided request IDs."
+        }
+      ]
+    },
+    {
+      "connector": "coda.listIngestionLogs",
+      "title": "Retrieve the logs of a Ingestion.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/tenantId/{tenantId}/rootIngestionId/{rootIngestionId}/logs",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 25,
+            "maximum": 100
+          },
+          "description": "Maximum number of results to return in this query."
+        },
+        {
+          "name": "logTypes",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PackLogType"
+            }
+          },
+          "description": "Only return logs of the given types."
+        },
+        {
+          "name": "ingestionExecutionId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "ID of the ingestion execution."
+        },
+        {
+          "name": "beforeTimestamp",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Only return logs before the given time (non-inclusive).\n"
+        },
+        {
+          "name": "afterTimestamp",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Only return logs after the given time (non-inclusive).\n"
+        },
+        {
+          "name": "ingestionStatus",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/IngestionStatus"
+          },
+          "description": "Only fetch logs with the given ingestion status. This only works in combination with the onlyExecutionCompletions parameter.\n"
+        },
+        {
+          "name": "onlyExecutionCompletions",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Only fetch logs that represent the completion of a child execution."
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          },
+          "description": "Specifies if the logs will be returned in time desc or asc. Default is desc.\n"
+        },
+        {
+          "name": "q",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "x-allow-empty": true
+          },
+          "description": "A search query that follows Lucene syntax.\n"
+        },
+        {
+          "name": "requestIds",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Only return logs matching provided request IDs."
+        }
+      ]
+    },
+    {
+      "connector": "coda.listGroupedPackLogs",
+      "title": "Retrieve the grouped logs of a Pack.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/docs/{docId}/groupedLogs",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 25,
+            "maximum": 100
+          },
+          "description": "Maximum number of results to return in this query."
+        },
+        {
+          "name": "beforeTimestamp",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Only return logs before the given time (non-inclusive).\n"
+        },
+        {
+          "name": "afterTimestamp",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Only return logs after the given time (non-inclusive).\n"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          },
+          "description": "Specifies if the logs will be returned in time desc or asc. Default is desc.\n"
+        },
+        {
+          "name": "q",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "x-allow-empty": true
+          },
+          "description": "A search query that follows Lucene syntax.\n"
+        }
+      ]
+    },
+    {
+      "connector": "coda.listGroupedIngestionLogs",
+      "title": "Retrieve the grouped logs of a Pack for a specific ingestionExecutionId.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/tenantId/{tenantId}/rootIngestionId/{rootIngestionId}/groupedLogs",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 25,
+            "maximum": 100
+          },
+          "description": "Maximum number of results to return in this query."
+        },
+        {
+          "name": "beforeTimestamp",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Only return logs before the given time (non-inclusive).\n"
+        },
+        {
+          "name": "afterTimestamp",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Only return logs after the given time (non-inclusive).\n"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          },
+          "description": "Specifies if the logs will be returned in time desc or asc. Default is desc.\n"
+        },
+        {
+          "name": "q",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "x-allow-empty": true
+          },
+          "description": "A search query that follows Lucene syntax.\n"
+        }
+      ]
+    },
+    {
+      "connector": "coda.listIngestionBatchExecutions",
+      "title": "Retrieve a list of ingestion batch executions for the given root ingestion id.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/tenantId/{tenantId}/rootIngestionId/{rootIngestionId}/ingestionBatchExecutions",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 25,
+            "maximum": 100
+          },
+          "description": "Maximum number of results to return in this query."
+        },
+        {
+          "name": "datasource",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "x-allow-empty": true
+          },
+          "description": "Only show batch executions for this datasource (sync table)."
+        },
+        {
+          "name": "executionType",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "$ref": "#/components/schemas/IngestionExecutionType"
+          },
+          "description": "Only show batch executions with this execution type."
+        },
+        {
+          "name": "includeDeletedIngestions",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Include deleted ingestion executions in the response"
+        },
+        {
+          "name": "ingestionExecutionId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Only retrieve this single batch execution."
+        },
+        {
+          "name": "ingestionId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Only show batch executions for this sync table ingestion."
+        },
+        {
+          "name": "ingestionStatus",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "$ref": "#/components/schemas/IngestionStatus"
+          },
+          "description": "Only show batch executions with this status."
+        }
+      ]
+    },
+    {
+      "connector": "coda.listIngestionParentItems",
+      "title": "Retrieve a list of parent items for the given ingestion batch execution id.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/tenantId/{tenantId}/rootIngestionId/{rootIngestionId}/ingestionBatchExecutions/{ingestionExecutionId}/parentItems",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 25,
+            "maximum": 100
+          },
+          "description": "Maximum number of results to return in this query."
+        },
+        {
+          "name": "ingestionExecutionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Only show parent items for this ingestion batch execution."
+        },
+        {
+          "name": "ingestionId",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The ID of the sync table ingestion. Enables faster lookup."
+        },
+        {
+          "name": "ingestionStatus",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "$ref": "#/components/schemas/IngestionStatus"
+          },
+          "description": "Only show parent items with this status."
+        }
+      ]
+    },
+    {
+      "connector": "coda.getPackLogDetails",
+      "title": "Retrieve the information for a specific log.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/tenantId/{tenantId}/rootIngestionId/{rootIngestionId}/logs/{logId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "logId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-allow-empty": false
+          },
+          "description": "The id of the log to retrieve.\n"
+        },
+        {
+          "name": "detailsKey",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-allow-empty": false
+          },
+          "description": "The key of the details to retrieve.\n"
+        }
+      ]
+    },
+    {
+      "connector": "coda.listPackFeaturedDocs",
+      "title": "List featured docs for a Pack",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/featuredDocs",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "coda.updatePackFeaturedDocs",
+      "title": "Update featured docs for a Pack",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/packs/{packId}/featuredDocs",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePackFeaturedDocsRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.addGoLink",
+      "title": "Add a go link",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/organizations/{organizationId}/goLinks",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddGoLinkRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "coda.listAgentSessionIds",
+      "title": "Retrieve the chat sessions of an agent instance.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/go/tenants/{tenantId}/agentInstances/{agentInstanceId}/agentSessionIds",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 25,
+            "maximum": 100
+          },
+          "description": "Maximum number of results to return in this query."
+        },
+        {
+          "name": "agentSessionId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "ID of the agent chat session."
+        },
+        {
+          "name": "logTypes",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PackLogType"
+            }
+          },
+          "description": "Only return logs of the given types."
+        },
+        {
+          "name": "beforeTimestamp",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Only return logs before the given time (non-inclusive).\n"
+        },
+        {
+          "name": "afterTimestamp",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Only return logs after the given time (non-inclusive).\n"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          },
+          "description": "Specifies if the logs will be returned in time desc or asc. Default is desc.\n"
+        },
+        {
+          "name": "q",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "x-allow-empty": true
+          },
+          "description": "A search query that follows Lucene syntax.\n"
+        },
+        {
+          "name": "requestIds",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Only return logs matching provided request IDs."
+        }
+      ]
+    },
+    {
+      "connector": "coda.listAgentLogs",
+      "title": "Retrieve the logs of an agent instance.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/go/tenants/{tenantId}/agentInstances/{agentInstanceId}/logs",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 25,
+            "maximum": 100
+          },
+          "description": "Maximum number of results to return in this query."
+        },
+        {
+          "name": "logTypes",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PackLogType"
+            }
+          },
+          "description": "Only return logs of the given types."
+        },
+        {
+          "name": "agentSessionId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "ID of the agent chat session."
+        },
+        {
+          "name": "beforeTimestamp",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Only return logs before the given time (non-inclusive).\n"
+        },
+        {
+          "name": "afterTimestamp",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Only return logs after the given time (non-inclusive).\n"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          },
+          "description": "Specifies if the logs will be returned in time desc or asc. Default is desc.\n"
+        },
+        {
+          "name": "q",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "x-allow-empty": true
+          },
+          "description": "A search query that follows Lucene syntax.\n"
+        },
+        {
+          "name": "requestIds",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Only return logs matching provided request IDs."
+        }
+      ]
+    },
+    {
+      "connector": "coda.getAgentPackLogDetails",
+      "title": "Retrieve the information for a specific log.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://docs.superhuman.com/apis/v1",
+      "path": "/go/tenants/{tenantId}/agentInstances/{agentInstanceId}/logs/{logId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "logId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-allow-empty": false
+          },
+          "description": "The id of the log to retrieve.\n"
+        },
+        {
+          "name": "detailsKey",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-allow-empty": false
+          },
+          "description": "The key of the details to retrieve.\n"
+        }
+      ]
+    }
+  ]
+}

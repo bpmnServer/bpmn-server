@@ -1,0 +1,2670 @@
+{
+  "name": "bigcommerce",
+  "title": "Bigcommerce",
+  "source": "https://raw.githubusercontent.com/bigcommerce/api-specs/main/reference/catalog/products_catalog.v3.yml",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "bigcommerce.getProducts",
+      "title": "Get All Products",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter items by ID.\n"
+        },
+        {
+          "name": "id:in",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "name": "id:not_in",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "name": "id:min",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "name": "id:max",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "name": "id:greater",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "name": "id:less",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "name": "name",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter items by name.\n"
+        },
+        {
+          "name": "upc",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter items by UPC.\n"
+        },
+        {
+          "name": "price",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Filter items by price.\n"
+        },
+        {
+          "name": "weight",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Filter items by weight.\n"
+        },
+        {
+          "name": "condition",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "new",
+              "used",
+              "refurbished"
+            ]
+          },
+          "description": "Filter items by condition.\n"
+        },
+        {
+          "name": "brand_id",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter items by brand_id.\n"
+        },
+        {
+          "name": "date_modified",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Filter items by `date_modified`. "
+        },
+        {
+          "name": "date_modified:max",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter items by `date_modified`. For example, `date_modified:max=2020-06-15`."
+        },
+        {
+          "name": "date_modified:min",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter items by `date_modified`. For example, `date_modified:min=2018-06-15`."
+        },
+        {
+          "name": "date_last_imported",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Filter items by date_last_imported."
+        },
+        {
+          "name": "date_last_imported:max",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter items by date_last_imported. For example, `date_last_imported:max=2020-06-15`."
+        },
+        {
+          "name": "date_last_imported:min",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter items by date_last_imported. For example, `date_last_imported:min=2018-06-15`."
+        },
+        {
+          "name": "is_visible",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Filter items based on whether the product is currently visible on the storefront."
+        },
+        {
+          "name": "is_featured",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "enum": [
+              1,
+              0
+            ]
+          },
+          "description": "Filter items by is_featured. `1` for true, `0` for false."
+        },
+        {
+          "name": "is_free_shipping",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter items by is_free_shipping. `1` for true, `0` for false."
+        },
+        {
+          "name": "inventory_level",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter items by inventory_level.\n"
+        },
+        {
+          "name": "inventory_level:in",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "inventory_level:not_in",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "inventory_level:min",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "inventory_level:max",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "inventory_level:greater",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "inventory_level:less",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "inventory_low",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter items by inventory_low. Values: 1, 0.\n"
+        },
+        {
+          "name": "out_of_stock",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter items by out_of_stock. To enable the filter, pass `out_of_stock`=`1`.\n"
+        },
+        {
+          "name": "total_sold",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter items by total_sold.\n"
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "digital",
+              "physical"
+            ]
+          },
+          "description": "Filter items by type."
+        },
+        {
+          "name": "categories",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter items by categories.\n If a product is in more than one category, using this query will not return the product. Instead use `categories:in=12`."
+        },
+        {
+          "name": "keyword",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter items by keywords found in the `name` or `sku` fields"
+        },
+        {
+          "name": "keyword_context",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "shopper",
+              "merchant"
+            ]
+          },
+          "description": "Set context used by the search algorithm to return results targeted towards the specified group. Use `merchant` to help merchants search their own catalog. Use `shopper` to return shopper-facing search results."
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter items by status.\n"
+        },
+        {
+          "name": "include",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "variants",
+                "images",
+                "custom_fields",
+                "bulk_pricing_rules",
+                "primary_image",
+                "modifiers",
+                "options",
+                "videos"
+              ]
+            }
+          },
+          "description": "Sub-resources to include on a product, in a comma-separated list. If `options` or `modifiers` is used, results are limited to 10 per page.\n\n**Note:** The following sub-resources include:\n  * variants\n  * images\n  * custom_fields\n  * bulk_pricing_rules\n  * primary_images\n  * modifiers\n  * options\n  * videos"
+        },
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to include, in a comma-separated list. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "exclude_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to exclude, in a comma-separated list. The specified fields will be excluded from a response. The ID cannot be excluded."
+        },
+        {
+          "name": "availability",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "available",
+              "disabled",
+              "preorder"
+            ]
+          },
+          "description": "Filter items by availability. Values are: available, disabled, preorder.\n"
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Specifies the page number in a limited (paginated) list of products."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Controls the number of items per page in a limited (paginated) list of products. The default product limit is 50 with a maximum limit of 250."
+        },
+        {
+          "name": "direction",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          },
+          "description": "Sort direction. Acceptable values are: `asc`, `desc`.\n"
+        },
+        {
+          "name": "sort",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "id",
+              "name",
+              "sku",
+              "price",
+              "date_modified",
+              "date_last_imported",
+              "inventory_level",
+              "is_visible",
+              "total_sold"
+            ]
+          },
+          "description": "Field name to sort by. Note: Since `id` increments when new products are added, you can use that field to sort by product create date.\n"
+        },
+        {
+          "name": "categories:in",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter items by categories. Use for products in multiple categories. For example, `categories:in=12`."
+        },
+        {
+          "name": "sku",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter items by main SKU. To filter by variant SKU, see [Get All Variants](/docs/rest-catalog/product-variants#get-all-product-variants). "
+        },
+        {
+          "name": "sku:in",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Filter items by SKU."
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.updateProducts",
+      "title": "Update Products (Batch)",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to include, in a comma-separated list. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/product_Put_Collection"
+              },
+              "examples": {
+                "example-1": {
+                  "value": [
+                    {
+                      "id": 0,
+                      "name": "Smith Journal 13",
+                      "type": "physical",
+                      "sku": "SM-13",
+                      "description": "<p><span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel metus ac est egestas porta sed quis erat. Integer id nulla massa. Proin vitae enim nisi. Praesent non dignissim nulla. Nulla mattis id massa ac pharetra. Mauris et nisi in dolor aliquam sodales. Aliquam dui nisl, dictum quis leo sit amet, rutrum volutpat metus. Curabitur libero nunc, interdum ac libero non, tristique porttitor metus. Ut non dignissim lorem, in vestibulum leo. Vivamus sodales quis turpis eget.</span></p>",
+                      "weight": 0,
+                      "width": 0,
+                      "depth": 0,
+                      "height": 0,
+                      "price": 0,
+                      "cost_price": 0,
+                      "retail_price": 0,
+                      "sale_price": 0,
+                      "map_price": 0,
+                      "tax_class_id": 0,
+                      "product_tax_code": "string",
+                      "categories": [
+                        0
+                      ],
+                      "brand_id": 0,
+                      "inventory_level": 0,
+                      "inventory_warning_level": 0,
+                      "inventory_tracking": "none",
+                      "fixed_cost_shipping_price": 0,
+                      "is_free_shipping": true,
+                      "is_visible": true,
+                      "is_featured": true,
+                      "related_products": [
+                        0
+                      ],
+                      "warranty": "string",
+                      "bin_picking_number": "string",
+                      "layout_file": "string",
+                      "upc": "string",
+                      "search_keywords": "string",
+                      "availability": "available",
+                      "availability_description": "string",
+                      "gift_wrapping_options_type": "any",
+                      "gift_wrapping_options_list": [
+                        0
+                      ],
+                      "sort_order": -2147483648,
+                      "condition": "New",
+                      "is_condition_shown": true,
+                      "order_quantity_minimum": 0,
+                      "order_quantity_maximum": 0,
+                      "page_title": "string",
+                      "meta_keywords": [
+                        "string"
+                      ],
+                      "meta_description": "string",
+                      "view_count": 0,
+                      "preorder_release_date": "2019-08-24T14:15:22Z",
+                      "preorder_message": "string",
+                      "is_preorder_only": true,
+                      "is_price_hidden": true,
+                      "price_hidden_label": "string",
+                      "custom_url": {
+                        "url": "string",
+                        "is_customized": true
+                      },
+                      "open_graph_type": "product",
+                      "open_graph_title": "string",
+                      "open_graph_description": "string",
+                      "open_graph_use_meta_description": true,
+                      "open_graph_use_product_name": true,
+                      "open_graph_use_image": true,
+                      "brand_name": "Common Good",
+                      "gtin": "string",
+                      "mpn": "string",
+                      "reviews_rating_sum": 3,
+                      "reviews_count": 4,
+                      "total_sold": 80,
+                      "custom_fields": [
+                        {
+                          "id": 6,
+                          "name": "ISBN",
+                          "value": "1234567890123"
+                        }
+                      ],
+                      "bulk_pricing_rules": [
+                        {
+                          "id": 0,
+                          "quantity_min": 10,
+                          "quantity_max": 50,
+                          "type": "price",
+                          "amount": 10
+                        }
+                      ],
+                      "images": [
+                        {
+                          "image_file": "string",
+                          "is_thumbnail": true,
+                          "sort_order": -2147483648,
+                          "description": "string",
+                          "image_url": "string",
+                          "id": 0,
+                          "product_id": 0,
+                          "url_zoom": "string",
+                          "url_standard": "string",
+                          "url_thumbnail": "string",
+                          "url_tiny": "string",
+                          "date_modified": "2019-08-24T14:15:22Z"
+                        }
+                      ],
+                      "videos": [
+                        {
+                          "title": "Writing Great Documentation",
+                          "description": "A video about documentation.",
+                          "sort_order": 1,
+                          "type": "youtube",
+                          "video_id": "z3fRu9pkuXE",
+                          "id": 0,
+                          "product_id": 0,
+                          "length": "string"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.createProduct",
+      "title": "Create a Product",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to include, in a comma-separated list. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/product_Base"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.deleteProducts",
+      "title": "Delete Products",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "name",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter items by name.\n"
+        },
+        {
+          "name": "sku",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter items by SKU.\n"
+        },
+        {
+          "name": "price",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Filter items by price.\n"
+        },
+        {
+          "name": "weight",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Filter items by weight.\n"
+        },
+        {
+          "name": "condition",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "new",
+              "used",
+              "refurbished"
+            ]
+          },
+          "description": "Filter items by condition.\n"
+        },
+        {
+          "name": "brand_id",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter items by brand_id.\n"
+        },
+        {
+          "name": "date_modified",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Filter items by date_modified. For example `v3/catalog/products?date_modified:min=2018-06-15`"
+        },
+        {
+          "name": "date_last_imported",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Filter items by date_last_imported. For example `v3/catalog/products?date_last_imported:min=2018-06-15`"
+        },
+        {
+          "name": "is_visible",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Filter items by if visible on the storefront. "
+        },
+        {
+          "name": "is_featured",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter items by is_featured.\n"
+        },
+        {
+          "name": "id:in",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "description": "Filter by product ID(s)."
+        },
+        {
+          "name": "inventory_level",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter items by inventory_level.\n"
+        },
+        {
+          "name": "total_sold",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter items by total_sold.\n"
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "digital",
+              "physical"
+            ]
+          },
+          "description": "Filter items by type: `physical` or `digital`."
+        },
+        {
+          "name": "categories",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter items by categories.\n If a product is in more than one category, using this query will not return the product. Instead use `categories:in=12`."
+        },
+        {
+          "name": "keyword",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter items by keywords found in the `name`, `description`, or `sku` fields, or in the brand name.\n"
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.getProductById",
+      "title": "Get a Product",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "include",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "variants",
+                "images",
+                "custom_fields",
+                "bulk_pricing_rules",
+                "primary_image",
+                "modifiers",
+                "options",
+                "videos"
+              ]
+            }
+          },
+          "description": "Sub-resources to include on a product, in a comma-separated list. If `options` or `modifiers` is used, results are limited to 10 per page."
+        },
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to include, in a comma-separated list. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "exclude_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to exclude, in a comma-separated list. The specified fields will be excluded from a response. The ID cannot be excluded."
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.updateProduct",
+      "title": "Update a Product",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "variants",
+              "images",
+              "custom_fields",
+              "bulk_pricing_rules",
+              "primary_image",
+              "modifiers",
+              "options",
+              "videos"
+            ]
+          },
+          "description": "Sub-resources to include on a product, in a comma-separated list. If `options` or `modifiers` is used, results are limited to 10 per page. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/product_Put"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.deleteProductById",
+      "title": "Delete a Product",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bigcommerce.getProductImages",
+      "title": "Get All Product Images",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/images",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Specifies the page number in a limited (paginated) list of products."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Controls the number of items per page in a limited (paginated) list of products."
+        },
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to include, in a comma-separated list. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "exclude_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to exclude, in a comma-separated list. The specified fields will be excluded from a response. The ID cannot be excluded."
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.createProductImage",
+      "title": "Create a Product Image",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/images",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "Product Image Post",
+                "description": "The model for a POST to create an image on a product.",
+                "allOf": [
+                  {
+                    "title": "Product Image Base",
+                    "type": "object",
+                    "properties": {
+                      "product_id": {
+                        "type": "integer",
+                        "description": "The unique numeric identifier for the product with which the image is associated.\n"
+                      },
+                      "url_zoom": {
+                        "readOnly": true,
+                        "type": "string",
+                        "description": "The zoom URL for this image. By default, this is used as the zoom image on product pages when zoom images are enabled.\n"
+                      },
+                      "url_standard": {
+                        "readOnly": true,
+                        "type": "string",
+                        "description": "The standard URL for this image. By default, this is used for product-page images.\n"
+                      },
+                      "url_thumbnail": {
+                        "readOnly": true,
+                        "type": "string",
+                        "description": "The thumbnail URL for this image. By default, this is the image size used on the category page and in side panels.\n"
+                      },
+                      "url_tiny": {
+                        "readOnly": true,
+                        "type": "string",
+                        "description": "The tiny URL for this image. By default, this is the image size used for thumbnails beneath the product image on a product page.\n"
+                      },
+                      "date_modified": {
+                        "type": "string",
+                        "description": "The date on which the product image was modified.\n",
+                        "format": "date-time"
+                      },
+                      "is_thumbnail": {
+                        "type": "boolean",
+                        "description": "Flag for identifying whether the image is used as the product's thumbnail.\n"
+                      },
+                      "sort_order": {
+                        "maximum": 2147483647,
+                        "minimum": -2147483648,
+                        "type": "integer",
+                        "description": "The order in which the image will be displayed on the product page. Higher integers give the image a lower priority. When updating, if the image is given a lower priority, all images with a `sort_order` the same as or greater than the image's new `sort_order` value will have their `sort_order`s reordered.\n"
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "The description for the image.\n"
+                      }
+                    },
+                    "description": "Common ProductImage properties."
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "image_url": {
+                        "type": "string",
+                        "description": "Must be a fully qualified URL path, including protocol. Limit of 8MB per file.\n"
+                      },
+                      "image_file": {
+                        "type": "string",
+                        "description": "The local path to the original image file uploaded to BigCommerce. A `multipart/form-data` media type.\n\nMust be sent as a `multipart/form-data` field in the request body. Limit of 8 MB per file.\n"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "title": "Product Image Post",
+                "description": "The model for a POST to create an image on a product.",
+                "allOf": [
+                  {
+                    "title": "Product Image Base",
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "description": "The unique numeric ID of the image; increments sequentially.\n"
+                      },
+                      "product_id": {
+                        "type": "integer",
+                        "description": "The unique numeric identifier for the product with which the image is associated.\n"
+                      },
+                      "url_zoom": {
+                        "readOnly": true,
+                        "type": "string",
+                        "description": "The zoom URL for this image. By default, this is used as the zoom image on product pages when zoom images are enabled.\n"
+                      },
+                      "url_standard": {
+                        "readOnly": true,
+                        "type": "string",
+                        "description": "The standard URL for this image. By default, this is used for product-page images.\n"
+                      },
+                      "url_thumbnail": {
+                        "readOnly": true,
+                        "type": "string",
+                        "description": "The thumbnail URL for this image. By default, this is the image size used on the category page and in side panels.\n"
+                      },
+                      "url_tiny": {
+                        "readOnly": true,
+                        "type": "string",
+                        "description": "The tiny URL for this image. By default, this is the image size used for thumbnails beneath the product image on a product page.\n"
+                      },
+                      "date_modified": {
+                        "type": "string",
+                        "description": "The date on which the product image was modified.\n",
+                        "format": "date-time"
+                      },
+                      "is_thumbnail": {
+                        "type": "boolean",
+                        "description": "Flag for identifying whether the image is used as the product's thumbnail.\n"
+                      },
+                      "sort_order": {
+                        "maximum": 2147483647,
+                        "minimum": -2147483648,
+                        "type": "integer",
+                        "description": "The order in which the image will be displayed on the product page. Higher integers give the image a lower priority. When updating, if the image is given a lower priority, all images with a `sort_order` the same as or greater than the image's new `sort_order` value will have their `sort_order`s reordered.\n"
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "The description for the image.\n"
+                      }
+                    },
+                    "description": "Common ProductImage properties."
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "image_url": {
+                        "type": "string",
+                        "description": "Must be a fully qualified URL path, including protocol. Limit of 8MB per file.\n"
+                      },
+                      "image_file": {
+                        "type": "string",
+                        "description": "The local path to the original image file uploaded to BigCommerce. A `multipart/form-data` media type.\n\nMust be sent as a multipart/form-data field in the request body. Limit of 8 MB per file.\n"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.getProductImageById",
+      "title": "Get a Product Image",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/images/{image_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to include, in a comma-separated list. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "exclude_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to exclude, in a comma-separated list. The specified fields will be excluded from a response. The ID cannot be excluded."
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.updateProductImage",
+      "title": "Update a Product Image",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/images/{image_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/productImage_Put"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.deleteProductImage",
+      "title": "Delete a Product Image",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/images/{image_id}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bigcommerce.getProductVideos",
+      "title": "Get All Product Videos",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/videos",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to include, in a comma-separated list. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "exclude_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to exclude, in a comma-separated list. The specified fields will be excluded from a response. The ID cannot be excluded."
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Specifies the page number in a limited (paginated) list of products."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Controls the number of items per page in a limited (paginated) list of products."
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.createProductVideo",
+      "title": "Create a Product Video",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/videos",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "Product Video Post",
+                "description": "The model for a POST to create a video on a product.\n",
+                "allOf": [
+                  {
+                    "title": "Product Video Base",
+                    "description": "Common Product Video properties.",
+                    "properties": {
+                      "title": {
+                        "maxLength": 255,
+                        "minLength": 0,
+                        "type": "string",
+                        "example": "Writing Great Documentation",
+                        "description": "The title for the video. If left blank, this will be filled in according to data on a host site.\n"
+                      },
+                      "description": {
+                        "type": "string",
+                        "example": "A video about documenation",
+                        "description": "The description for the video. If left blank, this will be filled in according to data on a host site.\n"
+                      },
+                      "sort_order": {
+                        "maximum": 2147483647,
+                        "minimum": -2147483648,
+                        "example": 1,
+                        "type": "integer",
+                        "description": "The order in which the video will be displayed on the product page. Higher integers give the video a lower priority. When updating, if the video is given a lower priority, all videos with a `sort_order` the same as or greater than the video's new `sort_order` value will have their `sort_order`s reordered.\n"
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "The video type (a short name of a host site).\n",
+                        "enum": [
+                          "youtube"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "video_id": {
+                        "type": "string",
+                        "maxLength": 25,
+                        "minLength": 0,
+                        "description": "The ID of the video on a host site.\n",
+                        "x-required": [
+                          "post"
+                        ],
+                        "example": "z3fRu9pkuXE"
+                      }
+                    }
+                  }
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.getProductVideoById",
+      "title": "Get a Product Video",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/videos/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to include, in a comma-separated list. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "exclude_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to exclude, in a comma-separated list. The specified fields will be excluded from a response. The ID cannot be excluded."
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.updateProductVideo",
+      "title": "Update a Product Video",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/videos/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "Product Video Put",
+                "description": "The model for a PUT to update a video on a product.\n",
+                "allOf": [
+                  {
+                    "title": "Product Video Base",
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "maxLength": 255,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The title for the video. If left blank, this will be filled in according to data on a host site.\n"
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "The description for the video. If left blank, this will be filled in according to data on a host site.\n"
+                      },
+                      "sort_order": {
+                        "maximum": 2147483647,
+                        "minimum": -2147483648,
+                        "type": "integer",
+                        "description": "The order in which the video will be displayed on the product page. Higher integers give the video a lower priority. When updating, if the video is given a lower priority, all videos with a `sort_order` the same as or greater than the video's new `sort_order` value will have their `sort_order`s reordered.\n"
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "The video type (a short name of a host site).\n",
+                        "enum": [
+                          "youtube"
+                        ]
+                      }
+                    },
+                    "description": "Common Product Video properties."
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "description": "The unique numeric ID of the product video; increments sequentially.\n",
+                        "x-required": [
+                          "put"
+                        ]
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.deleteProductVideo",
+      "title": "Delete a Product Video",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/videos/{id}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bigcommerce.getComplexRules",
+      "title": "Get Complex Rules",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/complex-rules",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to include, in a comma-separated list. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "exclude_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to exclude, in a comma-separated list. The specified fields will be excluded from a response. The ID cannot be excluded."
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Specifies the page number in a limited (paginated) list of products."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Controls the number of items per page in a limited (paginated) list of products."
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.createComplexRule",
+      "title": "Create a Complex Rule",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/complex-rules",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "Complex Rule",
+                "type": "object",
+                "properties": {
+                  "product_id": {
+                    "type": "integer",
+                    "description": "The unique numeric ID of the product with which the rule is associated; increments sequentially.\n",
+                    "nullable": true,
+                    "example": 67,
+                    "x-required": [
+                      "post",
+                      "put"
+                    ]
+                  },
+                  "sort_order": {
+                    "maximum": 2147483647,
+                    "minimum": -2147483648,
+                    "type": "integer",
+                    "description": "The priority to give this rule when making adjustments to the product properties.\n",
+                    "example": 0
+                  },
+                  "enabled": {
+                    "type": "boolean",
+                    "description": "Flag for determining whether the rule is to be used when adjusting a product's price, weight, image, or availabilty.\n",
+                    "example": true
+                  },
+                  "stop": {
+                    "type": "boolean",
+                    "description": "Flag for determining whether other rules should not be applied after this rule has been applied.\n"
+                  },
+                  "purchasing_disabled": {
+                    "type": "boolean",
+                    "description": "Flag for determining whether the rule should disable purchasing of a product when the conditions are applied.\n"
+                  },
+                  "purchasing_disabled_message": {
+                    "maxLength": 255,
+                    "minLength": 0,
+                    "type": "string",
+                    "description": "Message displayed on the storefront when a rule disables the purchasing of a product.\n",
+                    "example": "This product is not available at this time."
+                  },
+                  "purchasing_hidden": {
+                    "type": "boolean",
+                    "description": "Flag for determining whether the rule should hide purchasing of a product when the conditions are applied.\n"
+                  },
+                  "image_url": {
+                    "type": "string",
+                    "description": "The URL for an image displayed on the storefront when the conditions are applied. Limit of 8MB per file.\n",
+                    "example": "https://cdn8.bigcommerce.com/s-123456/product_images/d/fakeimage.png"
+                  },
+                  "price_adjuster": {
+                    "title": "Adjuster",
+                    "type": "object",
+                    "properties": {
+                      "adjuster": {
+                        "type": "string",
+                        "description": "The type of adjuster for either the price or the weight of the variant, when the modifier value is selected on the storefront.\n",
+                        "nullable": true,
+                        "enum": [
+                          "relative",
+                          "percentage"
+                        ]
+                      },
+                      "adjuster_value": {
+                        "type": "number",
+                        "description": "The numeric amount by which the adjuster will change either the price or the weight of the variant, when the modifier value is selected on the storefront.\n",
+                        "example": 5
+                      }
+                    },
+                    "description": "Adjuster for Complex Rules."
+                  },
+                  "weight_adjuster": {
+                    "title": "Adjuster",
+                    "type": "object",
+                    "properties": {
+                      "adjuster": {
+                        "type": "string",
+                        "description": "The type of adjuster for either the price or the weight of the variant, when the modifier value is selected on the storefront.\n",
+                        "nullable": true,
+                        "enum": [
+                          "relative",
+                          "percentage"
+                        ]
+                      },
+                      "adjuster_value": {
+                        "type": "number",
+                        "description": "The numeric amount by which the adjuster will change either the price or the weight of the variant, when the modifier value is selected on the storefront.\n",
+                        "example": 5
+                      }
+                    },
+                    "description": "Adjuster for Complex Rules."
+                  },
+                  "conditions": {
+                    "type": "array",
+                    "items": {
+                      "title": "Complex Rule Condition",
+                      "required": [
+                        "modifier_id",
+                        "modifier_value_id",
+                        "variant_id"
+                      ],
+                      "type": "object",
+                      "properties": {
+                        "modifier_id": {
+                          "type": "integer",
+                          "description": "The unique numeric ID of the modifier with which the rule condition is associated.\nRequired in /POST.",
+                          "nullable": true,
+                          "example": 55
+                        },
+                        "modifier_value_id": {
+                          "type": "integer",
+                          "description": "The unique numeric ID of the modifier value with which the rule condition is associated.\nRequired in /POST.",
+                          "nullable": true,
+                          "example": 256
+                        },
+                        "variant_id": {
+                          "type": "integer",
+                          "description": "The unique numeric ID of the variant with which the rule condition is associated.\nRequired in /POST.",
+                          "nullable": true,
+                          "example": 1
+                        }
+                      }
+                    }
+                  }
+                },
+                "description": "Common ComplexRule properties."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.getComplexRuleById",
+      "title": "Get a Complex Rule",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/complex-rules/{complex_rule_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to include, in a comma-separated list. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "exclude_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to exclude, in a comma-separated list. The specified fields will be excluded from a response. The ID cannot be excluded."
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.updateComplexRule",
+      "title": "Update a Complex Rule",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/complex-rules/{complex_rule_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "Complex Rule",
+                "type": "object",
+                "properties": {
+                  "product_id": {
+                    "type": "integer",
+                    "description": "The unique numeric ID of the product with which the rule is associated; increments sequentially.\n",
+                    "nullable": true,
+                    "example": 67,
+                    "x-required": [
+                      "post",
+                      "put"
+                    ]
+                  },
+                  "sort_order": {
+                    "maximum": 2147483647,
+                    "minimum": -2147483648,
+                    "type": "integer",
+                    "description": "The priority to give this rule when making adjustments to the product properties.\n",
+                    "example": 0
+                  },
+                  "enabled": {
+                    "type": "boolean",
+                    "description": "Flag for determining whether the rule is to be used when adjusting a product's price, weight, image, or availabilty.\n",
+                    "example": true
+                  },
+                  "stop": {
+                    "type": "boolean",
+                    "description": "Flag for determining whether other rules should not be applied after this rule has been applied.\n"
+                  },
+                  "purchasing_disabled": {
+                    "type": "boolean",
+                    "description": "Flag for determining whether the rule should disable purchasing of a product when the conditions are applied.\n"
+                  },
+                  "purchasing_disabled_message": {
+                    "maxLength": 255,
+                    "minLength": 0,
+                    "type": "string",
+                    "description": "Message displayed on the storefront when a rule disables the purchasing of a product.\n",
+                    "example": "This product is not available at this time."
+                  },
+                  "purchasing_hidden": {
+                    "type": "boolean",
+                    "description": "Flag for determining whether the rule should hide purchasing of a product when the conditions are applied.\n"
+                  },
+                  "image_url": {
+                    "type": "string",
+                    "description": "The URL for an image displayed on the storefront when the conditions are applied. Limit of 8MB per file.\n",
+                    "example": "https://cdn8.bigcommerce.com/s-123456/product_images/d/fakeimage.png"
+                  },
+                  "price_adjuster": {
+                    "title": "Adjuster",
+                    "type": "object",
+                    "properties": {
+                      "adjuster": {
+                        "type": "string",
+                        "description": "The type of adjuster for either the price or the weight of the variant, when the modifier value is selected on the storefront.\n",
+                        "nullable": true,
+                        "enum": [
+                          "relative",
+                          "percentage"
+                        ]
+                      },
+                      "adjuster_value": {
+                        "type": "number",
+                        "description": "The numeric amount by which the adjuster will change either the price or the weight of the variant, when the modifier value is selected on the storefront.\n",
+                        "example": 5
+                      }
+                    },
+                    "description": "Adjuster for Complex Rules."
+                  },
+                  "weight_adjuster": {
+                    "title": "Adjuster",
+                    "type": "object",
+                    "properties": {
+                      "adjuster": {
+                        "type": "string",
+                        "description": "The type of adjuster for either the price or the weight of the variant, when the modifier value is selected on the storefront.\n",
+                        "nullable": true,
+                        "enum": [
+                          "relative",
+                          "percentage"
+                        ]
+                      },
+                      "adjuster_value": {
+                        "type": "number",
+                        "description": "The numeric amount by which the adjuster will change either the price or the weight of the variant, when the modifier value is selected on the storefront.\n",
+                        "example": 5
+                      }
+                    },
+                    "description": "Adjuster for Complex Rules."
+                  },
+                  "conditions": {
+                    "type": "array",
+                    "items": {
+                      "title": "Complex Rule Condition",
+                      "required": [
+                        "modifier_id",
+                        "modifier_value_id",
+                        "variant_id"
+                      ],
+                      "type": "object",
+                      "properties": {
+                        "modifier_id": {
+                          "type": "integer",
+                          "description": "The unique numeric ID of the modifier with which the rule condition is associated.\nRequired in /POST.",
+                          "nullable": true,
+                          "example": 55
+                        },
+                        "modifier_value_id": {
+                          "type": "integer",
+                          "description": "The unique numeric ID of the modifier value with which the rule condition is associated.\nRequired in /POST.",
+                          "nullable": true,
+                          "example": 256
+                        },
+                        "variant_id": {
+                          "type": "integer",
+                          "description": "The unique numeric ID of the variant with which the rule condition is associated.\nRequired in /POST.",
+                          "nullable": true,
+                          "example": 1
+                        }
+                      }
+                    }
+                  }
+                },
+                "description": "Common ComplexRule properties."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.deleteComplexRuleById",
+      "title": "Delete a Complex Rule",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/complex-rules/{complex_rule_id}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bigcommerce.getCustomFields",
+      "title": "Get Custom Fields",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/custom-fields",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to include, in a comma-separated list. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "exclude_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to exclude, in a comma-separated list. The specified fields will be excluded from a response. The ID cannot be excluded."
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Specifies the page number in a limited (paginated) list of products."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Controls the number of items per page in a limited (paginated) list of products."
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.createCustomField",
+      "title": "Create a Custom Fields",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/custom-fields",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "Custom Field",
+                "required": [
+                  "name",
+                  "value"
+                ],
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "maxLength": 250,
+                    "minLength": 1,
+                    "type": "string",
+                    "description": "The name of the field, shown on the storefront, orders, etc. Required for /POST\n",
+                    "example": "ISBN",
+                    "x-required": [
+                      "post"
+                    ]
+                  },
+                  "value": {
+                    "maxLength": 250,
+                    "minLength": 1,
+                    "type": "string",
+                    "description": "The name of the field, shown on the storefront, orders, etc. Required for /POST\n",
+                    "example": "1234567890123",
+                    "x-required": [
+                      "post"
+                    ]
+                  }
+                },
+                "description": "Gets custom fields associated with a product. These allow you to specify additional information that will appear on the product’s page, such as a book’s ISBN or a DVD’s release date."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.getCustomFieldById",
+      "title": "Get a Custom Field",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/custom-fields/{custom_field_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to include, in a comma-separated list. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "exclude_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to exclude, in a comma-separated list. The specified fields will be excluded from a response. The ID cannot be excluded."
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.updateCustomField",
+      "title": "Update a Custom Field",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/custom-fields/{custom_field_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "Custom Field",
+                "required": [
+                  "name",
+                  "value"
+                ],
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "minimum": 1,
+                    "type": "integer",
+                    "description": "The unique numeric ID of the custom field; increments sequentially.\nRead-Only",
+                    "example": 6
+                  },
+                  "name": {
+                    "maxLength": 250,
+                    "minLength": 1,
+                    "type": "string",
+                    "description": "The name of the field, shown on the storefront, orders, etc. Required for /POST\n",
+                    "example": "ISBN",
+                    "x-required": [
+                      "post"
+                    ]
+                  },
+                  "value": {
+                    "maxLength": 250,
+                    "minLength": 1,
+                    "type": "string",
+                    "description": "The name of the field, shown on the storefront, orders, etc. Required for /POST\n",
+                    "example": "1234567890123",
+                    "x-required": [
+                      "post"
+                    ]
+                  }
+                },
+                "description": "Gets custom fields associated with a product. These allow you to specify additional information that will appear on the product’s page, such as a book’s ISBN or a DVD’s release date."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.deleteCustomFieldById",
+      "title": "Delete a Custom Field",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/custom-fields/{custom_field_id}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bigcommerce.getBulkPricingRules",
+      "title": "Get All Bulk Pricing Rules",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/bulk-pricing-rules",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to include, in a comma-separated list. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "exclude_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to exclude, in a comma-separated list. The specified fields will be excluded from a response. The ID cannot be excluded."
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Specifies the page number in a limited (paginated) list of products."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Controls the number of items per page in a limited (paginated) list of products."
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.createBulkPricingRule",
+      "title": "Create a Bulk Pricing Rule",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/bulk-pricing-rules",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Specifies the page number in a limited (paginated) list of products."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Controls the number of items per page in a limited (paginated) list of products."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/bulkPricingRule_Full"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.getBulkPricingRuleById",
+      "title": "Get a Bulk Pricing Rule",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/bulk-pricing-rules/{bulk_pricing_rule_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to include, in a comma-separated list. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "exclude_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to exclude, in a comma-separated list. The specified fields will be excluded from a response. The ID cannot be excluded."
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.updateBulkPricingRule",
+      "title": "Update a Bulk Pricing Rule",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/bulk-pricing-rules/{bulk_pricing_rule_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "description": "Unique ID of the *Bulk Pricing Rule*. Read-Only.",
+                        "readOnly": true
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ]
+                  },
+                  {
+                    "$ref": "#/components/schemas/bulkPricingRule_Full"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.deleteBulkPricingRuleById",
+      "title": "Delete a Bulk Pricing Rule",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/bulk-pricing-rules/{bulk_pricing_rule_id}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bigcommerce.getProductMetafieldsByProductId",
+      "title": "Get All Product Metafields",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/metafields",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Specifies the page number in a limited (paginated) list of products."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Controls the number of items per page in a limited (paginated) list of products."
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter based on a metafield's key.\n"
+        },
+        {
+          "name": "namespace",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter based on a metafield's namespace."
+        },
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to include, in a comma-separated list. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "exclude_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to exclude, in a comma-separated list. The specified fields will be excluded from a response. The ID cannot be excluded."
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.createProductMetafield",
+      "title": "Create a Product Metafield",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/metafields",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/metafield_Base"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.getProductMetafieldByProductId",
+      "title": "Get a Product Metafield",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/metafields/{metafield_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to include, in a comma-separated list. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "exclude_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to exclude, in a comma-separated list. The specified fields will be excluded from a response. The ID cannot be excluded."
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.updateProductMetafield",
+      "title": "Update a Product Metafield",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/metafields/{metafield_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/metafield_Base"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.deleteProductMetafieldById",
+      "title": "Delete a Product Metafield",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/metafields/{metafield_id}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bigcommerce.getProductReviews",
+      "title": "Get Product Reviews",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/reviews",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to include, in a comma-separated list. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "exclude_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to exclude, in a comma-separated list. The specified fields will be excluded from a response. The ID cannot be excluded."
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Specifies the page number in a limited (paginated) list of products."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Controls the number of items per page in a limited (paginated) list of products."
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter items by status. `1` for approved, `0` for pending."
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.createProductReview",
+      "title": "Create a Product Review",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/reviews",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "Product Review Post",
+                "description": "The model for a POST to create a product review.\n",
+                "allOf": [
+                  {
+                    "title": "Product Review Base",
+                    "required": [
+                      "date_reviewed",
+                      "title"
+                    ],
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "maxLength": 255,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The title for the product review.\nRequired in /POST."
+                      },
+                      "text": {
+                        "type": "string",
+                        "description": "The text for the product review.\n"
+                      },
+                      "status": {
+                        "type": "string",
+                        "description": "The status of the product review. Must be one of `approved`, `disapproved` or `pending`.\n"
+                      },
+                      "rating": {
+                        "type": "integer",
+                        "description": "The rating of the product review. Must be one of 0, 1, 2, 3, 4, 5."
+                      },
+                      "email": {
+                        "type": "string",
+                        "description": "The email of the reviewer. Must be a valid email, or an empty string."
+                      },
+                      "name": {
+                        "maxLength": 255,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The name of the reviewer."
+                      },
+                      "date_reviewed": {
+                        "type": "string",
+                        "description": "Date the product was reviewed. Required in /POST.\n",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.getProductReviewById",
+      "title": "Get a Product Review",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/reviews/{review_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "include_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to include, in a comma-separated list. The ID and the specified fields will be returned."
+        },
+        {
+          "name": "exclude_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields to exclude, in a comma-separated list. The specified fields will be excluded from a response. The ID cannot be excluded."
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.updateProductReview",
+      "title": "Update a Product Review",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/reviews/{review_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "title": "Product Review Put",
+                "description": "The model for a PUT to update a product review.\n",
+                "allOf": [
+                  {
+                    "title": "Product Review Base",
+                    "required": [
+                      "date_reviewed",
+                      "title"
+                    ],
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "maxLength": 255,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The title for the product review.\nRequired in /POST."
+                      },
+                      "text": {
+                        "type": "string",
+                        "description": "The text for the product review.\n"
+                      },
+                      "status": {
+                        "type": "string",
+                        "description": "The status of the product review. Must be one of `approved`, `disapproved` or `pending`.\n"
+                      },
+                      "rating": {
+                        "type": "integer",
+                        "description": "The rating of the product review. Must be one of 0, 1, 2, 3, 4, 5."
+                      },
+                      "email": {
+                        "type": "string",
+                        "description": "The email of the reviewer. Must be a valid email, or an empty string."
+                      },
+                      "name": {
+                        "maxLength": 255,
+                        "minLength": 0,
+                        "type": "string",
+                        "description": "The name of the reviewer."
+                      },
+                      "date_reviewed": {
+                        "type": "string",
+                        "description": "Date the product was reviewed. Required in /POST.\n",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.deleteProductReview",
+      "title": "Delete a Product Review",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/{product_id}/reviews/{review_id}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "bigcommerce.GetProductsChannelAssignments",
+      "title": "Get Products Channel Assignments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/channel-assignments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "product_id:in",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "channel_id:in",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.CreateProductsChannelAssignments",
+      "title": "Create Products Channel Assignments",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/channel-assignments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProductChannelAssignment"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.DeleteProductsChannelAssignments",
+      "title": "Delete Products Channel Assignments",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/channel-assignments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "product_id:in",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "channel_id:in",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.GetProductsCategoryAssignments",
+      "title": "Get Products Category Assignments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/category-assignments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "product_id:in",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "category_id:in",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.CreateProductsCategoryAssignments",
+      "title": "Create Products Category Assignments.",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/category-assignments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProductCategoryAssignment"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.DeleteProductsCategoryAssignments",
+      "title": "Delete Products Category Assignments",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/products/category-assignments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "product_id:in",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "category_id:in",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "bigcommerce.getCatalogSummary",
+      "title": "Get a Catalog Summary",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.bigcommerce.com/stores/{store_hash}/v3",
+      "path": "/catalog/summary",
+      "authentication": "apiKey",
+      "parameters": []
+    }
+  ]
+}

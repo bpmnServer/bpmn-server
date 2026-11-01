@@ -1,0 +1,1428 @@
+{
+  "name": "postmark",
+  "title": "Postmark",
+  "source": "https://api.apis.guru/v2/specs/postmarkapp.com/server/1.0.0/swagger.json",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "postmark.getBounces",
+      "title": "Get bounces",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/bounces",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "count",
+          "in": "query",
+          "required": true,
+          "description": "Number of bounces to return per request. Max 500."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": true,
+          "description": "Number of bounces to skip."
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "description": "Filter by type of bounce"
+        },
+        {
+          "name": "inactive",
+          "in": "query",
+          "description": "Filter by emails that were deactivated by Postmark due to the bounce. Set to true or false. If this isn't specified it will return both active and inactive."
+        },
+        {
+          "name": "emailFilter",
+          "in": "query",
+          "description": "Filter by email address"
+        },
+        {
+          "name": "messageID",
+          "in": "query",
+          "description": "Filter by messageID"
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "description": "Filter by tag"
+        },
+        {
+          "name": "todate",
+          "in": "query",
+          "description": "Filter messages up to the date specified. e.g. `2014-02-01`"
+        },
+        {
+          "name": "fromdate",
+          "in": "query",
+          "description": "Filter messages starting from the date specified. e.g. `2014-02-01`"
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getSingleBounce",
+      "title": "Get a single bounce",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/bounces/{bounceid}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "bounceid",
+          "in": "path",
+          "required": true,
+          "description": "The ID of the bounce to retrieve."
+        }
+      ]
+    },
+    {
+      "connector": "postmark.activateBounce",
+      "title": "Activate a bounce",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/bounces/{bounceid}/activate",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "bounceid",
+          "in": "path",
+          "required": true,
+          "description": "The ID of the Bounce to activate."
+        }
+      ]
+    },
+    {
+      "connector": "postmark.get_bounces_bounceid_dump",
+      "title": "Get bounce dump",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/bounces/{bounceid}/dump",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "bounceid",
+          "in": "path",
+          "required": true,
+          "description": "The ID for the bounce dump to retrieve."
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getDeliveryStats",
+      "title": "Get delivery stats",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/deliverystats",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        }
+      ]
+    },
+    {
+      "connector": "postmark.sendEmail",
+      "title": "Send a single email",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/email",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "schema": {
+            "$ref": "#/definitions/SendEmailRequest"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "postmark.sendEmailBatch",
+      "title": "Send a batch of emails",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/email/batch",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "schema": {
+            "$ref": "#/definitions/SendEmailBatchRequest"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "postmark.sendEmailBatchWithTemplates",
+      "title": "Send a batch of email using templates.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/email/batchWithTemplates",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/SendEmailTemplatedBatchRequest"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "postmark.sendEmailWithTemplate",
+      "title": "Send an email using a Template",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/email/withTemplate",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/EmailWithTemplateRequest"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "postmark.searchInboundMessages",
+      "title": "Inbound message search",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/messages/inbound",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "count",
+          "in": "query",
+          "required": true,
+          "description": "Number of messages to return per request. Max 500."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": true,
+          "description": "Number of messages to skip"
+        },
+        {
+          "name": "recipient",
+          "in": "query",
+          "description": "Filter by the user who was receiving the email"
+        },
+        {
+          "name": "fromemail",
+          "in": "query",
+          "description": "Filter by the sender email address"
+        },
+        {
+          "name": "subject",
+          "in": "query",
+          "description": "Filter by email subject"
+        },
+        {
+          "name": "mailboxhash",
+          "in": "query",
+          "description": "Filter by mailboxhash"
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "description": "Filter by tag"
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "description": "Filter by status (`blocked`, `processed`, `queued`, `failed`, `scheduled`)"
+        },
+        {
+          "name": "todate",
+          "in": "query",
+          "description": "Filter messages up to the date specified. e.g. `2014-02-01`"
+        },
+        {
+          "name": "fromdate",
+          "in": "query",
+          "description": "Filter messages starting from the date specified. e.g. `2014-02-01`"
+        }
+      ]
+    },
+    {
+      "connector": "postmark.bypassRulesForInboundMessage",
+      "title": "Bypass rules for a blocked inbound message",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/messages/inbound/{messageid}/bypass",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "messageid",
+          "in": "path",
+          "required": true,
+          "description": "The ID of the message which should bypass inbound rules."
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getInboundMessageDetails",
+      "title": "Inbound message details",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/messages/inbound/{messageid}/details",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "messageid",
+          "in": "path",
+          "required": true,
+          "description": "The ID of the message for which to details will be retrieved."
+        }
+      ]
+    },
+    {
+      "connector": "postmark.retryInboundMessageProcessing",
+      "title": "Retry a failed inbound message for processing",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/messages/inbound/{messageid}/retry",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "messageid",
+          "in": "path",
+          "required": true,
+          "description": "The ID of the inbound message on which we should retry processing."
+        }
+      ]
+    },
+    {
+      "connector": "postmark.searchOutboundMessages",
+      "title": "Outbound message search",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/messages/outbound",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "count",
+          "in": "query",
+          "required": true,
+          "description": "Number of messages to return per request. Max 500."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": true,
+          "description": "Number of messages to skip"
+        },
+        {
+          "name": "recipient",
+          "in": "query",
+          "description": "Filter by the user who was receiving the email"
+        },
+        {
+          "name": "fromemail",
+          "in": "query",
+          "description": "Filter by the sender email address"
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "description": "Filter by tag"
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "description": "Filter by status (`queued` or `sent`)"
+        },
+        {
+          "name": "todate",
+          "in": "query",
+          "description": "Filter messages up to the date specified. e.g. `2014-02-01`"
+        },
+        {
+          "name": "fromdate",
+          "in": "query",
+          "description": "Filter messages starting from the date specified. e.g. `2014-02-01`"
+        }
+      ]
+    },
+    {
+      "connector": "postmark.searchClicksForOutboundMessages",
+      "title": "Clicks for a all messages",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/messages/outbound/clicks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "count",
+          "in": "query",
+          "required": true,
+          "description": "Number of message clicks to return per request. Max 500."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": true,
+          "description": "Number of messages to skip"
+        },
+        {
+          "name": "recipient",
+          "in": "query",
+          "required": false,
+          "description": "Filter by To, Cc, Bcc"
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "required": false,
+          "description": "Filter by tag"
+        },
+        {
+          "name": "client_name",
+          "in": "query",
+          "required": false,
+          "description": "Filter by client name, i.e. Outlook, Gmail"
+        },
+        {
+          "name": "client_company",
+          "in": "query",
+          "required": false,
+          "description": "Filter by company, i.e. Microsoft, Apple, Google"
+        },
+        {
+          "name": "client_family",
+          "in": "query",
+          "required": false,
+          "description": "Filter by client family, i.e. OS X, Chrome"
+        },
+        {
+          "name": "os_name",
+          "in": "query",
+          "required": false,
+          "description": "Filter by full OS name and specific version, i.e. OS X 10.9 Mavericks, Windows 7"
+        },
+        {
+          "name": "os_family",
+          "in": "query",
+          "required": false,
+          "description": "Filter by kind of OS used without specific version, i.e. OS X, Windows"
+        },
+        {
+          "name": "os_company",
+          "in": "query",
+          "required": false,
+          "description": "Filter by company which produced the OS, i.e. Apple Computer, Inc., Microsoft Corporation"
+        },
+        {
+          "name": "platform",
+          "in": "query",
+          "required": false,
+          "description": "Filter by platform, i.e. webmail, desktop, mobile"
+        },
+        {
+          "name": "country",
+          "in": "query",
+          "required": false,
+          "description": "Filter by country messages were opened in, i.e. Denmark, Russia"
+        },
+        {
+          "name": "region",
+          "in": "query",
+          "required": false,
+          "description": "Filter by full name of region messages were opened in, i.e. Moscow, New York"
+        },
+        {
+          "name": "city",
+          "in": "query",
+          "required": false,
+          "description": "Filter by full name of region messages were opened in, i.e. Moscow, New York"
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getClicksForSingleOutboundMessage",
+      "title": "Retrieve Message Clicks",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/messages/outbound/clicks/{messageid}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "messageid",
+          "in": "path",
+          "required": true,
+          "description": "The ID of the Outbound Message for which click statistics should be retrieved."
+        },
+        {
+          "name": "count",
+          "in": "query",
+          "required": true,
+          "description": "Number of message clicks to return per request. Max 500."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": true,
+          "description": "Number of messages to skip."
+        }
+      ]
+    },
+    {
+      "connector": "postmark.searchOpensForOutboundMessages",
+      "title": "Opens for all messages",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/messages/outbound/opens",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "count",
+          "in": "query",
+          "required": true,
+          "description": "Number of message opens to return per request. Max 500."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": true,
+          "description": "Number of messages to skip"
+        },
+        {
+          "name": "recipient",
+          "in": "query",
+          "required": false,
+          "description": "Filter by To, Cc, Bcc"
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "required": false,
+          "description": "Filter by tag"
+        },
+        {
+          "name": "client_name",
+          "in": "query",
+          "required": false,
+          "description": "Filter by client name, i.e. Outlook, Gmail"
+        },
+        {
+          "name": "client_company",
+          "in": "query",
+          "required": false,
+          "description": "Filter by company, i.e. Microsoft, Apple, Google"
+        },
+        {
+          "name": "client_family",
+          "in": "query",
+          "required": false,
+          "description": "Filter by client family, i.e. OS X, Chrome"
+        },
+        {
+          "name": "os_name",
+          "in": "query",
+          "required": false,
+          "description": "Filter by full OS name and specific version, i.e. OS X 10.9 Mavericks, Windows 7"
+        },
+        {
+          "name": "os_family",
+          "in": "query",
+          "required": false,
+          "description": "Filter by kind of OS used without specific version, i.e. OS X, Windows"
+        },
+        {
+          "name": "os_company",
+          "in": "query",
+          "required": false,
+          "description": "Filter by company which produced the OS, i.e. Apple Computer, Inc., Microsoft Corporation"
+        },
+        {
+          "name": "platform",
+          "in": "query",
+          "required": false,
+          "description": "Filter by platform, i.e. webmail, desktop, mobile"
+        },
+        {
+          "name": "country",
+          "in": "query",
+          "required": false,
+          "description": "Filter by country messages were opened in, i.e. Denmark, Russia"
+        },
+        {
+          "name": "region",
+          "in": "query",
+          "required": false,
+          "description": "Filter by full name of region messages were opened in, i.e. Moscow, New York"
+        },
+        {
+          "name": "city",
+          "in": "query",
+          "required": false,
+          "description": "Filter by full name of region messages were opened in, i.e. Moscow, New York"
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getOpensForSingleOutboundMessage",
+      "title": "Retrieve Message Opens",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/messages/outbound/opens/{messageid}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "messageid",
+          "in": "path",
+          "required": true,
+          "description": "The ID of the Outbound Message for which open statistics should be retrieved."
+        },
+        {
+          "name": "count",
+          "in": "query",
+          "required": true,
+          "description": "Number of message opens to return per request. Max 500."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": true,
+          "description": "Number of messages to skip."
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getOutboundMessageDetails",
+      "title": "Outbound message details",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/messages/outbound/{messageid}/details",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "messageid",
+          "in": "path",
+          "required": true,
+          "description": "The ID of the message for which to retrieve details."
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getOutboundMessageDump",
+      "title": "Outbound message dump",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/messages/outbound/{messageid}/dump",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "messageid",
+          "in": "path",
+          "required": true,
+          "description": "The ID of the message for which to retrieve a dump."
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getCurrentServerConfiguration",
+      "title": "Get Server Configuration",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/server",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        }
+      ]
+    },
+    {
+      "connector": "postmark.editCurrentServerConfiguration",
+      "title": "Edit Server Configuration",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/server",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "schema": {
+            "$ref": "#/definitions/EditServerConfigurationRequest"
+          },
+          "description": "The settings that should be modified for the current server."
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getOutboundOverviewStatistics",
+      "title": "Get outbound overview",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/stats/outbound",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "description": "Filter by tag"
+        },
+        {
+          "name": "fromdate",
+          "in": "query",
+          "description": "Filter stats starting from the date specified. e.g. `2014-01-01`"
+        },
+        {
+          "name": "todate",
+          "in": "query",
+          "description": "Filter stats up to the date specified. e.g. `2014-02-01`"
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getBounceCounts",
+      "title": "Get bounce counts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/stats/outbound/bounces",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "description": "Filter by tag"
+        },
+        {
+          "name": "fromdate",
+          "in": "query",
+          "description": "Filter stats starting from the date specified. e.g. `2014-01-01`"
+        },
+        {
+          "name": "todate",
+          "in": "query",
+          "description": "Filter stats up to the date specified. e.g. `2014-02-01`"
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getOutboundClickCounts",
+      "title": "Get click counts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/stats/outbound/clicks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "description": "Filter by tag"
+        },
+        {
+          "name": "fromdate",
+          "in": "query",
+          "description": "Filter stats starting from the date specified. e.g. `2014-01-01`"
+        },
+        {
+          "name": "todate",
+          "in": "query",
+          "description": "Filter stats up to the date specified. e.g. `2014-02-01`"
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getOutboundClickCountsByBrowserFamily",
+      "title": "Get browser usage by family",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/stats/outbound/clicks/browserfamilies",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "description": "Filter by tag"
+        },
+        {
+          "name": "fromdate",
+          "in": "query",
+          "description": "Filter stats starting from the date specified. e.g. `2014-01-01`"
+        },
+        {
+          "name": "todate",
+          "in": "query",
+          "description": "Filter stats up to the date specified. e.g. `2014-02-01`"
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getOutboundClickCountsByLocation",
+      "title": "Get clicks by body location",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/stats/outbound/clicks/location",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "description": "Filter by tag"
+        },
+        {
+          "name": "fromdate",
+          "in": "query",
+          "description": "Filter stats starting from the date specified. e.g. `2014-01-01`"
+        },
+        {
+          "name": "todate",
+          "in": "query",
+          "description": "Filter stats up to the date specified. e.g. `2014-02-01`"
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getOutboundClickCountsByPlatform",
+      "title": "Get browser plaform usage",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/stats/outbound/clicks/platforms",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "description": "Filter by tag"
+        },
+        {
+          "name": "fromdate",
+          "in": "query",
+          "description": "Filter stats starting from the date specified. e.g. `2014-01-01`"
+        },
+        {
+          "name": "todate",
+          "in": "query",
+          "description": "Filter stats up to the date specified. e.g. `2014-02-01`"
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getOutboundOpenCounts",
+      "title": "Get email open counts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/stats/outbound/opens",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "description": "Filter by tag"
+        },
+        {
+          "name": "fromdate",
+          "in": "query",
+          "description": "Filter stats starting from the date specified. e.g. `2014-01-01`"
+        },
+        {
+          "name": "todate",
+          "in": "query",
+          "description": "Filter stats up to the date specified. e.g. `2014-02-01`"
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getOutboundOpenCountsByEmailClient",
+      "title": "Get email client usage",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/stats/outbound/opens/emailclients",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "description": "Filter by tag"
+        },
+        {
+          "name": "fromdate",
+          "in": "query",
+          "description": "Filter stats starting from the date specified. e.g. `2014-01-01`"
+        },
+        {
+          "name": "todate",
+          "in": "query",
+          "description": "Filter stats up to the date specified. e.g. `2014-02-01`"
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getOutboundOpenCountsByPlatform",
+      "title": "Get email platform usage",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/stats/outbound/opens/platforms",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "description": "Filter by tag"
+        },
+        {
+          "name": "fromdate",
+          "in": "query",
+          "description": "Filter stats starting from the date specified. e.g. `2014-01-01`"
+        },
+        {
+          "name": "todate",
+          "in": "query",
+          "description": "Filter stats up to the date specified. e.g. `2014-02-01`"
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getSentCounts",
+      "title": "Get sent counts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/stats/outbound/sends",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "description": "Filter by tag"
+        },
+        {
+          "name": "fromdate",
+          "in": "query",
+          "description": "Filter stats starting from the date specified. e.g. `2014-01-01`"
+        },
+        {
+          "name": "todate",
+          "in": "query",
+          "description": "Filter stats up to the date specified. e.g. `2014-02-01`"
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getSpamComplaints",
+      "title": "Get spam complaints",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/stats/outbound/spam",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "description": "Filter by tag"
+        },
+        {
+          "name": "fromdate",
+          "in": "query",
+          "description": "Filter stats starting from the date specified. e.g. `2014-01-01`"
+        },
+        {
+          "name": "todate",
+          "in": "query",
+          "description": "Filter stats up to the date specified. e.g. `2014-02-01`"
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getTrackedEmailCounts",
+      "title": "Get tracked email counts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/stats/outbound/tracked",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "description": "Filter by tag"
+        },
+        {
+          "name": "fromdate",
+          "in": "query",
+          "description": "Filter stats starting from the date specified. e.g. `2014-01-01`"
+        },
+        {
+          "name": "todate",
+          "in": "query",
+          "description": "Filter stats starting from the date specified. e.g. `2014-01-01`"
+        }
+      ]
+    },
+    {
+      "connector": "postmark.listTemplates",
+      "title": "Get the Templates associated with this Server",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/templates",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "Count",
+          "in": "query",
+          "required": true,
+          "description": "The number of Templates to return"
+        },
+        {
+          "name": "Offset",
+          "in": "query",
+          "required": true,
+          "description": "The number of Templates to \"skip\" before returning results."
+        }
+      ]
+    },
+    {
+      "connector": "postmark.post_templates",
+      "title": "Create a Template",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/templates",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/CreateTemplateRequest"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "postmark.testTemplateContent",
+      "title": "Test Template Content",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/templates/validate",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "schema": {
+            "$ref": "#/definitions/TemplateValidationRequest"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "postmark.deleteTemplate",
+      "title": "Delete a Template",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/templates/{templateIdOrAlias}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "templateIdOrAlias",
+          "in": "path",
+          "required": true,
+          "description": "The 'TemplateID' or 'Alias' value for the Template you wish to delete."
+        }
+      ]
+    },
+    {
+      "connector": "postmark.getSingleTemplate",
+      "title": "Get a Template",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/templates/{templateIdOrAlias}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "templateIdOrAlias",
+          "in": "path",
+          "required": true,
+          "description": "The 'TemplateID' or 'Alias' value for the Template you wish to retrieve."
+        }
+      ]
+    },
+    {
+      "connector": "postmark.updateTemplate",
+      "title": "Update a Template",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/templates/{templateIdOrAlias}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "templateIdOrAlias",
+          "in": "path",
+          "required": true,
+          "description": "The 'TemplateID' or 'Alias' value for the Template you wish to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/EditTemplateRequest"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "postmark.listInboundRules",
+      "title": "List inbound rule triggers",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/triggers/inboundrules",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "count",
+          "in": "query",
+          "required": true,
+          "description": "Number of records to return per request."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": true,
+          "description": "Number of records to skip."
+        }
+      ]
+    },
+    {
+      "connector": "postmark.createInboundRule",
+      "title": "Create an inbound rule trigger",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/triggers/inboundrules",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "schema": {
+            "$ref": "#/definitions/CreateInboundRuleRequest"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "postmark.deleteInboundRule",
+      "title": "Delete a single trigger",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.postmarkapp.com/",
+      "path": "/triggers/inboundrules/{triggerid}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "X-Postmark-Server-Token",
+          "in": "header",
+          "required": true,
+          "description": "The token associated with the Server on which this request will operate."
+        },
+        {
+          "name": "triggerid",
+          "in": "path",
+          "required": true,
+          "description": "The ID of the Inbound Rule that should be deleted."
+        }
+      ]
+    }
+  ]
+}

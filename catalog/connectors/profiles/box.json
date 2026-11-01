@@ -1,0 +1,8 @@
+{
+  "name": "box",
+  "title": "Box",
+  "source": "https://raw.githubusercontent.com/box/box-openapi/main/openapi.json",
+  "authentication": "oauth-client-credentials-flow",
+  "operations": [],
+  "error": "The operation was aborted due to timeout"
+}

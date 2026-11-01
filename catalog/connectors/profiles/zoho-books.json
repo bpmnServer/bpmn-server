@@ -1,0 +1,310 @@
+{
+  "name": "zoho-books",
+  "title": "Zoho Books",
+  "source": "https://raw.githubusercontent.com/ballerina-platform/openapi-connectors/main/openapi/zoho.books/openapi.yaml",
+  "authentication": "oauth-client-credentials-flow",
+  "operations": [
+    {
+      "connector": "zoho-books.listContacts",
+      "title": "List contacts.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://books.zoho.com",
+      "path": "/api/v3/contacts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "organization_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Unique identifier for an organization"
+        }
+      ]
+    },
+    {
+      "connector": "zoho-books.addContact",
+      "title": "Add a contact.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://books.zoho.com",
+      "path": "/api/v3/contacts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "organization_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Unique identifier for an organization"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Contact"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "zoho-books.getContact",
+      "title": "Get Contact.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://books.zoho.com",
+      "path": "/api/v3/contacts/{contacts_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "contacts_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Unique identifier for an contact"
+        },
+        {
+          "name": "organization_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Unique identifier for an organization"
+        }
+      ]
+    },
+    {
+      "connector": "zoho-books.updateContact",
+      "title": "Update a contact.",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://books.zoho.com",
+      "path": "/api/v3/contacts/{contacts_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "contacts_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Unique identifier for an contact"
+        },
+        {
+          "name": "organization_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Unique identifier for an organization"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Contact"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "zoho-books.deleteContact",
+      "title": "Delete a contact.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://books.zoho.com",
+      "path": "/api/v3/contacts/{contacts_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "contacts_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Unique identifier for an contact"
+        },
+        {
+          "name": "organization_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Unique identifier for an organization"
+        }
+      ]
+    },
+    {
+      "connector": "zoho-books.listInvoices",
+      "title": "List Invoices.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://books.zoho.com",
+      "path": "/api/v3/invoices",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "organization_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Unique identifier for an organization"
+        }
+      ]
+    },
+    {
+      "connector": "zoho-books.addInvoice",
+      "title": "Add an invoice.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://books.zoho.com",
+      "path": "/api/v3/invoices",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "organization_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Unique identifier for an organization"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Invoice"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "zoho-books.getInvoice",
+      "title": "Get Invoice.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://books.zoho.com",
+      "path": "/api/v3/invoices/{invoice_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "invoice_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Unique identifier for an invoice"
+        },
+        {
+          "name": "organization_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Unique identifier for an organization"
+        }
+      ]
+    },
+    {
+      "connector": "zoho-books.updateInvoice",
+      "title": "Update an invoice.",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://books.zoho.com",
+      "path": "/api/v3/invoices/{invoice_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "invoice_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Unique identifier for an invoice"
+        },
+        {
+          "name": "organization_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Unique identifier for an organization"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Invoice"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "zoho-books.deleteInvoice",
+      "title": "Delete an invoice.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://books.zoho.com",
+      "path": "/api/v3/invoices/{invoice_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "invoice_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Unique identifier for an invoice"
+        },
+        {
+          "name": "organization_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Unique identifier for an organization"
+        }
+      ]
+    }
+  ]
+}

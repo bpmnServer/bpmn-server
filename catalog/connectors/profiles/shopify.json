@@ -1,0 +1,8 @@
+{
+  "name": "shopify",
+  "title": "Shopify",
+  "source": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/shopify.dev/admin/2023-04/openapi.yaml",
+  "authentication": "bearer",
+  "operations": [],
+  "error": "404 Not Found"
+}

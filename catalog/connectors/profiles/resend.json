@@ -1,0 +1,3650 @@
+{
+  "name": "resend",
+  "title": "Resend",
+  "source": "https://raw.githubusercontent.com/resendlabs/resend-openapi/main/resend.yaml",
+  "authentication": "bearer",
+  "operations": [
+    {
+      "connector": "resend.emails/send",
+      "title": "Send an email",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/emails",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "description": "A unique identifier for the request to ensure emails are only sent once. [Learn more](https://resend.com/docs/dashboard/emails/idempotency-keys)"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendEmailRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.emails/list",
+      "title": "Retrieve a list of emails",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/emails",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.emails/get",
+      "title": "Retrieve a single email",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/emails/{email_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "email_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the email."
+        }
+      ]
+    },
+    {
+      "connector": "resend.emails/update",
+      "title": "Update a single email",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.resend.com",
+      "path": "/emails/{email_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "email_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the email."
+        }
+      ]
+    },
+    {
+      "connector": "resend.emails/cancel",
+      "title": "Cancel the schedule of the e-mail.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/emails/{email_id}/cancel",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "email_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the email."
+        }
+      ]
+    },
+    {
+      "connector": "resend.emails/share",
+      "title": "Create a shareable link for a sent or received email.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/emails/{email_id}/share",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "email_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the email."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShareEmailOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.emails/send-batch",
+      "title": "Trigger up to 100 batch emails at once.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/emails/batch",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "description": "A unique identifier for the request to ensure emails are only sent once. [Learn more](https://resend.com/docs/dashboard/emails/idempotency-keys)"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SendEmailRequest"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.emails/list-attachments",
+      "title": "Retrieve a list of attachments for a sent email",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/emails/{email_id}/attachments",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "email_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The ID of the email."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Maximum number of attachments to return."
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Pagination cursor to fetch results after this attachment ID. Cannot be used with 'before'."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Pagination cursor to fetch results before this attachment ID. Cannot be used with 'after'."
+        }
+      ]
+    },
+    {
+      "connector": "resend.emails/get-attachment",
+      "title": "Retrieve a single attachment for a sent email",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/emails/{email_id}/attachments/{attachment_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "email_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The ID of the email."
+        },
+        {
+          "name": "attachment_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The ID of the attachment."
+        }
+      ]
+    },
+    {
+      "connector": "resend.emails/list-receiving",
+      "title": "Retrieve a list of received emails",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/emails/receiving",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Maximum number of received emails to return."
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Pagination cursor to fetch results after this email ID. Cannot be used with 'before'."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Pagination cursor to fetch results before this email ID. Cannot be used with 'after'."
+        }
+      ]
+    },
+    {
+      "connector": "resend.emails/get-receiving",
+      "title": "Retrieve a single received email",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/emails/receiving/{email_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "email_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The ID of the received email."
+        }
+      ]
+    },
+    {
+      "connector": "resend.emails/list-receiving-attachments",
+      "title": "Retrieve a list of attachments for a received email",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/emails/receiving/{email_id}/attachments",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "email_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The ID of the received email."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Maximum number of attachments to return."
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Pagination cursor to fetch results after this attachment ID. Cannot be used with 'before'."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Pagination cursor to fetch results before this attachment ID. Cannot be used with 'after'."
+        }
+      ]
+    },
+    {
+      "connector": "resend.emails/get-receiving-attachment",
+      "title": "Retrieve a single attachment for a received email",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/emails/receiving/{email_id}/attachments/{attachment_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "email_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The ID of the received email."
+        },
+        {
+          "name": "attachment_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The ID of the attachment."
+        }
+      ]
+    },
+    {
+      "connector": "resend.emails/metrics",
+      "title": "Retrieve account-level email metrics",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/emails/metrics",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "start_date",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The start of the date range, as an ISO 8601 date or datetime. Must be on or before `end_date`. Defaults to 6 days before `end_date`."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The end of the date range, as an ISO 8601 date or datetime. Values in the future are clamped to the current time. Defaults to now."
+        },
+        {
+          "name": "timezone",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "default": "UTC"
+          },
+          "description": "The IANA timezone (e.g. `America/New_York`) used to bucket periods when `period` is in `dimensions`."
+        },
+        {
+          "name": "granularity",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "hourly",
+              "daily",
+              "weekly",
+              "monthly"
+            ],
+            "default": "daily"
+          },
+          "description": "The bucket size used when `period` is in `dimensions`. The date range can't produce more than 10,000 periods at the chosen granularity."
+        },
+        {
+          "name": "metrics",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "received",
+                "delivered",
+                "complained",
+                "suppressed",
+                "bounced",
+                "bounced_transient",
+                "bounced_permanent",
+                "bounced_undetermined",
+                "opened",
+                "clicked",
+                "unsubscribed",
+                "delivery_delayed",
+                "failed",
+                "sent",
+                "unique_opened",
+                "unique_clicked",
+                "delivery_rate",
+                "open_rate",
+                "click_rate",
+                "bounce_rate",
+                "complaint_rate",
+                "unsubscribe_rate"
+              ]
+            }
+          },
+          "description": "List of metrics to include in the response. Defaults to all metrics. Accepts a comma-separated value, the parameter repeated, or a mix of both."
+        },
+        {
+          "name": "dimensions",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "period",
+                "domain",
+                "email",
+                "broadcast"
+              ]
+            }
+          },
+          "description": "List of dimensions to break the response down by. `email` cannot be combined with `broadcast`. Defaults to `[]`, returning a single `totals` row for the whole range, with no `data`. Accepts a comma-separated value, the parameter repeated, or a mix of both."
+        },
+        {
+          "name": "domain_id",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "description": "List of sending domain IDs to restrict the response to, up to 100. Accepts a comma-separated value, the parameter repeated, or a mix of both."
+        },
+        {
+          "name": "email_id",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "description": "List of email IDs to restrict the response to, up to 100. Cannot be combined with the `broadcast` dimension or `broadcast_id`. Accepts a comma-separated value, the parameter repeated, or a mix of both."
+        },
+        {
+          "name": "broadcast_id",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "description": "List of broadcast IDs to restrict the response to, up to 100. Cannot be combined with the `email` dimension or `email_id`. Accepts a comma-separated value, the parameter repeated, or a mix of both."
+        }
+      ]
+    },
+    {
+      "connector": "resend.domains/create",
+      "title": "Create a new domain",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/domains",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDomainRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.domains/list",
+      "title": "Retrieve a list of domains",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/domains",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.domains/get",
+      "title": "Retrieve a single domain",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/domains/{domain_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "domain_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the domain."
+        }
+      ]
+    },
+    {
+      "connector": "resend.domains/update",
+      "title": "Update an existing domain",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.resend.com",
+      "path": "/domains/{domain_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "domain_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the domain."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDomainOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.domains/remove",
+      "title": "Remove an existing domain",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/domains/{domain_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "domain_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the domain."
+        }
+      ]
+    },
+    {
+      "connector": "resend.domains/verify",
+      "title": "Verify an existing domain",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/domains/{domain_id}/verify",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "domain_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the domain."
+        }
+      ]
+    },
+    {
+      "connector": "resend.domains/create-claim",
+      "title": "Claim a domain",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/domains/claim",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDomainClaimRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.domains/get-claim",
+      "title": "Retrieve a domain claim",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/domains/{domain_id}/claim",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "domain_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the placeholder domain created by the claim."
+        }
+      ]
+    },
+    {
+      "connector": "resend.domains/verify-claim",
+      "title": "Verify a domain claim",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/domains/{domain_id}/claim/verify",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "domain_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the placeholder domain created by the claim."
+        }
+      ]
+    },
+    {
+      "connector": "resend.api-keys/create",
+      "title": "Create a new API key",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/api-keys",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateApiKeyRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.api-keys/list",
+      "title": "Retrieve a list of API keys",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/api-keys",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.api-keys/update",
+      "title": "Update an existing API key",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.resend.com",
+      "path": "/api-keys/{api_key_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "api_key_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The API key ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateApiKeyRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.api-keys/remove",
+      "title": "Remove an existing API key",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/api-keys/{api_key_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "api_key_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The API key ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.oauth/list-grants",
+      "title": "Retrieve a list of OAuth grants",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/oauth/grants",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.oauth/revoke-grant",
+      "title": "Revoke an OAuth grant",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/oauth/grants/{oauth_grant_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "oauth_grant_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The OAuth grant ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.templates/create",
+      "title": "Create a template",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/templates",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTemplateRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.templates/list",
+      "title": "Retrieve a list of templates",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/templates",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.templates/get",
+      "title": "Retrieve a single template",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/templates/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Template ID or alias."
+        }
+      ]
+    },
+    {
+      "connector": "resend.templates/update",
+      "title": "Update an existing template",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.resend.com",
+      "path": "/templates/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Template ID or alias."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTemplateOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.templates/remove",
+      "title": "Remove an existing template",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/templates/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Template ID or alias."
+        }
+      ]
+    },
+    {
+      "connector": "resend.templates/publish",
+      "title": "Publish a template",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/templates/{id}/publish",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Template ID or alias."
+        }
+      ]
+    },
+    {
+      "connector": "resend.templates/duplicate",
+      "title": "Duplicate a template",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/templates/{id}/duplicate",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Template ID or alias."
+        }
+      ]
+    },
+    {
+      "connector": "resend.audiences/create",
+      "title": "Create a list of contacts",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/audiences",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAudienceOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.audiences/list",
+      "title": "Retrieve a list of audiences",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/audiences",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.audiences/remove",
+      "title": "Remove an existing audience",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/audiences/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Audience ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.audiences/get",
+      "title": "Retrieve a single audience",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/audiences/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Audience ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.contacts/create",
+      "title": "Create a new contact",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/contacts",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContactOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.contacts/list",
+      "title": "Retrieve a list of contacts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/contacts",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.contacts/create-import",
+      "title": "Create a contact import",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/contacts/imports",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContactImportOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.contacts/list-imports",
+      "title": "Retrieve a list of contact imports",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/contacts/imports",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "status",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "in_progress",
+              "completed",
+              "failed"
+            ]
+          },
+          "description": "Filter contact imports by status."
+        }
+      ]
+    },
+    {
+      "connector": "resend.contacts/get-import",
+      "title": "Retrieve a single contact import",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/contacts/imports/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Contact Import ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.contacts/get",
+      "title": "Retrieve a single contact by ID or email",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/contacts/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Contact ID or email address."
+        }
+      ]
+    },
+    {
+      "connector": "resend.contacts/update",
+      "title": "Update a single contact by ID or email",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.resend.com",
+      "path": "/contacts/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Contact ID or email address."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContactOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.contacts/remove",
+      "title": "Remove an existing contact by ID or email",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/contacts/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Contact ID or email address."
+        }
+      ]
+    },
+    {
+      "connector": "resend.broadcasts/create",
+      "title": "Create a broadcast",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/broadcasts",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBroadcastOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.broadcasts/list",
+      "title": "Retrieve a list of broadcasts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/broadcasts",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.broadcasts/remove",
+      "title": "Remove an existing broadcast that is in the draft status",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/broadcasts/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Broadcast ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.broadcasts/get",
+      "title": "Retrieve a single broadcast",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/broadcasts/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Broadcast ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.broadcasts/update",
+      "title": "Update an existing broadcast",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.resend.com",
+      "path": "/broadcasts/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Broadcast ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBroadcastOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.broadcasts/send",
+      "title": "Send or schedule a broadcast",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/broadcasts/{id}/send",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Broadcast ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendBroadcastOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.broadcasts/cancel",
+      "title": "Cancel a broadcast",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/broadcasts/{id}/cancel",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Broadcast ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.broadcasts/duplicate",
+      "title": "Duplicate a broadcast",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/broadcasts/{id}/duplicate",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Broadcast ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.broadcasts/recipients",
+      "title": "Retrieve broadcast recipients",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/broadcasts/{id}/recipients",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Broadcast ID."
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "sent",
+              "delivered",
+              "opened",
+              "clicked",
+              "bounced",
+              "complained",
+              "unsubscribed",
+              "suppressed"
+            ]
+          },
+          "description": "The recipient event type to filter by."
+        },
+        {
+          "name": "email",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter recipients whose email address contains this value."
+        },
+        {
+          "name": "bounce_type",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "permanent",
+              "transient",
+              "undetermined"
+            ]
+          },
+          "description": "Filter bounced recipients by bounce type. Only valid when `type` is `bounced`."
+        }
+      ]
+    },
+    {
+      "connector": "resend.broadcasts/list-clicked-links",
+      "title": "Retrieve a broadcast's clicked links",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/broadcasts/{id}/clicked-links",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Broadcast ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.webhooks/create",
+      "title": "Create a new webhook",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/webhooks",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWebhookRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.webhooks/list",
+      "title": "Retrieve a list of webhooks",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/webhooks",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Maximum number of webhooks to return."
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Pagination cursor to fetch results after this webhook ID. Cannot be used with 'before'."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Pagination cursor to fetch results before this webhook ID. Cannot be used with 'after'."
+        }
+      ]
+    },
+    {
+      "connector": "resend.webhooks/get",
+      "title": "Retrieve a single webhook",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/webhooks/{webhook_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "webhook_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Webhook ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.webhooks/update",
+      "title": "Update an existing webhook",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.resend.com",
+      "path": "/webhooks/{webhook_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "webhook_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Webhook ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWebhookRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.webhooks/remove",
+      "title": "Remove an existing webhook",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/webhooks/{webhook_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "webhook_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Webhook ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.webhooks/rotate-signing-secret",
+      "title": "Rotate a webhook signing secret",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/webhooks/{webhook_id}/signing-secret/rotate",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "webhook_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Webhook ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.webhooks/list-events",
+      "title": "Retrieve a list of webhook events",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/webhooks/{webhook_id}/events",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "webhook_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Webhook ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.webhooks/get-event",
+      "title": "Retrieve a single webhook event",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/webhooks/{webhook_id}/events/{event_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "webhook_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Webhook ID."
+        },
+        {
+          "name": "event_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Webhook Event ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.webhooks/replay-event",
+      "title": "Replay a webhook event",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/webhooks/{webhook_id}/events/{event_id}/replay",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "webhook_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Webhook ID."
+        },
+        {
+          "name": "event_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Webhook Event ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.webhooks/list-event-attempts",
+      "title": "Retrieve a list of webhook event attempts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/webhooks/{webhook_id}/events/{event_id}/attempts",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "webhook_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Webhook ID."
+        },
+        {
+          "name": "event_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Webhook Event ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.segments/create",
+      "title": "Create a new segment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/segments",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSegmentOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.segments/list",
+      "title": "Retrieve a list of segments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/segments",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.segments/get",
+      "title": "Retrieve a single segment",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/segments/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Segment ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.segments/update",
+      "title": "Update an existing segment",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.resend.com",
+      "path": "/segments/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Segment ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSegmentOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.segments/remove",
+      "title": "Remove an existing segment",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/segments/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Segment ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.segments/list-contacts",
+      "title": "Retrieve a list of contacts in a segment",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/segments/{id}/contacts",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Segment ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.topics/create",
+      "title": "Create a new topic",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/topics",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTopicOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.topics/list",
+      "title": "Retrieve a list of topics",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/topics",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.topics/get",
+      "title": "Retrieve a single topic",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/topics/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Topic ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.topics/update",
+      "title": "Update an existing topic",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.resend.com",
+      "path": "/topics/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Topic ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTopicOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.topics/remove",
+      "title": "Remove an existing topic",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/topics/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Topic ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.contact-properties/create",
+      "title": "Create a new contact property",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/contact-properties",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContactPropertyOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.contact-properties/list",
+      "title": "Retrieve a list of contact properties",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/contact-properties",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.contact-properties/get",
+      "title": "Retrieve a single contact property",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/contact-properties/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Contact Property ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.contact-properties/update",
+      "title": "Update an existing contact property",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.resend.com",
+      "path": "/contact-properties/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Contact Property ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContactPropertyOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.contact-properties/remove",
+      "title": "Remove an existing contact property",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/contact-properties/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Contact Property ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.contacts/list-segments",
+      "title": "Retrieve a list of segments for a contact",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/contacts/{contact_id}/segments",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "contact_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Contact ID or email address."
+        }
+      ]
+    },
+    {
+      "connector": "resend.contacts/add-segment",
+      "title": "Add a contact to a segment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/contacts/{contact_id}/segments/{segment_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "contact_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Contact ID or email address."
+        },
+        {
+          "name": "segment_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Segment ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.contacts/remove-segment",
+      "title": "Remove a contact from a segment",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/contacts/{contact_id}/segments/{segment_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "contact_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Contact ID or email address."
+        },
+        {
+          "name": "segment_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Segment ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.contacts/list-topics",
+      "title": "Retrieve topics for a contact",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/contacts/{contact_id}/topics",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "contact_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Contact ID or email address."
+        }
+      ]
+    },
+    {
+      "connector": "resend.contacts/update-topics",
+      "title": "Update topics for a contact",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.resend.com",
+      "path": "/contacts/{contact_id}/topics",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "contact_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Contact ID or email address."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContactTopicsOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.logs/list",
+      "title": "Retrieve a list of logs",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/logs",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.logs/get",
+      "title": "Retrieve a single log",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/logs/{log_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "log_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The ID of the log."
+        }
+      ]
+    },
+    {
+      "connector": "resend.automations/create",
+      "title": "Create an automation",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/automations",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAutomationRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.automations/list",
+      "title": "Retrieve a list of automations",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/automations",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "status",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "enabled",
+              "disabled"
+            ]
+          },
+          "description": "Filter automations by status."
+        }
+      ]
+    },
+    {
+      "connector": "resend.automations/get",
+      "title": "Retrieve a single automation",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/automations/{automation_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "automation_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The ID of the automation."
+        }
+      ]
+    },
+    {
+      "connector": "resend.automations/update",
+      "title": "Update an automation",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.resend.com",
+      "path": "/automations/{automation_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "automation_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The ID of the automation."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchAutomationRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.automations/remove",
+      "title": "Delete an automation",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/automations/{automation_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "automation_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The ID of the automation."
+        }
+      ]
+    },
+    {
+      "connector": "resend.automations/duplicate",
+      "title": "Duplicate an automation",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/automations/{automation_id}/duplicate",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "automation_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The ID of the automation."
+        }
+      ]
+    },
+    {
+      "connector": "resend.automations/stop",
+      "title": "Stop an automation",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/automations/{automation_id}/stop",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "automation_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The ID of the automation."
+        }
+      ]
+    },
+    {
+      "connector": "resend.automations/list-runs",
+      "title": "Retrieve a list of automation runs",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/automations/{automation_id}/runs",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "automation_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The ID of the automation."
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter runs by status. Comma-separated list of: running, completed, failed, cancelled."
+        }
+      ]
+    },
+    {
+      "connector": "resend.automations/get-run",
+      "title": "Retrieve a single automation run",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/automations/{automation_id}/runs/{run_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "automation_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The ID of the automation."
+        },
+        {
+          "name": "run_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The ID of the automation run."
+        }
+      ]
+    },
+    {
+      "connector": "resend.events/create",
+      "title": "Create an event",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/events",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEventRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.events/list",
+      "title": "Retrieve a list of events",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/events",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.events/send",
+      "title": "Send an event",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/events/send",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendEventRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.events/get",
+      "title": "Retrieve a single event",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/events/{identifier}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The event ID (UUID) or event name."
+        }
+      ]
+    },
+    {
+      "connector": "resend.events/update",
+      "title": "Update an event",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.resend.com",
+      "path": "/events/{identifier}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The event ID (UUID) or event name."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEventRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.events/remove",
+      "title": "Delete an event",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/events/{identifier}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The event ID (UUID) or event name."
+        }
+      ]
+    },
+    {
+      "connector": "resend.suppressions/add",
+      "title": "Create a suppression",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/suppressions",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSuppressionOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.suppressions/list",
+      "title": "Retrieve a list of suppressions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/suppressions",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "origin",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "bounce",
+              "complaint",
+              "manual"
+            ]
+          },
+          "description": "Filter suppressions by origin."
+        }
+      ]
+    },
+    {
+      "connector": "resend.suppressions/batch-add",
+      "title": "Add up to 100 suppressions at once",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/suppressions/batch/add",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchAddSuppressionsOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.suppressions/batch-remove",
+      "title": "Remove up to 100 suppressions at once",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/suppressions/batch/remove",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchRemoveSuppressionsOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.suppressions/get",
+      "title": "Retrieve a single suppression by ID or email",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/suppressions/{suppression}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "suppression",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Suppression ID or email address."
+        }
+      ]
+    },
+    {
+      "connector": "resend.suppressions/remove",
+      "title": "Remove a single suppression by ID or email",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/suppressions/{suppression}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "suppression",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Suppression ID or email address."
+        }
+      ]
+    },
+    {
+      "connector": "resend.usage/get",
+      "title": "Retrieve account usage",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/usage",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.inboxes/create",
+      "title": "Create an inbox",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInboxOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/list",
+      "title": "Retrieve a list of inboxes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.inboxes/get",
+      "title": "Retrieve a single inbox by ID or email address",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.inboxes/update",
+      "title": "Update an existing inbox by ID or email address",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInboxOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/remove",
+      "title": "Remove an existing inbox by ID or email address",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.inboxes/get-agent",
+      "title": "Retrieve the agent settings for an inbox",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/agent",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.inboxes/update-agent",
+      "title": "Update the agent settings for an inbox",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/agent",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInboxAgentOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/list-labels",
+      "title": "Retrieve a list of inbox labels",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/labels",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.inboxes/create-label",
+      "title": "Create a label on an inbox",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/labels",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInboxLabelOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/update-label",
+      "title": "Update an existing inbox label",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/labels/{label_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "label_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Label ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInboxLabelOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/remove-label",
+      "title": "Remove an existing inbox label",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/labels/{label_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "label_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Label ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/list-threads",
+      "title": "Retrieve a list of inbox threads",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/threads",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "folders",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "inbox",
+                "archive",
+                "spam",
+                "sent",
+                "trash"
+              ]
+            }
+          },
+          "description": "Comma-separated folders to list, for example `inbox,sent`. Repeating the parameter returns a 422 validation_error. A thread is returned when any of its emails is in one of the folders, so a thread in `inbox` with an email you sent matches both `inbox` and `sent`. Defaults to `inbox`, or to `inbox,archive,sent` when `labels` is set. `spam` and `trash` are only included when you name them."
+        },
+        {
+          "name": "labels",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "maxItems": 50,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "description": "Comma-separated label IDs. Returns threads with any of these labels. Up to 50 IDs. An ID that does not exist in the inbox returns a 404. Repeating the parameter returns a 422 validation_error."
+        },
+        {
+          "name": "read",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "`true` returns threads where every email is read. `false` returns threads with at least one unread email. Only the literal values `true` and `false` are accepted."
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/search-threads",
+      "title": "Search the threads of an inbox",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/threads/search",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "query",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "description": "Free text to search for in the subject, body, sender, recipients, and attachment names. Every word must match. Wrap words in double quotes to match an exact phrase. Start a word or quoted phrase with `-` to exclude it. Max 256 characters and 32 words."
+        },
+        {
+          "name": "from",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Comma-separated senders. Each value matches part of the sender's address or name, without case. Returns threads that match any of them. Up to 20 values. Repeating the parameter returns a 422 validation_error."
+        },
+        {
+          "name": "to",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Comma-separated recipients, matched the same way as `from`. Up to 20 values. Repeating the parameter returns a 422 validation_error."
+        },
+        {
+          "name": "cc",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Comma-separated CC recipients, matched the same way as `from`. Up to 20 values. Repeating the parameter returns a 422 validation_error."
+        },
+        {
+          "name": "bcc",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Comma-separated BCC recipients, matched the same way as `from`. Up to 20 values. Repeating the parameter returns a 422 validation_error."
+        },
+        {
+          "name": "has_attachment",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "`true` matches emails with an attachment. `false` matches emails without one. Only the literal values `true` and `false` are accepted."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Matches emails sent on or after this date. Accepts a date like `2026-09-01` or an ISO 8601 timestamp, in UTC unless the timestamp has an offset. An empty value returns a 422."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Matches emails sent on or before this date. Same formats as `start_date`. A date covers that whole day, so `start_date=2026-09-01&end_date=2026-09-30` covers all of September. A timestamp is used as given. An `end_date` before `start_date` returns a 422 validation_error. An empty value returns a 422."
+        },
+        {
+          "name": "folders",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "inbox",
+                "archive",
+                "spam",
+                "sent",
+                "trash"
+              ]
+            }
+          },
+          "description": "Comma-separated folders to search, for example `inbox,sent`. Repeating the parameter returns a 422 validation_error. A thread is returned when any of its emails is in one of the folders. Defaults to `inbox`, or to `inbox,archive,sent` when `labels` is set. `spam` and `trash` are only included when you name them."
+        },
+        {
+          "name": "labels",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "maxItems": 50,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "description": "Comma-separated label IDs. Returns threads with any of these labels. Up to 50 IDs. An ID that does not exist in the inbox returns a 404. Repeating the parameter returns a 422 validation_error."
+        },
+        {
+          "name": "read",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "`true` returns threads where every email is read. `false` returns threads with at least one unread email. Only the literal values `true` and `false` are accepted."
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/get-thread",
+      "title": "Retrieve a single inbox thread",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/threads/{thread_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "thread_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Thread ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/update-thread",
+      "title": "Update an existing inbox thread",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/threads/{thread_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "thread_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Thread ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInboxThreadOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/remove-thread",
+      "title": "Remove an existing inbox thread",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/threads/{thread_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "thread_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Thread ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/add-thread-labels",
+      "title": "Add labels to an inbox thread",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/threads/{thread_id}/labels",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "thread_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Thread ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddInboxThreadLabelsOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/set-thread-labels",
+      "title": "Set the labels of an inbox thread",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/threads/{thread_id}/labels",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "thread_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Thread ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetInboxThreadLabelsOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/remove-thread-label",
+      "title": "Remove a label from an inbox thread",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/threads/{thread_id}/labels/{label_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "thread_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Thread ID."
+        },
+        {
+          "name": "label_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Label ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/list-thread-emails",
+      "title": "Retrieve a list of thread emails",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/threads/{thread_id}/emails",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "thread_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Thread ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/get-thread-email",
+      "title": "Retrieve a single thread email",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/threads/{thread_id}/emails/{email_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "thread_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Thread ID."
+        },
+        {
+          "name": "email_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Email ID, as returned in `data[].id` by the list thread emails endpoint."
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/reply-thread-email",
+      "title": "Reply to a thread email",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/threads/{thread_id}/emails/{email_id}/reply",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "description": "A unique key for the request, so the reply is sent only once. A retry with the same key within 24 hours returns the first successful (2xx) response, with the `idempotent-replayed: true` header. A failed request is not stored, so it can be retried with the same key. Reusing the key with a different body, or while the first request is still running, returns a 409. An empty key, or one longer than 256 characters, returns a 400 `invalid_idempotency_key`. [Learn more](https://resend.com/docs/dashboard/emails/idempotency-keys)"
+        },
+        {
+          "name": "thread_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Thread ID."
+        },
+        {
+          "name": "email_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Email ID of the message to reply to, as returned in `data[].id` by the list thread emails endpoint."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplyInboxThreadEmailOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/forward-thread-email",
+      "title": "Forward a thread email",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/threads/{thread_id}/emails/{email_id}/forward",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "description": "A unique key for the request, so the forward is sent only once. A retry with the same key within 24 hours returns the first successful (2xx) response, with the `idempotent-replayed: true` header. A failed request is not stored, so it can be retried with the same key. Reusing the key with a different body, or while the first request is still running, returns a 409. An empty key, or one longer than 256 characters, returns a 400 `invalid_idempotency_key`. [Learn more](https://resend.com/docs/dashboard/emails/idempotency-keys)"
+        },
+        {
+          "name": "thread_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Thread ID."
+        },
+        {
+          "name": "email_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Email ID of the message to forward, as returned in `data[].id` by the list thread emails endpoint."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForwardInboxThreadEmailOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/list-drafts",
+      "title": "Retrieve a list of drafts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/drafts",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "resend.inboxes/create-draft",
+      "title": "Create a draft",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/drafts",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "description": "A unique key for the request, so the draft is created only once. A retry with the same key within 24 hours returns the first successful (2xx) response, with the `idempotent-replayed: true` header. A failed request is not stored, so it can be retried with the same key. Reusing the key with a different body, or while the first request is still running, returns a 409. An empty key, or one longer than 256 characters, returns a 400 `invalid_idempotency_key`. [Learn more](https://resend.com/docs/dashboard/emails/idempotency-keys)"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInboxDraftOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/get-draft",
+      "title": "Retrieve a single draft",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/drafts/{draft_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "draft_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Draft ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/update-draft",
+      "title": "Update an existing draft",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/drafts/{draft_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "draft_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Draft ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInboxDraftOptions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/remove-draft",
+      "title": "Remove an existing draft",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/drafts/{draft_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "draft_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Draft ID."
+        }
+      ]
+    },
+    {
+      "connector": "resend.inboxes/send-draft",
+      "title": "Send a draft",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.resend.com",
+      "path": "/inboxes/{inbox_id}/drafts/{draft_id}/send",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Idempotency-Key",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "description": "A unique key for the request, so the draft is sent only once. A retry with the same key within 24 hours returns the first successful (2xx) response, with the `idempotent-replayed: true` header. A failed request is not stored, so it can be retried with the same key. Reusing the key with a different body, or while the first request is still running, returns a 409. An empty key, or one longer than 256 characters, returns a 400 `invalid_idempotency_key`. [Learn more](https://resend.com/docs/dashboard/emails/idempotency-keys)"
+        },
+        {
+          "name": "draft_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Draft ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendInboxDraftOptions"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

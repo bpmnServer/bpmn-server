@@ -1,0 +1,8 @@
+{
+  "name": "twitch",
+  "title": "Twitch",
+  "source": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/twitch.tv/helix/latest/openapi.yaml",
+  "authentication": "oauth-client-credentials-flow",
+  "operations": [],
+  "error": "404 Not Found"
+}

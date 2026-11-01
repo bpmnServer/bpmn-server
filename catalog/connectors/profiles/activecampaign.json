@@ -1,0 +1,895 @@
+{
+  "name": "activecampaign",
+  "title": "Activecampaign",
+  "source": "https://raw.githubusercontent.com/ballerina-platform/openapi-connectors/main/openapi/activecampaign/openapi.yaml",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "activecampaign.Retrieve account",
+      "title": "Retrieve an account",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/",
+      "path": "/api/3/accounts/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Account's ID"
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Delete account",
+      "title": "Delete an account",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/",
+      "path": "/api/3/accounts/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Account's ID"
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Update account",
+      "title": "Update an account",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "/",
+      "path": "/api/3/accounts/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Account's ID"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAccountRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Create account",
+      "title": "Create an account",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/",
+      "path": "/api/3/accounts",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAccountRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.List accounts",
+      "title": "List all accounts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/",
+      "path": "/api/3/accounts",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "search",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Search by name"
+        },
+        {
+          "name": "count_deals",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Whether to compute the contactCount and dealCount counts for the number of contacts/deals associated with each account. Set it to true to include the right counts. If set to false or omitted from the call, then contactCount and dealCount will not be counted and be simply displayed as 0."
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Create account note",
+      "title": "Create a new note for an account",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/",
+      "path": "/api/3/accounts/{id}/notes",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Account's id to assign new note to"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAccountNoteRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Update  accout note",
+      "title": "Update an account note",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "/",
+      "path": "/api/3/accounts/{id}/notes/{noteId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Account's id to assign new note to"
+        },
+        {
+          "name": "noteId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Account note's id to update"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAccountNoteRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Get Contacts",
+      "title": "List, search, and filter contacts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/",
+      "path": "/api/3/contacts",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "ids",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter contacts by ID. Can be repeated for multiple IDs."
+        },
+        {
+          "name": "email",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter contacts by ID. Can be repeated for multiple IDs."
+        },
+        {
+          "name": "email_like",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter contacts that contain the given value in the email address"
+        },
+        {
+          "name": "exclude",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Exclude from the response the contact with the given ID"
+        },
+        {
+          "name": "formid",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter contacts associated with the given form"
+        },
+        {
+          "name": "id_greater",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Only include contacts with an ID greater than the given ID"
+        },
+        {
+          "name": "id_less",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Only include contacts with an ID less than the given ID"
+        },
+        {
+          "name": "listid",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter contacts associated with the given list"
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter contacts that match the given value in the contact names, organization, phone or email"
+        },
+        {
+          "name": "segmentid",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Return only contacts that match a list segment (this param initially returns segment information, when it is run a second time it will return contacts that match the segment)"
+        },
+        {
+          "name": "seriesid",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter contacts associated with the given automation"
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Status"
+        },
+        {
+          "name": "tagid",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter contacts associated with the given tag"
+        },
+        {
+          "name": "filters[created_before]",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter contacts that were created prior to this date"
+        },
+        {
+          "name": "filters[created_after]",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter contacts that were created after this date"
+        },
+        {
+          "name": "filters[updated_before]",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter contacts that were updated before this date"
+        },
+        {
+          "name": "filters[updated_after]",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter contacts that were updated after this date"
+        },
+        {
+          "name": "waitid",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Filter by contacts in the wait queue of an automation block"
+        },
+        {
+          "name": "orders[cdate]",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order contacts by creation date"
+        },
+        {
+          "name": "orders[email]",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order contacts by email"
+        },
+        {
+          "name": "orders[first_name]",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order contacts by first name"
+        },
+        {
+          "name": "orders[last_name]",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order contacts by last name"
+        },
+        {
+          "name": "orders[name]",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order contacts by full name"
+        },
+        {
+          "name": "forders[score]",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order contacts by score"
+        },
+        {
+          "name": "in_group_lists",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Set this to \"true\" in order to return only contacts that the current user has permissions to see."
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Create Contact",
+      "title": "Create Contact",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/",
+      "path": "/api/3/contacts",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContactRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Get Contact by ID",
+      "title": "Retrieve an existing contact",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/",
+      "path": "/api/3/contacts/{contactId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "contactId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of the contact"
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Delete Contact",
+      "title": "Delete Contact",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/",
+      "path": "/api/3/contacts/{contactId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "contactId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "Delete an existing contact"
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Get Contact Data",
+      "title": "Retrieve a contact's data",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/",
+      "path": "/api/3/contacts/{contactId}/contactData",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "contactId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "ID of the contact"
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Get Contact Bounce Logs",
+      "title": "Get Contact Bounce Logs",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/",
+      "path": "/api/3/contacts/{contactId}/bounceLogs",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "contactId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "ID of the contact"
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Get Contact Data Goals",
+      "title": "Retrieve a contact's goals",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/",
+      "path": "/api/3/contacts/{contactId}/contactGoals",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "contactId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "ID of the contact"
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Add Contact to Automation",
+      "title": "Add a contact to an automation",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/",
+      "path": "/api/3/contactAutomations",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddContactAutomationRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.List Contact Automations",
+      "title": "List all automations a contact is in",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/",
+      "path": "/api/3/contactAutomations",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "activecampaign.Get Contact Automation",
+      "title": "Retrieve an automation a contact is in",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/",
+      "path": "/api/3/contactAutomations/{contactAutomationId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "contactAutomationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "ID of the contactAutomation to retrieve"
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Delete Contact Automation",
+      "title": "Remove a contact from an automation",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/",
+      "path": "/api/3/contactAutomations/{contactAutomationId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "contactAutomationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "ID of the contactAutomation to delete"
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.List email activities",
+      "title": "List all email activities",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/",
+      "path": "/api/3/cemailActivities",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "filters[subscriberid]",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Set this parameter to return only email activities belonging to a given subscriber."
+        },
+        {
+          "name": "filters[dealId]",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Set this parameter to return only email activities belonging to a given deal."
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Create or Update Contact",
+      "title": "Create or update a contact",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/",
+      "path": "/api/3/contact/sync",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContactRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Subscribe or Unsubscribe contact from list",
+      "title": "Subscribe a contact to a list or unsubscribe a contact from a list.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/",
+      "path": "/api/3/contactLists",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscribeOrUnsubscribeContactRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Bulk import contacts",
+      "title": "Bulk import contacts",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/",
+      "path": "/api/3/import/bulk_import",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkImportRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Bulk Import Status List",
+      "title": "Bulk import status list. After using the POST endpoint to send bulk data, you can use this endpoint to monitor progress.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/",
+      "path": "/api/3/import/bulk_import",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "activecampaign.Bulk Import Status Info",
+      "title": "This endpoint returns a specific bulk import's status including the contact IDs of any newly created contacts, and emails of any contacts that failed to be created.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/",
+      "path": "/api/3/import/info",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "batchId",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Batch ID"
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Get Campaigns",
+      "title": "List all campaigns",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/",
+      "path": "/api/3/campaigns",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orders[sdate]",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order campaigns by send date"
+        },
+        {
+          "name": "orders[ldate]",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order campaigns by last send date"
+        },
+        {
+          "name": "filters[automation]",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter to return automation campaigns"
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Get Campaign by ID",
+      "title": "Retrieve a campaign",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/",
+      "path": "/api/3/campaigns/{campaignId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "campaignId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "ID of campaign to retrieve"
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Get Messages",
+      "title": "List all messages",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/",
+      "path": "/api/3/messages",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "activecampaign.Add tag to contact",
+      "title": "Add a tag to a contact",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/",
+      "path": "/api/3/contactTags",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddTagToContactRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Remove tag from contact",
+      "title": "Remove a tag from a contact",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/",
+      "path": "/api/3/contactTags/{tagId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "tagId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The contactTag id"
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Get Lists",
+      "title": "Retrieve all lists",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/",
+      "path": "/api/3/lists",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "filters[name]",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by the name of the list"
+        }
+      ]
+    },
+    {
+      "connector": "activecampaign.Create List",
+      "title": "Create a list",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/",
+      "path": "/api/3/lists",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateListRequest"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

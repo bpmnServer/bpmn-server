@@ -1,0 +1,1134 @@
+{
+  "name": "replicate",
+  "title": "Replicate",
+  "source": "https://api.replicate.com/openapi.json",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "replicate.account.get",
+      "title": "Get the authenticated account",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/account",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "replicate.collections.list",
+      "title": "List collections of models",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/collections",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "replicate.collections.get",
+      "title": "Get a collection of models",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/collections/{collection_slug}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "collection_slug",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The slug of the collection, like `super-resolution` or `image-restoration`. See [replicate.com/collections](https://replicate.com/collections).\n"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.deployments.list",
+      "title": "List deployments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/deployments",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "replicate.deployments.create",
+      "title": "Create a deployment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/deployments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "hardware": {
+                    "description": "The SKU for the hardware used to run the model. Possible values can be retrieved from the `hardware.list` endpoint.",
+                    "type": "string"
+                  },
+                  "max_instances": {
+                    "description": "The maximum number of instances for scaling.",
+                    "maximum": 20,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "min_instances": {
+                    "description": "The minimum number of instances for scaling.",
+                    "maximum": 5,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "model": {
+                    "description": "The full name of the model that you want to deploy e.g. stability-ai/sdxl.",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "The name of the deployment.",
+                    "type": "string"
+                  },
+                  "version": {
+                    "description": "The 64-character string ID of the model version that you want to deploy.",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "model",
+                  "version",
+                  "hardware",
+                  "min_instances",
+                  "max_instances"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "replicate.deployments.delete",
+      "title": "Delete a deployment",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/deployments/{deployment_owner}/{deployment_name}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "deployment_owner",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the user or organization that owns the deployment.\n"
+        },
+        {
+          "name": "deployment_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the deployment.\n"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.deployments.get",
+      "title": "Get a deployment",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/deployments/{deployment_owner}/{deployment_name}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "deployment_owner",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the user or organization that owns the deployment.\n"
+        },
+        {
+          "name": "deployment_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the deployment.\n"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.deployments.update",
+      "title": "Update a deployment",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/deployments/{deployment_owner}/{deployment_name}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "deployment_owner",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the user or organization that owns the deployment.\n"
+        },
+        {
+          "name": "deployment_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the deployment.\n"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "hardware": {
+                    "description": "The SKU for the hardware used to run the model. Possible values can be retrieved from the `hardware.list` endpoint.",
+                    "type": "string"
+                  },
+                  "max_instances": {
+                    "description": "The maximum number of instances for scaling.",
+                    "maximum": 20,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "min_instances": {
+                    "description": "The minimum number of instances for scaling.",
+                    "maximum": 5,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "version": {
+                    "description": "The ID of the model version that you want to deploy",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "replicate.deployments.predictions.create",
+      "title": "Create a prediction using a deployment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/deployments/{deployment_owner}/{deployment_name}/predictions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "deployment_owner",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the user or organization that owns the deployment.\n"
+        },
+        {
+          "name": "deployment_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the deployment.\n"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/schemas_prediction_request"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "replicate.files.list",
+      "title": "List files",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/files",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "replicate.files.create",
+      "title": "Create a file",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/files",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "content": {
+                    "description": "The file content",
+                    "format": "binary",
+                    "type": "string"
+                  },
+                  "filename": {
+                    "description": "The filename",
+                    "maxLength": 255,
+                    "type": "string"
+                  },
+                  "metadata": {
+                    "default": {},
+                    "description": "User-provided metadata associated with the file",
+                    "type": "object"
+                  },
+                  "type": {
+                    "default": "application/octet-stream",
+                    "description": "The content / MIME type for the file",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "content"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "replicate.files.delete",
+      "title": "Delete a file",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/files/{file_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "file_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the file to delete"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.files.get",
+      "title": "Get a file",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/files/{file_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "file_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the file to get"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.files.download",
+      "title": "Download a file",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/files/{file_id}/download",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "file_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the file to download"
+        },
+        {
+          "name": "owner",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The username of the user or organization that uploaded the file"
+        },
+        {
+          "name": "expiry",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "description": "A Unix timestamp with expiration date of this download URL"
+        },
+        {
+          "name": "signature",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "A base64-encoded HMAC-SHA256 checksum of the string '{owner} {id} {expiry}' generated with the Files API signing secret"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.hardware.list",
+      "title": "List available hardware for models",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/hardware",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "replicate.models.list",
+      "title": "List public models",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/models",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "sort_by",
+          "in": "query",
+          "schema": {
+            "default": "latest_version_created_at",
+            "enum": [
+              "model_created_at",
+              "latest_version_created_at"
+            ],
+            "type": "string"
+          },
+          "description": "Field to sort models by. Defaults to `latest_version_created_at`.\n"
+        },
+        {
+          "name": "sort_direction",
+          "in": "query",
+          "schema": {
+            "default": "desc",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "type": "string"
+          },
+          "description": "Sort direction. Defaults to `desc` (descending, newest first).\n"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.models.create",
+      "title": "Create a model",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/models",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "cover_image_url": {
+                    "description": "A URL for the model's cover image. This should be an image file.",
+                    "type": "string"
+                  },
+                  "description": {
+                    "description": "A description of the model.",
+                    "example": "Detect hot dogs in images",
+                    "type": "string"
+                  },
+                  "github_url": {
+                    "description": "A URL for the model's source code on GitHub.",
+                    "example": "https://github.com/alice/hot-dog-detector",
+                    "type": "string"
+                  },
+                  "hardware": {
+                    "description": "The SKU for the hardware used to run the model. Possible values can be retrieved from the `hardware.list` endpoint.",
+                    "example": "cpu",
+                    "type": "string"
+                  },
+                  "license_url": {
+                    "description": "A URL for the model's license.",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "The name of the model. This must be unique among all models owned by the user or organization.",
+                    "example": "hot-dog-detector",
+                    "type": "string"
+                  },
+                  "owner": {
+                    "description": "The name of the user or organization that will own the model. This must be the same as the user or organization that is making the API request. In other words, the API token used in the request must belong to this user or organization.",
+                    "example": "alice",
+                    "type": "string"
+                  },
+                  "paper_url": {
+                    "description": "A URL for the model's paper.",
+                    "example": "https://arxiv.org/abs/2504.17639",
+                    "type": "string"
+                  },
+                  "visibility": {
+                    "description": "Whether the model should be public or private. A public model can be viewed and run by anyone, whereas a private model can be viewed and run only by the user or organization members that own the model.",
+                    "enum": [
+                      "public",
+                      "private"
+                    ],
+                    "example": "public",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "owner",
+                  "name",
+                  "visibility",
+                  "hardware"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "replicate.models.delete",
+      "title": "Delete a model",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/models/{model_owner}/{model_name}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "model_owner",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the user or organization that owns the model.\n"
+        },
+        {
+          "name": "model_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the model.\n"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.models.get",
+      "title": "Get a model",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/models/{model_owner}/{model_name}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "model_owner",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the user or organization that owns the model.\n"
+        },
+        {
+          "name": "model_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the model.\n"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.models.update",
+      "title": "Update metadata for a model",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/models/{model_owner}/{model_name}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "model_owner",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the user or organization that owns the model.\n"
+        },
+        {
+          "name": "model_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the model.\n"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "description": {
+                    "description": "A description of the model.",
+                    "example": "Detect hot dogs in images",
+                    "type": "string"
+                  },
+                  "github_url": {
+                    "description": "A URL for the model's source code on GitHub.",
+                    "example": "https://github.com/alice/hot-dog-detector",
+                    "type": "string"
+                  },
+                  "license_url": {
+                    "description": "A URL for the model's license.",
+                    "type": "string"
+                  },
+                  "paper_url": {
+                    "description": "A URL for the model's paper.",
+                    "example": "https://arxiv.org/abs/2504.17639",
+                    "type": "string"
+                  },
+                  "readme": {
+                    "description": "The README content of the model.",
+                    "example": "# Updated README\n\nNew content here",
+                    "type": "string"
+                  },
+                  "weights_url": {
+                    "description": "A URL for the model's weights.",
+                    "example": "https://huggingface.co/alice/hot-dog-detector",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "replicate.models.examples.list",
+      "title": "List examples for a model",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/models/{model_owner}/{model_name}/examples",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "model_owner",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the user or organization that owns the model.\n"
+        },
+        {
+          "name": "model_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the model.\n"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.models.predictions.create",
+      "title": "Create a prediction using an official model",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/models/{model_owner}/{model_name}/predictions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "model_owner",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the user or organization that owns the model.\n"
+        },
+        {
+          "name": "model_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the model.\n"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/schemas_prediction_request"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "replicate.models.readme.get",
+      "title": "Get a model's README",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/models/{model_owner}/{model_name}/readme",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "model_owner",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the user or organization that owns the model.\n"
+        },
+        {
+          "name": "model_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the model.\n"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.models.versions.list",
+      "title": "List model versions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/models/{model_owner}/{model_name}/versions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "model_owner",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the user or organization that owns the model.\n"
+        },
+        {
+          "name": "model_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the model.\n"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.models.versions.delete",
+      "title": "Delete a model version",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/models/{model_owner}/{model_name}/versions/{version_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "model_owner",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the user or organization that owns the model.\n"
+        },
+        {
+          "name": "model_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the model.\n"
+        },
+        {
+          "name": "version_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the version.\n"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.models.versions.get",
+      "title": "Get a model version",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/models/{model_owner}/{model_name}/versions/{version_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "model_owner",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the user or organization that owns the model.\n"
+        },
+        {
+          "name": "model_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the model.\n"
+        },
+        {
+          "name": "version_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the version.\n"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.trainings.create",
+      "title": "Create a training",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/models/{model_owner}/{model_name}/versions/{version_id}/trainings",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "model_owner",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the user or organization that owns the model.\n"
+        },
+        {
+          "name": "model_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the model.\n"
+        },
+        {
+          "name": "version_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the version.\n"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/schemas_training_request"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "replicate.predictions.list",
+      "title": "List predictions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/predictions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "created_after",
+          "in": "query",
+          "schema": {
+            "example": "2025-01-01T00:00:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": "Include only predictions created at or after this date-time, in ISO 8601 format."
+        },
+        {
+          "name": "created_before",
+          "in": "query",
+          "schema": {
+            "example": "2025-02-01T00:00:00Z",
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": "Include only predictions created before this date-time, in ISO 8601 format."
+        },
+        {
+          "name": "source",
+          "in": "query",
+          "schema": {
+            "enum": [
+              "web"
+            ],
+            "type": "string"
+          },
+          "description": "Filter predictions by how they were created. Currently only `web` is supported.\n\nIf no value is set, the API returns predictions from both API and web sources.\n\nWhen filtering by `source=web`, results are limited to predictions created in the last 14 days.\n"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.predictions.create",
+      "title": "Create a prediction",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/predictions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/schemas_version_prediction_request"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "replicate.predictions.get",
+      "title": "Get a prediction",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/predictions/{prediction_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "prediction_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the prediction to get.\n"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.predictions.cancel",
+      "title": "Cancel a prediction",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/predictions/{prediction_id}/cancel",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "prediction_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the prediction to cancel.\n"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.search",
+      "title": "Search models, collections, and docs (beta)",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/search",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "query",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "example": "nano banana",
+            "type": "string"
+          },
+          "description": "The search query string"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "default": 20,
+            "example": 10,
+            "maximum": 50,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "description": "Maximum number of model results to return (1-50, defaults to 20)"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.trainings.list",
+      "title": "List trainings",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/trainings",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "replicate.trainings.get",
+      "title": "Get a training",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/trainings/{training_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "training_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the training to get.\n"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.trainings.cancel",
+      "title": "Cancel a training",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/trainings/{training_id}/cancel",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "training_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the training you want to cancel.\n"
+        }
+      ]
+    },
+    {
+      "connector": "replicate.webhooks.default.secret.get",
+      "title": "Get the signing secret for the default webhook",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.replicate.com/v1",
+      "path": "/webhooks/default/secret",
+      "authentication": "apiKey",
+      "parameters": []
+    }
+  ]
+}

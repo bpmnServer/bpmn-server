@@ -1,0 +1,5490 @@
+{
+  "name": "influxdb",
+  "title": "Influxdb",
+  "source": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/influxdata.com/2.0.0/openapi.yaml",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "influxdb.GetRoutes",
+      "title": "List all top level routes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "influxdb.GetAuthorizations",
+      "title": "List all authorizations",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/authorizations",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Only show authorizations that belong to a user ID."
+        },
+        {
+          "name": "user",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Only show authorizations that belong to a user name."
+        },
+        {
+          "name": "orgID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Only show authorizations that belong to an organization ID."
+        },
+        {
+          "name": "org",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Only show authorizations that belong to a organization name."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostAuthorizations",
+      "title": "Create an authorization",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/authorizations",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthorizationPostRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteAuthorizationsID",
+      "title": "Delete an authorization",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/authorizations/{authID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "authID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the authorization to delete."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetAuthorizationsID",
+      "title": "Retrieve an authorization",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/authorizations/{authID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "authID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the authorization to get."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PatchAuthorizationsID",
+      "title": "Update an authorization to be active or inactive",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "/api/v2",
+      "path": "/authorizations/{authID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "authID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the authorization to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthorizationUpdateRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetBuckets",
+      "title": "List all buckets",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/buckets",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "org",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the organization."
+        },
+        {
+          "name": "orgID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The organization ID."
+        },
+        {
+          "name": "name",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Only returns buckets with a specific name."
+        },
+        {
+          "name": "id",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Only returns buckets with a specific ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostBuckets",
+      "title": "Create a bucket",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/buckets",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostBucketRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteBucketsID",
+      "title": "Delete a bucket",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/buckets/{bucketID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "bucketID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the bucket to delete."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetBucketsID",
+      "title": "Retrieve a bucket",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/buckets/{bucketID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "bucketID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The bucket ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PatchBucketsID",
+      "title": "Update a bucket",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "/api/v2",
+      "path": "/buckets/{bucketID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "bucketID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The bucket ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchBucketRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetBucketsIDLabels",
+      "title": "List all labels for a bucket",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/buckets/{bucketID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "bucketID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The bucket ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostBucketsIDLabels",
+      "title": "Add a label to a bucket",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/buckets/{bucketID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "bucketID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The bucket ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelMapping"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteBucketsIDLabelsID",
+      "title": "Delete a label from a bucket",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/buckets/{bucketID}/labels/{labelID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "bucketID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The bucket ID."
+        },
+        {
+          "name": "labelID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the label to delete."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetBucketsIDMembers",
+      "title": "List all users with member privileges for a bucket",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/buckets/{bucketID}/members",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "bucketID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The bucket ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostBucketsIDMembers",
+      "title": "Add a member to a bucket",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/buckets/{bucketID}/members",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "bucketID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The bucket ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddResourceMemberRequestBody"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteBucketsIDMembersID",
+      "title": "Remove a member from a bucket",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/buckets/{bucketID}/members/{userID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the member to remove."
+        },
+        {
+          "name": "bucketID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The bucket ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetBucketsIDOwners",
+      "title": "List all owners of a bucket",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/buckets/{bucketID}/owners",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "bucketID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The bucket ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostBucketsIDOwners",
+      "title": "Add an owner to a bucket",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/buckets/{bucketID}/owners",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "bucketID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The bucket ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddResourceMemberRequestBody"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteBucketsIDOwnersID",
+      "title": "Remove an owner from a bucket",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/buckets/{bucketID}/owners/{userID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the owner to remove."
+        },
+        {
+          "name": "bucketID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The bucket ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetChecks",
+      "title": "List all checks",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/checks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Only show checks that belong to a specific organization ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.CreateCheck",
+      "title": "Add new check",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/checks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostCheck"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteChecksID",
+      "title": "Delete a check",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/checks/{checkID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "checkID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The check ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetChecksID",
+      "title": "Retrieve a check",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/checks/{checkID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "checkID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The check ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PatchChecksID",
+      "title": "Update a check",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "/api/v2",
+      "path": "/checks/{checkID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "checkID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The check ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckPatch"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PutChecksID",
+      "title": "Update a check",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "/api/v2",
+      "path": "/checks/{checkID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "checkID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The check ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Check"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetChecksIDLabels",
+      "title": "List all labels for a check",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/checks/{checkID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "checkID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The check ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostChecksIDLabels",
+      "title": "Add a label to a check",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/checks/{checkID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "checkID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The check ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelMapping"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteChecksIDLabelsID",
+      "title": "Delete label from a check",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/checks/{checkID}/labels/{labelID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "checkID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The check ID."
+        },
+        {
+          "name": "labelID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the label to delete."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetChecksIDQuery",
+      "title": "Retrieve a check query",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/checks/{checkID}/query",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "checkID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The check ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetDashboards",
+      "title": "List all dashboards",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "owner",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "A user identifier. Returns only dashboards where this user has the `owner` role."
+        },
+        {
+          "name": "sortBy",
+          "in": "query",
+          "schema": {
+            "enum": [
+              "ID",
+              "CreatedAt",
+              "UpdatedAt"
+            ],
+            "type": "string"
+          },
+          "description": "The column to sort by."
+        },
+        {
+          "name": "id",
+          "in": "query",
+          "schema": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "description": "A list of dashboard identifiers. Returns only the listed dashboards. If both `id` and `owner` are specified, only `id` is used."
+        },
+        {
+          "name": "orgID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the organization."
+        },
+        {
+          "name": "org",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the organization."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostDashboards",
+      "title": "Create a dashboard",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDashboardRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteDashboardsID",
+      "title": "Delete a dashboard",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards/{dashboardID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "dashboardID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the dashboard to update."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetDashboardsID",
+      "title": "Retrieve a Dashboard",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards/{dashboardID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "dashboardID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the dashboard to update."
+        },
+        {
+          "name": "include",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "enum": [
+              "properties"
+            ],
+            "type": "string"
+          },
+          "description": "Includes the cell view properties in the response if set to `properties`"
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PatchDashboardsID",
+      "title": "Update a dashboard",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards/{dashboardID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "dashboardID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the dashboard to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "cells": {
+                    "$ref": "#/components/schemas/CellWithViewProperties",
+                    "description": "optional, when provided will replace all existing cells with the cells provided"
+                  },
+                  "description": {
+                    "description": "optional, when provided will replace the description",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "optional, when provided will replace the name",
+                    "type": "string"
+                  }
+                },
+                "title": "PatchDashboardRequest",
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostDashboardsIDCells",
+      "title": "Create a dashboard cell",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards/{dashboardID}/cells",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "dashboardID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the dashboard to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCell"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PutDashboardsIDCells",
+      "title": "Replace cells in a dashboard",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards/{dashboardID}/cells",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "dashboardID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the dashboard to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Cells"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteDashboardsIDCellsID",
+      "title": "Delete a dashboard cell",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards/{dashboardID}/cells/{cellID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "dashboardID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the dashboard to delete."
+        },
+        {
+          "name": "cellID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the cell to delete."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PatchDashboardsIDCellsID",
+      "title": "Update the non-positional information related to a cell",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards/{dashboardID}/cells/{cellID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "dashboardID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the dashboard to update."
+        },
+        {
+          "name": "cellID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the cell to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CellUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetDashboardsIDCellsIDView",
+      "title": "Retrieve the view for a cell",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards/{dashboardID}/cells/{cellID}/view",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "dashboardID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The dashboard ID."
+        },
+        {
+          "name": "cellID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The cell ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PatchDashboardsIDCellsIDView",
+      "title": "Update the view for a cell",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards/{dashboardID}/cells/{cellID}/view",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "dashboardID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the dashboard to update."
+        },
+        {
+          "name": "cellID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the cell to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/View"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetDashboardsIDLabels",
+      "title": "List all labels for a dashboard",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards/{dashboardID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "dashboardID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The dashboard ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostDashboardsIDLabels",
+      "title": "Add a label to a dashboard",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards/{dashboardID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "dashboardID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The dashboard ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelMapping"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteDashboardsIDLabelsID",
+      "title": "Delete a label from a dashboard",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards/{dashboardID}/labels/{labelID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "dashboardID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The dashboard ID."
+        },
+        {
+          "name": "labelID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the label to delete."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetDashboardsIDMembers",
+      "title": "List all dashboard members",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards/{dashboardID}/members",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "dashboardID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The dashboard ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostDashboardsIDMembers",
+      "title": "Add a member to a dashboard",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards/{dashboardID}/members",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "dashboardID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The dashboard ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddResourceMemberRequestBody"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteDashboardsIDMembersID",
+      "title": "Remove a member from a dashboard",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards/{dashboardID}/members/{userID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the member to remove."
+        },
+        {
+          "name": "dashboardID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The dashboard ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetDashboardsIDOwners",
+      "title": "List all dashboard owners",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards/{dashboardID}/owners",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "dashboardID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The dashboard ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostDashboardsIDOwners",
+      "title": "Add an owner to a dashboard",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards/{dashboardID}/owners",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "dashboardID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The dashboard ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddResourceMemberRequestBody"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteDashboardsIDOwnersID",
+      "title": "Remove an owner from a dashboard",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/dashboards/{dashboardID}/owners/{userID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the owner to remove."
+        },
+        {
+          "name": "dashboardID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The dashboard ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetDBRPs",
+      "title": "List all database retention policy mappings",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/dbrps",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Specifies the organization ID to filter on"
+        },
+        {
+          "name": "id",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Specifies the mapping ID to filter on"
+        },
+        {
+          "name": "bucketID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Specifies the bucket ID to filter on"
+        },
+        {
+          "name": "default",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Specifies filtering on default"
+        },
+        {
+          "name": "db",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Specifies the database to filter on"
+        },
+        {
+          "name": "rp",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Specifies the retention policy to filter on"
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostDBRP",
+      "title": "Add a database retention policy mapping",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/dbrps",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DBRP"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteDBRPID",
+      "title": "Delete a database retention policy",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/dbrps/{dbrpID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Specifies the organization ID of the mapping"
+        },
+        {
+          "name": "dbrpID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The database retention policy mapping"
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetDBRPsID",
+      "title": "Retrieve a database retention policy mapping",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/dbrps/{dbrpID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Specifies the organization ID of the mapping"
+        },
+        {
+          "name": "dbrpID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The database retention policy mapping ID"
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PatchDBRPID",
+      "title": "Update a database retention policy mapping",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "/api/v2",
+      "path": "/dbrps/{dbrpID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Specifies the organization ID of the mapping"
+        },
+        {
+          "name": "dbrpID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The database retention policy mapping."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DBRPUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostDelete",
+      "title": "Delete time series data from InfluxDB",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/delete",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "org",
+          "in": "query",
+          "schema": {
+            "description": "Only points from this organization are deleted.",
+            "type": "string"
+          },
+          "description": "Specifies the organization to delete data from."
+        },
+        {
+          "name": "bucket",
+          "in": "query",
+          "schema": {
+            "description": "Only points from this bucket are deleted.",
+            "type": "string"
+          },
+          "description": "Specifies the bucket to delete data from."
+        },
+        {
+          "name": "orgID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Specifies the organization ID of the resource."
+        },
+        {
+          "name": "bucketID",
+          "in": "query",
+          "schema": {
+            "description": "Only points from this bucket ID are deleted.",
+            "type": "string"
+          },
+          "description": "Specifies the bucket ID to delete data from."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeletePredicateRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetDocumentsTemplates",
+      "title": "List all templates",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/documents/templates",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "org",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Specifies the name of the organization of the template."
+        },
+        {
+          "name": "orgID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Specifies the organization ID of the template."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostDocumentsTemplates",
+      "title": "Create a template",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/documents/templates",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentCreate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteDocumentsTemplatesID",
+      "title": "Delete a template",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/documents/templates/{templateID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "templateID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The template ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetDocumentsTemplatesID",
+      "title": "Retrieve a template",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/documents/templates/{templateID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "templateID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The template ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PutDocumentsTemplatesID",
+      "title": "Update a template",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "/api/v2",
+      "path": "/documents/templates/{templateID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "templateID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The template ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetDocumentsTemplatesIDLabels",
+      "title": "List all labels for a template",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/documents/templates/{templateID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "templateID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The template ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostDocumentsTemplatesIDLabels",
+      "title": "Add a label to a template",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/documents/templates/{templateID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "templateID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The template ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelMapping"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteDocumentsTemplatesIDLabelsID",
+      "title": "Delete a label from a template",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/documents/templates/{templateID}/labels/{labelID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "templateID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The template ID."
+        },
+        {
+          "name": "labelID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The label ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetFlags",
+      "title": "Return the feature flags for the currently authenticated user",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/flags",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "influxdb.GetHealth",
+      "title": "Get the health of an instance",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/health",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "influxdb.GetLabels",
+      "title": "List all labels",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The organization ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostLabels",
+      "title": "Create a label",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelCreateRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteLabelsID",
+      "title": "Delete a label",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/labels/{labelID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "labelID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the label to delete."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetLabelsID",
+      "title": "Retrieve a label",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/labels/{labelID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "labelID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the label to update."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PatchLabelsID",
+      "title": "Update a label",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "/api/v2",
+      "path": "/labels/{labelID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "labelID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the label to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetMe",
+      "title": "Retrieve the currently authenticated user",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/me",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "influxdb.PutMePassword",
+      "title": "Update a password",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "/api/v2",
+      "path": "/me/password",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetBody"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetNotificationEndpoints",
+      "title": "List all notification endpoints",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/notificationEndpoints",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Only show notification endpoints that belong to specific organization ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.CreateNotificationEndpoint",
+      "title": "Add a notification endpoint",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/notificationEndpoints",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostNotificationEndpoint"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteNotificationEndpointsID",
+      "title": "Delete a notification endpoint",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/notificationEndpoints/{endpointID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "endpointID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The notification endpoint ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetNotificationEndpointsID",
+      "title": "Retrieve a notification endpoint",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/notificationEndpoints/{endpointID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "endpointID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The notification endpoint ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PatchNotificationEndpointsID",
+      "title": "Update a notification endpoint",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "/api/v2",
+      "path": "/notificationEndpoints/{endpointID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "endpointID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The notification endpoint ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationEndpointUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PutNotificationEndpointsID",
+      "title": "Update a notification endpoint",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "/api/v2",
+      "path": "/notificationEndpoints/{endpointID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "endpointID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The notification endpoint ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationEndpoint"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetNotificationEndpointsIDLabels",
+      "title": "List all labels for a notification endpoint",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/notificationEndpoints/{endpointID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "endpointID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The notification endpoint ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostNotificationEndpointIDLabels",
+      "title": "Add a label to a notification endpoint",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/notificationEndpoints/{endpointID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "endpointID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The notification endpoint ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelMapping"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteNotificationEndpointsIDLabelsID",
+      "title": "Delete a label from a notification endpoint",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/notificationEndpoints/{endpointID}/labels/{labelID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "endpointID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The notification endpoint ID."
+        },
+        {
+          "name": "labelID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the label to delete."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetNotificationRules",
+      "title": "List all notification rules",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/notificationRules",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Only show notification rules that belong to a specific organization ID."
+        },
+        {
+          "name": "checkID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Only show notifications that belong to the specific check ID."
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "schema": {
+            "example": "env:prod",
+            "pattern": "^[a-zA-Z0-9_]+:[a-zA-Z0-9_]+$",
+            "type": "string"
+          },
+          "description": "Only return notification rules that \"would match\" statuses which contain the tag key value pairs provided."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.CreateNotificationRule",
+      "title": "Add a notification rule",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/notificationRules",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostNotificationRule"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteNotificationRulesID",
+      "title": "Delete a notification rule",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/notificationRules/{ruleID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "ruleID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The notification rule ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetNotificationRulesID",
+      "title": "Retrieve a notification rule",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/notificationRules/{ruleID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "ruleID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The notification rule ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PatchNotificationRulesID",
+      "title": "Update a notification rule",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "/api/v2",
+      "path": "/notificationRules/{ruleID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "ruleID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The notification rule ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationRuleUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PutNotificationRulesID",
+      "title": "Update a notification rule",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "/api/v2",
+      "path": "/notificationRules/{ruleID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "ruleID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The notification rule ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationRule"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetNotificationRulesIDLabels",
+      "title": "List all labels for a notification rule",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/notificationRules/{ruleID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "ruleID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The notification rule ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostNotificationRuleIDLabels",
+      "title": "Add a label to a notification rule",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/notificationRules/{ruleID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "ruleID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The notification rule ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelMapping"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteNotificationRulesIDLabelsID",
+      "title": "Delete label from a notification rule",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/notificationRules/{ruleID}/labels/{labelID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "ruleID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The notification rule ID."
+        },
+        {
+          "name": "labelID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the label to delete."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetNotificationRulesIDQuery",
+      "title": "Retrieve a notification rule query",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/notificationRules/{ruleID}/query",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "ruleID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The notification rule ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetOrgs",
+      "title": "List all organizations",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/orgs",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "org",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter organizations to a specific organization name."
+        },
+        {
+          "name": "orgID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter organizations to a specific organization ID."
+        },
+        {
+          "name": "userID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter organizations to a specific user ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostOrgs",
+      "title": "Create an organization",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/orgs",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostOrganizationRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteOrgsID",
+      "title": "Delete an organization",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/orgs/{orgID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the organization to delete."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetOrgsID",
+      "title": "Retrieve an organization",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/orgs/{orgID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the organization to get."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PatchOrgsID",
+      "title": "Update an organization",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "/api/v2",
+      "path": "/orgs/{orgID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the organization to get."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchOrganizationRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetOrgsIDMembers",
+      "title": "List all members of an organization",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/orgs/{orgID}/members",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The organization ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostOrgsIDMembers",
+      "title": "Add a member to an organization",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/orgs/{orgID}/members",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The organization ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddResourceMemberRequestBody"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteOrgsIDMembersID",
+      "title": "Remove a member from an organization",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/orgs/{orgID}/members/{userID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the member to remove."
+        },
+        {
+          "name": "orgID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The organization ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetOrgsIDOwners",
+      "title": "List all owners of an organization",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/orgs/{orgID}/owners",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The organization ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostOrgsIDOwners",
+      "title": "Add an owner to an organization",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/orgs/{orgID}/owners",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The organization ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddResourceMemberRequestBody"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteOrgsIDOwnersID",
+      "title": "Remove an owner from an organization",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/orgs/{orgID}/owners/{userID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the owner to remove."
+        },
+        {
+          "name": "orgID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The organization ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetOrgsIDSecrets",
+      "title": "List all secret keys for an organization",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/orgs/{orgID}/secrets",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The organization ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PatchOrgsIDSecrets",
+      "title": "Update secrets in an organization",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "/api/v2",
+      "path": "/orgs/{orgID}/secrets",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The organization ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Secrets"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostOrgsIDSecrets",
+      "title": "Delete secrets from an organization",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/orgs/{orgID}/secrets/delete",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The organization ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SecretKeys"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostQuery",
+      "title": "Query InfluxDB",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/query",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "Accept-Encoding",
+          "in": "header",
+          "schema": {
+            "default": "identity",
+            "description": "Specifies that the query response in the body should be encoded with gzip or not encoded with identity.",
+            "enum": [
+              "gzip",
+              "identity"
+            ],
+            "type": "string"
+          },
+          "description": "The Accept-Encoding request HTTP header advertises which content encoding, usually a compression algorithm, the client is able to understand."
+        },
+        {
+          "name": "Content-Type",
+          "in": "header",
+          "schema": {
+            "enum": [
+              "application/json",
+              "application/vnd.flux"
+            ],
+            "type": "string"
+          }
+        },
+        {
+          "name": "org",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Specifies the name of the organization executing the query. Takes either the ID or Name interchangeably. If both `orgID` and `org` are specified, `org` takes precedence."
+        },
+        {
+          "name": "orgID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Specifies the ID of the organization executing the query. If both `orgID` and `org` are specified, `org` takes precedence."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Query"
+                  },
+                  {
+                    "$ref": "#/components/schemas/InfluxQLQuery"
+                  }
+                ]
+              }
+            },
+            "application/vnd.flux": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostQueryAnalyze",
+      "title": "Analyze an InfluxQL or Flux query",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/query/analyze",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "Content-Type",
+          "in": "header",
+          "schema": {
+            "enum": [
+              "application/json"
+            ],
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Query"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostQueryAst",
+      "title": "Generate an Abstract Syntax Tree (AST) from a query",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/query/ast",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "Content-Type",
+          "in": "header",
+          "schema": {
+            "enum": [
+              "application/json"
+            ],
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LanguageRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetQuerySuggestions",
+      "title": "Retrieve query suggestions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/query/suggestions",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "influxdb.GetQuerySuggestionsName",
+      "title": "Retrieve query suggestions for a branching suggestion",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/query/suggestions/{name}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the branching suggestion."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetReady",
+      "title": "Get the readiness of an instance at startup",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/ready",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "influxdb.GetScrapers",
+      "title": "List all scraper targets",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/scrapers",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "name",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Specifies the name of the scraper target."
+        },
+        {
+          "name": "id",
+          "in": "query",
+          "schema": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "description": "List of scraper target IDs to return. If both `id` and `owner` are specified, only `id` is used."
+        },
+        {
+          "name": "orgID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Specifies the organization ID of the scraper target."
+        },
+        {
+          "name": "org",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Specifies the organization name of the scraper target."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostScrapers",
+      "title": "Create a scraper target",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/scrapers",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScraperTargetRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteScrapersID",
+      "title": "Delete a scraper target",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/scrapers/{scraperTargetID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "scraperTargetID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the scraper target."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetScrapersID",
+      "title": "Retrieve a scraper target",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/scrapers/{scraperTargetID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "scraperTargetID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the scraper target."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PatchScrapersID",
+      "title": "Update a scraper target",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "/api/v2",
+      "path": "/scrapers/{scraperTargetID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "scraperTargetID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the scraper target."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScraperTargetRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetScrapersIDLabels",
+      "title": "List all labels for a scraper target",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/scrapers/{scraperTargetID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "scraperTargetID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The scraper target ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostScrapersIDLabels",
+      "title": "Add a label to a scraper target",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/scrapers/{scraperTargetID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "scraperTargetID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The scraper target ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelMapping"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteScrapersIDLabelsID",
+      "title": "Delete a label from a scraper target",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/scrapers/{scraperTargetID}/labels/{labelID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "scraperTargetID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The scraper target ID."
+        },
+        {
+          "name": "labelID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The label ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetScrapersIDMembers",
+      "title": "List all users with member privileges for a scraper target",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/scrapers/{scraperTargetID}/members",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "scraperTargetID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The scraper target ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostScrapersIDMembers",
+      "title": "Add a member to a scraper target",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/scrapers/{scraperTargetID}/members",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "scraperTargetID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The scraper target ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddResourceMemberRequestBody"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteScrapersIDMembersID",
+      "title": "Remove a member from a scraper target",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/scrapers/{scraperTargetID}/members/{userID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of member to remove."
+        },
+        {
+          "name": "scraperTargetID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The scraper target ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetScrapersIDOwners",
+      "title": "List all owners of a scraper target",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/scrapers/{scraperTargetID}/owners",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "scraperTargetID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The scraper target ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostScrapersIDOwners",
+      "title": "Add an owner to a scraper target",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/scrapers/{scraperTargetID}/owners",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "scraperTargetID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The scraper target ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddResourceMemberRequestBody"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteScrapersIDOwnersID",
+      "title": "Remove an owner from a scraper target",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/scrapers/{scraperTargetID}/owners/{userID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of owner to remove."
+        },
+        {
+          "name": "scraperTargetID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The scraper target ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetSetup",
+      "title": "Check if database has default user, org, bucket",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/setup",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "influxdb.PostSetup",
+      "title": "Set up initial user, org and bucket",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/setup",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OnboardingRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostSignin",
+      "title": "Exchange basic auth credentials for session",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/signin",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "influxdb.PostSignout",
+      "title": "Expire the current session",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/signout",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "influxdb.GetSources",
+      "title": "List all sources",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/sources",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "org",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the organization."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostSources",
+      "title": "Create a source",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/sources",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Source"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteSourcesID",
+      "title": "Delete a source",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/sources/{sourceID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "sourceID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The source ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetSourcesID",
+      "title": "Retrieve a source",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/sources/{sourceID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "sourceID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The source ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PatchSourcesID",
+      "title": "Update a Source",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "/api/v2",
+      "path": "/sources/{sourceID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "sourceID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The source ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Source"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetSourcesIDBuckets",
+      "title": "Get buckets in a source",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/sources/{sourceID}/buckets",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "sourceID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The source ID."
+        },
+        {
+          "name": "org",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the organization."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetSourcesIDHealth",
+      "title": "Get the health of a source",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/sources/{sourceID}/health",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "sourceID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The source ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.ListStacks",
+      "title": "List all installed InfluxDB templates",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/stacks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The organization id of the stacks"
+        },
+        {
+          "name": "name",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "A collection of names to filter the list by."
+        },
+        {
+          "name": "stackID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "A collection of stackIDs to filter the list by."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.CreateStack",
+      "title": "Create a new stack",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/stacks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "description": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "orgID": {
+                    "type": "string"
+                  },
+                  "urls": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "title": "PostStackRequest",
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteStack",
+      "title": "Delete a stack and associated resources",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/stacks/{stack_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "stack_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Theidentifier of the stack."
+        },
+        {
+          "name": "orgID",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the organization."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.ReadStack",
+      "title": "Retrieve a stack",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/stacks/{stack_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "stack_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Theidentifier of the stack."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.UpdateStack",
+      "title": "Update an InfluxDB Stack",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "/api/v2",
+      "path": "/stacks/{stack_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "stack_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Theidentifier of the stack."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "additionalResources": {
+                    "items": {
+                      "properties": {
+                        "kind": {
+                          "type": "string"
+                        },
+                        "resourceID": {
+                          "type": "string"
+                        },
+                        "templateMetaName": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "kind",
+                        "resourceID"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "description": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "name": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "templateURLs": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "nullable": true,
+                    "type": "array"
+                  }
+                },
+                "title": "PatchStackRequest",
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.UninstallStack",
+      "title": "Uninstall an InfluxDB Stack",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/stacks/{stack_id}/uninstall",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "stack_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The stack id"
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetTasks",
+      "title": "List all tasks",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/tasks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "name",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Returns task with a specific name."
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Return tasks after a specified ID."
+        },
+        {
+          "name": "user",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter tasks to a specific user ID."
+        },
+        {
+          "name": "org",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter tasks to a specific organization name."
+        },
+        {
+          "name": "orgID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter tasks to a specific organization ID."
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "enum": [
+              "active",
+              "inactive"
+            ],
+            "type": "string"
+          },
+          "description": "Filter tasks by a status--\"inactive\" or \"active\"."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "default": 100,
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "description": "The number of tasks to return"
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostTasks",
+      "title": "Create a new task",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/tasks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskCreateRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteTasksID",
+      "title": "Delete a task",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the task to delete."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetTasksID",
+      "title": "Retrieve a task",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The task ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PatchTasksID",
+      "title": "Update a task",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The task ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskUpdateRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetTasksIDLabels",
+      "title": "List all labels for a task",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The task ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostTasksIDLabels",
+      "title": "Add a label to a task",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The task ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelMapping"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteTasksIDLabelsID",
+      "title": "Delete a label from a task",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}/labels/{labelID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The task ID."
+        },
+        {
+          "name": "labelID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The label ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetTasksIDLogs",
+      "title": "Retrieve all logs for a task",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}/logs",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The task ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetTasksIDMembers",
+      "title": "List all task members",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}/members",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The task ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostTasksIDMembers",
+      "title": "Add a member to a task",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}/members",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The task ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddResourceMemberRequestBody"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteTasksIDMembersID",
+      "title": "Remove a member from a task",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}/members/{userID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the member to remove."
+        },
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The task ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetTasksIDOwners",
+      "title": "List all owners of a task",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}/owners",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The task ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostTasksIDOwners",
+      "title": "Add an owner to a task",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}/owners",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The task ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddResourceMemberRequestBody"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteTasksIDOwnersID",
+      "title": "Remove an owner from a task",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}/owners/{userID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the owner to remove."
+        },
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The task ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetTasksIDRuns",
+      "title": "List runs for a task",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}/runs",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the task to get runs for."
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Returns runs after a specific ID."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "default": 100,
+            "maximum": 500,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "description": "The number of runs to return"
+        },
+        {
+          "name": "afterTime",
+          "in": "query",
+          "schema": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": "Filter runs to those scheduled after this time, RFC3339"
+        },
+        {
+          "name": "beforeTime",
+          "in": "query",
+          "schema": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "description": "Filter runs to those scheduled before this time, RFC3339"
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostTasksIDRuns",
+      "title": "Manually start a task run, overriding the current schedule",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}/runs",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunManually"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteTasksIDRunsID",
+      "title": "Cancel a running task",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}/runs/{runID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The task ID."
+        },
+        {
+          "name": "runID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The run ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetTasksIDRunsID",
+      "title": "Retrieve a single run for a task",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}/runs/{runID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The task ID."
+        },
+        {
+          "name": "runID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The run ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetTasksIDRunsIDLogs",
+      "title": "Retrieve all logs for a run",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}/runs/{runID}/logs",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of task to get logs for."
+        },
+        {
+          "name": "runID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "ID of run to get logs for."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostTasksIDRunsIDRetry",
+      "title": "Retry a task run",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/tasks/{taskID}/runs/{runID}/retry",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "taskID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The task ID."
+        },
+        {
+          "name": "runID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The run ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json; charset=utf-8": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetTelegrafPlugins",
+      "title": "List all Telegraf plugins",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/telegraf/plugins",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "type",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The type of plugin desired."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetTelegrafs",
+      "title": "List all Telegraf configurations",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/telegrafs",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "orgID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The organization ID the Telegraf config belongs to."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostTelegrafs",
+      "title": "Create a Telegraf configuration",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/telegrafs",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelegrafRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteTelegrafsID",
+      "title": "Delete a Telegraf configuration",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/telegrafs/{telegrafID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "telegrafID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Telegraf configuration ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetTelegrafsID",
+      "title": "Retrieve a Telegraf configuration",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/telegrafs/{telegrafID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "telegrafID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Telegraf configuration ID."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "default": "application/toml",
+            "enum": [
+              "application/toml",
+              "application/json",
+              "application/octet-stream"
+            ],
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PutTelegrafsID",
+      "title": "Update a Telegraf configuration",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "/api/v2",
+      "path": "/telegrafs/{telegrafID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "telegrafID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Telegraf config ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelegrafRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetTelegrafsIDLabels",
+      "title": "List all labels for a Telegraf config",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/telegrafs/{telegrafID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "telegrafID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Telegraf config ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostTelegrafsIDLabels",
+      "title": "Add a label to a Telegraf config",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/telegrafs/{telegrafID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "telegrafID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Telegraf config ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelMapping"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteTelegrafsIDLabelsID",
+      "title": "Delete a label from a Telegraf config",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/telegrafs/{telegrafID}/labels/{labelID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "telegrafID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Telegraf config ID."
+        },
+        {
+          "name": "labelID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The label ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetTelegrafsIDMembers",
+      "title": "List all users with member privileges for a Telegraf config",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/telegrafs/{telegrafID}/members",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "telegrafID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Telegraf config ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostTelegrafsIDMembers",
+      "title": "Add a member to a Telegraf config",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/telegrafs/{telegrafID}/members",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "telegrafID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Telegraf config ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddResourceMemberRequestBody"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteTelegrafsIDMembersID",
+      "title": "Remove a member from a Telegraf config",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/telegrafs/{telegrafID}/members/{userID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the member to remove."
+        },
+        {
+          "name": "telegrafID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Telegraf config ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetTelegrafsIDOwners",
+      "title": "List all owners of a Telegraf configuration",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/telegrafs/{telegrafID}/owners",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "telegrafID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Telegraf configuration ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostTelegrafsIDOwners",
+      "title": "Add an owner to a Telegraf configuration",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/telegrafs/{telegrafID}/owners",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "telegrafID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Telegraf configuration ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddResourceMemberRequestBody"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteTelegrafsIDOwnersID",
+      "title": "Remove an owner from a Telegraf config",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/telegrafs/{telegrafID}/owners/{userID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the owner to remove."
+        },
+        {
+          "name": "telegrafID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Telegraf config ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.ApplyTemplate",
+      "title": "Apply or dry-run an InfluxDB Template",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/templates/apply",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateApply"
+              }
+            },
+            "application/x-jsonnet": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateApply"
+              }
+            },
+            "text/yml": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateApply"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.ExportTemplate",
+      "title": "Export a new Influx Template",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/templates/export",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/TemplateExportByID"
+                  },
+                  {
+                    "$ref": "#/components/schemas/TemplateExportByName"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetUsers",
+      "title": "List all users",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/users",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "name",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostUsers",
+      "title": "Create a user",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/users",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteUsersID",
+      "title": "Delete a user",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/users/{userID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the user to delete."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetUsersID",
+      "title": "Retrieve a user",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/users/{userID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The user ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PatchUsersID",
+      "title": "Update a user",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "/api/v2",
+      "path": "/users/{userID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the user to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostUsersIDPassword",
+      "title": "Update a password",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/users/{userID}/password",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "userID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The user ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetBody"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetVariables",
+      "title": "List all variables",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/variables",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "org",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The name of the organization."
+        },
+        {
+          "name": "orgID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The organization ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostVariables",
+      "title": "Create a variable",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/variables",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Variable"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteVariablesID",
+      "title": "Delete a variable",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/variables/{variableID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "variableID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The variable ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetVariablesID",
+      "title": "Retrieve a variable",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/variables/{variableID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "variableID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The variable ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PatchVariablesID",
+      "title": "Update a variable",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "/api/v2",
+      "path": "/variables/{variableID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "variableID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The variable ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Variable"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PutVariablesID",
+      "title": "Replace a variable",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "/api/v2",
+      "path": "/variables/{variableID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "variableID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The variable ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Variable"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.GetVariablesIDLabels",
+      "title": "List all labels for a variable",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "/api/v2",
+      "path": "/variables/{variableID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "variableID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The variable ID."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostVariablesIDLabels",
+      "title": "Add a label to a variable",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/variables/{variableID}/labels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "variableID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The variable ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelMapping"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.DeleteVariablesIDLabelsID",
+      "title": "Delete a label from a variable",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "/api/v2",
+      "path": "/variables/{variableID}/labels/{labelID}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "variableID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The variable ID."
+        },
+        {
+          "name": "labelID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The label ID to delete."
+        }
+      ]
+    },
+    {
+      "connector": "influxdb.PostWrite",
+      "title": "Write time series data into InfluxDB",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "/api/v2",
+      "path": "/write",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "Content-Encoding",
+          "in": "header",
+          "schema": {
+            "default": "identity",
+            "description": "Specifies that the line protocol in the body is encoded with gzip or not encoded with identity.",
+            "enum": [
+              "gzip",
+              "identity"
+            ],
+            "type": "string"
+          },
+          "description": "When present, its value indicates to the database that compression is applied to the line-protocol body."
+        },
+        {
+          "name": "Content-Type",
+          "in": "header",
+          "schema": {
+            "default": "text/plain; charset=utf-8",
+            "description": "Text/plain specifies the text line protocol; charset is assumed to be utf-8.",
+            "enum": [
+              "text/plain",
+              "text/plain; charset=utf-8",
+              "application/vnd.influx.arrow"
+            ],
+            "type": "string"
+          },
+          "description": "Content-Type is used to indicate the format of the data sent to the server."
+        },
+        {
+          "name": "Content-Length",
+          "in": "header",
+          "schema": {
+            "description": "The length in decimal number of octets.",
+            "type": "integer"
+          },
+          "description": "Content-Length is an entity header is indicating the size of the entity-body, in bytes, sent to the database. If the length is greater than the database max body configuration option, a 413 response is sent."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "default": "application/json",
+            "description": "The return format for errors.",
+            "enum": [
+              "application/json"
+            ],
+            "type": "string"
+          },
+          "description": "Specifies the return content format."
+        },
+        {
+          "name": "org",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "description": "All points within batch are written to this organization.",
+            "type": "string"
+          },
+          "description": "Specifies the destination organization for writes. Takes either the ID or Name interchangeably. If both `orgID` and `org` are specified, `org` takes precedence."
+        },
+        {
+          "name": "orgID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Specifies the ID of the destination organization for writes. If both `orgID` and `org` are specified, `org` takes precedence."
+        },
+        {
+          "name": "bucket",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "description": "All points within batch are written to this bucket.",
+            "type": "string"
+          },
+          "description": "The destination bucket for writes."
+        },
+        {
+          "name": "precision",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/WritePrecision"
+          },
+          "description": "The precision for the unix timestamps within the body line-protocol."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "text/plain": {
+              "schema": {
+                "format": "byte",
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

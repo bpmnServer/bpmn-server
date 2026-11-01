@@ -112,7 +112,7 @@ class MongoDB implements IDocumentStore {
         this.profilerStart('>mongo.remove:' + collName);
         try {
             const result = await collection.deleteMany(query);
-            if (result.deletedCount === 0)
+            if (result.deletedCount > 0)
                 this.logger.log('remove done for ' + result.deletedCount + ' docs in ' + collName);
             return result;
         } catch (err) {

@@ -1,0 +1,8 @@
+{
+  "name": "contentful",
+  "title": "Contentful",
+  "source": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/contentful.com/management.2/openapi.yaml",
+  "authentication": "bearer",
+  "operations": [],
+  "error": "404 Not Found"
+}

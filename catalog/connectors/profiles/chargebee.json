@@ -1,0 +1,8 @@
+{
+  "name": "chargebee",
+  "title": "Chargebee",
+  "source": "https://raw.githubusercontent.com/chargebee/openapi/master/spec/chargebee_api_v2_pc_v1_spec.json",
+  "authentication": "basic",
+  "operations": [],
+  "error": "The operation was aborted due to timeout"
+}

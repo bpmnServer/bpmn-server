@@ -1,0 +1,7 @@
+{
+  "name": "lob",
+  "title": "Lob",
+  "source": "https://raw.githubusercontent.com/lob/lob-openapi/main/lob-api-public.yml",
+  "authentication": "basic",
+  "operations": []
+}

@@ -19,7 +19,19 @@ export interface CatalogEntry {
     services?: string[];
     verify?: { errors: number; warnings: number; issues: { severity: string; code: string; elementId?: string; message: string }[] };
 }
-export interface Catalog { format: string; version: number; updated?: string; entries: CatalogEntry[] }
+export interface CatalogConnector {
+    id: string;
+    name: string;
+    url: string;
+    defaultAuth?: string;
+}
+export interface Catalog {
+    format: string;
+    version: number;
+    updated?: string;
+    entries: CatalogEntry[];
+    connectors?: CatalogConnector[];
+}
 
 export const catalogLocation = () => process.env.CATALOG_URL || DEFAULT_CATALOG;
 

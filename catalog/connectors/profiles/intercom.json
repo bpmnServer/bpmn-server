@@ -1,0 +1,8 @@
+{
+  "name": "intercom",
+  "title": "Intercom",
+  "source": "https://raw.githubusercontent.com/intercom/Intercom-OpenAPI/main/descriptions/2.10/api.intercom.io.yaml",
+  "authentication": "bearer",
+  "operations": [],
+  "error": "The operation was aborted due to timeout"
+}

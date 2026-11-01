@@ -1,0 +1,4649 @@
+{
+  "name": "supabase-storage",
+  "title": "Supabase Storage",
+  "source": "https://raw.githubusercontent.com/supabase/supabase/master/apps/docs/spec/storage_v0_openapi.json",
+  "authentication": "bearer",
+  "operations": [
+    {
+      "connector": "supabase-storage.post_upload_resumable",
+      "title": "Handle POST request for TUS Resumable uploads",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/upload/resumable/",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "supabase-storage.options_upload_resumable",
+      "title": "Handle OPTIONS request for TUS Resumable uploads",
+      "packageVersion": "1.0.0",
+      "method": "OPTIONS",
+      "baseUrl": "",
+      "path": "/upload/resumable/",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "supabase-storage.post_upload_resumable_*",
+      "title": "Handle POST request for TUS Resumable uploads",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/upload/resumable/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.put_upload_resumable_*",
+      "title": "Handle PUT request for TUS Resumable uploads",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "",
+      "path": "/upload/resumable/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.patch_upload_resumable_*",
+      "title": "Handle PATCH request for TUS Resumable uploads",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "",
+      "path": "/upload/resumable/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_upload_resumable_*",
+      "title": "Handle HEAD request for TUS Resumable uploads",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/upload/resumable/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.delete_upload_resumable_*",
+      "title": "Handle DELETE request for TUS Resumable uploads",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/upload/resumable/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.options_upload_resumable_*",
+      "title": "Handle OPTIONS request for TUS Resumable uploads",
+      "packageVersion": "1.0.0",
+      "method": "OPTIONS",
+      "baseUrl": "",
+      "path": "/upload/resumable/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_upload_resumable_sign",
+      "title": "Handle POST request for TUS Resumable uploads",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/upload/resumable/sign/",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "supabase-storage.options_upload_resumable_sign",
+      "title": "Handle OPTIONS request for TUS Resumable uploads",
+      "packageVersion": "1.0.0",
+      "method": "OPTIONS",
+      "baseUrl": "",
+      "path": "/upload/resumable/sign/",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "supabase-storage.post_upload_resumable_sign_*",
+      "title": "Handle POST request for TUS Resumable uploads",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/upload/resumable/sign/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.put_upload_resumable_sign_*",
+      "title": "Handle PUT request for TUS Resumable uploads",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "",
+      "path": "/upload/resumable/sign/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.patch_upload_resumable_sign_*",
+      "title": "Handle PATCH request for TUS Resumable uploads",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "",
+      "path": "/upload/resumable/sign/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_upload_resumable_sign_*",
+      "title": "Handle HEAD request for TUS Resumable uploads",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/upload/resumable/sign/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.delete_upload_resumable_sign_*",
+      "title": "Handle DELETE request for TUS Resumable uploads",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/upload/resumable/sign/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.options_upload_resumable_sign_*",
+      "title": "Handle OPTIONS request for TUS Resumable uploads",
+      "packageVersion": "1.0.0",
+      "method": "OPTIONS",
+      "baseUrl": "",
+      "path": "/upload/resumable/sign/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_bucket",
+      "title": "Create a bucket",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/bucket/",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "avatars"
+                  },
+                  "id": {
+                    "type": "string",
+                    "example": "avatars"
+                  },
+                  "public": {
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "STANDARD",
+                      "ANALYTICS"
+                    ]
+                  },
+                  "file_size_limit": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "examples": [
+                          1000
+                        ],
+                        "nullable": true,
+                        "minimum": 0
+                      },
+                      {
+                        "type": "string",
+                        "examples": [
+                          "100MB"
+                        ],
+                        "nullable": true
+                      }
+                    ]
+                  },
+                  "allowed_mime_types": {
+                    "type": "array",
+                    "nullable": true,
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "image/png",
+                      "image/jpg"
+                    ]
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_bucket",
+      "title": "Gets all buckets",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/bucket/",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "sortColumn",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "id",
+              "name",
+              "created_at",
+              "updated_at"
+            ]
+          }
+        },
+        {
+          "name": "sortOrder",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_bucket",
+      "title": "Gets all buckets",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/bucket/",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "sortColumn",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "id",
+              "name",
+              "created_at",
+              "updated_at"
+            ]
+          }
+        },
+        {
+          "name": "sortOrder",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_bucket_bucketId_empty",
+      "title": "Empty a bucket",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/bucket/{bucketId}/empty",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "bucketId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_bucket",
+      "title": "Gets all buckets",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/bucket",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "sortColumn",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "id",
+              "name",
+              "created_at",
+              "updated_at"
+            ]
+          }
+        },
+        {
+          "name": "sortOrder",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_bucket_bucketId",
+      "title": "Get details of a bucket",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/bucket/{bucketId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "bucketId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_bucket_bucketId",
+      "title": "Get details of a bucket",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/bucket/{bucketId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "bucketId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.put_bucket_bucketId",
+      "title": "Update properties of a bucket",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "",
+      "path": "/bucket/{bucketId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "bucketId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "minProperties": 1,
+                "properties": {
+                  "public": {
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "file_size_limit": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "examples": [
+                          1000
+                        ],
+                        "nullable": true,
+                        "minimum": 0
+                      },
+                      {
+                        "type": "string",
+                        "examples": [
+                          "100MB"
+                        ],
+                        "nullable": true
+                      }
+                    ]
+                  },
+                  "allowed_mime_types": {
+                    "type": "array",
+                    "nullable": true,
+                    "items": {
+                      "type": "string",
+                      "example": [
+                        "image/png",
+                        "image/jpg"
+                      ]
+                    }
+                  }
+                },
+                "anyOf": [
+                  {
+                    "required": [
+                      "public"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "file_size_limit"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "allowed_mime_types"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.delete_bucket_bucketId",
+      "title": "Delete a bucket",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/bucket/{bucketId}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "bucketId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.delete_object_bucketName_*",
+      "title": "Delete an object",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/object/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_object_bucketName_*",
+      "title": "Get object",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/object/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.put_object_bucketName_*",
+      "title": "Update the object at an existing key",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "",
+      "path": "/object/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_object_bucketName_*",
+      "title": "Retrieve object info",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/object/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "height",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "resize",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "cover",
+              "contain",
+              "fill"
+            ]
+          }
+        },
+        {
+          "name": "format",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "origin",
+              "avif",
+              "webp"
+            ]
+          }
+        },
+        {
+          "name": "quality",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 20,
+            "maximum": 100
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_object_bucketName_*",
+      "title": "Upload a new object",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/object/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.delete_object_bucketName",
+      "title": "Delete multiple objects",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/object/{bucketName}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prefixes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "example": [
+                      "folder/cat.png",
+                      "folder/morecats.png"
+                    ]
+                  }
+                },
+                "required": [
+                  "prefixes"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_object_authenticated_bucketName_*",
+      "title": "Retrieve an object",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/object/authenticated/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "download",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_object_authenticated_bucketName_*",
+      "title": "Retrieve object info",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/object/authenticated/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "height",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "resize",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "cover",
+              "contain",
+              "fill"
+            ]
+          }
+        },
+        {
+          "name": "format",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "origin",
+              "avif",
+              "webp"
+            ]
+          }
+        },
+        {
+          "name": "quality",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 20,
+            "maximum": 100
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_object_upload_sign_bucketName_*",
+      "title": "Generate a presigned url to upload an object",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/object/upload/sign/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.put_object_upload_sign_bucketName_*",
+      "title": "Uploads an object via a presigned URL",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "",
+      "path": "/object/upload/sign/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "token",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_object_sign_bucketName_*",
+      "title": "Generate a presigned url to retrieve an object",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/object/sign/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "expiresIn": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 60000
+                  },
+                  "transform": {
+                    "type": "object",
+                    "properties": {
+                      "height": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "example": 100
+                      },
+                      "width": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "example": 100
+                      },
+                      "resize": {
+                        "type": "string",
+                        "enum": [
+                          "cover",
+                          "contain",
+                          "fill"
+                        ]
+                      },
+                      "format": {
+                        "type": "string",
+                        "enum": [
+                          "origin",
+                          "avif",
+                          "webp"
+                        ]
+                      },
+                      "quality": {
+                        "type": "integer",
+                        "minimum": 20,
+                        "maximum": 100
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "expiresIn"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_object_sign_bucketName_*",
+      "title": "Retrieve an object via a presigned URL",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/object/sign/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "download",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "token",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_object_sign_bucketName_*",
+      "title": "Retrieve an object via a presigned URL",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/object/sign/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "download",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "token",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_object_sign_bucketName",
+      "title": "Generate presigned urls to retrieve objects",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/object/sign/{bucketName}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "expiresIn": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 60000
+                  },
+                  "paths": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "example": [
+                      "folder/cat.png",
+                      "folder/morecats.png"
+                    ]
+                  }
+                },
+                "required": [
+                  "expiresIn",
+                  "paths"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_object_move",
+      "title": "Moves an object",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/object/move",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "bucketId": {
+                    "type": "string",
+                    "example": "avatars"
+                  },
+                  "sourceKey": {
+                    "type": "string",
+                    "example": "folder/cat.png"
+                  },
+                  "destinationBucket": {
+                    "type": "string",
+                    "example": "users"
+                  },
+                  "destinationKey": {
+                    "type": "string",
+                    "example": "folder/newcat.png"
+                  }
+                },
+                "required": [
+                  "bucketId",
+                  "sourceKey",
+                  "destinationKey"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_object_list-v2_bucketName",
+      "title": "Search for objects under a prefix",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/object/list-v2/{bucketName}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prefix": {
+                    "type": "string",
+                    "example": "folder/subfolder"
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 10
+                  },
+                  "cursor": {
+                    "type": "string"
+                  },
+                  "with_delimiter": {
+                    "type": "boolean"
+                  },
+                  "sortBy": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string",
+                        "enum": [
+                          "name",
+                          "updated_at",
+                          "created_at"
+                        ]
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "column"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_object_list_bucketName",
+      "title": "Search for objects under a prefix",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/object/list/{bucketName}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prefix": {
+                    "type": "string",
+                    "example": "folder/subfolder"
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 10
+                  },
+                  "offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "example": 0
+                  },
+                  "sortBy": {
+                    "type": "object",
+                    "properties": {
+                      "column": {
+                        "type": "string",
+                        "enum": [
+                          "name",
+                          "updated_at",
+                          "created_at",
+                          "last_accessed_at"
+                        ]
+                      },
+                      "order": {
+                        "type": "string",
+                        "enum": [
+                          "asc",
+                          "desc"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "column"
+                    ]
+                  },
+                  "search": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "prefix"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_object_info_authenticated_bucketName_*",
+      "title": "Retrieve object info",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/object/info/authenticated/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "height",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "resize",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "cover",
+              "contain",
+              "fill"
+            ]
+          }
+        },
+        {
+          "name": "format",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "origin",
+              "avif",
+              "webp"
+            ]
+          }
+        },
+        {
+          "name": "quality",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 20,
+            "maximum": 100
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_object_info_authenticated_bucketName_*",
+      "title": "Retrieve object info",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/object/info/authenticated/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "height",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "resize",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "cover",
+              "contain",
+              "fill"
+            ]
+          }
+        },
+        {
+          "name": "format",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "origin",
+              "avif",
+              "webp"
+            ]
+          }
+        },
+        {
+          "name": "quality",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 20,
+            "maximum": 100
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_object_info_bucketName_*",
+      "title": "Retrieve object info",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/object/info/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "height",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "resize",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "cover",
+              "contain",
+              "fill"
+            ]
+          }
+        },
+        {
+          "name": "format",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "origin",
+              "avif",
+              "webp"
+            ]
+          }
+        },
+        {
+          "name": "quality",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 20,
+            "maximum": 100
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_object_info_bucketName_*",
+      "title": "Retrieve object info",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/object/info/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "height",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "resize",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "cover",
+              "contain",
+              "fill"
+            ]
+          }
+        },
+        {
+          "name": "format",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "origin",
+              "avif",
+              "webp"
+            ]
+          }
+        },
+        {
+          "name": "quality",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 20,
+            "maximum": 100
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_object_copy",
+      "title": "Copies an object",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/object/copy",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "bucketId": {
+                    "type": "string",
+                    "example": "avatars"
+                  },
+                  "sourceKey": {
+                    "type": "string",
+                    "example": "folder/source.png"
+                  },
+                  "destinationBucket": {
+                    "type": "string",
+                    "example": "users"
+                  },
+                  "destinationKey": {
+                    "type": "string",
+                    "example": "folder/destination.png"
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "properties": {
+                      "cacheControl": {
+                        "type": "string"
+                      },
+                      "mimetype": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "copyMetadata": {
+                    "type": "boolean",
+                    "example": true
+                  }
+                },
+                "required": [
+                  "sourceKey",
+                  "bucketId",
+                  "destinationKey"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_object_public_bucketName_*",
+      "title": "Retrieve an object from a public bucket",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/object/public/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "download",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_object_public_bucketName_*",
+      "title": "Get object info",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/object/public/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "height",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "resize",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "cover",
+              "contain",
+              "fill"
+            ]
+          }
+        },
+        {
+          "name": "format",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "origin",
+              "avif",
+              "webp"
+            ]
+          }
+        },
+        {
+          "name": "quality",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 20,
+            "maximum": 100
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_object_info_public_bucketName_*",
+      "title": "Get object info",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/object/info/public/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "height",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "resize",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "cover",
+              "contain",
+              "fill"
+            ]
+          }
+        },
+        {
+          "name": "format",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "origin",
+              "avif",
+              "webp"
+            ]
+          }
+        },
+        {
+          "name": "quality",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 20,
+            "maximum": 100
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_render_image_authenticated_bucketName_*",
+      "title": "Render an authenticated image with the given transformations",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/render/image/authenticated/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "height",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "resize",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "cover",
+              "contain",
+              "fill"
+            ]
+          }
+        },
+        {
+          "name": "format",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "origin",
+              "avif",
+              "webp"
+            ]
+          }
+        },
+        {
+          "name": "quality",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 20,
+            "maximum": 100
+          }
+        },
+        {
+          "name": "download",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_render_image_authenticated_bucketName_*",
+      "title": "Render an authenticated image with the given transformations",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/render/image/authenticated/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "height",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "resize",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "cover",
+              "contain",
+              "fill"
+            ]
+          }
+        },
+        {
+          "name": "format",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "origin",
+              "avif",
+              "webp"
+            ]
+          }
+        },
+        {
+          "name": "quality",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 20,
+            "maximum": 100
+          }
+        },
+        {
+          "name": "download",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_render_image_sign_bucketName_*",
+      "title": "Render an authenticated image with the given transformations",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/render/image/sign/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "token",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "download",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_render_image_sign_bucketName_*",
+      "title": "Render an authenticated image with the given transformations",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/render/image/sign/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "token",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "download",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_render_image_public_bucketName_*",
+      "title": "Render a public image with the given transformations",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/render/image/public/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "height",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "resize",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "cover",
+              "contain",
+              "fill"
+            ]
+          }
+        },
+        {
+          "name": "format",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "origin",
+              "avif",
+              "webp"
+            ]
+          }
+        },
+        {
+          "name": "quality",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 20,
+            "maximum": 100
+          }
+        },
+        {
+          "name": "download",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_render_image_public_bucketName_*",
+      "title": "Render a public image with the given transformations",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/render/image/public/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "height",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "width",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "resize",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "cover",
+              "contain",
+              "fill"
+            ]
+          }
+        },
+        {
+          "name": "format",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "origin",
+              "avif",
+              "webp"
+            ]
+          }
+        },
+        {
+          "name": "quality",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 20,
+            "maximum": 100
+          }
+        },
+        {
+          "name": "download",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.put_s3_Bucket_*",
+      "title": "put_s3_Bucket_*",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "",
+      "path": "/s3/{Bucket}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Bucket",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_s3_Bucket_*",
+      "title": "head_s3_Bucket_*",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/s3/{Bucket}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Bucket",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_s3_Bucket_*",
+      "title": "post_s3_Bucket_*",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/s3/{Bucket}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Bucket",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.delete_s3_Bucket_*",
+      "title": "delete_s3_Bucket_*",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/s3/{Bucket}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Bucket",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_s3_Bucket_*",
+      "title": "get_s3_Bucket_*",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/s3/{Bucket}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Bucket",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.delete_s3_Bucket",
+      "title": "delete_s3_Bucket",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/s3/{Bucket}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Bucket",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.put_s3_Bucket",
+      "title": "put_s3_Bucket",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "",
+      "path": "/s3/{Bucket}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Bucket",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_s3_Bucket",
+      "title": "post_s3_Bucket",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/s3/{Bucket}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Bucket",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_s3_Bucket",
+      "title": "get_s3_Bucket",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/s3/{Bucket}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Bucket",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_s3_Bucket",
+      "title": "head_s3_Bucket",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/s3/{Bucket}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Bucket",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.delete_s3_Bucket",
+      "title": "delete_s3_Bucket",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/s3/{Bucket}/",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Bucket",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.put_s3_Bucket",
+      "title": "put_s3_Bucket",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "",
+      "path": "/s3/{Bucket}/",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Bucket",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_s3_Bucket",
+      "title": "post_s3_Bucket",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/s3/{Bucket}/",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Bucket",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_s3_Bucket",
+      "title": "get_s3_Bucket",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/s3/{Bucket}/",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Bucket",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_s3_Bucket",
+      "title": "head_s3_Bucket",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/s3/{Bucket}/",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Bucket",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_s3",
+      "title": "get_s3",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/s3/",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "supabase-storage.delete_cdn_bucketName_*",
+      "title": "Purge cache for an object",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/cdn/{bucketName}/{*}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "*",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_health",
+      "title": "healthcheck",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/health/",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "supabase-storage.head_health",
+      "title": "healthcheck",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/health/",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "supabase-storage.head_health",
+      "title": "healthcheck",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/health",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "supabase-storage.post_iceberg_bucket",
+      "title": "Create an analytics bucket",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/iceberg/bucket",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "avatars"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_iceberg_bucket",
+      "title": "List analytics buckets",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/iceberg/bucket",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "sortColumn",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "id",
+              "name",
+              "created_at",
+              "updated_at"
+            ]
+          }
+        },
+        {
+          "name": "sortOrder",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_iceberg_bucket",
+      "title": "List analytics buckets",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/iceberg/bucket",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        {
+          "name": "sortColumn",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "id",
+              "name",
+              "created_at",
+              "updated_at"
+            ]
+          }
+        },
+        {
+          "name": "sortOrder",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ]
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.delete_iceberg_bucket_bucketName",
+      "title": "Delete an analytics bucket",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/iceberg/bucket/{bucketName}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "bucketName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_iceberg_v1_config",
+      "title": "Get Iceberg catalog configuration",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/iceberg/v1/config",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "warehouse",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_iceberg_v1_config",
+      "title": "Get Iceberg catalog configuration",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/iceberg/v1/config",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "warehouse",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_iceberg_v1_prefix_namespaces",
+      "title": "Create a namespace",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/iceberg/v1/{prefix}/namespaces",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "prefix",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "namespace": {
+                    "type": "string",
+                    "example": "namespace"
+                  },
+                  "properties": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "namespace"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_iceberg_v1_prefix_namespaces",
+      "title": "List namespaces",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/iceberg/v1/{prefix}/namespaces",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "pageToken",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "pageSize",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "number"
+          }
+        },
+        {
+          "name": "parent",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "prefix",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_iceberg_v1_prefix_namespaces",
+      "title": "List namespaces",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/iceberg/v1/{prefix}/namespaces",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "pageToken",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "pageSize",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "number"
+          }
+        },
+        {
+          "name": "parent",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "prefix",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_iceberg_v1_prefix_namespaces_namespace",
+      "title": "Load a namespace",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/iceberg/v1/{prefix}/namespaces/{namespace}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "prefix",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "namespace",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_iceberg_v1_prefix_namespaces_namespace",
+      "title": "Load a namespace",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/iceberg/v1/{prefix}/namespaces/{namespace}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "prefix",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "namespace",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.delete_iceberg_v1_prefix_namespaces_namespace",
+      "title": "Drop a namespace",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/iceberg/v1/{prefix}/namespaces/{namespace}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "prefix",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "namespace",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_iceberg_v1_prefix_namespaces_namespace_tables",
+      "title": "Create a table in the given namespace",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/iceberg/v1/{prefix}/namespaces/{namespace}/tables",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "prefix",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "namespace",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "schema"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string",
+                    "format": "uri",
+                    "nullable": true
+                  },
+                  "schema": {
+                    "allOf": [
+                      {
+                        "type": "object",
+                        "required": [
+                          "type",
+                          "fields"
+                        ],
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "struct"
+                            ]
+                          },
+                          "fields": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "name",
+                                "type",
+                                "required"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "oneOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "object",
+                                      "required": [
+                                        "type",
+                                        "fields"
+                                      ],
+                                      "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "enum": [
+                                            "struct"
+                                          ]
+                                        },
+                                        "fields": {
+                                          "type": "array",
+                                          "items": {
+                                            "$comment": "recurse nested StructField definitions here"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "type": "object",
+                                      "required": [
+                                        "type",
+                                        "element-id",
+                                        "element",
+                                        "element-required"
+                                      ],
+                                      "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "enum": [
+                                            "list"
+                                          ]
+                                        },
+                                        "element-id": {
+                                          "type": "integer"
+                                        },
+                                        "element": {
+                                          "$comment": "Type object (recurse)"
+                                        },
+                                        "element-required": {
+                                          "type": "boolean"
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "type": "object",
+                                      "required": [
+                                        "type",
+                                        "key-id",
+                                        "key",
+                                        "value-id",
+                                        "value",
+                                        "value-required"
+                                      ],
+                                      "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "enum": [
+                                            "map"
+                                          ]
+                                        },
+                                        "key-id": {
+                                          "type": "integer"
+                                        },
+                                        "key": {
+                                          "$comment": "Type object (recurse)"
+                                        },
+                                        "value-id": {
+                                          "type": "integer"
+                                        },
+                                        "value": {
+                                          "$comment": "Type object (recurse)"
+                                        },
+                                        "value-required": {
+                                          "type": "boolean"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                "required": {
+                                  "type": "boolean"
+                                },
+                                "doc": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "schema-id": {
+                            "type": "integer",
+                            "readOnly": true
+                          },
+                          "identifier-field-ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "spec": {
+                    "type": "object",
+                    "required": [
+                      "fields"
+                    ],
+                    "properties": {
+                      "spec-id": {
+                        "type": "integer",
+                        "readOnly": true
+                      },
+                      "fields": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "source-id",
+                            "transform",
+                            "name"
+                          ],
+                          "properties": {
+                            "field-id": {
+                              "type": "integer"
+                            },
+                            "source-id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "transform": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "properties": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  },
+                  "stage-create": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "write-order": {
+                    "type": "object",
+                    "nullable": true,
+                    "required": [
+                      "fields"
+                    ],
+                    "properties": {
+                      "order-id": {
+                        "type": "integer",
+                        "readOnly": true
+                      },
+                      "fields": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "source-id",
+                            "transform",
+                            "direction",
+                            "null-order"
+                          ],
+                          "properties": {
+                            "source-id": {
+                              "type": "integer"
+                            },
+                            "transform": {
+                              "type": "string"
+                            },
+                            "direction": {
+                              "type": "string",
+                              "enum": [
+                                "asc",
+                                "desc"
+                              ]
+                            },
+                            "null-order": {
+                              "type": "string",
+                              "enum": [
+                                "nulls-first",
+                                "nulls-last"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_iceberg_v1_prefix_namespaces_namespace_tables",
+      "title": "Create a table",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/iceberg/v1/{prefix}/namespaces/{namespace}/tables",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "pageToken",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "pageSize",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "number"
+          }
+        },
+        {
+          "name": "parent",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "prefix",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "namespace",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_iceberg_v1_prefix_namespaces_namespace_tables",
+      "title": "Create a table",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/iceberg/v1/{prefix}/namespaces/{namespace}/tables",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "pageToken",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "pageSize",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "number"
+          }
+        },
+        {
+          "name": "parent",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "prefix",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "namespace",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.get_iceberg_v1_prefix_namespaces_namespace_tables_table",
+      "title": "Load an Iceberg Table",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/iceberg/v1/{prefix}/namespaces/{namespace}/tables/{table}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "prefix",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "namespace",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "table",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.head_iceberg_v1_prefix_namespaces_namespace_tables_table",
+      "title": "Load an Iceberg Table",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/iceberg/v1/{prefix}/namespaces/{namespace}/tables/{table}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "prefix",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "namespace",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "table",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.delete_iceberg_v1_prefix_namespaces_namespace_tables_table",
+      "title": "Drop a Table",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/iceberg/v1/{prefix}/namespaces/{namespace}/tables/{table}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "purgeRequested",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "true",
+              "false",
+              "True",
+              "False"
+            ],
+            "default": "false"
+          },
+          "description": "If true, the table will be permanently deleted"
+        },
+        {
+          "name": "prefix",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "namespace",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "table",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_iceberg_v1_prefix_namespaces_namespace_tables_table",
+      "title": "Commit updates to multiple tables in an atomic operation",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/iceberg/v1/{prefix}/namespaces/{namespace}/tables/{table}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "prefix",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "namespace",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "table",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Commit updates to multiple tables in an atomic operation",
+                "properties": {
+                  "requirements": {
+                    "type": "array",
+                    "description": "Assertions to validate before applying updates",
+                    "items": {
+                      "type": "object",
+                      "description": "A requirement assertion",
+                      "required": [
+                        "type"
+                      ],
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "description": "Type of the requirement (e.g. assert-ref-snapshot-id, assert-table-uuid)",
+                          "example": "assert-ref-snapshot-id"
+                        },
+                        "ref": {
+                          "type": "string"
+                        },
+                        "uuid": {
+                          "type": "string"
+                        },
+                        "args": {
+                          "type": "object",
+                          "additionalProperties": true
+                        }
+                      },
+                      "additionalProperties": true
+                    }
+                  },
+                  "updates": {
+                    "type": "array",
+                    "description": "Metadata updates to apply to the table",
+                    "items": {
+                      "type": "object",
+                      "description": "A single update operation",
+                      "required": [
+                        "action"
+                      ],
+                      "properties": {
+                        "action": {
+                          "type": "string",
+                          "description": "Action to perform (e.g. add-snapshot, set-snapshot-ref)",
+                          "example": "add-snapshot"
+                        },
+                        "snapshot": {
+                          "type": "object",
+                          "properties": {
+                            "sequence-number": {
+                              "type": "integer"
+                            },
+                            "timestamp-ms": {
+                              "type": "integer"
+                            },
+                            "manifest-list": {
+                              "type": "string"
+                            },
+                            "summary": {
+                              "type": "object",
+                              "additionalProperties": true,
+                              "properties": {
+                                "operation": {
+                                  "type": "string"
+                                },
+                                "added-files-size": {
+                                  "type": "string"
+                                },
+                                "added-data-files": {
+                                  "type": "string"
+                                },
+                                "added-records": {
+                                  "type": "string"
+                                },
+                                "total-delete-files": {
+                                  "type": "string"
+                                },
+                                "total-records": {
+                                  "type": "string"
+                                },
+                                "total-position-deletes": {
+                                  "type": "string"
+                                },
+                                "total-equality-deletes": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "schema-id": {
+                              "type": "integer"
+                            }
+                          },
+                          "additionalProperties": true
+                        },
+                        "ref-name": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "args": {
+                          "type": "object",
+                          "additionalProperties": true
+                        }
+                      },
+                      "additionalProperties": true
+                    }
+                  }
+                },
+                "required": [
+                  "updates",
+                  "requirements"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_vector_CreateIndex",
+      "title": "Create a vector index",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/vector/CreateIndex",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "dataType": {
+                    "type": "string",
+                    "enum": [
+                      "float32"
+                    ]
+                  },
+                  "dimension": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 4096
+                  },
+                  "distanceMetric": {
+                    "type": "string",
+                    "enum": [
+                      "cosine",
+                      "euclidean"
+                    ]
+                  },
+                  "indexName": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 45,
+                    "pattern": "^[a-z0-9](?:[a-z0-9.-]{1,61})?[a-z0-9]$",
+                    "description": "3-63 chars, lowercase letters, numbers, hyphens, dots; must start/end with letter or number. Must be unique within the vector bucket."
+                  },
+                  "metadataConfiguration": {
+                    "type": "object",
+                    "required": [
+                      "nonFilterableMetadataKeys"
+                    ],
+                    "properties": {
+                      "nonFilterableMetadataKeys": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "vectorBucketName": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "dataType",
+                  "dimension",
+                  "distanceMetric",
+                  "indexName",
+                  "vectorBucketName"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_vector_DeleteIndex",
+      "title": "Delete a vector index",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/vector/DeleteIndex",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "indexName": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 45,
+                    "pattern": "^[a-z0-9](?:[a-z0-9.-]{1,61})?[a-z0-9]$",
+                    "description": "3-63 chars, lowercase letters, numbers, hyphens, dots; must start/end with letter or number. Must be unique within the vector bucket."
+                  },
+                  "vectorBucketName": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "indexName",
+                  "vectorBucketName"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_vector_ListIndexes",
+      "title": "List indexes in a vector bucket",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/vector/ListIndexes",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "vectorBucketName": {
+                    "type": "string"
+                  },
+                  "maxResults": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 500,
+                    "default": 500
+                  },
+                  "nextToken": {
+                    "type": "string"
+                  },
+                  "prefix": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "vectorBucketName"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_vector_GetIndex",
+      "title": "Get a vector index",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/vector/GetIndex",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "vectorBucketName": {
+                    "type": "string"
+                  },
+                  "indexName": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 45,
+                    "pattern": "^[a-z0-9](?:[a-z0-9.-]{1,61})?[a-z0-9]$",
+                    "description": "3-63 chars, lowercase letters, numbers, hyphens, dots; must start/end with letter or number. Must be unique within the vector bucket."
+                  }
+                },
+                "required": [
+                  "vectorBucketName",
+                  "indexName"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_vector_CreateVectorBucket",
+      "title": "Create a vector bucket",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/vector/CreateVectorBucket",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "vectorBucketName": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "vectorBucketName"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_vector_DeleteVectorBucket",
+      "title": "Create a vector bucket",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/vector/DeleteVectorBucket",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "vectorBucketName": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "vectorBucketName"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_vector_ListVectorBuckets",
+      "title": "List vector buckets",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/vector/ListVectorBuckets",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "maxResults": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 500,
+                    "default": 500
+                  },
+                  "nextToken": {
+                    "type": "string"
+                  },
+                  "prefix": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_vector_GetVectorBucket",
+      "title": "Create a vector bucket",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/vector/GetVectorBucket",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "vectorBucketName": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "vectorBucketName"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_vector_PutVectors",
+      "title": "Put vectors into an index",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/vector/PutVectors",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "vectorBucketName": {
+                    "type": "string"
+                  },
+                  "indexName": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 45,
+                    "pattern": "^[a-z0-9](?:[a-z0-9.-]{1,61})?[a-z0-9]$",
+                    "description": "3-63 chars, lowercase letters, numbers, hyphens, dots; must start/end with letter or number. Must be unique within the vector bucket."
+                  },
+                  "vectors": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 500,
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "float32": {
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              }
+                            }
+                          },
+                          "required": [
+                            "float32"
+                          ]
+                        },
+                        "metadata": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "oneOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "boolean"
+                              },
+                              {
+                                "type": "number"
+                              }
+                            ]
+                          }
+                        },
+                        "key": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "vectorBucketName",
+                  "indexName",
+                  "vectors"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_vector_QueryVectors",
+      "title": "Query vectors",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/vector/QueryVectors",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/def-2"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_vector_DeleteVectors",
+      "title": "Delete vectors from an index",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/vector/DeleteVectors",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "vectorBucketName": {
+                    "type": "string"
+                  },
+                  "indexName": {
+                    "type": "string"
+                  },
+                  "keys": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "vectorBucketName",
+                  "indexName",
+                  "keys"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_vector_ListVectors",
+      "title": "List vectors in a vector index",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/vector/ListVectors",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "vectorBucketName": {
+                    "type": "string"
+                  },
+                  "indexArn": {
+                    "type": "string"
+                  },
+                  "indexName": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 45,
+                    "pattern": "^[a-z0-9](?:[a-z0-9.-]{1,61})?[a-z0-9]$",
+                    "description": "3-63 chars, lowercase letters, numbers, hyphens, dots; must start/end with letter or number. Must be unique within the vector bucket."
+                  },
+                  "maxResults": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 500
+                  },
+                  "nextToken": {
+                    "type": "string"
+                  },
+                  "returnData": {
+                    "type": "boolean"
+                  },
+                  "returnMetadata": {
+                    "type": "boolean"
+                  },
+                  "segmentCount": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 16
+                  },
+                  "segmentIndex": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 15
+                  }
+                },
+                "required": [
+                  "vectorBucketName",
+                  "indexName"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "supabase-storage.post_vector_GetVectors",
+      "title": "Returns vector attributes",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/vector/GetVectors",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "indexName": {
+                    "type": "string"
+                  },
+                  "keys": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "returnData": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "returnMetadata": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "vectorBucketName": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "indexName",
+                  "keys",
+                  "vectorBucketName"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

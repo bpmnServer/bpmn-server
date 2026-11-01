@@ -1,0 +1,8 @@
+{
+  "name": "airtable",
+  "title": "Airtable",
+  "source": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/airtable.com/0.1.0/openapi.yaml",
+  "authentication": "bearer",
+  "operations": [],
+  "error": "404 Not Found"
+}

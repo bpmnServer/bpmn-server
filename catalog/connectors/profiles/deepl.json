@@ -1,0 +1,2733 @@
+{
+  "name": "deepl",
+  "title": "Deepl",
+  "source": "https://raw.githubusercontent.com/DeepLcom/openapi/main/openapi.yaml",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "deepl.adminGetAnalytics",
+      "title": "Get usage statistics as an admin",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/admin/analytics",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "Start date for the usage report (ISO 8601 date format)."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "End date for the usage report (ISO 8601 date format)."
+        },
+        {
+          "name": "group_by",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "key",
+              "key_and_day"
+            ]
+          },
+          "description": "Optional parameter to group usage statistics. Possible values:\n * `key` - Group by API key\n * `key_and_day` - Group by API key and usage date"
+        }
+      ]
+    },
+    {
+      "connector": "deepl.adminGetCustomTagAnalytics",
+      "title": "Get custom tag usage statistics as an admin",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/admin/analytics/custom-tags",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "Start date for the usage report (ISO 8601 date format)."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "End date for the usage report (ISO 8601 date format)."
+        },
+        {
+          "name": "aggregate_by",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "period",
+              "day"
+            ],
+            "default": "period"
+          },
+          "description": "Optional parameter to control aggregation of usage statistics. Possible values:\n * `period` - Aggregate usage over the entire date range (default)\n * `day` - Group usage by individual day"
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Page number for pagination. Use the integer value returned in `next_page` from\na previous response to retrieve the next page of results."
+        }
+      ]
+    },
+    {
+      "connector": "deepl.adminCreateDeveloperKey",
+      "title": "Create a developer key as an admin",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/admin/developer-keys",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "$ref": "#/components/schemas/ApiKeyLabel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.adminGetDeveloperKeys",
+      "title": "Get all developer keys as an admin",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/admin/developer-keys",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "deepl.adminDeactivateDeveloperKey",
+      "title": "Deactivate a developer key as an admin",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/admin/developer-keys/deactivate",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "key_id"
+                ],
+                "properties": {
+                  "key_id": {
+                    "$ref": "#/components/schemas/ApiKeyId"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.adminRenameDeveloperKey",
+      "title": "Rename a developer key as an admin",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/admin/developer-keys/label",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "key_id",
+                  "label"
+                ],
+                "properties": {
+                  "key_id": {
+                    "$ref": "#/components/schemas/ApiKeyId"
+                  },
+                  "label": {
+                    "type": "string",
+                    "description": "API key label.",
+                    "example": "developer key prod"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.adminSetDeveloperKeyUsageLimits",
+      "title": "Set developer key usage limits as an admin",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/admin/developer-keys/limits",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "key_id"
+                ],
+                "properties": {
+                  "key_id": {
+                    "$ref": "#/components/schemas/ApiKeyId"
+                  },
+                  "characters": {
+                    "$ref": "#/components/schemas/ApiKeyUsageCharacters"
+                  },
+                  "speech_to_text_milliseconds": {
+                    "$ref": "#/components/schemas/ApiKeyUsageSpeechToTextMilliseconds"
+                  },
+                  "speech_to_speech_milliseconds": {
+                    "$ref": "#/components/schemas/ApiKeyUsageSpeechToSpeechMilliseconds"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.translateText",
+      "title": "Request Translation",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/translate",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text",
+                  "target_lang"
+                ],
+                "properties": {
+                  "text": {
+                    "description": "Text to be translated. Only UTF-8-encoded plain text is supported. The parameter may be specified\nmany times in a single request, within the request size limit (128KiB). Translations are returned\nin the same order as they are requested. Each text in the array is translated independently — texts\ndo not share context with each other.",
+                    "type": "array",
+                    "x-default": [
+                      "Hello, World!"
+                    ],
+                    "items": {
+                      "type": "string",
+                      "example": "Hello, World!"
+                    }
+                  },
+                  "source_lang": {
+                    "$ref": "#/components/schemas/SourceLanguage"
+                  },
+                  "target_lang": {
+                    "$ref": "#/components/schemas/TargetLanguage",
+                    "x-default": "DE"
+                  },
+                  "context": {
+                    "$ref": "#/components/schemas/Context"
+                  },
+                  "show_billed_characters": {
+                    "$ref": "#/components/schemas/ShowBilledCharacters"
+                  },
+                  "split_sentences": {
+                    "$ref": "#/components/schemas/SplitSentencesOption"
+                  },
+                  "preserve_formatting": {
+                    "$ref": "#/components/schemas/PreserveFormattingOption"
+                  },
+                  "formality": {
+                    "$ref": "#/components/schemas/Formality"
+                  },
+                  "model_type": {
+                    "$ref": "#/components/schemas/ModelType"
+                  },
+                  "glossary_id": {
+                    "description": "Specify the glossary to use for the translation. The glossary needs a dictionary for the\nlanguage pair of the request.\n\nIf `source_lang` is omitted, DeepL detects the source language and uses the dictionary for\nthe detected language pair. The request returns a `400` if the glossary has no dictionary\nfor that pair.\n\nCannot be used together with `glossary_ids`.",
+                    "type": "string",
+                    "example": "def3a26b-3e84-45b3-84ae-0c0aaf3525f7"
+                  },
+                  "glossary_ids": {
+                    "description": "Specify up to 5 glossaries to use for the translation, as an array of glossary IDs. Each glossary's matching terms are applied to the translation.\n\nEvery listed glossary must contain a dictionary for the requested language pair.\n\nIf `source_lang` is omitted, DeepL detects the source language and every listed glossary must\ncontain a dictionary for the detected language pair. A single glossary without a matching\ndictionary returns a `400` for the whole request.\n\nCannot be used together with `glossary_id`.",
+                    "type": "array",
+                    "maxItems": 5,
+                    "items": {
+                      "type": "string",
+                      "example": "def3a26b-3e84-45b3-84ae-0c0aaf3525f7"
+                    }
+                  },
+                  "style_id": {
+                    "description": "Specify the [style rule list](/docs/customize/using-style-rules) to use for the translation.\n\n**Important:** The target language has to match the language of the style rule list. A list\ncreated for a root language (for example `en`) applies to that language and all of its variants\n(`EN-GB`, `EN-US`). A list created for a variant (for example `en-GB`) applies only when\n`target_lang` is that variant.\n\nAll `model_type` values are supported.",
+                    "type": "string",
+                    "example": "7ff9bfd6-cd85-4190-8503-d6215a321519"
+                  },
+                  "translation_memory_id": {
+                    "$ref": "#/components/schemas/TranslationMemoryId"
+                  },
+                  "translation_memory_threshold": {
+                    "$ref": "#/components/schemas/TranslationMemoryThreshold"
+                  },
+                  "custom_instructions": {
+                    "description": "Specify a list of instructions to customize the translation behavior. Up to 10 custom instructions can be specified, each with a maximum of 300 characters.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "Use a friendly, diplomatic tone"
+                    }
+                  },
+                  "style_profile_id": {
+                    "description": "Translate with a [style profile](/api-reference/style-profiles/list-all-style-profiles): its glossaries,\nstyle rule lists and translation memories through one ID. The profile is applied per text once the\nsource language is known: the glossaries with a dictionary for the text's language pair, the style\nrule list for the target language, and the translation memories whose source language matches the\ntext. A component that does not fit a text's language pair is left out for that text; this is not an\nerror.\n\nCannot be combined with `glossary_id`, `glossary_ids`, `style_id`, `translation_memory_id`,\n`translation_memory_threshold` or `custom_instructions`. A request that combines them is rejected\nwith `400 Bad Request`. A style profile that does not exist or that your account cannot access is\nrejected with `404 Not Found`.",
+                    "type": "string",
+                    "format": "uuid",
+                    "example": "3f1c9d0e-7a24-4b58-9c31-8f0e5d2a1b47"
+                  },
+                  "tag_handling": {
+                    "$ref": "#/components/schemas/TagHandlingOption"
+                  },
+                  "tag_handling_version": {
+                    "$ref": "#/components/schemas/TagHandlingVersionOption"
+                  },
+                  "outline_detection": {
+                    "$ref": "#/components/schemas/OutlineDetectionOption"
+                  },
+                  "enable_beta_languages": {
+                    "description": "This parameter is maintained for backward compatibility and has no effect.",
+                    "type": "boolean",
+                    "default": false,
+                    "deprecated": true
+                  },
+                  "non_splitting_tags": {
+                    "description": "Comma-separated list of XML tags which never split sentences.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "non_splitting_tag"
+                    }
+                  },
+                  "splitting_tags": {
+                    "description": "Comma-separated list of XML tags which always cause splits.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "splitting_tag"
+                    }
+                  },
+                  "ignore_tags": {
+                    "description": "Comma-separated list of XML tags that indicate text not to be translated.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "ignore_tag"
+                    }
+                  }
+                }
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text",
+                  "target_lang"
+                ],
+                "properties": {
+                  "text": {
+                    "description": "Text to be translated. Only UTF-8-encoded plain text is supported. The parameter may be specified many times in a single request, within the request size limit (128KiB). Translations are returned in the same order as they are requested. Each text in the array is translated independently — texts do not share context with each other.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "Hello, World!"
+                    }
+                  },
+                  "source_lang": {
+                    "$ref": "#/components/schemas/SourceLanguage"
+                  },
+                  "target_lang": {
+                    "$ref": "#/components/schemas/TargetLanguage"
+                  },
+                  "context": {
+                    "$ref": "#/components/schemas/Context"
+                  },
+                  "show_billed_characters": {
+                    "$ref": "#/components/schemas/ShowBilledCharacters"
+                  },
+                  "split_sentences": {
+                    "$ref": "#/components/schemas/SplitSentencesOption"
+                  },
+                  "preserve_formatting": {
+                    "$ref": "#/components/schemas/PreserveFormattingOptionStr"
+                  },
+                  "formality": {
+                    "$ref": "#/components/schemas/Formality"
+                  },
+                  "model_type": {
+                    "$ref": "#/components/schemas/ModelType"
+                  },
+                  "glossary_id": {
+                    "description": "Specify the glossary to use for the translation. The glossary needs a dictionary for the\nlanguage pair of the request.\n\nIf `source_lang` is omitted, DeepL detects the source language and uses the dictionary for\nthe detected language pair. The request returns a `400` if the glossary has no dictionary\nfor that pair.\n\nCannot be used together with `glossary_ids`.",
+                    "type": "string",
+                    "example": "def3a26b-3e84-45b3-84ae-0c0aaf3525f7"
+                  },
+                  "glossary_ids": {
+                    "description": "Comma-separated list of up to 5 glossary IDs to use for the translation. Each glossary's matching terms are applied to the translation. May also be sent as a repeated parameter.\n\nEvery listed glossary must contain a dictionary for the requested language pair.\n\nIf `source_lang` is omitted, DeepL detects the source language and every listed glossary must\ncontain a dictionary for the detected language pair. A single glossary without a matching\ndictionary returns a `400` for the whole request.\n\nCannot be used together with `glossary_id`.",
+                    "type": "array",
+                    "maxItems": 5,
+                    "items": {
+                      "type": "string",
+                      "example": "def3a26b-3e84-45b3-84ae-0c0aaf3525f7"
+                    }
+                  },
+                  "translation_memory_id": {
+                    "$ref": "#/components/schemas/TranslationMemoryId"
+                  },
+                  "translation_memory_threshold": {
+                    "$ref": "#/components/schemas/TranslationMemoryThreshold"
+                  },
+                  "style_profile_id": {
+                    "description": "Translate with a [style profile](/api-reference/style-profiles/list-all-style-profiles): its glossaries,\nstyle rule lists and translation memories through one ID. The profile is applied per text once the\nsource language is known: the glossaries with a dictionary for the text's language pair, the style\nrule list for the target language, and the translation memories whose source language matches the\ntext. A component that does not fit a text's language pair is left out for that text; this is not an\nerror.\n\nCannot be combined with `glossary_id`, `glossary_ids`, `style_id`, `translation_memory_id`,\n`translation_memory_threshold` or `custom_instructions`. A request that combines them is rejected\nwith `400 Bad Request`. A style profile that does not exist or that your account cannot access is\nrejected with `404 Not Found`.",
+                    "type": "string",
+                    "format": "uuid",
+                    "example": "3f1c9d0e-7a24-4b58-9c31-8f0e5d2a1b47"
+                  },
+                  "tag_handling": {
+                    "$ref": "#/components/schemas/TagHandlingOption"
+                  },
+                  "outline_detection": {
+                    "$ref": "#/components/schemas/OutlineDetectionOptionStr"
+                  },
+                  "enable_beta_languages": {
+                    "description": "This parameter is maintained for backward compatibility and has no effect.",
+                    "type": "boolean",
+                    "default": false,
+                    "deprecated": true
+                  },
+                  "non_splitting_tags": {
+                    "description": "Comma-separated list of XML tags which never split sentences.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "non_splitting_tag"
+                    }
+                  },
+                  "splitting_tags": {
+                    "description": "Comma-separated list of XML tags which always cause splits.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "splitting_tag"
+                    }
+                  },
+                  "ignore_tags": {
+                    "description": "Comma-separated list of XML tags that indicate text not to be translated.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "ignore_tag"
+                    }
+                  }
+                }
+              },
+              "encoding": {
+                "text": {
+                  "style": "form",
+                  "explode": true
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.translateDocument",
+      "title": "Upload and Translate a Document",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/document",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "multipart/form-data": {
+              "examples": {
+                "Basic": {
+                  "summary": "Basic Document Translation",
+                  "value": {
+                    "target_lang": "DE",
+                    "file": "@document.docx"
+                  }
+                },
+                "Watermark": {
+                  "summary": "Adding a \"Translated by DeepL\" watermark (docx/pdf only)",
+                  "value": {
+                    "target_lang": "DE",
+                    "file": "@document.pdf",
+                    "enable_watermark": true
+                  }
+                },
+                "SuppressImages": {
+                  "summary": "Suppressing translation of embedded images (pptx only)",
+                  "value": {
+                    "target_lang": "DE",
+                    "file": "@document.pptx",
+                    "input_conversion_options": "version:1,suppress-image-types:all"
+                  }
+                },
+                "Glossary": {
+                  "summary": "Using a Glossary",
+                  "value": {
+                    "source_lang": "EN",
+                    "target_lang": "DE",
+                    "file": "@document.docx",
+                    "glossary_id": "[yourGlossaryId]"
+                  }
+                },
+                "MultipleGlossaries": {
+                  "summary": "Using Multiple Glossaries",
+                  "value": {
+                    "source_lang": "EN",
+                    "target_lang": "DE",
+                    "file": "@document.docx",
+                    "glossary_ids": "[yourGlossaryId1],[yourGlossaryId2]"
+                  }
+                },
+                "StyleRule": {
+                  "summary": "Using a Style Rule List",
+                  "value": {
+                    "source_lang": "EN",
+                    "target_lang": "DE",
+                    "file": "@document.docx",
+                    "style_id": "[yourStyleId]"
+                  }
+                },
+                "TranslationMemory": {
+                  "summary": "Using a Translation Memory",
+                  "value": {
+                    "source_lang": "EN",
+                    "target_lang": "DE",
+                    "file": "@document.docx",
+                    "translation_memory_id": "[yourTranslationMemoryId]",
+                    "translation_memory_threshold": 75
+                  }
+                },
+                "QualityEvaluation": {
+                  "summary": "Requesting a quality evaluation report (beta)",
+                  "value": {
+                    "source_lang": "EN",
+                    "target_lang": "DE",
+                    "file": "@document.docx",
+                    "enable_quality_evaluation": true
+                  }
+                }
+              },
+              "schema": {
+                "type": "object",
+                "required": [
+                  "target_lang",
+                  "file"
+                ],
+                "properties": {
+                  "source_lang": {
+                    "$ref": "#/components/schemas/SourceLanguage"
+                  },
+                  "target_lang": {
+                    "$ref": "#/components/schemas/TargetLanguage"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The document file to be translated. The file name should be included in this part's content disposition. As an alternative, the filename parameter can be used. The following file types and extensions are supported:\n  * `docx` - Microsoft Word Document\n  * `pptx` - Microsoft PowerPoint Document\n  * `xlsx` - Microsoft Excel Document\n  * `xlsm` - Microsoft Excel Macro-Enabled Workbook (currently in beta)\n  * `pdf` - Portable Document Format\n  * `htm / html` - HTML Document\n  * `txt` - Plain Text Document\n  * `xlf / xliff` - XLIFF Document (versions 1.2, 2.0, and 2.1)\n  * `srt` - SRT Document\n  * `vtt` - WebVTT Subtitle Document (currently in beta)\n  * `idml` - Adobe InDesign Markup Language\n  * `xml` - XML Document\n  * `json` - JSON Document\n  * `yaml / yml` - YAML Document (currently in beta)\n  * `properties` - Java Properties Document (currently in beta)\n  * `strings` - iOS/macOS Strings Document (currently in beta)\n  * `md / markdown` - Markdown Document (currently in beta)\n  * `dita` - DITA topic (Darwin Information Typing Architecture)\n  * `mif` - Adobe FrameMaker Interchange Format\n  * `zip` - SCORM Package (e-learning content, currently in beta)\n  * `odt` - OpenDocument Text Document (currently in beta)\n  * `rtf` - Rich Text Format Document (currently in beta)\n  * `resx` - .NET Resource Document (currently in beta)\n  * `jpeg` / `jpg` / `png` - Image (currently in beta)"
+                  },
+                  "filename": {
+                    "type": "string",
+                    "description": "The name of the uploaded file. Can be used as an alternative to including the file name in the file part's content disposition."
+                  },
+                  "output_format": {
+                    "type": "string",
+                    "description": "File extension of desired format of translated file, for example: `docx`. If unspecified, by default the translated file will be in the same format as the input file.\n"
+                  },
+                  "input_conversion_options": {
+                    "description": "Comma-separated list of `key:value` conversion options, prefixed with a version, that control how the input document is converted before translation. For example: `version:1,suppress-image-types:all`.\n\nSupported keys:\n\n  * `suppress-image-types` - Leaves the specified types of images embedded in the document untranslated. The value is a hyphen-separated list of image content types (for example `logo-photo` suppresses logos and photos), or `all` to suppress every embedded image. Recognized image content types: `logo`, `icon`, `decorative`, `barcode`, `formula`, `signature`, `handwriting`, `stamp`, `screenshot`, `diagram`, `chart`, `photo`, `illustration`, `comic`, `music`, `infographic`, `table`, `text`, `other`, `unknown`. Only `pptx` documents support this key.\n  * `json-placeholders` - Controls how brace-delimited placeholders in `json` string values are handled. `protect` (the default) keeps identifier-shaped placeholders such as `{stars}` or `{{userName}}` verbatim so they are not translated; `translate` translates them along with the surrounding text. ICU MessageFormat skeletons such as `{count, plural, one {# item} other {# items}}` are always protected, with only the branch text translated, in both modes. Multi-word groups such as `{see note}` are treated as translatable text in both modes.\n\nFor other file types this parameter is ignored. Unrecognized keys are ignored.",
+                    "type": "string",
+                    "example": "version:1,suppress-image-types:all"
+                  },
+                  "formality": {
+                    "$ref": "#/components/schemas/Formality"
+                  },
+                  "glossary_id": {
+                    "description": "A unique ID assigned to a glossary. To check glossary support for a language pair, call `GET /v3/languages?resource=translate_document` and verify the `glossary` feature key is present on both the source and target language.\n\nRequires the `source_lang` parameter. The request returns a `400` if `source_lang` is omitted.\n\nCannot be used together with `glossary_ids`.",
+                    "type": "string",
+                    "example": "def3a26b-3e84-45b3-84ae-0c0aaf3525f7"
+                  },
+                  "glossary_ids": {
+                    "description": "Comma-separated list of up to 5 glossary IDs to use for the translation. Each glossary's matching terms are applied to the translated document. May also be sent as a repeated parameter.\n\nEvery listed glossary must contain a dictionary for the requested language pair.\n\nRequires the `source_lang` parameter. The request returns a `400` if `source_lang` is omitted.\n\nCannot be used together with `glossary_id`.",
+                    "type": "array",
+                    "maxItems": 5,
+                    "items": {
+                      "type": "string",
+                      "example": "def3a26b-3e84-45b3-84ae-0c0aaf3525f7"
+                    }
+                  },
+                  "style_id": {
+                    "description": "Specify the [style rule list](/docs/customize/using-style-rules) to use for the translation.\n\n**Important:** The target language has to match the language of the style rule list. A list\ncreated for a root language (for example `en`) applies to that language and all of its variants\n(`EN-GB`, `EN-US`). A list created for a variant (for example `en-GB`) applies only when\n`target_lang` is that variant.",
+                    "type": "string",
+                    "example": "7ff9bfd6-cd85-4190-8503-d6215a321519"
+                  },
+                  "translation_memory_id": {
+                    "$ref": "#/components/schemas/TranslationMemoryId"
+                  },
+                  "translation_memory_threshold": {
+                    "$ref": "#/components/schemas/TranslationMemoryThreshold"
+                  },
+                  "style_profile_id": {
+                    "description": "Translate with a [style profile](/api-reference/style-profiles/list-all-style-profiles): its glossaries,\nstyle rule lists and translation memories through one ID. The profile is applied once the\ndocument's source language is known: the glossaries with a dictionary for the language pair, the\nstyle rule list for the target language, and the translation memories whose source language matches\nthe document. A component that does not fit the language pair is left out; this is not an error.\n\nCannot be combined with `glossary_id`, `glossary_ids`, `style_id`, `translation_memory_id` or\n`translation_memory_threshold`. A request that combines them is rejected with `400 Bad Request`.\nA style profile that does not exist or that your account cannot access is not rejected at upload:\nthe document status reports an error with the message `Style profile not found.`.",
+                    "type": "string",
+                    "format": "uuid",
+                    "example": "3f1c9d0e-7a24-4b58-9c31-8f0e5d2a1b47"
+                  },
+                  "enable_watermark": {
+                    "description": "When `true`, adds a \"Translated by DeepL\" watermark to the translated document.\n\nOnly supported for `docx` and `pdf` output. For all other output formats the parameter is ignored and the document is returned without a watermark.",
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "enable_quality_evaluation": {
+                    "description": "(beta) When `true`, DeepL also evaluates the finished translation and returns a `quality_evaluation_job_id`. Poll [`GET /v1/quality-evaluations/{job_id}`](/api-reference/quality-evaluations/poll) with it for a per-segment report of translation issues. The translation itself is unaffected.\n\n**Important:** Available to select customers; contact your customer success manager to enable it. Supported for `docx`, `pptx`, `pdf`, `srt`, `idml`, `xml`, `dita`, `mif`, and XLIFF 2.1 uploads, and for the [supported language pairs](/api-reference/quality-evaluations/poll#supported-language-pairs) only.\n\nRejected before the upload is accepted: `403` if quality evaluation is not enabled for the account, `400` for an ineligible file type, an unsupported language pair, or a value other than `true` or `false`.",
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "enable_beta_languages": {
+                    "description": "This parameter is maintained for backward compatibility and has no effect.",
+                    "type": "boolean",
+                    "default": false,
+                    "deprecated": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.getDocumentStatus",
+      "title": "Check Document Status",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/document/{document_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentKey"
+              },
+              "examples": {
+                "basic": {
+                  "summary": "Basic",
+                  "value": {
+                    "document_key": "0CB0054F1C132C1625B392EADDA41CB754A742822F6877173029A6C487E7F60A"
+                  }
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentKey"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.downloadDocument",
+      "title": "Download Translated Document",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/document/{document_id}/result",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentKey"
+              },
+              "examples": {
+                "basic": {
+                  "summary": "Basic",
+                  "value": {
+                    "document_key": "0CB0054F1C132C1625B392EADDA41CB754A742822F6877173029A6C487E7F60A"
+                  }
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentKey"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.listGlossaryLanguages",
+      "title": "List Language Pairs Supported by Glossaries",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/glossary-language-pairs",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "deepl.createMultilingualGlossary",
+      "title": "Create a Glossary",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/glossaries",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMultilingualGlossaryParameters"
+              },
+              "examples": {
+                "Basic": {
+                  "value": {
+                    "name": "My Glossary",
+                    "dictionaries": [
+                      {
+                        "source_lang": "en",
+                        "target_lang": "de",
+                        "entries": "Hello\tGuten Tag",
+                        "entries_format": "tsv"
+                      },
+                      {
+                        "source_lang": "de",
+                        "target_lang": "en",
+                        "entries": "Guten Tag\tHello",
+                        "entries_format": "tsv"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMultilingualGlossaryParameters"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.listMultilingualGlossaries",
+      "title": "List all Glossaries",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/glossaries",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "deepl.getMultilingualGlossary",
+      "title": "Retrieve Glossary Details",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/glossaries/{glossary_id}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "deepl.patchMultilingualGlossary",
+      "title": "Edit glossary details",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/glossaries/{glossary_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchMultilingualGlossaryParameters"
+              },
+              "examples": {
+                "Basic": {
+                  "value": {
+                    "name": "My Glossary",
+                    "dictionaries": [
+                      {
+                        "source_lang": "en",
+                        "target_lang": "de",
+                        "entries": "Hello\tGuten Tag",
+                        "entries_format": "tsv"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchMultilingualGlossaryParameters"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.deleteMultilingualGlossary",
+      "title": "Delete a Glossary",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/glossaries/{glossary_id}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "deepl.getMultilingualGlossaryEntries",
+      "title": "Retrieve Glossary Entries",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/glossaries/{glossary_id}/entries",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "source_lang",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/GlossarySourceLanguage"
+          }
+        },
+        {
+          "name": "target_lang",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/GlossaryTargetLanguage"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.deleteDictionary",
+      "title": "Deletes the dictionary associated with the given language pair with the given glossary ID.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/glossaries/{glossary_id}/dictionaries",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "source_lang",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/GlossarySourceLanguage"
+          }
+        },
+        {
+          "name": "target_lang",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/GlossaryTargetLanguage"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.replaceDictionary",
+      "title": "Replaces or creates a dictionary in the glossary with the specified entries.",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/glossaries/{glossary_id}/dictionaries",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MultilingualGlossaryEntries"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.createGlossary",
+      "title": "Create a Glossary",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/glossaries",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGlossaryParameters"
+              },
+              "examples": {
+                "Basic": {
+                  "value": {
+                    "name": "My Glossary",
+                    "source_lang": "en",
+                    "target_lang": "de",
+                    "entries": "Hello\tGuten Tag",
+                    "entries_format": "tsv"
+                  }
+                }
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGlossaryParameters"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.listGlossaries",
+      "title": "List all Glossaries",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/glossaries",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "deepl.getGlossary",
+      "title": "Retrieve Glossary Details",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/glossaries/{glossary_id}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "deepl.deleteGlossary",
+      "title": "Delete a Glossary",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/glossaries/{glossary_id}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "deepl.getGlossaryEntries",
+      "title": "Retrieve Glossary Entries",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/glossaries/{glossary_id}/entries",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "default": "text/tab-separated-values"
+          },
+          "description": "The requested format of the returned glossary entries. Currently, supports only `text/tab-separated-values`."
+        }
+      ]
+    },
+    {
+      "connector": "deepl.rephraseText",
+      "title": "Improve text",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/write/rephrase",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text"
+                ],
+                "properties": {
+                  "text": {
+                    "description": "Text to be improved. Only UTF-8-encoded plain text is supported. Improvements are returned in the same order as they are requested.",
+                    "type": "array",
+                    "x-default": [
+                      "this is a example sentence to imprve"
+                    ],
+                    "items": {
+                      "type": "string",
+                      "example": "this is a example sentence to imprve"
+                    }
+                  },
+                  "target_lang": {
+                    "$ref": "#/components/schemas/TargetLanguageWrite"
+                  },
+                  "writing_style": {
+                    "$ref": "#/components/schemas/WritingStyle"
+                  },
+                  "tone": {
+                    "$ref": "#/components/schemas/WritingTone"
+                  }
+                }
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text"
+                ],
+                "properties": {
+                  "text": {
+                    "description": "Text to be improved. Only UTF-8-encoded plain text is supported. Improvements are returned in the same order as they are requested.",
+                    "type": "array",
+                    "x-default": [
+                      "this is a example sentence to imprve"
+                    ],
+                    "items": {
+                      "type": "string",
+                      "example": "this is a example sentence to imprve"
+                    }
+                  },
+                  "target_lang": {
+                    "$ref": "#/components/schemas/TargetLanguageWrite"
+                  },
+                  "writing_style": {
+                    "$ref": "#/components/schemas/WritingStyle"
+                  },
+                  "tone": {
+                    "$ref": "#/components/schemas/WritingTone"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.correctText",
+      "title": "Correct text",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/write/correct",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text"
+                ],
+                "properties": {
+                  "text": {
+                    "description": "Text to be corrected. Only UTF-8-encoded plain text is supported. Corrections are returned in the same order as they are requested.",
+                    "type": "array",
+                    "x-default": [
+                      "this is a example sentence to imprve"
+                    ],
+                    "items": {
+                      "type": "string",
+                      "example": "this is a example sentence to imprve"
+                    }
+                  },
+                  "target_lang": {
+                    "$ref": "#/components/schemas/TargetLanguageWrite"
+                  }
+                }
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text"
+                ],
+                "properties": {
+                  "text": {
+                    "description": "Text to be corrected. Only UTF-8-encoded plain text is supported. Corrections are returned in the same order as they are requested.",
+                    "type": "array",
+                    "x-default": [
+                      "this is a example sentence to imprve"
+                    ],
+                    "items": {
+                      "type": "string",
+                      "example": "this is a example sentence to imprve"
+                    }
+                  },
+                  "target_lang": {
+                    "$ref": "#/components/schemas/TargetLanguageWrite"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.getUsage",
+      "title": "Check Usage and Limits",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/usage",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "deepl.getLanguagesV2",
+      "title": "Retrieve Supported Languages",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v2/languages",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "type",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "source",
+              "target"
+            ],
+            "default": "source"
+          },
+          "description": "Supported values are \"source\" or \"target\". If type parameter is not included, defaults to \"source\"."
+        }
+      ]
+    },
+    {
+      "connector": "deepl.createSpokenTerms",
+      "title": "Create Spoken Terms collection",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/spoken-terms",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSpokenTermsParameters"
+              },
+              "examples": {
+                "Basic": {
+                  "value": {
+                    "name": "Technical Terms",
+                    "term_lists": [
+                      {
+                        "lang": "en",
+                        "entries": "DeepL\nAPI\nwebhook"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSpokenTermsParameters"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.listSpokenTerms",
+      "title": "List all Spoken Terms collections",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/spoken-terms",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "deepl.getSpokenTerms",
+      "title": "Retrieve Spoken Terms collection details",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/spoken-terms/{spoken_terms_id}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "deepl.patchSpokenTerms",
+      "title": "Edit Spoken Terms collection details",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/spoken-terms/{spoken_terms_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchSpokenTermsParameters"
+              },
+              "examples": {
+                "UpdateName": {
+                  "value": {
+                    "name": "Updated Technical Terms"
+                  }
+                },
+                "MergeEntries": {
+                  "value": {
+                    "term_lists": [
+                      {
+                        "lang": "en",
+                        "entries": "authentication\nendpoint"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchSpokenTermsParameters"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.deleteSpokenTerms",
+      "title": "Delete Spoken Terms collection",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/spoken-terms/{spoken_terms_id}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "deepl.getSpokenTermsEntries",
+      "title": "Retrieve Spoken Terms entries",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/spoken-terms/{spoken_terms_id}/entries",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "lang",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "en"
+          },
+          "description": "The language code (ISO 639-1) for the term list to retrieve."
+        }
+      ]
+    },
+    {
+      "connector": "deepl.putSpokenTermsList",
+      "title": "Replace or create a term list",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/spoken-terms/{spoken_terms_id}/term-lists",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutSpokenTermsListParameters"
+              },
+              "examples": {
+                "Basic": {
+                  "value": {
+                    "lang": "en",
+                    "entries": "DeepL\nAPI\nwebhook\nintegration"
+                  }
+                }
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/PutSpokenTermsListParameters"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.deleteSpokenTermsList",
+      "title": "Delete a term list",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/spoken-terms/{spoken_terms_id}/term-lists",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "lang",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "en"
+          },
+          "description": "The language code (ISO 639-1) for the term list to delete."
+        }
+      ]
+    },
+    {
+      "connector": "deepl.getLanguageResources",
+      "title": "Retrieve Language Resources",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/languages/resources",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "deepl.getLanguages",
+      "title": "Retrieve Languages",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/languages",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "resource",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "translate_text",
+              "translate_document",
+              "glossary",
+              "voice",
+              "write",
+              "style_rules",
+              "translation_memory"
+            ]
+          },
+          "description": "The resource to retrieve languages for. Supported values: `translate_text`, `translate_document`,\n`glossary`, `voice`, `write`, `style_rules`, `translation_memory`."
+        },
+        {
+          "name": "include",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "beta",
+                "external"
+              ]
+            }
+          },
+          "description": "Controls which languages and features are included in the response. By default, only stable\nlanguages and features are returned. Values can be combined with repeated parameters\n(e.g. `?include=beta&include=external`).\n\n- `beta`: Include languages and features in beta, in addition to stable\n- `external`: Include features that rely on third-party service providers"
+        }
+      ]
+    },
+    {
+      "connector": "deepl.listTranslationMemories",
+      "title": "List translation memories",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/translation_memories",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 0
+          },
+          "description": "The index of the first page to return. Use with `page_size` to get the next page of translation memories."
+        },
+        {
+          "name": "page_size",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "description": "The maximum number of translation memories to return. Values above 100 are reduced to 100."
+        }
+      ]
+    },
+    {
+      "connector": "deepl.createTranslationMemoryImport",
+      "title": "Import a translation memory",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/translation_memories/import",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "source_file"
+                ],
+                "properties": {
+                  "source_file": {
+                    "type": "object",
+                    "required": [
+                      "file_name",
+                      "content_length"
+                    ],
+                    "properties": {
+                      "file_name": {
+                        "description": "The name of the TMX file you intend to upload, including its extension. At most 100\ncharacters.",
+                        "type": "string",
+                        "maxLength": 100,
+                        "example": "legal.tmx"
+                      },
+                      "content_type": {
+                        "description": "The MIME type of the file. Defaults to `application/xml`, which is correct for TMX.\nTMX is currently the only supported import format. At most 127 characters.",
+                        "type": "string",
+                        "default": "application/xml",
+                        "maxLength": 127,
+                        "example": "application/xml"
+                      },
+                      "content_length": {
+                        "description": "The size of the file in bytes. Must be greater than 0 and at most 1 GB. An oversize\nvalue is rejected with `400 Bad Request`.",
+                        "type": "integer",
+                        "format": "int64",
+                        "minimum": 1,
+                        "example": 1024
+                      }
+                    }
+                  },
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "display_name": {
+                        "description": "The name to give the new translation memory. If you omit this, the translation memory\nis created without a name.",
+                        "type": "string",
+                        "example": "Legal"
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "Basic": {
+                  "value": {
+                    "source_file": {
+                      "file_name": "legal.tmx",
+                      "content_type": "application/xml",
+                      "content_length": 1024
+                    },
+                    "parameters": {
+                      "display_name": "Legal"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.getTranslationMemoryJob",
+      "title": "Retrieve an import or export job",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/translation_memories/jobs/{job_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "job_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The identifier of the job, returned when you created the import or export."
+        }
+      ]
+    },
+    {
+      "connector": "deepl.getTranslationMemory",
+      "title": "Retrieve a translation memory",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/translation_memories/{translation_memory_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "translation_memory_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/TranslationMemoryId"
+          },
+          "description": "The ID of the translation memory to retrieve."
+        }
+      ]
+    },
+    {
+      "connector": "deepl.deleteTranslationMemory",
+      "title": "Delete a translation memory",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/translation_memories/{translation_memory_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "translation_memory_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/TranslationMemoryId"
+          },
+          "description": "The ID of the translation memory to delete."
+        }
+      ]
+    },
+    {
+      "connector": "deepl.getTranslationMemorySegments",
+      "title": "List translation memory segments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/translation_memories/{translation_memory_id}/segments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "translation_memory_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/TranslationMemoryId"
+          },
+          "description": "The ID of the translation memory whose segments you want to list."
+        },
+        {
+          "name": "page_size",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 100
+          },
+          "description": "The maximum number of segments to return per page. Values above 100 are reduced to 100."
+        },
+        {
+          "name": "page_cursor",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The `next_page_cursor` from a previous response. Omit this on your first call. Treat the value\nas opaque: do not build or modify it yourself."
+        },
+        {
+          "name": "filter_text",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "minLength": 2
+          },
+          "description": "Return only segments where this text appears in the source or in any target translation. Must be\nat least 2 characters."
+        },
+        {
+          "name": "filter_case_sensitive",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": "Whether `filter_text` is matched case-sensitively."
+        }
+      ]
+    },
+    {
+      "connector": "deepl.createTranslationMemoryExport",
+      "title": "Export a translation memory",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/translation_memories/{translation_memory_id}/export",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "translation_memory_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/TranslationMemoryId"
+          },
+          "description": "The ID of the translation memory to export."
+        }
+      ]
+    },
+    {
+      "connector": "deepl.listStyleProfiles",
+      "title": "List style profiles",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/style_profiles",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 0
+          },
+          "description": "The index of the first page to return. Use with `page_size` to get the next page of style profiles."
+        },
+        {
+          "name": "page_size",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 10
+          },
+          "description": "The maximum number of style profiles to return. Values above 100 are reduced to 100."
+        }
+      ]
+    },
+    {
+      "connector": "deepl.createStyleProfile",
+      "title": "Create a style profile",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/style_profiles",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "description": "Name for the style profile. At most 255 characters. An empty name is rejected with\n`400 Bad Request`.",
+                    "type": "string",
+                    "example": "Legal, German"
+                  },
+                  "description": {
+                    "description": "Free-text description of the style profile. At most 1000 characters. Omit it to create\nthe style profile without a description.",
+                    "type": "string",
+                    "example": "Contract wording for the German market."
+                  },
+                  "industry": {
+                    "description": "The industry the style profile is written for. At most 255 characters. Omit it to create\nthe style profile without an industry.",
+                    "type": "string",
+                    "example": "Legal"
+                  },
+                  "glossary_ids": {
+                    "description": "The IDs of the glossaries to link, highest priority first. The order only takes effect\nwith `glossary_priority_order_enabled`. Defaults to an empty list.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "example": [
+                      "4d0a2e1c-6b93-4f7a-8d15-2c6e9a3b7f81"
+                    ]
+                  },
+                  "style_rule_ids": {
+                    "description": "The IDs of the style rule lists to link. At most one style rule list per target\nlanguage. Defaults to an empty list.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "example": [
+                      "bd0a38f3-1831-440b-a8dd-2c702e2325ab"
+                    ]
+                  },
+                  "translation_memory_ids": {
+                    "description": "The IDs of the translation memories to link. At most one translation memory per source\nlanguage. Defaults to an empty list.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "example": [
+                      "a74d88fb-ed2a-4943-a664-a4512398b994"
+                    ]
+                  },
+                  "glossary_priority_order_enabled": {
+                    "description": "Whether the order of `glossary_ids` sets priority: when two linked glossaries define the\nsame source term, the one listed first wins. When `false`, the order has no effect.\nDefaults to `false`.",
+                    "type": "boolean",
+                    "default": false,
+                    "example": true
+                  }
+                }
+              },
+              "examples": {
+                "MetadataOnly": {
+                  "summary": "Metadata only",
+                  "value": {
+                    "name": "Marketing, Japanese"
+                  }
+                },
+                "FullyConfigured": {
+                  "summary": "Fully configured",
+                  "value": {
+                    "name": "Legal, German",
+                    "description": "Contract wording for the German market.",
+                    "industry": "Legal",
+                    "glossary_ids": [
+                      "4d0a2e1c-6b93-4f7a-8d15-2c6e9a3b7f81"
+                    ],
+                    "style_rule_ids": [
+                      "bd0a38f3-1831-440b-a8dd-2c702e2325ab"
+                    ],
+                    "translation_memory_ids": [
+                      "a74d88fb-ed2a-4943-a664-a4512398b994"
+                    ],
+                    "glossary_priority_order_enabled": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.getStyleProfile",
+      "title": "Retrieve a style profile",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/style_profiles/{style_profile_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "style_profile_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/StyleProfileId"
+          },
+          "description": "The ID of the style profile to retrieve."
+        }
+      ]
+    },
+    {
+      "connector": "deepl.updateStyleProfile",
+      "title": "Update a style profile",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/style_profiles/{style_profile_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "style_profile_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/StyleProfileId"
+          },
+          "description": "The ID of the style profile to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "description": "A new name for the style profile. At most 255 characters. An empty string is rejected\nwith `400 Bad Request`.",
+                    "type": "string",
+                    "example": "Legal, German (2026)"
+                  },
+                  "description": {
+                    "description": "A new description for the style profile. At most 1000 characters. Send an empty string\nto clear it.",
+                    "type": "string",
+                    "example": "Contract wording for the German market, 2026 revision."
+                  },
+                  "industry": {
+                    "description": "A new industry for the style profile. At most 255 characters. Send an empty string to\nclear it.",
+                    "type": "string",
+                    "example": "Legal"
+                  },
+                  "glossary_ids": {
+                    "description": "The IDs of the glossaries to link, highest priority first. The order only takes effect\nwith `glossary_priority_order_enabled`. Replaces the linked glossaries in full. Send an\nempty list to unlink all of them.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "example": [
+                      "4d0a2e1c-6b93-4f7a-8d15-2c6e9a3b7f81"
+                    ]
+                  },
+                  "style_rule_ids": {
+                    "description": "The IDs of the style rule lists to link. At most one style rule list per target\nlanguage. Replaces the linked style rule lists in full. Send an empty list to unlink\nall of them.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "example": [
+                      "bd0a38f3-1831-440b-a8dd-2c702e2325ab"
+                    ]
+                  },
+                  "translation_memory_ids": {
+                    "description": "The IDs of the translation memories to link. At most one translation memory per source\nlanguage. Replaces the linked translation memories in full. Send an empty list to\nunlink all of them.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "example": [
+                      "a74d88fb-ed2a-4943-a664-a4512398b994"
+                    ]
+                  },
+                  "glossary_priority_order_enabled": {
+                    "description": "Whether the order of `glossary_ids` sets priority: when two linked glossaries define the\nsame source term, the one listed first wins. When `false`, the order has no effect.",
+                    "type": "boolean",
+                    "example": true
+                  }
+                }
+              },
+              "examples": {
+                "RenameOnly": {
+                  "summary": "Rename only",
+                  "value": {
+                    "name": "Legal, German (2026)"
+                  }
+                },
+                "ClearTheDescription": {
+                  "summary": "Clear the description",
+                  "value": {
+                    "description": ""
+                  }
+                },
+                "ReplaceTheLinkedGlossaries": {
+                  "summary": "Replace the linked glossaries",
+                  "value": {
+                    "glossary_ids": [
+                      "4d0a2e1c-6b93-4f7a-8d15-2c6e9a3b7f81",
+                      "7b2f6d84-3c15-4e90-8a72-d5e1490bc637"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.deleteStyleProfile",
+      "title": "Delete a style profile",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/style_profiles/{style_profile_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "style_profile_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/StyleProfileId"
+          },
+          "description": "The ID of the style profile to delete."
+        }
+      ]
+    },
+    {
+      "connector": "deepl.getStyleRuleLists",
+      "title": "Retrieve style rule lists",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/style_rules",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 0
+          },
+          "description": "The index of the first page to return. Use with `page_size` to get the next page of rule lists"
+        },
+        {
+          "name": "page_size",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 25
+          },
+          "description": "The maximum number of style rule lists to return."
+        },
+        {
+          "name": "detailed",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "default": false
+          },
+          "description": "Determines if the rule list's `configured_rules` and `custom_instructions` should be included in the response body."
+        }
+      ]
+    },
+    {
+      "connector": "deepl.createStyleRuleList",
+      "title": "Create a style rule list",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/style_rules",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "language"
+                ],
+                "properties": {
+                  "name": {
+                    "$ref": "#/components/schemas/StyleRuleName",
+                    "x-default": "My style rules"
+                  },
+                  "language": {
+                    "$ref": "#/components/schemas/StyleRuleLanguage",
+                    "x-default": "de"
+                  },
+                  "configured_rules": {
+                    "$ref": "#/components/schemas/ConfiguredRules"
+                  },
+                  "custom_instructions": {
+                    "type": "array",
+                    "description": "Array of custom instruction objects",
+                    "maxItems": 200,
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "label",
+                        "prompt"
+                      ],
+                      "properties": {
+                        "label": {
+                          "type": "string",
+                          "description": "Label for the custom instruction"
+                        },
+                        "prompt": {
+                          "type": "string",
+                          "description": "Instruction text",
+                          "maxLength": 300
+                        },
+                        "source_language": {
+                          "type": "string",
+                          "description": "Optional source language code"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "name": "My style rules",
+                "language": "de",
+                "configured_rules": {
+                  "style_and_tone": {
+                    "abbreviations": "use_abbreviations_and_symbols",
+                    "short_vs_long_words": "use_short_words"
+                  },
+                  "punctuation": {
+                    "apostrophe": "use_curly_apostrophes"
+                  }
+                },
+                "custom_instructions": [
+                  {
+                    "label": "Currency custom instruction",
+                    "prompt": "Have currency symbols before the numerical value (e.g. $100, €100)",
+                    "source_language": "en"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.getStyleRuleList",
+      "title": "Get a style rule list",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/style_rules/{style_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "style_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the style rule list"
+        }
+      ]
+    },
+    {
+      "connector": "deepl.updateStyleRuleList",
+      "title": "Update a style rule list's name",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/style_rules/{style_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "style_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the style rule list"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "$ref": "#/components/schemas/StyleRuleName"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.deleteStyleRuleList",
+      "title": "Delete a style rule list",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/style_rules/{style_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "style_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the style rule list"
+        }
+      ]
+    },
+    {
+      "connector": "deepl.updateStyleRuleConfiguredRules",
+      "title": "Replace configured rules for a style rule list",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/style_rules/{style_id}/configured_rules",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "style_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the style rule list"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfiguredRules"
+              },
+              "example": {
+                "dates_and_times": {
+                  "calendar_era": "use_bc_and_ad"
+                },
+                "punctuation": {
+                  "periods_in_academic_degrees": "do_not_use"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.createCustomInstruction",
+      "title": "Create a custom instruction",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/style_rules/{style_id}/custom_instructions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "style_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the style rule list"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "label",
+                  "prompt"
+                ],
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "description": "Label for the custom instruction",
+                    "maxLength": 100,
+                    "x-default": "Currency custom instruction"
+                  },
+                  "prompt": {
+                    "type": "string",
+                    "description": "Instruction text",
+                    "maxLength": 300,
+                    "x-default": "Have currency symbols before the numerical value (e.g. $100, €100)"
+                  },
+                  "source_language": {
+                    "type": "string",
+                    "description": "Optional source language code"
+                  }
+                }
+              },
+              "example": {
+                "label": "Currency custom instruction",
+                "prompt": "Have currency symbols before the numerical value (e.g. $100, €100)"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.getCustomInstruction",
+      "title": "Get a custom instruction",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/style_rules/{style_id}/custom_instructions/{instruction_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "style_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the style rule list"
+        },
+        {
+          "name": "instruction_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the custom instruction"
+        }
+      ]
+    },
+    {
+      "connector": "deepl.updateCustomInstruction",
+      "title": "Replace a custom instruction",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/style_rules/{style_id}/custom_instructions/{instruction_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "style_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the style rule list"
+        },
+        {
+          "name": "instruction_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the custom instruction"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "label",
+                  "prompt"
+                ],
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "description": "Updated label for the custom instruction",
+                    "maxLength": 100
+                  },
+                  "prompt": {
+                    "type": "string",
+                    "description": "Updated instruction text",
+                    "maxLength": 300
+                  },
+                  "source_language": {
+                    "type": "string",
+                    "description": "Optional source language code"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.deleteCustomInstruction",
+      "title": "Delete a custom instruction",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/style_rules/{style_id}/custom_instructions/{instruction_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "style_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the style rule list"
+        },
+        {
+          "name": "instruction_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the custom instruction"
+        }
+      ]
+    },
+    {
+      "connector": "deepl.getVoiceStreamingUrl",
+      "title": "Get Streaming URL",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/voice/realtime",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "source_media_content_type"
+                ],
+                "properties": {
+                  "message_format": {
+                    "$ref": "#/components/schemas/VoiceMessageFormat"
+                  },
+                  "source_media_content_type": {
+                    "$ref": "#/components/schemas/VoiceSourceMediaContentType"
+                  },
+                  "source_language": {
+                    "$ref": "#/components/schemas/VoiceSourceLanguage"
+                  },
+                  "source_language_mode": {
+                    "$ref": "#/components/schemas/VoiceSourceLanguageMode"
+                  },
+                  "target_languages": {
+                    "$ref": "#/components/schemas/VoiceTargetLanguages"
+                  },
+                  "target_media_languages": {
+                    "$ref": "#/components/schemas/VoiceTargetMediaLanguages"
+                  },
+                  "target_media_content_type": {
+                    "$ref": "#/components/schemas/VoiceTargetMediaContentType"
+                  },
+                  "target_media_voice": {
+                    "$ref": "#/components/schemas/VoiceTargetMediaVoice"
+                  },
+                  "spoken_terms_id": {
+                    "$ref": "#/components/schemas/SpokenTermsId"
+                  },
+                  "glossary_id": {
+                    "description": "Specify the glossary to use for the target transcripts (translations). For new integrations we\nrecommend the more general `glossary_ids`.\n\nCannot be used together with `glossary_ids`.",
+                    "type": "string",
+                    "example": "def3a26b-3e84-45b3-84ae-0c0aaf3525f7"
+                  },
+                  "glossary_ids": {
+                    "description": "Specify the glossaries to use for the target transcripts (translations), as an array of\nglossary IDs ordered by priority (highest first). Each glossary's matching terms are applied to\nthe translation; where entries conflict, the higher-priority glossary wins. Unknown glossary IDs\nare ignored.\n\nIn realtime Voice, glossary terms are matched against the streaming source transcription,\nwhich affects how and when terms are applied. See\n[Glossaries in realtime Voice](/docs/voice/overview#glossaries-in-realtime-voice).\n\nCannot be used together with `glossary_id`. Requests that exceed the\n[session limit](/docs/voice/voice-api-requirements#session-limits), contain duplicates, or\ncombine `glossary_ids` with `glossary_id` are rejected with a `400 Bad Request` before a\nsession is created.",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "def3a26b-3e84-45b3-84ae-0c0aaf3525f7"
+                    }
+                  },
+                  "formality": {
+                    "$ref": "#/components/schemas/VoiceFormality"
+                  }
+                }
+              },
+              "examples": {
+                "basic": {
+                  "summary": "Basic configuration",
+                  "value": {
+                    "source_media_content_type": "audio/ogg; codecs=opus",
+                    "source_language": "en",
+                    "source_language_mode": "auto",
+                    "target_languages": [
+                      "de",
+                      "fr",
+                      "es"
+                    ],
+                    "message_format": "json"
+                  }
+                },
+                "with_glossary": {
+                  "summary": "With glossary and formality to customize translation",
+                  "value": {
+                    "source_media_content_type": "audio/pcm; encoding=s16le; rate=16000",
+                    "source_language": "en",
+                    "source_language_mode": "fixed",
+                    "target_languages": [
+                      "de",
+                      "fr"
+                    ],
+                    "message_format": "msgpack",
+                    "glossary_id": "def3a26b-3e84-45b3-84ae-0c0aaf3525f7",
+                    "formality": "formal"
+                  }
+                },
+                "with_multiple_glossaries": {
+                  "summary": "With multiple glossaries in priority order",
+                  "value": {
+                    "source_media_content_type": "audio/pcm; encoding=s16le; rate=16000",
+                    "source_language": "en",
+                    "source_language_mode": "fixed",
+                    "target_languages": [
+                      "de",
+                      "fr"
+                    ],
+                    "glossary_ids": [
+                      "def3a26b-3e84-45b3-84ae-0c0aaf3525f7",
+                      "7c4f1080-cfe2-41d4-8269-0e6ec15a0354"
+                    ]
+                  }
+                },
+                "with_spoken_terms": {
+                  "summary": "With Spoken Terms to inform transcription",
+                  "value": {
+                    "source_media_content_type": "audio/pcm; encoding=s16le; rate=16000",
+                    "source_language": "en",
+                    "source_language_mode": "fixed",
+                    "target_languages": [
+                      "de"
+                    ],
+                    "spoken_terms_id": "7c4f1080-cfe2-41d4-8269-0e6ec15a0354"
+                  }
+                },
+                "with_tts": {
+                  "summary": "With translated audio (default format)",
+                  "value": {
+                    "source_media_content_type": "audio/ogg;codecs=opus",
+                    "source_language": "en",
+                    "target_languages": [
+                      "de",
+                      "fr",
+                      "es"
+                    ],
+                    "target_media_languages": [
+                      "de"
+                    ],
+                    "target_media_content_type": "audio/webm;codecs=opus",
+                    "target_media_voice": "female"
+                  }
+                },
+                "with_speaker_match": {
+                  "summary": "With translated audio using a speaker-matched voice",
+                  "value": {
+                    "source_media_content_type": "audio/ogg;codecs=opus",
+                    "source_language": "en",
+                    "target_languages": [
+                      "de"
+                    ],
+                    "target_media_languages": [
+                      "de"
+                    ],
+                    "target_media_voice": "match"
+                  }
+                },
+                "with_tts_short_form": {
+                  "summary": "With translated audio using short-form MIME types",
+                  "value": {
+                    "source_media_content_type": "audio/webm",
+                    "source_language": "en",
+                    "target_languages": [
+                      "de",
+                      "es"
+                    ],
+                    "target_media_languages": [
+                      "de"
+                    ],
+                    "target_media_content_type": "audio/ogg"
+                  }
+                },
+                "with_tts_high_quality": {
+                  "summary": "With translated audio using high-quality PCM",
+                  "value": {
+                    "source_media_content_type": "audio/pcm;encoding=s16le;rate=16000",
+                    "source_language": "en",
+                    "target_languages": [
+                      "de"
+                    ],
+                    "target_media_languages": [
+                      "de"
+                    ],
+                    "target_media_content_type": "audio/pcm;encoding=s16le;rate=24000"
+                  }
+                },
+                "with_tts_raw_opus": {
+                  "summary": "With translated audio using raw Opus",
+                  "value": {
+                    "source_media_content_type": "audio/pcm;encoding=s16le;rate=16000",
+                    "source_language": "en",
+                    "target_languages": [
+                      "de"
+                    ],
+                    "target_media_languages": [
+                      "de"
+                    ],
+                    "target_media_content_type": "audio/opus"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.requestReconnection",
+      "title": "Request Reconnection",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v3/voice/realtime",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "token",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The latest ephemeral token obtained for the stream."
+        }
+      ]
+    },
+    {
+      "connector": "deepl.createVoiceTranslateJob",
+      "title": "Create a voice translation job",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v1/jobs/voice/translate",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoiceTranslateCreateJobRequest"
+              },
+              "example": {
+                "source_file": {
+                  "name": "podcast-episode-42.mp3",
+                  "content_type": "audio/mpeg",
+                  "content_length": 15728640
+                },
+                "parameters": {
+                  "source_language": "en"
+                },
+                "targets": [
+                  {
+                    "language": "de",
+                    "type": "text/plain"
+                  },
+                  {
+                    "language": "es",
+                    "type": "audio/pcm;encoding=s16le;rate=16000"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "deepl.getVoiceTranslateJobStatus",
+      "title": "Get voice translation job status",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v1/jobs/voice/translate/{job_id}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "deepl.pollQualityEvaluation",
+      "title": "Poll for the evaluation result",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.deepl.com",
+      "path": "/v1/quality-evaluations/{job_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "job_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "04DE5AD98A02647D83285A36021911C6"
+          },
+          "description": "The unique ID of the quality evaluation, returned as `quality_evaluation_job_id` when the document was [uploaded for translation](/api-reference/document/upload-and-translate-a-document)."
+        }
+      ]
+    }
+  ]
+}

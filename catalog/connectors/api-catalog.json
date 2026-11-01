@@ -1,0 +1,602 @@
+[
+  {
+    "id": "github",
+    "name": "Github",
+    "url": "https://raw.githubusercontent.com/github/rest-api-description/main/descriptions/api.github.com/api.github.com.json",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "cloudflare",
+    "name": "Cloudflare",
+    "url": "https://raw.githubusercontent.com/cloudflare/api-schemas/main/openapi.json",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "stripe",
+    "name": "Stripe",
+    "url": "https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.json",
+    "defaultAuth": "basic"
+  },
+  {
+    "id": "notion",
+    "name": "Notion",
+    "url": "https://developers.notion.com/openapi.json",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "resend",
+    "name": "Resend",
+    "url": "https://raw.githubusercontent.com/resendlabs/resend-openapi/main/resend.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "openai",
+    "name": "Openai",
+    "url": "https://raw.githubusercontent.com/openai/openai-openapi/master/openapi.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "figma",
+    "name": "Figma",
+    "url": "https://raw.githubusercontent.com/figma/rest-api-spec/main/openapi/openapi.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "twilio",
+    "name": "Twilio",
+    "url": "https://raw.githubusercontent.com/twilio/twilio-oai/main/spec/json/twilio_messaging_v1.json",
+    "defaultAuth": "basic"
+  },
+  {
+    "id": "slack",
+    "name": "Slack",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/slack.com/1.7.0/openapi.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "jira",
+    "name": "Jira",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/atlassian.com/jira/1001.0.0-SNAPSHOT/openapi.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "hubspot",
+    "name": "Hubspot",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/hubapi.com/crm/v3/openapi.yaml",
+    "defaultAuth": "oauth-client-credentials-flow"
+  },
+  {
+    "id": "discord",
+    "name": "Discord",
+    "url": "https://raw.githubusercontent.com/discord/discord-api-spec/main/specs/openapi.json",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "pagerduty",
+    "name": "Pagerduty",
+    "url": "https://raw.githubusercontent.com/PagerDuty/api-schema/main/reference/REST/openapiv3.json",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "zoom",
+    "name": "Zoom",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/zoom.us/2.0.0/openapi.yaml",
+    "defaultAuth": "oauth-client-credentials-flow"
+  },
+  {
+    "id": "mailchimp",
+    "name": "Mailchimp",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/mailchimp.com/3.0.55/openapi.yaml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "asana",
+    "name": "Asana",
+    "url": "https://raw.githubusercontent.com/Asana/openapi/master/defs/asana_oas.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "sendgrid",
+    "name": "Sendgrid",
+    "url": "https://raw.githubusercontent.com/twilio/sendgrid-oai/main/spec/json/tsg_mail_v3.json",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "paypal",
+    "name": "Paypal",
+    "url": "https://raw.githubusercontent.com/paypal/paypal-rest-api-specifications/main/openapi/payments_payment_v2.json",
+    "defaultAuth": "oauth-client-credentials-flow"
+  },
+  {
+    "id": "plaid",
+    "name": "Plaid",
+    "url": "https://raw.githubusercontent.com/plaid/plaid-openapi/master/2020-09-14.yml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "vercel",
+    "name": "Vercel",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/vercel.com/0.0.1/openapi.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "anthropic",
+    "name": "Anthropic",
+    "url": "https://raw.githubusercontent.com/anthropics/anthropic-openapi/main/openapi.yaml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "shopify",
+    "name": "Shopify",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/shopify.dev/admin/2023-04/openapi.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "datadog",
+    "name": "Datadog",
+    "url": "https://raw.githubusercontent.com/DataDog/datadog-api-client-python/master/openapi.yaml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "sentry",
+    "name": "Sentry",
+    "url": "https://raw.githubusercontent.com/getsentry/sentry-api-schema/main/openapi-derefed.json",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "intercom",
+    "name": "Intercom",
+    "url": "https://raw.githubusercontent.com/intercom/Intercom-OpenAPI/main/descriptions/2.10/api.intercom.io.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "contentful",
+    "name": "Contentful",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/contentful.com/management.2/openapi.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "airtable",
+    "name": "Airtable",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/airtable.com/0.1.0/openapi.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "twitch",
+    "name": "Twitch",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/twitch.tv/helix/latest/openapi.yaml",
+    "defaultAuth": "oauth-client-credentials-flow"
+  },
+  {
+    "id": "klaviyo",
+    "name": "Klaviyo",
+    "url": "https://raw.githubusercontent.com/klaviyo/klaviyo-api-node/main/openapi/openapi.yaml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "brex",
+    "name": "Brex",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/brex.com/payments/0.1/openapi.yaml",
+    "defaultAuth": "oauth-client-credentials-flow"
+  },
+  {
+    "id": "box",
+    "name": "Box",
+    "url": "https://raw.githubusercontent.com/box/box-openapi/main/openapi.json",
+    "defaultAuth": "oauth-client-credentials-flow"
+  },
+  {
+    "id": "spotify",
+    "name": "Spotify",
+    "url": "https://api.apis.guru/v2/specs/spotify.com/sonallux/2023.2.27/openapi.json",
+    "defaultAuth": "oauth-client-credentials-flow"
+  },
+  {
+    "id": "gitlab",
+    "name": "Gitlab",
+    "url": "https://api.apis.guru/v2/specs/gitlab.com/v3/swagger.json",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "netlify",
+    "name": "Netlify",
+    "url": "https://api.apis.guru/v2/specs/netlify.com/2.15.0/swagger.json",
+    "defaultAuth": "oauth-client-credentials-flow"
+  },
+  {
+    "id": "launchdarkly",
+    "name": "Launchdarkly",
+    "url": "https://api.apis.guru/v2/specs/launchdarkly.com/5.3.0/swagger.json",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "postmark",
+    "name": "Postmark",
+    "url": "https://api.apis.guru/v2/specs/postmarkapp.com/server/1.0.0/swagger.json",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "circleci",
+    "name": "Circleci",
+    "url": "https://api.apis.guru/v2/specs/circleci.com/v1/openapi.json",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "grafana",
+    "name": "Grafana",
+    "url": "https://raw.githubusercontent.com/grafana/grafana/main/public/openapi3.json",
+    "defaultAuth": "basic"
+  },
+  {
+    "id": "digitalocean",
+    "name": "Digitalocean",
+    "url": "https://api.apis.guru/v2/specs/digitalocean.com/2.0/openapi.json",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "linode",
+    "name": "Linode",
+    "url": "https://api.apis.guru/v2/specs/linode.com/4.145.0/openapi.json",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "square",
+    "name": "Square",
+    "url": "https://api.apis.guru/v2/specs/squareup.com/2.0/openapi.json",
+    "defaultAuth": "oauth-client-credentials-flow"
+  },
+  {
+    "id": "zendesk",
+    "name": "Zendesk",
+    "url": "https://developer.zendesk.com/zendesk/oas.yaml",
+    "defaultAuth": "basic"
+  },
+  {
+    "id": "bitbucket",
+    "name": "Bitbucket",
+    "url": "https://api.apis.guru/v2/specs/bitbucket.org/2.0/openapi.yaml",
+    "defaultAuth": "basic"
+  },
+  {
+    "id": "miro",
+    "name": "Miro",
+    "url": "https://raw.githubusercontent.com/miroapp/api-clients/main/packages/generator/spec.json",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "okta",
+    "name": "Okta",
+    "url": "https://raw.githubusercontent.com/okta/okta-management-openapi-spec/master/dist/current/management-oneOfInheritance.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "meraki",
+    "name": "Meraki",
+    "url": "https://api.apis.guru/v2/specs/meraki.com/0.0.0-streaming/openapi.json",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "docker",
+    "name": "Docker",
+    "url": "https://api.apis.guru/v2/specs/docker.com/hub/beta/openapi.json",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "kubernetes",
+    "name": "Kubernetes",
+    "url": "https://api.apis.guru/v2/specs/kubernetes.io/unversioned/swagger.json",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "freshdesk",
+    "name": "Freshdesk",
+    "url": "https://raw.githubusercontent.com/ccl-consulting/freshdesk-openapi-definitions/main/swagger.yaml",
+    "defaultAuth": "basic"
+  },
+  {
+    "id": "dropbox",
+    "name": "Dropbox",
+    "url": "https://api.apis.guru/v2/specs/dropbox.com/2/openapi.yaml",
+    "defaultAuth": "oauth-client-credentials-flow"
+  },
+  {
+    "id": "xero",
+    "name": "Xero",
+    "url": "https://raw.githubusercontent.com/XeroAPI/Xero-OpenAPI/master/xero_accounting.yaml",
+    "defaultAuth": "oauth-client-credentials-flow"
+  },
+  {
+    "id": "bigcommerce",
+    "name": "Bigcommerce",
+    "url": "https://raw.githubusercontent.com/bigcommerce/api-specs/main/reference/catalog/products_catalog.v3.yml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "recurly",
+    "name": "Recurly",
+    "url": "https://raw.githubusercontent.com/recurly/recurly-client-node/master/openapi/api.yaml",
+    "defaultAuth": "basic"
+  },
+  {
+    "id": "cohere",
+    "name": "Cohere",
+    "url": "https://raw.githubusercontent.com/cohere-ai/cohere-developer-experience/main/cohere-openapi.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "algolia",
+    "name": "Algolia",
+    "url": "https://raw.githubusercontent.com/algolia/api-clients-automation/main/docs/bundled/search.yml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "replicate",
+    "name": "Replicate",
+    "url": "https://api.replicate.com/openapi.json",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "mixpanel",
+    "name": "Mixpanel",
+    "url": "https://raw.githubusercontent.com/mixpanel/docs/main/openapi/src/ingestion.openapi.yaml",
+    "defaultAuth": "basic"
+  },
+  {
+    "id": "trello",
+    "name": "Trello",
+    "url": "https://api.apis.guru/v2/specs/trello.com/1.0/openapi.json",
+    "defaultAuth": "oauth-client-credentials-flow"
+  },
+  {
+    "id": "confluence",
+    "name": "Confluence",
+    "url": "https://dac-static.atlassian.com/cloud/confluence/swagger.v3.json",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "pipedrive",
+    "name": "Pipedrive",
+    "url": "https://developers.pipedrive.com/docs/api/v1/openapi.yaml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "adyen",
+    "name": "Adyen",
+    "url": "https://raw.githubusercontent.com/Adyen/adyen-openapi/master/yaml/CheckoutService-v71.yaml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "twilio-voice",
+    "name": "Twilio Voice",
+    "url": "https://raw.githubusercontent.com/twilio/twilio-oai/main/spec/json/twilio_voice_v1.json",
+    "defaultAuth": "basic"
+  },
+  {
+    "id": "paddle",
+    "name": "Paddle",
+    "url": "https://raw.githubusercontent.com/PaddleHQ/paddle-openapi/main/v1/openapi.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "lob",
+    "name": "Lob",
+    "url": "https://raw.githubusercontent.com/lob/lob-openapi/main/lob-api-public.yml",
+    "defaultAuth": "basic"
+  },
+  {
+    "id": "deepl",
+    "name": "Deepl",
+    "url": "https://raw.githubusercontent.com/DeepLcom/openapi/main/openapi.yaml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "docusign",
+    "name": "Docusign",
+    "url": "https://raw.githubusercontent.com/docusign/OpenAPI-Specifications/master/esignature.rest.swagger-v2.1.json",
+    "defaultAuth": "oauth-client-credentials-flow"
+  },
+  {
+    "id": "chargebee",
+    "name": "Chargebee",
+    "url": "https://raw.githubusercontent.com/chargebee/openapi/master/spec/chargebee_api_v2_pc_v1_spec.json",
+    "defaultAuth": "basic"
+  },
+  {
+    "id": "twilio-video",
+    "name": "Twilio Video",
+    "url": "https://raw.githubusercontent.com/twilio/twilio-oai/main/spec/json/twilio_video_v1.json",
+    "defaultAuth": "basic"
+  },
+  {
+    "id": "cloudinary",
+    "name": "Cloudinary",
+    "url": "https://raw.githubusercontent.com/cloudinary/account-provisioning-java/master/api/openapi.yaml",
+    "defaultAuth": "basic"
+  },
+  {
+    "id": "amplitude",
+    "name": "Amplitude",
+    "url": "https://raw.githubusercontent.com/amplitude/amplitude-docs/main/content/collections/api/en/session-replay-openapi.yaml",
+    "defaultAuth": "basic"
+  },
+  {
+    "id": "mollie",
+    "name": "Mollie",
+    "url": "https://raw.githubusercontent.com/mollie/openapi/main/specs.yaml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "quickbooks-online",
+    "name": "Quickbooks Online",
+    "url": "https://raw.githubusercontent.com/ballerina-platform/openapi-connectors/main/openapi/quickbooks.online/openapi.yaml",
+    "defaultAuth": "oauth-client-credentials-flow"
+  },
+  {
+    "id": "servicenow",
+    "name": "Servicenow",
+    "url": "https://raw.githubusercontent.com/ballerina-platform/openapi-connectors/main/openapi/servicenow/openapi.yaml",
+    "defaultAuth": "basic"
+  },
+  {
+    "id": "telegram-bot",
+    "name": "Telegram Bot",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/telegram.org/5.0.0/openapi.yaml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "clickup",
+    "name": "Clickup",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/clickup.com/1.0.0/openapi.yaml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "webflow",
+    "name": "Webflow",
+    "url": "https://raw.githubusercontent.com/webflow/openapi-spec/main/openapi/v2.yml",
+    "defaultAuth": "oauth-client-credentials-flow"
+  },
+  {
+    "id": "activecampaign",
+    "name": "Activecampaign",
+    "url": "https://raw.githubusercontent.com/ballerina-platform/openapi-connectors/main/openapi/activecampaign/openapi.yaml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "zoho-crm",
+    "name": "Zoho Crm",
+    "url": "https://raw.githubusercontent.com/ballerina-platform/openapi-connectors/main/openapi/zoho.crm.rest/openapi.yaml",
+    "defaultAuth": "oauth-client-credentials-flow"
+  },
+  {
+    "id": "influxdb",
+    "name": "Influxdb",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/influxdata.com/2.0.0/openapi.yaml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "telnyx",
+    "name": "Telnyx",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/telnyx.com/2.0.0/openapi.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "bamboohr",
+    "name": "Bamboohr",
+    "url": "https://raw.githubusercontent.com/konfig-sdks/openapi-examples/main/bamboohr/openapi.yaml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "gusto",
+    "name": "Gusto",
+    "url": "https://raw.githubusercontent.com/konfig-sdks/openapi-examples/main/gusto/embedded-payroll/openapi.yaml",
+    "defaultAuth": "oauth-client-credentials-flow"
+  },
+  {
+    "id": "copper-crm",
+    "name": "Copper Crm",
+    "url": "https://raw.githubusercontent.com/konfig-sdks/openapi-examples/main/copper/openapi.yaml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "vonage-sms",
+    "name": "Vonage Sms",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/nexmo.com/sms/1.2.0/openapi.yaml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "personio",
+    "name": "Personio",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/personio.de/personnel/1.0/openapi.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "weatherbit",
+    "name": "Weatherbit",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/weatherbit.io/2.0.0/swagger.yaml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "magento",
+    "name": "Magento",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/magento.com/2.2.10/openapi.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "zoho-books",
+    "name": "Zoho Books",
+    "url": "https://raw.githubusercontent.com/ballerina-platform/openapi-connectors/main/openapi/zoho.books/openapi.yaml",
+    "defaultAuth": "oauth-client-credentials-flow"
+  },
+  {
+    "id": "appwrite",
+    "name": "Appwrite",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/appwrite.io/server/0.9.3/openapi.yaml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "nasa",
+    "name": "Nasa",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/nasa.gov/apod/1.0.0/openapi.yaml",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "coda",
+    "name": "Coda",
+    "url": "https://coda.io/apis/v1/openapi.json",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "svix",
+    "name": "Svix",
+    "url": "https://raw.githubusercontent.com/svix/svix-webhooks/main/server/openapi.json",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "supabase-storage",
+    "name": "Supabase Storage",
+    "url": "https://raw.githubusercontent.com/supabase/supabase/master/apps/docs/spec/storage_v0_openapi.json",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "novu",
+    "name": "Novu",
+    "url": "https://api.novu.co/openapi.json",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "lago",
+    "name": "Lago",
+    "url": "https://raw.githubusercontent.com/getlago/lago-openapi/main/openapi.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "hookdeck",
+    "name": "Hookdeck",
+    "url": "https://raw.githubusercontent.com/hookdeck/hookdeck-api-schema/main/openapi.json",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "posthog",
+    "name": "Posthog",
+    "url": "https://app.posthog.com/api/schema/?format=json",
+    "defaultAuth": "apiKey"
+  },
+  {
+    "id": "airbyte",
+    "name": "Airbyte",
+    "url": "https://raw.githubusercontent.com/airbytehq/airbyte-api-python-sdk/main/airbyte-api.openapi.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "ably",
+    "name": "Ably",
+    "url": "https://raw.githubusercontent.com/ably/open-specs/main/definitions/control-v1.yaml",
+    "defaultAuth": "bearer"
+  },
+  {
+    "id": "openfga",
+    "name": "Openfga",
+    "url": "https://raw.githubusercontent.com/openfga/api/main/docs/openapiv2/apidocs.swagger.json",
+    "defaultAuth": "bearer"
+  }
+]

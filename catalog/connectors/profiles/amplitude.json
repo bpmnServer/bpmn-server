@@ -1,0 +1,8 @@
+{
+  "name": "amplitude",
+  "title": "Amplitude",
+  "source": "https://raw.githubusercontent.com/amplitude/amplitude-docs/main/content/collections/api/en/session-replay-openapi.yaml",
+  "authentication": "basic",
+  "operations": [],
+  "error": "404 Not Found"
+}

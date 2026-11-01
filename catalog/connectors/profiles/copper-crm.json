@@ -1,0 +1,4086 @@
+{
+  "name": "copper-crm",
+  "title": "Copper Crm",
+  "source": "https://raw.githubusercontent.com/konfig-sdks/openapi-examples/main/copper/openapi.yaml",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "copper-crm.1AccountAndUsers_getDetails",
+      "title": "Fetch Account Details",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/account",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.1AccountAndUsers_getUserById",
+      "title": "Fetch User by ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/users/{example_user_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_user_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.1AccountAndUsers_searchUsers",
+      "title": "List Users",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/users/search",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/1AccountAndUsersSearchUsersRequest"
+              },
+              "examples": {
+                "List Users": {
+                  "value": {
+                    "page_size": 200
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.2Leads_getLeadById",
+      "title": "Fetch a Lead by ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/leads/{example_lead_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_lead_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.2Leads_updateLead",
+      "title": "Update a Lead",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "{{base_url}}",
+      "path": "/leads/{example_lead_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_lead_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/2LeadsUpdateLeadRequest"
+              },
+              "examples": {
+                "Update a Lead": {
+                  "value": {
+                    "custom_fields": [
+                      {
+                        "custom_field_definition_id": 184997,
+                        "value": [
+                          262644,
+                          262645
+                        ]
+                      }
+                    ],
+                    "details": "This is an update"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.2Leads_removeLead",
+      "title": "Delete a Lead",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "{{base_url}}",
+      "path": "/leads/{example_lead_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_lead_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "text/plain": {
+              "examples": {
+                "Delete a Lead": {
+                  "value": ""
+                }
+              },
+              "schema": {
+                "description": "WARNING: Missing schema in media type object. Missing schema has been filled with this AnyType schema."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.2Leads_createNewLead",
+      "title": "Create a New Lead",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/leads",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/2LeadsCreateNewLeadRequest"
+              },
+              "examples": {
+                "Create a New Lead": {
+                  "value": {
+                    "custom_fields": [
+                      {
+                        "custom_field_definition_id": 100764,
+                        "value": "Text fields are 255 chars or less!"
+                      },
+                      {
+                        "custom_field_definition_id": 103481,
+                        "value": "Text area fields can have long text content"
+                      }
+                    ],
+                    "customer_source_id": 331242,
+                    "email": {
+                      "category": "work",
+                      "email": "mylead@noemail.com"
+                    },
+                    "name": "My Lead",
+                    "phone_numbers": [
+                      {
+                        "category": "mobile",
+                        "number": "415-123-45678"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.2Leads_upsertLead",
+      "title": "UPSERT a Lead",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "{{base_url}}",
+      "path": "/leads/upsert",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/2LeadsUpsertLeadRequest"
+              },
+              "examples": {
+                "UPSERT a Lead": {
+                  "value": {
+                    "match": {
+                      "field_name": "email",
+                      "field_value": "mylead@gmail.test"
+                    },
+                    "properties": {
+                      "email": {
+                        "category": "work",
+                        "email": "mylead@gmail.test"
+                      },
+                      "name": "My Lead"
+                    }
+                  }
+                },
+                "UPSERT a Lead (by custom field)": {
+                  "value": {
+                    "match": {
+                      "field_name": "custom",
+                      "field_value": {
+                        "custom_field_definition_id": 178384,
+                        "value": 1
+                      }
+                    },
+                    "properties": {
+                      "email": {
+                        "category": "work",
+                        "email": "mylead@gmail.test"
+                      },
+                      "name": "My Lead"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.2Leads_convertLeadToPerson",
+      "title": "CONVERT a Lead",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/leads/{example_leadconvert_id}/convert",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_leadconvert_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/2LeadsConvertLeadToPersonRequest"
+              },
+              "examples": {
+                "CONVERT a Lead": {
+                  "value": {
+                    "details": {
+                      "opportunity": {
+                        "monetary_value": 1000,
+                        "name": "Demo Project",
+                        "pipeline_id": 213214,
+                        "pipeline_stage_id": 12345
+                      },
+                      "person": {
+                        "name": "John Doe"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.2Leads_listLeadsSearch",
+      "title": "List Leads (Search)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/leads/search",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/2LeadsListLeadsSearchRequest"
+              },
+              "examples": {
+                "List Leads (Search)": {
+                  "value": {
+                    "maximum_interaction_date": 1515797000,
+                    "minimum_interaction_date": 1515796000,
+                    "page_size": 25,
+                    "sort_by": "name"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.2Leads_getLeadActivities",
+      "title": "See a Lead's Activities",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/leads/{example_lead_id}/activities",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_lead_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/2LeadsGetLeadActivitiesRequest"
+              },
+              "examples": {
+                "See a Lead's Activities": {
+                  "value": {
+                    "activity_types": [
+                      {
+                        "category": "user",
+                        "id": 1
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.5Opportunities_listCustomerSources",
+      "title": "List Customer Sources",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/customer_sources",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.2Leads_listLeadStatuses",
+      "title": "List Lead Statuses",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/lead_statuses",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.3People_getById",
+      "title": "Fetch a Person by ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/people/{example_person_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_person_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.3People_updatePersonById",
+      "title": "Update a Person",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "{{base_url}}",
+      "path": "/people/{example_person_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_person_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/3PeopleUpdatePersonByIdRequest"
+              },
+              "examples": {
+                "Update a Person": {
+                  "value": {
+                    "details": "This is an update"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.3People_removePerson",
+      "title": "Delete a Person",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "{{base_url}}",
+      "path": "/people/{example_person_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_person_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "text/plain": {
+              "examples": {
+                "Delete a Person": {
+                  "value": ""
+                }
+              },
+              "schema": {
+                "description": "WARNING: Missing schema in media type object. Missing schema has been filled with this AnyType schema."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.3People_getByEmail",
+      "title": "Fetch a Person by Email",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/people/fetch_by_email",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/3PeopleGetByEmailRequest"
+              },
+              "examples": {
+                "Fetch a Person by Email": {
+                  "value": {
+                    "email": "mycontact_123@noemail.com"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.3People_createNewPerson",
+      "title": "Create a New Person",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/people",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/3PeopleCreateNewPersonRequest"
+              },
+              "examples": {
+                "Create a New Person": {
+                  "value": {
+                    "emails": [
+                      {
+                        "category": "work",
+                        "email": "mycontact_1233@noemail.com"
+                      }
+                    ],
+                    "name": "My Contact",
+                    "phone_numbers": [
+                      {
+                        "category": "mobile",
+                        "number": "415-123-45678"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.3People_listPeopleSearch",
+      "title": "List People (Search)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/people/search",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/3PeopleListPeopleSearchRequest"
+              },
+              "examples": {
+                "List People (Search)": {
+                  "value": {
+                    "page_size": 25,
+                    "phone_number": "4153554776",
+                    "sort_by": "name"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.3People_getPersonActivities",
+      "title": "See a Person's Activities",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/people/{example_person_id}/activities",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_person_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/3PeopleGetPersonActivitiesRequest"
+              },
+              "examples": {
+                "See a Person's Activities": {
+                  "value": {
+                    "activity_types": [
+                      {
+                        "category": "user",
+                        "id": 1
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.4Companies_listContactTypes",
+      "title": "List Contact Types",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/contact_types",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.4Companies_getById",
+      "title": "Fetch a Company by ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/companies/{example_company_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_company_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.4Companies_updateCompany",
+      "title": "Update a Company",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "{{base_url}}",
+      "path": "/companies/{example_company_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_company_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/4CompaniesUpdateCompanyRequest"
+              },
+              "examples": {
+                "Update a Company": {
+                  "value": {
+                    "details": "This is an update"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.4Companies_createNewCompany",
+      "title": "Create a New Company ",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/companies",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/4CompaniesCreateNewCompanyRequest"
+              },
+              "examples": {
+                "Create a New Company ": {
+                  "value": {
+                    "address": {
+                      "city": "San Francisco",
+                      "postal_code": "94105",
+                      "state": "CA",
+                      "street": "123 Main St"
+                    },
+                    "details": "This is a demo company",
+                    "email_domain": "democompany.com",
+                    "name": "Demo Company",
+                    "phone_numbers": [
+                      {
+                        "category": "work",
+                        "number": "415-123-45678"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.4Companies_removeCompany",
+      "title": "Delete a Company",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "{{base_url}}",
+      "path": "/companies/{delete_company_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "delete_company_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "text/plain": {
+              "examples": {
+                "Delete a Company": {
+                  "value": ""
+                }
+              },
+              "schema": {
+                "description": "WARNING: Missing schema in media type object. Missing schema has been filled with this AnyType schema."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.4Companies_listCompanySearch",
+      "title": "List Companies (Search)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/companies/search",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/4CompaniesListCompanySearchRequest"
+              },
+              "examples": {
+                "List Companies (Search)": {
+                  "value": {
+                    "contact_type_ids": [
+                      6
+                    ],
+                    "page_size": 25,
+                    "sort_by": "name"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.4Companies_getCompanyActivities",
+      "title": "See a Company's Activities",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/companies/{example_company_id}/activities",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_company_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/4CompaniesGetCompanyActivitiesRequest"
+              },
+              "examples": {
+                "See a Company's Activities": {
+                  "value": {
+                    "activity_types": [
+                      {
+                        "category": "user",
+                        "id": 1
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.5Opportunities_getOpportunityById",
+      "title": "Fetch an Opportunity by ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/opportunities/{example_opportunity_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_opportunity_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.5Opportunities_updateOpportunityFields",
+      "title": "Update an Opportunity",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "{{base_url}}",
+      "path": "/opportunities/{example_opportunity_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_opportunity_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/5OpportunitiesUpdateOpportunityFieldsRequest"
+              },
+              "examples": {
+                "Update an Opportunity": {
+                  "value": {
+                    "details": "This is an update"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.5Opportunities_createNewOpportunity",
+      "title": "Create a New Opportunity",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/opportunities",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/5OpportunitiesCreateNewOpportunityRequest"
+              },
+              "examples": {
+                "Create a New Opportunity": {
+                  "value": {
+                    "customer_source_id": 331242,
+                    "name": "New Demo Opportunity",
+                    "primary_contact_id": 27140359
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.5Opportunities_removeOpportunityRecord",
+      "title": "Delete an Opportunity",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "{{base_url}}",
+      "path": "/opportunities/{delete_opportunity_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "delete_opportunity_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "text/plain": {
+              "examples": {
+                "Delete an Opportunity": {
+                  "value": ""
+                }
+              },
+              "schema": {
+                "description": "WARNING: Missing schema in media type object. Missing schema has been filled with this AnyType schema."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.5Opportunities_listByCriteria",
+      "title": "List Opportunities (Search)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/opportunities/search",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/5OpportunitiesListByCriteriaRequest"
+              },
+              "examples": {
+                "List Opportunities (Search)": {
+                  "value": {
+                    "loss_reason_ids": [
+                      -2
+                    ],
+                    "page_size": 25,
+                    "sort_by": "name"
+                  }
+                },
+                "Search Opportunities by Name": {
+                  "value": {
+                    "name": "500 Keyboards (sample)"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.5Opportunities_listLossReasons",
+      "title": "List Loss Reasons",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/loss_reasons",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.5Opportunities_getPipelinesList",
+      "title": "List Pipelines",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/pipelines",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.5Opportunities_listPipelineStages",
+      "title": "List Pipeline Stages",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/pipeline_stages",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.5Opportunities_listPipelineStages",
+      "title": "List Stages in a Pipeline",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/pipeline_stages/pipeline/{pipeline_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "pipeline_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.6Projects_getById",
+      "title": "Fetch a Project by ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/projects/{example_project_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_project_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.6Projects_updateProject",
+      "title": "Update a Project",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "{{base_url}}",
+      "path": "/projects/{example_project_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_project_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/6ProjectsUpdateProjectRequest"
+              },
+              "examples": {
+                "Update a Project": {
+                  "value": {
+                    "details": "This is an update"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.6Projects_createNewProject",
+      "title": "Create a New Project",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/projects",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/6ProjectsCreateNewProjectRequest"
+              },
+              "examples": {
+                "Create a New Project": {
+                  "value": {
+                    "name": "New Demo Project"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.6Projects_removeProjectRecord",
+      "title": "Delete a Project",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "{{base_url}}",
+      "path": "/projects/{delete_project_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "delete_project_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "text/plain": {
+              "examples": {
+                "Delete a Project": {
+                  "value": ""
+                }
+              },
+              "schema": {
+                "description": "WARNING: Missing schema in media type object. Missing schema has been filled with this AnyType schema."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.6Projects_listProjectsSearch",
+      "title": "List Projects (Search)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/projects/search",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/6ProjectsListProjectsSearchRequest"
+              },
+              "examples": {
+                "List Projects (Search)": {
+                  "value": {
+                    "custom_fields": [
+                      {
+                        "custom_field_definition_id": 12,
+                        "option": "ANY",
+                        "value": [
+                          8
+                        ]
+                      }
+                    ],
+                    "page_size": 25,
+                    "sort_by": "name"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.7Tasks_getTaskById",
+      "title": "Fetch a Task by ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/tasks/{example_task_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_task_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.7Tasks_updateTaskRecord",
+      "title": "Update a Task",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "{{base_url}}",
+      "path": "/tasks/{example_task_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_task_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/7TasksUpdateTaskRecordRequest"
+              },
+              "examples": {
+                "Update a Task": {
+                  "value": {
+                    "details": "This is an update"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.7Tasks_createNewTask",
+      "title": "Create a New Task",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/tasks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/7TasksCreateNewTaskRequest"
+              },
+              "examples": {
+                "Create a New Task": {
+                  "value": {
+                    "name": "Demo Task"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.7Tasks_removeTaskRecord",
+      "title": "Delete a Task",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "{{base_url}}",
+      "path": "/tasks/{delete_task_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "delete_task_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "text/plain": {
+              "examples": {
+                "Delete a Task": {
+                  "value": ""
+                }
+              },
+              "schema": {
+                "description": "WARNING: Missing schema in media type object. Missing schema has been filled with this AnyType schema."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.7Tasks_listTasksSearch",
+      "title": "List Tasks (Search)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/tasks/search",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/7TasksListTasksSearchRequest"
+              },
+              "examples": {
+                "List Tasks (Search)": {
+                  "value": {
+                    "page_size": 25,
+                    "sort_by": "name",
+                    "statuses": [
+                      "Completed"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.8Activities_getActivityById",
+      "title": "Fetch an Activity by ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/activities/{example_activity_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_activity_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.8Activities_createNewActivity",
+      "title": "Create a New Activity",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/activities",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/8ActivitiesCreateNewActivityRequest"
+              },
+              "examples": {
+                "Create a New Activity": {
+                  "value": {
+                    "details": "This is the description of this note",
+                    "parent": {
+                      "id": 27140359,
+                      "type": "person"
+                    },
+                    "type": {
+                      "category": "user",
+                      "id": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.8Activities_removeActivityRecord",
+      "title": "Delete an Activity",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "{{base_url}}",
+      "path": "/activities/{delete_activity_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "delete_activity_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "text/plain": {
+              "examples": {
+                "Delete an Activity": {
+                  "value": ""
+                }
+              },
+              "schema": {
+                "description": "WARNING: Missing schema in media type object. Missing schema has been filled with this AnyType schema."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.8Activities_listSearch",
+      "title": "List Activities (Search)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/activities/search",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/8ActivitiesListSearchRequest"
+              },
+              "examples": {
+                "List Activities (Search)": {
+                  "value": {
+                    "page_size": 25
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.8Activities_listActivityTypes",
+      "title": "List Activity Types",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/activity_types",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.CustomFields_listDefinitions",
+      "title": "List Custom Field Definitions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/custom_field_definitions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.CustomFields_createFieldDefinition",
+      "title": "Create a new custom field definition",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/custom_field_definitions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomFieldsCreateFieldDefinitionRequest"
+              },
+              "examples": {
+                "Create a new custom field definition": {
+                  "value": {
+                    "available_on": [
+                      "lead",
+                      "person"
+                    ],
+                    "data_type": "String",
+                    "name": "A String"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.CustomFields_getDefinition",
+      "title": "Fetch a Custom Field Definition",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/custom_field_definitions/{custom_field_definition_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "custom_field_definition_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.CustomFields_updateExistingDefinition",
+      "title": "Update an existing custom field definition",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "{{base_url}}",
+      "path": "/custom_field_definitions/{custom_field_definition_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "custom_field_definition_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomFieldsUpdateExistingDefinitionRequest"
+              },
+              "examples": {
+                "Update an existing custom field definition": {
+                  "value": {
+                    "name": "Renamed String"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.CustomFields_deleteCustomFieldDefinition",
+      "title": "Delete a Custom Field Definition",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "{{base_url}}",
+      "path": "/custom_field_definitions/{custom_field_definition_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "custom_field_definition_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "text/plain": {
+              "examples": {
+                "Delete a Custom Field Definition": {
+                  "value": ""
+                }
+              },
+              "schema": {
+                "description": "WARNING: Missing schema in media type object. Missing schema has been filled with this AnyType schema."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.CustomFields_searchEntityByCustomField",
+      "title": "Search Entity (Leads, People, etc) by Custom Field",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/{entity_name_in_plural}/search",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "entity_name_in_plural",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomFieldsSearchEntityByCustomFieldRequest"
+              },
+              "examples": {
+                "Search Entity (Leads, People, etc) by Custom Field": {
+                  "value": {
+                    "custom_fields": [
+                      {
+                        "allow_empty": true,
+                        "custom_field_definition_id": 3
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.CustomFields_listAllActivityTypes",
+      "title": "List All Custom Activity Types",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/custom_activity_types",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.CustomFields_createCustomActivityType",
+      "title": "Create a New Custom Activity Type",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/custom_activity_types",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomFieldsCreateCustomActivityTypeRequest"
+              },
+              "examples": {
+                "Create a New Custom Activity Type": {
+                  "value": {
+                    "icon_type": "Phone",
+                    "name": "New Activity"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.CustomFields_getActivityType",
+      "title": "Get Custom Activity Type",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/custom_activity_types/{custom_activity_type_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "custom_activity_type_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.CustomFields_updateExistingActivityType",
+      "title": "Update an Existing Custom Activity Type",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "{{base_url}}",
+      "path": "/custom_activity_types/{custom_activity_type_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "custom_activity_type_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomFieldsUpdateExistingActivityTypeRequest"
+              },
+              "examples": {
+                "Update an Existing Custom Activity Type": {
+                  "value": {
+                    "icon_type": "Todo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.CustomFields_getConnections",
+      "title": "List the connections on specified entity",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/related_links",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "custom_field_definition_id",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "example": "{{custom_field_definition_id}}"
+          },
+          "description": "The Id of the custom field definition. This can be fetched by the custom_field_definitions API."
+        },
+        {
+          "name": "source_type",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "example": "{{source_type}}"
+          },
+          "description": "The entity type of the source. Supported sources: \"people\", \"opportunity\", \"lead\", \"organization\", \"project\", \"user\""
+        },
+        {
+          "name": "source_id",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "example": "{{source_id}}"
+          },
+          "description": "The Copper record id for the specified entity type"
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.CustomFields_createConnection",
+      "title": "Create a connection",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/related_links",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomFieldsCreateConnectionRequest"
+              },
+              "examples": {
+                "Create a connection": {
+                  "value": {
+                    "custom_field_definition_id": 169,
+                    "source": {
+                      "entity_type": "lead",
+                      "id": 1001
+                    },
+                    "target": {
+                      "entity_type": "lead",
+                      "id": 1002
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.CustomFields_deleteConnection",
+      "title": "Delete a connection",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "{{base_url}}",
+      "path": "/related_links/{connection_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "connection_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "text/plain": {
+              "examples": {
+                "Delete a connection": {
+                  "value": ""
+                }
+              },
+              "schema": {
+                "description": "WARNING: Missing schema in media type object. Missing schema has been filled with this AnyType schema."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.RelatedItems_viewAllRelated",
+      "title": "View all records of a given Entity Type related to an Entity",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/{entity}/{entity_id}/related/{related_entity_name}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "entity",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "entity_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "related_entity_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.RelatedItems_getAllRelated",
+      "title": "View all records related to an Entity",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/{entity}/{entity_id}/related",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "entity",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "entity_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.FileUpload_listAttachedFiles",
+      "title": "List attached files of an entity record",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/{entity_type}/{entity_id}/files",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "entity_type",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "entity_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.FileUpload_relateToEntity",
+      "title": "Upload 3: Relate the uploaded file to a specific entity",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/{entity_type}/{entity_id}/files",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "entity_type",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "entity_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FileUploadRelateToEntityRequest"
+              },
+              "examples": {
+                "Upload 3: Relate the uploaded file to a specific entity": {
+                  "value": {
+                    "file_name": "cat.jpeg",
+                    "key": "temp_uploads/f0317718-9b56-4d28-bda4-985af6b75f56/b0c5afe5-3d87-495d-ae58-760fcafbadec"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.FileUpload_getFileMetadata",
+      "title": "Get metadata of a specific attached file",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/{entity}/{entity_id}/files/{file_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "entity",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "entity_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "file_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.FileUpload_getSignedS3Url",
+      "title": "Upload 1: Get signed S3 URL",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/{entity_type}/{entity_id}/files/s3_signed_url",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "entity_type",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "entity_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.Webhooks_uploadFileToS3",
+      "title": "Upload 2: Upload your file to S3",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhooksUploadFileToS3Request"
+              }
+            },
+            "text/plain": {
+              "examples": {
+                "Notification Example": {
+                  "value": "{\n  \"ids\": [<entity_id_1>, <entity_id_2>, ...],\n  \"type\": \"<entity_type>\",\n  \"event\": \"<event_type>\",\n  \"subscription_id\": <subscription_id>,\n  \"secret_field_1\": \"<string>\",\n  \"secret_field_2\": \"<string>\",\n  \"updated_attributes\": {\n    \"field_name\": [<old_value>, <new_value>]\n  }\n}"
+                }
+              },
+              "schema": {
+                "description": "WARNING: Missing schema in media type object. Missing schema has been filled with this AnyType schema."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.Webhooks_listSubscriptions",
+      "title": "List all subscriptions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/webhooks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.Webhooks_createSubscriptionEvent",
+      "title": "Create new subscription",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "{{base_url}}",
+      "path": "/webhooks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhooksCreateSubscriptionEventRequest"
+              },
+              "examples": {
+                "Create new subscription": {
+                  "value": {
+                    "event": "update",
+                    "secret": {
+                      "key": "copper_notifications",
+                      "secret": "hook_source"
+                    },
+                    "target": "https://your.endpoint.here",
+                    "type": "lead"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.Webhooks_unsubscribe",
+      "title": "Delete subscription (unsubscribe)",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "{{base_url}}",
+      "path": "/webhooks/{example_webhook_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_webhook_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "text/plain": {
+              "examples": {
+                "Delete subscription (unsubscribe)": {
+                  "value": ""
+                }
+              },
+              "schema": {
+                "description": "WARNING: Missing schema in media type object. Missing schema has been filled with this AnyType schema."
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "copper-crm.Webhooks_viewSubscriptionById",
+      "title": "View subscription by ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "{{base_url}}",
+      "path": "/webhooks{example_webhook_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "example_webhook_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-pw-accesstoken",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_token}}"
+          }
+        },
+        {
+          "name": "x-pw-application",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "developer_api"
+          }
+        },
+        {
+          "name": "x-pw-useremail",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "example": "{{api_email}}"
+          }
+        }
+      ]
+    }
+  ]
+}

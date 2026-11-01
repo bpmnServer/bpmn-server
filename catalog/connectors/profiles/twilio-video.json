@@ -1,0 +1,2055 @@
+{
+  "name": "twilio-video",
+  "title": "Twilio Video",
+  "source": "https://raw.githubusercontent.com/twilio/twilio-oai/main/spec/json/twilio_video_v1.json",
+  "authentication": "basic",
+  "operations": [
+    {
+      "connector": "twilio-video.FetchComposition",
+      "title": "Returns a single Composition resource identified by a Composition SID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Compositions/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^CJ[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Composition resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.DeleteComposition",
+      "title": "Delete a Recording Composition resource identified by a Composition SID.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Compositions/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^CJ[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Composition resource to delete."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.ListComposition",
+      "title": "List of all Recording compositions.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Compositions",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Status",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/composition_enum_status"
+          },
+          "description": "Read only Composition resources with this status. Can be: `enqueued`, `processing`, `completed`, `deleted`, or `failed`."
+        },
+        {
+          "name": "DateCreatedAfter",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Read only Composition resources created on or after this [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date-time with time zone."
+        },
+        {
+          "name": "DateCreatedBefore",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Read only Composition resources created before this ISO 8601 date-time with time zone."
+        },
+        {
+          "name": "RoomSid",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^RM[0-9a-fA-F]{32}$"
+          },
+          "description": "Read only Composition resources with this Room SID."
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50
+          },
+          "description": "How many resources to return in each list page."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.CreateComposition",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Compositions",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateCompositionRequest",
+                "properties": {
+                  "RoomSid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^RM[0-9a-fA-F]{32}$",
+                    "description": "The SID of the Group Room with the media tracks to be used as composition sources."
+                  },
+                  "VideoLayout": {
+                    "description": "An object that describes the video layout of the composition in terms of regions. See [Specifying Video Layouts](https://www.twilio.com/docs/video/api/compositions-resource#specifying-video-layouts) for more info. Please, be aware that either video_layout or audio_sources have to be provided to get a valid creation request"
+                  },
+                  "AudioSources": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "An array of track names from the same group room to merge into the new composition. Can include zero or more track names. The new composition includes all audio sources specified in `audio_sources` except for those specified in `audio_sources_excluded`. The track names in this parameter can include an asterisk as a wild card character, which will match zero or more characters in a track name. For example, `student*` includes `student` as well as `studentTeam`. Please, be aware that either video_layout or audio_sources have to be provided to get a valid creation request"
+                  },
+                  "AudioSourcesExcluded": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "An array of track names to exclude. The new composition includes all audio sources specified in `audio_sources` except for those specified in `audio_sources_excluded`. The track names in this parameter can include an asterisk as a wild card character, which will match zero or more characters in a track name. For example, `student*` excludes `student` as well as `studentTeam`. This parameter can also be empty."
+                  },
+                  "Resolution": {
+                    "type": "string",
+                    "description": "A string that describes the columns (width) and rows (height) of the generated composed video in pixels. Defaults to `640x480`. \nThe string's format is `{width}x{height}` where: \n\n* 16 <= `{width}` <= 1280\n* 16 <= `{height}` <= 1280\n* `{width}` * `{height}` <= 921,600\n\nTypical values are: \n\n* HD = `1280x720`\n* PAL = `1024x576`\n* VGA = `640x480`\n* CIF = `320x240`\n\nNote that the `resolution` imposes an aspect ratio to the resulting composition. When the original video tracks are constrained by the aspect ratio, they are scaled to fit. See [Specifying Video Layouts](https://www.twilio.com/docs/video/api/compositions-resource#specifying-video-layouts) for more info."
+                  },
+                  "Format": {
+                    "$ref": "#/components/schemas/composition_enum_format"
+                  },
+                  "StatusCallback": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL we should call using the `status_callback_method` to send status information to your application on every composition event. If not provided, status callback events will not be dispatched."
+                  },
+                  "StatusCallbackMethod": {
+                    "type": "string",
+                    "format": "http-method",
+                    "enum": [
+                      "GET",
+                      "POST"
+                    ],
+                    "description": "The HTTP method we should use to call `status_callback`. Can be: `POST` or `GET` and the default is `POST`."
+                  },
+                  "Trim": {
+                    "type": "boolean",
+                    "description": "Whether to clip the intervals where there is no active media in the composition. The default is `true`. Compositions with `trim` enabled are shorter when the Room is created and no Participant joins for a while as well as if all the Participants leave the room and join later, because those gaps will be removed. See [Specifying Video Layouts](https://www.twilio.com/docs/video/api/compositions-resource#specifying-video-layouts) for more info."
+                  }
+                },
+                "required": [
+                  "RoomSid"
+                ]
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "RoomSid": "RMaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "AudioSources": [
+                      "RTaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                      "user*"
+                    ],
+                    "AudioSourcesExcluded": [
+                      "RTbaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                    ],
+                    "VideoLayout": "{}",
+                    "Trim": true,
+                    "Format": "mp4",
+                    "Resolution": "1920x1080"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.FetchCompositionHook",
+      "title": "Returns a single CompositionHook resource identified by a CompositionHook SID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/CompositionHooks/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^HK[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the CompositionHook resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.DeleteCompositionHook",
+      "title": "Delete a Recording CompositionHook resource identified by a `CompositionHook SID`.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/CompositionHooks/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^HK[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the CompositionHook resource to delete."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.UpdateCompositionHook",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/CompositionHooks/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^HK[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the CompositionHook resource to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "UpdateCompositionHookRequest",
+                "properties": {
+                  "FriendlyName": {
+                    "type": "string",
+                    "description": "A descriptive string that you create to describe the resource. It can be up to  100 characters long and it must be unique within the account."
+                  },
+                  "Enabled": {
+                    "type": "boolean",
+                    "description": "Whether the composition hook is active. When `true`, the composition hook will be triggered for every completed Group Room in the account. When `false`, the composition hook never triggers."
+                  },
+                  "VideoLayout": {
+                    "description": "A JSON object that describes the video layout of the composition hook in terms of regions. See [Specifying Video Layouts](https://www.twilio.com/docs/video/api/compositions-resource#specifying-video-layouts) for more info."
+                  },
+                  "AudioSources": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "An array of track names from the same group room to merge into the compositions created by the composition hook. Can include zero or more track names. A composition triggered by the composition hook includes all audio sources specified in `audio_sources` except those specified in `audio_sources_excluded`. The track names in this parameter can include an asterisk as a wild card character, which matches zero or more characters in a track name. For example, `student*` includes tracks named `student` as well as `studentTeam`."
+                  },
+                  "AudioSourcesExcluded": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "An array of track names to exclude. A composition triggered by the composition hook includes all audio sources specified in `audio_sources` except for those specified in `audio_sources_excluded`. The track names in this parameter can include an asterisk as a wild card character, which matches zero or more characters in a track name. For example, `student*` excludes `student` as well as `studentTeam`. This parameter can also be empty."
+                  },
+                  "Trim": {
+                    "type": "boolean",
+                    "description": "Whether to clip the intervals where there is no active media in the compositions triggered by the composition hook. The default is `true`. Compositions with `trim` enabled are shorter when the Room is created and no Participant joins for a while as well as if all the Participants leave the room and join later, because those gaps will be removed. See [Specifying Video Layouts](https://www.twilio.com/docs/video/api/compositions-resource#specifying-video-layouts) for more info."
+                  },
+                  "Format": {
+                    "$ref": "#/components/schemas/composition_hook_enum_format"
+                  },
+                  "Resolution": {
+                    "type": "string",
+                    "description": "A string that describes the columns (width) and rows (height) of the generated composed video in pixels. Defaults to `640x480`. \nThe string's format is `{width}x{height}` where: \n\n* 16 <= `{width}` <= 1280\n* 16 <= `{height}` <= 1280\n* `{width}` * `{height}` <= 921,600\n\nTypical values are: \n\n* HD = `1280x720`\n* PAL = `1024x576`\n* VGA = `640x480`\n* CIF = `320x240`\n\nNote that the `resolution` imposes an aspect ratio to the resulting composition. When the original video tracks are constrained by the aspect ratio, they are scaled to fit. See [Specifying Video Layouts](https://www.twilio.com/docs/video/api/compositions-resource#specifying-video-layouts) for more info."
+                  },
+                  "StatusCallback": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL we should call using the `status_callback_method` to send status information to your application on every composition event. If not provided, status callback events will not be dispatched."
+                  },
+                  "StatusCallbackMethod": {
+                    "type": "string",
+                    "format": "http-method",
+                    "enum": [
+                      "GET",
+                      "POST"
+                    ],
+                    "description": "The HTTP method we should use to call `status_callback`. Can be: `POST` or `GET` and the default is `POST`."
+                  }
+                },
+                "required": [
+                  "FriendlyName"
+                ]
+              },
+              "examples": {
+                "updateAllFields": {
+                  "value": {
+                    "FriendlyName": "My composition hook",
+                    "Enabled": true,
+                    "AudioSources": [
+                      "user*",
+                      "moderator"
+                    ],
+                    "AudioSourcesExcluded": [
+                      "admin"
+                    ],
+                    "VideoLayout": "{}",
+                    "Trim": true,
+                    "Format": "mp4",
+                    "Resolution": "1280x720",
+                    "StatusCallback": "http://www.example.com",
+                    "StatusCallbackMethod": "POST"
+                  }
+                },
+                "updateWithDefaults": {
+                  "value": {
+                    "FriendlyName": "My composition hook",
+                    "AudioSources": [
+                      "user*",
+                      "moderator"
+                    ],
+                    "AudioSourcesExcluded": [
+                      "admin"
+                    ],
+                    "Format": "mp4",
+                    "Resolution": "1280x720"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.ListCompositionHook",
+      "title": "List of all Recording CompositionHook resources.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/CompositionHooks",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Enabled",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Read only CompositionHook resources with an `enabled` value that matches this parameter."
+        },
+        {
+          "name": "DateCreatedAfter",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Read only CompositionHook resources created on or after this [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) datetime with time zone."
+        },
+        {
+          "name": "DateCreatedBefore",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Read only CompositionHook resources created before this [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) datetime with time zone."
+        },
+        {
+          "name": "FriendlyName",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Read only CompositionHook resources with friendly names that match this string. The match is not case sensitive and can include asterisk `*` characters as wildcard match."
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.CreateCompositionHook",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/CompositionHooks",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateCompositionHookRequest",
+                "properties": {
+                  "FriendlyName": {
+                    "type": "string",
+                    "description": "A descriptive string that you create to describe the resource. It can be up to  100 characters long and it must be unique within the account."
+                  },
+                  "Enabled": {
+                    "type": "boolean",
+                    "description": "Whether the composition hook is active. When `true`, the composition hook will be triggered for every completed Group Room in the account. When `false`, the composition hook will never be triggered."
+                  },
+                  "VideoLayout": {
+                    "description": "An object that describes the video layout of the composition hook in terms of regions. See [Specifying Video Layouts](https://www.twilio.com/docs/video/api/compositions-resource#specifying-video-layouts) for more info."
+                  },
+                  "AudioSources": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "An array of track names from the same group room to merge into the compositions created by the composition hook. Can include zero or more track names. A composition triggered by the composition hook includes all audio sources specified in `audio_sources` except those specified in `audio_sources_excluded`. The track names in this parameter can include an asterisk as a wild card character, which matches zero or more characters in a track name. For example, `student*` includes tracks named `student` as well as `studentTeam`."
+                  },
+                  "AudioSourcesExcluded": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "An array of track names to exclude. A composition triggered by the composition hook includes all audio sources specified in `audio_sources` except for those specified in `audio_sources_excluded`. The track names in this parameter can include an asterisk as a wild card character, which matches zero or more characters in a track name. For example, `student*` excludes `student` as well as `studentTeam`. This parameter can also be empty."
+                  },
+                  "Resolution": {
+                    "type": "string",
+                    "description": "A string that describes the columns (width) and rows (height) of the generated composed video in pixels. Defaults to `640x480`. \nThe string's format is `{width}x{height}` where: \n\n* 16 <= `{width}` <= 1280\n* 16 <= `{height}` <= 1280\n* `{width}` * `{height}` <= 921,600\n\nTypical values are: \n\n* HD = `1280x720`\n* PAL = `1024x576`\n* VGA = `640x480`\n* CIF = `320x240`\n\nNote that the `resolution` imposes an aspect ratio to the resulting composition. When the original video tracks are constrained by the aspect ratio, they are scaled to fit. See [Specifying Video Layouts](https://www.twilio.com/docs/video/api/compositions-resource#specifying-video-layouts) for more info."
+                  },
+                  "Format": {
+                    "$ref": "#/components/schemas/composition_hook_enum_format"
+                  },
+                  "StatusCallback": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL we should call using the `status_callback_method` to send status information to your application on every composition event. If not provided, status callback events will not be dispatched."
+                  },
+                  "StatusCallbackMethod": {
+                    "type": "string",
+                    "format": "http-method",
+                    "enum": [
+                      "GET",
+                      "POST"
+                    ],
+                    "description": "The HTTP method we should use to call `status_callback`. Can be: `POST` or `GET` and the default is `POST`."
+                  },
+                  "Trim": {
+                    "type": "boolean",
+                    "description": "Whether to clip the intervals where there is no active media in the Compositions triggered by the composition hook. The default is `true`. Compositions with `trim` enabled are shorter when the Room is created and no Participant joins for a while as well as if all the Participants leave the room and join later, because those gaps will be removed. See [Specifying Video Layouts](https://www.twilio.com/docs/video/api/compositions-resource#specifying-video-layouts) for more info."
+                  }
+                },
+                "required": [
+                  "FriendlyName"
+                ]
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "FriendlyName": "My composition hook",
+                    "Enabled": false,
+                    "AudioSources": [
+                      "user*",
+                      "moderator"
+                    ],
+                    "AudioSourcesExcluded": [
+                      "admin"
+                    ],
+                    "VideoLayout": "{}",
+                    "Trim": true,
+                    "Format": "mp4",
+                    "Resolution": "1280x720",
+                    "StatusCallback": "http://www.example.com",
+                    "StatusCallbackMethod": "POST"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.FetchCompositionSettings",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/CompositionSettings/Default",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "twilio-video.CreateCompositionSettings",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/CompositionSettings/Default",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateCompositionSettingsRequest",
+                "properties": {
+                  "FriendlyName": {
+                    "type": "string",
+                    "description": "A descriptive string that you create to describe the resource and show to the user in the console"
+                  },
+                  "AwsCredentialsSid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^CR[0-9a-fA-F]{32}$",
+                    "description": "The SID of the stored Credential resource."
+                  },
+                  "EncryptionKeySid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^CR[0-9a-fA-F]{32}$",
+                    "description": "The SID of the Public Key resource to use for encryption."
+                  },
+                  "AwsS3Url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL of the AWS S3 bucket where the compositions should be stored. We only support DNS-compliant URLs like `https://documentation-example-twilio-bucket/compositions`, where `compositions` is the path in which you want the compositions to be stored. This URL accepts only URI-valid characters, as described in the [RFC 3986](https://tools.ietf.org/html/rfc3986#section-2)."
+                  },
+                  "AwsStorageEnabled": {
+                    "type": "boolean",
+                    "description": "Whether all compositions should be written to the `aws_s3_url`. When `false`, all compositions are stored in our cloud."
+                  },
+                  "EncryptionEnabled": {
+                    "type": "boolean",
+                    "description": "Whether all compositions should be stored in an encrypted form. The default is `false`."
+                  }
+                },
+                "required": [
+                  "FriendlyName"
+                ]
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "FriendlyName": "friendly_name",
+                    "AwsCredentialsSid": "CRaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "EncryptionKeySid": "CRaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab",
+                    "AwsS3Url": "https://my-super-duper-bucket.s3.amazonaws.com/my/path/",
+                    "AwsStorageEnabled": true,
+                    "EncryptionEnabled": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.FetchRecording",
+      "title": "Returns a single Recording resource identified by a Recording SID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Recordings/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^RT[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Recording resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.DeleteRecording",
+      "title": "Delete a Recording resource identified by a Recording SID.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Recordings/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^RT[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Recording resource to delete."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.ListRecording",
+      "title": "List of all Track recordings.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Recordings",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Status",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/recording_enum_status"
+          },
+          "description": "Read only the recordings that have this status. Can be: `processing`, `completed`, or `deleted`."
+        },
+        {
+          "name": "SourceSid",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^[a-zA-Z]{2}[0-9a-fA-F]{32}$"
+          },
+          "description": "Read only the recordings that have this `source_sid`."
+        },
+        {
+          "name": "GroupingSid",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 34,
+              "maxLength": 34,
+              "pattern": "^[a-zA-Z]{2}[0-9a-fA-F]{32}$"
+            }
+          },
+          "description": "Read only recordings with this `grouping_sid`, which may include a `participant_sid` and/or a `room_sid`."
+        },
+        {
+          "name": "DateCreatedAfter",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Read only recordings that started on or after this [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date-time with time zone."
+        },
+        {
+          "name": "DateCreatedBefore",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Read only recordings that started before this [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date-time with time zone, given as `YYYY-MM-DDThh:mm:ss+|-hh:mm` or `YYYY-MM-DDThh:mm:ssZ`."
+        },
+        {
+          "name": "MediaType",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/recording_enum_type"
+          },
+          "description": "Read only recordings that have this media type. Can be either `audio` or `video`."
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50
+          },
+          "description": "How many resources to return in each list page."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.FetchRecordingSettings",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/RecordingSettings/Default",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "twilio-video.CreateRecordingSettings",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/RecordingSettings/Default",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateRecordingSettingsRequest",
+                "properties": {
+                  "FriendlyName": {
+                    "type": "string",
+                    "description": "A descriptive string that you create to describe the resource and be shown to users in the console"
+                  },
+                  "AwsCredentialsSid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^CR[0-9a-fA-F]{32}$",
+                    "description": "The SID of the stored Credential resource."
+                  },
+                  "EncryptionKeySid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^CR[0-9a-fA-F]{32}$",
+                    "description": "The SID of the Public Key resource to use for encryption."
+                  },
+                  "AwsS3Url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL of the AWS S3 bucket where the recordings should be stored. We only support DNS-compliant URLs like `https://documentation-example-twilio-bucket/recordings`, where `recordings` is the path in which you want the recordings to be stored. This URL accepts only URI-valid characters, as described in the [RFC 3986](https://tools.ietf.org/html/rfc3986#section-2)."
+                  },
+                  "AwsStorageEnabled": {
+                    "type": "boolean",
+                    "description": "Whether all recordings should be written to the `aws_s3_url`. When `false`, all recordings are stored in our cloud."
+                  },
+                  "EncryptionEnabled": {
+                    "type": "boolean",
+                    "description": "Whether all recordings should be stored in an encrypted form. The default is `false`."
+                  }
+                },
+                "required": [
+                  "FriendlyName"
+                ]
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "FriendlyName": "friendly_name",
+                    "AwsCredentialsSid": "CRaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "EncryptionKeySid": "CRaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab",
+                    "AwsS3Url": "https://my-super-duper-bucket.s3.amazonaws.com/my/path/",
+                    "AwsStorageEnabled": true,
+                    "EncryptionEnabled": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.FetchRoom",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the Room resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.UpdateRoom",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the Room resource to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "UpdateRoomRequest",
+                "properties": {
+                  "Status": {
+                    "$ref": "#/components/schemas/room_enum_room_status"
+                  }
+                },
+                "required": [
+                  "Status"
+                ]
+              },
+              "examples": {
+                "update": {
+                  "value": {
+                    "Status": "completed"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.CreateRoom",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateRoomRequest",
+                "properties": {
+                  "EnableTurn": {
+                    "type": "boolean",
+                    "description": "Deprecated, now always considered to be true."
+                  },
+                  "Type": {
+                    "$ref": "#/components/schemas/room_enum_room_type"
+                  },
+                  "UniqueName": {
+                    "type": "string",
+                    "description": "An application-defined string that uniquely identifies the resource. It can be used as a `room_sid` in place of the resource's `sid` in the URL to address the resource, assuming it does not contain any [reserved characters](https://tools.ietf.org/html/rfc3986#section-2.2) that would need to be URL encoded. This value is unique for `in-progress` rooms. SDK clients can use this name to connect to the room. REST API clients can use this name in place of the Room SID to interact with the room as long as the room is `in-progress`."
+                  },
+                  "StatusCallback": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL Twilio should call using the `status_callback_method` to send status information to your application on every room event. See [Status Callbacks](https://www.twilio.com/docs/video/api/status-callbacks) for more info."
+                  },
+                  "StatusCallbackMethod": {
+                    "type": "string",
+                    "format": "http-method",
+                    "enum": [
+                      "GET",
+                      "POST"
+                    ],
+                    "description": "The HTTP method Twilio should use to call `status_callback`. Can be `POST` or `GET`."
+                  },
+                  "MaxParticipants": {
+                    "type": "integer",
+                    "description": "The maximum number of concurrent Participants allowed in the room. The maximum allowed value is 50."
+                  },
+                  "RecordParticipantsOnConnect": {
+                    "type": "boolean",
+                    "description": "Whether to start recording when Participants connect."
+                  },
+                  "TranscribeParticipantsOnConnect": {
+                    "type": "boolean",
+                    "description": "Whether to start transcriptions when Participants connect. If TranscriptionsConfiguration is not provided, default settings will be used."
+                  },
+                  "VideoCodecs": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/room_enum_video_codec"
+                    },
+                    "description": "An array of the video codecs that are supported when publishing a track in the room.  Can be: `VP8` and `H264`."
+                  },
+                  "MediaRegion": {
+                    "type": "string",
+                    "description": "The region for the Room's media server.  Can be one of the [available Media Regions](https://www.twilio.com/docs/video/ip-addresses#group-rooms-media-servers)."
+                  },
+                  "RecordingRules": {
+                    "description": "A collection of Recording Rules that describe how to include or exclude matching tracks for recording"
+                  },
+                  "TranscriptionsConfiguration": {
+                    "type": "object",
+                    "description": "A collection of properties that describe transcription behaviour. If TranscribeParticipantsOnConnect is set to true and TranscriptionsConfiguration is not provided, default settings will be used."
+                  },
+                  "AudioOnly": {
+                    "type": "boolean",
+                    "description": "When set to true, indicates that the participants in the room will only publish audio. No video tracks will be allowed."
+                  },
+                  "MaxParticipantDuration": {
+                    "type": "integer",
+                    "description": "The maximum number of seconds a Participant can be connected to the room. The maximum possible value is 86400 seconds (24 hours). The default is 14400 seconds (4 hours)."
+                  },
+                  "EmptyRoomTimeout": {
+                    "type": "integer",
+                    "description": "Configures how long (in minutes) a room will remain active after last participant leaves. Valid values range from 1 to 60 minutes (no fractions)."
+                  },
+                  "UnusedRoomTimeout": {
+                    "type": "integer",
+                    "description": "Configures how long (in minutes) a room will remain active if no one joins. Valid values range from 1 to 60 minutes (no fractions)."
+                  },
+                  "LargeRoom": {
+                    "type": "boolean",
+                    "description": "When set to true, indicated that this is the large room."
+                  }
+                }
+              },
+              "examples": {
+                "create": {
+                  "value": {}
+                },
+                "createWebrtcGo": {
+                  "value": {
+                    "Type": "go",
+                    "UniqueName": "room1"
+                  }
+                },
+                "createGroupRooms": {
+                  "value": {
+                    "Type": "group",
+                    "UniqueName": "grouproom",
+                    "RecordingRules": "%5B%7B%22type%22%3A%22exclude%22%2C%22all%22%3A%20true%7D%5D"
+                  }
+                },
+                "createGroupRoomsWithAudioOnlyEnabled": {
+                  "value": {
+                    "Type": "group",
+                    "UniqueName": "grouproom",
+                    "RecordingRules": "%5B%7B%22type%22%3A%22exclude%22%2C%22all%22%3A%20true%7D%5D",
+                    "AudioOnly": true
+                  }
+                },
+                "createSmallGroupRooms": {
+                  "value": {
+                    "Type": "group-small",
+                    "UniqueName": "SmallDailyStandup"
+                  }
+                },
+                "createLargeGroupRooms": {
+                  "value": {
+                    "Type": "group",
+                    "UniqueName": "MyWebinar",
+                    "MaxParticipants": 90
+                  }
+                },
+                "createLargeGroupRoomsWithAudioOnlyEnabled": {
+                  "value": {
+                    "Type": "group",
+                    "UniqueName": "MyWebinar",
+                    "MaxParticipants": 90,
+                    "AudioOnly": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.ListRoom",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Status",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/room_enum_room_status"
+          },
+          "description": "Read only the rooms with this status. Can be: `in-progress` (default) or `completed`"
+        },
+        {
+          "name": "UniqueName",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Read only rooms with the this `unique_name`."
+        },
+        {
+          "name": "DateCreatedAfter",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Read only rooms that started on or after this date, given as `YYYY-MM-DD`."
+        },
+        {
+          "name": "DateCreatedBefore",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Read only rooms that started before this date, given as `YYYY-MM-DD`."
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.FetchRoomParticipant",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/Participants/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the room with the Participant resource to fetch."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the RoomParticipant resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.UpdateRoomParticipant",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/Participants/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the room with the participant to update."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the RoomParticipant resource to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "UpdateRoomParticipantRequest",
+                "properties": {
+                  "Status": {
+                    "$ref": "#/components/schemas/room_participant_enum_status"
+                  }
+                }
+              },
+              "examples": {
+                "update": {
+                  "value": {
+                    "Status": "disconnected"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.ListRoomParticipant",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/Participants",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the room with the Participant resources to read."
+        },
+        {
+          "name": "Status",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/room_participant_enum_status"
+          },
+          "description": "Read only the participants with this status. Can be: `connected` or `disconnected`. For `in-progress` Rooms the default Status is `connected`, for `completed` Rooms only `disconnected` Participants are returned."
+        },
+        {
+          "name": "Identity",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Read only the Participants with this [User](https://www.twilio.com/docs/chat/rest/user-resource) `identity` value."
+        },
+        {
+          "name": "DateCreatedAfter",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Read only Participants that started after this date in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#UTC) format."
+        },
+        {
+          "name": "DateCreatedBefore",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Read only Participants that started before this date in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#UTC) format."
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.UpdateRoomParticipantAnonymize",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/Participants/{Sid}/Anonymize",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the room with the participant to update."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the RoomParticipant resource to update."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.FetchRoomParticipantPublishedTrack",
+      "title": "Returns a single Track resource represented by TrackName or SID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/Participants/{ParticipantSid}/PublishedTracks/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the Room resource where the Track resource to fetch is published."
+        },
+        {
+          "name": "ParticipantSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the Participant resource with the published track to fetch."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the RoomParticipantPublishedTrack resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.ListRoomParticipantPublishedTrack",
+      "title": "Returns a list of tracks associated with a given Participant. Only `currently` Published Tracks are in the list resource.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/Participants/{ParticipantSid}/PublishedTracks",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the Room resource where the Track resources to read are published."
+        },
+        {
+          "name": "ParticipantSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the Participant resource with the published tracks to read."
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.FetchRoomParticipantSubscribeRule",
+      "title": "Returns a list of Subscribe Rules for the Participant.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/Participants/{ParticipantSid}/SubscribeRules",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the Room resource where the subscribe rules to fetch apply."
+        },
+        {
+          "name": "ParticipantSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the Participant resource with the subscribe rules to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.UpdateRoomParticipantSubscribeRule",
+      "title": "Update the Subscribe Rules for the Participant",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/Participants/{ParticipantSid}/SubscribeRules",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the Room resource where the subscribe rules to update apply."
+        },
+        {
+          "name": "ParticipantSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the Participant resource to update the Subscribe Rules."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "UpdateRoomParticipantSubscribeRuleRequest",
+                "properties": {
+                  "Rules": {
+                    "description": "A JSON-encoded array of subscribe rules. See the [Specifying Subscribe Rules](https://www.twilio.com/docs/video/api/track-subscriptions#specifying-sr) section for further information."
+                  }
+                }
+              },
+              "examples": {
+                "updateFilters": {
+                  "value": {
+                    "Rules": "%5B%7B%22type%22%3A%22exclude%22%2C%22all%22%3A%20true%7D%5D"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.FetchRoomParticipantSubscribedTrack",
+      "title": "Returns a single Track resource represented by `track_sid`.  Note: This is one resource with the Video API that requires a SID, be Track Name on the subscriber side is not guaranteed to be unique.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/Participants/{ParticipantSid}/SubscribedTracks/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the Room where the Track resource to fetch is subscribed."
+        },
+        {
+          "name": "ParticipantSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the participant that subscribes to the Track resource to fetch."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MT[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the RoomParticipantSubscribedTrack resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.ListRoomParticipantSubscribedTrack",
+      "title": "Returns a list of tracks that are subscribed for the participant.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/Participants/{ParticipantSid}/SubscribedTracks",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the Room resource with the Track resources to read."
+        },
+        {
+          "name": "ParticipantSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the participant that subscribes to the Track resources to read."
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.FetchRoomRecording",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/Recordings/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^RM[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Room resource with the recording to fetch."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^RT[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the RoomRecording resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.DeleteRoomRecording",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/Recordings/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^RM[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the room with the RoomRecording resource to delete."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^RT[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the RoomRecording resource to delete."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.ListRoomRecording",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/Recordings",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^RM[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the room with the RoomRecording resources to read."
+        },
+        {
+          "name": "Status",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/room_recording_enum_status"
+          },
+          "description": "Read only the recordings with this status. Can be: `processing`, `completed`, or `deleted`."
+        },
+        {
+          "name": "SourceSid",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^[a-zA-Z]{2}[0-9a-fA-F]{32}$"
+          },
+          "description": "Read only the recordings that have this `source_sid`."
+        },
+        {
+          "name": "DateCreatedAfter",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Read only recordings that started on or after this [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) datetime with time zone."
+        },
+        {
+          "name": "DateCreatedBefore",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "description": "Read only Recordings that started before this [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) datetime with time zone."
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.FetchRoomRecordingRule",
+      "title": "Returns a list of Recording Rules for the Room.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/RecordingRules",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the Room resource where the recording rules to fetch apply."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.UpdateRoomRecordingRule",
+      "title": "Update the Recording Rules for the Room",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/RecordingRules",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the Room resource where the recording rules to update apply."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "UpdateRoomRecordingRuleRequest",
+                "properties": {
+                  "Rules": {
+                    "description": "A JSON-encoded array of recording rules."
+                  }
+                }
+              },
+              "examples": {
+                "update": {
+                  "value": {
+                    "Rules": "%5B%7B%22type%22%3A%22exclude%22%2C%22all%22%3A%20true%7D%5D"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.FetchRoomTranscriptions",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/Transcriptions/{Ttid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the room with the transcriptions resource to fetch."
+        },
+        {
+          "name": "Ttid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Twilio type id of the transcriptions resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.UpdateRoomTranscriptions",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/Transcriptions/{Ttid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the room with the transcriptions resource to update."
+        },
+        {
+          "name": "Ttid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The Twilio type id of the transcriptions resource to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "UpdateRoomTranscriptionsRequest",
+                "properties": {
+                  "Status": {
+                    "$ref": "#/components/schemas/room_transcriptions_enum_status"
+                  },
+                  "Configuration": {
+                    "type": "object",
+                    "description": "A collection of properties that describe transcription behaviour."
+                  }
+                }
+              },
+              "examples": {
+                "updateStatus": {
+                  "value": {
+                    "Status": "stopped"
+                  }
+                },
+                "updateConfiguration": {
+                  "value": {
+                    "Configuration": "{\"LanguageCode\": \"EN-us\", \"ProfanityFilter\": true}"
+                  }
+                },
+                "updateAllFields": {
+                  "value": {
+                    "Status": "started",
+                    "Configuration": "{\"LanguageCode\": \"EN-us\", \"ProfanityFilter\": true}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.ListRoomTranscriptions",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/Transcriptions",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the room with the transcriptions resources to read."
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-video.CreateRoomTranscriptions",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://video.twilio.com",
+      "path": "/v1/Rooms/{RoomSid}/Transcriptions",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "RoomSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the room new transcriptions resource to be created."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateRoomTranscriptionsRequest",
+                "properties": {
+                  "Configuration": {
+                    "type": "object",
+                    "description": "A collection of properties that describe transcription behaviour."
+                  }
+                }
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "Configuration": "{\"LanguageCode\": \"EN-us\", \"ProfanityFilter\": true}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

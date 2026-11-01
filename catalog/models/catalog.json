@@ -1,0 +1,16 @@
+[
+  { "name": "businessrules", "title": "BusinessRules", "tags": ["demo"] },
+  { "name": "buy-used-car", "title": "Buy Used Car", "tags": ["test"] },
+  { "name": "employee-expenses", "title": "Employee Expenses", "tags": ["demo"] },
+  { "name": "followup", "title": "Followup", "tags": ["demo"] },
+  { "name": "got-mail", "title": "Got Mail", "tags": ["demo"] },
+  { "name": "help-desk", "title": "Help Desk", "tags": ["demo"] },
+  { "name": "hungry", "title": "Hungry", "tags": ["demo"] },
+  { "name": "invest-in-stock", "title": "Invest in Stock", "tags": ["test"] },
+  { "name": "invoicing", "title": "Invoicing", "tags": ["demo"] },
+  { "name": "pizza", "title": "pizza", "tags": ["demo"] },
+  { "name": "process-invoices", "title": "Process Invoices", "tags": ["test"] },
+  { "name": "samplenew", "title": "SampleNew", "tags": ["test"] },
+  { "name": "stock-expert", "title": "Stock Expert", "tags": ["test"] },
+  { "name": "superproc", "title": "SuperProc", "tags": ["test"] }
+]

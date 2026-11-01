@@ -1,0 +1,2558 @@
+{
+  "name": "cohere",
+  "title": "Cohere",
+  "source": "https://raw.githubusercontent.com/cohere-ai/cohere-developer-experience/main/cohere-openapi.yaml",
+  "authentication": "bearer",
+  "operations": [
+    {
+      "connector": "cohere.chat",
+      "title": "Chat API (v1)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/chat",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "Accepts",
+          "in": "header",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "text/event-stream"
+            ]
+          },
+          "description": "Pass text/event-stream to receive the streamed response as server-sent events. The default is `\\n` delimited events.\n"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "x-fern-audiences": [
+                  "public"
+                ],
+                "x-examples": {
+                  "Chat": {
+                    "value": {
+                      "message": "Can you give me a global market overview of solar panels?",
+                      "temperature": 0.3,
+                      "stream": false,
+                      "chat_history": [
+                        {
+                          "role": "User",
+                          "message": "Hi!"
+                        },
+                        {
+                          "role": "Chatbot",
+                          "message": "How can I help you today?"
+                        }
+                      ],
+                      "prompt_truncation": "OFF"
+                    }
+                  }
+                },
+                "required": [
+                  "message"
+                ],
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "Text input for the model to respond to.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n"
+                  },
+                  "model": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The name of a compatible [Cohere model](https://docs.cohere.com/docs/models) or the ID of a [fine-tuned](https://docs.cohere.com/docs/chat-fine-tuning) model.\n\nCompatible Deployments: Cohere Platform, Private Deployments\n"
+                  },
+                  "stream": {
+                    "description": "Defaults to `false`.\n\nWhen `true`, the response will be a JSON stream of events. The final event will contain the complete response, and will have an `event_type` of `\"stream-end\"`.\n\nStreaming is beneficial for user interfaces that render the contents of the response piece by piece, as it gets generated.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n",
+                    "type": "boolean",
+                    "x-fern-audiences": [
+                      "public"
+                    ]
+                  },
+                  "preamble": {
+                    "description": "When specified, the default Cohere preamble will be replaced with the provided one. Preambles are a part of the prompt used to adjust the model's overall behavior and conversation style, and use the `SYSTEM` role.\n\nThe `SYSTEM` role is also used for the contents of the optional `chat_history=` parameter. When used with the `chat_history=` parameter it adds content throughout a conversation. Conversely, when used with the `preamble=` parameter it adds content at the start of the conversation only.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n",
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ]
+                  },
+                  "chat_history": {
+                    "type": "array",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "minItems": 0,
+                    "items": {
+                      "$ref": "#/components/schemas/Message"
+                    },
+                    "description": "A list of previous messages between the user and the model, giving the model conversational context for responding to the user's `message`.\n\nEach item represents a single message in the chat history, excluding the current user turn. It has two properties: `role` and `message`. The `role` identifies the sender (`CHATBOT`, `SYSTEM`, or `USER`), while the `message` contains the text content.\n\nThe chat_history parameter should not be used for `SYSTEM` messages in most cases. Instead, to add a `SYSTEM` role message at the beginning of a conversation, the `preamble` parameter should be used.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n"
+                  },
+                  "conversation_id": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "An alternative to `chat_history`.\n\nProviding a `conversation_id` creates or resumes a persisted conversation with the specified ID. The ID can be any non empty string.\n\nCompatible Deployments: Cohere Platform\n"
+                  },
+                  "prompt_truncation": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "enum": [
+                      "OFF",
+                      "AUTO",
+                      "AUTO_PRESERVE_ORDER"
+                    ],
+                    "description": "Defaults to `AUTO` when `connectors` are specified and `OFF` in all other cases.\n\nDictates how the prompt will be constructed.\n\nWith `prompt_truncation` set to \"AUTO\", some elements from `chat_history` and `documents` will be dropped in an attempt to construct a prompt that fits within the model's context length limit. During this process the order of the documents and chat history will be changed and ranked by relevance.\n\nWith `prompt_truncation` set to \"AUTO_PRESERVE_ORDER\", some elements from `chat_history` and `documents` will be dropped in an attempt to construct a prompt that fits within the model's context length limit. During this process the order of the documents and chat history will be preserved as they are inputted into the API.\n\nWith `prompt_truncation` set to \"OFF\", no elements will be dropped. If the sum of the inputs exceeds the model's context length limit, a `TooManyTokens` error will be returned.\n\nCompatible Deployments:\n - AUTO: Cohere Platform Only\n - AUTO_PRESERVE_ORDER: Azure, AWS Sagemaker/Bedrock, Private Deployments\n"
+                  },
+                  "connectors": {
+                    "deprecated": true,
+                    "type": "array",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "minItems": 0,
+                    "items": {
+                      "$ref": "#/components/schemas/ChatConnector"
+                    },
+                    "description": "Accepts `{\"id\": \"web-search\"}`, and/or the `\"id\"` for a custom [connector](https://docs.cohere.com/docs/connectors), if you've [created](https://docs.cohere.com/v1/docs/creating-and-deploying-a-connector) one.\n\nWhen specified, the model's reply will be enriched with information found by querying each of the connectors (RAG).\n\nCompatible Deployments: Cohere Platform\n"
+                  },
+                  "search_queries_only": {
+                    "deprecated": true,
+                    "type": "boolean",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "Defaults to `false`.\n\nWhen `true`, the response will only contain a list of generated search queries, but no search will take place, and no reply from the model to the user's `message` will be generated.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n"
+                  },
+                  "documents": {
+                    "description": "A list of relevant documents that the model can cite to generate a more accurate reply. Each document is a string-string dictionary.\n\nExample:\n```\n[\n  { \"title\": \"Tall penguins\", \"text\": \"Emperor penguins are the tallest.\" },\n  { \"title\": \"Penguin habitats\", \"text\": \"Emperor penguins only live in Antarctica.\" },\n]\n```\n\nKeys and values from each document will be serialized to a string and passed to the model. The resulting generation will include citations that reference some of these documents.\n\nSome suggested keys are \"text\", \"author\", and \"date\". For better generation quality, it is recommended to keep the total word count of the strings in the dictionary to under 300 words.\n\nAn `id` field (string) can be optionally supplied to identify the document in the citations. This field will not be passed to the model.\n\nAn `_excludes` field (array of strings) can be optionally supplied to omit some key-value pairs from being shown to the model. The omitted fields will still show up in the citation object. The \"_excludes\" field will not be passed to the model.\n\nSee ['Document Mode'](https://docs.cohere.com/docs/retrieval-augmented-generation-rag#document-mode) in the guide for more information.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n",
+                    "type": "array",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "items": {
+                      "$ref": "#/components/schemas/ChatDocument"
+                    }
+                  },
+                  "citation_quality": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "Defaults to `\"enabled\"`.\nCitations are enabled by default for models that support it, but can be turned off by setting `\"type\": \"disabled\"`.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n",
+                    "enum": [
+                      "ENABLED",
+                      "DISABLED",
+                      "FAST",
+                      "ACCURATE",
+                      "OFF"
+                    ]
+                  },
+                  "temperature": {
+                    "type": "number",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "format": "float",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Defaults to `0.3`.\n\nA non-negative float that tunes the degree of randomness in generation. Lower temperatures mean less random generations, and higher temperatures mean more random generations.\n\nRandomness can be further maximized by increasing the  value of the `p` parameter.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n"
+                  },
+                  "max_tokens": {
+                    "type": "integer",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The maximum number of tokens the model will generate as part of the response. Note: Setting a low value may result in incomplete generations.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n",
+                    "writeOnly": true
+                  },
+                  "max_input_tokens": {
+                    "type": "integer",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The maximum number of input tokens to send to the model. If not specified, `max_input_tokens` is the model's context length limit minus a small buffer.\n\nInput will be truncated according to the `prompt_truncation` parameter.\n\nCompatible Deployments: Cohere Platform\n",
+                    "writeOnly": true
+                  },
+                  "k": {
+                    "type": "integer",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "Ensures only the top `k` most likely tokens are considered for generation at each step.\nDefaults to `0`, min value of `0`, max value of `500`.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n",
+                    "writeOnly": true,
+                    "default": 0,
+                    "minimum": 0,
+                    "maximum": 500
+                  },
+                  "p": {
+                    "type": "number",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "Ensures that only the most likely tokens, with total probability mass of `p`, are considered for generation at each step. If both `k` and `p` are enabled, `p` acts after `k`.\nDefaults to `0.75`. min value of `0.01`, max value of `0.99`.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n",
+                    "writeOnly": true,
+                    "default": 0.75,
+                    "minimum": 0.01,
+                    "maximum": 0.99
+                  },
+                  "seed": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "minimum": 0,
+                    "maximum": 18446744073709552000,
+                    "type": "integer",
+                    "description": "If specified, the backend will make a best effort to sample tokens\ndeterministically, such that repeated requests with the same\nseed and parameters should return the same result. However,\ndeterminism cannot be totally guaranteed.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n"
+                  },
+                  "stop_sequences": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "writeOnly": true,
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "A list of up to 5 strings that the model will use to stop generation. If the model generates a string that matches any of the strings in the list, it will stop generating tokens and return the generated text up to that point not including the stop sequence.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n"
+                  },
+                  "frequency_penalty": {
+                    "type": "number",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "Defaults to `0.0`, min value of `0.0`, max value of `1.0`.\n\nUsed to reduce repetitiveness of generated tokens. The higher the value, the stronger a penalty is applied to previously present tokens, proportional to how many times they have already appeared in the prompt or prior generation.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n",
+                    "writeOnly": true
+                  },
+                  "presence_penalty": {
+                    "type": "number",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "Defaults to `0.0`, min value of `0.0`, max value of `1.0`.\n\nUsed to reduce repetitiveness of generated tokens. Similar to `frequency_penalty`, except that this penalty is applied equally to all tokens that have already appeared, regardless of their exact frequencies.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n",
+                    "writeOnly": true
+                  },
+                  "raw_prompting": {
+                    "x-fern-audiences": [
+                      "sdk-only"
+                    ],
+                    "type": "boolean",
+                    "description": "When enabled, the user's prompt will be sent to the model without\nany pre-processing.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n"
+                  },
+                  "tools": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "A list of available tools (functions) that the model may suggest invoking before producing a text response.\n\nWhen `tools` is passed (without `tool_results`), the `text` field in the response will be `\"\"` and the `tool_calls` field in the response will be populated with a list of tool calls that need to be made. If no calls need to be made, the `tool_calls` array will be empty.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n",
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Tool"
+                    },
+                    "minItems": 0
+                  },
+                  "tool_results": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "A list of results from invoking tools recommended by the model in the previous chat turn. Results are used to produce a text response and will be referenced in citations. When using `tool_results`, `tools` must be passed as well.\nEach tool_result contains information about how it was invoked, as well as a list of outputs in the form of dictionaries.\n\n**Note**: `outputs` must be a list of objects. If your tool returns a single object (eg `{\"status\": 200}`), make sure to wrap it in a list.\n```\ntool_results = [\n  {\n    \"call\": {\n      \"name\": <tool name>,\n      \"parameters\": {\n        <param name>: <param value>\n      }\n    },\n    \"outputs\": [{\n      <key>: <value>\n    }]\n  },\n  ...\n]\n```\n**Note**: Chat calls with `tool_results` should not be included in the Chat history to avoid duplication of the message text.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n",
+                    "type": "array",
+                    "minItems": 0,
+                    "items": {
+                      "$ref": "#/components/schemas/ToolResult"
+                    }
+                  },
+                  "force_single_step": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "type": "boolean",
+                    "description": "Forces the chat to be single step. Defaults to `false`."
+                  },
+                  "response_format": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "$ref": "#/components/schemas/ResponseFormat"
+                  },
+                  "safety_mode": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "x-fern-availability": "beta",
+                    "enum": [
+                      "CONTEXTUAL",
+                      "STRICT",
+                      "NONE"
+                    ],
+                    "description": "Used to select the [safety instruction](https://docs.cohere.com/docs/safety-modes) inserted into the prompt. Defaults to `CONTEXTUAL`.\nWhen `NONE` is specified, the safety instruction will be omitted.\n\nSafety modes are not yet configurable in combination with `tools`, `tool_results` and `documents` parameters.\n\n**Note**: This parameter is only compatible newer Cohere models, starting with [Command R 08-2024](https://docs.cohere.com/docs/command-r#august-2024-release) and [Command R+ 08-2024](https://docs.cohere.com/docs/command-r-plus#august-2024-release).\n\n**Note**: `command-r7b-12-2024` and newer models only support `\"CONTEXTUAL\"` and `\"STRICT\"` modes.\n\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.chatv2",
+      "title": "Chat API (v2)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v2/chat",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "messages",
+                  "model"
+                ],
+                "properties": {
+                  "stream": {
+                    "description": "Defaults to `false`.\n\nWhen `true`, the response will be a SSE stream of events.\n\nStreaming is beneficial for user interfaces that render the contents of the response piece by piece, as it gets generated.\n",
+                    "type": "boolean",
+                    "x-fern-audiences": [
+                      "public"
+                    ]
+                  },
+                  "model": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "type": "string",
+                    "description": "The name of a compatible [Cohere model](https://docs.cohere.com/v2/docs/models)."
+                  },
+                  "messages": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "$ref": "#/components/schemas/ChatMessages"
+                  },
+                  "tools": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/ToolV2"
+                    },
+                    "description": "A list of tools (functions) available to the model. The model response may contain 'tool_calls' to the specified tools.\n\nLearn more in the [Tool Use guide](https://docs.cohere.com/docs/tools).\n"
+                  },
+                  "strict_tools": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "x-fern-availability": "beta",
+                    "type": "boolean",
+                    "description": "When set to `true`, tool calls in the Assistant message will be forced to follow the tool definition strictly. Learn more in the [Structured Outputs (Tools) guide](https://docs.cohere.com/docs/structured-outputs-json#structured-outputs-tools).\n\n**Note**: The first few requests with a new set of tools will take longer to process.\n"
+                  },
+                  "documents": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "type": "array",
+                    "items": {
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "$ref": "#/components/schemas/Document"
+                        }
+                      ]
+                    },
+                    "description": "A list of relevant documents that the model can cite to generate a more accurate reply. Each document is either a string or document object with content and metadata.\n"
+                  },
+                  "citation_options": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "$ref": "#/components/schemas/CitationOptions"
+                  },
+                  "response_format": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "$ref": "#/components/schemas/ResponseFormatV2"
+                  },
+                  "safety_mode": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "enum": [
+                      "CONTEXTUAL",
+                      "STRICT",
+                      "OFF"
+                    ],
+                    "description": "Used to select the [safety instruction](https://docs.cohere.com/v2/docs/safety-modes) inserted into the prompt. Defaults to `CONTEXTUAL`.\nWhen `OFF` is specified, the safety instruction will be omitted.\n\nSafety modes are not yet configurable in combination with `tools` and `documents` parameters.\n\n**Note**: This parameter is only compatible newer Cohere models, starting with [Command R 08-2024](https://docs.cohere.com/docs/command-r#august-2024-release) and [Command R+ 08-2024](https://docs.cohere.com/docs/command-r-plus#august-2024-release).\n\n**Note**: `command-r7b-12-2024` and newer models only support `\"CONTEXTUAL\"` and `\"STRICT\"` modes.\n"
+                  },
+                  "max_tokens": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "type": "integer",
+                    "description": "The maximum number of output tokens the model will generate in the response. If not set, `max_tokens` defaults to the model's maximum output token limit. You can find the maximum output token limits for each model in the [model documentation](https://docs.cohere.com/docs/models).\n\n**Note**: Setting a low value may result in incomplete generations. In such cases, the `finish_reason` field in the response will be set to `\"MAX_TOKENS\"`.\n\n**Note**: If `max_tokens` is set higher than the model's maximum output token limit, the generation will be capped at that model-specific maximum limit.\n"
+                  },
+                  "stop_sequences": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "A list of up to 5 strings that the model will use to stop generation. If the model generates a string that matches any of the strings in the list, it will stop generating tokens and return the generated text up to that point not including the stop sequence.\n"
+                  },
+                  "temperature": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "type": "number",
+                    "format": "float",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Defaults to `0.3`.\n\nA non-negative float that tunes the degree of randomness in generation. Lower temperatures mean less random generations, and higher temperatures mean more random generations.\n\nRandomness can be further maximized by increasing the  value of the `p` parameter.\n"
+                  },
+                  "seed": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 18446744073709552000,
+                    "description": "If specified, the backend will make a best effort to sample tokens\ndeterministically, such that repeated requests with the same\nseed and parameters should return the same result. However,\ndeterminism cannot be totally guaranteed.\n"
+                  },
+                  "frequency_penalty": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "type": "number",
+                    "format": "float",
+                    "description": "Defaults to `0.0`, min value of `0.0`, max value of `1.0`.\nUsed to reduce repetitiveness of generated tokens. The higher the value, the stronger a penalty is applied to previously present tokens, proportional to how many times they have already appeared in the prompt or prior generation.\n"
+                  },
+                  "presence_penalty": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "type": "number",
+                    "format": "float",
+                    "description": "Defaults to `0.0`, min value of `0.0`, max value of `1.0`.\nUsed to reduce repetitiveness of generated tokens. Similar to `frequency_penalty`, except that this penalty is applied equally to all tokens that have already appeared, regardless of their exact frequencies.\n"
+                  },
+                  "k": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0,
+                    "maximum": 500,
+                    "description": "Ensures that only the top `k` most likely tokens are considered for generation at each step. When `k` is set to `0`, k-sampling is disabled.\nDefaults to `0`, min value of `0`, max value of `500`.\n"
+                  },
+                  "p": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "type": "number",
+                    "format": "float",
+                    "default": 0.75,
+                    "minimum": 0.01,
+                    "maximum": 0.99,
+                    "description": "Ensures that only the most likely tokens, with total probability mass of `p`, are considered for generation at each step. If both `k` and `p` are enabled, `p` acts after `k`.\nDefaults to `0.75`. min value of `0.01`, max value of `0.99`.\n"
+                  },
+                  "logprobs": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "type": "boolean",
+                    "description": "Defaults to `false`. When set to `true`, the log probabilities of the generated tokens will be included in the response.\n"
+                  },
+                  "tool_choice": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "enum": [
+                      "REQUIRED",
+                      "NONE"
+                    ],
+                    "description": "Used to control whether or not the model will be forced to use a tool when answering. When `REQUIRED` is specified, the model will be forced to use at least one of the user-defined tools, and the `tools` parameter must be passed in the request.\nWhen `NONE` is specified, the model will be forced **not** to use one of the specified tools, and give a direct response.\nIf tool_choice isn't specified, then the model is free to choose whether to use the specified tools or not.\n\n**Note**: This parameter is only compatible with models [Command-r7b](https://docs.cohere.com/v2/docs/command-r7b) and newer.\n"
+                  },
+                  "thinking": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "$ref": "#/components/schemas/Thinking"
+                  },
+                  "priority": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0,
+                    "maximum": 999,
+                    "description": "Controls how early the request is handled. Lower numbers indicate higher priority (default: 0, the highest). When the system is under load, higher-priority requests are processed first and are the least likely to be dropped."
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.parsev2",
+      "title": "Parse API (v2)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v2/parse",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "model",
+                  "document"
+                ],
+                "properties": {
+                  "model": {
+                    "type": "string",
+                    "description": "The name of a compatible Cohere parse model."
+                  },
+                  "document": {
+                    "$ref": "#/components/schemas/ParseDocument"
+                  },
+                  "output_format": {
+                    "$ref": "#/components/schemas/ParseOutputFormat"
+                  }
+                },
+                "x-fern-type-name": "ParseRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.generate",
+      "title": "Generate",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/generate",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "x-fern-audiences": [
+                  "public"
+                ],
+                "properties": {
+                  "prompt": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "example": "Please explain to me how LLMs work",
+                    "description": "The input text that serves as the starting point for generating the response.\nNote: The prompt will be pre-processed and modified before reaching the model.\n",
+                    "writeOnly": true
+                  },
+                  "model": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The identifier of the model to generate with. Currently available models are `command` (default), `command-nightly` (experimental), `command-light`, and `command-light-nightly` (experimental).\nSmaller, \"light\" models are faster, while larger models will perform better. [Custom models](https://docs.cohere.com/docs/training-custom-models) can also be supplied with their full ID.",
+                    "writeOnly": true
+                  },
+                  "num_generations": {
+                    "type": "integer",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The maximum number of generations that will be returned. Defaults to `1`, min value of `1`, max value of `5`.\n",
+                    "writeOnly": true
+                  },
+                  "stream": {
+                    "type": "boolean",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "When `true`, the response will be a JSON stream of events. Streaming is beneficial for user interfaces that render the contents of the response piece by piece, as it gets generated.\n\nThe final event will contain the complete response, and will contain an `is_finished` field set to `true`. The event will also contain a `finish_reason`, which can be one of the following:\n- `COMPLETE` - the model sent back a finished reply\n- `MAX_TOKENS` - the reply was cut off because the model reached the maximum number of tokens for its context length\n- `ERROR` - something went wrong when generating the reply\n- `ERROR_TOXIC` - the model generated a reply that was deemed toxic\n"
+                  },
+                  "max_tokens": {
+                    "type": "integer",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The maximum number of tokens the model will generate as part of the response. Note: Setting a low value may result in incomplete generations.\n\nThis parameter is off by default, and if it's not specified, the model will continue generating until it emits an EOS completion token. See [BPE Tokens](/bpe-tokens-wiki) for more details.\n\nCan only be set to `0` if `return_likelihoods` is set to `ALL` to get the likelihood of the prompt.\n",
+                    "writeOnly": true
+                  },
+                  "truncate": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "default": "END",
+                    "enum": [
+                      "NONE",
+                      "START",
+                      "END"
+                    ],
+                    "description": "One of `NONE|START|END` to specify how the API will handle inputs longer than the maximum token length.\n\nPassing `START` will discard the start of the input. `END` will discard the end of the input. In both cases, input is discarded until the remaining input is exactly the maximum input token length for the model.\n\nIf `NONE` is selected, when the input exceeds the maximum input token length an error will be returned.",
+                    "writeOnly": true
+                  },
+                  "temperature": {
+                    "type": "number",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "A non-negative float that tunes the degree of randomness in generation. Lower temperatures mean less random generations. See [Temperature](/temperature-wiki) for more details.\nDefaults to `0.75`, min value of `0.0`, max value of `5.0`.\n",
+                    "writeOnly": true
+                  },
+                  "seed": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "minimum": 0,
+                    "maximum": 18446744073709552000,
+                    "type": "integer",
+                    "description": "If specified, the backend will make a best effort to sample tokens\ndeterministically, such that repeated requests with the same\nseed and parameters should return the same result. However,\ndeterminism cannot be totally guaranteed.\nCompatible Deployments: Cohere Platform, Azure, AWS Sagemaker/Bedrock, Private Deployments\n"
+                  },
+                  "preset": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "example": "my-preset-a58sbd",
+                    "description": "Identifier of a custom preset. A preset is a combination of parameters, such as prompt, temperature etc. You can create presets in the [playground](https://dashboard.cohere.com/playground/generate).\nWhen a preset is specified, the `prompt` parameter becomes optional, and any included parameters will override the preset's parameters.\n",
+                    "writeOnly": true
+                  },
+                  "end_sequences": {
+                    "type": "array",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The generated text will be cut at the beginning of the earliest occurrence of an end sequence. The sequence will be excluded from the text.",
+                    "items": {
+                      "type": "string",
+                      "x-fern-audiences": [
+                        "public"
+                      ]
+                    },
+                    "writeOnly": true
+                  },
+                  "stop_sequences": {
+                    "type": "array",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The generated text will be cut at the end of the earliest occurrence of a stop sequence. The sequence will be included the text.",
+                    "items": {
+                      "type": "string",
+                      "x-fern-audiences": [
+                        "public"
+                      ]
+                    },
+                    "writeOnly": true
+                  },
+                  "k": {
+                    "type": "integer",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "Ensures only the top `k` most likely tokens are considered for generation at each step.\nDefaults to `0`, min value of `0`, max value of `500`.\n",
+                    "writeOnly": true
+                  },
+                  "p": {
+                    "type": "number",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "Ensures that only the most likely tokens, with total probability mass of `p`, are considered for generation at each step. If both `k` and `p` are enabled, `p` acts after `k`.\nDefaults to `0.75`. min value of `0.01`, max value of `0.99`.\n",
+                    "writeOnly": true
+                  },
+                  "frequency_penalty": {
+                    "type": "number",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "Used to reduce repetitiveness of generated tokens. The higher the value, the stronger a penalty is applied to previously present tokens, proportional to how many times they have already appeared in the prompt or prior generation.\n\nUsing `frequency_penalty` in combination with `presence_penalty` is not supported on newer models.\n",
+                    "writeOnly": true
+                  },
+                  "presence_penalty": {
+                    "type": "number",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "Defaults to `0.0`, min value of `0.0`, max value of `1.0`.\n\nCan be used to reduce repetitiveness of generated tokens. Similar to `frequency_penalty`, except that this penalty is applied equally to all tokens that have already appeared, regardless of their exact frequencies.\n\nUsing `frequency_penalty` in combination with `presence_penalty` is not supported on newer models.\n",
+                    "writeOnly": true
+                  },
+                  "return_likelihoods": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "One of `GENERATION|NONE` to specify how and if the token likelihoods are returned with the response. Defaults to `NONE`.\n\nIf `GENERATION` is selected, the token likelihoods will only be provided for generated text.\n\nWARNING: `ALL` is deprecated, and will be removed in a future release.",
+                    "enum": [
+                      "GENERATION",
+                      "ALL",
+                      "NONE"
+                    ],
+                    "default": "NONE"
+                  },
+                  "raw_prompting": {
+                    "type": "boolean",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "When enabled, the user's prompt will be sent to the model without any pre-processing."
+                  }
+                },
+                "required": [
+                  "prompt"
+                ],
+                "writeOnly": true
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.embed",
+      "title": "Embed API (v1)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/embed",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "x-fern-audiences": [
+                  "public"
+                ],
+                "properties": {
+                  "texts": {
+                    "type": "array",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "minItems": 1,
+                    "maxItems": 96,
+                    "description": "An array of strings for the model to embed. Maximum number of texts per call is `96`.",
+                    "items": {
+                      "type": "string",
+                      "x-fern-audiences": [
+                        "public"
+                      ],
+                      "writeOnly": true
+                    },
+                    "writeOnly": true
+                  },
+                  "images": {
+                    "type": "array",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "minItems": 1,
+                    "description": "An array of image data URIs for the model to embed.\n\nThe image must be a valid [data URI](https://developer.mozilla.org/en-US/docs/Web/URI/Schemes/data). The image must be in either `image/jpeg`, `image/png`, `image/webp`, or `image/gif` format.\n\nImage embeddings are supported with Embed v3.0 and newer models.\n\nFor **Embed v3.x** models, the maximum number of images per call is `1`, and each image has a maximum size of `5MB`.\n\nFor **Embed v4.0 and newer** models, there is no limit on the number of images per call. The combined size of all images in the request must be at most `20MB`.",
+                    "items": {
+                      "type": "string",
+                      "x-fern-audiences": [
+                        "public"
+                      ],
+                      "writeOnly": true
+                    }
+                  },
+                  "model": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "ID of one of the available [Embedding models](https://docs.cohere.com/docs/cohere-embed).",
+                    "writeOnly": true
+                  },
+                  "input_type": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "$ref": "#/components/schemas/EmbedInputType"
+                  },
+                  "embedding_types": {
+                    "type": "array",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "items": {
+                      "$ref": "#/components/schemas/EmbeddingType"
+                    },
+                    "description": "Specifies the types of embeddings you want to get back. Not required and default is None, which returns the Embed Floats response type. Can be one or more of the following types.\n\n* `\"float\"`: Use this when you want to get back the default float embeddings. Supported with all Embed models.\n* `\"int8\"`: Use this when you want to get back signed int8 embeddings. Supported with Embed v3.0 and newer Embed models.\n* `\"uint8\"`: Use this when you want to get back unsigned int8 embeddings. Supported with Embed v3.0 and newer Embed models.\n* `\"binary\"`: Use this when you want to get back signed binary embeddings. Supported with Embed v3.0 and newer Embed models.\n* `\"ubinary\"`: Use this when you want to get back unsigned binary embeddings. Supported with Embed v3.0 and newer Embed models.",
+                    "writeOnly": true
+                  },
+                  "truncate": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "default": "END",
+                    "enum": [
+                      "NONE",
+                      "START",
+                      "END"
+                    ],
+                    "description": "One of `NONE|START|END` to specify how the API will handle inputs longer than the maximum token length.\n\nPassing `START` will discard the start of the input. `END` will discard the end of the input. In both cases, input is discarded until the remaining input is exactly the maximum input token length for the model.\n\nIf `NONE` is selected, when the input exceeds the maximum input token length an error will be returned.",
+                    "writeOnly": true
+                  }
+                },
+                "x-fern-type-name": "EmbedRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.embedv2",
+      "title": "Embed API (v2)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v2/embed",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "x-fern-audiences": [
+                  "public"
+                ],
+                "required": [
+                  "model",
+                  "input_type"
+                ],
+                "properties": {
+                  "texts": {
+                    "type": "array",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "minItems": 1,
+                    "maxItems": 96,
+                    "description": "An array of strings for the model to embed. Maximum number of texts per call is `96`.",
+                    "items": {
+                      "type": "string",
+                      "x-fern-audiences": [
+                        "public"
+                      ],
+                      "writeOnly": true
+                    },
+                    "writeOnly": true
+                  },
+                  "images": {
+                    "type": "array",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "minItems": 1,
+                    "description": "An array of image data URIs for the model to embed.\n\nThe image must be a valid [data URI](https://developer.mozilla.org/en-US/docs/Web/URI/Schemes/data). The image must be in either `image/jpeg`, `image/png`, `image/webp`, or `image/gif` format.\n\nImage embeddings are supported with Embed v3.0 and newer models.\n\nFor **Embed v3.x** models, the maximum number of images per call is `1`, and each image has a maximum size of `5MB`.\n\nFor **Embed v4.0 and newer** models, there is no limit on the number of images per call. The combined size of all images in the request must be at most `20MB`.",
+                    "items": {
+                      "type": "string",
+                      "x-fern-audiences": [
+                        "public"
+                      ],
+                      "writeOnly": true
+                    }
+                  },
+                  "model": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "ID of one of the available [Embedding models](https://docs.cohere.com/docs/cohere-embed).",
+                    "writeOnly": true
+                  },
+                  "input_type": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "$ref": "#/components/schemas/EmbedInputType"
+                  },
+                  "inputs": {
+                    "type": "array",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "items": {
+                      "$ref": "#/components/schemas/EmbedInput"
+                    },
+                    "description": "An array of inputs for the model to embed. Maximum number of inputs per call is `96`. An input can contain a mix of text and image components."
+                  },
+                  "max_tokens": {
+                    "type": "integer",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The maximum number of tokens to embed per input. If the input text is longer than this, it will be truncated according to the `truncate` parameter."
+                  },
+                  "output_dimension": {
+                    "type": "integer",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The number of dimensions of the output embedding. This is only available for `embed-v4` and newer models.\nFor supported dimensions, please refer to the [Embed models](https://docs.cohere.com/docs/cohere-embed) page."
+                  },
+                  "embedding_types": {
+                    "type": "array",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "items": {
+                      "$ref": "#/components/schemas/EmbeddingType"
+                    },
+                    "description": "Specifies the types of embeddings you want to get back. Can be one or more of the following types.\n\n* `\"float\"`: Use this when you want to get back the default float embeddings. Supported with all Embed models.\n* `\"int8\"`: Use this when you want to get back signed int8 embeddings. Supported with Embed v3.0 and newer Embed models.\n* `\"uint8\"`: Use this when you want to get back unsigned int8 embeddings. Supported with Embed v3.0 and newer Embed models.\n* `\"binary\"`: Use this when you want to get back signed binary embeddings. Supported with Embed v3.0 and newer Embed models.\n* `\"ubinary\"`: Use this when you want to get back unsigned binary embeddings. Supported with Embed v3.0 and newer Embed models.\n* `\"base64\"`: Use this when you want to get back base64 embeddings. Supported with Embed v3.0 and newer Embed models.",
+                    "writeOnly": true,
+                    "default": [
+                      "float"
+                    ]
+                  },
+                  "truncate": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "default": "END",
+                    "enum": [
+                      "NONE",
+                      "START",
+                      "END"
+                    ],
+                    "description": "One of `NONE|START|END` to specify how the API will handle inputs longer than the maximum token length.\n\nPassing `START` will discard the start of the input. `END` will discard the end of the input. In both cases, input is discarded until the remaining input is exactly the maximum input token length for the model.\n\nIf `NONE` is selected, when the input exceeds the maximum input token length an error will be returned.",
+                    "writeOnly": true
+                  },
+                  "priority": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0,
+                    "maximum": 999,
+                    "description": "Controls how early the request is handled. Lower numbers indicate higher priority (default: 0, the highest). When the system is under load, higher-priority requests are processed first and are the least likely to be dropped."
+                  }
+                },
+                "x-fern-type-name": "V2EmbedRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.create-transcription",
+      "title": "Create a transcription",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v2/audio/transcriptions",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "x-fern-audiences": [
+                  "public"
+                ],
+                "properties": {
+                  "model": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "ID of the model to use."
+                  },
+                  "language": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The language of the input audio, supplied in [ISO-639-1](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes) format."
+                  },
+                  "temperature": {
+                    "type": "number",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The sampling temperature, between 0 and 1. Higher values like 0.8 make the output more random, while lower values like 0.2 make it more focused and deterministic."
+                  },
+                  "file": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "format": "binary",
+                    "description": "The audio file object to transcribe. Supported file extensions are flac, mp3, mpeg, mpga, ogg, and wav."
+                  }
+                },
+                "required": [
+                  "model",
+                  "language",
+                  "file"
+                ],
+                "x-fern-type-name": "AudioTranscriptionsCreateRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.ListBatches",
+      "title": "List batches",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v2/batches",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "page_size",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "The maximum number of batches to return. The service may return fewer than\nthis value.\nIf unspecified, at most 50 batches will be returned.\nThe maximum value is 1000; values above 1000 will be coerced to 1000."
+        },
+        {
+          "name": "page_token",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "A page token, received from a previous `ListBatches` call.\nProvide this to retrieve the subsequent page."
+        },
+        {
+          "name": "order_by",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Batches can be ordered by creation time or last updated time.\nUse `created_at` for creation time or `updated_at` for last updated time."
+        }
+      ]
+    },
+    {
+      "connector": "cohere.CreateBatch",
+      "title": "Create a batch",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v2/batches",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Batch"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.GetBatch",
+      "title": "Retrieve a batch",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v2/batches/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The batch ID."
+        }
+      ]
+    },
+    {
+      "connector": "cohere.CancelBatch",
+      "title": "Cancel a batch",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v2/batches/{id}:cancel",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The batch ID."
+        }
+      ]
+    },
+    {
+      "connector": "cohere.create-embed-job",
+      "title": "Create an Embed Job",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/embed-jobs",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmbedJobRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.list-embed-jobs",
+      "title": "List Embed Jobs",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/embed-jobs",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "cohere.get-embed-job",
+      "title": "Fetch an Embed Job",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/embed-jobs/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "The ID of the embed job to retrieve."
+        }
+      ]
+    },
+    {
+      "connector": "cohere.cancel-embed-job",
+      "title": "Cancel an Embed Job",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/embed-jobs/{id}/cancel",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "The ID of the embed job to cancel."
+        }
+      ]
+    },
+    {
+      "connector": "cohere.rerank",
+      "title": "Rerank API (v1)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/rerank",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "x-fern-audiences": [
+                  "public"
+                ],
+                "properties": {
+                  "model": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The identifier of the model to use, eg `rerank-v3.5`."
+                  },
+                  "query": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The search query"
+                  },
+                  "documents": {
+                    "type": "array",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "A list of document objects or strings to rerank.\nIf a document is provided the text fields is required and all other fields will be preserved in the response.\n\nThe total max chunks (length of documents * max_chunks_per_doc) must be less than 10000.\n\nWe recommend a maximum of 1,000 documents for optimal endpoint performance.",
+                    "items": {
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "$ref": "#/components/schemas/RerankDocument"
+                        }
+                      ]
+                    }
+                  },
+                  "top_n": {
+                    "type": "integer",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "minimum": 1,
+                    "description": "The number of most relevant documents or indices to return, defaults to the length of the documents"
+                  },
+                  "rank_fields": {
+                    "type": "array",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "items": {
+                      "type": "string",
+                      "x-fern-audiences": [
+                        "public"
+                      ]
+                    },
+                    "description": "If a JSON object is provided, you can specify which keys you would like to have considered for reranking. The model will rerank based on order of the fields passed in (i.e. rank_fields=['title','author','text'] will rerank using the values in title, author, text  sequentially. If the length of title, author, and text exceeds the context length of the model, the chunking will not re-consider earlier fields). If not provided, the model will use the default text field for ranking."
+                  },
+                  "return_documents": {
+                    "type": "boolean",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "default": false,
+                    "description": "- If false, returns results without the doc text - the api will return a list of {index, relevance score} where index is inferred from the list passed into the request.\n- If true, returns results with the doc text passed in - the api will return an ordered list of {index, text, relevance score} where index + text refers to the list passed into the request."
+                  },
+                  "max_chunks_per_doc": {
+                    "type": "integer",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The maximum number of chunks to produce internally from a document",
+                    "default": 10
+                  }
+                },
+                "required": [
+                  "query",
+                  "documents"
+                ],
+                "x-fern-type-name": "RerankRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.rerankv2",
+      "title": "Rerank API (v2)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v2/rerank",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "x-fern-audiences": [
+                  "public"
+                ],
+                "properties": {
+                  "model": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The identifier of the model to use, eg `rerank-v5.0-pro`."
+                  },
+                  "query": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The search query"
+                  },
+                  "documents": {
+                    "type": "array",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "A list of texts that will be compared to the `query`.\nFor optimal performance we recommend against sending more than 1,000 documents in a single request.\n\n**Note**: long documents will automatically be truncated to the value of `max_tokens_per_doc`.\n\n**Note**: structured data should be formatted as YAML strings for best performance.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "top_n": {
+                    "type": "integer",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "minimum": 1,
+                    "description": "Limits the number of returned rerank results to the specified value. If not passed, all the rerank results will be returned."
+                  },
+                  "max_tokens_per_doc": {
+                    "type": "integer",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "Defaults to `4096`. Long documents will be automatically truncated to the specified number of tokens."
+                  },
+                  "relevant_spans": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "$ref": "#/components/schemas/RerankRelevantSpans"
+                  },
+                  "priority": {
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0,
+                    "maximum": 999,
+                    "description": "Controls how early the request is handled. Lower numbers indicate higher priority (default: 0, the highest). When the system is under load, higher-priority requests are processed first and are the least likely to be dropped."
+                  }
+                },
+                "required": [
+                  "query",
+                  "documents",
+                  "model"
+                ],
+                "x-fern-type-name": "V2RerankRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.classify",
+      "title": "Classify",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/classify",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "x-fern-audiences": [
+                  "public"
+                ],
+                "properties": {
+                  "inputs": {
+                    "type": "array",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "maxItems": 96,
+                    "description": "A list of up to 96 texts to be classified. Each one must be a non-empty string.\nThere is, however, no consistent, universal limit to the length a particular input can be. We perform classification on the first `x` tokens of each input, and `x` varies depending on which underlying model is powering classification. The maximum token length for each model is listed in the \"max tokens\" column [here](https://docs.cohere.com/docs/models).\nNote: by default the `truncate` parameter is set to `END`, so tokens exceeding the limit will be automatically dropped. This behavior can be disabled by setting `truncate` to `NONE`, which will result in validation errors for longer texts.",
+                    "items": {
+                      "type": "string",
+                      "x-fern-audiences": [
+                        "public"
+                      ],
+                      "writeOnly": true
+                    },
+                    "writeOnly": true
+                  },
+                  "examples": {
+                    "type": "array",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "An array of examples to provide context to the model. Each example is a text string and its associated label/class. Each unique label requires at least 2 examples associated with it; the maximum number of examples is 2500, and each example has a maximum length of 512 tokens. The values should be structured as `{text: \"...\",label: \"...\"}`.\nNote: [Fine-tuned Models](https://docs.cohere.com/docs/classify-fine-tuning) trained on classification examples don't require the `examples` parameter to be passed in explicitly.",
+                    "maxItems": 2500,
+                    "items": {
+                      "x-fern-audiences": [
+                        "public"
+                      ],
+                      "$ref": "#/components/schemas/ClassifyExample"
+                    },
+                    "writeOnly": true
+                  },
+                  "model": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "ID of a [Fine-tuned](https://docs.cohere.com/v2/docs/classify-starting-the-training) Classify model",
+                    "writeOnly": true
+                  },
+                  "preset": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "example": "my-preset-a58sbd",
+                    "description": "The ID of a custom playground preset. You can create presets in the [playground](https://dashboard.cohere.com/playground). If you use a preset, all other parameters become optional, and any included parameters will override the preset's parameters.",
+                    "writeOnly": true,
+                    "deprecated": true
+                  },
+                  "truncate": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "default": "END",
+                    "enum": [
+                      "NONE",
+                      "START",
+                      "END"
+                    ],
+                    "description": "One of `NONE|START|END` to specify how the API will handle inputs longer than the maximum token length.\nPassing `START` will discard the start of the input. `END` will discard the end of the input. In both cases, input is discarded until the remaining input is exactly the maximum input token length for the model.\nIf `NONE` is selected, when the input exceeds the maximum input token length an error will be returned.",
+                    "writeOnly": true
+                  }
+                },
+                "required": [
+                  "inputs"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.create-dataset",
+      "title": "Create a Dataset",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/datasets",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "name",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "The name of the uploaded dataset."
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/DatasetType"
+          },
+          "description": "The dataset type, which is used to validate the data. The only valid type is `embed-input` used in conjunction with the Embed Jobs API."
+        },
+        {
+          "name": "keep_original_file",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "Indicates if the original file should be stored."
+        },
+        {
+          "name": "skip_malformed_input",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "Indicates whether rows with malformed input should be dropped (instead of failing the validation check). Dropped rows will be returned in the warnings field."
+        },
+        {
+          "name": "keep_fields",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-fern-audiences": [
+                "public"
+              ]
+            }
+          },
+          "description": "List of names of fields that will be persisted in the Dataset. By default the Dataset will retain only the required fields indicated in the [schema for the corresponding Dataset type](https://docs.cohere.com/docs/datasets#dataset-types). For example, datasets of type `embed-input` will drop all fields other than the required `text` field. If any of the fields in `keep_fields` are missing from the uploaded file, Dataset validation will fail."
+        },
+        {
+          "name": "optional_fields",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "x-fern-audiences": [
+                "public"
+              ]
+            }
+          },
+          "description": "List of names of fields that will be persisted in the Dataset. By default the Dataset will retain only the required fields indicated in the [schema for the corresponding Dataset type](https://docs.cohere.com/docs/datasets#dataset-types). For example, Datasets of type `embed-input` will drop all fields other than the required `text` field. If any of the fields in `optional_fields` are missing from the uploaded file, Dataset validation will pass."
+        },
+        {
+          "name": "text_separator",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "Raw .txt uploads will be split into entries using the text_separator value."
+        },
+        {
+          "name": "csv_delimiter",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "The delimiter used for .csv uploads."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "x-fern-audiences": [
+                  "public"
+                ],
+                "properties": {
+                  "data": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "format": "binary",
+                    "description": "The file to upload"
+                  },
+                  "eval_data": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "format": "binary",
+                    "description": "An optional evaluation file to upload"
+                  }
+                },
+                "required": [
+                  "data"
+                ],
+                "x-fern-type-name": "dataset-dytngn"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.list-datasets",
+      "title": "List Datasets",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/datasets",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "datasetType",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "optional filter by dataset type"
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "x-fern-audiences": [
+              "public"
+            ],
+            "format": "date-time"
+          },
+          "description": "optional filter before a date"
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "x-fern-audiences": [
+              "public"
+            ],
+            "format": "date-time"
+          },
+          "description": "optional filter after a date"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "type": "number",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "optional limit to number of results"
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "schema": {
+            "type": "number",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "optional offset to start of results"
+        },
+        {
+          "name": "validationStatus",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/DatasetValidationStatus"
+          },
+          "description": "optional filter by validation status"
+        }
+      ]
+    },
+    {
+      "connector": "cohere.get-dataset-usage",
+      "title": "Get Dataset Usage",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/datasets/usage",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "cohere.get-dataset",
+      "title": "Get a Dataset",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/datasets/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-fern-audiences": [
+              "public"
+            ],
+            "pattern": "^(?!usage$).*$"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.delete-dataset",
+      "title": "Delete a Dataset",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/datasets/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-fern-audiences": [
+              "public"
+            ],
+            "pattern": "^(?!usage$).*$"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.summarize",
+      "title": "Summarize",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/summarize",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "x-fern-audiences": [
+                  "public"
+                ],
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The text to generate a summary for. Can be up to 100,000 characters long. Currently the only supported language is English.",
+                    "minLength": 250,
+                    "maxLength": 50000,
+                    "writeOnly": true
+                  },
+                  "length": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "One of `short`, `medium`, `long`, or `auto` defaults to `auto`. Indicates the approximate length of the summary. If `auto` is selected, the best option will be picked based on the input text.",
+                    "default": "medium",
+                    "enum": [
+                      "short",
+                      "medium",
+                      "long"
+                    ],
+                    "writeOnly": true
+                  },
+                  "format": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "default": "paragraph",
+                    "enum": [
+                      "paragraph",
+                      "bullets"
+                    ],
+                    "description": "One of `paragraph`, `bullets`, or `auto`, defaults to `auto`. Indicates the style in which the summary will be delivered - in a free form paragraph or in bullet points. If `auto` is selected, the best option will be picked based on the input text.",
+                    "writeOnly": true
+                  },
+                  "model": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The identifier of the model to generate the summary with. Currently available models are `command` (default), `command-nightly` (experimental), `command-light`, and `command-light-nightly` (experimental). Smaller, \"light\" models are faster, while larger models will perform better.",
+                    "writeOnly": true
+                  },
+                  "extractiveness": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "One of `low`, `medium`, `high`, or `auto`, defaults to `auto`. Controls how close to the original text the summary is. `high` extractiveness summaries will lean towards reusing sentences verbatim, while `low` extractiveness summaries will tend to paraphrase more. If `auto` is selected, the best option will be picked based on the input text.",
+                    "default": "low",
+                    "enum": [
+                      "low",
+                      "medium",
+                      "high"
+                    ],
+                    "writeOnly": true
+                  },
+                  "temperature": {
+                    "type": "number",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "Ranges from 0 to 5. Controls the randomness of the output. Lower values tend to generate more “predictable” output, while higher values tend to generate more “creative” output. The sweet spot is typically between 0 and 1.",
+                    "default": 0.3,
+                    "minimum": 0,
+                    "maximum": 5,
+                    "writeOnly": true
+                  },
+                  "additional_command": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "A free-form instruction for modifying how the summaries get generated. Should complete the sentence \"Generate a summary _\". Eg. \"focusing on the next steps\" or \"written by Yoda\"",
+                    "writeOnly": true
+                  }
+                },
+                "required": [
+                  "text"
+                ],
+                "x-fern-type-name": "SummarizeRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.tokenize",
+      "title": "Tokenize",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/tokenize",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "x-fern-audiences": [
+                  "public"
+                ],
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The string to be tokenized, the minimum text length is 1 character, and the maximum text length is 65536 characters.",
+                    "minLength": 1,
+                    "maxLength": 65536
+                  },
+                  "model": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The input will be tokenized by the tokenizer that is used by this model."
+                  }
+                },
+                "required": [
+                  "text",
+                  "model"
+                ],
+                "x-fern-type-name": "TokenizeRequest"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "text": "tokenize me! :D",
+                    "model": "command"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.detokenize",
+      "title": "Detokenize",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/detokenize",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "x-fern-audiences": [
+                  "public"
+                ],
+                "properties": {
+                  "tokens": {
+                    "type": "array",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "The list of tokens to be detokenized.",
+                    "minItems": 1,
+                    "maxItems": 65536,
+                    "items": {
+                      "type": "integer",
+                      "x-fern-audiences": [
+                        "public"
+                      ]
+                    },
+                    "writeOnly": true
+                  },
+                  "model": {
+                    "type": "string",
+                    "x-fern-audiences": [
+                      "public"
+                    ],
+                    "description": "An optional parameter to provide the model name. This will ensure that the detokenization is done by the tokenizer used by that model."
+                  }
+                },
+                "required": [
+                  "tokens",
+                  "model"
+                ],
+                "x-fern-type-name": "DetokenizeRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.list-connectors",
+      "title": "List Connectors",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/connectors",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "default": 30,
+            "type": "number",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "Maximum number of connectors to return [0, 100]."
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "schema": {
+            "default": 0,
+            "type": "number",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "Number of connectors to skip before returning results [0, inf]."
+        }
+      ]
+    },
+    {
+      "connector": "cohere.create-connector",
+      "title": "Create a Connector",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/connectors",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateConnectorRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.get-connector",
+      "title": "Get a Connector",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/connectors/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "The ID of the connector to retrieve."
+        }
+      ]
+    },
+    {
+      "connector": "cohere.update-connector",
+      "title": "Update a Connector",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/connectors/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "The ID of the connector to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateConnectorRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.delete-connector",
+      "title": "Delete a Connector",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/connectors/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "The ID of the connector to delete."
+        }
+      ]
+    },
+    {
+      "connector": "cohere.oAuthAuthorize-connector",
+      "title": "Authorize with oAuth",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/connectors/{id}/oauth/authorize",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "The ID of the connector to authorize."
+        },
+        {
+          "name": "after_token_redirect",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "The URL to redirect to after the connector has been authorized."
+        }
+      ]
+    },
+    {
+      "connector": "cohere.get-model",
+      "title": "Get a Model",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/models/{model}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "model",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "x-fern-audiences": [
+              "public"
+            ],
+            "example": "command-a-03-2025"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.list-models",
+      "title": "List Models",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/models",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "page_size",
+          "in": "query",
+          "schema": {
+            "type": "number",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "Maximum number of models to include in a page\nDefaults to `20`, min value of `1`, max value of `1000`."
+        },
+        {
+          "name": "page_token",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "Page token provided in the `next_page_token` field of a previous response."
+        },
+        {
+          "name": "endpoint",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/CompatibleEndpoint",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "When provided, filters the list of models to only those that are compatible with the specified endpoint."
+        },
+        {
+          "name": "default_only",
+          "in": "query",
+          "schema": {
+            "type": "boolean",
+            "x-fern-audiences": [
+              "public"
+            ]
+          },
+          "description": "When provided, filters the list of models to only the default model to the endpoint. This parameter is only valid when `endpoint` is provided."
+        }
+      ]
+    },
+    {
+      "connector": "cohere.checkAPIKey",
+      "title": "Check API key",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/check-api-key",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "cohere.ListFinetunedModels",
+      "title": "Lists fine-tuned models.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/finetuning/finetuned-models",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "page_size",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "Maximum number of results to be returned by the server. If 0, defaults to\n50."
+        },
+        {
+          "name": "page_token",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Request a specific page of the list results."
+        },
+        {
+          "name": "order_by",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Comma separated list of fields. For example: \"created_at,name\". The default\nsorting order is ascending. To specify descending order for a field, append\n\" desc\" to the field name. For example: \"created_at desc,name\".\n\nSupported sorting fields:\n  - created_at (default)"
+        }
+      ]
+    },
+    {
+      "connector": "cohere.CreateFinetunedModel",
+      "title": "Trains and deploys a fine-tuned model.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/finetuning/finetuned-models",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinetunedModel"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.UpdateFinetunedModel",
+      "title": "Updates a fine-tuned model.",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/finetuning/finetuned-models/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "FinetunedModel ID."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "FinetunedModel name (e.g. `foobar`)."
+                  },
+                  "creator_id": {
+                    "type": "string",
+                    "description": "User ID of the creator.",
+                    "readOnly": true
+                  },
+                  "organization_id": {
+                    "type": "string",
+                    "description": "Organization ID.",
+                    "readOnly": true
+                  },
+                  "settings": {
+                    "$ref": "#/components/schemas/Settings",
+                    "description": "FinetunedModel settings such as dataset, hyperparameters..."
+                  },
+                  "status": {
+                    "$ref": "#/components/schemas/Status",
+                    "description": "Current stage in the life-cycle of the fine-tuned model.",
+                    "readOnly": true
+                  },
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Creation timestamp.",
+                    "readOnly": true
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Latest update timestamp.",
+                    "readOnly": true
+                  },
+                  "completed_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Timestamp for the completed fine-tuning.",
+                    "readOnly": true
+                  },
+                  "last_used": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Deprecated: Timestamp for the latest request to this fine-tuned model.",
+                    "readOnly": true
+                  }
+                },
+                "title": "Information about the fine-tuned model. Must contain name and settings.",
+                "required": [
+                  "name",
+                  "settings",
+                  "finetuned_model"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "cohere.GetFinetunedModel",
+      "title": "Returns a fine-tuned model by ID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/finetuning/finetuned-models/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The fine-tuned model ID."
+        }
+      ]
+    },
+    {
+      "connector": "cohere.DeleteFinetunedModel",
+      "title": "Deletes a fine-tuned model.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/finetuning/finetuned-models/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The fine-tuned model ID."
+        }
+      ]
+    },
+    {
+      "connector": "cohere.ListEvents",
+      "title": "Fetch history of statuses for a fine-tuned model.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/finetuning/finetuned-models/{finetuned_model_id}/events",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "finetuned_model_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The parent fine-tuned model ID."
+        },
+        {
+          "name": "page_size",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "Maximum number of results to be returned by the server. If 0, defaults to\n50."
+        },
+        {
+          "name": "page_token",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Request a specific page of the list results."
+        },
+        {
+          "name": "order_by",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Comma separated list of fields. For example: \"created_at,name\". The default\nsorting order is ascending. To specify descending order for a field, append\n\" desc\" to the field name. For example: \"created_at desc,name\".\n\nSupported sorting fields:\n  - created_at (default)"
+        }
+      ]
+    },
+    {
+      "connector": "cohere.ListTrainingStepMetrics",
+      "title": "Retrieve training metrics for fine-tuned models.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.cohere.com",
+      "path": "/v1/finetuning/finetuned-models/{finetuned_model_id}/training-step-metrics",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "finetuned_model_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The parent fine-tuned model ID."
+        },
+        {
+          "name": "page_size",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "Maximum number of results to be returned by the server. If 0, defaults to\n50."
+        },
+        {
+          "name": "page_token",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Request a specific page of the list results."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2391 @@
+{
+  "name": "weatherbit",
+  "title": "Weatherbit",
+  "source": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/weatherbit.io/2.0.0/swagger.yaml",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "weatherbit.get_alerts?lat=lat&lon=lon",
+      "title": "Returns severe weather alerts issued by meteorological agencies - Given a lat/lon.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/alerts?lat={lat}&lon={lon}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "lat",
+          "in": "path",
+          "required": true,
+          "description": "Latitude component of location."
+        },
+        {
+          "name": "lon",
+          "in": "path",
+          "required": true,
+          "description": "Longitude component of location."
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback - Example - callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_bulk_files_file",
+      "title": "Download pre-generated bulk datasets",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/bulk/files/{file}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "file",
+          "in": "path",
+          "required": true,
+          "description": "Filename (ie. current.csv.gz)"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_current_airquality?city=city&country=country",
+      "title": "Returns current air quality conditions - Given City and/or State, Country.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/current/airquality?city={city}&country={country}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "city",
+          "in": "path",
+          "required": true,
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR"
+        },
+        {
+          "name": "state",
+          "in": "query",
+          "required": false,
+          "description": "Full name of state."
+        },
+        {
+          "name": "country",
+          "in": "path",
+          "required": true,
+          "description": "Country Code (2 letter)."
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_current_airquality?city_id=city_id",
+      "title": "Returns current air quality conditions - Given a City ID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/current/airquality?city_id={city_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "city_id",
+          "in": "path",
+          "required": true,
+          "description": "City ID. Example: 4487042"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example - callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_current_airquality?lat=lat&lon=lon",
+      "title": "Returns current air quality conditions - Given a lat/lon.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/current/airquality?lat={lat}&lon={lon}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "lat",
+          "in": "path",
+          "required": true,
+          "description": "Latitude component of location."
+        },
+        {
+          "name": "lon",
+          "in": "path",
+          "required": true,
+          "description": "Longitude component of location."
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example - callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_current_airquality?postal_code=postal_code",
+      "title": "Returns current air quality conditions - Given a Postal Code.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/current/airquality?postal_code={postal_code}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "postal_code",
+          "in": "path",
+          "required": true,
+          "description": "Postal Code. Example: 28546"
+        },
+        {
+          "name": "country",
+          "in": "query",
+          "required": false,
+          "description": "Country Code (2 letter)."
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example - callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_current?cities=cities",
+      "title": "Returns a group of observations given a list of cities",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/current?cities={cities}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "cities",
+          "in": "path",
+          "required": true,
+          "description": "Comma separated list of City ID's. Example: 4487042, 4494942, 4504871"
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "marine",
+          "in": "query",
+          "required": false,
+          "description": "Marine stations only (buoys, oil platforms, etc)"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback - Example - callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_current?city=city&country=country",
+      "title": "Returns a Current Observation - Given City and/or State, Country.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/current?city={city}&country={country}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "city",
+          "in": "path",
+          "required": true,
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR"
+        },
+        {
+          "name": "include",
+          "in": "query",
+          "required": false,
+          "description": "Include 1 hour - minutely forecast in the response"
+        },
+        {
+          "name": "state",
+          "in": "query",
+          "required": false,
+          "description": "Full name of state."
+        },
+        {
+          "name": "country",
+          "in": "path",
+          "required": true,
+          "description": "Country Code (2 letter)."
+        },
+        {
+          "name": "marine",
+          "in": "query",
+          "required": false,
+          "description": "Marine stations only (buoys, oil platforms, etc)"
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback - Example - callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_current?city_id=city_id",
+      "title": "Returns a current observation by city id.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/current?city_id={city_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "city_id",
+          "in": "path",
+          "required": true,
+          "description": "City ID. Example: 4487042"
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "include",
+          "in": "query",
+          "required": false,
+          "description": "Include 1 hour - minutely forecast in the response"
+        },
+        {
+          "name": "marine",
+          "in": "query",
+          "required": false,
+          "description": "Marine stations only (buoys, oil platforms, etc)"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback - Example - callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_current?lat=lat&lon=lon",
+      "title": "Returns a Current Observation - Given a lat/lon.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/current?lat={lat}&lon={lon}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "lat",
+          "in": "path",
+          "required": true,
+          "description": "Latitude component of location."
+        },
+        {
+          "name": "lon",
+          "in": "path",
+          "required": true,
+          "description": "Longitude component of location."
+        },
+        {
+          "name": "include",
+          "in": "query",
+          "required": false,
+          "description": "Include 1 hour - minutely forecast in the response"
+        },
+        {
+          "name": "marine",
+          "in": "query",
+          "required": false,
+          "description": "Marine stations only (buoys, oil platforms, etc)"
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback - Example - callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_current?points=points",
+      "title": "Returns a group of observations given a list of points in the format (lat1, lon1), (lat2, lon2), (latN, lonN), ...",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/current?points={points}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "points",
+          "in": "path",
+          "required": true,
+          "description": "Comma separated list of points. Example: (35.5, -75.5),(45, 65),(45.12, -130.5)"
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_current?postal_code=postal_code",
+      "title": "Returns a current observation by postal code.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/current?postal_code={postal_code}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "postal_code",
+          "in": "path",
+          "required": true,
+          "description": "Postal Code. Example: 28546"
+        },
+        {
+          "name": "country",
+          "in": "query",
+          "required": false,
+          "description": "Country Code (2 letter)."
+        },
+        {
+          "name": "include",
+          "in": "query",
+          "required": false,
+          "description": "Include 1 hour - minutely forecast in the response"
+        },
+        {
+          "name": "marine",
+          "in": "query",
+          "required": false,
+          "description": "Marine stations only (buoys, oil platforms, etc)"
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback - Example - callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_current?station=station",
+      "title": "Returns a Current Observation. - Given a station ID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/current?station={station}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "station",
+          "in": "path",
+          "required": true,
+          "description": "Station Call ID."
+        },
+        {
+          "name": "include",
+          "in": "query",
+          "required": false,
+          "description": "Include 1 hour - minutely forecast in the response"
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_current?stations=stations",
+      "title": "Returns a group of observations given a list of stations",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/current?stations={stations}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "stations",
+          "in": "path",
+          "required": true,
+          "description": "Comma separated list of Station Call ID's. Example: KRDU,KBFI,KVNY"
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_forecast_airquality?city=city&country=country",
+      "title": "Returns 72 hour (hourly) Air Quality forecast - Given City and/or State, Country.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/forecast/airquality?city={city}&country={country}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "city",
+          "in": "path",
+          "required": true,
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR"
+        },
+        {
+          "name": "state",
+          "in": "query",
+          "required": false,
+          "description": "Full name of state."
+        },
+        {
+          "name": "country",
+          "in": "path",
+          "required": true,
+          "description": "Country Code (2 letter)."
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "hours",
+          "in": "query",
+          "required": false,
+          "description": "Number of hours to return."
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_forecast_airquality?city_id=city_id",
+      "title": "Returns 72 hour (hourly) Air Quality forecast - Given a City ID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/forecast/airquality?city_id={city_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "city_id",
+          "in": "path",
+          "required": true,
+          "description": "City ID. Example: 4487042"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example - callback=func"
+        },
+        {
+          "name": "hours",
+          "in": "query",
+          "required": false,
+          "description": "Number of hours to return."
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_forecast_airquality?lat=lat&lon=lon",
+      "title": "Returns 72 hour (hourly) Air Quality forecast - Given a lat/lon.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/forecast/airquality?lat={lat}&lon={lon}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "lat",
+          "in": "path",
+          "required": true,
+          "description": "Latitude component of location."
+        },
+        {
+          "name": "lon",
+          "in": "path",
+          "required": true,
+          "description": "Longitude component of location."
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example - callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        },
+        {
+          "name": "hours",
+          "in": "query",
+          "required": false,
+          "description": "Number of hours to return."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_forecast_airquality?postal_code=postal_code",
+      "title": "Returns 72 hour (hourly) Air Quality forecast - Given a Postal Code.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/forecast/airquality?postal_code={postal_code}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "postal_code",
+          "in": "path",
+          "required": true,
+          "description": "Postal Code. Example: 28546"
+        },
+        {
+          "name": "country",
+          "in": "query",
+          "required": false,
+          "description": "Country Code (2 letter)."
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example - callback=func"
+        },
+        {
+          "name": "hours",
+          "in": "query",
+          "required": false,
+          "description": "Number of hours to return."
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_forecast_daily?city=city&country=country",
+      "title": "Returns a daily forecast - Given City and/or State, Country.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/forecast/daily?city={city}&country={country}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "city",
+          "in": "path",
+          "required": true,
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR"
+        },
+        {
+          "name": "state",
+          "in": "query",
+          "required": false,
+          "description": "Full name of state."
+        },
+        {
+          "name": "country",
+          "in": "path",
+          "required": true,
+          "description": "Country Code (2 letter)."
+        },
+        {
+          "name": "days",
+          "in": "query",
+          "required": false,
+          "description": "Number of days to return. Default 16."
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example - callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_forecast_daily?city_id=city_id",
+      "title": "Returns a daily forecast - Given a City ID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/forecast/daily?city_id={city_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "city_id",
+          "in": "path",
+          "required": true,
+          "description": "City ID. Example: 4487042"
+        },
+        {
+          "name": "days",
+          "in": "query",
+          "required": false,
+          "description": "Number of days to return. Default 16."
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_forecast_daily?lat=lat&lon=lon",
+      "title": "Returns a daily forecast - Given Lat/Lon.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/forecast/daily?lat={lat}&lon={lon}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "lat",
+          "in": "path",
+          "required": true,
+          "description": "Latitude component of location."
+        },
+        {
+          "name": "lon",
+          "in": "path",
+          "required": true,
+          "description": "Longitude component of location."
+        },
+        {
+          "name": "days",
+          "in": "query",
+          "required": false,
+          "description": "Number of days to return. Default 16."
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_forecast_daily?postal_code=postal_code",
+      "title": "Returns a daily forecast - Given a Postal Code.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/forecast/daily?postal_code={postal_code}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "postal_code",
+          "in": "path",
+          "required": true,
+          "description": "Postal Code. Example: 28546"
+        },
+        {
+          "name": "country",
+          "in": "query",
+          "required": false,
+          "description": "Country Code (2 letter)."
+        },
+        {
+          "name": "days",
+          "in": "query",
+          "required": false,
+          "description": "Number of days to return. Default 16."
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_forecast_energy?lat=lat&lon=lon",
+      "title": "Returns Energy Forecast API response  - Given a single lat/lon. ",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/forecast/energy?lat={lat}&lon={lon}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "lat",
+          "in": "path",
+          "required": true,
+          "description": "Latitude component of location."
+        },
+        {
+          "name": "lon",
+          "in": "path",
+          "required": true,
+          "description": "Longitude component of location."
+        },
+        {
+          "name": "threshold",
+          "in": "query",
+          "required": false,
+          "description": "Temperature threshold to use to calculate degree days (default 18 C) "
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "tp",
+          "in": "query",
+          "required": false,
+          "description": "Time period (default: daily)"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_forecast_hourly?city=city&country=country",
+      "title": "Returns an hourly forecast - Given City and/or State, Country.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/forecast/hourly?city={city}&country={country}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "city",
+          "in": "path",
+          "required": true,
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR"
+        },
+        {
+          "name": "state",
+          "in": "query",
+          "required": false,
+          "description": "Full name of state."
+        },
+        {
+          "name": "country",
+          "in": "path",
+          "required": true,
+          "description": "Country Code (2 letter)."
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "hours",
+          "in": "query",
+          "required": false,
+          "description": "Number of hours to return."
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_forecast_hourly?city_id=city_id",
+      "title": "Returns an hourly forecast - Given a City ID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/forecast/hourly?city_id={city_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "city_id",
+          "in": "path",
+          "required": true,
+          "description": "City ID. Example: 4487042"
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example - callback=func"
+        },
+        {
+          "name": "hours",
+          "in": "query",
+          "required": false,
+          "description": "Number of hours to return."
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_forecast_hourly?lat=lat&lon=lon",
+      "title": "Returns an hourly forecast - Given a lat/lon.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/forecast/hourly?lat={lat}&lon={lon}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "lat",
+          "in": "path",
+          "required": true,
+          "description": "Latitude component of location."
+        },
+        {
+          "name": "lon",
+          "in": "path",
+          "required": true,
+          "description": "Longitude component of location."
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example - callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        },
+        {
+          "name": "hours",
+          "in": "query",
+          "required": false,
+          "description": "Number of hours to return."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_forecast_hourly?postal_code=postal_code",
+      "title": "Returns an hourly forecast - Given a Postal Code.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/forecast/hourly?postal_code={postal_code}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "postal_code",
+          "in": "path",
+          "required": true,
+          "description": "Postal Code. Example: 28546"
+        },
+        {
+          "name": "country",
+          "in": "query",
+          "required": false,
+          "description": "Country Code (2 letter)."
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example - callback=func"
+        },
+        {
+          "name": "hours",
+          "in": "query",
+          "required": false,
+          "description": "Number of hours to return."
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_airquality?city=city&country=country",
+      "title": "Returns 72 hours of historical quality conditions - Given City and/or State, Country.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/airquality?city={city}&country={country}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "city",
+          "in": "path",
+          "required": true,
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR"
+        },
+        {
+          "name": "state",
+          "in": "query",
+          "required": false,
+          "description": "Full name of state."
+        },
+        {
+          "name": "country",
+          "in": "path",
+          "required": true,
+          "description": "Country Code (2 letter)."
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_airquality?city_id=city_id",
+      "title": "Returns 72 hours of historical air quality conditions - Given a City ID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/airquality?city_id={city_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "city_id",
+          "in": "path",
+          "required": true,
+          "description": "City ID."
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example - callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_airquality?lat=lat&lon=lon",
+      "title": "Returns 72 hours of historical air quality conditions - Given a lat/lon.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/airquality?lat={lat}&lon={lon}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "lat",
+          "in": "path",
+          "required": true,
+          "description": "Latitude component of location."
+        },
+        {
+          "name": "lon",
+          "in": "path",
+          "required": true,
+          "description": "Longitude component of location."
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example - callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_airquality?postal_code=postal_code",
+      "title": "Returns 72 hours of historical air quality conditions - Given a Postal Code.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/airquality?postal_code={postal_code}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "postal_code",
+          "in": "path",
+          "required": true,
+          "description": "Postal Code. Example: 28546"
+        },
+        {
+          "name": "country",
+          "in": "query",
+          "required": false,
+          "description": "Country Code (2 letter)."
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example - callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_daily?city=city&country=country",
+      "title": "Returns Historical Observations - Given City and/or State, Country.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/daily?city={city}&country={country}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "city",
+          "in": "path",
+          "required": true,
+          "description": "City search.. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR"
+        },
+        {
+          "name": "state",
+          "in": "query",
+          "required": false,
+          "description": "Full name of state."
+        },
+        {
+          "name": "country",
+          "in": "path",
+          "required": true,
+          "description": "Country Code (2 letter)."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_daily?city_id=city_id",
+      "title": "Returns Historical Observations - Given a City ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/daily?city_id={city_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "city_id",
+          "in": "path",
+          "required": true,
+          "description": "City ID. Example: 4487042"
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)"
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH)"
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_daily?lat=lat&lon=lon",
+      "title": "Returns Historical Observations - Given a lat/lon.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/daily?lat={lat}&lon={lon}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "lat",
+          "in": "path",
+          "required": true,
+          "description": "Latitude component of location."
+        },
+        {
+          "name": "lon",
+          "in": "path",
+          "required": true,
+          "description": "Longitude component of location."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_daily?postal_code=postal_code",
+      "title": "Returns Historical Observations - Given a Postal Code",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/daily?postal_code={postal_code}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "postal_code",
+          "in": "path",
+          "required": true,
+          "description": "Postal Code. Example: 28546"
+        },
+        {
+          "name": "country",
+          "in": "query",
+          "required": false,
+          "description": "Country Code (2 letter)."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)"
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH)"
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_daily?station=station",
+      "title": "Returns Historical Observations - Given a station ID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/daily?station={station}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "station",
+          "in": "path",
+          "required": true,
+          "description": "Station ID."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_energy?lat=lat&lon=lon",
+      "title": "Returns Energy API response  - Given a single lat/lon. ",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/energy?lat={lat}&lon={lon}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "lat",
+          "in": "path",
+          "required": true,
+          "description": "Latitude component of location."
+        },
+        {
+          "name": "lon",
+          "in": "path",
+          "required": true,
+          "description": "Longitude component of location."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "tp",
+          "in": "query",
+          "required": false,
+          "description": "Time period to aggregate by (daily, monthly)"
+        },
+        {
+          "name": "threshold",
+          "in": "query",
+          "required": false,
+          "description": "Temperature threshold to use to calculate degree days (default 18 C) "
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_hourly?city=city&country=country",
+      "title": "Returns Historical Observations - Given City and/or State, Country.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/hourly?city={city}&country={country}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "city",
+          "in": "path",
+          "required": true,
+          "description": "City search. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR"
+        },
+        {
+          "name": "state",
+          "in": "query",
+          "required": false,
+          "description": "Full name of state."
+        },
+        {
+          "name": "country",
+          "in": "path",
+          "required": true,
+          "description": "Country Code (2 letter)."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "tz",
+          "in": "query",
+          "required": false,
+          "description": "Assume utc (default) or local time for start_date, end_date"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_hourly?city_id=city_id",
+      "title": "Returns Historical Observations - Given a City ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/hourly?city_id={city_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "city_id",
+          "in": "path",
+          "required": true,
+          "description": "City ID. Example: 4487042"
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)"
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH)"
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "tz",
+          "in": "query",
+          "required": false,
+          "description": "Assume utc (default) or local time for start_date, end_date"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_hourly?lat=lat&lon=lon",
+      "title": "Returns Historical Observations - Given a lat/lon.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/hourly?lat={lat}&lon={lon}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "lat",
+          "in": "path",
+          "required": true,
+          "description": "Latitude component of location."
+        },
+        {
+          "name": "lon",
+          "in": "path",
+          "required": true,
+          "description": "Longitude component of location."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "tz",
+          "in": "query",
+          "required": false,
+          "description": "Assume utc (default) or local time for start_date, end_date"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_hourly?postal_code=postal_code",
+      "title": "Returns Historical Observations - Given a Postal Code",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/hourly?postal_code={postal_code}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "postal_code",
+          "in": "path",
+          "required": true,
+          "description": "Postal Code. Example: 28546"
+        },
+        {
+          "name": "country",
+          "in": "query",
+          "required": false,
+          "description": "Country Code (2 letter)."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)"
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH)"
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "tz",
+          "in": "query",
+          "required": false,
+          "description": "Assume utc (default) or local time for start_date, end_date"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_hourly?station=station",
+      "title": "Returns Historical Observations - Given a station ID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/hourly?station={station}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "station",
+          "in": "path",
+          "required": true,
+          "description": "Station ID."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "tz",
+          "in": "query",
+          "required": false,
+          "description": "Assume utc (default) or local time for start_date, end_date"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_subhourly?city=city&country=country",
+      "title": "Returns Historical Observations - Given City and/or State, Country.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/subhourly?city={city}&country={country}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "city",
+          "in": "path",
+          "required": true,
+          "description": "City search. Example - &city=Raleigh,NC or &city=Berlin,DE or city=Paris&country=FR"
+        },
+        {
+          "name": "state",
+          "in": "query",
+          "required": false,
+          "description": "Full name of state."
+        },
+        {
+          "name": "country",
+          "in": "path",
+          "required": true,
+          "description": "Country Code (2 letter)."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "tz",
+          "in": "query",
+          "required": false,
+          "description": "Assume utc (default) or local time for start_date, end_date"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_subhourly?city_id=city_id",
+      "title": "Returns Historical Observations - Given a City ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/subhourly?city_id={city_id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "city_id",
+          "in": "path",
+          "required": true,
+          "description": "City ID. Example: 4487042"
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)"
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH)"
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "tz",
+          "in": "query",
+          "required": false,
+          "description": "Assume utc (default) or local time for start_date, end_date"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_subhourly?lat=lat&lon=lon",
+      "title": "Returns Historical Observations - Given a lat/lon.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/subhourly?lat={lat}&lon={lon}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "lat",
+          "in": "path",
+          "required": true,
+          "description": "Latitude component of location."
+        },
+        {
+          "name": "lon",
+          "in": "path",
+          "required": true,
+          "description": "Longitude component of location."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "tz",
+          "in": "query",
+          "required": false,
+          "description": "Assume utc (default) or local time for start_date, end_date"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_subhourly?postal_code=postal_code",
+      "title": "Returns Historical Observations - Given a Postal Code",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/subhourly?postal_code={postal_code}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "postal_code",
+          "in": "path",
+          "required": true,
+          "description": "Postal Code. Example: 28546"
+        },
+        {
+          "name": "country",
+          "in": "query",
+          "required": false,
+          "description": "Country Code (2 letter)."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)"
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH)"
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "tz",
+          "in": "query",
+          "required": false,
+          "description": "Assume utc (default) or local time for start_date, end_date"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    },
+    {
+      "connector": "weatherbit.get_history_subhourly?station=station",
+      "title": "Returns Historical Observations - Given a station ID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.weatherbit.io/v2.0",
+      "path": "/history/subhourly?station={station}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "station",
+          "in": "path",
+          "required": true,
+          "description": "Station ID."
+        },
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "description": "Start Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "description": "End Date (YYYY-MM-DD or YYYY-MM-DD:HH)."
+        },
+        {
+          "name": "units",
+          "in": "query",
+          "required": false,
+          "description": "Convert to units. Default Metric See <a target='blank' href='/api/requests'>units field description</a>"
+        },
+        {
+          "name": "lang",
+          "in": "query",
+          "required": false,
+          "description": "Language (Default: English) See <a target='blank' href='/api/requests'>language field description</a>"
+        },
+        {
+          "name": "tz",
+          "in": "query",
+          "required": false,
+          "description": "Assume utc (default) or local time for start_date, end_date"
+        },
+        {
+          "name": "callback",
+          "in": "query",
+          "required": false,
+          "description": "Wraps return in jsonp callback. Example: callback=func"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": true,
+          "description": "Your registered API key."
+        }
+      ]
+    }
+  ]
+}

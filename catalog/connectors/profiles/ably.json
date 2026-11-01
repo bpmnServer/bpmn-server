@@ -1,0 +1,8 @@
+{
+  "name": "ably",
+  "title": "Ably",
+  "source": "https://raw.githubusercontent.com/ably/open-specs/main/definitions/control-v1.yaml",
+  "authentication": "bearer",
+  "operations": [],
+  "error": "Missing closing \"quote at line 3876, column 54:\n\n                example: \"-----BEGIN CERTIFICATE-----\n                                                     ^\n"
+}

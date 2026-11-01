@@ -1,0 +1,8 @@
+{
+  "name": "cloudinary",
+  "title": "Cloudinary",
+  "source": "https://raw.githubusercontent.com/cloudinary/account-provisioning-java/master/api/openapi.yaml",
+  "authentication": "basic",
+  "operations": [],
+  "error": "404 Not Found"
+}

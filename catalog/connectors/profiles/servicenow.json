@@ -1,0 +1,1354 @@
+{
+  "name": "servicenow",
+  "title": "Servicenow",
+  "source": "https://raw.githubusercontent.com/ballerina-platform/openapi-connectors/main/openapi/servicenow/openapi.yaml",
+  "authentication": "basic",
+  "operations": [
+    {
+      "connector": "servicenow.getRecordList",
+      "title": "Retrieves multiple records for the specified table.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/now/table/{tableName}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "tableName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Name of the table from which to retrieve the record.\n <i>Example&#58; Incident"
+        },
+        {
+          "name": "name-value pairs",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Name-value pairs to use to filter the result set. This parameter is mutually exclusive with sysparm_query."
+        },
+        {
+          "name": "sysparm_display_value",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data retrieval operation for reference and choice fields."
+        },
+        {
+          "name": "sysparm_exclude_reference_link",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Flag that indicates whether to exclude Table API links for reference fields"
+        },
+        {
+          "name": "sysparm_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Comma-separated list of fields to return in the response."
+        },
+        {
+          "name": "sysparm_limit",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Maximum number of records to return. For requests that exceed this number of records, use the sysparm_offset parameter to paginate record retrieval. Note - Unusually large sysparm_limit values can impact system performance."
+        },
+        {
+          "name": "sysparm_no_count",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Flag that indicates whether to execute a select count(*) query on the table to return the number of rows in the associated table."
+        },
+        {
+          "name": "sysparm_offset",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Starting record index for which to begin retrieving records. Use this value to paginate record retrieval. This functionality enables the retrieval of all records, regardless of the number of records, in small manageable chunks."
+        },
+        {
+          "name": "sysparm_query",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Encoded query used to filter the result set. Syntax - sysparm_query=<col_name><operator><value>."
+        },
+        {
+          "name": "sysparm_query_category",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Name of the category to use for queries."
+        },
+        {
+          "name": "sysparm_query_no_domain",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Flag that indicates whether to restrict the record search to only the domains for which the logged in user is configured."
+        },
+        {
+          "name": "sysparm_suppress_pagination_header",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Flag that indicates whether to remove the Link header from the response. The Link header provides various URLs to relative pages in the record set which you can use to paginate the returned record set."
+        },
+        {
+          "name": "sysparm_view",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "UI view for which to render the data. Determines the fields returned in the response."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.createRecord",
+      "title": "Inserts one record in the specified table. Multiple record insertion is not supported by this method.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/api/now/table/{tableName}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "tableName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Name of the table in which to save the record."
+        },
+        {
+          "name": "sysparm_display_value",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data retrieval operation for reference and choice fields."
+        },
+        {
+          "name": "sysparm_exclude_reference_link",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Flag that indicates whether to exclude Table API links for reference fields"
+        },
+        {
+          "name": "sysparm_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Comma-separated list of fields to return in the response."
+        },
+        {
+          "name": "sysparm_input_display_value",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Flag that indicates whether to set field values using the display value or the actual value."
+        },
+        {
+          "name": "sysparm_view",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "UI view for which to render the data. Determines the fields returned in the response."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        },
+        {
+          "name": "Content-Type",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the request body.\nSupported types \n - application/json \n - application/xml."
+        },
+        {
+          "name": "X-no-response-body",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "By default, responses include body content detailing the new record. Set this header to true in the request to suppress the response body."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.getRecordById",
+      "title": "Retrieves the record identified by the specified sys_id from the specified table.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/now/table/{tableName}/{sys_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "tableName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Name of the table from which to retrieve the record.\n <i>Example&#58; Incident"
+        },
+        {
+          "name": "sys_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Sys_id of the record to retrieve\n <i>Example&#58; b7a00a202f1030105b5b2b5df699b618"
+        },
+        {
+          "name": "sysparm_display_value",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data retrieval operation for reference and choice fields."
+        },
+        {
+          "name": "sysparm_exclude_reference_link",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Flag that indicates whether to exclude Table API links for reference fields"
+        },
+        {
+          "name": "sysparm_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Comma-separated list of fields to return in the response.\nIn the use case of __query incidents__ those fields are __number,sys_id,sys_created_on,cmdb_ci,correlation_id,state,assignment_group,short_description,description,close_code,close_notes__ \n <i>Example&#58; number,sys_id,sys_created_on,cmdb_ci,correlation_id,state,assignment_group,short_description,description,close_code,close_notes"
+        },
+        {
+          "name": "sysparm_query_no_domain",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Flag that indicates whether to restrict the record search to only the domains for which the logged in user is configured."
+        },
+        {
+          "name": "sysparm_view",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "UI view for which to render the data. Determines the fields returned in the response."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.patchRecordById",
+      "title": "Updates the specified record with the name-value pairs included in the request body.",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "",
+      "path": "/api/now/table/{tableName}/{sys_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "tableName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Name of the table in which to the specified record is located."
+        },
+        {
+          "name": "sys_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Sys_id of the record to update."
+        },
+        {
+          "name": "sysparm_display_value",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data retrieval operation for reference and choice fields."
+        },
+        {
+          "name": "sysparm_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Comma-separated list of fields to return in the response."
+        },
+        {
+          "name": "sysparm_input_display_value",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Flag that indicates whether to set field values using the display value or the actual value."
+        },
+        {
+          "name": "sysparm_query_no_domain",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Flag that indicates whether to restrict the record search to only the domains for which the logged in user is configured."
+        },
+        {
+          "name": "sysparm_view",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "UI view for which to render the data. Determines the fields returned in the response."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        },
+        {
+          "name": "Content-Type",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the request body.\nSupported types \n - application/json \n - application/xml."
+        },
+        {
+          "name": "X-no-response-body",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "By default, responses include body content detailing the new record. Set this header to true in the request to suppress the response body."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.updateRecord",
+      "title": "Updates the specified record with the request body.",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "",
+      "path": "/api/now/table/{tableName}/{sys_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "tableName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Name of the table in which the record is located."
+        },
+        {
+          "name": "sys_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Unique identifier of the record to update."
+        },
+        {
+          "name": "sysparm_display_value",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data retrieval operation for reference and choice fields."
+        },
+        {
+          "name": "sysparm_exclude_reference_link",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Flag that indicates whether to exclude Table API links for reference fields"
+        },
+        {
+          "name": "sysparm_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Comma-separated list of fields to return in the response."
+        },
+        {
+          "name": "sysparm_input_display_value",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Flag that indicates whether to set field values using the display value or the actual value."
+        },
+        {
+          "name": "sysparm_query_no_domain",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Flag that indicates whether to restrict the record search to only the domains for which the logged in user is configured."
+        },
+        {
+          "name": "sysparm_view",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "UI view for which to render the data. Determines the fields returned in the response."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        },
+        {
+          "name": "Content-Type",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the request body.\nSupported types \n - application/json \n - application/xml."
+        },
+        {
+          "name": "X-no-response-body",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "By default, responses include body content detailing the new record. Set this header to true in the request to suppress the response body."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.deleteRecord",
+      "title": "Deletes the specified record from the specified table.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/api/now/table/{tableName}/{sys_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "tableName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Name of the table from which to delete the specified record, such as \"incident\" or \"asset\"."
+        },
+        {
+          "name": "sys_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Sys_id of the record to delete."
+        },
+        {
+          "name": "sysparm_query_no_domain",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Flag that indicates whether to restrict the record search to only the domains for which the logged in user is configured."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.aggregate",
+      "title": "Retrieves records for the specified table and performs aggregate functions on the returned values.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/now/stats/{tableName}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "tableName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Name of the table for which to retrieve records."
+        },
+        {
+          "name": "name-value pairs",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "An alternative to using the sysparm_query parameter. You can filter a query using key-value pairs where the key is the name of a field."
+        },
+        {
+          "name": "sysparm_avg_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "List of fields on which to perform avg aggregate operation. You can specify multiple fields by separating each with a comma."
+        },
+        {
+          "name": "sysparm_min_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "List of fields on which to perform min aggregate operation. You can specify multiple fields by separating each with a comma."
+        },
+        {
+          "name": "sysparm_max_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "List of fields on which to perform max aggregate operation. You can specify multiple fields by separating each with a comma."
+        },
+        {
+          "name": "sysparm_sum_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "List of fields on which to perform sum aggregate operation. You can specify multiple fields by separating each with a comma."
+        },
+        {
+          "name": "sysparm_count",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Flag that determines whether to return the number of records returned by the query."
+        },
+        {
+          "name": "sysparm_display_value",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data retrieval operation when grouping by reference or choice fields. Based on this value, the query returns either the display value, the actual value in the database, or both."
+        },
+        {
+          "name": "sysparm_group_by",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Fields by which to group the returned data. You can specify multiple fields by separating each field with a comma, such as sysparm_group_by=priority,state."
+        },
+        {
+          "name": "sysparm_having",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Additional query that enables you to filter the data based on an aggregate operation. The value for this parameter must follow the syntax aggregate^field^operator^value, such as count^priority^>^3 to obtain the number of records within the query results with a priority greater than 3. You can specify multiple queries by separating each with a comma, such ascount^state^=^1,avg^priority^>^3."
+        },
+        {
+          "name": "sysparm_orderby",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data retrieval operation when grouping by reference or choice fields. Based on this value, the query returns either the display value, the actual value in the database, or both."
+        },
+        {
+          "name": "sysparm_query",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "An encoded query. For example- (sysparm_query=active=true)(sysparm_query=caller_id=javascript:gs.getUserID()^active=true)"
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.getImportSet",
+      "title": "Retrieves the specified import staging record and resulting transformation result.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/now/import/{stagingTableName}/{sys_id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "stagingTableName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Name of the table from which to obtain the import data."
+        },
+        {
+          "name": "sys_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Sys_id of the record that contains the data."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.createImportSet",
+      "title": "Inserts incoming data into a specified staging table and triggers transformation based on predefined transform maps in the import set table.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/api/now/import/{stagingTableName}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "stagingTableName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Name of the table from which to import the data."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        },
+        {
+          "name": "Content-Type",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the request body."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.createMultipleImportSet",
+      "title": "Inserts multiple records into a specified staging table and triggers transformation based on predefined transform maps or Robust Transform Engine (RTE) configurations in a single request.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/api/now/import/{stagingTableName}/insertMultiple",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "stagingTableName",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Name of the table from which to import the data."
+        },
+        {
+          "name": "multi_import_set_id",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Sys_id of an entry in the Multi Import Sets [sys_multi_import_set] table. If specified, adds the current import to this multiple import set instead of adding to a new multiple import set."
+        },
+        {
+          "name": "run_after",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Sys_id of an entry in the Import Sets [sys_import_set] table. Enables running the current import set after the specified import set is complete. You can use this parameter to enforce the sequential order of imports. This parameter is only valid in asynchronous transformations."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        },
+        {
+          "name": "Content-Type",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the request body."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.getCaseById",
+      "title": "Retrieves the activity stream for a specified Customer Service Management (CSM) case.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/sn_customerservice/case/{id}/activities",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Sys_id or case number of the case to retrieve. Located in the Case [sn_customerservice_case] table. Results will be unpredictable if a specified case number is shared by two or more cases."
+        },
+        {
+          "name": "sysparm_activity_type",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filters the type of activities to return from the activity stream. The entries.element parameter contains the activity type for each activity."
+        },
+        {
+          "name": "sysparm_limit",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Maximum number of records to return. Unusually large sysparm_limit values can impact system performance. For requests that exceed this number of records, use the sysparm_offset parameter to paginate record retrieval."
+        },
+        {
+          "name": "sysparm_offset",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Starting record index for which to begin retrieving records. Use this value to paginate record retrieval. This functionality enables the retrieval of all records, regardless of the number of records, in small manageable chunks."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.getValuesByFieldNameInCase",
+      "title": "Retrieves the list of possible field values for a choice or reference field in the Case [sn_customerservice_case] table.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/sn_customerservice/case/field_values/{field_name}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "field_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Name of a choice or reference field in the Case [sn_customerservice_case] table."
+        },
+        {
+          "name": "sysparm_dependent_value",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Value to select in the Case [sn_customerservice_case] table choice field that the requested field is dependent on. Use only when requesting a choice field that is dependent on another field."
+        },
+        {
+          "name": "sysparm_limit",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Maximum number of records to return. Unusually large sysparm_limit values can impact system performance. For requests that exceed this number of records, use the sysparm_offset parameter to paginate record retrieval."
+        },
+        {
+          "name": "sysparm_offset",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Starting record index for which to begin retrieving records. Use this value to paginate record retrieval. This functionality enables the retrieval of all records, regardless of the number of records, in small manageable chunks."
+        },
+        {
+          "name": "sysparm_reference_field_columns",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Comma-separated list of column names, from the table of the specified reference field, to return in the response."
+        },
+        {
+          "name": "sysparm_query",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Encoded query used to filter the result set. Queries defined using this parameter are appended to any encoded queries produced by reference qualifiers."
+        },
+        {
+          "name": "sysparm_ref_qual_input",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Encoded set of field values representing a current object to pass to reference qualifiers that use JavaScript functions. Use only when requesting a reference field."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.getValuesByCaseIdAndFieldName",
+      "title": "Retrieves the list of possible field values for a choice or reference field for a specified record in the Case [sn_customerservice_case] table.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/sn_customerservice/case/{id}/field_values/{field_name}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "field_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Name of a choice or reference field in the Case [sn_customerservice_case] table."
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Sys_id of a record. Located in the Case [sn_customerservice_case] table to use when evaluating reference qualifiers."
+        },
+        {
+          "name": "sysparm_dependent_value",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Value to select in the Case [sn_customerservice_case] table choice field that the requested field is dependent on. Use only when requesting a choice field that is dependent on another field."
+        },
+        {
+          "name": "sysparm_limit",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Maximum number of records to return. Unusually large sysparm_limit values can impact system performance. For requests that exceed this number of records, use the sysparm_offset parameter to paginate record retrieval."
+        },
+        {
+          "name": "sysparm_offset",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Starting record index for which to begin retrieving records. Use this value to paginate record retrieval. This functionality enables the retrieval of all records, regardless of the number of records, in small manageable chunks."
+        },
+        {
+          "name": "sysparm_reference_field_columns",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Comma-separated list of column names, from the table of the specified reference field, to return in the response."
+        },
+        {
+          "name": "sysparm_query",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Encoded query used to filter the result set. Queries defined using this parameter are appended to any encoded queries produced by reference qualifiers."
+        },
+        {
+          "name": "sysparm_ref_qual_input",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Encoded set of field values representing a current object to pass to reference qualifiers that use JavaScript functions. Use only when requesting a reference field."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.getCSMCaseById",
+      "title": "Retrieves the specified Customer Service Management (CSM) case.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/sn_customerservice/case/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Sys_id or case number for the case to retrieve. Located in the Case [sn_customerservice_case] table. Results will be unpredictable if a specified case number is shared by two or more cases."
+        },
+        {
+          "name": "sysparm_display_value",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data retrieval operation for reference and choice fields. Based on this value, retrieves the display value and/or the actual value from the database."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.updateCSMCase",
+      "title": "Updates the specified existing Customer Service Management (CSM) case with the passed-in parameters.",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "",
+      "path": "/api/sn_customerservice/case/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Sys_id of the case to update. Located in the Case [sn_customerservice_case] table."
+        },
+        {
+          "name": "sysparm_display_value",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data retrieval operation for reference and choice fields. Based on this value, retrieves the display value and/or the actual value from the database."
+        },
+        {
+          "name": "sysparm_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Comma-separated list of fields to return in the response."
+        },
+        {
+          "name": "sysparm_get_case_details",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Flag that indicates whether to return the updated case record."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        },
+        {
+          "name": "Content-Type",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the request body."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.getCSMCaseList",
+      "title": "Retrieves a specified set of Customer Service Management (CSM) cases.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/sn_customerservice/case",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "sysparm_display_value",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data retrieval operation for reference and choice fields. Based on this value, retrieves the display value and/or the actual value from the database."
+        },
+        {
+          "name": "sysparm_fields",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Comma-separated list of fields to return in the response."
+        },
+        {
+          "name": "sysparm_limit",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Maximum number of records to return. Unusually large sysparm_limit values can impact system performance. For requests that exceed this number of records, use the sysparm_offset parameter to paginate record retrieval."
+        },
+        {
+          "name": "sysparm_offset",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Starting record index for which to begin retrieving records. Use this value to paginate record retrieval. This functionality enables the retrieval of all records, regardless of the number of records, in small manageable chunks."
+        },
+        {
+          "name": "sysparm_query",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Encoded query used to filter the result set."
+        },
+        {
+          "name": "sysparm_reference_fields",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Whether or not to retrieve fields from reference tables such as account, contact, consumer, and sn_app_cs_social_social_profile. By default, these fields are returned if the user has read access to them, but this adds performance overhead. When retrieving a large number of case records, this overhead can be eliminated by setting sysparm_reference_fields=false."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.createCSMCase",
+      "title": "Creates a new Customer Service Management (CSM) case.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/api/sn_customerservice/case",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        },
+        {
+          "name": "Content-Type",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the request body."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.getCSMContactList",
+      "title": "Retrieves a specified set of Customer Service Management (CSM) contacts.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/now/contact",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "sysparm_limit",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Maximum number of records to return. Unusually large sysparm_limit values can impact system performance. For requests that exceed this number of records, use the sysparm_offset parameter to paginate record retrieval."
+        },
+        {
+          "name": "sysparm_offset",
+          "in": "query",
+          "schema": {
+            "type": "number"
+          },
+          "description": "Starting record index for which to begin retrieving records. Use this value to paginate record retrieval. This functionality enables the retrieval of all records, regardless of the number of records, in small manageable chunks."
+        },
+        {
+          "name": "sysparm_query",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Encoded query used to filter the result set."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.createCSMContact",
+      "title": "Creates a new Customer Service Management (CSM) contact.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/api/now/contact",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        },
+        {
+          "name": "Content-Type",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the request body."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "servicenow.getCSMContactById",
+      "title": "Retrieves the specified Customer Service Management (CSM) contact.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/now/contact/{id}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Sys_id of the contact to retrieve. Located in the Contact [customer_contact] table."
+        },
+        {
+          "name": "Accept",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Data format of the response body."
+        }
+      ]
+    }
+  ]
+}

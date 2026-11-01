@@ -1,0 +1,5705 @@
+{
+  "name": "xero",
+  "title": "Xero",
+  "source": "https://raw.githubusercontent.com/XeroAPI/Xero-OpenAPI/master/xero_accounting.yaml",
+  "authentication": "oauth-client-credentials-flow",
+  "operations": [
+    {
+      "connector": "xero.getAccounts",
+      "title": "Retrieves the full chart of accounts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Accounts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        }
+      ]
+    },
+    {
+      "connector": "xero.createAccount",
+      "title": "Creates a new chart of accounts",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Accounts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Account"
+              },
+              "example": {
+                "Code": "123456",
+                "Name": "Foobar",
+                "Type": "EXPENSE",
+                "Description": "Hello World"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getAccount",
+      "title": "Retrieves a single chart of accounts by using a unique account Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Accounts/{AccountID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateAccount",
+      "title": "Updates a chart of accounts",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Accounts/{AccountID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Accounts"
+              },
+              "example": {
+                "Accounts": [
+                  {
+                    "Code": "123456",
+                    "Name": "BarFoo",
+                    "AccountID": "99ce6032-0678-4aa0-8148-240c75fee33a",
+                    "Type": "EXPENSE",
+                    "Description": "GoodBye World",
+                    "TaxType": "INPUT",
+                    "EnablePaymentsToAccount": false,
+                    "ShowInExpenseClaims": false,
+                    "Class": "EXPENSE",
+                    "ReportingCode": "EXP",
+                    "ReportingCodeName": "Expense",
+                    "UpdatedDateUTC": "2019-02-21T16:29:47.96-08:00"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.deleteAccount",
+      "title": "Deletes a chart of accounts",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Accounts/{AccountID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getAccountAttachments",
+      "title": "Retrieves attachments for a specific accounts by using a unique account Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Accounts/{AccountID}/Attachments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getAccountAttachmentById",
+      "title": "Retrieves a specific attachment from a specific account using a unique attachment Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Accounts/{AccountID}/Attachments/{AttachmentID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getAccountAttachmentByFileName",
+      "title": "Retrieves an attachment for a specific account by filename",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Accounts/{AccountID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateAccountAttachmentByFileName",
+      "title": "Updates attachment on a specific account by filename",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Accounts/{AccountID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.createAccountAttachmentByFileName",
+      "title": "Creates an attachment on a specific account",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Accounts/{AccountID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getBatchPayments",
+      "title": "Retrieves either one or many batch payments for invoices",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BatchPayments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        }
+      ]
+    },
+    {
+      "connector": "xero.createBatchPayment",
+      "title": "Creates one or many batch payments for invoices",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BatchPayments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchPayments"
+              },
+              "example": {
+                "BatchPayments": [
+                  {
+                    "Account": {
+                      "AccountID": "00000000-0000-0000-0000-000000000000"
+                    },
+                    "Reference": "ref",
+                    "Date": "2018-08-01",
+                    "Payments": [
+                      {
+                        "Account": {
+                          "Code": "001"
+                        },
+                        "Date": "2019-12-31",
+                        "Amount": 500,
+                        "Invoice": {
+                          "InvoiceID": "00000000-0000-0000-0000-000000000000",
+                          "LineItems": [],
+                          "Contact": {},
+                          "Type": "ACCPAY"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.deleteBatchPayment",
+      "title": "Updates a specific batch payment for invoices and credit notes",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BatchPayments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchPaymentDelete"
+              },
+              "example": {
+                "BatchPaymentID": "9bf296e9-0748-4d29-a3dc-24dde1098030",
+                "Status": "DELETED"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getBatchPayment",
+      "title": "Retrieves a specific batch payment using a unique batch payment Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BatchPayments/{BatchPaymentID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.deleteBatchPaymentByUrlParam",
+      "title": "Updates a specific batch payment for invoices and credit notes",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BatchPayments/{BatchPaymentID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BatchPaymentDeleteByUrlParam"
+              },
+              "example": {
+                "Status": "DELETED"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getBatchPaymentHistory",
+      "title": "Retrieves history from a specific batch payment",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BatchPayments/{BatchPaymentID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createBatchPaymentHistoryRecord",
+      "title": "Creates a history record for a specific batch payment",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BatchPayments/{BatchPaymentID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "xero.getBankTransactions",
+      "title": "Retrieves any spent or received money transactions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransactions",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Up to 100 bank transactions will be returned in a single API call with line items details"
+        },
+        {
+          "name": "References",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Filter by a comma-separated list of References"
+        }
+      ]
+    },
+    {
+      "connector": "xero.createBankTransactions",
+      "title": "Creates one or more spent or received money transaction",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransactions",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankTransactions"
+              },
+              "example": {
+                "bankTransactions": [
+                  {
+                    "type": "BankTransaction.TypeEnum.SPEND",
+                    "contact": {
+                      "contactID": "00000000-0000-0000-0000-000000000000"
+                    },
+                    "lineItems": [
+                      {
+                        "description": "Foobar",
+                        "quantity": 1,
+                        "unitAmount": 20,
+                        "accountCode": "000"
+                      }
+                    ],
+                    "bankAccount": {
+                      "code": "000"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.updateOrCreateBankTransactions",
+      "title": "Updates or creates one or more spent or received money transaction",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransactions",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankTransactions"
+              },
+              "example": {
+                "BankTransactions": [
+                  {
+                    "Type": "SPEND",
+                    "Contact": {
+                      "ContactID": "00000000-0000-0000-0000-000000000000"
+                    },
+                    "Lineitems": [
+                      {
+                        "Description": "Foobar",
+                        "Quantity": 1,
+                        "UnitAmount": 20,
+                        "AccountCode": "400"
+                      }
+                    ],
+                    "BankAccount": {
+                      "Code": "088"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getBankTransaction",
+      "title": "Retrieves a single spent or received money transaction by using a unique bank transaction Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransactions/{BankTransactionID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateBankTransaction",
+      "title": "Updates a single spent or received money transaction",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransactions/{BankTransactionID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankTransactions"
+              },
+              "example": {
+                "BankTransactions": [
+                  {
+                    "Type": "SPEND",
+                    "Contact": {
+                      "ContactID": "00000000-0000-0000-0000-000000000000",
+                      "ContactStatus": "ACTIVE",
+                      "Name": "Buzz Lightyear",
+                      "FirstName": "Buzz",
+                      "LastName": "Lightyear",
+                      "EmailAddress": "buzz.Lightyear@email.com",
+                      "ContactPersons": [],
+                      "BankAccountDetails": "",
+                      "Addresses": [
+                        {
+                          "AddressType": "STREET",
+                          "City": "",
+                          "Region": "",
+                          "PostalCode": "",
+                          "Country": ""
+                        },
+                        {
+                          "AddressType": "POBOX",
+                          "AddressLine1": "",
+                          "AddressLine2": "",
+                          "AddressLine3": "",
+                          "AddressLine4": "",
+                          "City": "Palo Alto",
+                          "Region": "CA",
+                          "PostalCode": "94020",
+                          "Country": "United States"
+                        }
+                      ],
+                      "Phones": [
+                        {
+                          "PhoneType": "DEFAULT",
+                          "PhoneNumber": "847-1294",
+                          "PhoneAreaCode": "(626)",
+                          "PhoneCountryCode": ""
+                        },
+                        {
+                          "PhoneType": "DDI",
+                          "PhoneNumber": "",
+                          "PhoneAreaCode": "",
+                          "PhoneCountryCode": ""
+                        },
+                        {
+                          "PhoneType": "FAX",
+                          "PhoneNumber": "",
+                          "PhoneAreaCode": "",
+                          "PhoneCountryCode": ""
+                        },
+                        {
+                          "PhoneType": "MOBILE",
+                          "PhoneNumber": "",
+                          "PhoneAreaCode": "",
+                          "PhoneCountryCode": ""
+                        }
+                      ],
+                      "UpdatedDateUTC": "2017-08-21T13:49:04.227-07:00",
+                      "ContactGroups": []
+                    },
+                    "Lineitems": [],
+                    "BankAccount": {
+                      "Code": "088",
+                      "Name": "Business Wells Fargo",
+                      "AccountID": "00000000-0000-0000-0000-000000000000"
+                    },
+                    "IsReconciled": false,
+                    "Date": "2019-02-25",
+                    "Reference": "You just updated",
+                    "CurrencyCode": "USD",
+                    "CurrencyRate": 1,
+                    "Status": "AUTHORISED",
+                    "LineAmountTypes": "Inclusive",
+                    "TotalTax": 1.74,
+                    "BankTransactionID": "00000000-0000-0000-0000-000000000000",
+                    "UpdatedDateUTC": "2019-02-26T12:39:27.813-08:00"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getBankTransactionAttachments",
+      "title": "Retrieves any attachments from a specific bank transactions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransactions/{BankTransactionID}/Attachments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getBankTransactionAttachmentById",
+      "title": "Retrieves specific attachments from a specific BankTransaction using a unique attachment Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransactions/{BankTransactionID}/Attachments/{AttachmentID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getBankTransactionAttachmentByFileName",
+      "title": "Retrieves a specific attachment from a specific bank transaction by filename",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransactions/{BankTransactionID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateBankTransactionAttachmentByFileName",
+      "title": "Updates a specific attachment from a specific bank transaction by filename",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransactions/{BankTransactionID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.createBankTransactionAttachmentByFileName",
+      "title": "Creates an attachment for a specific bank transaction by filename",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransactions/{BankTransactionID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getBankTransactionsHistory",
+      "title": "Retrieves history from a specific bank transaction using a unique bank transaction Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransactions/{BankTransactionID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createBankTransactionHistoryRecord",
+      "title": "Creates a history record for a specific bank transactions",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransactions/{BankTransactionID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "xero.getBankTransfers",
+      "title": "Retrieves all bank transfers",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransfers",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        },
+        {
+          "name": "includeDeleted",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "e.g. includeDeleted=true - Bank transfers with a status of DELETED will be included in the response"
+        }
+      ]
+    },
+    {
+      "connector": "xero.createBankTransfer",
+      "title": "Creates a bank transfer",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransfers",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankTransfers"
+              },
+              "example": {
+                "BankTransfers": [
+                  {
+                    "FromBankAccount": {
+                      "Code": "090",
+                      "Name": "My Savings",
+                      "AccountID": "00000000-0000-0000-0000-000000000000",
+                      "Type": "BANK",
+                      "BankAccountNumber": "123455",
+                      "Status": "ACTIVE",
+                      "BankAccountType": "BANK",
+                      "CurrencyCode": "USD",
+                      "TaxType": "NONE",
+                      "EnablePaymentsToAccount": false,
+                      "ShowInExpenseClaims": false,
+                      "Class": "ASSET",
+                      "ReportingCode": "ASS",
+                      "ReportingCodeName": "Assets",
+                      "HasAttachments": false,
+                      "UpdatedDateUTC": "2016-10-17T13:45:33.993-07:00"
+                    },
+                    "ToBankAccount": {
+                      "Code": "088",
+                      "Name": "Business Wells Fargo",
+                      "AccountID": "00000000-0000-0000-0000-000000000000",
+                      "Type": "BANK",
+                      "BankAccountNumber": "123455",
+                      "Status": "ACTIVE",
+                      "BankAccountType": "BANK",
+                      "CurrencyCode": "USD",
+                      "TaxType": "NONE",
+                      "EnablePaymentsToAccount": false,
+                      "ShowInExpenseClaims": false,
+                      "Class": "ASSET",
+                      "ReportingCode": "ASS",
+                      "ReportingCodeName": "Assets",
+                      "HasAttachments": false,
+                      "UpdatedDateUTC": "2016-06-03T08:31:14.517-07:00"
+                    },
+                    "Amount": "50.00",
+                    "FromIsReconciled": true,
+                    "ToIsReconciled": true,
+                    "Reference": "Sub 098801",
+                    "FromTracking": [
+                      {
+                        "TrackingCategoryID": "e2f2f732-e92a-4f3a-9c4d-ee4da0182a13",
+                        "TrackingOptionID": "cd0a4b7e-3c6b-4b3c-8e2a-1f2d3c4b5a69"
+                      }
+                    ],
+                    "ToTracking": [
+                      {
+                        "TrackingCategoryID": "e2f2f732-e92a-4f3a-9c4d-ee4da0182a13",
+                        "TrackingOptionID": "9f8e7d6c-5b4a-3c2d-1e0f-a9b8c7d6e5f4"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.deleteBankTransfers",
+      "title": "Deletes one or more bank transfers",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransfers",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankTransfersDelete"
+              },
+              "example": {
+                "BankTransfers": [
+                  {
+                    "BankTransferID": "6221458a-ef7a-4d5f-9b1c-1b96ce03833c",
+                    "Status": "DELETED"
+                  },
+                  {
+                    "BankTransferID": "9f0153d5-617c-4903-887b-3875807aa27a",
+                    "Status": "DELETED"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getBankTransfer",
+      "title": "Retrieves specific bank transfers by using a unique bank transfer Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransfers/{BankTransferID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.deleteBankTransfer",
+      "title": "Deletes a specific bank transfer",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransfers/{BankTransferID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankTransferDeleteByUrlParam"
+              },
+              "example": {
+                "Status": "DELETED"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getBankTransferAttachments",
+      "title": "Retrieves attachments from a specific bank transfer",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransfers/{BankTransferID}/Attachments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getBankTransferAttachmentById",
+      "title": "Retrieves a specific attachment from a specific bank transfer using a unique attachment ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransfers/{BankTransferID}/Attachments/{AttachmentID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getBankTransferAttachmentByFileName",
+      "title": "Retrieves a specific attachment on a specific bank transfer by file name",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransfers/{BankTransferID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateBankTransferAttachmentByFileName",
+      "title": "updateBankTransferAttachmentByFileName",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransfers/{BankTransferID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.createBankTransferAttachmentByFileName",
+      "title": "createBankTransferAttachmentByFileName",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransfers/{BankTransferID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getBankTransferHistory",
+      "title": "Retrieves history from a specific bank transfer using a unique bank transfer Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransfers/{BankTransferID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createBankTransferHistoryRecord",
+      "title": "Creates a history record for a specific bank transfer",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BankTransfers/{BankTransferID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "xero.getBrandingThemes",
+      "title": "Retrieves all the branding themes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BrandingThemes",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getBrandingTheme",
+      "title": "Retrieves a specific branding theme using a unique branding theme Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BrandingThemes/{BrandingThemeID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getBrandingThemePaymentServices",
+      "title": "Retrieves the payment services for a specific branding theme",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BrandingThemes/{BrandingThemeID}/PaymentServices",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createBrandingThemePaymentServices",
+      "title": "Creates a new custom payment service for a specific branding theme",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/BrandingThemes/{BrandingThemeID}/PaymentServices",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentServices"
+              },
+              "example": {
+                "PaymentServices": [
+                  {
+                    "PaymentServiceID": "54b3b4f6-0443-4fba-bcd1-61ec0c35ca55",
+                    "PaymentServiceName": "PayUpNow",
+                    "PaymentServiceUrl": "https://www.payupnow.com/",
+                    "PaymentServiceType": "Custom",
+                    "PayNowText": "Time To Pay"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getBudgets",
+      "title": "Retrieve a list of budgets",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Budgets",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "IDs",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "description": "Filter by BudgetID. Allows you to retrieve a specific individual budget."
+        },
+        {
+          "name": "DateTo",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "Filter by start date"
+        },
+        {
+          "name": "DateFrom",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "Filter by end date"
+        }
+      ]
+    },
+    {
+      "connector": "xero.getBudget",
+      "title": "Retrieves a specific budget, which includes budget lines",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Budgets/{BudgetID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "DateTo",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "Filter by start date"
+        },
+        {
+          "name": "DateFrom",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "Filter by end date"
+        }
+      ]
+    },
+    {
+      "connector": "xero.getContacts",
+      "title": "Retrieves all contacts in a Xero organisation",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Contacts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        },
+        {
+          "name": "IDs",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "description": "Filter by a comma separated list of ContactIDs. Allows you to retrieve a specific set of contacts in a single call."
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "e.g. page=1 - Up to 100 contacts will be returned in a single API call."
+        },
+        {
+          "name": "includeArchived",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "e.g. includeArchived=true - Contacts with a status of ARCHIVED will be included in the response"
+        },
+        {
+          "name": "searchTerm",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Search parameter that performs a case-insensitive text search across the Name, FirstName, LastName, ContactNumber and EmailAddress fields."
+        }
+      ]
+    },
+    {
+      "connector": "xero.createContacts",
+      "title": "Creates multiple contacts (bulk) in a Xero organisation",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Contacts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Contacts"
+              },
+              "example": {
+                "Contacts": [
+                  {
+                    "ContactID": "3ff6d40c-af9a-40a3-89ce-3c1556a25591",
+                    "ContactStatus": "ACTIVE",
+                    "Name": "Foo9987",
+                    "EmailAddress": "sid32476@blah.com",
+                    "BankAccountDetails": "",
+                    "Addresses": [
+                      {
+                        "AddressType": "STREET",
+                        "City": "",
+                        "Region": "",
+                        "PostalCode": "",
+                        "Country": ""
+                      },
+                      {
+                        "AddressType": "POBOX",
+                        "City": "",
+                        "Region": "",
+                        "PostalCode": "",
+                        "Country": ""
+                      }
+                    ],
+                    "Phones": [
+                      {
+                        "PhoneType": "DEFAULT",
+                        "PhoneNumber": "",
+                        "PhoneAreaCode": "",
+                        "PhoneCountryCode": ""
+                      },
+                      {
+                        "PhoneType": "DDI",
+                        "PhoneNumber": "",
+                        "PhoneAreaCode": "",
+                        "PhoneCountryCode": ""
+                      },
+                      {
+                        "PhoneType": "FAX",
+                        "PhoneNumber": "",
+                        "PhoneAreaCode": "",
+                        "PhoneCountryCode": ""
+                      },
+                      {
+                        "PhoneType": "MOBILE",
+                        "PhoneNumber": "555-1212",
+                        "PhoneAreaCode": "415",
+                        "PhoneCountryCode": ""
+                      }
+                    ],
+                    "UpdatedDateUTC": "/Date(1551399321043+0000)/",
+                    "ContactGroups": [],
+                    "IsSupplier": false,
+                    "IsCustomer": false,
+                    "SalesTrackingCategories": [],
+                    "PurchasesTrackingCategories": [],
+                    "PaymentTerms": {
+                      "Bills": {
+                        "Day": 15,
+                        "Type": "OFCURRENTMONTH"
+                      },
+                      "Sales": {
+                        "Day": 10,
+                        "Type": "DAYSAFTERBILLMONTH"
+                      }
+                    },
+                    "ContactPersons": []
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.updateOrCreateContacts",
+      "title": "Updates or creates one or more contacts in a Xero organisation",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Contacts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Contacts"
+              },
+              "example": {
+                "Contacts": [
+                  {
+                    "Name": "Bruce Banner",
+                    "EmailAddress": "hulk@avengers.com",
+                    "Phones": [
+                      {
+                        "PhoneType": "MOBILE",
+                        "PhoneNumber": "555-1212",
+                        "PhoneAreaCode": "415"
+                      }
+                    ],
+                    "PaymentTerms": {
+                      "Bills": {
+                        "Day": 15,
+                        "Type": "OFCURRENTMONTH"
+                      },
+                      "Sales": {
+                        "Day": 10,
+                        "Type": "DAYSAFTERBILLMONTH"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getContactByContactNumber",
+      "title": "Retrieves a specific contact by contact number in a Xero organisation",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Contacts/{ContactNumber}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "ContactNumber",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "This field is read only on the Xero contact screen, used to identify contacts in external systems (max length = 50)."
+        }
+      ]
+    },
+    {
+      "connector": "xero.getContact",
+      "title": "Retrieves a specific contacts in a Xero organisation using a unique contact Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Contacts/{ContactID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateContact",
+      "title": "Updates a specific contact in a Xero organisation",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Contacts/{ContactID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Contacts"
+              },
+              "example": {
+                "Contacts": [
+                  {
+                    "ContactID": "00000000-0000-0000-0000-000000000000",
+                    "Name": "Thanos"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getContactAttachments",
+      "title": "Retrieves attachments for a specific contact in a Xero organisation",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Contacts/{ContactID}/Attachments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getContactAttachmentById",
+      "title": "Retrieves a specific attachment from a specific contact using a unique attachment Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Contacts/{ContactID}/Attachments/{AttachmentID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getContactAttachmentByFileName",
+      "title": "Retrieves a specific attachment from a specific contact by file name",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Contacts/{ContactID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateContactAttachmentByFileName",
+      "title": "updateContactAttachmentByFileName",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Contacts/{ContactID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.createContactAttachmentByFileName",
+      "title": "createContactAttachmentByFileName",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Contacts/{ContactID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getContactCISSettings",
+      "title": "Retrieves CIS settings for a specific contact in a Xero organisation",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Contacts/{ContactID}/CISSettings",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getContactHistory",
+      "title": "Retrieves history records for a specific contact",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Contacts/{ContactID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createContactHistory",
+      "title": "Creates a new history record for a specific contact",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Contacts/{ContactID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "xero.getContactGroups",
+      "title": "Retrieves the contact Id and name of each contact group",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ContactGroups",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        }
+      ]
+    },
+    {
+      "connector": "xero.createContactGroup",
+      "title": "Creates a contact group",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ContactGroups",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactGroups"
+              },
+              "example": {
+                "ContactGroups": [
+                  {
+                    "Name": "VIPs"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getContactGroup",
+      "title": "Retrieves a specific contact group by using a unique contact group Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ContactGroups/{ContactGroupID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateContactGroup",
+      "title": "Updates a specific contact group",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ContactGroups/{ContactGroupID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactGroups"
+              },
+              "example": {
+                "ContactGroups": [
+                  {
+                    "Name": "Suppliers"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.createContactGroupContacts",
+      "title": "Creates contacts to a specific contact group",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ContactGroups/{ContactGroupID}/Contacts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Contacts"
+              },
+              "example": {
+                "Contacts": [
+                  {
+                    "ContactID": "a3675fc4-f8dd-4f03-ba5b-f1870566bcd7"
+                  },
+                  {
+                    "ContactID": "4e1753b9-018a-4775-b6aa-1bc7871cfee3"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.deleteContactGroupContacts",
+      "title": "Deletes all contacts from a specific contact group",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ContactGroups/{ContactGroupID}/Contacts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.deleteContactGroupContact",
+      "title": "Deletes a specific contact from a contact group using a unique contact Id",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ContactGroups/{ContactGroupID}/Contacts/{ContactID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getCreditNotes",
+      "title": "Retrieves any credit notes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/CreditNotes",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "e.g. page=1 – Up to 100 credit notes will be returned in a single API call with line items shown for each credit note"
+        }
+      ]
+    },
+    {
+      "connector": "xero.createCreditNotes",
+      "title": "Creates a new credit note",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/CreditNotes",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreditNotes"
+              },
+              "example": {
+                "CreditNotes": [
+                  {
+                    "Type": "ACCPAYCREDIT",
+                    "Contact": {
+                      "ContactID": "430fa14a-f945-44d3-9f97-5df5e28441b8"
+                    },
+                    "Date": "2019-01-05",
+                    "LineItems": [
+                      {
+                        "Description": "Foobar",
+                        "Quantity": 2,
+                        "UnitAmount": 20,
+                        "AccountCode": "400"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.updateOrCreateCreditNotes",
+      "title": "Updates or creates one or more credit notes",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/CreditNotes",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreditNotes"
+              },
+              "example": {
+                "CreditNotes": [
+                  {
+                    "Type": "ACCPAYCREDIT",
+                    "Contact": {
+                      "ContactID": "430fa14a-f945-44d3-9f97-5df5e28441b8"
+                    },
+                    "Date": "2019-01-05",
+                    "Status": "AUTHORISED",
+                    "Reference": "HelloWorld",
+                    "LineItems": [
+                      {
+                        "Description": "Foobar",
+                        "Quantity": 2,
+                        "UnitAmount": 20,
+                        "AccountCode": "400"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getCreditNote",
+      "title": "Retrieves a specific credit note using a unique credit note Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/CreditNotes/{CreditNoteID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateCreditNote",
+      "title": "Updates a specific credit note",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/CreditNotes/{CreditNoteID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreditNotes"
+              },
+              "example": {
+                "CreditNotes": [
+                  {
+                    "Type": "ACCPAYCREDIT",
+                    "Contact": {
+                      "ContactID": "430fa14a-f945-44d3-9f97-5df5e28441b8"
+                    },
+                    "Date": "2019-01-05",
+                    "Status": "AUTHORISED",
+                    "Reference": "HelloWorld",
+                    "SentToContact": true,
+                    "LineItems": [
+                      {
+                        "Description": "Foobar",
+                        "Quantity": 2,
+                        "UnitAmount": 20,
+                        "AccountCode": "400"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getCreditNoteAttachments",
+      "title": "Retrieves attachments for a specific credit notes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/CreditNotes/{CreditNoteID}/Attachments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getCreditNoteAttachmentById",
+      "title": "Retrieves a specific attachment from a specific credit note using a unique attachment Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/CreditNotes/{CreditNoteID}/Attachments/{AttachmentID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getCreditNoteAttachmentByFileName",
+      "title": "Retrieves a specific attachment on a specific credit note by file name",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/CreditNotes/{CreditNoteID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateCreditNoteAttachmentByFileName",
+      "title": "Updates attachments on a specific credit note by file name",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/CreditNotes/{CreditNoteID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.createCreditNoteAttachmentByFileName",
+      "title": "Creates an attachment for a specific credit note",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/CreditNotes/{CreditNoteID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getCreditNoteAsPdf",
+      "title": "Retrieves credit notes as PDF files",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/CreditNotes/{CreditNoteID}/pdf",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createCreditNoteAllocation",
+      "title": "Creates allocation for a specific credit note",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/CreditNotes/{CreditNoteID}/Allocations",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Allocations"
+              },
+              "example": {
+                "Allocations": [
+                  {
+                    "Invoice": {
+                      "LineItems": [],
+                      "InvoiceID": "c45720a1-ade3-4a38-a064-d15489be6841"
+                    },
+                    "Amount": 1,
+                    "Date": "2019-03-05"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.deleteCreditNoteAllocations",
+      "title": "Deletes an Allocation from a Credit Note",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/CreditNotes/{CreditNoteID}/Allocations/{AllocationID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getCreditNoteHistory",
+      "title": "Retrieves history records of a specific credit note",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/CreditNotes/{CreditNoteID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createCreditNoteHistory",
+      "title": "Retrieves history records of a specific credit note",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/CreditNotes/{CreditNoteID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "xero.getCurrencies",
+      "title": "Retrieves currencies for your Xero organisation",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Currencies",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        }
+      ]
+    },
+    {
+      "connector": "xero.createCurrency",
+      "title": "Create a new currency for a Xero organisation",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Currencies",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Currency"
+              },
+              "example": {
+                "Code": "USD",
+                "Description": "United States Dollar"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getExpenseClaims",
+      "title": "Retrieves expense claims",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ExpenseClaims",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        }
+      ]
+    },
+    {
+      "connector": "xero.createExpenseClaims",
+      "title": "Creates expense claims",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ExpenseClaims",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpenseClaims"
+              },
+              "example": {
+                "ExpenseClaims": [
+                  {
+                    "Status": "SUBMITTED",
+                    "User": {
+                      "UserID": "d1164823-0ac1-41ad-987b-b4e30fe0b273"
+                    },
+                    "Receipts": [
+                      {
+                        "Lineitems": [],
+                        "ReceiptID": "dc1c7f6d-0a4c-402f-acac-551d62ce5816"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getExpenseClaim",
+      "title": "Retrieves a specific expense claim using a unique expense claim Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ExpenseClaims/{ExpenseClaimID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateExpenseClaim",
+      "title": "Updates a specific expense claims",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ExpenseClaims/{ExpenseClaimID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpenseClaims"
+              },
+              "example": {
+                "ExpenseClaims": [
+                  {
+                    "Status": "SUBMITTED",
+                    "User": {
+                      "UserID": "d1164823-0ac1-41ad-987b-b4e30fe0b273"
+                    },
+                    "Receipts": [
+                      {
+                        "Lineitems": [],
+                        "ReceiptID": "dc1c7f6d-0a4c-402f-acac-551d62ce5816"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getExpenseClaimHistory",
+      "title": "Retrieves history records of a specific expense claim",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ExpenseClaims/{ExpenseClaimID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createExpenseClaimHistory",
+      "title": "Creates a history record for a specific expense claim",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ExpenseClaims/{ExpenseClaimID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "xero.getInvoices",
+      "title": "Retrieves sales invoices or purchase bills",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Invoices",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        },
+        {
+          "name": "IDs",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "description": "Filter by a comma-separated list of InvoicesIDs."
+        },
+        {
+          "name": "InvoiceNumbers",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Filter by a comma-separated list of InvoiceNumbers."
+        },
+        {
+          "name": "ContactIDs",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "description": "Filter by a comma-separated list of ContactIDs."
+        },
+        {
+          "name": "Statuses",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Filter by a comma-separated list Statuses. For faster response times we recommend using these explicit parameters instead of passing OR conditions into the Where filter."
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "e.g. page=1 – Up to 100 invoices will be returned in a single API call with line items shown for each invoice"
+        },
+        {
+          "name": "includeArchived",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "e.g. includeArchived=true - Invoices with a status of ARCHIVED will be included in the response"
+        },
+        {
+          "name": "createdByMyApp",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "When set to true you'll only retrieve Invoices created by your app"
+        }
+      ]
+    },
+    {
+      "connector": "xero.createInvoices",
+      "title": "Creates one or more sales invoices or purchase bills",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Invoices",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Invoices"
+              },
+              "example": {
+                "Invoices": [
+                  {
+                    "Type": "ACCREC",
+                    "Contact": {
+                      "ContactID": "430fa14a-f945-44d3-9f97-5df5e28441b8"
+                    },
+                    "LineItems": [
+                      {
+                        "Description": "Acme Tires",
+                        "Quantity": 2,
+                        "UnitAmount": 20,
+                        "AccountCode": "200",
+                        "TaxType": "NONE",
+                        "LineAmount": 40
+                      }
+                    ],
+                    "Date": "2019-03-11",
+                    "DueDate": "2018-12-10",
+                    "Reference": "Website Design",
+                    "Status": "AUTHORISED"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.updateOrCreateInvoices",
+      "title": "Updates or creates one or more sales invoices or purchase bills",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Invoices",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Invoices"
+              },
+              "example": {
+                "Invoices": [
+                  {
+                    "Type": "ACCREC",
+                    "Contact": {
+                      "ContactID": "430fa14a-f945-44d3-9f97-5df5e28441b8"
+                    },
+                    "LineItems": [
+                      {
+                        "Description": "Acme Tires",
+                        "Quantity": 2,
+                        "UnitAmount": 20,
+                        "AccountCode": "200",
+                        "TaxType": "NONE",
+                        "LineAmount": 40
+                      }
+                    ],
+                    "Date": "2019-03-11",
+                    "DueDate": "2018-12-10",
+                    "Reference": "Website Design",
+                    "Status": "AUTHORISED"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getInvoice",
+      "title": "Retrieves a specific sales invoice or purchase bill using a unique invoice Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Invoices/{InvoiceID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateInvoice",
+      "title": "Updates a specific sales invoices or purchase bills",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Invoices/{InvoiceID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Invoices"
+              },
+              "example": {
+                "Invoices": [
+                  {
+                    "Reference": "May the force be with you",
+                    "InvoiceID": "00000000-0000-0000-0000-000000000000",
+                    "LineItems": [],
+                    "Contact": {},
+                    "Type": "ACCPAY"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getInvoiceAsPdf",
+      "title": "Retrieves invoices or purchase bills as PDF files",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Invoices/{InvoiceID}/pdf",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getInvoiceAttachments",
+      "title": "Retrieves attachments for a specific invoice or purchase bill",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Invoices/{InvoiceID}/Attachments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getInvoiceAttachmentById",
+      "title": "Retrieves a specific attachment from a specific invoices or purchase bills by using a unique attachment Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Invoices/{InvoiceID}/Attachments/{AttachmentID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getInvoiceAttachmentByFileName",
+      "title": "Retrieves an attachment from a specific invoice or purchase bill by filename",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Invoices/{InvoiceID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateInvoiceAttachmentByFileName",
+      "title": "Updates an attachment from a specific invoices or purchase bill by filename",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Invoices/{InvoiceID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.createInvoiceAttachmentByFileName",
+      "title": "Creates an attachment for a specific invoice or purchase bill by filename",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Invoices/{InvoiceID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getOnlineInvoice",
+      "title": "Retrieves a URL to an online invoice",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Invoices/{InvoiceID}/OnlineInvoice",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.emailInvoice",
+      "title": "Sends a copy of a specific invoice to related contact via email",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Invoices/{InvoiceID}/Email",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestEmpty"
+              },
+              "example": {}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getInvoiceHistory",
+      "title": "Retrieves history records for a specific invoice",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Invoices/{InvoiceID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createInvoiceHistory",
+      "title": "Creates a history record for a specific invoice",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Invoices/{InvoiceID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "xero.getInvoiceReminders",
+      "title": "Retrieves invoice reminder settings",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/InvoiceReminders/Settings",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getItems",
+      "title": "Retrieves items",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Items",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        }
+      ]
+    },
+    {
+      "connector": "xero.createItems",
+      "title": "Creates one or more items",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Items",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Items"
+              },
+              "example": {
+                "Items": [
+                  {
+                    "Code": "code123",
+                    "Name": "Item Name XYZ",
+                    "Description": "Foobar",
+                    "InventoryAssetAccountCode": "140",
+                    "PurchaseDetails": {
+                      "COGSAccountCode": "500"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.updateOrCreateItems",
+      "title": "Updates or creates one or more items",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Items",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Items"
+              },
+              "example": {
+                "Items": [
+                  {
+                    "Code": "ItemCode123",
+                    "Name": "ItemName XYZ",
+                    "Description": "Item Description ABC"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getItem",
+      "title": "Retrieves a specific item using a unique item Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Items/{ItemID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateItem",
+      "title": "Updates a specific item",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Items/{ItemID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Items"
+              },
+              "example": {
+                "Items": [
+                  {
+                    "Code": "ItemCode123",
+                    "Description": "Description 123"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.deleteItem",
+      "title": "Deletes a specific item",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Items/{ItemID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getItemHistory",
+      "title": "Retrieves history for a specific item",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Items/{ItemID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createItemHistory",
+      "title": "Creates a history record for a specific item",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Items/{ItemID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "xero.getJournals",
+      "title": "Retrieves journals",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Journals",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "offset",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Offset by a specified journal number. e.g. journals with a JournalNumber greater than the offset will be returned"
+        },
+        {
+          "name": "paymentsOnly",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Filter to retrieve journals on a cash basis. Journals are returned on an accrual basis by default."
+        }
+      ]
+    },
+    {
+      "connector": "xero.getJournal",
+      "title": "Retrieves a specific journal using a unique journal Id.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Journals/{JournalID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getJournalByNumber",
+      "title": "Retrieves a specific journal using a unique journal number.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Journals/{JournalNumber}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getLinkedTransactions",
+      "title": "Retrieves linked transactions (billable expenses)",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/LinkedTransactions",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Up to 100 linked transactions will be returned in a single API call. Use the page parameter to specify the page to be returned e.g. page=1."
+        },
+        {
+          "name": "LinkedTransactionID",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "The Xero identifier for an Linked Transaction"
+        },
+        {
+          "name": "SourceTransactionID",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Filter by the SourceTransactionID. Get the linked transactions created from a particular ACCPAY invoice"
+        },
+        {
+          "name": "ContactID",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Filter by the ContactID. Get all the linked transactions that have been assigned to a particular customer."
+        },
+        {
+          "name": "Status",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by the combination of ContactID and Status. Get  the linked transactions associated to a  customer and with a status"
+        },
+        {
+          "name": "TargetTransactionID",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Filter by the TargetTransactionID. Get all the linked transactions allocated to a particular ACCREC invoice"
+        }
+      ]
+    },
+    {
+      "connector": "xero.createLinkedTransaction",
+      "title": "Creates linked transactions (billable expenses)",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/LinkedTransactions",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkedTransaction"
+              },
+              "example": {
+                "LinkedTransactions": [
+                  {
+                    "SourceTransactionID": "a848644a-f20f-4630-98c3-386bd7505631",
+                    "SourceLineItemID": "b0df260d-3cc8-4ced-9bd6-41924f624ed3"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getLinkedTransaction",
+      "title": "Retrieves a specific linked transaction (billable expenses) using a unique linked transaction Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/LinkedTransactions/{LinkedTransactionID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateLinkedTransaction",
+      "title": "Updates a specific linked transactions (billable expenses)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/LinkedTransactions/{LinkedTransactionID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkedTransactions"
+              },
+              "example": {
+                "LinkedTransactions": [
+                  {
+                    "SourceTransactionID": "00000000-0000-0000-0000-000000000000",
+                    "SourceLineItemID": "00000000-0000-0000-0000-000000000000"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.deleteLinkedTransaction",
+      "title": "Deletes a specific linked transactions (billable expenses)",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/LinkedTransactions/{LinkedTransactionID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getManualJournals",
+      "title": "Retrieves manual journals",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ManualJournals",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "e.g. page=1 – Up to 100 manual journals will be returned in a single API call with line items shown for each overpayment"
+        }
+      ]
+    },
+    {
+      "connector": "xero.createManualJournals",
+      "title": "Creates one or more manual journals",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ManualJournals",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManualJournals"
+              },
+              "example": {
+                "ManualJournals": [
+                  {
+                    "Narration": "Journal Desc",
+                    "JournalLines": [
+                      {
+                        "LineAmount": 100,
+                        "AccountCode": "400",
+                        "Description": "Money Movement"
+                      },
+                      {
+                        "LineAmount": -100,
+                        "AccountCode": "400",
+                        "Description": "Prepayment of things",
+                        "Tracking": [
+                          {
+                            "Name": "North",
+                            "Option": "Region"
+                          }
+                        ]
+                      }
+                    ],
+                    "Date": "2019-03-14"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.updateOrCreateManualJournals",
+      "title": "Updates or creates a single manual journal",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ManualJournals",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManualJournals"
+              },
+              "example": {
+                "ManualJournals": [
+                  {
+                    "Narration": "Journal Desc",
+                    "JournalLines": [
+                      {
+                        "LineAmount": 100,
+                        "AccountCode": "400",
+                        "Description": "Money Movement"
+                      },
+                      {
+                        "LineAmount": -100,
+                        "AccountCode": "400",
+                        "Description": "Prepayment of things",
+                        "Tracking": [
+                          {
+                            "Name": "North",
+                            "Option": "Region"
+                          }
+                        ]
+                      }
+                    ],
+                    "Date": "2019-03-14"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getManualJournal",
+      "title": "Retrieves a specific manual journal",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ManualJournals/{ManualJournalID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateManualJournal",
+      "title": "Updates a specific manual journal",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ManualJournals/{ManualJournalID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManualJournals"
+              },
+              "example": {
+                "ManualJournals": [
+                  {
+                    "Narration": "Hello Xero",
+                    "ManualJournalID": "00000000-0000-0000-0000-000000000000",
+                    "JournalLines": []
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getManualJournalAttachments",
+      "title": "Retrieves attachment for a specific manual journal",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ManualJournals/{ManualJournalID}/Attachments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getManualJournalAttachmentById",
+      "title": "Allows you to retrieve a specific attachment from a specific manual journal using a unique attachment Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ManualJournals/{ManualJournalID}/Attachments/{AttachmentID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getManualJournalAttachmentByFileName",
+      "title": "Retrieves a specific attachment from a specific manual journal by file name",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ManualJournals/{ManualJournalID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateManualJournalAttachmentByFileName",
+      "title": "Updates a specific attachment from a specific manual journal by file name",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ManualJournals/{ManualJournalID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.createManualJournalAttachmentByFileName",
+      "title": "Creates a specific attachment for a specific manual journal by file name",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ManualJournals/{ManualJournalID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getManualJournalsHistory",
+      "title": "Retrieves history for a specific manual journal",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ManualJournals/{ManualJournalID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createManualJournalHistoryRecord",
+      "title": "Creates a history record for a specific manual journal",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/ManualJournals/{ManualJournalID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "xero.getOrganisations",
+      "title": "Retrieves Xero organisation details",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Organisation",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getOrganisationActions",
+      "title": "Retrieves a list of the key actions your app has permission to perform in the connected Xero organisation.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Organisation/Actions",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getOrganisationCISSettings",
+      "title": "Retrieves the CIS settings for the Xero organistaion.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Organisation/{OrganisationID}/CISSettings",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getOverpayments",
+      "title": "Retrieves overpayments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Overpayments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "e.g. page=1 – Up to 100 overpayments will be returned in a single API call with line items shown for each overpayment"
+        },
+        {
+          "name": "References",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Filter by a comma-separated list of References"
+        }
+      ]
+    },
+    {
+      "connector": "xero.getOverpayment",
+      "title": "Retrieves a specific overpayment using a unique overpayment Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Overpayments/{OverpaymentID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createOverpaymentAllocations",
+      "title": "Creates a single allocation for a specific overpayment",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Overpayments/{OverpaymentID}/Allocations",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Allocations"
+              },
+              "example": {
+                "Allocations": [
+                  {
+                    "Invoice": {
+                      "InvoiceID": "00000000-0000-0000-0000-000000000000",
+                      "LineItems": [],
+                      "Contact": {},
+                      "Type": "ACCPAY"
+                    },
+                    "Amount": 10,
+                    "Date": "2019-03-12"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.deleteOverpaymentAllocations",
+      "title": "Deletes an Allocation from an overpayment",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Overpayments/{OverpaymentID}/Allocations/{AllocationID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getOverpaymentHistory",
+      "title": "Retrieves history records of a specific overpayment",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Overpayments/{OverpaymentID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createOverpaymentHistory",
+      "title": "Creates a history record for a specific overpayment",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Overpayments/{OverpaymentID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "xero.getPayments",
+      "title": "Retrieves payments for invoices and credit notes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Payments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Up to 100 payments will be returned in a single API call"
+        }
+      ]
+    },
+    {
+      "connector": "xero.createPayments",
+      "title": "Creates multiple payments for invoices or credit notes",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Payments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Payments"
+              },
+              "example": {
+                "Payments": [
+                  {
+                    "Invoice": {
+                      "LineItems": [],
+                      "InvoiceID": "00000000-0000-0000-0000-000000000000"
+                    },
+                    "Account": {
+                      "Code": "970"
+                    },
+                    "Date": "2019-03-12",
+                    "Amount": 1
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.createPayment",
+      "title": "Creates a single payment for invoice or credit notes",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Payments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Payment"
+              },
+              "example": {
+                "Payments": [
+                  {
+                    "Invoice": {
+                      "LineItems": [],
+                      "InvoiceID": "00000000-0000-0000-0000-000000000000"
+                    },
+                    "Account": {
+                      "Code": "970"
+                    },
+                    "Date": "2019-03-12",
+                    "Amount": 1
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getPayment",
+      "title": "Retrieves a specific payment for invoices and credit notes using a unique payment Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Payments/{PaymentID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.deletePayment",
+      "title": "Updates a specific payment for invoices and credit notes",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Payments/{PaymentID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentDelete"
+              },
+              "example": {
+                "Payments": [
+                  {
+                    "Status": "DELETED"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getPaymentHistory",
+      "title": "Retrieves history records of a specific payment",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Payments/{PaymentID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createPaymentHistory",
+      "title": "Creates a history record for a specific payment",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Payments/{PaymentID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "xero.getPaymentServices",
+      "title": "Retrieves payment services",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/PaymentServices",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createPaymentService",
+      "title": "Creates a payment service",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/PaymentServices",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentServices"
+              },
+              "example": {
+                "PaymentServices": [
+                  {
+                    "PaymentServiceName": "PayUpNow",
+                    "PaymentServiceUrl": "https://www.payupnow.com/",
+                    "PayNowText": "Time To Pay"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getPrepayments",
+      "title": "Retrieves prepayments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Prepayments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "e.g. page=1 – Up to 100 prepayments will be returned in a single API call with line items shown for each prepayment"
+        },
+        {
+          "name": "InvoiceNumbers",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Filter by a comma-separated list of InvoiceNumbers"
+        },
+        {
+          "name": "References",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Filter by a comma-separated list of References"
+        }
+      ]
+    },
+    {
+      "connector": "xero.getPrepayment",
+      "title": "Allows you to retrieve a specified prepayments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Prepayments/{PrepaymentID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createPrepaymentAllocations",
+      "title": "Allows you to create an Allocation for prepayments",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Prepayments/{PrepaymentID}/Allocations",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Allocations"
+              },
+              "example": {
+                "Allocations": [
+                  {
+                    "Invoice": {
+                      "LineItems": [],
+                      "InvoiceID": "00000000-0000-0000-0000-000000000000"
+                    },
+                    "Amount": 1,
+                    "Date": "2019-01-10"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.deletePrepaymentAllocations",
+      "title": "Deletes an Allocation from a Prepayment",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Prepayments/{PrepaymentID}/Allocations/{AllocationID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getPrepaymentHistory",
+      "title": "Retrieves history record for a specific prepayment",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Prepayments/{PrepaymentID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createPrepaymentHistory",
+      "title": "Creates a history record for a specific prepayment",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Prepayments/{PrepaymentID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "xero.getPurchaseOrders",
+      "title": "Retrieves purchase orders",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/PurchaseOrders",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "Status",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "SUBMITTED",
+              "AUTHORISED",
+              "BILLED",
+              "DELETED"
+            ]
+          },
+          "description": "Filter by purchase order status"
+        },
+        {
+          "name": "DateFrom",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by purchase order date (e.g. GET https://.../PurchaseOrders?DateFrom=2015-12-01&DateTo=2015-12-31"
+        },
+        {
+          "name": "DateTo",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by purchase order date (e.g. GET https://.../PurchaseOrders?DateFrom=2015-12-01&DateTo=2015-12-31"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "To specify a page, append the page parameter to the URL e.g. ?page=1. If there are 100 records in the response you will need to check if there is any more data by fetching the next page e.g ?page=2 and continuing this process until no more results are returned."
+        }
+      ]
+    },
+    {
+      "connector": "xero.createPurchaseOrders",
+      "title": "Creates one or more purchase orders",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/PurchaseOrders",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PurchaseOrders"
+              },
+              "example": {
+                "PurchaseOrders": [
+                  {
+                    "Contact": {
+                      "ContactID": "00000000-0000-0000-0000-000000000000"
+                    },
+                    "LineItems": [
+                      {
+                        "Description": "Foobar",
+                        "Quantity": 1,
+                        "UnitAmount": 20,
+                        "AccountCode": "710"
+                      }
+                    ],
+                    "Date": "2019-03-13"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.updateOrCreatePurchaseOrders",
+      "title": "Updates or creates one or more purchase orders",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/PurchaseOrders",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PurchaseOrders"
+              },
+              "example": {
+                "PurchaseOrders": [
+                  {
+                    "Contact": {
+                      "ContactID": "00000000-0000-0000-0000-000000000000"
+                    },
+                    "LineItems": [
+                      {
+                        "Description": "Foobar",
+                        "Quantity": 1,
+                        "UnitAmount": 20,
+                        "AccountCode": "710"
+                      }
+                    ],
+                    "Date": "2019-03-13"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getPurchaseOrderAsPdf",
+      "title": "Retrieves specific purchase order as PDF files using a unique purchase order Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/PurchaseOrders/{PurchaseOrderID}/pdf",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getPurchaseOrder",
+      "title": "Retrieves a specific purchase order using a unique purchase order Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/PurchaseOrders/{PurchaseOrderID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updatePurchaseOrder",
+      "title": "Updates a specific purchase order",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/PurchaseOrders/{PurchaseOrderID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PurchaseOrders"
+              },
+              "example": {
+                "PurchaseOrders": [
+                  {
+                    "AttentionTo": "Peter Parker",
+                    "LineItems": [],
+                    "Contact": {}
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getPurchaseOrderByNumber",
+      "title": "Retrieves a specific purchase order using purchase order number",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/PurchaseOrders/{PurchaseOrderNumber}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "PurchaseOrderNumber",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Unique identifier for a PurchaseOrder"
+        }
+      ]
+    },
+    {
+      "connector": "xero.getPurchaseOrderHistory",
+      "title": "Retrieves history for a specific purchase order",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/PurchaseOrders/{PurchaseOrderID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createPurchaseOrderHistory",
+      "title": "Creates a history record for a specific purchase orders",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/PurchaseOrders/{PurchaseOrderID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "xero.getPurchaseOrderAttachments",
+      "title": "Retrieves attachments for a specific purchase order",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/PurchaseOrders/{PurchaseOrderID}/Attachments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getPurchaseOrderAttachmentById",
+      "title": "Retrieves specific attachment for a specific purchase order using a unique attachment Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/PurchaseOrders/{PurchaseOrderID}/Attachments/{AttachmentID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getPurchaseOrderAttachmentByFileName",
+      "title": "Retrieves a specific attachment for a specific purchase order by filename",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/PurchaseOrders/{PurchaseOrderID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updatePurchaseOrderAttachmentByFileName",
+      "title": "Updates a specific attachment for a specific purchase order by filename",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/PurchaseOrders/{PurchaseOrderID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.createPurchaseOrderAttachmentByFileName",
+      "title": "Creates attachment for a specific purchase order",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/PurchaseOrders/{PurchaseOrderID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getQuotes",
+      "title": "Retrieves sales quotes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Quotes",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "DateFrom",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "Filter for quotes after a particular date"
+        },
+        {
+          "name": "DateTo",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "Filter for quotes before a particular date"
+        },
+        {
+          "name": "ExpiryDateFrom",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "Filter for quotes expiring after a particular date"
+        },
+        {
+          "name": "ExpiryDateTo",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "Filter for quotes before a particular date"
+        },
+        {
+          "name": "ContactID",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Filter for quotes belonging to a particular contact"
+        },
+        {
+          "name": "Status",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter for quotes of a particular Status"
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "e.g. page=1 – Up to 100 Quotes will be returned in a single API call with line items shown for each quote"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        },
+        {
+          "name": "QuoteNumber",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by quote number (e.g. GET https://.../Quotes?QuoteNumber=QU-0001)"
+        }
+      ]
+    },
+    {
+      "connector": "xero.createQuotes",
+      "title": "Create one or more quotes",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Quotes",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Quotes"
+              },
+              "example": {
+                "Quotes": [
+                  {
+                    "Contact": {
+                      "ContactID": "00000000-0000-0000-0000-000000000000"
+                    },
+                    "LineItems": [
+                      {
+                        "Description": "Foobar",
+                        "Quantity": 1,
+                        "UnitAmount": 20,
+                        "AccountCode": "12775"
+                      }
+                    ],
+                    "Date": "2020-02-01"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.updateOrCreateQuotes",
+      "title": "Updates or creates one or more quotes",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Quotes",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Quotes"
+              },
+              "example": {
+                "Quotes": [
+                  {
+                    "Contact": {
+                      "ContactID": "00000000-0000-0000-0000-000000000000"
+                    },
+                    "LineItems": [
+                      {
+                        "Description": "Foobar",
+                        "Quantity": 1,
+                        "UnitAmount": 20,
+                        "AccountCode": "12775"
+                      }
+                    ],
+                    "Date": "2020-02-01"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getQuote",
+      "title": "Retrieves a specific quote using a unique quote Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Quotes/{QuoteID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateQuote",
+      "title": "Updates a specific quote",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Quotes/{QuoteID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Quotes"
+              },
+              "example": {
+                "Quotes": [
+                  {
+                    "Reference": "I am an update",
+                    "Contact": {
+                      "ContactID": "00000000-0000-0000-0000-000000000000"
+                    },
+                    "Date": "2020-02-01"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getQuoteHistory",
+      "title": "Retrieves history records of a specific quote",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Quotes/{QuoteID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createQuoteHistory",
+      "title": "Creates a history record for a specific quote",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Quotes/{QuoteID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "xero.getQuoteAsPdf",
+      "title": "Retrieves a specific quote as a PDF file using a unique quote Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Quotes/{QuoteID}/pdf",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getQuoteAttachments",
+      "title": "Retrieves attachments for a specific quote",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Quotes/{QuoteID}/Attachments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getQuoteAttachmentById",
+      "title": "Retrieves a specific attachment from a specific quote using a unique attachment Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Quotes/{QuoteID}/Attachments/{AttachmentID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getQuoteAttachmentByFileName",
+      "title": "Retrieves a specific attachment from a specific quote by filename",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Quotes/{QuoteID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateQuoteAttachmentByFileName",
+      "title": "Updates a specific attachment from a specific quote by filename",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Quotes/{QuoteID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.createQuoteAttachmentByFileName",
+      "title": "Creates attachment for a specific quote",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Quotes/{QuoteID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getReceipts",
+      "title": "Retrieves draft expense claim receipts for any user",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Receipts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        }
+      ]
+    },
+    {
+      "connector": "xero.createReceipt",
+      "title": "Creates draft expense claim receipts for any user",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Receipts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Receipts"
+              },
+              "example": {
+                "Receipts": [
+                  {
+                    "Contact": {
+                      "ContactID": "00000000-0000-0000-0000-000000000000"
+                    },
+                    "Lineitems": [
+                      {
+                        "Description": "Foobar",
+                        "Quantity": 2,
+                        "UnitAmount": 20,
+                        "AccountCode": "400",
+                        "TaxType": "NONE",
+                        "LineAmount": 40
+                      }
+                    ],
+                    "User": {
+                      "UserID": "00000000-0000-0000-0000-000000000000"
+                    },
+                    "LineAmountTypes": "NoTax",
+                    "Status": "DRAFT"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getReceipt",
+      "title": "Retrieves a specific draft expense claim receipt by using a unique receipt Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Receipts/{ReceiptID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateReceipt",
+      "title": "Updates a specific draft expense claim receipts",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Receipts/{ReceiptID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Receipts"
+              },
+              "example": {
+                "Receipts": [
+                  {
+                    "Lineitems": [],
+                    "User": {
+                      "UserID": "00000000-0000-0000-0000-000000000000"
+                    },
+                    "Reference": "Foobar"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getReceiptAttachments",
+      "title": "Retrieves attachments for a specific expense claim receipt",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Receipts/{ReceiptID}/Attachments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getReceiptAttachmentById",
+      "title": "Retrieves a specific attachments from a specific expense claim receipts by using a unique attachment Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Receipts/{ReceiptID}/Attachments/{AttachmentID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getReceiptAttachmentByFileName",
+      "title": "Retrieves a specific attachment from a specific expense claim receipts by file name",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Receipts/{ReceiptID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateReceiptAttachmentByFileName",
+      "title": "Updates a specific attachment on a specific expense claim receipts by file name",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Receipts/{ReceiptID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.createReceiptAttachmentByFileName",
+      "title": "Creates an attachment on a specific expense claim receipts by file name",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Receipts/{ReceiptID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getReceiptHistory",
+      "title": "Retrieves a history record for a specific receipt",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Receipts/{ReceiptID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createReceiptHistory",
+      "title": "Creates a history record for a specific receipt",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Receipts/{ReceiptID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "xero.getRepeatingInvoices",
+      "title": "Retrieves repeating invoices",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/RepeatingInvoices",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        }
+      ]
+    },
+    {
+      "connector": "xero.createRepeatingInvoices",
+      "title": "Creates one or more repeating invoice templates",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/RepeatingInvoices",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepeatingInvoices"
+              },
+              "example": {
+                "RepeatingInvoices": [
+                  {
+                    "Schedule": {
+                      "Period": 1,
+                      "Unit": "MONTHLY",
+                      "DueDate": 10,
+                      "DueDateType": "OFFOLLOWINGMONTH",
+                      "StartDate": "/Date(1555286400000+0000)/"
+                    },
+                    "Type": "ACCREC",
+                    "Reference": "[Week]",
+                    "ApprovedForSending": false,
+                    "SendCopy": false,
+                    "MarkAsSent": false,
+                    "IncludePDF": false,
+                    "Contact": {
+                      "ContactID": "430fa14a-f945-44d3-9f97-5df5e28441b8",
+                      "Name": "Liam Gallagher"
+                    },
+                    "Status": "AUTHORISED",
+                    "LineAmountTypes": "Exclusive",
+                    "LineItems": [
+                      {
+                        "Description": "Guitars Fender Strat",
+                        "UnitAmount": 5000,
+                        "TaxType": "OUTPUT2",
+                        "TaxAmount": 750,
+                        "LineAmount": 5000,
+                        "AccountCode": "200",
+                        "Tracking": [],
+                        "Quantity": 1,
+                        "LineItemID": "13a8353c-d2af-4d5b-920c-438449f08900",
+                        "DiscountEnteredAsPercent": true
+                      }
+                    ],
+                    "CurrencyCode": "NZD"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.updateOrCreateRepeatingInvoices",
+      "title": "Creates or deletes one or more repeating invoice templates",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/RepeatingInvoices",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepeatingInvoices"
+              },
+              "example": {
+                "RepeatingInvoices": [
+                  {
+                    "Schedule": {
+                      "Period": 1,
+                      "Unit": "MONTHLY",
+                      "DueDate": 10,
+                      "DueDateType": "OFFOLLOWINGMONTH",
+                      "StartDate": "/Date(1555286400000+0000)/"
+                    },
+                    "Type": "ACCREC",
+                    "Reference": "[Week]",
+                    "ApprovedForSending": false,
+                    "SendCopy": false,
+                    "MarkAsSent": false,
+                    "IncludePDF": false,
+                    "Contact": {
+                      "ContactID": "430fa14a-f945-44d3-9f97-5df5e28441b8",
+                      "Name": "Liam Gallagher"
+                    },
+                    "Status": "AUTHORISED",
+                    "LineAmountTypes": "Exclusive",
+                    "LineItems": [
+                      {
+                        "Description": "Guitars Fender Strat",
+                        "UnitAmount": 5000,
+                        "TaxType": "OUTPUT2",
+                        "TaxAmount": 750,
+                        "LineAmount": 5000,
+                        "AccountCode": "200",
+                        "Tracking": [],
+                        "Quantity": 1,
+                        "LineItemID": "13a8353c-d2af-4d5b-920c-438449f08900",
+                        "DiscountEnteredAsPercent": true
+                      }
+                    ],
+                    "CurrencyCode": "NZD"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getRepeatingInvoice",
+      "title": "Retrieves a specific repeating invoice by using a unique repeating invoice Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/RepeatingInvoices/{RepeatingInvoiceID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateRepeatingInvoice",
+      "title": "Deletes a specific repeating invoice template",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/RepeatingInvoices/{RepeatingInvoiceID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepeatingInvoices"
+              },
+              "example": {
+                "Schedule": {
+                  "Period": 1,
+                  "Unit": "MONTHLY",
+                  "DueDate": 10,
+                  "DueDateType": "OFFOLLOWINGMONTH",
+                  "StartDate": "/Date(1555286400000+0000)/",
+                  "EndDate": "/Date(1569801600000+0000)/",
+                  "NextScheduledDate": "/Date(1555286400000+0000)/"
+                },
+                "RepeatingInvoiceID": "428c0d75-909f-4b04-8403-a48dc27283b0",
+                "Type": "ACCREC",
+                "Reference": "[Week]",
+                "HasAttachments": true,
+                "ApprovedForSending": false,
+                "SendCopy": false,
+                "MarkAsSent": false,
+                "IncludePDF": false,
+                "ID": "428c0d75-909f-4b04-8403-a48dc27283b0",
+                "Contact": {
+                  "ContactID": "430fa14a-f945-44d3-9f97-5df5e28441b8",
+                  "Name": "Liam Gallagher",
+                  "Addresses": [],
+                  "Phones": [],
+                  "ContactGroups": [],
+                  "ContactPersons": [],
+                  "HasValidationErrors": false
+                },
+                "Status": "DELETED",
+                "LineAmountTypes": "Exclusive",
+                "LineItems": [
+                  {
+                    "Description": "Guitars Fender Strat",
+                    "UnitAmount": 5000,
+                    "TaxType": "OUTPUT2",
+                    "TaxAmount": 750,
+                    "LineAmount": 5000,
+                    "AccountCode": "200",
+                    "Tracking": [],
+                    "Quantity": 1,
+                    "LineItemID": "13a8353c-d2af-4d5b-920c-438449f08900",
+                    "DiscountEnteredAsPercent": true
+                  }
+                ],
+                "SubTotal": 5000,
+                "TotalTax": 750,
+                "Total": 5750,
+                "CurrencyCode": "NZD"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getRepeatingInvoiceAttachments",
+      "title": "Retrieves attachments from a specific repeating invoice",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/RepeatingInvoices/{RepeatingInvoiceID}/Attachments",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getRepeatingInvoiceAttachmentById",
+      "title": "Retrieves a specific attachment from a specific repeating invoice",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/RepeatingInvoices/{RepeatingInvoiceID}/Attachments/{AttachmentID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getRepeatingInvoiceAttachmentByFileName",
+      "title": "Retrieves a specific attachment from a specific repeating invoices by file name",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/RepeatingInvoices/{RepeatingInvoiceID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateRepeatingInvoiceAttachmentByFileName",
+      "title": "Updates a specific attachment from a specific repeating invoices by file name",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/RepeatingInvoices/{RepeatingInvoiceID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.createRepeatingInvoiceAttachmentByFileName",
+      "title": "Creates an attachment from a specific repeating invoices by file name",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/RepeatingInvoices/{RepeatingInvoiceID}/Attachments/{FileName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getRepeatingInvoiceHistory",
+      "title": "Retrieves history record for a specific repeating invoice",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/RepeatingInvoices/{RepeatingInvoiceID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createRepeatingInvoiceHistory",
+      "title": "Creates a  history record for a specific repeating invoice",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/RepeatingInvoices/{RepeatingInvoiceID}/History",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    },
+    {
+      "connector": "xero.getReportTenNinetyNine",
+      "title": "Retrieve reports for 1099",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Reports/TenNinetyNine",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "reportYear",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The year of the 1099 report"
+        }
+      ]
+    },
+    {
+      "connector": "xero.getReportAgedPayablesByContact",
+      "title": "Retrieves report for aged payables by contact",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Reports/AgedPayablesByContact",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "contactId",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Unique identifier for a Contact"
+        },
+        {
+          "name": "date",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "The date of the Aged Payables By Contact report"
+        }
+      ]
+    },
+    {
+      "connector": "xero.getReportAgedReceivablesByContact",
+      "title": "Retrieves report for aged receivables by contact",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Reports/AgedReceivablesByContact",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "contactId",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": "Unique identifier for a Contact"
+        },
+        {
+          "name": "date",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "The date of the Aged Receivables By Contact report"
+        }
+      ]
+    },
+    {
+      "connector": "xero.getReportBalanceSheet",
+      "title": "Retrieves report for balancesheet",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Reports/BalanceSheet",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "date",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "The date of the Balance Sheet report"
+        },
+        {
+          "name": "periods",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "The number of periods for the Balance Sheet report"
+        },
+        {
+          "name": "timeframe",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "MONTH",
+              "QUARTER",
+              "YEAR"
+            ]
+          },
+          "description": "The period size to compare to (MONTH, QUARTER, YEAR)"
+        },
+        {
+          "name": "trackingOptionID1",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The tracking option 1 for the Balance Sheet report"
+        },
+        {
+          "name": "trackingOptionID2",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The tracking option 2 for the Balance Sheet report"
+        },
+        {
+          "name": "standardLayout",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "The standard layout boolean for the Balance Sheet report"
+        },
+        {
+          "name": "paymentsOnly",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "return a cash basis for the Balance Sheet report"
+        }
+      ]
+    },
+    {
+      "connector": "xero.getReportBankSummary",
+      "title": "Retrieves report for bank summary",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Reports/BankSummary",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getReportFromId",
+      "title": "Retrieves a specific report using a unique ReportID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Reports/{ReportID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "ReportID",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Unique identifier for a Report"
+        }
+      ]
+    },
+    {
+      "connector": "xero.getReportBudgetSummary",
+      "title": "Retrieves report for budget summary",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Reports/BudgetSummary",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "date",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "The date for the Bank Summary report e.g. 2018-03-31"
+        },
+        {
+          "name": "periods",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "The number of periods to compare (integer between 1 and 12)"
+        },
+        {
+          "name": "timeframe",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "The period size to compare to (1=month, 3=quarter, 12=year)"
+        }
+      ]
+    },
+    {
+      "connector": "xero.getReportExecutiveSummary",
+      "title": "Retrieves report for executive summary",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Reports/ExecutiveSummary",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "date",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "The date for the Bank Summary report e.g. 2018-03-31"
+        }
+      ]
+    },
+    {
+      "connector": "xero.getReportsList",
+      "title": "Retrieves a list of the organistaions unique reports that require a uuid to fetch",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Reports",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getReportProfitAndLoss",
+      "title": "Retrieves report for profit and loss",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Reports/ProfitAndLoss",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "periods",
+          "in": "query",
+          "schema": {
+            "type": "integer"
+          },
+          "description": "The number of periods to compare (integer between 1 and 12)"
+        },
+        {
+          "name": "timeframe",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "MONTH",
+              "QUARTER",
+              "YEAR"
+            ]
+          },
+          "description": "The period size to compare to (MONTH, QUARTER, YEAR)"
+        },
+        {
+          "name": "trackingCategoryID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The trackingCategory 1 for the ProfitAndLoss report"
+        },
+        {
+          "name": "trackingCategoryID2",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The trackingCategory 2 for the ProfitAndLoss report"
+        },
+        {
+          "name": "trackingOptionID",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The tracking option 1 for the ProfitAndLoss report"
+        },
+        {
+          "name": "trackingOptionID2",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The tracking option 2 for the ProfitAndLoss report"
+        },
+        {
+          "name": "standardLayout",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Return the standard layout for the ProfitAndLoss report"
+        },
+        {
+          "name": "paymentsOnly",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Return cash only basis for the ProfitAndLoss report"
+        }
+      ]
+    },
+    {
+      "connector": "xero.getReportTrialBalance",
+      "title": "Retrieves report for trial balance",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Reports/TrialBalance",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "date",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "The date for the Trial Balance report e.g. 2018-03-31"
+        },
+        {
+          "name": "paymentsOnly",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Return cash only basis for the Trial Balance report"
+        }
+      ]
+    },
+    {
+      "connector": "xero.postSetup",
+      "title": "Sets the chart of accounts, the conversion date and conversion balances",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Setup",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Setup"
+              },
+              "example": {
+                "ConversionDate": {},
+                "ConversionBalances": [],
+                "Accounts": [
+                  {
+                    "Code": "200",
+                    "Name": "Sales",
+                    "Type": "SALES",
+                    "ReportingCode": "REV.TRA.GOO"
+                  },
+                  {
+                    "Code": "400",
+                    "Name": "Advertising",
+                    "Type": "OVERHEADS",
+                    "ReportingCode": "EXP"
+                  },
+                  {
+                    "Code": "610",
+                    "Name": "Accounts Receivable",
+                    "Type": "CURRENT",
+                    "SystemAccount": "DEBTORS",
+                    "ReportingCode": "ASS.CUR.REC.TRA"
+                  },
+                  {
+                    "Code": "800",
+                    "Name": "Accounts Payable",
+                    "Type": "CURRLIAB",
+                    "SystemAccount": "CREDITORS",
+                    "ReportingCode": "LIA.CUR.PAY"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getTaxRates",
+      "title": "Retrieves tax rates",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/TaxRates",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        }
+      ]
+    },
+    {
+      "connector": "xero.createTaxRates",
+      "title": "Creates one or more tax rates",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/TaxRates",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxRates"
+              },
+              "example": {
+                "TaxRates": [
+                  {
+                    "Name": "CA State Tax",
+                    "TaxComponents": [
+                      {
+                        "Name": "State Tax",
+                        "Rate": 2.25
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.updateTaxRate",
+      "title": "Updates tax rates",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/TaxRates",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaxRates"
+              },
+              "example": {
+                "TaxRates": [
+                  {
+                    "Name": "State Tax NY",
+                    "TaxComponents": [
+                      {
+                        "Name": "State Tax",
+                        "Rate": 2.25
+                      }
+                    ],
+                    "Status": "DELETED",
+                    "ReportTaxType": "INPUT"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getTaxRateByTaxType",
+      "title": "Retrieves a specific tax rate according to given TaxType code",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/TaxRates/{TaxType}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getTrackingCategories",
+      "title": "Retrieves tracking categories and options",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/TrackingCategories",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        },
+        {
+          "name": "includeArchived",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "e.g. includeArchived=true - Categories and options with a status of ARCHIVED will be included in the response"
+        }
+      ]
+    },
+    {
+      "connector": "xero.createTrackingCategory",
+      "title": "Create tracking categories",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/TrackingCategories",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrackingCategory"
+              },
+              "example": {
+                "name": "FooBar"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.getTrackingCategory",
+      "title": "Retrieves specific tracking categories and options using a unique tracking category Id",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/TrackingCategories/{TrackingCategoryID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.updateTrackingCategory",
+      "title": "Updates a specific tracking category",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/TrackingCategories/{TrackingCategoryID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrackingCategory"
+              },
+              "example": {
+                "Name": "Avengers"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.deleteTrackingCategory",
+      "title": "Deletes a specific tracking category",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/TrackingCategories/{TrackingCategoryID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.createTrackingOptions",
+      "title": "Creates options for a specific tracking category",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/TrackingCategories/{TrackingCategoryID}/Options",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrackingOption"
+              },
+              "example": {
+                "name": " Bar"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.updateTrackingOptions",
+      "title": "Updates a specific option for a specific tracking category",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/TrackingCategories/{TrackingCategoryID}/Options/{TrackingOptionID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrackingOption"
+              },
+              "example": {
+                "name": "Vision"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "xero.deleteTrackingOptions",
+      "title": "Deletes a specific option for a specific tracking category",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/TrackingCategories/{TrackingCategoryID}/Options/{TrackingOptionID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "xero.getUsers",
+      "title": "Retrieves users",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Users",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "where",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by an any element"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Order by an any element"
+        }
+      ]
+    },
+    {
+      "connector": "xero.getUser",
+      "title": "Retrieves a specific user",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.xero.com/api.xro/2.0",
+      "path": "/Users/{UserID}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    }
+  ]
+}

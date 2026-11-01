@@ -1,0 +1,483 @@
+{
+  "name": "personio",
+  "title": "Personio",
+  "source": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/personio.de/personnel/1.0/openapi.yaml",
+  "authentication": "bearer",
+  "operations": [
+    {
+      "connector": "personio.get_company_attendances",
+      "title": "This endpoint is responsible for fetching attendance data for the company employees. It is possible to paginate results, filter by period, the date and/or time it was updated, and/or specific employees. The result will contain a list of attendance periods, structured as defined here.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.personio.de/v1",
+      "path": "/company/attendances",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "format": "date",
+            "type": "string"
+          },
+          "description": "First day of the period to be queried. It is inclusive, so the day specified as start_date will also be considered on the results"
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "format": "date",
+            "type": "string"
+          },
+          "description": "Last day of the period to be queried. It is inclusive, so the day specified as end_date will also be considered on the results."
+        },
+        {
+          "name": "updated_from",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "format": "datetime",
+            "type": "string"
+          },
+          "description": "Datetime from when the queried periods have been updated. Same format as updated_at. It is inclusive, so the day specified as updated_from will also be considered on the results. Can be just the date, or the date and the time, with or without the timezone."
+        },
+        {
+          "name": "updated_to",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "format": "datetime",
+            "type": "string"
+          },
+          "description": "Datetime until when the queried periods have been updated. Same format as updated_at. It is inclusive, so the day specified as updated_to will also be considered on the results. Can be just the date, or the date and the time, with or without the timezone."
+        },
+        {
+          "name": "employees",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "description": "A list of Personio employee identifiers to filter the results. Only those employees specified here will be returned."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "description": "Pagination attribute to limit how many attendances will be returned per page"
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 0,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "description": "Pagination attribute to identify which page you are requesting, by the form of telling an offset from the first record that would be returned."
+        }
+      ]
+    },
+    {
+      "connector": "personio.post_company_attendances",
+      "title": "This endpoint is responsible for adding attendance data for the company employees. It is possible to add attendances for one or many employees at the same time. The payload sent on the request should be a list of attendance periods, in the form of an array containing attendance period objects.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.personio.de/v1",
+      "path": "/company/attendances",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewAttendancePeriodRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "personio.delete_company_attendances_id",
+      "title": "This endpoint is responsible for deleting attendance data for the company employees.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.personio.de/v1",
+      "path": "/company/attendances/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "description": "ID of the attendance period to delete"
+        }
+      ]
+    },
+    {
+      "connector": "personio.patch_company_attendances_id",
+      "title": "This endpoint is responsible for updating attendance data for the company employees. Attributes are not required and if not specified, the current value will be used. It is not possible to change the employee id.",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.personio.de/v1",
+      "path": "/company/attendances/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "description": "ID of the attendance period to update"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAttendancePeriodRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "personio.get_company_employees",
+      "title": "List Employees",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.personio.de/v1",
+      "path": "/company/employees",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "personio.post_company_employees",
+      "title": "Create an employee",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.personio.de/v1",
+      "path": "/company/employees",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "properties": {
+                  "employee[department]": {
+                    "description": "Employee department",
+                    "type": "string"
+                  },
+                  "employee[email]": {
+                    "description": "Employee email",
+                    "type": "string"
+                  },
+                  "employee[first_name]": {
+                    "description": "Employee first name",
+                    "type": "string"
+                  },
+                  "employee[gender]": {
+                    "description": "Employee gender",
+                    "enum": [
+                      "male",
+                      "female",
+                      "diverse"
+                    ],
+                    "type": "string"
+                  },
+                  "employee[hire_date]": {
+                    "description": "Employee hire date",
+                    "format": "date",
+                    "type": "string"
+                  },
+                  "employee[last_name]": {
+                    "description": "Employee last name",
+                    "type": "string"
+                  },
+                  "employee[position]": {
+                    "description": "Employee position",
+                    "type": "string"
+                  },
+                  "employee[weekly_hours]": {
+                    "description": "Employee weekly working hours",
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "employee[email]",
+                  "employee[first_name]",
+                  "employee[last_name]"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "personio.get_company_employees_employee_id",
+      "title": "Show employee by ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.personio.de/v1",
+      "path": "/company/employees/{employee_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "employee_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "description": "Numeric `id` of the employee"
+        }
+      ]
+    },
+    {
+      "connector": "personio.get_company_employees_employee_id_profile-picture_width",
+      "title": "Show employee profile picture",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.personio.de/v1",
+      "path": "/company/employees/{employee_id}/profile-picture/{width}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "employee_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "description": "Numeric `id` of the employee"
+        },
+        {
+          "name": "width",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "description": "Width of the image. Default 75x75"
+        }
+      ]
+    },
+    {
+      "connector": "personio.get_company_time-off-types",
+      "title": "Provides a list of available time-off types, for example 'Paid vacation', 'Parental leave' or 'Home office'",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.personio.de/v1",
+      "path": "/company/time-off-types",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "description": "Pagination attribute to limit how many records will be returned per page"
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 0,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "description": "Pagination attribute to identify which page you are requesting, by the form of telling an offset from the first record that would be returned."
+        }
+      ]
+    },
+    {
+      "connector": "personio.get_company_time-offs",
+      "title": "This endpoint is responsible for fetching absence data for the company employees. It is possible to paginate results, filter by period and/or specific employees. The result will contain a list of absence periods, structured as defined here.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.personio.de/v1",
+      "path": "/company/time-offs",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "start_date",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "format": "date",
+            "type": "string"
+          },
+          "description": "First day of the period to be queried. It is inclusive, so the day specified as start_date will also be considered on the results"
+        },
+        {
+          "name": "end_date",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "format": "date",
+            "type": "string"
+          },
+          "description": "Last day of the period to be queried. It is inclusive, so the day specified as end_date will also be considered on the results."
+        },
+        {
+          "name": "updated_from",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "format": "datetime",
+            "type": "string"
+          },
+          "description": "Datetime from when the queried periods have been updated. It is inclusive, so the day specified as updated_from will also be considered on the results."
+        },
+        {
+          "name": "updated_to",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "format": "datetime",
+            "type": "string"
+          },
+          "description": "Datetime until when the queried periods have been updated. It is inclusive, so the day specified as updated_to will also be considered on the results."
+        },
+        {
+          "name": "employees",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "description": "A list of Personio employee identifiers to filter the results. Only those employees specified here will be returned."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "description": "Pagination attribute to limit how many attendances will be returned per page"
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 0,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "description": "Pagination attribute to identify which page you are requesting, by the form of telling an offset from the first record that would be returned."
+        }
+      ]
+    },
+    {
+      "connector": "personio.post_company_time-offs",
+      "title": "This endpoint is responsible for adding absence data for the company employees.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.personio.de/v1",
+      "path": "/company/time-offs",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTimeOffPeriodRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "personio.delete_company_time-offs_id",
+      "title": "This endpoint is responsible for deleting absence period data for the company employees.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.personio.de/v1",
+      "path": "/company/time-offs/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "description": "ID of the absence period to delete"
+        }
+      ]
+    },
+    {
+      "connector": "personio.get_company_time-offs_id",
+      "title": "Absence Period",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.personio.de/v1",
+      "path": "/company/time-offs/{id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "description": "Numeric `id` of the absence period"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3128 @@
+{
+  "name": "twilio",
+  "title": "Twilio",
+  "source": "https://raw.githubusercontent.com/twilio/twilio-oai/main/spec/json/twilio_messaging_v1.json",
+  "authentication": "basic",
+  "operations": [
+    {
+      "connector": "twilio.CreateAlphaSender",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{ServiceSid}/AlphaSenders",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to create the resource under."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateAlphaSenderRequest",
+                "properties": {
+                  "AlphaSender": {
+                    "type": "string",
+                    "description": "The Alphanumeric Sender ID string. Can be up to 11 characters long. Valid characters are A-Z, a-z, 0-9, space, hyphen `-`, plus `+`, underscore `_` and ampersand `&`. This value cannot contain only numbers."
+                  }
+                },
+                "required": [
+                  "AlphaSender"
+                ]
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "AlphaSender": "Twilio"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio.ListAlphaSender",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{ServiceSid}/AlphaSenders",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to read the resources from."
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.FetchAlphaSender",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{ServiceSid}/AlphaSenders/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to fetch the resource from."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the AlphaSender resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.DeleteAlphaSender",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{ServiceSid}/AlphaSenders/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to delete the resource from."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the AlphaSender resource to delete."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.CreateBrandRegistrationOtp",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/a2p/BrandRegistrations/{BrandRegistrationSid}/SmsOtp",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "BrandRegistrationSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^BN[0-9a-fA-F]{32}$"
+          },
+          "description": "Brand Registration Sid of Sole Proprietor Brand."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.FetchBrandRegistrations",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/a2p/BrandRegistrations/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^BN[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Brand Registration resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.UpdateBrandRegistrations",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/a2p/BrandRegistrations/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^BN[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Brand Registration resource to update."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.ListBrandRegistrations",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/a2p/BrandRegistrations",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.CreateBrandRegistrations",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/a2p/BrandRegistrations",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateBrandRegistrationsRequest",
+                "properties": {
+                  "CustomerProfileBundleSid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^BU[0-9a-fA-F]{32}$",
+                    "description": "Customer Profile Bundle Sid."
+                  },
+                  "A2PProfileBundleSid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^BU[0-9a-fA-F]{32}$",
+                    "description": "A2P Messaging Profile Bundle Sid."
+                  },
+                  "BrandType": {
+                    "type": "string",
+                    "description": "Type of brand being created. One of: \"STANDARD\", \"SOLE_PROPRIETOR\". SOLE_PROPRIETOR is for low volume, SOLE_PROPRIETOR use cases. STANDARD is for all other use cases."
+                  },
+                  "Mock": {
+                    "type": "boolean",
+                    "description": "A boolean that specifies whether brand should be a mock or not. If true, brand will be registered as a mock brand. Defaults to false if no value is provided."
+                  },
+                  "SkipAutomaticSecVet": {
+                    "type": "boolean",
+                    "description": "A flag to disable automatic secondary vetting for brands which it would otherwise be done."
+                  }
+                },
+                "required": [
+                  "CustomerProfileBundleSid",
+                  "A2PProfileBundleSid"
+                ]
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "CustomerProfileBundleSid": "BU0000009f7e067e279523808d267e2d90",
+                    "A2PProfileBundleSid": "BU1111109f7e067e279523808d267e2d85",
+                    "BrandType": "STANDARD",
+                    "SkipAutomaticSecVet": false,
+                    "Mock": false
+                  }
+                },
+                "createSoleProprietorBrand": {
+                  "value": {
+                    "CustomerProfileBundleSid": "BU0000009f7e067e279523808d267e2d90",
+                    "A2PProfileBundleSid": "BU1111109f7e067e279523808d267e2d85",
+                    "BrandType": "STANDARD",
+                    "SkipAutomaticSecVet": false,
+                    "Mock": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio.CreateBrandVetting",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/a2p/BrandRegistrations/{BrandSid}/Vettings",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "BrandSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^BN[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Brand Registration resource of the vettings to create ."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateBrandVettingRequest",
+                "properties": {
+                  "VettingProvider": {
+                    "$ref": "#/components/schemas/brand_vetting_enum_vetting_provider"
+                  },
+                  "VettingId": {
+                    "type": "string",
+                    "description": "The unique ID of the vetting"
+                  }
+                },
+                "required": [
+                  "VettingProvider"
+                ]
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "VettingProvider": "campaign-verify",
+                    "VettingId": "cv|1.0|tcr|10dlc|9975c339-d46f-49b7-a399-EXAMPLETOKEN|GQ3EXAMPLETOKENAXXBUNBT2AgL-LdQuPveFhEyY"
+                  }
+                },
+                "create202Response": {
+                  "value": {
+                    "VettingProvider": "campaign-verify",
+                    "VettingId": "cv|1.0|tcr|10dlc|9975c339-d46f-49b7-a399-EXAMPLETOKEN|GQ3EXAMPLETOKENAXXBUNBT2AgL-LdQuPveFhEyY"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio.ListBrandVetting",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/a2p/BrandRegistrations/{BrandSid}/Vettings",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "BrandSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^BN[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Brand Registration resource of the vettings to read ."
+        },
+        {
+          "name": "VettingProvider",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/brand_vetting_enum_vetting_provider"
+          },
+          "description": "The third-party provider of the vettings to read"
+        }
+      ]
+    },
+    {
+      "connector": "twilio.FetchBrandVetting",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/a2p/BrandRegistrations/{BrandSid}/Vettings/{BrandVettingSid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "BrandSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^BN[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Brand Registration resource of the vettings to read ."
+        },
+        {
+          "name": "BrandVettingSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^VT[0-9a-fA-F]{32}$"
+          },
+          "description": "The Twilio SID of the third-party vetting record."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.ListChannelSender",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{MessagingServiceSid}/ChannelSenders",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "MessagingServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to read the resources from."
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.CreateChannelSender",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{MessagingServiceSid}/ChannelSenders",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "MessagingServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to create the resource under."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateChannelSenderRequest",
+                "properties": {
+                  "Sid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^XE[0-9a-fA-F]{32}$",
+                    "description": "The SID of the Channel Sender being added to the Service."
+                  }
+                },
+                "required": [
+                  "Sid"
+                ]
+              },
+              "examples": {
+                "createwhatsappsender": {
+                  "value": {
+                    "Sid": "XEaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                  }
+                },
+                "createfbsender": {
+                  "value": {
+                    "Sid": "XEaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab"
+                  }
+                },
+                "creatercssender": {
+                  "value": {
+                    "Sid": "XEaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaac"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio.FetchChannelSender",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{MessagingServiceSid}/ChannelSenders/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "MessagingServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to fetch the resource from."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the ChannelSender resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.DeleteChannelSender",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{MessagingServiceSid}/ChannelSenders/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "MessagingServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to delete the resource from."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the Channel Sender resource to delete."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.FetchDeactivation",
+      "title": "Fetch a list of all United States numbers that have been deactivated on a specific date.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Deactivations",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Date",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "The request will return a list of all United States Phone Numbers that were deactivated on the day specified by this parameter. This date should be specified in YYYY-MM-DD format."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.CreateDestinationAlphaSender",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{ServiceSid}/DestinationAlphaSenders",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to create the resource under."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateDestinationAlphaSenderRequest",
+                "properties": {
+                  "AlphaSender": {
+                    "type": "string",
+                    "description": "The Alphanumeric Sender ID string. Can be up to 11 characters long. Valid characters are A-Z, a-z, 0-9, space, hyphen `-`, plus `+`, underscore `_` and ampersand `&`. This value cannot contain only numbers."
+                  },
+                  "IsoCountryCode": {
+                    "type": "string",
+                    "description": "The Optional Two Character ISO Country Code the Alphanumeric Sender ID will be used for. If the IsoCountryCode is not provided, a default Alpha Sender will be created that can be used across all countries."
+                  }
+                },
+                "required": [
+                  "AlphaSender"
+                ]
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "AlphaSender": "Twilio",
+                    "IsoCountryCode": "FR"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio.ListDestinationAlphaSender",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{ServiceSid}/DestinationAlphaSenders",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to read the resources from."
+        },
+        {
+          "name": "IsoCountryCode",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Optional filter to return only alphanumeric sender IDs associated with the specified two-character ISO country code."
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.FetchDestinationAlphaSender",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{ServiceSid}/DestinationAlphaSenders/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to fetch the resource from."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the AlphaSender resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.DeleteDestinationAlphaSender",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{ServiceSid}/DestinationAlphaSenders/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to delete the resource from."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the AlphaSender resource to delete."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.UpdateDomainCertV4",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/LinkShortening/Domains/{DomainSid}/Certificate",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "DomainSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^DN[0-9a-fA-F]{32}$"
+          },
+          "description": "Unique string used to identify the domain that this certificate should be associated with."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "UpdateDomainCertV4Request",
+                "properties": {
+                  "TlsCert": {
+                    "type": "string",
+                    "description": "Contains the full TLS certificate and private for this domain in PEM format: https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail. Twilio uses this information to process HTTPS traffic sent to your domain."
+                  }
+                },
+                "required": [
+                  "TlsCert"
+                ]
+              },
+              "examples": {
+                "update": {
+                  "value": {
+                    "TlsCert": "-----BEGIN CERTIFICATE-----MIIDcDCCAlgCCQD0iHbJmcUyYDANBgkqhkiG9w0BAQsFADB6MQswCQYDVQQGEwJ1czELMAkGA1UECAwCdXMxCzAJBgNVBAcMAnVzMQswCQYDVQQKDAJ1czELMAkGA1UECwwCdXMxGDAWBgNVBAMMD2FwaS5leGFtcGxlLmNvbTEdMBsGCSqGSIb3DQEJARYOamRqZEBmamZkai5jb20wHhcNMjAwMjA3MTgwMjA0WhcNMjEwMjA2MTgwMjA0WjB6MQswCQYDVQQGEwJ1czELMAkGA1UECAwCdXMxCzAJBgNVBAcMAnVzMQswCQYDVQQKDAJ1czELMAkGA1UECwwCdXMxGDAWBgNVBAMMD2FwaS5leGFtcGxlLmNvbTEdMBsGCSqGSIb3DQEJARYOamRqZEBmamZkai5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCo6AAEeYlR6bFAnxRvx/0BsKfZVhOlB3ua+fQc3yvdDbpQ+zxpKl4bki0HU9q2flRSc52NV6m1XGtSknHSuTlTPj3eRTJpbVpSDfI55zSKsMOgo7JvjdYZXzzPQqhruWXw2exwK1wQjVko3AIW/G2vC4nSPa7C2cxhQe6lYDhJazwFi1/TN0nqKPDuU9DL2BohjX40NzXpJ3yFEHogPTrzHyADIDtXqJzWofzz4zbkNuLAfijmHQnudvDpJoGZzzVOLk8i4eIY8aQECBC+8E2hmlJGhUSONqIYrdy0MD800ervCor0WhAdPe1293fkMER9PjYgtpP2CeSf1umUzwZjAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAHjWBgL4K7BuYF50ocWm5nMk4X0wsLx6+Z4n3cQurFOPBH0lKzUgxp8s/CDDI9Qa5/WTk2C0bvarcQdf0pjX5foNc/WtHmr1wu0w5Ykjhbw/uBDXzdMy2Dnk6hvDJYuXP+0VVw4tykXIE4mBYNG/dk5vptY5OG/YBMMR995pXLn8a0FJNdnznx0ocWpCeLVP6ddzgRYsU0BdO7v9lQRhRnxBYpL52VQ4uNcW77WcirLFpbbbQTDRQcTAE8maVGgO2Q/mG572/OzQ3VryNbuc2/fYJvZuavawIQR1/H9SA6aT5+fruz1e0UuPpIkKDS4emuqIOKIRpB4lIJj97esKhX8=-----END CERTIFICATE----------BEGIN PRIVATE KEY-----\nMIIEpAIBAAKCAQEAu3589qzU1kyEjPJ8v3p7RGOaESNX4+hDw3Nv6nPNd1ysTVXV\n80+v2iTANVlCLK6bpqOVq8VMs+6BAcWrZvfgBwKnad+cqLbrgjSsMLOD5e+zNO7A\np1ItO/dpecLbTN4HItbiywAk/HKVZ11/1mh4wPvKtpIUJpBwB2h4j3oGBIjhK3MP\nk0evPohP+kWIBHT73cK/IkcpSIptDEhzKfwnYbni7N4TrF84ba+ykFJn1N5/mD8R\nZT4jFhRKOwVNtfW+b8svlVt2n9O8viaUHO4UaAmkSsGuLd7BbfUUaMCBhVZECDnX\nG2xmOWAj7DW/NMUFNZiKfsCuBo0l4EBH9V8plQIDAQABAoIBAQChHptIZ1EnLu4h\nKSgma5yOMoFtBNA8W5YP2Z1s/kKstgijFIYc5neZoEdEEQYa25mKY7z0tUGqxeQ6\nn6EhhRURMSiohK5dFYPgil8GIt3PtGJttFX981JH297Z8ab+sTW0rLCL/f3KqrTU\n9LYsi+5o+HdE2NdUJH8A/rfLo/KT5Yv5qWgR0F3R6iYBpsq1TAfuYTN0HZPURXUq\n3QkWwICdvKEvx/at92Q9a91Rkm+c+31CgmzSJBsNerSZLC3y/KOlVA3fNtq8Bzjh\nTOw4ReH1Bwze18mt+zOQ0t/2l7uIFGkhqDczqVlJUNKWDZ7s9o7CdOxwfVdUP9ft\nBtm1ZXeBAoGBAN2SracmzVLHOnQJLlPm2LAy8Y7Yl7VNL7bk9dN/+A7HXjIEUsFR\n/B6zfoYsVLmYbjhqFpMAzepj5HXdI2FRw30nB9SJguW9D4jPJrS635aD5+UM7sKY\n/77OKIv5gTRhaHP1gFPMsUQRZZ8RAfL4lXDlOGwKMYT9Hmx+s30runlFAoGBANig\nSIXbCNKM/vc+Xx9nyqfAHzEw444erVEoW7S/ZoL1z2+47Z+Cu9Il+i1bWKazvOEx\n4xN8aGEga0uCBEGB3g7o7LlxoMqexfZiMgWiLTXB1cpOVvV7oT8ZVm8sJXH/PwBG\nSLR7igcBuOF2888rPf1+slz/HqOSATgufXYCxGwRAoGAF9Tz+puQ0At/vQVTx1B4\nFBOWqb+gKa8Ap9Jeon4MJ0LIXebbI9H2pTK3NCVGg6PijwzSGsOmYkSWSRsc+BW8\nShTNoc2cl6tLJXLqfdvvupe7dIZ8k8+zCknQUKXogMLNYlOQlvLYSjL41DAXHpQg\nNsFg3TYHd39mK1NBaQAwEWUCgYBuJVmazht3S3/c4VbmlhTCJPr3PR+HROvlZzrx\n9Zw/HJOEACi6wXOU0ACcDWVPJfb1HjOS1eAQ+rXzp8FYOZtaQ28Sf8c9H2wS8izz\nFlocilmVSy4GFf2QIucDEhRcGWfEUPho5KPzGhoScjRX82nKuiAhDwtaKkP6eBEM\n7y1GsQKBgQDYA+/CsjoDT//pc1AaetuBT0INviCGJKiRDJwvVJgwi/CHZYUZuXbv\nsyI3EUey4OL7in0N4oxCuBMEs+PVz39PRfANFTqQ/j74jazUnmCRHlReJy5A8DvZ\n9tUKnGAnoUlrl7oz139om8ZW+DjLBRgr8ao1bC8UC8jX4SpB1IMP0Q==\n-----END PRIVATE KEY-----"
+                  }
+                },
+                "create": {
+                  "value": {
+                    "TlsCert": "-----BEGIN CERTIFICATE-----MIIDcDCCAlgCCQD0iHbJmcUyYDANBgkqhkiG9w0BAQsFADB6MQswCQYDVQQGEwJ1czELMAkGA1UECAwCdXMxCzAJBgNVBAcMAnVzMQswCQYDVQQKDAJ1czELMAkGA1UECwwCdXMxGDAWBgNVBAMMD2FwaS5leGFtcGxlLmNvbTEdMBsGCSqGSIb3DQEJARYOamRqZEBmamZkai5jb20wHhcNMjAwMjA3MTgwMjA0WhcNMjEwMjA2MTgwMjA0WjB6MQswCQYDVQQGEwJ1czELMAkGA1UECAwCdXMxCzAJBgNVBAcMAnVzMQswCQYDVQQKDAJ1czELMAkGA1UECwwCdXMxGDAWBgNVBAMMD2FwaS5leGFtcGxlLmNvbTEdMBsGCSqGSIb3DQEJARYOamRqZEBmamZkai5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCo6AAEeYlR6bFAnxRvx/0BsKfZVhOlB3ua+fQc3yvdDbpQ+zxpKl4bki0HU9q2flRSc52NV6m1XGtSknHSuTlTPj3eRTJpbVpSDfI55zSKsMOgo7JvjdYZXzzPQqhruWXw2exwK1wQjVko3AIW/G2vC4nSPa7C2cxhQe6lYDhJazwFi1/TN0nqKPDuU9DL2BohjX40NzXpJ3yFEHogPTrzHyADIDtXqJzWofzz4zbkNuLAfijmHQnudvDpJoGZzzVOLk8i4eIY8aQECBC+8E2hmlJGhUSONqIYrdy0MD800ervCor0WhAdPe1293fkMER9PjYgtpP2CeSf1umUzwZjAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAHjWBgL4K7BuYF50ocWm5nMk4X0wsLx6+Z4n3cQurFOPBH0lKzUgxp8s/CDDI9Qa5/WTk2C0bvarcQdf0pjX5foNc/WtHmr1wu0w5Ykjhbw/uBDXzdMy2Dnk6hvDJYuXP+0VVw4tykXIE4mBYNG/dk5vptY5OG/YBMMR995pXLn8a0FJNdnznx0ocWpCeLVP6ddzgRYsU0BdO7v9lQRhRnxBYpL52VQ4uNcW77WcirLFpbbbQTDRQcTAE8maVGgO2Q/mG572/OzQ3VryNbuc2/fYJvZuavawIQR1/H9SA6aT5+fruz1e0UuPpIkKDS4emuqIOKIRpB4lIJj97esKhX8=-----END CERTIFICATE----------BEGIN PRIVATE KEY-----\nMIIEpAIBAAKCAQEAu3589qzU1kyEjPJ8v3p7RGOaESNX4+hDw3Nv6nPNd1ysTVXV\n80+v2iTANVlCLK6bpqOVq8VMs+6BAcWrZvfgBwKnad+cqLbrgjSsMLOD5e+zNO7A\np1ItO/dpecLbTN4HItbiywAk/HKVZ11/1mh4wPvKtpIUJpBwB2h4j3oGBIjhK3MP\nk0evPohP+kWIBHT73cK/IkcpSIptDEhzKfwnYbni7N4TrF84ba+ykFJn1N5/mD8R\nZT4jFhRKOwVNtfW+b8svlVt2n9O8viaUHO4UaAmkSsGuLd7BbfUUaMCBhVZECDnX\nG2xmOWAj7DW/NMUFNZiKfsCuBo0l4EBH9V8plQIDAQABAoIBAQChHptIZ1EnLu4h\nKSgma5yOMoFtBNA8W5YP2Z1s/kKstgijFIYc5neZoEdEEQYa25mKY7z0tUGqxeQ6\nn6EhhRURMSiohK5dFYPgil8GIt3PtGJttFX981JH297Z8ab+sTW0rLCL/f3KqrTU\n9LYsi+5o+HdE2NdUJH8A/rfLo/KT5Yv5qWgR0F3R6iYBpsq1TAfuYTN0HZPURXUq\n3QkWwICdvKEvx/at92Q9a91Rkm+c+31CgmzSJBsNerSZLC3y/KOlVA3fNtq8Bzjh\nTOw4ReH1Bwze18mt+zOQ0t/2l7uIFGkhqDczqVlJUNKWDZ7s9o7CdOxwfVdUP9ft\nBtm1ZXeBAoGBAN2SracmzVLHOnQJLlPm2LAy8Y7Yl7VNL7bk9dN/+A7HXjIEUsFR\n/B6zfoYsVLmYbjhqFpMAzepj5HXdI2FRw30nB9SJguW9D4jPJrS635aD5+UM7sKY\n/77OKIv5gTRhaHP1gFPMsUQRZZ8RAfL4lXDlOGwKMYT9Hmx+s30runlFAoGBANig\nSIXbCNKM/vc+Xx9nyqfAHzEw444erVEoW7S/ZoL1z2+47Z+Cu9Il+i1bWKazvOEx\n4xN8aGEga0uCBEGB3g7o7LlxoMqexfZiMgWiLTXB1cpOVvV7oT8ZVm8sJXH/PwBG\nSLR7igcBuOF2888rPf1+slz/HqOSATgufXYCxGwRAoGAF9Tz+puQ0At/vQVTx1B4\nFBOWqb+gKa8Ap9Jeon4MJ0LIXebbI9H2pTK3NCVGg6PijwzSGsOmYkSWSRsc+BW8\nShTNoc2cl6tLJXLqfdvvupe7dIZ8k8+zCknQUKXogMLNYlOQlvLYSjL41DAXHpQg\nNsFg3TYHd39mK1NBaQAwEWUCgYBuJVmazht3S3/c4VbmlhTCJPr3PR+HROvlZzrx\n9Zw/HJOEACi6wXOU0ACcDWVPJfb1HjOS1eAQ+rXzp8FYOZtaQ28Sf8c9H2wS8izz\nFlocilmVSy4GFf2QIucDEhRcGWfEUPho5KPzGhoScjRX82nKuiAhDwtaKkP6eBEM\n7y1GsQKBgQDYA+/CsjoDT//pc1AaetuBT0INviCGJKiRDJwvVJgwi/CHZYUZuXbv\nsyI3EUey4OL7in0N4oxCuBMEs+PVz39PRfANFTqQ/j74jazUnmCRHlReJy5A8DvZ\n9tUKnGAnoUlrl7oz139om8ZW+DjLBRgr8ao1bC8UC8jX4SpB1IMP0Q==\n-----END PRIVATE KEY-----"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio.FetchDomainCertV4",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/LinkShortening/Domains/{DomainSid}/Certificate",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "DomainSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^DN[0-9a-fA-F]{32}$"
+          },
+          "description": "Unique string used to identify the domain that this certificate should be associated with."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.DeleteDomainCertV4",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/LinkShortening/Domains/{DomainSid}/Certificate",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "DomainSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^DN[0-9a-fA-F]{32}$"
+          },
+          "description": "Unique string used to identify the domain that this certificate should be associated with."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.UpdateDomainConfig",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/LinkShortening/Domains/{DomainSid}/Config",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "DomainSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^DN[0-9a-fA-F]{32}$"
+          },
+          "description": "Unique string used to identify the domain that this config should be associated with."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "UpdateDomainConfigRequest",
+                "properties": {
+                  "FallbackUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Any requests we receive to this domain that do not match an existing shortened message will be redirected to the fallback url. These will likely be either expired messages, random misdirected traffic, or intentional scraping."
+                  },
+                  "CallbackUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL to receive click events to your webhook whenever the recipients click on the shortened links"
+                  },
+                  "ContinueOnFailure": {
+                    "type": "boolean",
+                    "description": "Boolean field to set customer delivery preference when there is a failure in linkShortening service"
+                  },
+                  "DisableHttps": {
+                    "type": "boolean",
+                    "description": "Customer's choice to send links with/without \"https://\" attached to shortened url. If true, messages will not be sent with https:// at the beginning of the url. If false, messages will be sent with https:// at the beginning of the url. False is the default behavior if it is not specified."
+                  }
+                }
+              },
+              "examples": {
+                "update": {
+                  "value": {
+                    "FallbackUrl": "https://www.example.com",
+                    "CallbackUrl": "https://www.example.com",
+                    "ContinueOnFailure": true,
+                    "DisableHttps": false
+                  }
+                },
+                "create": {
+                  "value": {
+                    "FallbackUrl": "https://www.example.com",
+                    "CallbackUrl": "https://www.example.com",
+                    "DisableHttps": false,
+                    "ContinueOnFailure": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio.FetchDomainConfig",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/LinkShortening/Domains/{DomainSid}/Config",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "DomainSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^DN[0-9a-fA-F]{32}$"
+          },
+          "description": "Unique string used to identify the domain that this config should be associated with."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.FetchDomainConfigMessagingService",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/LinkShortening/MessagingService/{MessagingServiceSid}/DomainConfig",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "MessagingServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "Unique string used to identify the Messaging service that this domain should be associated with."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.FetchDomainDnsValidation",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/LinkShortening/Domains/{DomainSid}/ValidateDns",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "DomainSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^DN[0-9a-fA-F]{32}$"
+          },
+          "description": "Unique string used to identify the domain."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.CreateExternalCampaign",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/PreregisteredUsa2p",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateExternalCampaignRequest",
+                "properties": {
+                  "CampaignId": {
+                    "type": "string",
+                    "description": "ID of the preregistered campaign."
+                  },
+                  "MessagingServiceSid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^MG[0-9a-fA-F]{32}$",
+                    "description": "The SID of the [Messaging Service](https://www.twilio.com/docs/messaging/api/service-resource) that the resource is associated with."
+                  },
+                  "CnpMigration": {
+                    "type": "boolean",
+                    "description": "Customers should use this flag during the ERC registration process to indicate to Twilio that the campaign being registered is undergoing CNP migration. It is important for the user to first trigger the CNP migration process for said campaign in their CSP portal and have Twilio accept the sharing request, before making this api call."
+                  }
+                },
+                "required": [
+                  "CampaignId",
+                  "MessagingServiceSid"
+                ]
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "MessagingServiceSid": "MGaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "CampaignId": "CMaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "CnpMigration": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio.CreateLinkshorteningMessagingService",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/LinkShortening/Domains/{DomainSid}/MessagingServices/{MessagingServiceSid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "DomainSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^DN[0-9a-fA-F]{32}$"
+          },
+          "description": "The domain SID to associate with a messaging service. With URL shortening enabled, links in messages sent with the associated messaging service will be shortened to the provided domain"
+        },
+        {
+          "name": "MessagingServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "A messaging service SID to associate with a domain. With URL shortening enabled, links in messages sent with the provided messaging service will be shortened to the associated domain"
+        }
+      ]
+    },
+    {
+      "connector": "twilio.DeleteLinkshorteningMessagingService",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/LinkShortening/Domains/{DomainSid}/MessagingServices/{MessagingServiceSid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "DomainSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^DN[0-9a-fA-F]{32}$"
+          },
+          "description": "The domain SID to dissociate from a messaging service. With URL shortening enabled, links in messages sent with the associated messaging service will be shortened to the provided domain"
+        },
+        {
+          "name": "MessagingServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "A messaging service SID to dissociate from a domain. With URL shortening enabled, links in messages sent with the provided messaging service will be shortened to the associated domain"
+        }
+      ]
+    },
+    {
+      "connector": "twilio.FetchLinkshorteningMessagingServiceDomainAssociation",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/LinkShortening/MessagingServices/{MessagingServiceSid}/Domain",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "MessagingServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "Unique string used to identify the Messaging service that this domain should be associated with."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.CreatePhoneNumber",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{ServiceSid}/PhoneNumbers",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to create the resource under."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreatePhoneNumberRequest",
+                "properties": {
+                  "PhoneNumberSid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^PN[0-9a-fA-F]{32}$",
+                    "description": "The SID of the Phone Number being added to the Service."
+                  }
+                },
+                "required": [
+                  "PhoneNumberSid"
+                ]
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "PhoneNumberSid": "PNaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                  }
+                },
+                "createWithCapabilities": {
+                  "value": {
+                    "PhoneNumberSid": "PNaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                  }
+                },
+                "createWithCapabilitiesWhenDownstreamResponse200": {
+                  "value": {
+                    "PhoneNumberSid": "PNaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio.ListPhoneNumber",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{ServiceSid}/PhoneNumbers",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to read the resources from."
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.DeletePhoneNumber",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{ServiceSid}/PhoneNumbers/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to delete the resource from."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the PhoneNumber resource to delete."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.FetchPhoneNumber",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{ServiceSid}/PhoneNumbers/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to fetch the resource from."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the PhoneNumber resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.UpdateRequestManagedCert",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/LinkShortening/Domains/{DomainSid}/RequestManagedCert",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "DomainSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^DN[0-9a-fA-F]{32}$"
+          },
+          "description": "Unique string used to identify the domain that this certificate should be associated with."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.CreateService",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateServiceRequest",
+                "properties": {
+                  "FriendlyName": {
+                    "type": "string",
+                    "description": "A descriptive string that you create to describe the resource. It can be up to 64 characters long."
+                  },
+                  "InboundRequestUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL we call using `inbound_method` when a message is received by any phone number or short code in the Service. When this property is `null`, receiving inbound messages is disabled. All messages sent to the Twilio phone number or short code will not be logged and received on the Account. If the `use_inbound_webhook_on_number` field is enabled then the webhook url defined on the phone number will override the `inbound_request_url` defined for the Messaging Service."
+                  },
+                  "InboundMethod": {
+                    "type": "string",
+                    "format": "http-method",
+                    "enum": [
+                      "GET",
+                      "POST"
+                    ],
+                    "description": "The HTTP method we should use to call `inbound_request_url`. Can be `GET` or `POST` and the default is `POST`."
+                  },
+                  "FallbackUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL that we call using `fallback_method` if an error occurs while retrieving or executing the TwiML from the Inbound Request URL. If the `use_inbound_webhook_on_number` field is enabled then the webhook url defined on the phone number will override the `fallback_url` defined for the Messaging Service."
+                  },
+                  "FallbackMethod": {
+                    "type": "string",
+                    "format": "http-method",
+                    "enum": [
+                      "GET",
+                      "POST"
+                    ],
+                    "description": "The HTTP method we should use to call `fallback_url`. Can be: `GET` or `POST`."
+                  },
+                  "StatusCallback": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL we should call to [pass status updates](https://www.twilio.com/docs/sms/api/message-resource#message-status-values) about message delivery."
+                  },
+                  "StickySender": {
+                    "type": "boolean",
+                    "description": "Whether to enable [Sticky Sender](https://www.twilio.com/docs/messaging/services#sticky-sender) on the Service instance."
+                  },
+                  "MmsConverter": {
+                    "type": "boolean",
+                    "description": "Whether to enable the [MMS Converter](https://www.twilio.com/docs/messaging/services#mms-converter) for messages sent through the Service instance."
+                  },
+                  "SmartEncoding": {
+                    "type": "boolean",
+                    "description": "Whether to enable [Smart Encoding](https://www.twilio.com/docs/messaging/services#smart-encoding) for messages sent through the Service instance."
+                  },
+                  "ScanMessageContent": {
+                    "$ref": "#/components/schemas/service_enum_scan_message_content"
+                  },
+                  "FallbackToLongCode": {
+                    "type": "boolean",
+                    "description": "[OBSOLETE] Former feature used to fallback to long code sender after certain short code message failures."
+                  },
+                  "AreaCodeGeomatch": {
+                    "type": "boolean",
+                    "description": "Whether to enable [Area Code Geomatch](https://www.twilio.com/docs/messaging/services#area-code-geomatch) on the Service Instance."
+                  },
+                  "ValidityPeriod": {
+                    "type": "integer",
+                    "description": "How long, in seconds, messages sent from the Service are valid. Can be an integer from `1` to `36,000`. Default value is `36,000`."
+                  },
+                  "SynchronousValidation": {
+                    "type": "boolean",
+                    "description": "Reserved."
+                  },
+                  "Usecase": {
+                    "type": "string",
+                    "description": "A string that describes the scenario in which the Messaging Service will be used. Possible values are `notifications`, `marketing`, `verification`, `discussion`, `poll`, `undeclared`."
+                  },
+                  "UseInboundWebhookOnNumber": {
+                    "type": "boolean",
+                    "description": "A boolean value that indicates either the webhook url configured on the phone number will be used or `inbound_request_url`/`fallback_url` url will be called when a message is received from the phone number. If this field is enabled then the webhook url defined on the phone number will override the `inbound_request_url`/`fallback_url` defined for the Messaging Service."
+                  }
+                },
+                "required": [
+                  "FriendlyName"
+                ]
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "FriendlyName": "My Service!",
+                    "StickySender": true,
+                    "MmsConverter": true,
+                    "SmartEncoding": false,
+                    "FallbackToLongCode": true,
+                    "InboundRequestUrl": "https://www.example.com",
+                    "InboundMethod": "POST",
+                    "FallbackMethod": "GET",
+                    "FallbackUrl": "https://www.example.com",
+                    "StatusCallback": "https://www.example.com",
+                    "ScanMessageContent": "inherit",
+                    "AreaCodeGeomatch": true,
+                    "ValidityPeriod": 600,
+                    "SynchronousValidation": true,
+                    "Usecase": "marketing",
+                    "UseInboundWebhookOnNumber": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio.ListService",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.UpdateService",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Service resource to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "UpdateServiceRequest",
+                "properties": {
+                  "FriendlyName": {
+                    "type": "string",
+                    "description": "A descriptive string that you create to describe the resource. It can be up to 64 characters long."
+                  },
+                  "InboundRequestUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL we call using `inbound_method` when a message is received by any phone number or short code in the Service. When this property is `null`, receiving inbound messages is disabled. All messages sent to the Twilio phone number or short code will not be logged and received on the Account. If the `use_inbound_webhook_on_number` field is enabled then the webhook url defined on the phone number will override the `inbound_request_url` defined for the Messaging Service."
+                  },
+                  "InboundMethod": {
+                    "type": "string",
+                    "format": "http-method",
+                    "enum": [
+                      "GET",
+                      "POST"
+                    ],
+                    "description": "The HTTP method we should use to call `inbound_request_url`. Can be `GET` or `POST` and the default is `POST`."
+                  },
+                  "FallbackUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL that we call using `fallback_method` if an error occurs while retrieving or executing the TwiML from the Inbound Request URL. If the `use_inbound_webhook_on_number` field is enabled then the webhook url defined on the phone number will override the `fallback_url` defined for the Messaging Service."
+                  },
+                  "FallbackMethod": {
+                    "type": "string",
+                    "format": "http-method",
+                    "enum": [
+                      "GET",
+                      "POST"
+                    ],
+                    "description": "The HTTP method we should use to call `fallback_url`. Can be: `GET` or `POST`."
+                  },
+                  "StatusCallback": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL we should call to [pass status updates](https://www.twilio.com/docs/sms/api/message-resource#message-status-values) about message delivery."
+                  },
+                  "StickySender": {
+                    "type": "boolean",
+                    "description": "Whether to enable [Sticky Sender](https://www.twilio.com/docs/messaging/services#sticky-sender) on the Service instance."
+                  },
+                  "MmsConverter": {
+                    "type": "boolean",
+                    "description": "Whether to enable the [MMS Converter](https://www.twilio.com/docs/messaging/services#mms-converter) for messages sent through the Service instance."
+                  },
+                  "SmartEncoding": {
+                    "type": "boolean",
+                    "description": "Whether to enable [Smart Encoding](https://www.twilio.com/docs/messaging/services#smart-encoding) for messages sent through the Service instance."
+                  },
+                  "ScanMessageContent": {
+                    "$ref": "#/components/schemas/service_enum_scan_message_content"
+                  },
+                  "FallbackToLongCode": {
+                    "type": "boolean",
+                    "description": "[OBSOLETE] Former feature used to fallback to long code sender after certain short code message failures."
+                  },
+                  "AreaCodeGeomatch": {
+                    "type": "boolean",
+                    "description": "Whether to enable [Area Code Geomatch](https://www.twilio.com/docs/messaging/services#area-code-geomatch) on the Service Instance."
+                  },
+                  "ValidityPeriod": {
+                    "type": "integer",
+                    "description": "How long, in seconds, messages sent from the Service are valid. Can be an integer from `1` to `36,000`. Default value is `36,000`."
+                  },
+                  "SynchronousValidation": {
+                    "type": "boolean",
+                    "description": "Reserved."
+                  },
+                  "Usecase": {
+                    "type": "string",
+                    "description": "A string that describes the scenario in which the Messaging Service will be used. Possible values are `notifications`, `marketing`, `verification`, `discussion`, `poll`, `undeclared`."
+                  },
+                  "UseInboundWebhookOnNumber": {
+                    "type": "boolean",
+                    "description": "A boolean value that indicates either the webhook url configured on the phone number will be used or `inbound_request_url`/`fallback_url` url will be called when a message is received from the phone number. If this field is enabled then the webhook url defined on the phone number will override the `inbound_request_url`/`fallback_url` defined for the Messaging Service."
+                  }
+                }
+              },
+              "examples": {
+                "update": {
+                  "value": {
+                    "StickySender": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio.FetchService",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Service resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.DeleteService",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Service resource to delete."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.CreateShortCode",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{ServiceSid}/ShortCodes",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to create the resource under."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateShortCodeRequest",
+                "properties": {
+                  "ShortCodeSid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^SC[0-9a-fA-F]{32}$",
+                    "description": "The SID of the ShortCode resource being added to the Service."
+                  }
+                },
+                "required": [
+                  "ShortCodeSid"
+                ]
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "ShortCodeSid": "SCaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                  }
+                },
+                "createwith200Downstreamresponse": {
+                  "value": {
+                    "ShortCodeSid": "SCaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio.ListShortCode",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{ServiceSid}/ShortCodes",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to read the resources from."
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.DeleteShortCode",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{ServiceSid}/ShortCodes/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to delete the resource from."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the ShortCode resource to delete."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.FetchShortCode",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{ServiceSid}/ShortCodes/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Service](https://www.twilio.com/docs/chat/rest/service-resource) to fetch the resource from."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The SID of the ShortCode resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.FetchTollfreeVerification",
+      "title": "Retrieve a tollfree verification",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Tollfree/Verifications/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^HH[0-9a-fA-F]{32}$"
+          },
+          "description": "A unique string identifying a Tollfree Verification."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.UpdateTollfreeVerification",
+      "title": "Edit a tollfree verification",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Tollfree/Verifications/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^HH[0-9a-fA-F]{32}$"
+          },
+          "description": "The unique string to identify Tollfree Verification."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "UpdateTollfreeVerificationRequest",
+                "properties": {
+                  "BusinessName": {
+                    "type": "string",
+                    "description": "The name of the business or organization using the Tollfree number."
+                  },
+                  "BusinessWebsite": {
+                    "type": "string",
+                    "description": "The website of the business or organization using the Tollfree number."
+                  },
+                  "NotificationEmail": {
+                    "type": "string",
+                    "description": "The email address to receive the notification about the verification result. ."
+                  },
+                  "UseCaseCategories": {
+                    "$ref": "#/components/schemas/tollfree_verification_enum_use_case_categories"
+                  },
+                  "UseCaseSummary": {
+                    "type": "string",
+                    "description": "Use this to further explain how messaging is used by the business or organization."
+                  },
+                  "ProductionMessageSample": {
+                    "type": "string",
+                    "description": "An example of message content, i.e. a sample message."
+                  },
+                  "OptInImageUrls": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Link to an image that shows the opt-in workflow. Multiple images allowed and must be a publicly hosted URL."
+                  },
+                  "OptInType": {
+                    "$ref": "#/components/schemas/tollfree_verification_enum_opt_in_type"
+                  },
+                  "MessageVolume": {
+                    "type": "string",
+                    "description": "Estimate monthly volume of messages from the Tollfree Number."
+                  },
+                  "BusinessStreetAddress": {
+                    "type": "string",
+                    "description": "The address of the business or organization using the Tollfree number."
+                  },
+                  "BusinessStreetAddress2": {
+                    "type": "string",
+                    "description": "The address of the business or organization using the Tollfree number."
+                  },
+                  "BusinessCity": {
+                    "type": "string",
+                    "description": "The city of the business or organization using the Tollfree number."
+                  },
+                  "BusinessStateProvinceRegion": {
+                    "type": "string",
+                    "description": "The state/province/region of the business or organization using the Tollfree number."
+                  },
+                  "BusinessPostalCode": {
+                    "type": "string",
+                    "description": "The postal code of the business or organization using the Tollfree number."
+                  },
+                  "BusinessCountry": {
+                    "type": "string",
+                    "description": "The country of the business or organization using the Tollfree number."
+                  },
+                  "AdditionalInformation": {
+                    "type": "string",
+                    "description": "Additional information to be provided for verification."
+                  },
+                  "BusinessContactFirstName": {
+                    "type": "string",
+                    "description": "The first name of the contact for the business or organization using the Tollfree number."
+                  },
+                  "BusinessContactLastName": {
+                    "type": "string",
+                    "description": "The last name of the contact for the business or organization using the Tollfree number."
+                  },
+                  "BusinessContactEmail": {
+                    "type": "string",
+                    "description": "The email address of the contact for the business or organization using the Tollfree number."
+                  },
+                  "BusinessContactPhone": {
+                    "type": "string",
+                    "format": "phone-number",
+                    "description": "The E.164 formatted phone number of the contact for the business or organization using the Tollfree number."
+                  },
+                  "EditReason": {
+                    "type": "string",
+                    "description": "Describe why the verification is being edited. If the verification was rejected because of a technical issue, such as the website being down, and the issue has been resolved this parameter should be set to something similar to 'Website fixed'."
+                  },
+                  "BusinessRegistrationNumber": {
+                    "type": "string",
+                    "description": "A legally recognized business registration number"
+                  },
+                  "BusinessRegistrationAuthority": {
+                    "$ref": "#/components/schemas/tollfree_verification_enum_business_registration_authority"
+                  },
+                  "BusinessRegistrationCountry": {
+                    "type": "string",
+                    "description": "Country business is registered in"
+                  },
+                  "BusinessType": {
+                    "$ref": "#/components/schemas/tollfree_verification_enum_business_type"
+                  },
+                  "BusinessRegistrationPhoneNumber": {
+                    "type": "string",
+                    "description": "The E.164 formatted number associated with the business."
+                  },
+                  "DoingBusinessAs": {
+                    "type": "string",
+                    "description": "Trade name, sub entity, or downstream business name of business being submitted for verification"
+                  },
+                  "OptInConfirmationMessage": {
+                    "type": "string",
+                    "description": "The confirmation message sent to users when they opt in to receive messages."
+                  },
+                  "HelpMessageSample": {
+                    "type": "string",
+                    "description": "A sample help message provided to users."
+                  },
+                  "PrivacyPolicyUrl": {
+                    "type": "string",
+                    "description": "The URL to the privacy policy for the business or organization."
+                  },
+                  "TermsAndConditionsUrl": {
+                    "type": "string",
+                    "description": "The URL to the terms and conditions for the business or organization."
+                  },
+                  "AgeGatedContent": {
+                    "type": "boolean",
+                    "description": "Indicates if the content is age gated."
+                  },
+                  "OptInKeywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of keywords that users can text in to opt in to receive messages."
+                  },
+                  "VettingProvider": {
+                    "$ref": "#/components/schemas/tollfree_verification_enum_vetting_provider"
+                  },
+                  "VettingId": {
+                    "type": "string",
+                    "description": "The unique ID of the vetting"
+                  }
+                }
+              },
+              "examples": {
+                "update": {
+                  "value": {
+                    "BusinessName": "Owl, Inc.",
+                    "BusinessStreetAddress": "123 Main Street",
+                    "BusinessStreetAddress2": "Suite 101",
+                    "BusinessCity": "Anytown",
+                    "BusinessStateProvinceRegion": "AA",
+                    "BusinessPostalCode": "11111",
+                    "BusinessCountry": "US",
+                    "BusinessWebsite": "http://www.company.com",
+                    "BusinessContactFirstName": "firstname",
+                    "BusinessContactLastName": "lastname",
+                    "BusinessContactEmail": "email@company.com",
+                    "BusinessContactPhone": "+11231231234",
+                    "NotificationEmail": "support@company.com",
+                    "UseCaseCategories": [
+                      "TWO_FACTOR_AUTHENTICATION",
+                      "MARKETING"
+                    ],
+                    "UseCaseSummary": "This number is used to send out promotional offers and coupons to the customers of John's Coffee Shop",
+                    "ProductionMessageSample": "lorem ipsum",
+                    "OptInImageUrls": [
+                      "https://testbusiness.com/images/image1.jpg",
+                      "https://testbusiness.com/images/image2.jpg"
+                    ],
+                    "OptInType": "VERBAL",
+                    "MessageVolume": "1,000",
+                    "AdditionalInformation": "see our privacy policy here www.johnscoffeeshop.com/privacypolicy",
+                    "EditReason": "Website fixed",
+                    "BusinessRegistrationNumber": "123456789",
+                    "BusinessRegistrationAuthority": "EIN",
+                    "BusinessRegistrationCountry": "US",
+                    "BusinessType": "PRIVATE_PROFIT",
+                    "BusinessRegistrationPhoneNumber": "+13023334444",
+                    "DoingBusinessAs": "Toms Widgets",
+                    "AgeGatedContent": false,
+                    "HelpMessageSample": "For help, reply HELP or visit our website.",
+                    "OptInConfirmationMessage": "Thank you for opting in!",
+                    "OptInKeywords": [
+                      "START"
+                    ],
+                    "PrivacyPolicyUrl": "https://www.example.com/privacy",
+                    "TermsAndConditionsUrl": "https://www.example.com/terms"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio.DeleteTollfreeVerification",
+      "title": "Delete a tollfree verification",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Tollfree/Verifications/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^HH[0-9a-fA-F]{32}$"
+          },
+          "description": "The unique string to identify Tollfree Verification."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.ListTollfreeVerification",
+      "title": "List tollfree verifications",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Tollfree/Verifications",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "TollfreePhoneNumberSid",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^PN[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Phone Number associated with the Tollfree Verification."
+        },
+        {
+          "name": "Status",
+          "in": "query",
+          "schema": {
+            "$ref": "#/components/schemas/tollfree_verification_enum_status"
+          },
+          "description": "The compliance status of the Tollfree Verification record."
+        },
+        {
+          "name": "ExternalReferenceId",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Customer supplied reference id for the Tollfree Verification record."
+        },
+        {
+          "name": "IncludeSubAccounts",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Whether to include Tollfree Verifications from sub accounts in list response."
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        },
+        {
+          "name": "TrustProductSid",
+          "in": "query",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "The trust product sids / tollfree bundle sids of tollfree verifications"
+        }
+      ]
+    },
+    {
+      "connector": "twilio.CreateTollfreeVerification",
+      "title": "Create a tollfree verification",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Tollfree/Verifications",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateTollfreeVerificationRequest",
+                "properties": {
+                  "BusinessName": {
+                    "type": "string",
+                    "description": "The name of the business or organization using the Tollfree number."
+                  },
+                  "BusinessWebsite": {
+                    "type": "string",
+                    "description": "The website of the business or organization using the Tollfree number."
+                  },
+                  "NotificationEmail": {
+                    "type": "string",
+                    "description": "The email address to receive the notification about the verification result. ."
+                  },
+                  "UseCaseCategories": {
+                    "$ref": "#/components/schemas/tollfree_verification_enum_use_case_categories"
+                  },
+                  "UseCaseSummary": {
+                    "type": "string",
+                    "description": "Use this to further explain how messaging is used by the business or organization."
+                  },
+                  "ProductionMessageSample": {
+                    "type": "string",
+                    "description": "An example of message content, i.e. a sample message."
+                  },
+                  "OptInImageUrls": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Link to an image that shows the opt-in workflow. Multiple images allowed and must be a publicly hosted URL."
+                  },
+                  "OptInType": {
+                    "$ref": "#/components/schemas/tollfree_verification_enum_opt_in_type"
+                  },
+                  "MessageVolume": {
+                    "type": "string",
+                    "description": "Estimate monthly volume of messages from the Tollfree Number."
+                  },
+                  "TollfreePhoneNumberSid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^PN[0-9a-fA-F]{32}$",
+                    "description": "The SID of the Phone Number associated with the Tollfree Verification."
+                  },
+                  "CustomerProfileSid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^BU[0-9a-fA-F]{32}$",
+                    "description": "Customer's Profile Bundle BundleSid."
+                  },
+                  "BusinessStreetAddress": {
+                    "type": "string",
+                    "description": "The address of the business or organization using the Tollfree number."
+                  },
+                  "BusinessStreetAddress2": {
+                    "type": "string",
+                    "description": "The address of the business or organization using the Tollfree number."
+                  },
+                  "BusinessCity": {
+                    "type": "string",
+                    "description": "The city of the business or organization using the Tollfree number."
+                  },
+                  "BusinessStateProvinceRegion": {
+                    "type": "string",
+                    "description": "The state/province/region of the business or organization using the Tollfree number."
+                  },
+                  "BusinessPostalCode": {
+                    "type": "string",
+                    "description": "The postal code of the business or organization using the Tollfree number."
+                  },
+                  "BusinessCountry": {
+                    "type": "string",
+                    "description": "The country of the business or organization using the Tollfree number."
+                  },
+                  "AdditionalInformation": {
+                    "type": "string",
+                    "description": "Additional information to be provided for verification."
+                  },
+                  "BusinessContactFirstName": {
+                    "type": "string",
+                    "description": "The first name of the contact for the business or organization using the Tollfree number."
+                  },
+                  "BusinessContactLastName": {
+                    "type": "string",
+                    "description": "The last name of the contact for the business or organization using the Tollfree number."
+                  },
+                  "BusinessContactEmail": {
+                    "type": "string",
+                    "description": "The email address of the contact for the business or organization using the Tollfree number."
+                  },
+                  "BusinessContactPhone": {
+                    "type": "string",
+                    "format": "phone-number",
+                    "description": "The E.164 formatted phone number of the contact for the business or organization using the Tollfree number."
+                  },
+                  "ExternalReferenceId": {
+                    "type": "string",
+                    "description": "An optional external reference ID supplied by customer and echoed back on status retrieval."
+                  },
+                  "BusinessRegistrationNumber": {
+                    "type": "string",
+                    "description": "A legally recognized business registration number. Required for all business types except SOLE_PROPRIETOR."
+                  },
+                  "BusinessRegistrationAuthority": {
+                    "$ref": "#/components/schemas/tollfree_verification_enum_business_registration_authority"
+                  },
+                  "BusinessRegistrationCountry": {
+                    "type": "string",
+                    "description": "The country where the business is registered. Required for all business types except SOLE_PROPRIETOR."
+                  },
+                  "BusinessType": {
+                    "$ref": "#/components/schemas/tollfree_verification_enum_business_type"
+                  },
+                  "BusinessRegistrationPhoneNumber": {
+                    "type": "string",
+                    "description": "The E.164 formatted number associated with the business."
+                  },
+                  "DoingBusinessAs": {
+                    "type": "string",
+                    "description": "Trade name, sub entity, or downstream business name of business being submitted for verification"
+                  },
+                  "OptInConfirmationMessage": {
+                    "type": "string",
+                    "description": "The confirmation message sent to users when they opt in to receive messages."
+                  },
+                  "HelpMessageSample": {
+                    "type": "string",
+                    "description": "A sample help message provided to users."
+                  },
+                  "PrivacyPolicyUrl": {
+                    "type": "string",
+                    "description": "The URL to the privacy policy for the business or organization."
+                  },
+                  "TermsAndConditionsUrl": {
+                    "type": "string",
+                    "description": "The URL to the terms and conditions for the business or organization."
+                  },
+                  "AgeGatedContent": {
+                    "type": "boolean",
+                    "description": "Indicates if the content is age gated."
+                  },
+                  "OptInKeywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of keywords that users can text in to opt in to receive messages."
+                  },
+                  "VettingProvider": {
+                    "$ref": "#/components/schemas/tollfree_verification_enum_vetting_provider"
+                  },
+                  "VettingId": {
+                    "type": "string",
+                    "description": "The unique ID of the vetting"
+                  }
+                },
+                "required": [
+                  "BusinessName",
+                  "BusinessWebsite",
+                  "NotificationEmail",
+                  "UseCaseCategories",
+                  "UseCaseSummary",
+                  "ProductionMessageSample",
+                  "OptInImageUrls",
+                  "OptInType",
+                  "MessageVolume",
+                  "TollfreePhoneNumberSid"
+                ]
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "BusinessName": "Owl, Inc.",
+                    "BusinessStreetAddress": "123 Main Street",
+                    "BusinessStreetAddress2": "Suite 101",
+                    "BusinessCity": "Anytown",
+                    "BusinessStateProvinceRegion": "AA",
+                    "BusinessPostalCode": "11111",
+                    "BusinessCountry": "US",
+                    "BusinessWebsite": "http://www.company.com",
+                    "BusinessContactFirstName": "firstname",
+                    "BusinessContactLastName": "lastname",
+                    "BusinessContactEmail": "email@company.com",
+                    "BusinessContactPhone": "+11231231234",
+                    "NotificationEmail": "support@company.com",
+                    "UseCaseCategories": [
+                      "POLITICAL_ELECTION_CAMPAIGNS"
+                    ],
+                    "UseCaseSummary": "This number is used to send out promotional offers and coupons to the customers of John's Coffee Shop",
+                    "ProductionMessageSample": "lorem ipsum",
+                    "OptInImageUrls": [
+                      "https://testbusiness.com/images/image1.jpg",
+                      "https://testbusiness.com/images/image2.jpg"
+                    ],
+                    "OptInType": "VERBAL",
+                    "MessageVolume": "10",
+                    "AdditionalInformation": "see our privacy policy here www.johnscoffeeshop.com/privacypolicy",
+                    "TollfreePhoneNumberSid": "PNaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "ExternalReferenceId": "abc123xyz567",
+                    "BusinessRegistrationNumber": "123456789",
+                    "BusinessRegistrationAuthority": "EIN",
+                    "BusinessRegistrationCountry": "US",
+                    "BusinessType": "PRIVATE_PROFIT",
+                    "BusinessRegistrationPhoneNumber": "+13023334444",
+                    "DoingBusinessAs": "Toms Widgets",
+                    "AgeGatedContent": false,
+                    "HelpMessageSample": "For help, reply HELP or visit our website.",
+                    "OptInConfirmationMessage": "Thank you for opting in!",
+                    "OptInKeywords": [
+                      "START"
+                    ],
+                    "PrivacyPolicyUrl": "https://www.example.com/privacy",
+                    "TermsAndConditionsUrl": "https://www.example.com/terms",
+                    "VettingId": "cv|1.0|mno|tfree|a9792599-2156-457a-985b-f9045789b139|osfj78f1qrtue37",
+                    "VettingProvider": "CAMPAIGN_VERIFY"
+                  }
+                },
+                "create2": {
+                  "value": {
+                    "CustomerProfileSid": "BUaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "BusinessName": "Owl, Inc.",
+                    "BusinessWebsite": "http://www.company.com",
+                    "NotificationEmail": "support@company.com",
+                    "UseCaseCategories": [
+                      "TWO_FACTOR_AUTHENTICATION",
+                      "MARKETING"
+                    ],
+                    "UseCaseSummary": "This number is used to send out promotional offers and coupons to the customers of John's Coffee Shop",
+                    "ProductionMessageSample": "lorem ipsum",
+                    "OptInImageUrls": [
+                      "https://testbusiness.com/images/image1.jpg",
+                      "https://testbusiness.com/images/image2.jpg"
+                    ],
+                    "OptInType": "VERBAL",
+                    "MessageVolume": "10",
+                    "AdditionalInformation": "see our privacy policy here www.johnscoffeeshop.com/privacypolicy",
+                    "TollfreePhoneNumberSid": "PNaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "ExternalReferenceId": "abc123xyz567",
+                    "BusinessRegistrationNumber": "123456789",
+                    "BusinessRegistrationAuthority": "EIN",
+                    "BusinessRegistrationCountry": "US",
+                    "BusinessType": "PRIVATE_PROFIT",
+                    "BusinessRegistrationPhoneNumber": "+13023334444",
+                    "DoingBusinessAs": "Toms Widgets",
+                    "AgeGatedContent": false,
+                    "HelpMessageSample": "For help, reply HELP or visit our website.",
+                    "OptInConfirmationMessage": "Thank you for opting in!",
+                    "OptInKeywords": [
+                      "START"
+                    ],
+                    "PrivacyPolicyUrl": "https://www.example.com/privacy",
+                    "TermsAndConditionsUrl": "https://www.example.com/terms"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio.CreateUsAppToPerson",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{MessagingServiceSid}/Compliance/Usa2p",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "MessagingServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Messaging Service](https://www.twilio.com/docs/messaging/api/service-resource) to create the resources from."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateUsAppToPersonRequest",
+                "properties": {
+                  "BrandRegistrationSid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^BN[0-9a-fA-F]{32}$",
+                    "description": "A2P Brand Registration SID"
+                  },
+                  "Description": {
+                    "type": "string",
+                    "description": "A short description of what this SMS campaign does. Min length: 40 characters. Max length: 4096 characters."
+                  },
+                  "MessageFlow": {
+                    "type": "string",
+                    "description": "Required for all Campaigns. Details around how a consumer opts-in to their campaign, therefore giving consent to receive their messages. If multiple opt-in methods can be used for the same campaign, they must all be listed. 40 character minimum. 2048 character maximum."
+                  },
+                  "MessageSamples": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "An array of sample message strings, min two and max five. Min length for each sample: 20 chars. Max length for each sample: 1024 chars."
+                  },
+                  "UsAppToPersonUsecase": {
+                    "type": "string",
+                    "description": "A2P Campaign Use Case. Examples: [ 2FA, EMERGENCY, MARKETING..]"
+                  },
+                  "HasEmbeddedLinks": {
+                    "type": "boolean",
+                    "description": "Indicates that this SMS campaign will send messages that contain links."
+                  },
+                  "HasEmbeddedPhone": {
+                    "type": "boolean",
+                    "description": "Indicates that this SMS campaign will send messages that contain phone numbers."
+                  },
+                  "OptInMessage": {
+                    "type": "string",
+                    "description": "If end users can text in a keyword to start receiving messages from this campaign, the auto-reply messages sent to the end users must be provided. The opt-in response should include the Brand name, confirmation of opt-in enrollment to a recurring message campaign, how to get help, and clear description of how to opt-out. This field is required if end users can text in a keyword to start receiving messages from this campaign. 20 character minimum. 320 character maximum."
+                  },
+                  "OptOutMessage": {
+                    "type": "string",
+                    "description": "Upon receiving the opt-out keywords from the end users, Twilio customers are expected to send back an auto-generated response, which must provide acknowledgment of the opt-out request and confirmation that no further messages will be sent. It is also recommended that these opt-out messages include the brand name. This field is required if managing opt out keywords yourself (i.e. not using Twilio's Default or Advanced Opt Out features). 20 character minimum. 320 character maximum."
+                  },
+                  "HelpMessage": {
+                    "type": "string",
+                    "description": "When customers receive the help keywords from their end users, Twilio customers are expected to send back an auto-generated response; this may include the brand name and additional support contact information. This field is required if managing help keywords yourself (i.e. not using Twilio's Default or Advanced Opt Out features). 20 character minimum. 320 character maximum."
+                  },
+                  "OptInKeywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "If end users can text in a keyword to start receiving messages from this campaign, those keywords must be provided. This field is required if end users can text in a keyword to start receiving messages from this campaign. Values must be alphanumeric. 255 character maximum."
+                  },
+                  "OptOutKeywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "End users should be able to text in a keyword to stop receiving messages from this campaign. Those keywords must be provided. This field is required if managing opt out keywords yourself (i.e. not using Twilio's Default or Advanced Opt Out features). Values must be alphanumeric. 255 character maximum."
+                  },
+                  "HelpKeywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "End users should be able to text in a keyword to receive help. Those keywords must be provided as part of the campaign registration request. This field is required if managing help keywords yourself (i.e. not using Twilio's Default or Advanced Opt Out features). Values must be alphanumeric. 255 character maximum."
+                  },
+                  "SubscriberOptIn": {
+                    "type": "boolean",
+                    "description": "A boolean that specifies whether campaign has Subscriber Optin or not."
+                  },
+                  "AgeGated": {
+                    "type": "boolean",
+                    "description": "A boolean that specifies whether campaign is age gated or not."
+                  },
+                  "DirectLending": {
+                    "type": "boolean",
+                    "description": "A boolean that specifies whether campaign allows direct lending or not."
+                  },
+                  "PrivacyPolicyUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL of the privacy policy for the campaign."
+                  },
+                  "TermsAndConditionsUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL of the terms and conditions for the campaign."
+                  }
+                },
+                "required": [
+                  "BrandRegistrationSid",
+                  "Description",
+                  "MessageFlow",
+                  "MessageSamples",
+                  "UsAppToPersonUsecase",
+                  "HasEmbeddedLinks",
+                  "HasEmbeddedPhone"
+                ]
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "BrandRegistrationSid": "BNaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "Description": "Send marketing messages about sales to opted in customers.",
+                    "MessageSamples": [
+                      "EXPRESS: Denim Days Event is ON",
+                      "LAST CHANCE: Book your next flight for just 1 (ONE) EUR"
+                    ],
+                    "UsAppToPersonUsecase": "MARKETING",
+                    "MessageFlow": "End users opt-in by visiting www.example.com and adding their phone number. They then check a box agreeing to receive text messages from Example Brand. Additionally, end users can also opt-in by texting START to (111) 222-3333 to opt in.",
+                    "OptInMessage": "Acme Corporation: You are now opted-in. For help, reply HELP. To opt-out, reply STOP",
+                    "OptOutMessage": "You have successfully been unsubscribed from Acme Corporation. You will not receive any more messages from this number.",
+                    "HelpMessage": "Acme Corporation: Please visit www.example.com to get support. To opt-out, reply STOP.",
+                    "OptInKeywords": [
+                      "START"
+                    ],
+                    "OptOutKeywords": [
+                      "STOP"
+                    ],
+                    "HelpKeywords": [
+                      "HELP"
+                    ],
+                    "HasEmbeddedLinks": true,
+                    "HasEmbeddedPhone": false,
+                    "SubscriberOptIn": false,
+                    "AgeGated": false,
+                    "DirectLending": false
+                  }
+                },
+                "createWithDefaults": {
+                  "value": {
+                    "BrandRegistrationSid": "BNaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "Description": "Send marketing messages about sales to opted in customers.",
+                    "MessageSamples": [
+                      "EXPRESS: Denim Days Event is ON",
+                      "LAST CHANCE: Book your next flight for just 1 (ONE) EUR"
+                    ],
+                    "UsAppToPersonUsecase": "MARKETING",
+                    "MessageFlow": "End users opt-in by visiting www.example.com and adding their phone number. They then check a box agreeing to receive text messages from Example Brand. Additionally, end users can also opt-in by texting START to (111) 222-3333 to opt in.",
+                    "OptInMessage": "Acme Corporation: You are now opted-in. For help, reply HELP. To opt-out, reply STOP",
+                    "OptInKeywords": [
+                      "START"
+                    ],
+                    "HasEmbeddedLinks": true,
+                    "HasEmbeddedPhone": false,
+                    "AgeGated": false,
+                    "DirectLending": false
+                  }
+                },
+                "createWithDefaultsSoleProprietor": {
+                  "value": {
+                    "BrandRegistrationSid": "BNaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "Description": "Send marketing messages about sales to opted in customers.",
+                    "MessageSamples": [
+                      "EXPRESS: Denim Days Event is ON",
+                      "LAST CHANCE: Book your next flight for just 1 (ONE) EUR"
+                    ],
+                    "UsAppToPersonUsecase": "SOLE_PROPRIETOR",
+                    "MessageFlow": "End users opt-in by visiting www.example.com and adding their phone number. They then check a box agreeing to receive text messages from Example Brand. Additionally, end users can also opt-in by texting START to (111) 222-3333 to opt in.",
+                    "OptInMessage": "Acme Corporation: You are now opted-in. For help, reply HELP. To opt-out, reply STOP",
+                    "OptInKeywords": [
+                      "START"
+                    ],
+                    "HasEmbeddedLinks": true,
+                    "HasEmbeddedPhone": false,
+                    "AgeGated": false,
+                    "DirectLending": false
+                  }
+                },
+                "createWithExtendedFieldsAndHeader": {
+                  "value": {
+                    "BrandRegistrationSid": "BNaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "Description": "Send marketing messages about sales to opted in customers.",
+                    "MessageSamples": [
+                      "EXPRESS: Denim Days Event is ON",
+                      "LAST CHANCE: Book your next flight for just 1 (ONE) EUR"
+                    ],
+                    "UsAppToPersonUsecase": "MARKETING",
+                    "MessageFlow": "End users opt-in by visiting www.example.com and adding their phone number. They then check a box agreeing to receive text messages from Example Brand. Additionally, end users can also opt-in by texting START to (111) 222-3333 to opt in.",
+                    "OptInMessage": "Acme Corporation: You are now opted-in. For help, reply HELP. To opt-out, reply STOP",
+                    "OptOutMessage": "You have successfully been unsubscribed from Acme Corporation. You will not receive any more messages from this number.",
+                    "HelpMessage": "Acme Corporation: Please visit www.example.com to get support. To opt-out, reply STOP.",
+                    "OptInKeywords": [
+                      "START"
+                    ],
+                    "OptOutKeywords": [
+                      "STOP"
+                    ],
+                    "HelpKeywords": [
+                      "HELP"
+                    ],
+                    "PrivacyPolicyUrl": "https://example.com/privacy",
+                    "TermsAndConditionsUrl": "https://example.com/terms",
+                    "HasEmbeddedLinks": true,
+                    "HasEmbeddedPhone": false,
+                    "SubscriberOptIn": false,
+                    "AgeGated": false,
+                    "DirectLending": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio.ListUsAppToPerson",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{MessagingServiceSid}/Compliance/Usa2p",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "MessagingServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Messaging Service](https://www.twilio.com/docs/messaging/api/service-resource) to fetch the resource from."
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.DeleteUsAppToPerson",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{MessagingServiceSid}/Compliance/Usa2p/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "MessagingServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Messaging Service](https://www.twilio.com/docs/messaging/api/service-resource) to delete the resource from."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^QE[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the US A2P Compliance resource to delete `QE2c6890da8086d771620e9b13fadeba0b`."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.FetchUsAppToPerson",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{MessagingServiceSid}/Compliance/Usa2p/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "MessagingServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Messaging Service](https://www.twilio.com/docs/messaging/api/service-resource) to fetch the resource from."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^QE[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the US A2P Compliance resource to fetch `QE2c6890da8086d771620e9b13fadeba0b`."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.UpdateUsAppToPerson",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{MessagingServiceSid}/Compliance/Usa2p/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "MessagingServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Messaging Service](https://www.twilio.com/docs/messaging/services/api) to update the resource from."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^QE[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the US A2P Compliance resource to update `QE2c6890da8086d771620e9b13fadeba0b`."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "UpdateUsAppToPersonRequest",
+                "properties": {
+                  "HasEmbeddedLinks": {
+                    "type": "boolean",
+                    "description": "Indicates that this SMS campaign will send messages that contain links."
+                  },
+                  "HasEmbeddedPhone": {
+                    "type": "boolean",
+                    "description": "Indicates that this SMS campaign will send messages that contain phone numbers."
+                  },
+                  "MessageSamples": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "An array of sample message strings, min two and max five. Min length for each sample: 20 chars. Max length for each sample: 1024 chars."
+                  },
+                  "MessageFlow": {
+                    "type": "string",
+                    "description": "Required for all Campaigns. Details around how a consumer opts-in to their campaign, therefore giving consent to receive their messages. If multiple opt-in methods can be used for the same campaign, they must all be listed. 40 character minimum. 2048 character maximum."
+                  },
+                  "Description": {
+                    "type": "string",
+                    "description": "A short description of what this SMS campaign does. Min length: 40 characters. Max length: 4096 characters."
+                  },
+                  "AgeGated": {
+                    "type": "boolean",
+                    "description": "A boolean that specifies whether campaign requires age gate for federally legal content."
+                  },
+                  "DirectLending": {
+                    "type": "boolean",
+                    "description": "A boolean that specifies whether campaign allows direct lending or not."
+                  },
+                  "PrivacyPolicyUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL of the privacy policy for the campaign."
+                  },
+                  "TermsAndConditionsUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL of the terms and conditions for the campaign."
+                  }
+                },
+                "required": [
+                  "HasEmbeddedLinks",
+                  "HasEmbeddedPhone",
+                  "MessageSamples",
+                  "MessageFlow",
+                  "Description",
+                  "AgeGated",
+                  "DirectLending"
+                ]
+              },
+              "examples": {
+                "update": {
+                  "value": {
+                    "Description": "Send marketing messages about sales to opted in customers.",
+                    "MessageSamples": [
+                      "EXPRESS: Denim Days Event is ON",
+                      "LAST CHANCE: Book your next flight for just 1 (ONE) EUR"
+                    ],
+                    "MessageFlow": "End users opt-in by visiting www.example.com and adding their phone number. They then check a box agreeing to receive text messages from Example Brand. Additionally, end users can also opt-in by texting START to (111) 222-3333 to opt in.",
+                    "HasEmbeddedLinks": true,
+                    "HasEmbeddedPhone": false,
+                    "AgeGated": false,
+                    "DirectLending": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio.FetchUsAppToPersonUsecase",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/{MessagingServiceSid}/Compliance/Usa2p/Usecases",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "MessagingServiceSid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^MG[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the [Messaging Service](https://www.twilio.com/docs/messaging/api/service-resource) to fetch the resource from."
+        },
+        {
+          "name": "BrandRegistrationSid",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^BN[0-9a-fA-F]{32}$"
+          },
+          "description": "The unique string to identify the A2P brand."
+        }
+      ]
+    },
+    {
+      "connector": "twilio.FetchUsecase",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://messaging.twilio.com",
+      "path": "/v1/Services/Usecases",
+      "authentication": "basic",
+      "parameters": []
+    }
+  ]
+}

@@ -1,0 +1,1058 @@
+{
+  "name": "launchdarkly",
+  "title": "Launchdarkly",
+  "source": "https://api.apis.guru/v2/specs/launchdarkly.com/5.3.0/swagger.json",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "launchdarkly.getRoot",
+      "title": "You can issue a GET request to the root resource to find all of the resource categories supported by the API.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getRelayProxyConfigs",
+      "title": "Returns a list of relay proxy configurations in the account.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/account/relay-auto-configs",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.postRelayAutoConfig",
+      "title": "Create a new relay proxy config.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/account/relay-auto-configs",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.deleteRelayProxyConfig",
+      "title": "Delete a relay proxy configuration by ID.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/account/relay-auto-configs/{id}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getRelayProxyConfig",
+      "title": "Get a single relay proxy configuration by ID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/account/relay-auto-configs/{id}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.patchRelayProxyConfig",
+      "title": "Modify a relay proxy configuration by ID.",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/account/relay-auto-configs/{id}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.resetRelayProxyConfig",
+      "title": "Reset a relay proxy configuration's secret key with an optional expiry time for the old key.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/account/relay-auto-configs/{id}/reset",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getAuditLogEntries",
+      "title": "Get a list of all audit log entries. The query parameters allow you to restrict the returned results by date ranges, resource specifiers, or a full-text search query.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/auditlog",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getAuditLogEntry",
+      "title": "Use this endpoint to fetch a single audit log entry by its resouce ID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/auditlog/{resourceId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getDestinations",
+      "title": "Returns a list of all data export destinations.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/destinations",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.postDestination",
+      "title": "Create a new data export destination",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/destinations/{projectKey}/{environmentKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.deleteDestination",
+      "title": "Get a single data export destination by ID",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/destinations/{projectKey}/{environmentKey}/{destinationId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getDestination",
+      "title": "Get a single data export destination by ID",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/destinations/{projectKey}/{environmentKey}/{destinationId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.patchDestination",
+      "title": "Perform a partial update to a data export destination.",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/destinations/{projectKey}/{environmentKey}/{destinationId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getFeatureFlagStatusAcrossEnvironments",
+      "title": "Get the status for a particular feature flag across environments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/flag-status/{projectKey}/{featureFlagKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getFeatureFlagStatuses",
+      "title": "Get a list of statuses for all feature flags. The status includes the last time the feature flag was requested, as well as the state of the flag.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/flag-statuses/{projectKey}/{environmentKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getFeatureFlagStatus",
+      "title": "Get the status for a particular feature flag.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/flag-statuses/{projectKey}/{environmentKey}/{featureFlagKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getFeatureFlags",
+      "title": "Get a list of all features in the given project.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/flags/{projectKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.postFeatureFlag",
+      "title": "Creates a new feature flag.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/flags/{projectKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.get_flags_projectKey_environmentKey_featureFlagKey_dependent-flags",
+      "title": "Get dependent flags for the flag in the environment specified in path parameters",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/flags/{projectKey}/{environmentKey}/{featureFlagKey}/dependent-flags",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.deleteFeatureFlag",
+      "title": "Delete a feature flag in all environments. Be careful-- only delete feature flags that are no longer being used by your application.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/flags/{projectKey}/{featureFlagKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getFeatureFlag",
+      "title": "Get a single feature flag by key.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/flags/{projectKey}/{featureFlagKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.patchFeatureFlag",
+      "title": "Perform a partial update to a feature.",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/flags/{projectKey}/{featureFlagKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.copyFeatureFlag",
+      "title": "Copies the feature flag configuration from one environment to the same feature flag in another environment.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/flags/{projectKey}/{featureFlagKey}/copy",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.get_flags_projectKey_featureFlagKey_dependent-flags",
+      "title": "Get dependent flags across all environments for the flag specified in the path parameters",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/flags/{projectKey}/{featureFlagKey}/dependent-flags",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getExpiringUserTargets",
+      "title": "Get expiring user targets for feature flag",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/flags/{projectKey}/{featureFlagKey}/expiring-user-targets/{environmentKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.patchExpiringUserTargets",
+      "title": "Update, add, or delete expiring user targets on feature flag",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/flags/{projectKey}/{featureFlagKey}/expiring-user-targets/{environmentKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getIntegrations",
+      "title": "Get a list of all configured audit log event integrations associated with this account.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/integrations",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getIntegrationSubscriptions",
+      "title": "Get a list of all configured integrations of a given kind.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/integrations/{integrationKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.postIntegrationSubscription",
+      "title": "Create a new integration subscription of a given kind.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/integrations/{integrationKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.deleteIntegrationSubscription",
+      "title": "Delete an integration subscription by ID.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/integrations/{integrationKey}/{integrationId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getIntegrationSubscription",
+      "title": "Get a single integration subscription by ID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/integrations/{integrationKey}/{integrationId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.patchIntegrationSubscription",
+      "title": "Modify an integration subscription by ID.",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/integrations/{integrationKey}/{integrationId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getMembers",
+      "title": "Returns a list of all members in the account.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/members",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.postMembers",
+      "title": "Invite new members.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/members",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getMe",
+      "title": "Get the current team member associated with the token",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/members/me",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.deleteMember",
+      "title": "Delete a team member by ID.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/members/{memberId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getMember",
+      "title": "Get a single team member by ID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/members/{memberId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.patchMember",
+      "title": "Modify a team member by ID.",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/members/{memberId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getProjects",
+      "title": "Returns a list of all projects in the account.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.postProject",
+      "title": "Create a new project with the given key and name.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.deleteProject",
+      "title": "Delete a project by key. Caution-- deleting a project will delete all associated environments and feature flags. You cannot delete the last project in an account.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getProject",
+      "title": "Fetch a single project by key.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.patchProject",
+      "title": "Modify a project by ID.",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.postEnvironment",
+      "title": "Create a new environment in a specified project with a given name, key, and swatch color.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}/environments",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.deleteEnvironment",
+      "title": "Delete an environment in a specific project.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}/environments/{environmentKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getEnvironment",
+      "title": "Get an environment given a project and key.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}/environments/{environmentKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.patchEnvironment",
+      "title": "Modify an environment by ID. If you try to patch the environment by setting both required and requiredApprovalTags, it will result in an error. Users can specify either required approvals for all flags in an environment or those with specific tags, but not both. Only customers on an Enterprise plan can require approval for flag updates with either mechanism.",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}/environments/{environmentKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.resetEnvironmentSDKKey",
+      "title": "Reset an environment's SDK key with an optional expiry time for the old key.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}/environments/{environmentKey}/apiKey",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.resetEnvironmentMobileKey",
+      "title": "Reset an environment's mobile key. The optional expiry for the old key is deprecated for this endpoint, so the old key will always expire immediately.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}/environments/{environmentKey}/mobileKey",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getApprovalRequests",
+      "title": "Get all approval requests for a feature flag config",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}/flags/{featureFlagKey}/environments/{environmentKey}/approval-requests",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.deleteApprovalRequest",
+      "title": "Delete an approval request for a feature flag config",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}/flags/{featureFlagKey}/environments/{environmentKey}/approval-requests/{approvalRequestId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getApprovalRequest",
+      "title": "Get a single approval request for a feature flag config",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}/flags/{featureFlagKey}/environments/{environmentKey}/approval-requests/{approvalRequestId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.postApprovalRequest",
+      "title": "Create an approval request for a feature flag config",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}/flags/{featureFlagKey}/environments/{environmentKey}/approval-requests/{approvalRequestId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.postApplyApprovalRequest",
+      "title": "Apply approval request for a feature flag config",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}/flags/{featureFlagKey}/environments/{environmentKey}/approval-requests/{approvalRequestId}/apply",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.postReviewApprovalRequest",
+      "title": "Review approval request for a feature flag config",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}/flags/{featureFlagKey}/environments/{environmentKey}/approval-requests/{approvalRequestId}/review",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getFlagConfigScheduledChanges",
+      "title": "Get all scheduled workflows for a feature flag by key.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}/flags/{featureFlagKey}/environments/{environmentKey}/scheduled-changes",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.postFlagConfigScheduledChanges",
+      "title": "Creates a new scheduled change for a feature flag.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}/flags/{featureFlagKey}/environments/{environmentKey}/scheduled-changes",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getFlagConfigScheduledChangesConflicts",
+      "title": "Lists conflicts between the given instructions and any existing scheduled changes for the feature flag. The actual HTTP verb should be REPORT, not POST.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}/flags/{featureFlagKey}/environments/{environmentKey}/scheduled-changes-conflicts",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.deleteFlagConfigScheduledChanges",
+      "title": "Delete a scheduled change on a feature flag in an environment.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}/flags/{featureFlagKey}/environments/{environmentKey}/scheduled-changes/{scheduledChangeId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getFlagConfigScheduledChange",
+      "title": "Get a scheduled change on a feature flag by id.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}/flags/{featureFlagKey}/environments/{environmentKey}/scheduled-changes/{scheduledChangeId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.patchFlagConfigScheduledChange",
+      "title": "Updates an existing scheduled-change on a feature flag in an environment.",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/projects/{projectKey}/flags/{featureFlagKey}/environments/{environmentKey}/scheduled-changes/{scheduledChangeId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getCustomRoles",
+      "title": "Return a complete list of custom roles.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/roles",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.postCustomRole",
+      "title": "Create a new custom role.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/roles",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.deleteCustomRole",
+      "title": "Delete a custom role by key.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/roles/{customRoleKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getCustomRole",
+      "title": "Get one custom role by key.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/roles/{customRoleKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.patchCustomRole",
+      "title": "Modify a custom role by key.",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/roles/{customRoleKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getUserSegments",
+      "title": "Get a list of all user segments in the given project.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/segments/{projectKey}/{environmentKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.postUserSegment",
+      "title": "Creates a new user segment.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/segments/{projectKey}/{environmentKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.deleteUserSegment",
+      "title": "Delete a user segment.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/segments/{projectKey}/{environmentKey}/{userSegmentKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getUserSegment",
+      "title": "Get a single user segment by key.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/segments/{projectKey}/{environmentKey}/{userSegmentKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.patchUserSegment",
+      "title": "Perform a partial update to a user segment.",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/segments/{projectKey}/{environmentKey}/{userSegmentKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.updateBigSegmentTargets",
+      "title": "Update targets included or excluded in a big segment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/segments/{projectKey}/{environmentKey}/{userSegmentKey}/users",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getExpiringUserTargetsOnSegment",
+      "title": "Get expiring user targets for user segment",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/segments/{projectKey}/{userSegmentKey}/expiring-user-targets/{environmentKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.patchExpiringUserTargetsOnSegment",
+      "title": "Update, add, or delete expiring user targets on user segment",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/segments/{projectKey}/{userSegmentKey}/expiring-user-targets/{environmentKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getTokens",
+      "title": "Returns a list of tokens in the account.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/tokens",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.postToken",
+      "title": "Create a new token.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/tokens",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.deleteToken",
+      "title": "Delete an access token by ID.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/tokens/{tokenId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getToken",
+      "title": "Get a single access token by ID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/tokens/{tokenId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.patchToken",
+      "title": "Modify an access token by ID.",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/tokens/{tokenId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.resetToken",
+      "title": "Reset an access token's secret key with an optional expiry time for the old key.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/tokens/{tokenId}/reset",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getUsage",
+      "title": "Returns of the usage endpoints available.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/usage",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getEvaluations",
+      "title": "Get events usage by event id and the feature flag key.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/usage/evaluations/{envId}/{flagKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getEvents",
+      "title": "Get events usage endpoints.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/usage/events",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getEvent",
+      "title": "Get events usage by event type.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/usage/events/{type}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getMAU",
+      "title": "Get monthly active user data.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/usage/mau",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getMAUByCategory",
+      "title": "Get monthly active user data by category.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/usage/mau/bycategory",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getStreams",
+      "title": "Returns a list of all streams.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/usage/streams",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getStream",
+      "title": "Get a stream endpoint and return timeseries data.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/usage/streams/{source}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getStreamBySDK",
+      "title": "Get a stream timeseries data by source show sdk version metadata.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/usage/streams/{source}/bysdkversion",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getStreamSDKVersion",
+      "title": "Get a stream timeseries data by source and show all sdk version associated.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/usage/streams/{source}/sdkversions",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getSearchUsers",
+      "title": "Search users in LaunchDarkly based on their last active date, or a search query. It should not be used to enumerate all users in LaunchDarkly-- use the List users API resource.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/user-search/{projectKey}/{environmentKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getUsers",
+      "title": "List all users in the environment. Includes the total count of users. In each page, there will be up to 'limit' users returned (default 20). This is useful for exporting all users in the system for further analysis. Paginated collections will include a next link containing a URL with the next set of elements in the collection.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/users/{projectKey}/{environmentKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.deleteUser",
+      "title": "Delete a user by ID.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/users/{projectKey}/{environmentKey}/{userKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getUser",
+      "title": "Get a user by key.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/users/{projectKey}/{environmentKey}/{userKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getUserFlagSettings",
+      "title": "Fetch a single flag setting for a user by key.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/users/{projectKey}/{environmentKey}/{userKey}/flags",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getUserFlagSetting",
+      "title": "Fetch a single flag setting for a user by key.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/users/{projectKey}/{environmentKey}/{userKey}/flags/{featureFlagKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.putFlagSetting",
+      "title": "Specifically enable or disable a feature flag for a user based on their key.",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/users/{projectKey}/{environmentKey}/{userKey}/flags/{featureFlagKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getExpiringUserTargetsForUser",
+      "title": "Get expiring dates on flags for user",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/users/{projectKey}/{userKey}/expiring-user-targets/{environmentKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.patchExpiringUserTargetsForFlags",
+      "title": "Update, add, or delete expiring user targets for a single user on all flags",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/users/{projectKey}/{userKey}/expiring-user-targets/{environmentKey}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getWebhooks",
+      "title": "Fetch a list of all webhooks.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/webhooks",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.postWebhook",
+      "title": "Create a webhook.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/webhooks",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.deleteWebhook",
+      "title": "Delete a webhook by ID.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/webhooks/{resourceId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.getWebhook",
+      "title": "Get a webhook by ID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/webhooks/{resourceId}",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "launchdarkly.patchWebhook",
+      "title": "Modify a webhook by ID.",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "path": "/webhooks/{resourceId}",
+      "authentication": "apiKey",
+      "parameters": []
+    }
+  ]
+}

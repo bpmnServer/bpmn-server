@@ -1,0 +1,635 @@
+{
+  "name": "quickbooks-online",
+  "title": "Quickbooks Online",
+  "source": "https://raw.githubusercontent.com/ballerina-platform/openapi-connectors/main/openapi/quickbooks.online/openapi.yaml",
+  "authentication": "oauth-client-credentials-flow",
+  "operations": [
+    {
+      "connector": "quickbooks-online.Create or Update Account",
+      "title": "Create or Update an Account. The ID of the object to update is specified in the request body.​",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://quickbooks.api.intuit.com",
+      "path": "/v3/company/{realm-id}/account",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "realm-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Realm ID."
+        },
+        {
+          "name": "accept",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "default": "application/json"
+          },
+          "description": "Accept header"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountCreateObject"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "quickbooks-online.Read Account",
+      "title": "Retrieves the details of an Account object that has been previously created.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://quickbooks.api.intuit.com",
+      "path": "/v3/company/{realm-id}/account/{account-id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "realm-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Realm ID."
+        },
+        {
+          "name": "account-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Account ID."
+        },
+        {
+          "name": "accept",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "default": "application/json"
+          },
+          "description": "Accept header"
+        }
+      ]
+    },
+    {
+      "connector": "quickbooks-online.Create or Update Bill",
+      "title": "Create or Update a Bill. The ID of the object to update is specified in the request body.​",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://quickbooks.api.intuit.com",
+      "path": "/v3/company/{realm-id}/bill",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "realm-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Realm ID."
+        },
+        {
+          "name": "operation",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Opearation type"
+        },
+        {
+          "name": "accept",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "default": "application/json"
+          },
+          "description": "Accept header"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillCreateObject"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "quickbooks-online.Read bill",
+      "title": "Retrieves the details of a bill that has been previously created.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://quickbooks.api.intuit.com",
+      "path": "/v3/company/{realm-id}/bill/{bill-id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "realm-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Realm ID."
+        },
+        {
+          "name": "bill-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Bill ID."
+        },
+        {
+          "name": "accept",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "default": "application/json"
+          },
+          "description": "Accept header"
+        }
+      ]
+    },
+    {
+      "connector": "quickbooks-online.Create or Update Customer",
+      "title": "Create or Update a Customer. The ID of the object to update is specified in the request body.​",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://quickbooks.api.intuit.com",
+      "path": "/v3/company/{realm-id}/customer",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "realm-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Realm ID."
+        },
+        {
+          "name": "accept",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "default": "application/json"
+          },
+          "description": "Accept header"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerCreateObject"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "quickbooks-online.Read Customer",
+      "title": "Retrieves the details of a Customer object that has been previously created.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://quickbooks.api.intuit.com",
+      "path": "/v3/company/{realm-id}/customer/{customer-id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "realm-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Realm ID."
+        },
+        {
+          "name": "customer-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Customer ID."
+        },
+        {
+          "name": "accept",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "default": "application/json"
+          },
+          "description": "Accept header"
+        }
+      ]
+    },
+    {
+      "connector": "quickbooks-online.Create or Update Payment",
+      "title": "Create or Update a Payment.  The ID of the object to update is specifiedin the request body.​",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://quickbooks.api.intuit.com",
+      "path": "/v3/company/{realm-id}/payment",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "realm-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Realm ID."
+        },
+        {
+          "name": "operation",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Opearation type"
+        },
+        {
+          "name": "accept",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "default": "application/json"
+          },
+          "description": "Accept header"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentCreateObject"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "quickbooks-online.Read Payment",
+      "title": "Retrieves the details of a Payment object that has been previously created.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://quickbooks.api.intuit.com",
+      "path": "/v3/company/{realm-id}/payment/{payment-id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "realm-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Realm ID."
+        },
+        {
+          "name": "payment-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Payment ID."
+        },
+        {
+          "name": "accept",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "default": "application/json"
+          },
+          "description": "Accept header"
+        }
+      ]
+    },
+    {
+      "connector": "quickbooks-online.Create or Update Estimate",
+      "title": "Create or Update an Estimate  The ID of the object to update is specifiedin the request body.​",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://quickbooks.api.intuit.com",
+      "path": "/v3/company/{realm-id}/estimate",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "realm-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Realm ID."
+        },
+        {
+          "name": "operation",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Opearation type"
+        },
+        {
+          "name": "accept",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "default": "application/json"
+          },
+          "description": "Accept header"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EstimateCreateObject"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "quickbooks-online.Read Estimate",
+      "title": "Retrieves the details of an estimate that has been previously created.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://quickbooks.api.intuit.com",
+      "path": "/v3/company/{realm-id}/estimate/{estimate-id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "realm-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Realm ID."
+        },
+        {
+          "name": "estimate-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Estimate ID."
+        },
+        {
+          "name": "accept",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "default": "application/json"
+          },
+          "description": "Accept header"
+        }
+      ]
+    },
+    {
+      "connector": "quickbooks-online.Create or Update Invoice",
+      "title": "Create or Update an Invoice  The ID of the object to update is specifiedin the request body.​",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://quickbooks.api.intuit.com",
+      "path": "/v3/company/{realm-id}/invoice",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "realm-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Realm ID."
+        },
+        {
+          "name": "operation",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Opearation type"
+        },
+        {
+          "name": "accept",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "default": "application/json"
+          },
+          "description": "Accept header"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvoiceCreateObject"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "quickbooks-online.Read Invoice",
+      "title": "Retrieves the details of an invoice that has been previously created.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://quickbooks.api.intuit.com",
+      "path": "/v3/company/{realm-id}/invoice/{invoice-id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "realm-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Realm ID."
+        },
+        {
+          "name": "invoice-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Invoice ID."
+        },
+        {
+          "name": "accept",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "default": "application/json"
+          },
+          "description": "Accept header"
+        }
+      ]
+    },
+    {
+      "connector": "quickbooks-online.Create or Update vendor",
+      "title": "Create or Update a vendor The ID of the object to update is specified in the request body.​ Either the DisplayName attribute or at least one of Title, GivenName, MiddleName, FamilyName, or Suffix attributes are required during create.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://quickbooks.api.intuit.com",
+      "path": "/v3/company/{realm-id}/vendor",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "realm-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Realm ID."
+        },
+        {
+          "name": "accept",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "default": "application/json"
+          },
+          "description": "Accept header"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VendorCreateObject"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "quickbooks-online.Read Vendor",
+      "title": "Retrieves the details of a vendor object that has been previously created.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://quickbooks.api.intuit.com",
+      "path": "/v3/company/{realm-id}/vendor/{vendor-id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "realm-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Realm ID."
+        },
+        {
+          "name": "vendor-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Vendor ID."
+        },
+        {
+          "name": "accept",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "default": "application/json"
+          },
+          "description": "Accept header"
+        }
+      ]
+    },
+    {
+      "connector": "quickbooks-online.Query Entity",
+      "title": "Query an entity",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://quickbooks.api.intuit.com",
+      "path": "/v3/company/{realm-id}/query",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "realm-id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Realm ID."
+        },
+        {
+          "name": "query",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Query statement."
+        },
+        {
+          "name": "accept",
+          "in": "header",
+          "schema": {
+            "type": "string",
+            "default": "application/json"
+          },
+          "description": "Accept header"
+        }
+      ]
+    }
+  ]
+}

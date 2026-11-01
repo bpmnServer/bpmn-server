@@ -1,0 +1,932 @@
+{
+  "name": "adyen",
+  "title": "Adyen",
+  "source": "https://raw.githubusercontent.com/Adyen/adyen-openapi/master/yaml/CheckoutService-v71.yaml",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "adyen.post-applePay-sessions",
+      "title": "Get an Apple Pay session",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/applePay/sessions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplePaySessionRequest"
+              },
+              "examples": {
+                "basic": {
+                  "$ref": "#/components/examples/post-applePay-sessions-basic"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-cancels",
+      "title": "Cancel an authorised payment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/cancels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StandalonePaymentCancelRequest"
+              },
+              "examples": {
+                "cancel-with-own-reference": {
+                  "$ref": "#/components/examples/post-cancels-cancel-with-own-reference"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-cardDetails",
+      "title": "Get the brands and other details of a card",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/cardDetails",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardDetailsRequest"
+              },
+              "examples": {
+                "basic": {
+                  "$ref": "#/components/examples/post-cardDetails-basic"
+                },
+                "supported-brands": {
+                  "$ref": "#/components/examples/post-cardDetails-supported-brands"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-donationCampaigns",
+      "title": "Get a list of donation campaigns.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/donationCampaigns",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DonationCampaignsRequest"
+              },
+              "examples": {
+                "donation-campaigns": {
+                  "$ref": "#/components/examples/post-donationCampaigns-donation-campaigns"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-donations",
+      "title": "Make a donation",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/donations",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DonationPaymentRequest"
+              },
+              "examples": {
+                "donations-campaigns": {
+                  "$ref": "#/components/examples/post-donations-donations-campaigns"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-forward",
+      "title": "Forward stored payment details",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/forward",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutForwardRequest"
+              },
+              "examples": {
+                "forward-card": {
+                  "$ref": "#/components/examples/post-forward-forward-card"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-orders",
+      "title": "Create an order",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/orders",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrderRequest"
+              },
+              "examples": {
+                "basic": {
+                  "$ref": "#/components/examples/post-orders-basic"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-orders-cancel",
+      "title": "Cancel an order",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/orders/cancel",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelOrderRequest"
+              },
+              "examples": {
+                "basic": {
+                  "$ref": "#/components/examples/post-orders-cancel-basic"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-originKeys",
+      "title": "Create originKey values for domains",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/originKeys",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UtilityRequest"
+              },
+              "examples": {
+                "basic": {
+                  "$ref": "#/components/examples/post-originKeys-basic"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-paymentLinks",
+      "title": "Create a payment link",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/paymentLinks",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentLinkRequest"
+              },
+              "examples": {
+                "basic": {
+                  "$ref": "#/components/examples/post-paymentLinks-basic"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.get-paymentLinks-linkId",
+      "title": "Get a payment link",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/paymentLinks/{linkId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "linkId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Unique identifier of the payment link."
+        }
+      ]
+    },
+    {
+      "connector": "adyen.patch-paymentLinks-linkId",
+      "title": "Update the status of a payment link",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/paymentLinks/{linkId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "linkId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Unique identifier of the payment link."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePaymentLinkRequest"
+              },
+              "examples": {
+                "basic": {
+                  "$ref": "#/components/examples/patch-paymentLinks-linkId-basic"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-paymentMethods",
+      "title": "Get a list of available payment methods",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/paymentMethods",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentMethodsRequest"
+              },
+              "examples": {
+                "basic": {
+                  "$ref": "#/components/examples/post-paymentMethods-basic"
+                },
+                "filtered": {
+                  "$ref": "#/components/examples/post-paymentMethods-filtered"
+                },
+                "include-stored": {
+                  "$ref": "#/components/examples/post-paymentMethods-include-stored"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-paymentMethods-balance",
+      "title": "Get the balance of a gift card",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/paymentMethods/balance",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BalanceCheckRequest"
+              },
+              "examples": {
+                "basic": {
+                  "$ref": "#/components/examples/post-paymentMethods-balance-basic"
+                },
+                "not-enough": {
+                  "$ref": "#/components/examples/post-paymentMethods-balance-not-enough"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-payments",
+      "title": "Start a transaction",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/payments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentRequest"
+              },
+              "examples": {
+                "applepay": {
+                  "$ref": "#/components/examples/post-payments-applepay"
+                },
+                "card-3d-secure-2-web": {
+                  "$ref": "#/components/examples/post-payments-card-3d-secure-2-web"
+                },
+                "card-3d-secure-redirect": {
+                  "$ref": "#/components/examples/post-payments-card-3d-secure-redirect"
+                },
+                "card-direct": {
+                  "$ref": "#/components/examples/post-payments-card-direct"
+                },
+                "card-securedfields": {
+                  "$ref": "#/components/examples/post-payments-card-securedfields"
+                },
+                "enableOneClick-SF": {
+                  "$ref": "#/components/examples/post-payments-enableOneClick-SF"
+                },
+                "googlepay": {
+                  "$ref": "#/components/examples/post-payments-googlepay"
+                },
+                "ideal": {
+                  "$ref": "#/components/examples/post-payments-ideal"
+                },
+                "klarna": {
+                  "$ref": "#/components/examples/post-payments-klarna"
+                },
+                "on-demand-top-up-from-transfer-instrument": {
+                  "$ref": "#/components/examples/post-payments-on-demand-top-up-from-transfer-instrument"
+                },
+                "on-demand-top-up-visa": {
+                  "$ref": "#/components/examples/post-payments-on-demand-top-up-visa"
+                },
+                "oneclick-securedfields": {
+                  "$ref": "#/components/examples/post-payments-oneclick-securedfields"
+                },
+                "split-balanceplatform": {
+                  "$ref": "#/components/examples/post-payments-split-balanceplatform"
+                },
+                "split-classic": {
+                  "$ref": "#/components/examples/post-payments-split-classic"
+                },
+                "subscription-first-transaction": {
+                  "$ref": "#/components/examples/post-payments-subscription-first-transaction"
+                },
+                "subscription-payment": {
+                  "$ref": "#/components/examples/post-payments-subscription-payment"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-payments-details",
+      "title": "Submit details for a payment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/payments/details",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentDetailsRequest"
+              },
+              "examples": {
+                "00.redirect": {
+                  "$ref": "#/components/examples/post-payments-details-00.redirect"
+                },
+                "3d-secure-2-native": {
+                  "$ref": "#/components/examples/post-payments-details-3d-secure-2-native"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-payments-paymentPspReference-amountUpdates",
+      "title": "Update an authorised amount",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/payments/{paymentPspReference}/amountUpdates",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "paymentPspReference",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The [`pspReference`](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments#responses-200-pspReference) of the payment."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentAmountUpdateRequest"
+              },
+              "examples": {
+                "amount-update": {
+                  "$ref": "#/components/examples/post-payments-paymentPspReference-amountUpdates-amount-update"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-payments-paymentPspReference-cancels",
+      "title": "Cancel an authorised payment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/payments/{paymentPspReference}/cancels",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "paymentPspReference",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The [`pspReference`](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments#responses-200-pspReference) of the payment that you want to cancel. "
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentCancelRequest"
+              },
+              "examples": {
+                "cancel-with-psp-reference": {
+                  "$ref": "#/components/examples/post-payments-paymentPspReference-cancels-cancel-with-psp-reference"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-payments-paymentPspReference-captures",
+      "title": "Capture an authorised payment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/payments/{paymentPspReference}/captures",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "paymentPspReference",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The [`pspReference`](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments#responses-200-pspReference) of the payment that you want to capture."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentCaptureRequest"
+              },
+              "examples": {
+                "capture": {
+                  "$ref": "#/components/examples/post-payments-paymentPspReference-captures-capture"
+                },
+                "split-balanceplatform": {
+                  "$ref": "#/components/examples/post-payments-paymentPspReference-captures-split-balanceplatform"
+                },
+                "split-classic": {
+                  "$ref": "#/components/examples/post-payments-paymentPspReference-captures-split-classic"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-payments-paymentPspReference-refunds",
+      "title": "Refund a captured payment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/payments/{paymentPspReference}/refunds",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "paymentPspReference",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The [`pspReference`](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments#responses-200-pspReference) of the payment that you want to refund."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentRefundRequest"
+              },
+              "examples": {
+                "refund": {
+                  "$ref": "#/components/examples/post-payments-paymentPspReference-refunds-refund"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-payments-paymentPspReference-reversals",
+      "title": "Refund or cancel a payment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/payments/{paymentPspReference}/reversals",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "paymentPspReference",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The [`pspReference`](https://docs.adyen.com/api-explorer/Checkout/latest/post/payments#responses-200-pspReference) of the payment that you want to reverse. "
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentReversalRequest"
+              },
+              "examples": {
+                "reversal": {
+                  "$ref": "#/components/examples/post-payments-paymentPspReference-reversals-reversal"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-paypal-updateOrder",
+      "title": "Updates the order for PayPal Express Checkout",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/paypal/updateOrder",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaypalUpdateOrderRequest"
+              },
+              "examples": {
+                "advanced-with-delivery": {
+                  "$ref": "#/components/examples/post-paypal-updateOrder-advanced-with-delivery"
+                },
+                "advanced-without-delivery": {
+                  "$ref": "#/components/examples/post-paypal-updateOrder-advanced-without-delivery"
+                },
+                "sessions-with-delivery": {
+                  "$ref": "#/components/examples/post-paypal-updateOrder-sessions-with-delivery"
+                },
+                "sessions-without-delivery": {
+                  "$ref": "#/components/examples/post-paypal-updateOrder-sessions-without-delivery"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-sessions",
+      "title": "Create a payment session",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/sessions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCheckoutSessionRequest"
+              },
+              "examples": {
+                "00.success": {
+                  "$ref": "#/components/examples/post-sessions-00.success"
+                },
+                "01.klarna": {
+                  "$ref": "#/components/examples/post-sessions-01.klarna"
+                },
+                "enableOneClick": {
+                  "$ref": "#/components/examples/post-sessions-enableOneClick"
+                },
+                "split": {
+                  "$ref": "#/components/examples/post-sessions-split"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.get-sessions-sessionId",
+      "title": "Get the result of a payment session",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/sessions/{sessionId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "sessionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "A unique identifier of the session."
+        },
+        {
+          "name": "sessionResult",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The `sessionResult` value from the Drop-in or Component."
+        }
+      ]
+    },
+    {
+      "connector": "adyen.get-storedPaymentMethods",
+      "title": "Get tokens for stored payment details",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/storedPaymentMethods",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "shopperReference",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Your reference to uniquely identify this shopper, for example user ID or account ID. Minimum length: 3 characters.\n> Your reference must not include personally identifiable information (PII), for example name or email address."
+        },
+        {
+          "name": "merchantAccount",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Your merchant account."
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-storedPaymentMethods",
+      "title": "Create a token to store payment details",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/storedPaymentMethods",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoredPaymentMethodRequest"
+              },
+              "examples": {
+                "encrypted-card-details": {
+                  "$ref": "#/components/examples/post-storedPaymentMethods-encrypted-card-details"
+                },
+                "unencrypted-card-details": {
+                  "$ref": "#/components/examples/post-storedPaymentMethods-unencrypted-card-details"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "adyen.delete-storedPaymentMethods-storedPaymentMethodId",
+      "title": "Delete a token for stored payment details",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/storedPaymentMethods/{storedPaymentMethodId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "storedPaymentMethodId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The unique identifier of the token."
+        },
+        {
+          "name": "shopperReference",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Your reference to uniquely identify this shopper, for example user ID or account ID. Minimum length: 3 characters.\n> Your reference must not include personally identifiable information (PII), for example name or email address."
+        },
+        {
+          "name": "merchantAccount",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Your merchant account."
+        }
+      ]
+    },
+    {
+      "connector": "adyen.post-validateShopperId",
+      "title": "Validates shopper Id",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://checkout-test.adyen.com/v71",
+      "path": "/validateShopperId",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateShopperIdRequest"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

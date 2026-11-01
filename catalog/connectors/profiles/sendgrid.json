@@ -1,0 +1,45 @@
+{
+  "name": "sendgrid",
+  "title": "Sendgrid",
+  "source": "https://raw.githubusercontent.com/twilio/sendgrid-oai/main/spec/json/tsg_mail_v3.json",
+  "authentication": "bearer",
+  "operations": [
+    {
+      "connector": "sendgrid.CreateMailBatch",
+      "title": "Create a batch ID.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.sendgrid.com",
+      "path": "/v3/mail/batch",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "sendgrid.GetMailBatch",
+      "title": "Validate a batch ID.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.sendgrid.com",
+      "path": "/v3/mail/batch/{batch_id}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "sendgrid.SendMail",
+      "title": "Send Email with Twilio SendGrid.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.sendgrid.com",
+      "path": "/v3/mail/send",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {}
+        }
+      ]
+    }
+  ]
+}

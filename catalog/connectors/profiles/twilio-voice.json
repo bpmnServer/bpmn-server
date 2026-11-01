@@ -1,0 +1,1418 @@
+{
+  "name": "twilio-voice",
+  "title": "Twilio Voice",
+  "source": "https://raw.githubusercontent.com/twilio/twilio-oai/main/spec/json/twilio_voice_v1.json",
+  "authentication": "basic",
+  "operations": [
+    {
+      "connector": "twilio-voice.DeleteArchivedCall",
+      "title": "Delete an archived call record from Bulk Export. Note: this does not also delete the record from the Voice API.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/Archives/{Date}/Calls/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Date",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": "The date of the Call in UTC."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^CA[0-9a-fA-F]{32}$"
+          },
+          "description": "The Twilio-provided Call SID that uniquely identifies the Call resource to delete"
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.CreateByocTrunk",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/ByocTrunks",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateByocTrunkRequest",
+                "properties": {
+                  "FriendlyName": {
+                    "type": "string",
+                    "description": "A descriptive string that you create to describe the resource. It is not unique and can be up to 255 characters long."
+                  },
+                  "VoiceUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL we should call when the BYOC Trunk receives a call."
+                  },
+                  "VoiceMethod": {
+                    "type": "string",
+                    "format": "http-method",
+                    "enum": [
+                      "GET",
+                      "POST"
+                    ],
+                    "description": "The HTTP method we should use to call `voice_url`. Can be: `GET` or `POST`."
+                  },
+                  "VoiceFallbackUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL that we should call when an error occurs while retrieving or executing the TwiML from `voice_url`."
+                  },
+                  "VoiceFallbackMethod": {
+                    "type": "string",
+                    "format": "http-method",
+                    "enum": [
+                      "GET",
+                      "POST"
+                    ],
+                    "description": "The HTTP method we should use to call `voice_fallback_url`. Can be: `GET` or `POST`."
+                  },
+                  "StatusCallbackUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL that we should call to pass status parameters (such as call ended) to your application."
+                  },
+                  "StatusCallbackMethod": {
+                    "type": "string",
+                    "format": "http-method",
+                    "enum": [
+                      "GET",
+                      "POST"
+                    ],
+                    "description": "The HTTP method we should use to call `status_callback_url`. Can be: `GET` or `POST`."
+                  },
+                  "CnamLookupEnabled": {
+                    "type": "boolean",
+                    "description": "Whether Caller ID Name (CNAM) lookup is enabled for the trunk. If enabled, all inbound calls to the BYOC Trunk from the United States and Canada automatically perform a CNAM Lookup and display Caller ID data on your phone. See [CNAM Lookups](https://www.twilio.com/docs/sip-trunking#CNAM) for more information."
+                  },
+                  "ConnectionPolicySid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^NY[0-9a-fA-F]{32}$",
+                    "description": "The SID of the Connection Policy that Twilio will use when routing traffic to your communications infrastructure."
+                  },
+                  "FromDomainSid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^SD[0-9a-fA-F]{32}$",
+                    "description": "The SID of the SIP Domain that should be used in the `From` header of originating calls sent to your SIP infrastructure. If your SIP infrastructure allows users to \"call back\" an incoming call, configure this with a [SIP Domain](https://www.twilio.com/docs/voice/api/sending-sip) to ensure proper routing. If not configured, the from domain will default to \"sip.twilio.com\"."
+                  }
+                }
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "FriendlyName": "friendly_name",
+                    "VoiceUrl": "https://byoc.example.com/twilio/app",
+                    "VoiceMethod": "POST",
+                    "VoiceFallbackUrl": "https://byoc.example.com/twilio/fallback",
+                    "VoiceFallbackMethod": "POST",
+                    "StatusCallbackUrl": "https://byoc.example.com/twilio/status_callback",
+                    "StatusCallbackMethod": "POST",
+                    "CnamLookupEnabled": false,
+                    "ConnectionPolicySid": "NYaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "FromDomainSid": "SDaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.ListByocTrunk",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/ByocTrunks",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.FetchByocTrunk",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/ByocTrunks/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^BY[0-9a-fA-F]{32}$"
+          },
+          "description": "The Twilio-provided string that uniquely identifies the BYOC Trunk resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.UpdateByocTrunk",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/ByocTrunks/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^BY[0-9a-fA-F]{32}$"
+          },
+          "description": "The Twilio-provided string that uniquely identifies the BYOC Trunk resource to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "UpdateByocTrunkRequest",
+                "properties": {
+                  "FriendlyName": {
+                    "type": "string",
+                    "description": "A descriptive string that you create to describe the resource. It is not unique and can be up to 255 characters long."
+                  },
+                  "VoiceUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL we should call when the BYOC Trunk receives a call."
+                  },
+                  "VoiceMethod": {
+                    "type": "string",
+                    "format": "http-method",
+                    "enum": [
+                      "GET",
+                      "POST"
+                    ],
+                    "description": "The HTTP method we should use to call `voice_url`"
+                  },
+                  "VoiceFallbackUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL that we should call when an error occurs while retrieving or executing the TwiML requested by `voice_url`."
+                  },
+                  "VoiceFallbackMethod": {
+                    "type": "string",
+                    "format": "http-method",
+                    "enum": [
+                      "GET",
+                      "POST"
+                    ],
+                    "description": "The HTTP method we should use to call `voice_fallback_url`. Can be: `GET` or `POST`."
+                  },
+                  "StatusCallbackUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The URL that we should call to pass status parameters (such as call ended) to your application."
+                  },
+                  "StatusCallbackMethod": {
+                    "type": "string",
+                    "format": "http-method",
+                    "enum": [
+                      "GET",
+                      "POST"
+                    ],
+                    "description": "The HTTP method we should use to call `status_callback_url`. Can be: `GET` or `POST`."
+                  },
+                  "CnamLookupEnabled": {
+                    "type": "boolean",
+                    "description": "Whether Caller ID Name (CNAM) lookup is enabled for the trunk. If enabled, all inbound calls to the BYOC Trunk from the United States and Canada automatically perform a CNAM Lookup and display Caller ID data on your phone. See [CNAM Lookups](https://www.twilio.com/docs/sip-trunking#CNAM) for more information."
+                  },
+                  "ConnectionPolicySid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^NY[0-9a-fA-F]{32}$",
+                    "description": "The SID of the Connection Policy that Twilio will use when routing traffic to your communications infrastructure."
+                  },
+                  "FromDomainSid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^SD[0-9a-fA-F]{32}$",
+                    "description": "The SID of the SIP Domain that should be used in the `From` header of originating calls sent to your SIP infrastructure. If your SIP infrastructure allows users to \"call back\" an incoming call, configure this with a [SIP Domain](https://www.twilio.com/docs/voice/api/sending-sip) to ensure proper routing. If not configured, the from domain will default to \"sip.twilio.com\"."
+                  }
+                }
+              },
+              "examples": {
+                "update": {
+                  "value": {
+                    "FriendlyName": "update_name",
+                    "VoiceUrl": "https://byoc.example.com/twilio_updated/app",
+                    "VoiceMethod": "GET",
+                    "VoiceFallbackUrl": "https://byoc.example.com/twilio_updated/fallback",
+                    "VoiceFallbackMethod": "GET",
+                    "StatusCallbackUrl": "https://byoc.example.com/twilio_updated/status_callback",
+                    "StatusCallbackMethod": "GET",
+                    "CnamLookupEnabled": true,
+                    "ConnectionPolicySid": "NYaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab",
+                    "FromDomainSid": "SDaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.DeleteByocTrunk",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/ByocTrunks/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^BY[0-9a-fA-F]{32}$"
+          },
+          "description": "The Twilio-provided string that uniquely identifies the BYOC Trunk resource to delete."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.CreateConnectionPolicy",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/ConnectionPolicies",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateConnectionPolicyRequest",
+                "properties": {
+                  "FriendlyName": {
+                    "type": "string",
+                    "description": "A descriptive string that you create to describe the resource. It is not unique and can be up to 255 characters long."
+                  }
+                }
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "FriendlyName": "friendly_name"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.ListConnectionPolicy",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/ConnectionPolicies",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.FetchConnectionPolicy",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/ConnectionPolicies/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^NY[0-9a-fA-F]{32}$"
+          },
+          "description": "The unique string that we created to identify the Connection Policy resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.UpdateConnectionPolicy",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/ConnectionPolicies/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^NY[0-9a-fA-F]{32}$"
+          },
+          "description": "The unique string that we created to identify the Connection Policy resource to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "UpdateConnectionPolicyRequest",
+                "properties": {
+                  "FriendlyName": {
+                    "type": "string",
+                    "description": "A descriptive string that you create to describe the resource. It is not unique and can be up to 255 characters long."
+                  }
+                }
+              },
+              "examples": {
+                "update": {
+                  "value": {
+                    "FriendlyName": "updated_name"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.DeleteConnectionPolicy",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/ConnectionPolicies/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^NY[0-9a-fA-F]{32}$"
+          },
+          "description": "The unique string that we created to identify the Connection Policy resource to delete."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.CreateConnectionPolicyTarget",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/ConnectionPolicies/{ConnectionPolicySid}/Targets",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ConnectionPolicySid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^NY[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Connection Policy that owns the Target."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateConnectionPolicyTargetRequest",
+                "properties": {
+                  "Target": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The SIP address you want Twilio to route your calls to. This must be a `sip:` schema. `sips` is NOT supported."
+                  },
+                  "FriendlyName": {
+                    "type": "string",
+                    "description": "A descriptive string that you create to describe the resource. It is not unique and can be up to 255 characters long."
+                  },
+                  "Priority": {
+                    "type": "integer",
+                    "description": "The relative importance of the target. Can be an integer from 0 to 65535, inclusive, and the default is 10. The lowest number represents the most important target."
+                  },
+                  "Weight": {
+                    "type": "integer",
+                    "description": "The value that determines the relative share of the load the Target should receive compared to other Targets with the same priority. Can be an integer from 1 to 65535, inclusive, and the default is 10. Targets with higher values receive more load than those with lower ones with the same priority."
+                  },
+                  "Enabled": {
+                    "type": "boolean",
+                    "description": "Whether the Target is enabled. The default is `true`."
+                  }
+                },
+                "required": [
+                  "Target"
+                ]
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "FriendlyName": "friendly_name",
+                    "Target": "sip:sip-box.com:1234",
+                    "Priority": 1,
+                    "Weight": 20,
+                    "Enabled": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.ListConnectionPolicyTarget",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/ConnectionPolicies/{ConnectionPolicySid}/Targets",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ConnectionPolicySid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^NY[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Connection Policy from which to read the Targets."
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.FetchConnectionPolicyTarget",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/ConnectionPolicies/{ConnectionPolicySid}/Targets/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ConnectionPolicySid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^NY[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Connection Policy that owns the Target."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^NE[0-9a-fA-F]{32}$"
+          },
+          "description": "The unique string that we created to identify the Target resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.UpdateConnectionPolicyTarget",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/ConnectionPolicies/{ConnectionPolicySid}/Targets/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ConnectionPolicySid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^NY[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Connection Policy that owns the Target."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^NE[0-9a-fA-F]{32}$"
+          },
+          "description": "The unique string that we created to identify the Target resource to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "UpdateConnectionPolicyTargetRequest",
+                "properties": {
+                  "FriendlyName": {
+                    "type": "string",
+                    "description": "A descriptive string that you create to describe the resource. It is not unique and can be up to 255 characters long."
+                  },
+                  "Target": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "The SIP address you want Twilio to route your calls to. This must be a `sip:` schema. `sips` is NOT supported."
+                  },
+                  "Priority": {
+                    "type": "integer",
+                    "description": "The relative importance of the target. Can be an integer from 0 to 65535, inclusive. The lowest number represents the most important target."
+                  },
+                  "Weight": {
+                    "type": "integer",
+                    "description": "The value that determines the relative share of the load the Target should receive compared to other Targets with the same priority. Can be an integer from 1 to 65535, inclusive. Targets with higher values receive more load than those with lower ones with the same priority."
+                  },
+                  "Enabled": {
+                    "type": "boolean",
+                    "description": "Whether the Target is enabled."
+                  }
+                }
+              },
+              "examples": {
+                "update": {
+                  "value": {
+                    "FriendlyName": "updated_name",
+                    "Target": "sip:sip-updated.com:4321",
+                    "Priority": 2,
+                    "Weight": 10,
+                    "Enabled": false
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.DeleteConnectionPolicyTarget",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/ConnectionPolicies/{ConnectionPolicySid}/Targets/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "ConnectionPolicySid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^NY[0-9a-fA-F]{32}$"
+          },
+          "description": "The SID of the Connection Policy that owns the Target."
+        },
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^NE[0-9a-fA-F]{32}$"
+          },
+          "description": "The unique string that we created to identify the Target resource to delete."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.FetchDialingPermissionsCountry",
+      "title": "Retrieve voice dialing country permissions identified by the given ISO country code",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/DialingPermissions/Countries/{IsoCode}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "IsoCode",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "iso-country-code"
+          },
+          "description": "The [ISO country code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) of the DialingPermissions Country resource to fetch"
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.ListDialingPermissionsCountry",
+      "title": "Retrieve all voice dialing country permissions for this account",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/DialingPermissions/Countries",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "IsoCode",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "iso-country-code"
+          },
+          "description": "Filter to retrieve the country permissions by specifying the [ISO country code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)"
+        },
+        {
+          "name": "Continent",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter to retrieve the country permissions by specifying the continent"
+        },
+        {
+          "name": "CountryCode",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter the results by specified [country codes](https://www.itu.int/itudoc/itu-t/ob-lists/icc/e164_763.html)"
+        },
+        {
+          "name": "LowRiskNumbersEnabled",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Filter to retrieve the country permissions with dialing to low-risk numbers enabled. Can be: `true` or `false`."
+        },
+        {
+          "name": "HighRiskSpecialNumbersEnabled",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Filter to retrieve the country permissions with dialing to high-risk special service numbers enabled. Can be: `true` or `false`"
+        },
+        {
+          "name": "HighRiskTollfraudNumbersEnabled",
+          "in": "query",
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Filter to retrieve the country permissions with dialing to high-risk [toll fraud](https://www.twilio.com/blog/how-to-protect-your-account-from-toll-fraud-with-voice-dialing-geo-permissions-html) numbers enabled. Can be: `true` or `false`."
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.CreateDialingPermissionsCountryBulkUpdate",
+      "title": "Create a bulk update request to change voice dialing country permissions of one or more countries identified by the corresponding [ISO country code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/DialingPermissions/BulkCountryUpdates",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateDialingPermissionsCountryBulkUpdateRequest",
+                "properties": {
+                  "UpdateRequest": {
+                    "type": "string",
+                    "description": "URL encoded JSON array of update objects. example : `[ { \"iso_code\": \"GB\", \"low_risk_numbers_enabled\": \"true\", \"high_risk_special_numbers_enabled\":\"true\", \"high_risk_tollfraud_numbers_enabled\": \"false\" } ]`"
+                  }
+                },
+                "required": [
+                  "UpdateRequest"
+                ]
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "UpdateRequest": "[ { \"iso_code\": \"GB\", \"low_risk_numbers\": \"Enabled\", \"high_risk_special_numbers\":\"Enabled\", \"high_risk_irsf_numbers\": \"Enabled\" } ]"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.ListDialingPermissionsHrsPrefixes",
+      "title": "Fetch the high-risk special services prefixes from the country resource corresponding to the [ISO country code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/DialingPermissions/Countries/{IsoCode}/HighRiskSpecialPrefixes",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "IsoCode",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "iso-country-code"
+          },
+          "description": "The [ISO 3166-1 country code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) to identify the country permissions from which high-risk special service number prefixes are fetched"
+        },
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.FetchDialingPermissionsSettings",
+      "title": "Retrieve voice dialing permissions inheritance for the sub-account",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/Settings",
+      "authentication": "basic",
+      "parameters": []
+    },
+    {
+      "connector": "twilio-voice.UpdateDialingPermissionsSettings",
+      "title": "Update voice dialing permissions inheritance for the sub-account",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/Settings",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "UpdateDialingPermissionsSettingsRequest",
+                "properties": {
+                  "DialingPermissionsInheritance": {
+                    "type": "boolean",
+                    "description": "`true` for the sub-account to inherit voice dialing permissions from the Master Project; otherwise `false`."
+                  }
+                }
+              },
+              "examples": {
+                "update": {
+                  "value": {
+                    "DialingPermissionsInheritance": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.CreateIpRecord",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/IpRecords",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateIpRecordRequest",
+                "properties": {
+                  "IpAddress": {
+                    "type": "string",
+                    "description": "An IP address in dotted decimal notation, IPv4 only."
+                  },
+                  "FriendlyName": {
+                    "type": "string",
+                    "description": "A descriptive string that you create to describe the resource. It is not unique and can be up to 255 characters long."
+                  },
+                  "CidrPrefixLength": {
+                    "type": "integer",
+                    "description": "An integer representing the length of the [CIDR](https://tools.ietf.org/html/rfc4632) prefix to use with this IP address. By default the entire IP address is used, which for IPv4 is value 32."
+                  }
+                },
+                "required": [
+                  "IpAddress"
+                ]
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "FriendlyName": "friendly_name",
+                    "IpAddress": "10.2.3.4",
+                    "CidrPrefixLength": 30
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.ListIpRecord",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/IpRecords",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.FetchIpRecord",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/IpRecords/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^IL[0-9a-fA-F]{32}$"
+          },
+          "description": "The Twilio-provided string that uniquely identifies the IP Record resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.UpdateIpRecord",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/IpRecords/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^IL[0-9a-fA-F]{32}$"
+          },
+          "description": "The Twilio-provided string that uniquely identifies the IP Record resource to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "UpdateIpRecordRequest",
+                "properties": {
+                  "FriendlyName": {
+                    "type": "string",
+                    "description": "A descriptive string that you create to describe the resource. It is not unique and can be up to 255 characters long."
+                  }
+                }
+              },
+              "examples": {
+                "update": {
+                  "value": {
+                    "FriendlyName": "update_name"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.DeleteIpRecord",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/IpRecords/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^IL[0-9a-fA-F]{32}$"
+          },
+          "description": "The Twilio-provided string that uniquely identifies the IP Record resource to delete."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.CreateSourceIpMapping",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/SourceIpMappings",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "CreateSourceIpMappingRequest",
+                "properties": {
+                  "IpRecordSid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^IL[0-9a-fA-F]{32}$",
+                    "description": "The Twilio-provided string that uniquely identifies the IP Record resource to map from."
+                  },
+                  "SipDomainSid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^SD[0-9a-fA-F]{32}$",
+                    "description": "The SID of the SIP Domain that the IP Record should be mapped to."
+                  }
+                },
+                "required": [
+                  "IpRecordSid",
+                  "SipDomainSid"
+                ]
+              },
+              "examples": {
+                "create": {
+                  "value": {
+                    "IpRecordSid": "ILaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "SipDomainSid": "SDaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.ListSourceIpMapping",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/SourceIpMappings",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "PageSize",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "maximum": 1000
+          },
+          "description": "How many resources to return in each list page. The default is 50, and the maximum is 1000."
+        },
+        {
+          "name": "Page",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "description": "The page index. This value is simply for client state."
+        },
+        {
+          "name": "PageToken",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The page token. This is provided by the API."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.FetchSourceIpMapping",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/SourceIpMappings/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^IB[0-9a-fA-F]{32}$"
+          },
+          "description": "The Twilio-provided string that uniquely identifies the IP Record resource to fetch."
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.UpdateSourceIpMapping",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/SourceIpMappings/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^IB[0-9a-fA-F]{32}$"
+          },
+          "description": "The Twilio-provided string that uniquely identifies the IP Record resource to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "title": "UpdateSourceIpMappingRequest",
+                "properties": {
+                  "SipDomainSid": {
+                    "type": "string",
+                    "minLength": 34,
+                    "maxLength": 34,
+                    "pattern": "^SD[0-9a-fA-F]{32}$",
+                    "description": "The SID of the SIP Domain that the IP Record should be mapped to."
+                  }
+                },
+                "required": [
+                  "SipDomainSid"
+                ]
+              },
+              "examples": {
+                "update": {
+                  "value": {
+                    "SipDomainSid": "SDaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "twilio-voice.DeleteSourceIpMapping",
+      "title": "",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://voice.twilio.com",
+      "path": "/v1/SourceIpMappings/{Sid}",
+      "authentication": "basic",
+      "parameters": [
+        {
+          "name": "Sid",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 34,
+            "maxLength": 34,
+            "pattern": "^IB[0-9a-fA-F]{32}$"
+          },
+          "description": "The Twilio-provided string that uniquely identifies the IP Record resource to delete."
+        }
+      ]
+    }
+  ]
+}

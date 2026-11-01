@@ -1,0 +1,2599 @@
+{
+  "name": "netlify",
+  "title": "Netlify",
+  "source": "https://api.apis.guru/v2/specs/netlify.com/2.15.0/swagger.json",
+  "authentication": "oauth-client-credentials-flow",
+  "operations": [
+    {
+      "connector": "netlify.listAccountsForUser",
+      "title": "listAccountsForUser",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/accounts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "netlify.createAccount",
+      "title": "createAccount",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/accounts",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "accountSetup",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/accountSetup"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listAccountTypesForUser",
+      "title": "listAccountTypesForUser",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/accounts/types",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "netlify.cancelAccount",
+      "title": "cancelAccount",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/accounts/{account_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getAccount",
+      "title": "getAccount",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/accounts/{account_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.updateAccount",
+      "title": "updateAccount",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/accounts/{account_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "accountUpdateSetup",
+          "in": "body",
+          "schema": {
+            "$ref": "#/definitions/accountUpdateSetup"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listAccountAuditEvents",
+      "title": "listAccountAuditEvents",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/accounts/{account_id}/audit",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "query",
+          "in": "query"
+        },
+        {
+          "name": "log_type",
+          "in": "query"
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getEnvVars",
+      "title": "Returns all environment variables for an account or site. An account corresponds to a team in the Netlify UI. To use this endpoint, your site must no longer be using the <a href=\"https://docs.netlify.com/environment-variables/classic-experience/\">classic environment variables experience</a>.  Migrate now with the Netlify UI.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/accounts/{account_id}/env",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "description": "Scope response to account_id"
+        },
+        {
+          "name": "context_name",
+          "in": "query",
+          "required": false,
+          "description": "Filter by deploy context"
+        },
+        {
+          "name": "scope",
+          "in": "query",
+          "required": false,
+          "description": "Filter by scope"
+        },
+        {
+          "name": "site_id",
+          "in": "query",
+          "required": false,
+          "description": "If specified, only return environment variables set on this site"
+        }
+      ]
+    },
+    {
+      "connector": "netlify.createEnvVars",
+      "title": "Creates new environment variables. Granular scopes are available on Pro plans and above.  To use this endpoint, your site must no longer be using the <a href=\"https://docs.netlify.com/environment-variables/classic-experience/\">classic environment variables experience</a>.  Migrate now with the Netlify UI.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/accounts/{account_id}/env",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "env_vars",
+          "in": "body",
+          "schema": {
+            "items": {
+              "properties": {
+                "key": {
+                  "description": "The existing or new name of the key, if you wish to rename it (case-sensitive)",
+                  "type": "string"
+                },
+                "scopes": {
+                  "description": "The scopes that this environment variable is set to (Pro plans and above)",
+                  "items": {
+                    "enum": [
+                      "builds",
+                      "functions",
+                      "runtime",
+                      "post-processing"
+                    ],
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "values": {
+                  "items": {
+                    "$ref": "#/definitions/envVarValue"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "description": "Scope response to account_id"
+        },
+        {
+          "name": "site_id",
+          "in": "query",
+          "required": false,
+          "description": "If provided, create an environment variable on the site level, not the account level"
+        }
+      ]
+    },
+    {
+      "connector": "netlify.deleteEnvVar",
+      "title": "Deletes an environment variable. To use this endpoint, your site must no longer be using the <a href=\"https://docs.netlify.com/environment-variables/classic-experience/\">classic environment variables experience</a>.  Migrate now with the Netlify UI.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/accounts/{account_id}/env/{key}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "description": "Scope response to account_id"
+        },
+        {
+          "name": "key",
+          "in": "path",
+          "required": true,
+          "description": "The environment variable key (case-sensitive)"
+        },
+        {
+          "name": "site_id",
+          "in": "query",
+          "required": false,
+          "description": "If provided, delete the environment variable from this site"
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getEnvVar",
+      "title": "Returns an individual environment variable. To use this endpoint, your site must no longer be using the <a href=\"https://docs.netlify.com/environment-variables/classic-experience/\">classic environment variables experience</a>.  Migrate now with the Netlify UI.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/accounts/{account_id}/env/{key}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "description": "Scope response to account_id"
+        },
+        {
+          "name": "key",
+          "in": "path",
+          "required": true,
+          "description": "The environment variable key (case-sensitive)"
+        },
+        {
+          "name": "site_id",
+          "in": "query",
+          "required": false,
+          "description": "If provided, return the environment variable for a specific site (no merging is performed)"
+        }
+      ]
+    },
+    {
+      "connector": "netlify.setEnvVarValue",
+      "title": "Updates or creates a new value for an existing environment variable. To use this endpoint, your site must no longer be using the <a href=\"https://docs.netlify.com/environment-variables/classic-experience/\">classic environment variables experience</a>.  Migrate now with the Netlify UI.",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/accounts/{account_id}/env/{key}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "description": "Scope response to account_id"
+        },
+        {
+          "name": "key",
+          "in": "path",
+          "required": true,
+          "description": "The existing environment variable key name (case-sensitive)"
+        },
+        {
+          "name": "site_id",
+          "in": "query",
+          "description": "If provided, update an environment variable set on this site"
+        },
+        {
+          "name": "env_var",
+          "in": "body",
+          "schema": {
+            "properties": {
+              "context": {
+                "description": "The deploy context in which this value will be used. `dev` refers to local development when running `netlify dev`.",
+                "enum": [
+                  "dev",
+                  "branch-deploy",
+                  "deploy-preview",
+                  "production"
+                ],
+                "type": "string"
+              },
+              "value": {
+                "description": "The environment variable's unencrypted value",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.updateEnvVar",
+      "title": "Updates an existing environment variable and all of its values. Existing values will be replaced by values provided. To use this endpoint, your site must no longer be using the <a href=\"https://docs.netlify.com/environment-variables/classic-experience/\">classic environment variables experience</a>.  Migrate now with the Netlify UI.",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/accounts/{account_id}/env/{key}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "description": "Scope response to account_id"
+        },
+        {
+          "name": "key",
+          "in": "path",
+          "required": true,
+          "description": "The existing environment variable key name (case-sensitive)"
+        },
+        {
+          "name": "env_var",
+          "in": "body",
+          "schema": {
+            "properties": {
+              "key": {
+                "description": "The existing or new name of the key, if you wish to rename it (case-sensitive)",
+                "type": "string"
+              },
+              "scopes": {
+                "description": "The scopes that this environment variable is set to (Pro plans and above)",
+                "items": {
+                  "enum": [
+                    "builds",
+                    "functions",
+                    "runtime",
+                    "post-processing"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "values": {
+                "items": {
+                  "$ref": "#/definitions/envVarValue"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          }
+        },
+        {
+          "name": "site_id",
+          "in": "query",
+          "required": false,
+          "description": "If provided, update an environment variable set on this site"
+        }
+      ]
+    },
+    {
+      "connector": "netlify.deleteEnvVarValue",
+      "title": "Deletes a specific environment variable value. To use this endpoint, your site must no longer be using the <a href=\"https://docs.netlify.com/environment-variables/classic-experience/\">classic environment variables experience</a>.  Migrate now with the Netlify UI.",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/accounts/{account_id}/env/{key}/value/{id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "description": "Scope response to account_id"
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The environment variable value's ID"
+        },
+        {
+          "name": "key",
+          "in": "path",
+          "required": true,
+          "description": "The environment variable key name (case-sensitive)"
+        },
+        {
+          "name": "site_id",
+          "in": "query",
+          "required": false,
+          "description": "If provided, delete the value from an environment variable on this site"
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listPaymentMethodsForUser",
+      "title": "listPaymentMethodsForUser",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/billing/payment_methods",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "netlify.getSiteBuild",
+      "title": "getSiteBuild",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/builds/{build_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "build_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.updateSiteBuildLog",
+      "title": "updateSiteBuildLog",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/builds/{build_id}/log",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "build_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "msg",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/buildLogMsg"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.notifyBuildStart",
+      "title": "notifyBuildStart",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/builds/{build_id}/start",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "build_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listDeployKeys",
+      "title": "listDeployKeys",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/deploy_keys",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "netlify.createDeployKey",
+      "title": "createDeployKey",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/deploy_keys",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "netlify.deleteDeployKey",
+      "title": "deleteDeployKey",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/deploy_keys/{key_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "key_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getDeployKey",
+      "title": "getDeployKey",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/deploy_keys/{key_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "key_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.deleteDeploy",
+      "title": "deleteDeploy",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/deploys/{deploy_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "deploy_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getDeploy",
+      "title": "getDeploy",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/deploys/{deploy_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "deploy_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.cancelSiteDeploy",
+      "title": "cancelSiteDeploy",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/deploys/{deploy_id}/cancel",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "deploy_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.uploadDeployFile",
+      "title": "uploadDeployFile",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/deploys/{deploy_id}/files/{path}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "deploy_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "path",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "size",
+          "in": "query"
+        },
+        {
+          "name": "file_body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "format": "binary",
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.uploadDeployFunction",
+      "title": "uploadDeployFunction",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/deploys/{deploy_id}/functions/{name}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "deploy_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "name",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "runtime",
+          "in": "query"
+        },
+        {
+          "name": "size",
+          "in": "query"
+        },
+        {
+          "name": "file_body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "format": "binary",
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.lockDeploy",
+      "title": "lockDeploy",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/deploys/{deploy_id}/lock",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "deploy_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.createPluginRun",
+      "title": "This is an internal-only endpoint.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/deploys/{deploy_id}/plugin_runs",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "deploy_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "plugin_run",
+          "in": "body",
+          "schema": {
+            "$ref": "#/definitions/pluginRunData"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.unlockDeploy",
+      "title": "unlockDeploy",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/deploys/{deploy_id}/unlock",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "deploy_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getDnsZones",
+      "title": "getDnsZones",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/dns_zones",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "account_slug",
+          "in": "query",
+          "required": false
+        }
+      ]
+    },
+    {
+      "connector": "netlify.createDnsZone",
+      "title": "createDnsZone",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/dns_zones",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "DnsZoneParams",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/dnsZoneSetup"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.deleteDnsZone",
+      "title": "deleteDnsZone",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/dns_zones/{zone_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "zone_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getDnsZone",
+      "title": "getDnsZone",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/dns_zones/{zone_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "zone_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getDnsRecords",
+      "title": "getDnsRecords",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/dns_zones/{zone_id}/dns_records",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "zone_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.createDnsRecord",
+      "title": "createDnsRecord",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/dns_zones/{zone_id}/dns_records",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "zone_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "dns_record",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/dnsRecordCreate"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.deleteDnsRecord",
+      "title": "deleteDnsRecord",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/dns_zones/{zone_id}/dns_records/{dns_record_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "zone_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "dns_record_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getIndividualDnsRecord",
+      "title": "getIndividualDnsRecord",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/dns_zones/{zone_id}/dns_records/{dns_record_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "zone_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "dns_record_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.transferDnsZone",
+      "title": "transferDnsZone",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/dns_zones/{zone_id}/transfer",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "zone_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "account_id",
+          "in": "query",
+          "required": true,
+          "description": "the account of the dns zone"
+        },
+        {
+          "name": "transfer_account_id",
+          "in": "query",
+          "required": true,
+          "description": "the account you want to transfer the dns zone to"
+        },
+        {
+          "name": "transfer_user_id",
+          "in": "query",
+          "required": true,
+          "description": "the user you want to transfer the dns zone to"
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listFormSubmissions",
+      "title": "listFormSubmissions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/forms/{form_id}/submissions",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "form_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listHooksBySiteId",
+      "title": "listHooksBySiteId",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/hooks",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "query",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.createHookBySiteId",
+      "title": "createHookBySiteId",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/hooks",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "query",
+          "required": true
+        },
+        {
+          "name": "hook",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/hook"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listHookTypes",
+      "title": "listHookTypes",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/hooks/types",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "netlify.deleteHook",
+      "title": "deleteHook",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/hooks/{hook_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "hook_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getHook",
+      "title": "getHook",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/hooks/{hook_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "hook_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.updateHook",
+      "title": "updateHook",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/hooks/{hook_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "hook_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "hook",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/hook"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.enableHook",
+      "title": "enableHook",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/hooks/{hook_id}/enable",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "hook_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.createTicket",
+      "title": "createTicket",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/oauth/tickets",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "client_id",
+          "in": "query",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.showTicket",
+      "title": "showTicket",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/oauth/tickets/{ticket_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "ticket_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.exchangeTicket",
+      "title": "exchangeTicket",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/oauth/tickets/{ticket_id}/exchange",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "ticket_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getServices",
+      "title": "getServices",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/services/",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "search",
+          "in": "query"
+        }
+      ]
+    },
+    {
+      "connector": "netlify.showService",
+      "title": "showService",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/services/{addonName}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "addonName",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.showServiceManifest",
+      "title": "showServiceManifest",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/services/{addonName}/manifest",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "addonName",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listSites",
+      "title": "**Note:** Environment variable keys and values will soon be moved from `build_settings.env` and `repo.env` to a new endpoint. Please use [getEnvVars](#tag/environmentVariables/operation/getEnvVars) to retrieve site environment variables.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "name",
+          "in": "query"
+        },
+        {
+          "name": "filter",
+          "in": "query"
+        }
+      ]
+    },
+    {
+      "connector": "netlify.createSite",
+      "title": "**Note:** Environment variable keys and values will soon be moved from `build_settings.env` and `repo.env` to a new endpoint. Please use [createEnvVars](#tag/environmentVariables/operation/createEnvVars) to create environment variables for a site.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/siteSetup"
+          }
+        },
+        {
+          "name": "configure_dns",
+          "in": "query"
+        }
+      ]
+    },
+    {
+      "connector": "netlify.deleteSite",
+      "title": "deleteSite",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getSite",
+      "title": "**Note:** Environment variable keys and values will soon be moved from `build_settings.env` and `repo.env` to a new endpoint. Please use [getEnvVars](#tag/environmentVariables/operation/getEnvVars) to retrieve site environment variables.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.updateSite",
+      "title": "**Note:** Environment variable keys and values will soon be moved from `build_settings.env` and `repo.env` to a new endpoint. Please use [updateEnvVar](#tag/environmentVariables/operation/updateEnvVar) to update a site's environment variables.",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "site",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/siteSetup"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listSiteAssets",
+      "title": "listSiteAssets",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/assets",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.createSiteAsset",
+      "title": "createSiteAsset",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/assets",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "name",
+          "in": "query",
+          "required": true
+        },
+        {
+          "name": "size",
+          "in": "query",
+          "required": true
+        },
+        {
+          "name": "content_type",
+          "in": "query",
+          "required": true
+        },
+        {
+          "name": "visibility",
+          "in": "query"
+        }
+      ]
+    },
+    {
+      "connector": "netlify.deleteSiteAsset",
+      "title": "deleteSiteAsset",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/assets/{asset_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "asset_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getSiteAssetInfo",
+      "title": "getSiteAssetInfo",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/assets/{asset_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "asset_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.updateSiteAsset",
+      "title": "updateSiteAsset",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/assets/{asset_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "asset_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "state",
+          "in": "query",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getSiteAssetPublicSignature",
+      "title": "getSiteAssetPublicSignature",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/assets/{asset_id}/public_signature",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "asset_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listSiteBuildHooks",
+      "title": "listSiteBuildHooks",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/build_hooks",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.createSiteBuildHook",
+      "title": "createSiteBuildHook",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/build_hooks",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "buildHook",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/buildHookSetup"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.deleteSiteBuildHook",
+      "title": "deleteSiteBuildHook",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/build_hooks/{id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getSiteBuildHook",
+      "title": "getSiteBuildHook",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/build_hooks/{id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.updateSiteBuildHook",
+      "title": "updateSiteBuildHook",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/build_hooks/{id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "buildHook",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/buildHookSetup"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listSiteBuilds",
+      "title": "listSiteBuilds",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/builds",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.createSiteBuild",
+      "title": "createSiteBuild",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/builds",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "build",
+          "in": "body",
+          "required": false,
+          "schema": {
+            "$ref": "#/definitions/buildSetup"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listSiteDeployedBranches",
+      "title": "listSiteDeployedBranches",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/deployed-branches",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listSiteDeploys",
+      "title": "listSiteDeploys",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/deploys",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "deploy-previews",
+          "in": "query"
+        },
+        {
+          "name": "production",
+          "in": "query"
+        },
+        {
+          "name": "state",
+          "in": "query"
+        },
+        {
+          "name": "branch",
+          "in": "query"
+        },
+        {
+          "name": "latest-published",
+          "in": "query"
+        }
+      ]
+    },
+    {
+      "connector": "netlify.createSiteDeploy",
+      "title": "createSiteDeploy",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/deploys",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "deploy-previews",
+          "in": "query"
+        },
+        {
+          "name": "production",
+          "in": "query"
+        },
+        {
+          "name": "state",
+          "in": "query"
+        },
+        {
+          "name": "branch",
+          "in": "query"
+        },
+        {
+          "name": "latest-published",
+          "in": "query"
+        },
+        {
+          "name": "title",
+          "in": "query"
+        },
+        {
+          "name": "deploy",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/deployFiles"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.deleteSiteDeploy",
+      "title": "deleteSiteDeploy",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/deploys/{deploy_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "deploy_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getSiteDeploy",
+      "title": "getSiteDeploy",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/deploys/{deploy_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "deploy_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.updateSiteDeploy",
+      "title": "updateSiteDeploy",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/deploys/{deploy_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "deploy_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "deploy",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/deployFiles"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.restoreSiteDeploy",
+      "title": "restoreSiteDeploy",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/deploys/{deploy_id}/restore",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "deploy_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getDNSForSite",
+      "title": "getDNSForSite",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/dns",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.configureDNSForSite",
+      "title": "configureDNSForSite",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/dns",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listSiteFiles",
+      "title": "listSiteFiles",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/files",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getSiteFileByPathName",
+      "title": "getSiteFileByPathName",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/files/{file_path}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "file_path",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listSiteForms",
+      "title": "listSiteForms",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/forms",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.deleteSiteForm",
+      "title": "deleteSiteForm",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/forms/{form_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "form_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getSiteMetadata",
+      "title": "getSiteMetadata",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/metadata",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.updateSiteMetadata",
+      "title": "updateSiteMetadata",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/metadata",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "metadata",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/metadata"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getLatestPluginRuns",
+      "title": "This is an internal-only endpoint.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/plugin_runs/latest",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "packages",
+          "in": "query",
+          "required": true
+        },
+        {
+          "name": "state",
+          "in": "query"
+        }
+      ]
+    },
+    {
+      "connector": "netlify.updatePlugin",
+      "title": "This is an internal-only endpoint.",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/plugins/{package}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "package",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "plugin_params",
+          "in": "body",
+          "schema": {
+            "$ref": "#/definitions/pluginParams"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.rollbackSiteDeploy",
+      "title": "rollbackSiteDeploy",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/rollback",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listServiceInstancesForSite",
+      "title": "listServiceInstancesForSite",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/service-instances",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.createServiceInstance",
+      "title": "createServiceInstance",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/services/{addon}/instances",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "addon",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "config",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.deleteServiceInstance",
+      "title": "deleteServiceInstance",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/services/{addon}/instances/{instance_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "addon",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "instance_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.showServiceInstance",
+      "title": "showServiceInstance",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/services/{addon}/instances/{instance_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "addon",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "instance_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.updateServiceInstance",
+      "title": "updateServiceInstance",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/services/{addon}/instances/{instance_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "addon",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "instance_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "config",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "type": "object"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listSiteSnippets",
+      "title": "listSiteSnippets",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/snippets",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.createSiteSnippet",
+      "title": "createSiteSnippet",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/snippets",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "snippet",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/snippet"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.deleteSiteSnippet",
+      "title": "deleteSiteSnippet",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/snippets/{snippet_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "snippet_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getSiteSnippet",
+      "title": "getSiteSnippet",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/snippets/{snippet_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "snippet_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.updateSiteSnippet",
+      "title": "updateSiteSnippet",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/snippets/{snippet_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "snippet_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "snippet",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/snippet"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.showSiteTLSCertificate",
+      "title": "showSiteTLSCertificate",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/ssl",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.provisionSiteTLSCertificate",
+      "title": "provisionSiteTLSCertificate",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/ssl",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "certificate",
+          "in": "query"
+        },
+        {
+          "name": "key",
+          "in": "query"
+        },
+        {
+          "name": "ca_certificates",
+          "in": "query"
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listSiteSubmissions",
+      "title": "listSiteSubmissions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/submissions",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getSplitTests",
+      "title": "getSplitTests",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/traffic_splits",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.createSplitTest",
+      "title": "createSplitTest",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/traffic_splits",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "branch_tests",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/splitTestSetup"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getSplitTest",
+      "title": "getSplitTest",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/traffic_splits/{split_test_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "split_test_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.updateSplitTest",
+      "title": "updateSplitTest",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/traffic_splits/{split_test_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "split_test_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "branch_tests",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/splitTestSetup"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.enableSplitTest",
+      "title": "enableSplitTest",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/traffic_splits/{split_test_id}/publish",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "split_test_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.disableSplitTest",
+      "title": "disableSplitTest",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/traffic_splits/{split_test_id}/unpublish",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "split_test_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.unlinkSiteRepo",
+      "title": "[Beta] Unlinks the repo from the site.\n\nThis action will also:\n- Delete associated deploy keys\n- Delete outgoing webhooks for the repo\n- Delete the site's build hooks",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/sites/{site_id}/unlink_repo",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.deleteSubmission",
+      "title": "deleteSubmission",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/submissions/{submission_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "submission_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listFormSubmission",
+      "title": "listFormSubmission",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/submissions/{submission_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "submission_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "query",
+          "in": "query"
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getCurrentUser",
+      "title": "getCurrentUser",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/user",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "netlify.getAccountBuildStatus",
+      "title": "getAccountBuildStatus",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/{account_id}/builds/status",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listMembersForAccount",
+      "title": "listMembersForAccount",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/{account_slug}/members",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "account_slug",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.addMemberToAccount",
+      "title": "addMemberToAccount",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/{account_slug}/members",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "account_slug",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "accountAddMemberSetup",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/accountAddMemberSetup"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.removeAccountMember",
+      "title": "removeAccountMember",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/{account_slug}/members/{member_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "account_slug",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "member_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.getAccountMember",
+      "title": "getAccountMember",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/{account_slug}/members/{member_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "account_slug",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "member_id",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.updateAccountMember",
+      "title": "updateAccountMember",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/{account_slug}/members/{member_id}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "account_slug",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "member_id",
+          "in": "path",
+          "required": true
+        },
+        {
+          "name": "accountUpdateMemberSetup",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/accountUpdateMemberSetup"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "netlify.listSitesForAccount",
+      "title": "**Note:** Environment variable keys and values will soon be moved from `build_settings.env` and `repo.env` to a new endpoint. Please use [getEnvVars](#tag/environmentVariables/operation/getEnvVars) to retrieve site environment variables.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/{account_slug}/sites",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "name",
+          "in": "query"
+        },
+        {
+          "name": "account_slug",
+          "in": "path",
+          "required": true
+        }
+      ]
+    },
+    {
+      "connector": "netlify.createSiteInTeam",
+      "title": "**Note:** Environment variable keys and values will soon be moved from `build_settings.env` and `repo.env` to a new endpoint. Please use [createEnvVars](#tag/environmentVariables/operation/createEnvVars) to create environment variables for a site.",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "path": "/{account_slug}/sites",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "site",
+          "in": "body",
+          "schema": {
+            "$ref": "#/definitions/siteSetup"
+          }
+        },
+        {
+          "name": "configure_dns",
+          "in": "query"
+        },
+        {
+          "name": "account_slug",
+          "in": "path",
+          "required": true
+        }
+      ]
+    }
+  ]
+}

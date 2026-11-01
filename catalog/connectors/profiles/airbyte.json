@@ -1,0 +1,8 @@
+{
+  "name": "airbyte",
+  "title": "Airbyte",
+  "source": "https://raw.githubusercontent.com/airbytehq/airbyte-api-python-sdk/main/airbyte-api.openapi.yaml",
+  "authentication": "bearer",
+  "operations": [],
+  "error": "404 Not Found"
+}

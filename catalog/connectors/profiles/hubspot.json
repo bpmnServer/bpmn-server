@@ -1,0 +1,174 @@
+{
+  "name": "hubspot",
+  "title": "Hubspot",
+  "source": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/hubapi.com/crm/v3/openapi.yaml",
+  "authentication": "oauth-client-credentials-flow",
+  "operations": [
+    {
+      "connector": "hubspot.get-/crm/v3/extensions/cards/sample-response",
+      "title": "Get sample card detail response",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.hubapi.com/crm/v3/extensions/cards",
+      "path": "/sample-response",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": []
+    },
+    {
+      "connector": "hubspot.get-/crm/v3/extensions/cards/{appId}",
+      "title": "Get all cards",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.hubapi.com/crm/v3/extensions/cards",
+      "path": "/{appId}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "appId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "description": "The ID of the target app."
+        }
+      ]
+    },
+    {
+      "connector": "hubspot.post-/crm/v3/extensions/cards/{appId}",
+      "title": "Create a new card",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.hubapi.com/crm/v3/extensions/cards",
+      "path": "/{appId}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "appId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "description": "The ID of the target app."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardCreateRequest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "hubspot.delete-/crm/v3/extensions/cards/{appId}/{cardId}",
+      "title": "Delete a card",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.hubapi.com/crm/v3/extensions/cards",
+      "path": "/{appId}/{cardId}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "appId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "description": "The ID of the target app."
+        },
+        {
+          "name": "cardId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the card to delete."
+        }
+      ]
+    },
+    {
+      "connector": "hubspot.get-/crm/v3/extensions/cards/{appId}/{cardId}",
+      "title": "Get a card.",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.hubapi.com/crm/v3/extensions/cards",
+      "path": "/{appId}/{cardId}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "appId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "description": "The ID of the target app."
+        },
+        {
+          "name": "cardId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the target card."
+        }
+      ]
+    },
+    {
+      "connector": "hubspot.patch-/crm/v3/extensions/cards/{appId}/{cardId}",
+      "title": "Update a card",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.hubapi.com/crm/v3/extensions/cards",
+      "path": "/{appId}/{cardId}",
+      "authentication": "oauth-client-credentials-flow",
+      "parameters": [
+        {
+          "name": "appId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "description": "The ID of the target app."
+        },
+        {
+          "name": "cardId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The ID of the card to update."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardPatchRequest"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5869 @@
+{
+  "name": "novu",
+  "title": "Novu",
+  "source": "https://api.novu.co/openapi.json",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "novu.EnvironmentsControllerV1_createEnvironment",
+      "title": "Create an environment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/environments",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEnvironmentRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.EnvironmentsControllerV1_listMyEnvironments",
+      "title": "List all environments",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/environments",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "novu.EnvironmentsControllerV1_updateMyEnvironment",
+      "title": "Update an environment",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/environments/{environmentId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "environmentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The unique identifier of the environment"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEnvironmentRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.EnvironmentsControllerV1_deleteEnvironment",
+      "title": "Delete an environment",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/environments/{environmentId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "environmentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The unique identifier of the environment"
+        }
+      ]
+    },
+    {
+      "connector": "novu.EventsController_trigger",
+      "title": "Trigger event",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/events/trigger",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TriggerEventRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.EventsController_triggerBulk",
+      "title": "Bulk trigger event",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/events/trigger/bulk",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkTriggerEventDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.EventsController_broadcastEventToAll",
+      "title": "Broadcast event to all",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/events/trigger/broadcast",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TriggerEventToAllRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.EventsController_cancel",
+      "title": "Cancel triggered event",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/events/trigger/{transactionId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "transactionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.NotificationsController_listNotifications",
+      "title": "List all events",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/notifications",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "channels",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChannelTypeEnum"
+            }
+          },
+          "description": "Array of channel types"
+        },
+        {
+          "name": "templates",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Array of template IDs or a single template ID"
+        },
+        {
+          "name": "emails",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Array of email addresses or a single email address"
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Search term (deprecated)"
+        },
+        {
+          "name": "subscriberIds",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Array of subscriber IDs or a single subscriber ID"
+        },
+        {
+          "name": "severity",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Array of severity levels or a single severity level"
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "minimum": 0,
+            "default": 0,
+            "type": "number"
+          },
+          "description": "Page number for pagination"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "minimum": 1,
+            "maximum": 50,
+            "default": 10,
+            "type": "number"
+          },
+          "description": "Limit for pagination"
+        },
+        {
+          "name": "transactionId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The transaction ID to filter by"
+        },
+        {
+          "name": "topicKey",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Topic Key for filtering notifications by topic"
+        },
+        {
+          "name": "subscriptionId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Subscription ID for filtering notifications by subscription"
+        },
+        {
+          "name": "contextKeys",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Filter by exact context keys, order insensitive (format: \"type:id\")"
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Date filter for records after this timestamp. Defaults to earliest date allowed by subscription plan"
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Date filter for records before this timestamp. Defaults to current time of request (now)"
+        }
+      ]
+    },
+    {
+      "connector": "novu.NotificationsController_getNotification",
+      "title": "Retrieve an event",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/notifications/{notificationId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "notificationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.AgentsController_createAgent",
+      "title": "Create an agent",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/agents",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "Novu-Analytics-Source",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAgentRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.AgentsController_listAgents",
+      "title": "List all agents",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/agents",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the starting point after which to fetch results."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the ending point before which to fetch results."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": 10,
+            "type": "number"
+          },
+          "description": "Limit the number of items to return"
+        },
+        {
+          "name": "orderDirection",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "description": "Direction of sorting"
+        },
+        {
+          "name": "orderBy",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Field to order by"
+        },
+        {
+          "name": "includeCursor",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Include cursor item in response"
+        },
+        {
+          "name": "identifier",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter agents by partial, case-insensitive match on identifier."
+        }
+      ]
+    },
+    {
+      "connector": "novu.AgentsController_updateAgentBridge",
+      "title": "Update an agent bridge",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/agents/{identifier}/bridge",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAgentBridgeRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.AgentsController_getAgent",
+      "title": "Retrieve an agent",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/agents/{identifier}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.AgentsController_updateAgent",
+      "title": "Update an agent",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/agents/{identifier}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAgentRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.AgentsController_deleteAgent",
+      "title": "Delete an agent",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/agents/{identifier}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "deleteFromProvider",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.AgentIntegrationsController_addAgentIntegration",
+      "title": "Create an agent integration",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/agents/{identifier}/integrations",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "Novu-Analytics-Source",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddAgentIntegrationRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.AgentIntegrationsController_listAgentIntegrations",
+      "title": "List agent integrations",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/agents/{identifier}/integrations",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the starting point after which to fetch results."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the ending point before which to fetch results."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": 10,
+            "type": "number"
+          },
+          "description": "Limit the number of items to return"
+        },
+        {
+          "name": "orderDirection",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "description": "Direction of sorting"
+        },
+        {
+          "name": "orderBy",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Field to order by"
+        },
+        {
+          "name": "includeCursor",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Include cursor item in response"
+        },
+        {
+          "name": "integrationIdentifier",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Return only links for this integration identifier (not the internal document _id)."
+        }
+      ]
+    },
+    {
+      "connector": "novu.AgentIntegrationsController_updateAgentIntegration",
+      "title": "Update an agent integration",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/agents/{identifier}/integrations/{agentIntegrationId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "agentIntegrationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAgentIntegrationRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.AgentIntegrationsController_removeAgentIntegration",
+      "title": "Delete an agent integration",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/agents/{identifier}/integrations/{agentIntegrationId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "agentIntegrationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.AgentReplyController_handleAgentReplyHandler",
+      "title": "Send an agent reply",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/agents/{agentId}/reply",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "agentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "example": "support-agent",
+            "type": "string"
+          },
+          "description": "Agent identifier (slug) for the agent that owns the conversation."
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentReplyPayloadDto"
+              },
+              "examples": {
+                "markdownReply": {
+                  "summary": "Markdown reply",
+                  "description": "Send a markdown (or plain text) message into an existing conversation.",
+                  "value": {
+                    "conversationId": "64f5a1c2e8b7a3d9f0c1b2a3",
+                    "integrationIdentifier": "slack-support",
+                    "reply": {
+                      "markdown": "**Report ready.** Your weekly summary is attached."
+                    }
+                  }
+                },
+                "replyWithFile": {
+                  "summary": "Reply with file attachment",
+                  "description": "Attach files to a markdown reply. Provide exactly one of `url` or `data` per file. Prefer `url` for larger files.",
+                  "value": {
+                    "conversationId": "64f5a1c2e8b7a3d9f0c1b2a3",
+                    "integrationIdentifier": "slack-support",
+                    "reply": {
+                      "markdown": "Here is your report.",
+                      "files": [
+                        {
+                          "filename": "report.pdf",
+                          "mimeType": "application/pdf",
+                          "url": "https://example.com/files/report.pdf"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "cardReply": {
+                  "summary": "Interactive card reply",
+                  "description": "Send a Chat SDK card (buttons, text, links). Build cards with `@novu/framework` helpers or an equivalent JSON tree.",
+                  "value": {
+                    "conversationId": "64f5a1c2e8b7a3d9f0c1b2a3",
+                    "integrationIdentifier": "slack-support",
+                    "reply": {
+                      "card": {
+                        "type": "card",
+                        "title": "Order #123",
+                        "children": [
+                          {
+                            "type": "text",
+                            "content": "Your order is ready for pickup."
+                          },
+                          {
+                            "type": "button",
+                            "id": "confirm",
+                            "label": "Confirm",
+                            "style": "primary"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                "editMessage": {
+                  "summary": "Edit a sent message",
+                  "description": "Update a previously delivered agent message in place. Cannot be combined with resolve, signals, or reactions.",
+                  "value": {
+                    "conversationId": "64f5a1c2e8b7a3d9f0c1b2a3",
+                    "integrationIdentifier": "slack-support",
+                    "edit": {
+                      "messageId": "1712345678.123456",
+                      "content": {
+                        "markdown": "Updated: the report is now final."
+                      }
+                    }
+                  }
+                },
+                "typingStart": {
+                  "summary": "Start typing indicator",
+                  "description": "Best-effort status text on platforms that support it. Omit `status` for the default \"Thinking…\".",
+                  "value": {
+                    "conversationId": "64f5a1c2e8b7a3d9f0c1b2a3",
+                    "integrationIdentifier": "slack-support",
+                    "typing": {
+                      "status": "Looking up your order…"
+                    }
+                  }
+                },
+                "typingStop": {
+                  "summary": "Stop typing indicator",
+                  "description": "Clear the typing / status indicator for this turn.",
+                  "value": {
+                    "conversationId": "64f5a1c2e8b7a3d9f0c1b2a3",
+                    "integrationIdentifier": "slack-support",
+                    "typing": "stop"
+                  }
+                },
+                "addReaction": {
+                  "summary": "Add emoji reaction",
+                  "description": "React to a platform message with a well-known emoji name.",
+                  "value": {
+                    "conversationId": "64f5a1c2e8b7a3d9f0c1b2a3",
+                    "integrationIdentifier": "slack-support",
+                    "addReactions": [
+                      {
+                        "messageId": "1712345678.123456",
+                        "emojiName": "white_check_mark"
+                      }
+                    ]
+                  }
+                },
+                "deleteMessage": {
+                  "summary": "Delete a sent message",
+                  "description": "Remove a previously posted platform message. Conversation history is preserved.",
+                  "value": {
+                    "conversationId": "64f5a1c2e8b7a3d9f0c1b2a3",
+                    "integrationIdentifier": "slack-support",
+                    "deleteMessages": [
+                      {
+                        "messageId": "1712345678.123456"
+                      }
+                    ]
+                  }
+                },
+                "resolveConversation": {
+                  "summary": "Resolve conversation",
+                  "description": "Mark the conversation resolved. Optionally include a summary and/or a final reply in the same request.",
+                  "value": {
+                    "conversationId": "64f5a1c2e8b7a3d9f0c1b2a3",
+                    "integrationIdentifier": "slack-support",
+                    "reply": {
+                      "markdown": "Glad that helped — marking this as resolved."
+                    },
+                    "resolve": {
+                      "summary": "Answered billing question about invoice INV-42."
+                    }
+                  }
+                },
+                "metadataSignal": {
+                  "summary": "Set conversation metadata",
+                  "description": "Persist key/value metadata on the conversation for later turns. Keys: 1–128 chars, letters/digits with `-`, `_`, `:` separators.",
+                  "value": {
+                    "conversationId": "64f5a1c2e8b7a3d9f0c1b2a3",
+                    "integrationIdentifier": "slack-support",
+                    "signals": [
+                      {
+                        "type": "metadata",
+                        "action": "set",
+                        "key": "crm:ticketId",
+                        "value": "TCK-1001"
+                      }
+                    ]
+                  }
+                },
+                "humanApprove": {
+                  "summary": "Ask the conversation subscriber to approve",
+                  "description": "Create an approve/deny card in the current conversation thread. The verdict arrives later on `onAction` with `ctx.humanResponse`.",
+                  "value": {
+                    "conversationId": "64f5a1c2e8b7a3d9f0c1b2a3",
+                    "integrationIdentifier": "slack-support",
+                    "signals": [
+                      {
+                        "type": "human",
+                        "kind": "approve",
+                        "card": {
+                          "title": "Deploy v2.4.1 to production?"
+                        },
+                        "requestId": "hr_7c2e1a3b-4d5f-6789-abcd-ef0123456789"
+                      }
+                    ]
+                  }
+                },
+                "triggerWorkflow": {
+                  "summary": "Trigger a Novu workflow",
+                  "description": "Fire a workflow from the agent turn. When `to` is omitted, Novu uses the conversation subscriber if one is resolved.",
+                  "value": {
+                    "conversationId": "64f5a1c2e8b7a3d9f0c1b2a3",
+                    "integrationIdentifier": "slack-support",
+                    "signals": [
+                      {
+                        "type": "trigger",
+                        "workflowId": "order-shipped",
+                        "to": "subscriber-123",
+                        "payload": {
+                          "orderId": "ORD-42"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "toolResult": {
+                  "summary": "Report tool results",
+                  "description": "Persist tool-call outcomes into conversation history (typically before the assistant reply).",
+                  "value": {
+                    "conversationId": "64f5a1c2e8b7a3d9f0c1b2a3",
+                    "integrationIdentifier": "slack-support",
+                    "toolResults": [
+                      {
+                        "toolCallId": "call_abc123",
+                        "toolName": "lookup_order",
+                        "output": {
+                          "status": "shipped",
+                          "eta": "2026-07-16"
+                        },
+                        "preview": "Order ORD-42 is shipped"
+                      }
+                    ],
+                    "reply": {
+                      "markdown": "Your order **ORD-42** has shipped and should arrive by July 16."
+                    }
+                  }
+                },
+                "toolApprovalRequest": {
+                  "summary": "Request tool approval",
+                  "description": "Ledger a gated tool call and optionally deliver an approval card via `reply.toolApprovalCard` or a normal card/markdown reply.",
+                  "value": {
+                    "conversationId": "64f5a1c2e8b7a3d9f0c1b2a3",
+                    "integrationIdentifier": "slack-support",
+                    "toolApprovalRequest": {
+                      "approvalId": "apr_01HZX",
+                      "toolCallId": "call_refund_1",
+                      "name": "issue_refund",
+                      "input": {
+                        "orderId": "ORD-42",
+                        "amountCents": 2500
+                      }
+                    },
+                    "reply": {
+                      "toolApprovalCard": {
+                        "type": "tool-approval-card",
+                        "title": "Approve refund?",
+                        "subtitle": "issue_refund · ORD-42 · $25.00",
+                        "approveLabel": "Approve",
+                        "denyLabel": "Deny"
+                      }
+                    }
+                  }
+                },
+                "turnError": {
+                  "summary": "Report turn failure",
+                  "description": "Bridge reports that the customer runtime failed. Cannot be combined with other actions. Novu delivers generic user-facing copy.",
+                  "value": {
+                    "conversationId": "64f5a1c2e8b7a3d9f0c1b2a3",
+                    "integrationIdentifier": "slack-support",
+                    "error": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.DomainsController_listDomains",
+      "title": "List domains for an environment",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/domains",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the starting point after which to fetch results."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the ending point before which to fetch results."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": 10,
+            "type": "number"
+          },
+          "description": "Limit the number of items to return"
+        },
+        {
+          "name": "orderDirection",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "description": "Direction of sorting"
+        },
+        {
+          "name": "orderBy",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Field to order by"
+        },
+        {
+          "name": "includeCursor",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Include cursor item in response"
+        },
+        {
+          "name": "name",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Domain name to filter results by."
+        }
+      ]
+    },
+    {
+      "connector": "novu.DomainsController_createDomain",
+      "title": "Create a domain",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/domains",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDomainDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.DomainsController_getDomain",
+      "title": "Retrieve a domain by name",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/domains/{domain}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "domain",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.DomainsController_updateDomain",
+      "title": "Update a domain",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/domains/{domain}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "domain",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDomainDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.DomainsController_deleteDomain",
+      "title": "Delete a domain",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/domains/{domain}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "domain",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.DomainsController_verifyDomain",
+      "title": "Verify a domain",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/domains/{domain}/verify",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "domain",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.DomainsController_diagnoseDomain",
+      "title": "Diagnose inbound DNS for a domain",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/domains/{domain}/diagnose",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "domain",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.DomainsController_listDomainRoutes",
+      "title": "List routes for a domain",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/domains/{domain}/routes",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "domain",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the starting point after which to fetch results."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the ending point before which to fetch results."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": 10,
+            "type": "number"
+          },
+          "description": "Limit the number of items to return"
+        },
+        {
+          "name": "orderDirection",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "description": "Direction of sorting"
+        },
+        {
+          "name": "orderBy",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Field to order by"
+        },
+        {
+          "name": "includeCursor",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Include cursor item in response"
+        },
+        {
+          "name": "agentId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Agent identifier to filter routes by."
+        }
+      ]
+    },
+    {
+      "connector": "novu.DomainsController_createDomainRoute",
+      "title": "Create a route",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/domains/{domain}/routes",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "domain",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DomainRouteDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.DomainsController_getDomainRoute",
+      "title": "Retrieve a route by address",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/domains/{domain}/routes/{address}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "domain",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "address",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.DomainsController_updateDomainRoute",
+      "title": "Update a route",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/domains/{domain}/routes/{address}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "domain",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "address",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDomainRouteDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.DomainsController_deleteDomainRoute",
+      "title": "Delete a route",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/domains/{domain}/routes/{address}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "domain",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "address",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.DomainsController_testDomainRoute",
+      "title": "Test an inbound route",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/domains/{domain}/routes/{address}/test",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "domain",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "address",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestDomainRouteDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.DomainsController_getDomainAutoConfigure",
+      "title": "Retrieve auto-configuration availability",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/domains/{domain}/auto-configure",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "domain",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.DomainsController_startDomainAutoConfigure",
+      "title": "Start DNS auto-configuration",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/domains/{domain}/auto-configure/start",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "domain",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDomainConnectApplyUrlDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.IntegrationsController_listIntegrations",
+      "title": "List all integrations",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/integrations",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "novu.IntegrationsController_createIntegration",
+      "title": "Create an integration",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/integrations",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateIntegrationRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.IntegrationsController_getActiveIntegrations",
+      "title": "List active integrations",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/integrations/active",
+      "authentication": "apiKey",
+      "parameters": []
+    },
+    {
+      "connector": "novu.IntegrationsController_updateIntegrationById",
+      "title": "Update an integration",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/integrations/{integrationId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "integrationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateIntegrationRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.IntegrationsController_removeIntegration",
+      "title": "Delete an integration",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/integrations/{integrationId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "integrationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.IntegrationsController_autoConfigureIntegration",
+      "title": "Auto-configure an integration for inbound webhooks",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/integrations/{integrationId}/auto-configure",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "integrationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.IntegrationsController_setIntegrationAsPrimary",
+      "title": "Update integration as primary",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/integrations/{integrationId}/set-primary",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "integrationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.IntegrationsController_getChatOAuthUrl",
+      "title": "Generate chat OAuth URL",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/integrations/chat/oauth",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateChatOauthUrlRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.IntegrationsController_generateConnectOAuthUrl",
+      "title": "Generate OAuth URL for a workspace/tenant connection",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/integrations/channel-connections/oauth",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateConnectOauthUrlRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.IntegrationsController_generateLinkUserOAuthUrl",
+      "title": "Generate OAuth URL to link a subscriber user identity",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/integrations/channel-endpoints/oauth",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateLinkUserOauthUrlRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.IntegrationsController_linkChannelEndpoint",
+      "title": "Issue a URL to link a subscriber chat identity",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/integrations/channel-endpoints/link",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkChannelEndpointRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.IntegrationsController_configureIntegrationWebhook",
+      "title": "Configure a chat integration webhook",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/integrations/{integrationIdentifier}/webhook/configure",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "integrationIdentifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.IntegrationsController_createIntegrationMobileLink",
+      "title": "Issue a short-lived mobile setup link for an existing integration",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/integrations/{integrationIdentifier}/mobile-link",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "integrationIdentifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IssueIntegrationMobileLinkRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.ContextsController_createContext",
+      "title": "Create a context",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/contexts",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContextRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.ContextsController_listContexts",
+      "title": "List all contexts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/contexts",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the starting point after which to fetch results."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the ending point before which to fetch results."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": 10,
+            "type": "number"
+          },
+          "description": "Limit the number of items to return"
+        },
+        {
+          "name": "orderDirection",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "description": "Direction of sorting"
+        },
+        {
+          "name": "orderBy",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Field to order by"
+        },
+        {
+          "name": "includeCursor",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Include cursor item in response"
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": "tenant",
+            "type": "string"
+          },
+          "description": "Filter contexts by type"
+        },
+        {
+          "name": "id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": "tenant-prod-123",
+            "type": "string"
+          },
+          "description": "Filter contexts by id"
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": "tenant",
+            "type": "string"
+          },
+          "description": "Search contexts by type or id (supports partial matching across both fields)"
+        }
+      ]
+    },
+    {
+      "connector": "novu.ContextsController_updateContext",
+      "title": "Update a context",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/contexts/{type}/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Context ID"
+        },
+        {
+          "name": "type",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Context type"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContextRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.ContextsController_getContext",
+      "title": "Retrieve a context",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/contexts/{type}/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Context ID"
+        },
+        {
+          "name": "type",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Context type"
+        }
+      ]
+    },
+    {
+      "connector": "novu.ContextsController_deleteContext",
+      "title": "Delete a context",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/contexts/{type}/{id}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Context ID"
+        },
+        {
+          "name": "type",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Context type"
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersV1Controller_bulkCreateSubscribers",
+      "title": "Bulk create subscribers",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/subscribers/bulk",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkSubscriberCreateDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersV1Controller_updateSubscriberChannel",
+      "title": "Update provider credentials",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/subscribers/{subscriberId}/credentials",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSubscriberChannelRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersV1Controller_modifySubscriberChannel",
+      "title": "Upsert provider credentials",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/subscribers/{subscriberId}/credentials",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSubscriberChannelRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersV1Controller_deleteSubscriberCredentials",
+      "title": "Delete provider credentials",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/subscribers/{subscriberId}/credentials/{providerId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "providerId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersV1Controller_updateSubscriberOnlineFlag",
+      "title": "Update subscriber online status",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/subscribers/{subscriberId}/online-status",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSubscriberOnlineFlagRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersV1Controller_getNotificationsFeed",
+      "title": "Retrieve subscriber notifications",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/subscribers/{subscriberId}/notifications/feed",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "minimum": 0,
+            "example": 0,
+            "type": "number"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "maximum": 100,
+            "default": 10,
+            "example": 10,
+            "type": "number"
+          }
+        },
+        {
+          "name": "feedIdentifier",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "read",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "seen",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "payload",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": "btoa(JSON.stringify({ foo: 123 })) results in base64 encoded string like eyJmb28iOjEyM30=",
+            "type": "string"
+          },
+          "description": "Base64 encoded string of the partial payload JSON object"
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersV1Controller_getUnseenCount",
+      "title": "Retrieve unseen notifications count",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/subscribers/{subscriberId}/notifications/unseen",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "feedId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Identifier for the feed. Can be a single string or an array of strings."
+        },
+        {
+          "name": "seen",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": false,
+            "type": "boolean"
+          },
+          "description": "Indicates whether to count seen notifications."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 100,
+            "type": "number"
+          },
+          "description": "The maximum number of notifications to return."
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersV1Controller_markMessagesAs",
+      "title": "Update notifications state",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/subscribers/{subscriberId}/messages/mark-as",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageMarkAsRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersV1Controller_markAllUnreadAsRead",
+      "title": "Update all notifications state",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/subscribers/{subscriberId}/messages/mark-all",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkAllMessageAsRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersV1Controller_markActionAsSeen",
+      "title": "Update notification action status",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/subscribers/{subscriberId}/messages/{messageId}/actions/{type}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "messageId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "type",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "primary",
+              "secondary"
+            ]
+          }
+        },
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkMessageActionAsSeenDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_searchSubscribers",
+      "title": "Search subscribers",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the starting point after which to fetch results."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the ending point before which to fetch results."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": 10,
+            "type": "number"
+          },
+          "description": "Limit the number of items to return"
+        },
+        {
+          "name": "orderDirection",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "description": "Direction of sorting"
+        },
+        {
+          "name": "orderBy",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Field to order by"
+        },
+        {
+          "name": "includeCursor",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Include cursor item in response"
+        },
+        {
+          "name": "email",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Exact email address of the subscriber. The value must match the stored email field."
+        },
+        {
+          "name": "name",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Name of the subscriber to filter results."
+        },
+        {
+          "name": "phone",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Exact phone number of the subscriber. The value must match the stored phone field."
+        },
+        {
+          "name": "subscriberId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Unique identifier of the subscriber to filter results."
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_createSubscriber",
+      "title": "Create a subscriber",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "failIfExists",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "If true, the request will fail if a subscriber with the same subscriberId already exists"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSubscriberRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_getSubscriber",
+      "title": "Retrieve a subscriber",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_patchSubscriber",
+      "title": "Update a subscriber",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchSubscriberRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_removeSubscriber",
+      "title": "Delete a subscriber",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_getSubscriberPreferences",
+      "title": "Retrieve subscriber preferences",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/preferences",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "criticality",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": "nonCritical",
+            "type": "string",
+            "enum": [
+              "critical",
+              "nonCritical",
+              "all"
+            ]
+          }
+        },
+        {
+          "name": "contextKeys",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": [
+              "tenant:acme"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Context keys for filtering preferences (e.g., [\"tenant:acme\"])"
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_updateSubscriberPreferences",
+      "title": "Update subscriber preferences",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/preferences",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchSubscriberPreferencesDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_bulkUpdateSubscriberPreferences",
+      "title": "Bulk update subscriber preferences",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/preferences/bulk",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkUpdateSubscriberPreferencesDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_listSubscriberTopics",
+      "title": "Retrieve subscriber subscriptions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/subscriptions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the starting point after which to fetch results."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the ending point before which to fetch results."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "maximum": 100,
+            "example": 10,
+            "type": "number"
+          },
+          "description": "Limit the number of items to return (max 100)"
+        },
+        {
+          "name": "orderDirection",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "description": "Direction of sorting"
+        },
+        {
+          "name": "orderBy",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Field to order by"
+        },
+        {
+          "name": "includeCursor",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Include cursor item in response"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by topic key"
+        },
+        {
+          "name": "contextKeys",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": [
+              "tenant:org-123",
+              "region:us-east-1"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Filter by exact context keys, order insensitive (format: \"type:id\")"
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_getSubscriberNotifications",
+      "title": "Retrieve subscriber notifications",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/notifications",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "maximum": 100,
+            "default": 10,
+            "example": 10,
+            "type": "number"
+          }
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": 0,
+            "type": "number"
+          }
+        },
+        {
+          "name": "tags",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Filter by workflow tags. Returns notifications that have any of the given tags."
+        },
+        {
+          "name": "read",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Filter by read/unread state"
+        },
+        {
+          "name": "archived",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Filter by archived state"
+        },
+        {
+          "name": "snoozed",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Filter by snoozed state"
+        },
+        {
+          "name": "seen",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Filter by seen state"
+        },
+        {
+          "name": "data",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by data attributes (JSON string)"
+        },
+        {
+          "name": "severity",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low",
+                "none"
+              ]
+            }
+          },
+          "description": "Filter by severity levels"
+        },
+        {
+          "name": "createdGte",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": 1704067200000,
+            "type": "number"
+          },
+          "description": "Filter notifications created on or after this timestamp (Unix timestamp in milliseconds)"
+        },
+        {
+          "name": "createdLte",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": 1735689599999,
+            "type": "number"
+          },
+          "description": "Filter notifications created on or before this timestamp (Unix timestamp in milliseconds)"
+        },
+        {
+          "name": "contextKeys",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Context keys for filtering notifications in multi-context scenarios"
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_getSubscriberNotificationsCount",
+      "title": "Retrieve subscriber notifications count",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/notifications/count",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "filters",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "maxItems": 30,
+            "example": "[{\"read\":false,\"archived\":false},{\"tags\":[\"important\"]},{\"tags\":{\"and\":[{\"or\":[\"a\",\"b\"]},{\"or\":[\"c\"]}]}}]",
+            "type": "string"
+          },
+          "description": "Array of filter objects (max 30) to count notifications by different criteria"
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_markNotificationAsRead",
+      "title": "Mark a notification as read",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/notifications/{notificationId}/read",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "notificationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the notification"
+        },
+        {
+          "name": "contextKeys",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Context keys for filtering"
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_markNotificationAsUnread",
+      "title": "Mark a notification as unread",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/notifications/{notificationId}/unread",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "notificationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the notification"
+        },
+        {
+          "name": "contextKeys",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Context keys for filtering"
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_archiveNotification",
+      "title": "Archive a notification",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/notifications/{notificationId}/archive",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "notificationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the notification"
+        },
+        {
+          "name": "contextKeys",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Context keys for filtering"
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_unarchiveNotification",
+      "title": "Unarchive a notification",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/notifications/{notificationId}/unarchive",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "notificationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the notification"
+        },
+        {
+          "name": "contextKeys",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Context keys for filtering"
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_snoozeNotification",
+      "title": "Snooze a notification",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/notifications/{notificationId}/snooze",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "notificationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the notification"
+        },
+        {
+          "name": "contextKeys",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Context keys for filtering"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SnoozeSubscriberNotificationDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_unsnoozeNotification",
+      "title": "Unsnooze a notification",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/notifications/{notificationId}/unsnooze",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "notificationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the notification"
+        },
+        {
+          "name": "contextKeys",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Context keys for filtering"
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_deleteNotification",
+      "title": "Delete a notification",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/notifications/{notificationId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "notificationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the notification"
+        },
+        {
+          "name": "contextKeys",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Context keys for filtering"
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_completeNotificationAction",
+      "title": "Complete a notification action",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/notifications/{notificationId}/actions/{actionType}/complete",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "notificationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the notification"
+        },
+        {
+          "name": "actionType",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "enum": [
+              "primary",
+              "secondary"
+            ],
+            "type": "string"
+          },
+          "description": "The type of action (primary or secondary)"
+        },
+        {
+          "name": "contextKeys",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Context keys for filtering"
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_revertNotificationAction",
+      "title": "Revert a notification action",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/notifications/{notificationId}/actions/{actionType}/revert",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "notificationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the notification"
+        },
+        {
+          "name": "actionType",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "enum": [
+              "primary",
+              "secondary"
+            ],
+            "type": "string"
+          },
+          "description": "The type of action (primary or secondary)"
+        },
+        {
+          "name": "contextKeys",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Context keys for filtering"
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_markNotificationsAsSeen",
+      "title": "Mark notifications as seen",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/notifications/seen",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkSubscriberNotificationsAsSeenDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_markAllNotificationsAsRead",
+      "title": "Mark all notifications as read",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/notifications/read",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAllSubscriberNotificationsDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_archiveAllNotifications",
+      "title": "Archive all notifications",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/notifications/archive",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAllSubscriberNotificationsDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_archiveAllReadNotifications",
+      "title": "Archive all read notifications",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/notifications/read-archive",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAllSubscriberNotificationsDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.SubscribersController_deleteAllNotifications",
+      "title": "Delete all notifications",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/subscribers/{subscriberId}/notifications/delete",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "subscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The identifier of the subscriber"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAllSubscriberNotificationsDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.LayoutsController_create",
+      "title": "Create a layout",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/layouts",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLayoutDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.LayoutsController_list",
+      "title": "List all layouts",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/layouts",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "minimum": 1,
+            "maximum": 100,
+            "example": 10,
+            "type": "number"
+          },
+          "description": "Number of items to return per page"
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "minimum": 0,
+            "example": 0,
+            "type": "number"
+          },
+          "description": "Number of items to skip before starting to return results"
+        },
+        {
+          "name": "orderDirection",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "$ref": "#/components/schemas/DirectionEnum"
+          },
+          "description": "Direction of sorting"
+        },
+        {
+          "name": "orderBy",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "$ref": "#/components/schemas/LayoutResponseDtoSortField"
+          },
+          "description": "Field to sort the results by"
+        },
+        {
+          "name": "query",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Search query to filter layouts"
+        }
+      ]
+    },
+    {
+      "connector": "novu.LayoutsController_update",
+      "title": "Update a layout",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/layouts/{layoutId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "layoutId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLayoutDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.LayoutsController_get",
+      "title": "Retrieve a layout",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/layouts/{layoutId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "layoutId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.LayoutsController__delete",
+      "title": "Delete a layout",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/layouts/{layoutId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "layoutId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The unique identifier of the layout"
+        }
+      ]
+    },
+    {
+      "connector": "novu.LayoutsController_duplicate",
+      "title": "Duplicate a layout",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/layouts/{layoutId}/duplicate",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "layoutId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DuplicateLayoutDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.LayoutsController_generatePreview",
+      "title": "Generate layout preview",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/layouts/{layoutId}/preview",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "layoutId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LayoutPreviewRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.LayoutsController_getUsage",
+      "title": "Get layout usage",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/layouts/{layoutId}/usage",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "layoutId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.MessagesController_getMessages",
+      "title": "List all messages",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/messages",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "channel",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "$ref": "#/components/schemas/ChannelTypeEnum"
+          }
+        },
+        {
+          "name": "subscriberId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "transactionId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "contextKeys",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": [
+              "tenant:org-123",
+              "region:us-east-1"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Filter by exact context keys, order insensitive (format: \"type:id\")"
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 0,
+            "type": "number"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "default": 10,
+            "type": "number"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.MessagesController_deleteMessage",
+      "title": "Delete a message",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/messages/{messageId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "messageId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "example": "507f1f77bcf86cd799439011",
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.MessagesController_deleteMessagesByTransactionId",
+      "title": "Delete messages by transactionId",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/messages/transaction/{transactionId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "channel",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "in_app",
+              "email",
+              "sms",
+              "chat",
+              "push",
+              "tool"
+            ]
+          },
+          "description": "The channel of the message to be deleted"
+        },
+        {
+          "name": "transactionId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "example": "507f1f77bcf86cd799439011",
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.TopicsV1Controller_getTopicSubscriber",
+      "title": "Check topic subscriber",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/topics/{topicKey}/subscribers/{externalSubscriberId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "externalSubscriberId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The external subscriber id"
+        },
+        {
+          "name": "topicKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The topic key"
+        }
+      ]
+    },
+    {
+      "connector": "novu.TopicsController_listTopics",
+      "title": "List all topics",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/topics",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the starting point after which to fetch results."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the ending point before which to fetch results."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "maximum": 100,
+            "example": 10,
+            "type": "number"
+          },
+          "description": "Limit the number of items to return (max 100)"
+        },
+        {
+          "name": "orderDirection",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "description": "Direction of sorting"
+        },
+        {
+          "name": "orderBy",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Field to order by"
+        },
+        {
+          "name": "includeCursor",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Include cursor item in response"
+        },
+        {
+          "name": "key",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Key of the topic to filter results."
+        },
+        {
+          "name": "name",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Name of the topic to filter results."
+        }
+      ]
+    },
+    {
+      "connector": "novu.TopicsController_upsertTopic",
+      "title": "Create a topic",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/topics",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "failIfExists",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "If true, the request will fail if a topic with the same key already exists"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUpdateTopicRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.TopicsController_getTopic",
+      "title": "Retrieve a topic",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/topics/{topicKey}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "topicKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key identifier of the topic"
+        }
+      ]
+    },
+    {
+      "connector": "novu.TopicsController_updateTopic",
+      "title": "Update a topic",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/topics/{topicKey}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "topicKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key identifier of the topic"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTopicRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.TopicsController_deleteTopic",
+      "title": "Delete a topic",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/topics/{topicKey}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "topicKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key identifier of the topic"
+        }
+      ]
+    },
+    {
+      "connector": "novu.TopicsController_listTopicSubscriptions",
+      "title": "List topic subscriptions",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/topics/{topicKey}/subscriptions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "topicKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key identifier of the topic"
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the starting point after which to fetch results."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the ending point before which to fetch results."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "maximum": 100,
+            "example": 10,
+            "type": "number"
+          },
+          "description": "Limit the number of items to return (max 100)"
+        },
+        {
+          "name": "orderDirection",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "description": "Direction of sorting"
+        },
+        {
+          "name": "orderBy",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Field to order by"
+        },
+        {
+          "name": "includeCursor",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Include cursor item in response"
+        },
+        {
+          "name": "subscriberId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Filter by subscriber ID"
+        },
+        {
+          "name": "contextKeys",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": [
+              "tenant:org-123",
+              "region:us-east-1"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Filter by exact context keys, order insensitive (format: \"type:id\")"
+        }
+      ]
+    },
+    {
+      "connector": "novu.TopicsController_createTopicSubscriptions",
+      "title": "Create topic subscriptions",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/topics/{topicKey}/subscriptions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "topicKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key identifier of the topic"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTopicSubscriptionsRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.TopicsController_deleteTopicSubscriptions",
+      "title": "Delete topic subscriptions",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/topics/{topicKey}/subscriptions",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "topicKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key identifier of the topic"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteTopicSubscriptionsRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.TopicsController_getTopicSubscription",
+      "title": "Retrieve a topic subscription",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/topics/{topicKey}/subscriptions/{identifier}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "topicKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key identifier of the topic"
+        },
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The unique identifier of the subscription"
+        }
+      ]
+    },
+    {
+      "connector": "novu.TopicsController_updateTopicSubscription",
+      "title": "Update a topic subscription",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/topics/{topicKey}/subscriptions/{identifier}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "topicKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The key identifier of the topic"
+        },
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The unique identifier of the subscription"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTopicSubscriptionRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.EnvironmentVariablesController_listEnvironmentVariables",
+      "title": "List all variables",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/environment-variables",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "maxLength": 256,
+            "type": "string"
+          },
+          "description": "Filter variables by key (case-insensitive partial match)"
+        }
+      ]
+    },
+    {
+      "connector": "novu.EnvironmentVariablesController_createEnvironmentVariable",
+      "title": "Create a variable",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/environment-variables",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEnvironmentVariableRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.EnvironmentVariablesController_getEnvironmentVariableUsage",
+      "title": "Retrieve a variable usage",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/environment-variables/{variableKey}/usage",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "variableKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "example": "BASE_URL",
+            "type": "string"
+          },
+          "description": "The unique key of the environment variable (e.g. BASE_URL)"
+        }
+      ]
+    },
+    {
+      "connector": "novu.EnvironmentVariablesController_getEnvironmentVariable",
+      "title": "Get environment variable",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/environment-variables/{variableKey}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "variableKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "example": "BASE_URL",
+            "type": "string"
+          },
+          "description": "The unique key of the environment variable (e.g. BASE_URL)"
+        }
+      ]
+    },
+    {
+      "connector": "novu.EnvironmentVariablesController_updateEnvironmentVariable",
+      "title": "Update a variable",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/environment-variables/{variableKey}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "variableKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "example": "BASE_URL",
+            "type": "string"
+          },
+          "description": "The unique key of the environment variable (e.g. BASE_URL)"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEnvironmentVariableRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.EnvironmentVariablesController_deleteEnvironmentVariable",
+      "title": "Delete environment variable",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/environment-variables/{variableKey}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "variableKey",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "example": "BASE_URL",
+            "type": "string"
+          },
+          "description": "The unique key of the environment variable (e.g. BASE_URL)"
+        }
+      ]
+    },
+    {
+      "connector": "novu.WorkflowController_create",
+      "title": "Create a workflow",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/workflows",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWorkflowDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.WorkflowController_searchWorkflows",
+      "title": "List all workflows",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/workflows",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "minimum": 1,
+            "maximum": 100,
+            "example": 10,
+            "type": "number"
+          },
+          "description": "Number of items to return per page"
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "minimum": 0,
+            "example": 0,
+            "type": "number"
+          },
+          "description": "Number of items to skip before starting to return results"
+        },
+        {
+          "name": "orderDirection",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "$ref": "#/components/schemas/DirectionEnum"
+          },
+          "description": "Direction of sorting"
+        },
+        {
+          "name": "orderBy",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "$ref": "#/components/schemas/WorkflowResponseDtoSortField"
+          },
+          "description": "Field to sort the results by"
+        },
+        {
+          "name": "query",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Search query to filter workflows"
+        },
+        {
+          "name": "tags",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Filter workflows by tags"
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkflowStatusEnum"
+            }
+          },
+          "description": "Filter workflows by status"
+        }
+      ]
+    },
+    {
+      "connector": "novu.WorkflowController_sync",
+      "title": "Sync a workflow",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/workflows/{workflowId}/sync",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "workflowId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncWorkflowDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.WorkflowController_update",
+      "title": "Update a workflow",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/workflows/{workflowId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "workflowId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWorkflowDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.WorkflowController_getWorkflow",
+      "title": "Retrieve a workflow",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/workflows/{workflowId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "workflowId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "environmentId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.WorkflowController_removeWorkflow",
+      "title": "Delete a workflow",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/workflows/{workflowId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "workflowId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.WorkflowController_patchWorkflow",
+      "title": "Update a workflow",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/workflows/{workflowId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "workflowId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchWorkflowDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.WorkflowController_generatePreview",
+      "title": "Generate a step preview",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/workflows/{workflowId}/step/{stepId}/preview",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "workflowId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "stepId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeneratePreviewRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.WorkflowController_getWorkflowStepData",
+      "title": "Retrieve workflow step",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/workflows/{workflowId}/steps/{stepId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "workflowId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "stepId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.EnvironmentsController_getEnvironmentTags",
+      "title": "List environment tags",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/environments/{environmentId}/tags",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "environmentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "example": "6615943e7ace93b0540ae377",
+            "type": "string"
+          },
+          "description": "Environment internal ID (MongoDB ObjectId) or identifier"
+        }
+      ]
+    },
+    {
+      "connector": "novu.EnvironmentsController_publishEnvironment",
+      "title": "Publish resources to target environment",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/environments/{targetEnvironmentId}/publish",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "targetEnvironmentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "example": "6615943e7ace93b0540ae377",
+            "type": "string"
+          },
+          "description": "Target environment ID (MongoDB ObjectId) to publish resources to"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublishEnvironmentRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.EnvironmentsController_diffEnvironment",
+      "title": "Compare resources between environments",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/environments/{targetEnvironmentId}/diff",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "targetEnvironmentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "example": "6615943e7ace93b0540ae377",
+            "type": "string"
+          },
+          "description": "Target environment ID (MongoDB ObjectId) to compare against"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiffEnvironmentRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.ChannelConnectionsController_listChannelConnections",
+      "title": "List all channel connections",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/channel-connections",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the starting point after which to fetch results."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the ending point before which to fetch results."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "maximum": 100,
+            "example": 10,
+            "type": "number"
+          },
+          "description": "Limit the number of items to return (max 100)"
+        },
+        {
+          "name": "orderDirection",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "description": "Direction of sorting"
+        },
+        {
+          "name": "orderBy",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Field to order by"
+        },
+        {
+          "name": "includeCursor",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Include cursor item in response"
+        },
+        {
+          "name": "subscriberId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": "subscriber-123",
+            "type": "string"
+          },
+          "description": "The subscriber ID to filter results by"
+        },
+        {
+          "name": "connectionMode",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": "shared",
+            "type": "string",
+            "enum": [
+              "subscriber",
+              "shared"
+            ]
+          },
+          "description": "Scope results relative to the subscriber. `subscriber` returns only the subscriber-owned connections, `shared` returns only shared (workspace-level) connections. Omit to return both."
+        },
+        {
+          "name": "channel",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": "chat",
+            "type": "string",
+            "enum": [
+              "in_app",
+              "email",
+              "sms",
+              "chat",
+              "push",
+              "tool"
+            ]
+          },
+          "description": "Filter by channel type (email, sms, push, chat, etc.)."
+        },
+        {
+          "name": "providerId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "$ref": "#/components/schemas/ProvidersIdEnum"
+          },
+          "description": "Filter by provider identifier (e.g., sendgrid, twilio, slack, etc.)."
+        },
+        {
+          "name": "integrationIdentifier",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": "slack-prod",
+            "type": "string"
+          },
+          "description": "Filter by integration identifier."
+        },
+        {
+          "name": "contextKeys",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": [
+              "tenant:org-123",
+              "region:us-east-1"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Filter by exact context keys, order insensitive (format: \"type:id\")"
+        }
+      ]
+    },
+    {
+      "connector": "novu.ChannelConnectionsController_createChannelConnection",
+      "title": "Create a channel connection",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/channel-connections",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateChannelConnectionRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.ChannelConnectionsController_getChannelConnectionByIdentifier",
+      "title": "Retrieve a channel connection",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/channel-connections/{identifier}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The unique identifier of the channel connection"
+        }
+      ]
+    },
+    {
+      "connector": "novu.ChannelConnectionsController_updateChannelConnection",
+      "title": "Update a channel connection",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/channel-connections/{identifier}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The unique identifier of the channel connection"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateChannelConnectionRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.ChannelConnectionsController_deleteChannelConnection",
+      "title": "Delete a channel connection",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/channel-connections/{identifier}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The unique identifier of the channel connection"
+        }
+      ]
+    },
+    {
+      "connector": "novu.ChannelEndpointsController_listChannelEndpoints",
+      "title": "List all channel endpoints",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/channel-endpoints",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the starting point after which to fetch results."
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Cursor for pagination indicating the ending point before which to fetch results."
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "maximum": 100,
+            "example": 10,
+            "type": "number"
+          },
+          "description": "Limit the number of items to return (max 100)"
+        },
+        {
+          "name": "orderDirection",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ASC",
+              "DESC"
+            ]
+          },
+          "description": "Direction of sorting"
+        },
+        {
+          "name": "orderBy",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Field to order by"
+        },
+        {
+          "name": "includeCursor",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Include cursor item in response"
+        },
+        {
+          "name": "subscriberId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": "subscriber-123",
+            "type": "string"
+          },
+          "description": "The subscriber ID to filter results by"
+        },
+        {
+          "name": "contextKeys",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": [
+              "tenant:org-123",
+              "region:us-east-1"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Filter by exact context keys, order insensitive (format: \"type:id\")"
+        },
+        {
+          "name": "channel",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "in_app",
+              "email",
+              "sms",
+              "chat",
+              "push",
+              "tool"
+            ]
+          },
+          "description": "Channel type to filter results."
+        },
+        {
+          "name": "providerId",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "$ref": "#/components/schemas/ProvidersIdEnum"
+          },
+          "description": "Filter by provider identifier (e.g., sendgrid, twilio, slack, etc.)."
+        },
+        {
+          "name": "integrationIdentifier",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": "slack-prod",
+            "type": "string"
+          },
+          "description": "Integration identifier to filter results."
+        },
+        {
+          "name": "connectionIdentifier",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": "slack-connection-abc123",
+            "type": "string"
+          },
+          "description": "Connection identifier to filter results."
+        }
+      ]
+    },
+    {
+      "connector": "novu.ChannelEndpointsController_createChannelEndpoint",
+      "title": "Create a channel endpoint",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/channel-endpoints",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateSlackChannelEndpointDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateSlackUserEndpointDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateWebhookEndpointDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreatePhoneEndpointDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateMsTeamsChannelEndpointDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateMsTeamsUserEndpointDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateTelegramChatEndpointDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateWebexRoomEndpointDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateWebexPersonEndpointDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateLineUserEndpointDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreatePagerDutyServiceEndpointDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateOpsgenieIntegrationEndpointDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateGrafanaOnCallIntegrationEndpointDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreateToolWebhookEndpointDto"
+                  }
+                ],
+                "discriminator": {
+                  "propertyName": "type",
+                  "mapping": {
+                    "slack_channel": "#/components/schemas/CreateSlackChannelEndpointDto",
+                    "slack_user": "#/components/schemas/CreateSlackUserEndpointDto",
+                    "webhook": "#/components/schemas/CreateWebhookEndpointDto",
+                    "phone": "#/components/schemas/CreatePhoneEndpointDto",
+                    "ms_teams_channel": "#/components/schemas/CreateMsTeamsChannelEndpointDto",
+                    "ms_teams_user": "#/components/schemas/CreateMsTeamsUserEndpointDto",
+                    "telegram_chat": "#/components/schemas/CreateTelegramChatEndpointDto",
+                    "webex_room": "#/components/schemas/CreateWebexRoomEndpointDto",
+                    "webex_person": "#/components/schemas/CreateWebexPersonEndpointDto",
+                    "line_user": "#/components/schemas/CreateLineUserEndpointDto",
+                    "pagerduty_service": "#/components/schemas/CreatePagerDutyServiceEndpointDto",
+                    "opsgenie_integration": "#/components/schemas/CreateOpsgenieIntegrationEndpointDto",
+                    "grafana_oncall_integration": "#/components/schemas/CreateGrafanaOnCallIntegrationEndpointDto",
+                    "tool_webhook": "#/components/schemas/CreateToolWebhookEndpointDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.ChannelEndpointsController_getChannelEndpoint",
+      "title": "Retrieve a channel endpoint",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/channel-endpoints/{identifier}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The unique identifier of the channel endpoint"
+        }
+      ]
+    },
+    {
+      "connector": "novu.ChannelEndpointsController_updateChannelEndpoint",
+      "title": "Update a channel endpoint",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/channel-endpoints/{identifier}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The unique identifier of the channel endpoint"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateChannelEndpointRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.ChannelEndpointsController_deleteChannelEndpoint",
+      "title": "Delete a channel endpoint",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v1/channel-endpoints/{identifier}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "identifier",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The unique identifier of the channel endpoint"
+        }
+      ]
+    },
+    {
+      "connector": "novu.TranslationController_uploadTranslationFiles",
+      "title": "Upload translation files",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/translations/upload",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "resourceId": {
+                    "type": "string",
+                    "description": "The resource ID to associate localizations with. Accepts identifier or slug format",
+                    "example": "welcome-email"
+                  },
+                  "resourceType": {
+                    "type": "string",
+                    "enum": [
+                      "workflow",
+                      "layout"
+                    ],
+                    "description": "The resource type to associate localizations with"
+                  },
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "description": "One or more JSON translation files. Filenames must match locale format (e.g., en_US.json, fr_FR.json). Field name can be \"files\" or \"files[]\"."
+                  }
+                },
+                "required": [
+                  "resourceId",
+                  "resourceType",
+                  "files"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.TranslationController_createTranslationEndpoint",
+      "title": "Create a translation",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/translations",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTranslationRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.TranslationController_getMasterJsonEndpoint",
+      "title": "Retrieve master translations JSON",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/translations/master-json",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "locale",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "example": "en_US",
+            "type": "string"
+          },
+          "description": "Locale to export. If not provided, exports organization default locale"
+        }
+      ]
+    },
+    {
+      "connector": "novu.TranslationController_importMasterJsonEndpoint",
+      "title": "Import master translations JSON",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/translations/master-json",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportMasterJsonRequestDto"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.TranslationController_uploadMasterJsonEndpoint",
+      "title": "Upload master translations JSON file",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/translations/master-json/upload",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Master JSON file with locale as filename (e.g., en_US.json)"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "novu.TranslationController_getTranslationGroupEndpoint",
+      "title": "Retrieve a translation group",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/translations/group/{resourceType}/{resourceId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "resourceType",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "enum": [
+              "workflow",
+              "layout"
+            ],
+            "type": "string"
+          },
+          "description": "Resource type"
+        },
+        {
+          "name": "resourceId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "example": "welcome-email",
+            "type": "string"
+          },
+          "description": "Resource ID"
+        }
+      ]
+    },
+    {
+      "connector": "novu.TranslationController_getSingleTranslation",
+      "title": "Retrieve a translation",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/translations/{resourceType}/{resourceId}/{locale}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "resourceType",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "enum": [
+              "workflow",
+              "layout"
+            ],
+            "type": "string"
+          },
+          "description": "Resource type"
+        },
+        {
+          "name": "resourceId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "example": "welcome-email",
+            "type": "string"
+          },
+          "description": "Resource ID"
+        },
+        {
+          "name": "locale",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "example": "en_US",
+            "type": "string"
+          },
+          "description": "Locale code"
+        }
+      ]
+    },
+    {
+      "connector": "novu.TranslationController_deleteTranslationEndpoint",
+      "title": "Delete a translation",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/translations/{resourceType}/{resourceId}/{locale}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "resourceType",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "enum": [
+              "workflow",
+              "layout"
+            ],
+            "type": "string"
+          },
+          "description": "Resource type"
+        },
+        {
+          "name": "resourceId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Resource ID"
+        },
+        {
+          "name": "locale",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Locale code"
+        }
+      ]
+    },
+    {
+      "connector": "novu.TranslationController_deleteTranslationGroupEndpoint",
+      "title": "Delete a translation group",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/translations/{resourceType}/{resourceId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "resourceType",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "enum": [
+              "workflow",
+              "layout"
+            ],
+            "type": "string"
+          },
+          "description": "Resource type"
+        },
+        {
+          "name": "resourceId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "example": "welcome-email",
+            "type": "string"
+          },
+          "description": "Resource ID"
+        }
+      ]
+    },
+    {
+      "connector": "novu.InboundWebhooksController_handleWebhook",
+      "title": "Track provider activity and engagement events",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "https://api.novu.co",
+      "path": "/v2/inbound-webhooks/delivery-providers/{environmentId}/{integrationId}",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "environmentId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The environment identifier"
+        },
+        {
+          "name": "integrationId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The integration identifier for the delivery provider"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Generic webhook payload from delivery providers"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

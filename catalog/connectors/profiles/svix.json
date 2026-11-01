@@ -1,0 +1,2026 @@
+{
+  "name": "svix",
+  "title": "Svix",
+  "source": "https://raw.githubusercontent.com/svix/svix-webhooks/main/server/openapi.json",
+  "authentication": "bearer",
+  "operations": [
+    {
+      "connector": "svix.get_api_v1_health_ping",
+      "title": "get_api_v1_health_ping",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/v1/health/ping",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "svix.head_api_v1_health_ping",
+      "title": "head_api_v1_health_ping",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/api/v1/health/ping",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "svix.v1.health.get",
+      "title": "Health",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/v1/health",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "svix.v1.health.get",
+      "title": "Health",
+      "packageVersion": "1.0.0",
+      "method": "HEAD",
+      "baseUrl": "",
+      "path": "/api/v1/health",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "svix.logout_api_v1_auth_logout__post",
+      "title": "Logout",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/api/v1/auth/logout",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "idempotency-key",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The request's idempotency key"
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.authentication.app-portal-access",
+      "title": "App Portal Access",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/api/v1/auth/app-portal-access/{app_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "idempotency-key",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The request's idempotency key"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppPortalAccessIn"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.application.list",
+      "title": "List Applications",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/v1/app",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "description": "Limit the number of returned items",
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "description": "Limit the number of returned items"
+        },
+        {
+          "name": "iterator",
+          "in": "query",
+          "schema": {
+            "description": "The iterator returned from a prior invocation",
+            "type": "string",
+            "example": "app_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+            "nullable": true
+          },
+          "description": "The iterator returned from a prior invocation"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "description": "The sorting order of the returned items",
+            "$ref": "#/components/schemas/Ordering",
+            "nullable": true
+          },
+          "description": "The sorting order of the returned items"
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.application.create",
+      "title": "Create Application",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/api/v1/app",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "get_if_exists",
+          "in": "query",
+          "schema": {
+            "description": "Get an existing application, or create a new one if doesn't exist. It's two separate functions in the libs.",
+            "default": false,
+            "type": "boolean"
+          },
+          "description": "Get an existing application, or create a new one if doesn't exist. It's two separate functions in the libs."
+        },
+        {
+          "name": "idempotency-key",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The request's idempotency key"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationIn"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.application.get",
+      "title": "Get Application",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "svix.v1.application.update",
+      "title": "Update Application",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationIn"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.application.delete",
+      "title": "Delete Application",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}",
+      "authentication": "bearer",
+      "parameters": []
+    },
+    {
+      "connector": "svix.patch_application",
+      "title": "Patch Application",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationPatch"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.endpoint.list",
+      "title": "List Endpoints",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/endpoint",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "description": "Limit the number of returned items",
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "description": "Limit the number of returned items"
+        },
+        {
+          "name": "iterator",
+          "in": "query",
+          "schema": {
+            "description": "The iterator returned from a prior invocation",
+            "type": "string",
+            "example": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+            "nullable": true
+          },
+          "description": "The iterator returned from a prior invocation"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "description": "The sorting order of the returned items",
+            "$ref": "#/components/schemas/Ordering",
+            "nullable": true
+          },
+          "description": "The sorting order of the returned items"
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.endpoint.create",
+      "title": "Create Endpoint",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/endpoint",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "idempotency-key",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The request's idempotency key"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EndpointIn"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.endpoint.get",
+      "title": "Get Endpoint",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/endpoint/{endpoint_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "endpoint_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-ep-identifier"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.endpoint.update",
+      "title": "Update Endpoint",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/endpoint/{endpoint_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "endpoint_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-ep-identifier"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EndpointUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.endpoint.delete",
+      "title": "Delete Endpoint",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/endpoint/{endpoint_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "endpoint_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-ep-identifier"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.patch_endpoint",
+      "title": "Patch Endpoint",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/endpoint/{endpoint_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "endpoint_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-ep-identifier"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EndpointPatch"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.endpoint.get-secret",
+      "title": "Get Endpoint Secret",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/endpoint/{endpoint_id}/secret",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "endpoint_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-ep-identifier"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.endpoint.rotate-secret",
+      "title": "Rotate Endpoint Secret",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/endpoint/{endpoint_id}/secret/rotate",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "endpoint_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-ep-identifier"
+          }
+        },
+        {
+          "name": "idempotency-key",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The request's idempotency key"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EndpointSecretRotateIn"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.endpoint.get-stats",
+      "title": "Endpoint Stats",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/endpoint/{endpoint_id}/stats",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "endpoint_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-ep-identifier"
+          }
+        },
+        {
+          "name": "since",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        {
+          "name": "until",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.endpoint.send-example",
+      "title": "Send Event Type Example Message",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/endpoint/{endpoint_id}/send-example",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "endpoint_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-ep-identifier"
+          }
+        },
+        {
+          "name": "idempotency-key",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The request's idempotency key"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventExampleIn"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.endpoint.recover",
+      "title": "Recover Failed Webhooks",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/endpoint/{endpoint_id}/recover",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "endpoint_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-ep-identifier"
+          }
+        },
+        {
+          "name": "idempotency-key",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The request's idempotency key"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecoverIn"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.endpoint.get-headers",
+      "title": "Get Endpoint Headers",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/endpoint/{endpoint_id}/headers",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "endpoint_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-ep-identifier"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.endpoint.update-headers",
+      "title": "Update Endpoint Headers",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/endpoint/{endpoint_id}/headers",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "endpoint_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-ep-identifier"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EndpointHeadersIn"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.endpoint.patch-headers",
+      "title": "Patch Endpoint Headers",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/endpoint/{endpoint_id}/headers",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "endpoint_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-ep-identifier"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EndpointHeadersPatchIn"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.event-type.list",
+      "title": "List Event Types",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/v1/event-type",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "description": "Limit the number of returned items",
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "description": "Limit the number of returned items"
+        },
+        {
+          "name": "iterator",
+          "in": "query",
+          "schema": {
+            "description": "The iterator returned from a prior invocation",
+            "type": "string",
+            "maxLength": 256,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "user.signup",
+            "nullable": true
+          },
+          "description": "The iterator returned from a prior invocation"
+        },
+        {
+          "name": "order",
+          "in": "query",
+          "schema": {
+            "description": "The sorting order of the returned items",
+            "$ref": "#/components/schemas/Ordering",
+            "nullable": true
+          },
+          "description": "The sorting order of the returned items"
+        },
+        {
+          "name": "include_archived",
+          "in": "query",
+          "schema": {
+            "description": "When `true` archived (deleted but not expunged) items are included in the response",
+            "default": false,
+            "type": "boolean"
+          },
+          "description": "When `true` archived (deleted but not expunged) items are included in the response"
+        },
+        {
+          "name": "with_content",
+          "in": "query",
+          "schema": {
+            "description": "When `true` the full item (including the schema) is included in the response",
+            "default": false,
+            "type": "boolean"
+          },
+          "description": "When `true` the full item (including the schema) is included in the response"
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.event-type.create",
+      "title": "Create Event Type",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/api/v1/event-type",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "idempotency-key",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The request's idempotency key"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventTypeIn"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.event-type.get",
+      "title": "Get Event Type",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/v1/event-type/{event_type_name}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "event_type_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "user.signup"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.event-type.update",
+      "title": "Update Event Type",
+      "packageVersion": "1.0.0",
+      "method": "PUT",
+      "baseUrl": "",
+      "path": "/api/v1/event-type/{event_type_name}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "event_type_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "user.signup"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventTypeUpdate"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.event-type.delete",
+      "title": "Delete Event Type",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/api/v1/event-type/{event_type_name}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "event_type_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "user.signup"
+          }
+        },
+        {
+          "name": "expunge",
+          "in": "query",
+          "schema": {
+            "description": "By default event types are archived when \"deleted\". Passing this to `true` deletes them entirely.",
+            "default": false,
+            "type": "boolean"
+          },
+          "description": "By default event types are archived when \"deleted\". Passing this to `true` deletes them entirely."
+        }
+      ]
+    },
+    {
+      "connector": "svix.patch_event_type",
+      "title": "Patch Event Type",
+      "packageVersion": "1.0.0",
+      "method": "PATCH",
+      "baseUrl": "",
+      "path": "/api/v1/event-type/{event_type_name}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "event_type_name",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "user.signup"
+          }
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventTypePatch"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.message.list",
+      "title": "List Messages",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/msg",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "description": "Limit the number of returned items",
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "description": "Limit the number of returned items"
+        },
+        {
+          "name": "iterator",
+          "in": "query",
+          "schema": {
+            "description": "The iterator returned from a prior invocation",
+            "type": "string",
+            "example": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+            "nullable": true
+          },
+          "description": "The iterator returned from a prior invocation"
+        },
+        {
+          "name": "channel",
+          "in": "query",
+          "schema": {
+            "description": "Filter response based on the channel",
+            "type": "string",
+            "maxLength": 128,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "project_1337",
+            "nullable": true
+          },
+          "description": "Filter response based on the channel"
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "schema": {
+            "description": "Only include items created before a certain date",
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "description": "Only include items created before a certain date"
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "schema": {
+            "description": "Only include items created after a certain date",
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "description": "Only include items created after a certain date"
+        },
+        {
+          "name": "with_content",
+          "in": "query",
+          "schema": {
+            "description": "When `true` message payloads are included in the response",
+            "default": true,
+            "type": "boolean"
+          },
+          "description": "When `true` message payloads are included in the response"
+        },
+        {
+          "name": "event_types",
+          "in": "query",
+          "schema": {
+            "description": "Filter response based on the event type",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 256,
+              "pattern": "^[a-zA-Z0-9\\-_.]+$",
+              "example": "user.signup"
+            },
+            "uniqueItems": true,
+            "nullable": true
+          },
+          "description": "Filter response based on the event type"
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.message.create",
+      "title": "Create Message",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/msg",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "with_content",
+          "in": "query",
+          "schema": {
+            "description": "When `true` message payloads are included in the response",
+            "default": true,
+            "type": "boolean"
+          },
+          "description": "When `true` message payloads are included in the response"
+        },
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "idempotency-key",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The request's idempotency key"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageIn"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.message.get",
+      "title": "Get Message",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/msg/{msg_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "msg_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-msg-identifier"
+          }
+        },
+        {
+          "name": "with_content",
+          "in": "query",
+          "schema": {
+            "description": "When `true` message payloads are included in the response",
+            "default": true,
+            "type": "boolean"
+          },
+          "description": "When `true` message payloads are included in the response"
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.message.expunge-content",
+      "title": "Expunge Message Content",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/msg/{msg_id}/content",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "msg_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-msg-identifier"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.message.bulk-expunge-content",
+      "title": "Bulk Expunge Message Content",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/msg/bulk-expunge",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "idempotency-key",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The request's idempotency key"
+        },
+        {
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkExpungeContentsIn"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.message-attempt.get",
+      "title": "Get Messageattempt",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/msg/{msg_id}/attempt/{attempt_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "msg_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-msg-identifier"
+          }
+        },
+        {
+          "name": "attempt_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "atmpt_1srOrx2ZWZBpBUvZwXKQmoEYga2"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.message-attempt.expunge-content",
+      "title": "Expunge Attempt Content",
+      "packageVersion": "1.0.0",
+      "method": "DELETE",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/msg/{msg_id}/attempt/{attempt_id}/content",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "msg_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-msg-identifier"
+          }
+        },
+        {
+          "name": "attempt_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "example": "atmpt_1srOrx2ZWZBpBUvZwXKQmoEYga2"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.message-attempt.list-attempted-destinations",
+      "title": "List Attempted Destinations",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/msg/{msg_id}/endpoint",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "description": "Limit the number of returned items",
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "description": "Limit the number of returned items"
+        },
+        {
+          "name": "iterator",
+          "in": "query",
+          "schema": {
+            "description": "The iterator returned from a prior invocation",
+            "type": "string",
+            "example": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+            "nullable": true
+          },
+          "description": "The iterator returned from a prior invocation"
+        },
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "msg_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-msg-identifier"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.message-attempt.resend",
+      "title": "Resend Webhook",
+      "packageVersion": "1.0.0",
+      "method": "POST",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/msg/{msg_id}/endpoint/{endpoint_id}/resend",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "msg_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-msg-identifier"
+          }
+        },
+        {
+          "name": "endpoint_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-ep-identifier"
+          }
+        },
+        {
+          "name": "idempotency-key",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          },
+          "description": "The request's idempotency key"
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.message-attempt.list-attempted-messages",
+      "title": "List Attempted Messages",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/endpoint/{endpoint_id}/msg",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "description": "Limit the number of returned items",
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "description": "Limit the number of returned items"
+        },
+        {
+          "name": "iterator",
+          "in": "query",
+          "schema": {
+            "description": "The iterator returned from a prior invocation",
+            "type": "string",
+            "example": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+            "nullable": true
+          },
+          "description": "The iterator returned from a prior invocation"
+        },
+        {
+          "name": "channel",
+          "in": "query",
+          "schema": {
+            "description": "Filter response based on the channel",
+            "type": "string",
+            "maxLength": 128,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "project_1337",
+            "nullable": true
+          },
+          "description": "Filter response based on the channel"
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "description": "Filter response based on the delivery status",
+            "$ref": "#/components/schemas/MessageStatus",
+            "nullable": true
+          },
+          "description": "Filter response based on the delivery status"
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "schema": {
+            "description": "Only include items created before a certain date",
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "description": "Only include items created before a certain date"
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "schema": {
+            "description": "Only include items created after a certain date",
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "description": "Only include items created after a certain date"
+        },
+        {
+          "name": "with_content",
+          "in": "query",
+          "schema": {
+            "description": "When `true` message payloads are included in the response",
+            "default": true,
+            "type": "boolean"
+          },
+          "description": "When `true` message payloads are included in the response"
+        },
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "endpoint_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-ep-identifier"
+          }
+        },
+        {
+          "name": "event_types",
+          "in": "query",
+          "schema": {
+            "description": "Filter response based on the event type",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 256,
+              "pattern": "^[a-zA-Z0-9\\-_.]+$",
+              "example": "user.signup"
+            },
+            "uniqueItems": true,
+            "nullable": true
+          },
+          "description": "Filter response based on the event type"
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.message-attempt.list-by-endpoint",
+      "title": "List Attempts By Endpoint",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/attempt/endpoint/{endpoint_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "description": "Limit the number of returned items",
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "description": "Limit the number of returned items"
+        },
+        {
+          "name": "iterator",
+          "in": "query",
+          "schema": {
+            "description": "The iterator returned from a prior invocation",
+            "type": "string",
+            "example": "atmpt_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+            "nullable": true
+          },
+          "description": "The iterator returned from a prior invocation"
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "description": "Filter response based on the delivery status",
+            "$ref": "#/components/schemas/MessageStatus",
+            "nullable": true
+          },
+          "description": "Filter response based on the delivery status"
+        },
+        {
+          "name": "status_code_class",
+          "in": "query",
+          "schema": {
+            "description": "Filter response based on the HTTP status code",
+            "$ref": "#/components/schemas/StatusCodeClass",
+            "nullable": true
+          },
+          "description": "Filter response based on the HTTP status code"
+        },
+        {
+          "name": "channel",
+          "in": "query",
+          "schema": {
+            "description": "Filter response based on the channel",
+            "type": "string",
+            "maxLength": 128,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "project_1337",
+            "nullable": true
+          },
+          "description": "Filter response based on the channel"
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "schema": {
+            "description": "Only include items created before a certain date",
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "description": "Only include items created before a certain date"
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "schema": {
+            "description": "Only include items created after a certain date",
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "description": "Only include items created after a certain date"
+        },
+        {
+          "name": "with_content",
+          "in": "query",
+          "schema": {
+            "description": "When `true` attempt content is included in the response",
+            "default": true,
+            "type": "boolean"
+          },
+          "description": "When `true` attempt content is included in the response"
+        },
+        {
+          "name": "event_types",
+          "in": "query",
+          "schema": {
+            "description": "Filter response based on the event type",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 256,
+              "pattern": "^[a-zA-Z0-9\\-_.]+$",
+              "example": "user.signup"
+            },
+            "uniqueItems": true,
+            "nullable": true
+          },
+          "description": "Filter response based on the event type"
+        },
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "endpoint_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-ep-identifier"
+          }
+        }
+      ]
+    },
+    {
+      "connector": "svix.v1.message-attempt.list-by-msg",
+      "title": "List Attempts By Msg",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "",
+      "path": "/api/v1/app/{app_id}/attempt/msg/{msg_id}",
+      "authentication": "bearer",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "description": "Limit the number of returned items",
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0
+          },
+          "description": "Limit the number of returned items"
+        },
+        {
+          "name": "iterator",
+          "in": "query",
+          "schema": {
+            "description": "The iterator returned from a prior invocation",
+            "type": "string",
+            "example": "atmpt_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+            "nullable": true
+          },
+          "description": "The iterator returned from a prior invocation"
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "schema": {
+            "description": "Filter response based on the delivery status",
+            "$ref": "#/components/schemas/MessageStatus",
+            "nullable": true
+          },
+          "description": "Filter response based on the delivery status"
+        },
+        {
+          "name": "status_code_class",
+          "in": "query",
+          "schema": {
+            "description": "Filter response based on the HTTP status code",
+            "$ref": "#/components/schemas/StatusCodeClass",
+            "nullable": true
+          },
+          "description": "Filter response based on the HTTP status code"
+        },
+        {
+          "name": "channel",
+          "in": "query",
+          "schema": {
+            "description": "Filter response based on the channel",
+            "type": "string",
+            "maxLength": 128,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "project_1337",
+            "nullable": true
+          },
+          "description": "Filter response based on the channel"
+        },
+        {
+          "name": "endpoint_id",
+          "in": "query",
+          "schema": {
+            "description": "Filter the attempts based on the attempted endpoint",
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-ep-identifier",
+            "nullable": true
+          },
+          "description": "Filter the attempts based on the attempted endpoint"
+        },
+        {
+          "name": "before",
+          "in": "query",
+          "schema": {
+            "description": "Only include items created before a certain date",
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "description": "Only include items created before a certain date"
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "schema": {
+            "description": "Only include items created after a certain date",
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "description": "Only include items created after a certain date"
+        },
+        {
+          "name": "with_content",
+          "in": "query",
+          "schema": {
+            "description": "When `true` attempt content is included in the response",
+            "default": true,
+            "type": "boolean"
+          },
+          "description": "When `true` attempt content is included in the response"
+        },
+        {
+          "name": "app_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-app-identifier"
+          }
+        },
+        {
+          "name": "msg_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9\\-_.]+$",
+            "example": "unique-msg-identifier"
+          }
+        },
+        {
+          "name": "event_types",
+          "in": "query",
+          "schema": {
+            "description": "Filter response based on the event type",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 256,
+              "pattern": "^[a-zA-Z0-9\\-_.]+$",
+              "example": "user.signup"
+            },
+            "uniqueItems": true,
+            "nullable": true
+          },
+          "description": "Filter response based on the event type"
+        }
+      ]
+    }
+  ]
+}

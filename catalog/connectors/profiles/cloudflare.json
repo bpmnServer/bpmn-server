@@ -1,0 +1,8 @@
+{
+  "name": "cloudflare",
+  "title": "Cloudflare",
+  "source": "https://raw.githubusercontent.com/cloudflare/api-schemas/main/openapi.json",
+  "authentication": "bearer",
+  "operations": [],
+  "error": "The operation was aborted due to timeout"
+}

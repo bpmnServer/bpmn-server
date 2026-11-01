@@ -1,0 +1,37 @@
+{
+  "name": "nasa",
+  "title": "Nasa",
+  "source": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/nasa.gov/apod/1.0.0/openapi.yaml",
+  "authentication": "apiKey",
+  "operations": [
+    {
+      "connector": "nasa.get_apod",
+      "title": "Returns images",
+      "packageVersion": "1.0.0",
+      "method": "GET",
+      "baseUrl": "https://api.nasa.gov/planetary",
+      "path": "/apod",
+      "authentication": "apiKey",
+      "parameters": [
+        {
+          "name": "date",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "The date of the APOD image to retrieve"
+        },
+        {
+          "name": "hd",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "description": "Retrieve the URL for the high resolution image"
+        }
+      ]
+    }
+  ]
+}

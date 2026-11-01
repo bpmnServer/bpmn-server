@@ -1,0 +1,8 @@
+{
+  "name": "dropbox",
+  "title": "Dropbox",
+  "source": "https://api.apis.guru/v2/specs/dropbox.com/2/openapi.yaml",
+  "authentication": "oauth-client-credentials-flow",
+  "operations": [],
+  "error": "404 Not Found"
+}
