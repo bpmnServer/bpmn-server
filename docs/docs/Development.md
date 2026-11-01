@@ -1,26 +1,22 @@
 # Development Environemnt
 
-To Create a new Development Enviroment:
+bpmn-server, bpmn-client, bpmn-web, the docs and the sample application are one repository, bpmnServer4; npm
+workspaces link the packages to each other, so a change to bpmn-server is what bpmn-web runs on.
 
-1. Create a dev folder
-2. git clone the repos under the folder
--    bpmn-server
--    bpmn-web
--    bpmn-client
--    docs
-
-3.  change dependecy of bpmn-web to the folder ../bpmn-server, by:
+```sh
+git clone <repository URL> bpmnServer4
+cd bpmnServer4
+npm install
+npm run build                    # bpmn-server, bpmn-client, bpmn-web
+cd testSampleApp
+cp .env.example .env             # set MONGO_DB_URL
+npm run setup
+npm run debug                    # the sample application with the Node inspector; npm start without it
 ```
-    npm i ../bpmn-server
 
-```
+Tests: `npm test` at the root (bpmn-server, bpmn-client, testSampleApp); in testSampleApp also `npm run test:ui`.
 
-4. to Publish changes:
-    use git push as usual for all repo
-    for bpmn-server:
-        npm publish
-    for docs
-        mkdocs gh-deploy
+To publish: `npm publish -w bpmn-server` (or `-w bpmn-client`, `-w bpmn-web`) after `npm run build`.
 
 
 New Status:

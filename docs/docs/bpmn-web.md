@@ -14,55 +14,26 @@ Please [see bpmn-server for full documentation](https://github.com/bpmnserver/bp
 This package requires Node.js and an access to MongoDB ()
 if you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas)
 
+bpmn-web is a package an application starts with its own settings, delegate and models. Create one:
+
 ```sh
-
-git clone https://github.com/bpmnServer/bpmn-web.git
-
-cd bpmn-web
-
-npm install
-
-npm run setup
+npx bpmn-server init my-app      # asks for the database; --memory to try it without MongoDB
+cd my-app
+npm start
 ```
-Edit .env file to have MongoDB point to your server or free cloud account
+
+The application's `.env` names the database and the keys:
 
 ```env
-# PORT # for express application
 PORT=3000
-
-#API_KEY is used for remote access
-API_KEY=12345
-
-# MongoDB Settings
-MONGO_DB_URL=mongodb://0.0.0.0:27017/bpmn
-#
-... more settings
+MONGO_DB_URL=mongodb://localhost:27017/my-app
+API_KEY=...                      # generated; callers of the REST APIs send it
 ```
 
-Run Setup one more time
+Open http://localhost:3000 and sign in as `admin`, password `admin`, then change the password.
 
-```sh
-npm run setup
-```
-
-## To start server
-
-```sh
-npm run start
-```
-
-Console will display:
-
-```text
-bpmn-server WebApp.ts version 1.4.0
-MongoDB URL mongodb://0.0.0.0:27017/bpmn
-db connection open
-
-App is running at http://localhost:3000 in development mode
-  Press CTRL-C to stop
-```
-
-Use your browser to view the bpmn-server running
+The sample application, with many models, connectors and delegates, is `testSampleApp` in the bpmnServer4
+repository: see [Installation](setup.md).
 
 ### Docker installation
 bpmn-web and MongoDB in two containers, from [bpmnServer/docker](https://github.com/bpmnServer/docker):

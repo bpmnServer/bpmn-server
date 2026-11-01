@@ -1,33 +1,37 @@
 # Installation
 
-## installation of bpmn-server along with bpmn-web
+## An application on bpmn-server and bpmn-web
 
 ```sh
-git clone https://github.com/bpmnServer/bpmn-web.git
-
-# this will install bpmn-server along with all dependencies 
-
-npm install 
-
-# this will copy Initial files that are not tracked by .git; .env and appDelegate
-
-npm run setup
-
-# now edit `.env` file, change your mongoDB connection
-
-# after editing .env, run setup again to initialize DB 
-
-npm run setup
-
-npm run start
-
+npx bpmn-server init my-app      # asks for the database; --memory to try it without MongoDB
+cd my-app
+npm start                        # http://localhost:3000, sign in as admin / admin
 ```
+
+`init` creates the application: `src/config.ts` (the settings you change), `src/appDelegate.ts` (your
+services, on bpmn-web's `WebAppDelegate`), `src/index.ts` (starts bpmn-web), `processes/` and `.env`.
+`npm run setup` prepares the database and stops, `npm run cli` opens the console, `npm run verify` checks the
+models. (`init` ships with the release after bpmn-server 3.2.0.)
 
 ### To Update
 
 ```sh
-git pull
-npm update
+npm update bpmn-server bpmn-web
+```
+
+## The source, with the sample application
+
+bpmn-server, bpmn-client, bpmn-web and the sample application (`testSampleApp`) are one repository, bpmnServer4:
+
+```sh
+git clone <repository URL> bpmnServer4
+cd bpmnServer4
+npm install
+npm run build
+cd testSampleApp
+cp .env.example .env             # set MONGO_DB_URL
+npm run setup
+npm start
 ```
 
 ## installation of bpmn-client
