@@ -14,6 +14,10 @@ and here
 -->
 ## Unreleased — New model editor
 
+### Dashboards
+- The model catalog is not offered for now (the Catalog menu entry and the Design dashboard's "Browse the
+  catalog" button are hidden) until it is fixed; `/dashboard/catalog` still answers.
+
 ### Package exports
 - `repository`: bpmnServer/bpmn-server, folder `packages/bpmn-web`.
 - `runScenario` and `checkScenarios` (with the `Scenario`, `ScenarioStep` and `Check` types): the model editor's

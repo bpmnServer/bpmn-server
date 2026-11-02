@@ -5,7 +5,8 @@ block nav
 		li: a(href='/dashboard') My work
 		if isDesigner
 			li: a(href='/dashboard/design') Design
-			li: a(href='/dashboard/catalog') Catalog
+			//- the catalog is hidden until it is fixed; /dashboard/catalog still answers
+			//- li: a(href='/dashboard/catalog') Catalog
 		if isAdmin
 			li: a(href='/dashboard/admin') Administration
 		li: a(href='/') Workbench
