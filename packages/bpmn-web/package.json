@@ -61,7 +61,7 @@
     "mongoose": "^9.8.0",
     "morgan": "^1.11.0",
     "multer": "^2.2.0",
-    "nodemailer": "^9.0.3",
+    "nodemailer": "^10.3.1",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "pug": "^3.0.4",
