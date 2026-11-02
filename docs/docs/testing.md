@@ -160,10 +160,11 @@ numbered from the script's own first line.
 - `debugger;` in a script stops there while a debugger is attached.
 - An error in one names that place in its stack: `at bpmn:///Buy%20Used%20Car/task_Buy/script.js:2:7`.
 
-### Known limits (bpmn-server 3.2)
+A failing script fails the call that ran it (`engine.start`, `run.complete`, ...) with the script's own
+error, whose stack names this location.
 
-- A failing script does not fail the instance: the engine logs the error (with the location above) and the
-  element stays started. A test sees it as an element that never ended; the log (`run.log()`) says why.
+### Known limits (bpmn-server 3.5)
+
 - A signal that reaches several boundary events of one instance fails after the first: thrown by the instance
   itself, the engine refuses the call back into the instance that is running; thrown from outside, the next
   boundary events are no longer waiting.

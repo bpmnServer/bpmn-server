@@ -692,10 +692,7 @@ class Token implements IToken {
             return;
         }
 
-        try {
-            console.log('current node',this.currentNode.id , this.currentNode.getOutbounds,'<');
         const outbounds =await this.currentNode.getOutbounds(this.currentItem);
-        
 
         if (outbounds.length == 0) {
             await this.end();
@@ -748,15 +745,10 @@ class Token implements IToken {
                 }
             });
         }
-   
+
         this.log('Token(' + this.id + ').goNext(): waiting for num promises ' + promises.length);
         await Promise.all(promises);
         this.logE('Token('+this.id +').goNext(): is done currentNodeId='+this.currentNode.id);
-    }
-        catch (exc) {
-            console.log(exc);
-            console.log(exc.stack);
-        }
     }
     log(...msg) {
         this.execution.log(msg);

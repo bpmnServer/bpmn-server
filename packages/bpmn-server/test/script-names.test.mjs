@@ -53,7 +53,13 @@ test('scripts, listeners and conditions still run in the engine', async () => {
   await server.shutdown();
 });
 
-// The engine logs a failing script and goes on (the item is left started); the handler's own error is checked here.
+test('a failing script fails the call that ran it, with its own error and location', async () => {
+  const server = await serverWith('failing', scripted({ script: 'data.a = 1;\nthrow new RangeError("too much");' }));
+  await assert.rejects(server.engine.start('failing', {}),
+    (e) => e instanceof RangeError && /bpmn:\/\/\/failing\/calc\/script\.js:2:/.test(e.stack));
+  await server.shutdown();
+});
+
 test('an error points at the element, the label and the script\'s own line', async () => {
   const handler = new ScriptHandler();
   assert.equal(await handler.executeScript(item(), 'data.a = 2;\nreturn data.a * 21;', 'start'), 42);
