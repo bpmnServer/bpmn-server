@@ -29,8 +29,8 @@ Applications on bpmn-web 3.1 get this release on their next install. What can ch
 - The model check has more checks: models that checked clean may show issues.
 
 **Known issue:** an inclusive gateway that takes only one of its several outgoing flows stops the run
-(`this.currentNode.getOutbounds is not a function`); 3.2 does the same. The sample application's
-`employee-onboarding` model runs into it.
+(`this.currentNode.getOutbounds is not a function`); 3.2 does the same.
+The sample application leaves out its `employee-onboarding` model, which runs into it, until this is fixed.
 
 ### init: an application on bpmn-server and bpmn-web
 - `npx bpmn-server init [folder]` creates a workflow application with bpmn-server and bpmn-web as its
@@ -39,7 +39,7 @@ Applications on bpmn-web 3.1 get this release on their next install. What can ch
   `--port`, `--api-only` / `--ui-only`, `--no-auth` (no sign-in and no security rules, for development);
   `--no-install`, `--yes`. `.env` gets generated keys; `docker-compose.yml` runs a MongoDB when one is needed.
 - It creates the sample application (bpmnServer4's `sampleApp`): models (Hello, Buy Used
-  Car, Leave Application, employee-onboarding, Business Rules with its decision table), the services they call
+  Car, Leave Application, Business Rules with its decision table), the services they call
   and element templates (`connectors/`), the app delegate (`delegates/`), `settings/config.ts`, `index.ts`.
   `--minimal` creates a one-model Hello application.
 - The application's `package.json` takes the template's scripts and dependencies; `bpmn-server` and

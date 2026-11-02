@@ -38,7 +38,7 @@ my-app/
   .env              generated keys, the database URL, what is served
   index.ts          starts bpmn-web with the settings, delegate and connectors below
   settings/         config.ts: only the settings you override; bpmn-web supplies the defaults
-  processes/        the models: Hello, Buy Used Car, Leave Application, employee-onboarding, Business Rules
+  processes/        the models: Hello, Buy Used Car, Leave Application, Business Rules
   connectors/       the services service tasks call (appServices.ts), and element templates (*.json)
   delegates/        the app delegate (on bpmn-web's WebAppDelegate): services, data objects, events
 ```

@@ -38,7 +38,7 @@ The source moved: bpmn-server, bpmn-web and bpmn-client are one repository,
 
 An inclusive gateway that takes only one of its several outgoing flows (for example only its default flow)
 stops the run with `this.currentNode.getOutbounds is not a function`. It is not new in 3.5 (3.2 does the same).
-The `employee-onboarding` model of the sample application runs into it.
+An employee-onboarding model ran into it, so it is left out of the sample application until this is fixed.
 
 ## Upgrading from 2.x
 

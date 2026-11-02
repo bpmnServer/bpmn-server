@@ -8,8 +8,8 @@ cd my-app
 npm start                        # http://localhost:3000, sign in as admin / admin
 ```
 
-`init` creates the sample application: `processes/` (Hello, Buy Used Car, Leave Application,
-employee-onboarding, Business Rules), `connectors/` (the services the models call, `appServices.ts`, and element
+`init` creates the sample application: `processes/` (Hello, Buy Used Car, Leave Application, Business Rules),
+`connectors/` (the services the models call, `appServices.ts`, and element
 templates), `delegates/` (the app delegate, on bpmn-web's `WebAppDelegate`), `settings/config.ts` (the settings
 you change), `index.ts` (starts bpmn-web) and `.env`. `--minimal` creates a one-model Hello application instead.
 `npm run setup` prepares the database and stops, `npm run cli` opens the console, `npm run verify` checks the
