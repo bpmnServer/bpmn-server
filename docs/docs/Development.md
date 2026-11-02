@@ -1,11 +1,11 @@
 # Development Environemnt
 
-bpmn-server, bpmn-client, bpmn-web, the docs and the sample application are one repository, bpmnServer4; npm
+bpmn-server, bpmn-client, bpmn-web, the docs and the sample application are one repository, [bpmnServer/bpmn-server](https://github.com/bpmnServer/bpmn-server); npm
 workspaces link the packages to each other, so a change to bpmn-server is what bpmn-web runs on.
 
 ```sh
-git clone <repository URL> bpmnServer4
-cd bpmnServer4
+git clone https://github.com/bpmnServer/bpmn-server.git
+cd bpmn-server
 npm install
 npm run build                    # bpmn-server, bpmn-client, bpmn-web
 cd testSampleApp

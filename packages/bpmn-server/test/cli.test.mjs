@@ -67,35 +67,53 @@ function init(...args) {
   return { dir, r, read, exists: file => fs.existsSync(path.join(dir, file)) };
 }
 
-test('init: a MongoDB application with sign-in, by default', () => {
+test('init: the sample application, on MongoDB with sign-in, by default', () => {
   const app = init('--port', '3050');
-  for (const file of ['package.json', '.env', '.gitignore', 'README.md', 'docker-compose.yml', 'tsconfig.json',
-    'src/index.ts', 'src/config.ts', 'src/appDelegate.ts', 'processes/Hello.bpmn'])
+  for (const file of ['package.json', '.env', '.gitignore', 'README.md', 'docker-compose.yml', 'tsconfig.json', 'index.ts',
+    'settings/config.ts', 'delegates/appDelegate.ts', 'connectors/appServices.ts', 'connectors/echo.json',
+    'processes/Hello.bpmn', 'processes/Buy Used Car.bpmn', 'processes/Leave Application.bpmn'])
     assert.ok(app.exists(file), file);
+  assert.ok(!app.exists('test') && !app.exists('node_modules'), 'no tests, no node_modules');
   const env = app.read('.env');
   assert.match(env, /^MONGO_DB_URL=mongodb:\/\/localhost:27017\/app$/m);
+  assert.match(env, /^SERVE=both$/m);
   assert.match(env, /^REQUIRE_AUTHENTICATION=true$/m);
   assert.match(env, /^API_KEY=[0-9a-f]{48}$/m);
+  assert.match(env, /^PORT=3050$/m);
   const pkg = JSON.parse(app.read('package.json'));
-  assert.ok(pkg.dependencies['bpmn-web'] && pkg.dependencies['bpmn-server']);
+  assert.equal(pkg.name, 'app');
+  assert.match(pkg.dependencies['bpmn-server'], /^\^\d/, 'the published bpmn-server, not the workspace\'s "*"');
+  assert.match(pkg.dependencies['bpmn-web'], /^\^\d/);
+  assert.ok(pkg.dependencies.axios && pkg.dependencies.dayjs, 'the sample application\'s own dependencies');
   assert.equal(pkg.dependencies['mongodb-memory-server'], undefined);
-  assert.match(app.read('src/index.ts'), /api: true,[\s\S]*ui: true,/);
-  assert.match(app.read('README.md'), /npm run setup[\s\S]*http:\/\/localhost:3050/);
+  assert.equal(pkg.scripts.start, 'tsx index.ts');
+  assert.match(app.read('README.md'), /^# app$/m, 'titled with the application\'s name');
   assert.match(app.r.stdout, /docker compose up -d/);
-  assert.equal(run('verify', path.join(app.dir, 'processes')).status, 0, 'the sample model passes');
+  assert.equal(run('verify', path.join(app.dir, 'processes')).status, 0, 'the sample models pass');
 });
 
 test('init: --memory, --no-auth and --api-only', () => {
   const app = init('--memory', '--no-auth', '--api-only');
   const env = app.read('.env');
   assert.match(env, /^MONGO_DB_URL=memory$/m);
+  assert.match(env, /^SERVE=api$/m);
   assert.match(env, /^REQUIRE_AUTHENTICATION=false$/m);
   assert.match(env, /^ENFORCE_SECURITY=false$/m);
   assert.ok(JSON.parse(app.read('package.json')).dependencies['mongodb-memory-server']);
   assert.ok(!app.exists('docker-compose.yml'), 'no MongoDB to run');
-  assert.match(app.read('src/index.ts'), /api: true,[\s\S]*ui: false,/);
   assert.doesNotMatch(app.r.stdout, /npm run setup|docker compose/);
-  assert.match(app.read('README.md'), /Sign-in is off/);
+});
+
+test('init --minimal: a Hello application', () => {
+  const app = init('--minimal', '--port', '3050', '--ui-only');
+  for (const file of ['package.json', '.env', '.gitignore', 'README.md', 'tsconfig.json',
+    'src/index.ts', 'src/config.ts', 'src/appDelegate.ts', 'processes/Hello.bpmn'])
+    assert.ok(app.exists(file), file);
+  assert.ok(!app.exists('connectors'), 'not the sample application');
+  assert.equal(JSON.parse(app.read('package.json')).scripts.start, 'tsx src/index.ts');
+  assert.match(app.read('src/index.ts'), /api: false,[\s\S]*ui: true,/);
+  assert.match(app.read('README.md'), /npm run setup[\s\S]*http:\/\/localhost:3050/);
+  assert.equal(run('verify', path.join(app.dir, 'processes')).status, 0, 'the Hello model passes');
 });
 
 test('init: conflicting options and a folder in use are refused', () => {

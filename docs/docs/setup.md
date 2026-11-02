@@ -8,10 +8,12 @@ cd my-app
 npm start                        # http://localhost:3000, sign in as admin / admin
 ```
 
-`init` creates the application: `src/config.ts` (the settings you change), `src/appDelegate.ts` (your
-services, on bpmn-web's `WebAppDelegate`), `src/index.ts` (starts bpmn-web), `processes/` and `.env`.
+`init` creates the sample application: `processes/` (Hello, Buy Used Car, Leave Application,
+employee-onboarding, Business Rules), `connectors/` (the services the models call, `appServices.ts`, and element
+templates), `delegates/` (the app delegate, on bpmn-web's `WebAppDelegate`), `settings/config.ts` (the settings
+you change), `index.ts` (starts bpmn-web) and `.env`. `--minimal` creates a one-model Hello application instead.
 `npm run setup` prepares the database and stops, `npm run cli` opens the console, `npm run verify` checks the
-models. (`init` ships with the release after bpmn-server 3.2.0.)
+models. (`init` ships with bpmn-server 3.5.)
 
 ### To Update
 
@@ -21,11 +23,11 @@ npm update bpmn-server bpmn-web
 
 ## The source, with the sample application
 
-bpmn-server, bpmn-client, bpmn-web and the sample application (`testSampleApp`) are one repository, bpmnServer4:
+bpmn-server, bpmn-client, bpmn-web, the sample application (`sampleApp`) and the working application with the tests (`testSampleApp`) are one repository, [bpmnServer/bpmn-server](https://github.com/bpmnServer/bpmn-server):
 
 ```sh
-git clone <repository URL> bpmnServer4
-cd bpmnServer4
+git clone https://github.com/bpmnServer/bpmn-server.git
+cd bpmn-server
 npm install
 npm run build
 cd testSampleApp

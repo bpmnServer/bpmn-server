@@ -32,8 +32,10 @@ API_KEY=...                      # generated; callers of the REST APIs send it
 
 Open http://localhost:3000 and sign in as `admin`, password `admin`, then change the password.
 
-The sample application, with many models, connectors and delegates, is `testSampleApp` in the bpmnServer4
-repository: see [Installation](setup.md).
+`init` creates the sample application: a few models, the services they call, the app delegate and settings
+(`--minimal`: a one-model Hello application). The repository,
+[bpmnServer/bpmn-server](https://github.com/bpmnServer/bpmn-server), has it as `sampleApp`, and the working
+application with more models and the tests as `testSampleApp`: see [Installation](setup.md).
 
 ### Docker installation
 bpmn-web and MongoDB in two containers, from [bpmnServer/docker](https://github.com/bpmnServer/docker):

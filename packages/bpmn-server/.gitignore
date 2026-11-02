@@ -21,3 +21,6 @@ tsconfig.tsbuildinfo
 
 
 
+
+# the init template, copied from sampleApp when the package is packed (npm run template)
+/templates/app

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://unpkg.com/@camunda/element-templates-json-schema@0.1.0/resources/schema.json",
+  "name": "Add two numbers",
+  "id": "bpmn-web.sample.add",
+  "version": 1,
+  "description": "Calls the sample service add and stores the sum in the instance data.",
+  "appliesTo": ["bpmn:ServiceTask"],
+  "properties": [
+    {
+      "label": "Service",
+      "type": "Hidden",
+      "value": "add",
+      "binding": { "type": "property", "name": "camunda:delegateExpression" }
+    },
+    {
+      "label": "First number",
+      "description": "A number, or an expression such as $data.amount",
+      "type": "String",
+      "value": "",
+      "binding": { "type": "camunda:inputParameter", "name": "v1" },
+      "constraints": { "notEmpty": true }
+    },
+    {
+      "label": "Second number",
+      "description": "A number, or an expression such as $data.fee",
+      "type": "String",
+      "value": "",
+      "binding": { "type": "camunda:inputParameter", "name": "v2" },
+      "constraints": { "notEmpty": true }
+    },
+    {
+      "label": "Store the sum in",
+      "description": "The data field that receives the result",
+      "type": "String",
+      "value": "sum",
+      "binding": { "type": "camunda:outputParameter", "source": "output" },
+      "constraints": { "notEmpty": true }
+    }
+  ]
+}

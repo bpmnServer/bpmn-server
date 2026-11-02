@@ -1,11 +1,12 @@
 /**
  * bpmn-server init: creates a workflow application on bpmn-server and bpmn-web.
  *
- *   npx bpmn-server init [folder] [--mongo <url> | --memory] [--port <n>] [--api-only | --ui-only] [--no-auth]
- *                        [--no-install] [--yes]
+ *   npx bpmn-server init [folder] [--minimal] [--mongo <url> | --memory] [--port <n>] [--api-only | --ui-only]
+ *                        [--no-auth] [--no-install] [--yes]
  *
- * The application owns its models (processes/), its delegate (src/appDelegate.ts), its settings
- * (src/config.ts) and .env; bpmn-server and bpmn-web are its dependencies, so `npm update` upgrades them.
+ * The application is the sample application (bpmnServer4's sampleApp: models, services and connectors, the app
+ * delegate, settings), or with --minimal a Hello application; .env is written with new keys. bpmn-server and
+ * bpmn-web are its dependencies, so `npm update` upgrades them.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -14,15 +15,28 @@ import readline from 'node:readline/promises';
 import { spawnSync } from 'node:child_process';
 
 const PACKAGE_ROOT = path.join(import.meta.dirname, '..');
-const TEMPLATE = path.join(PACKAGE_ROOT, 'templates', 'app');
-/** The first bpmn-web with start(). */
-const BPMN_WEB_VERSION = '^3.0.1';
+/** bpmn-web, as published with this bpmn-server: the two are released together, with the same version. */
+const bpmnWebVersion = () => `^${ownVersion()}`;
+
+/**
+ * The template: templates/app is the sample application, copied there from bpmnServer4's sampleApp when the
+ * package is packed (npm run template); in the repository, sampleApp itself. --minimal: templates/minimal.
+ */
+function templateFolder(minimal: boolean): string {
+    if (minimal)
+        return path.join(PACKAGE_ROOT, 'templates', 'minimal');
+    const packed = path.join(PACKAGE_ROOT, 'templates', 'app');
+    return fs.existsSync(packed) ? packed : path.join(PACKAGE_ROOT, '..', '..', 'sampleApp');
+}
+/** Not copied: what each application has of its own (init writes package.json and .env). */
+const NOT_COPIED = new Set(['node_modules', 'package.json', 'package-lock.json', '.env']);
 
 export const INIT_USAGE = `usage: bpmn-server init [folder] [options]
 
-  Creates a workflow application: models, an app delegate, settings and .env,
-  with bpmn-server and bpmn-web as its dependencies.
+  Creates a workflow application: sample models, the services they call, an app
+  delegate, settings and .env, with bpmn-server and bpmn-web as its dependencies.
 
+  --minimal        a Hello application instead: one model, one service
   --mongo <url>    the MongoDB database (default mongodb://localhost:27017/<folder>)
   --memory         a MongoDB in the application's process, to try it without a
                    database server (mongodb-memory-server; data is lost when it stops)
@@ -39,7 +53,7 @@ const MEMORY_SERVER_VERSION = '^10.4.3';
 
 interface InitOptions {
     folder: string; mongo: string; memory: boolean; port: string;
-    api: boolean; ui: boolean; auth: boolean; install: boolean;
+    api: boolean; ui: boolean; auth: boolean; install: boolean; minimal: boolean;
 }
 
 function parse(argv: string[]) {
@@ -91,6 +105,8 @@ const dbName = (folder: string) => path.basename(path.resolve(folder)).replace(/
 function copyTemplate(from: string, to: string, values: Record<string, string>) {
     fs.mkdirSync(to, { recursive: true });
     for (const entry of fs.readdirSync(from, { withFileTypes: true })) {
+        if (NOT_COPIED.has(entry.name))
+            continue;
         const source = path.join(from, entry.name);
         const target = path.join(to, entry.name === 'gitignore' ? '.gitignore' : entry.name);
         if (entry.isDirectory()) {
@@ -107,7 +123,8 @@ function copyTemplate(from: string, to: string, values: Record<string, string>) 
 function writeApplication(options: InitOptions) {
     const dir = path.resolve(options.folder);
     const name = path.basename(dir);
-    copyTemplate(TEMPLATE, dir, {
+    const template = templateFolder(options.minimal);
+    copyTemplate(template, dir, {
         __NAME__: name, __PORT__: options.port, __API__: String(options.api), __UI__: String(options.ui),
         __RUN__: runSteps(options).join('\n'),
         __SIGNIN__: options.auth
@@ -115,13 +132,15 @@ function writeApplication(options: InitOptions) {
             : 'Sign-in is off (`REQUIRE_AUTHENTICATION=false` in `.env`): for development only. Set it and\n`ENFORCE_SECURITY` to `true` before anyone else can reach the server.',
     });
     if (options.memory)
-        fs.rmSync(path.join(dir, 'docker-compose.yml'));
+        fs.rmSync(path.join(dir, 'docker-compose.yml'), { force: true });
+    // the sample application's README is titled sampleApp: the application's name instead
+    const readme = path.join(dir, 'README.md');
+    if (fs.existsSync(readme))
+        fs.writeFileSync(readme, fs.readFileSync(readme, 'utf8').replace(/^# sampleApp$/m, `# ${name}`));
 
-    const pkg = {
-        name: name.toLowerCase().replace(/[^a-z0-9._-]/g, '-'),
-        version: '1.0.0',
-        private: true,
-        type: 'module',
+    // the template's scripts and dependencies (the sample application's), bpmn-server and bpmn-web as published
+    const own = path.join(template, 'package.json');
+    const from = fs.existsSync(own) ? JSON.parse(fs.readFileSync(own, 'utf8')) : {
         scripts: {
             start: 'tsx src/index.ts',
             dev: 'tsx watch src/index.ts',
@@ -129,27 +148,45 @@ function writeApplication(options: InitOptions) {
             cli: 'tsx src/index.ts --cli',
             verify: 'bpmn-server verify processes',
         },
+        dependencies: { 'tsx': '^4.20.0' },
+        devDependencies: { '@types/node': '^22.0.0' },
+    };
+    const pkg = {
+        name: name.toLowerCase().replace(/[^a-z0-9._-]/g, '-'),
+        version: '1.0.0',
+        private: true,
+        type: 'module',
+        scripts: from.scripts,
         dependencies: {
+            ...from.dependencies,
             'bpmn-server': `^${ownVersion()}`,
-            'bpmn-web': BPMN_WEB_VERSION,
-            'tsx': '^4.20.0',
+            'bpmn-web': bpmnWebVersion(),
             ...(options.memory ? { 'mongodb-memory-server': MEMORY_SERVER_VERSION } : {}),
         },
-        devDependencies: {
-            '@types/node': '^22.0.0',
-        },
+        devDependencies: from.devDependencies ?? {},
     };
     fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify(pkg, null, 2) + '\n');
+    if (!fs.existsSync(path.join(dir, 'tsconfig.json')))
+        writeTsconfig(dir);
+    fs.writeFileSync(path.join(dir, '.env'), envFile(name, options));
+    return dir;
+}
 
+function writeTsconfig(dir: string) {
     const tsconfig = {
         compilerOptions: { module: 'NodeNext', moduleResolution: 'NodeNext', target: 'ES2022', strict: false, skipLibCheck: true, noEmit: true, types: ['node'] },
         include: ['src'],
     };
     fs.writeFileSync(path.join(dir, 'tsconfig.json'), JSON.stringify(tsconfig, null, 2) + '\n');
+}
 
-    const env = `# ${name}: machine settings and secrets. Not committed (.gitignore).
+/** .env: the machine's settings, new keys. */
+function envFile(name: string, options: InitOptions): string {
+    return `# ${name}: machine settings and secrets. Not committed (.gitignore).
 PORT=${options.port}
 ${options.memory ? '# memory: a MongoDB in the process, emptied when it stops; a mongodb://... URL keeps the data\n' : ''}MONGO_DB_URL=${options.memory ? 'memory' : options.mongo}
+# both, api (the REST APIs only) or ui (the web pages only)
+SERVE=${options.api && options.ui ? 'both' : options.api ? 'api' : 'ui'}
 
 # REST API keys (x-api-key): API_KEY runs processes, ADMIN_API_KEY also changes models
 API_KEY=${randomKey()}
@@ -169,8 +206,6 @@ EMAIL_ENABLE=false
 #SMTP_PASSWORD=
 #EMAIL_FROM=
 `;
-    fs.writeFileSync(path.join(dir, '.env'), env);
-    return dir;
 }
 
 export async function init(argv: string[]): Promise<number> {
@@ -196,6 +231,7 @@ export async function init(argv: string[]): Promise<number> {
         ui: !flags.has('--api-only'),
         auth: !flags.has('--no-auth'),
         install: !flags.has('--no-install'),
+        minimal: flags.has('--minimal'),
     };
     if (!flags.has('--yes') && process.stdin.isTTY)
         await ask(options, positional.length > 0, flags);

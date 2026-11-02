@@ -15,6 +15,17 @@ and here
 -->
 ## Unreleased
 
+### init: the sample application
+- `npx bpmn-server init` creates the sample application (bpmnServer4's `sampleApp`): models (Hello, Buy Used
+  Car, Leave Application, employee-onboarding, Business Rules with its decision table), the services they call
+  and element templates (`connectors/`), the app delegate (`delegates/`), `settings/config.ts`, `index.ts`.
+  `--minimal` creates the one-model Hello application `init` made before.
+- The application's `package.json` takes the template's scripts and dependencies; `bpmn-server` and
+  `bpmn-web` are this bpmn-server's version (the two are released together, with the same version).
+  `.env` has `SERVE` (both, api or ui) for `--api-only` / `--ui-only`.
+- Packing bpmn-server copies `sampleApp` into `templates/app` (`npm run template`, run by `prepack`;
+  `postpack` removes it); in the repository, `init` reads `sampleApp` itself.
+
 ### Scripts and expressions in the debugger
 - A model's scripts and expressions are compiled under names that say where they are,
   `bpmn:///<model>/<element>/<label>.js` (labels: the event of a listener, `script`, `condition`, an

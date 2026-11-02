@@ -9,13 +9,13 @@ A model is ready when it passes three kinds of checks:
 3. **When it does not**: run the test, or the application, under a debugger, with breakpoints in your
    services, in bpmn-server, and in the model's own scripts.
 
-The examples below come from `testSampleApp` in the bpmnServer4 repository: its tests are in
+The examples below come from `testSampleApp` in the [bpmnServer/bpmn-server](https://github.com/bpmnServer/bpmn-server) repository: its tests are in
 `testSampleApp/test/custom/`.
 
 ## Tests in TypeScript
 
 `testApp()` starts your application in memory: your settings, your app delegate and services, bpmn-web's
-configuration, an in-memory store instead of MongoDB, and no timers. It is a small file in the bpmnServer4
+configuration, an in-memory store instead of MongoDB, and no timers. It is a small file in the bpmn-server
 repository, `testSampleApp/test/support/testApp.ts`: copy it into your application's `test/support/` and adjust
 its two imports (your settings and your delegate).
 
@@ -130,7 +130,7 @@ be opened on the instance page. Scenario files are the same format, kept with yo
 
 ### In VS Code
 
-bpmnServer4's `.vscode/launch.json` has three configurations:
+The repository's `.vscode/launch.json` has three configurations:
 
 | | |
 |---|---|
