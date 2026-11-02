@@ -25,3 +25,23 @@ test('loading a definition again does not repeat its flows', async () => {
   assert.deepEqual(JSON.parse(definition.getJson()).flows.map(f => f.id), ['f1', 'f2', 'f3']);
   assert.equal(definition.getNodeById('g').outbounds.length, 2, 'the nodes are the second load\'s, with their own flows');
 });
+
+test('a user task whose form has no fields is described (the instance page reads getJson)', async () => {
+  const { makeServer } = await import('./helpers.mjs');
+  const fs = (await import('node:fs')).default;
+  const made = await makeServer();
+  fs.writeFileSync(made.dir + 'empty-form.bpmn', `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="d" targetNamespace="urn:test">
+  <bpmn:process id="p" isExecutable="true">
+    <bpmn:startEvent id="start" />
+    <bpmn:userTask id="task"><bpmn:extensionElements><camunda:formData /></bpmn:extensionElements></bpmn:userTask>
+    <bpmn:endEvent id="end" />
+    <bpmn:sequenceFlow id="f0" sourceRef="start" targetRef="task" />
+    <bpmn:sequenceFlow id="f1" sourceRef="task" targetRef="end" />
+  </bpmn:process>
+</bpmn:definitions>`);
+  await made.server.definitions.rebuild();
+  const definition = await made.server.definitions.load('empty-form');
+  assert.doesNotThrow(() => definition.getJson());
+  await made.server.shutdown();
+});

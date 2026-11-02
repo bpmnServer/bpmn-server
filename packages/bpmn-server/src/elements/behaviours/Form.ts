@@ -10,7 +10,8 @@ class CamundaFormData extends Behaviour {
     fields;
     init() {
         this.fields = [];
-        this.definition.$children.forEach(f => {
+        // <camunda:formData /> without fields has no $children
+        (this.definition.$children ?? []).forEach(f => {
             this.fields.push(f);
         });
     }
@@ -18,10 +19,13 @@ class CamundaFormData extends Behaviour {
     describe() {
         let desc = [];
         let fields = '';
-        this.fields.forEach(f => {
-            desc.push(['Form Field', `id: ${f.id} name: ${f.label} type: ${ f.type }`]);
-            //fields += `<p/>field id:'${f.id}'  name:'${f.label}' type: ${f.type} `
-        });
+        if (this.fields) {
+            this.fields.forEach(f => {
+                    desc.push(['Form Field', `id: ${f.id} name: ${f.label} type: ${ f.type }`]);
+                    //fields += `<p/>field id:'${f.id}'  name:'${f.label}' type: ${f.type} `
+                });
+       
+        }
         return desc;//['input fields', fields];
     }
 }
