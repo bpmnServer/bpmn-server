@@ -26,6 +26,8 @@ and here
 - `IScriptHandler.evaluateExpression` and `executeScript` take an optional `label`.
 
 ### Package exports
+- `repository`: bpmnServer/bpmn-server, folder `packages/bpmn-server` (the repository holds bpmn-server,
+  bpmn-web, bpmn-client, the docs and the sample application).
 - `exports`: `.` is the build as before (`dist/index.js`, its types); with the `bpmn-source` condition it is
   the TypeScript source (`src/index.ts`), for running from the source under tsx (bpmnServer4's `npm run dev`).
   `./*` keeps every other path of the package importable, as it was without an `exports` map.

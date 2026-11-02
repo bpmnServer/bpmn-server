@@ -12,6 +12,11 @@
     "./package.json": "./package.json"
   },
   "description": "bpmn-web Demo App",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bpmnServer/bpmn-server.git",
+    "directory": "packages/bpmn-web"
+  },
   "type": "module",
   "author": {
     "name": "bpmnServer RalphHanna"

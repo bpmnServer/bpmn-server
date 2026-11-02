@@ -15,6 +15,7 @@ and here
 ## Unreleased — New model editor
 
 ### Package exports
+- `repository`: bpmnServer/bpmn-server, folder `packages/bpmn-web`.
 - `runScenario` and `checkScenarios` (with the `Scenario`, `ScenarioStep` and `Check` types): the model editor's
   Test tab scenarios, run on any server (an application's tests run them from files, in memory).
 - The `bpmn-source` condition gives the TypeScript source (`src/index.ts`) instead of the build, for running

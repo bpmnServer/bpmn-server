@@ -35,7 +35,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https:github.com/ralphhanna/bpmn-client.git"
+    "url": "git+https://github.com/bpmnServer/bpmn-server.git",
+    "directory": "packages/bpmn-client"
   },
   "bin": {
     "bpmn-client-setup": "./dist/setup.js",

@@ -12,6 +12,11 @@ and here
 
 ### Changed
 -->
+## Unreleased
+### Changed
+- `repository` is the bpmnServer/bpmn-server repository, folder `packages/bpmn-client` (it pointed to an earlier
+  repository, with a malformed URL).
+
 ## Release 3.1.0 -- 2026-10-29
 Aligns the client with bpmn-web/bpmn-server 3.x; found by the new contract tests. Verified against
 bpmn-web on bpmn-server 3.2.0 (runtime model reads: `model.list`, `findStartEvents`, `findEvents`).
