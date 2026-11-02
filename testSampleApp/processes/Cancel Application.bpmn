@@ -65,7 +65,7 @@
     <bpmn2:sequenceFlow id="Flow_04bizxb" sourceRef="subProcess" targetRef="Gateway_2" />
     <bpmn2:sequenceFlow id="Flow_0lio4d5" sourceRef="Gateway_2" targetRef="continue" />
     <bpmn2:sequenceFlow id="Flow_1a55tdq" name="Re-Apply" sourceRef="Gateway_2" targetRef="subProcess">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.Cancel==true</bpmn2:conditionExpression>
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="JavaScript">data.subProcess.Cancel==true</bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
     <bpmn2:task id="continue" name="Continue Processing">
       <bpmn2:incoming>Flow_0lio4d5</bpmn2:incoming>

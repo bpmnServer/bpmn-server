@@ -22,15 +22,15 @@
     </bpmn2:endEvent>
     <bpmn2:sequenceFlow id="Flow_0rnkjn3" sourceRef="Activity_0scnn45" targetRef="Event_0ppt5fw" />
     <bpmn2:sequenceFlow id="Flow_0nzxls9" sourceRef="Event_13eeake" targetRef="Activity_00qabv3" />
-    <bpmn2:boundaryEvent id="Event_13eeake" attachedToRef="Activity_1fpjmlq">
+    <bpmn2:boundaryEvent id="Event_13eeake" cancelActivity="false" attachedToRef="Activity_1fpjmlq">
       <bpmn2:outgoing>Flow_0nzxls9</bpmn2:outgoing>
       <bpmn2:timerEventDefinition id="TimerEventDefinition_0xn1gds">
-        <bpmn2:timeCycle xsi:type="bpmn2:tFormalExpression">R3/PT3S</bpmn2:timeCycle>
+        <bpmn2:timeCycle xsi:type="bpmn2:tFormalExpression">R3/PT1S</bpmn2:timeCycle>
       </bpmn2:timerEventDefinition>
     </bpmn2:boundaryEvent>
     <bpmn2:scriptTask id="Activity_00qabv3" scriptFormat="JavaScript">
       <bpmn2:incoming>Flow_0nzxls9</bpmn2:incoming>
-      <bpmn2:script>console.log('reminder ----");</bpmn2:script>
+      <bpmn2:script>console.log('reminder');</bpmn2:script>
     </bpmn2:scriptTask>
   </bpmn2:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">

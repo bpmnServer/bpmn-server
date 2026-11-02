@@ -68,6 +68,14 @@ The sample application leaves out its `employee-onboarding` model, which runs in
 ### Tests
 - The engine's feature scenarios (`test/scenarios`, mocha) moved to bpmnServer4's `testSampleApp`, where they
   run on the sample application's delegate; mocha, chai and mocha-cakes-2 are no longer dev dependencies.
+- bpmn-web's old `src/examples` were checked against the tests. The features they showed and no test covered
+  are now `testSampleApp/examples` (a sub-process loop, an event-based gateway, a multi-instance vote, an
+  escalation, a restart), written to be read; the GitHub issues without a test are `testSampleApp/test/issues`
+  (#124, #233, #245).
+- Known, with todo tests, not fixed yet: an error in a process or sub-process start or end listener is an
+  unhandled rejection instead of failing the call; a repeating timer `R3` fires four times; with #124's model
+  (a boundary timer firing during a long service task), `engine.start` does not return; an ad hoc sub-process
+  does not run as documented.
 
 ### Scripts and expressions in the debugger
 - A model's scripts and expressions are compiled under names that say where they are,

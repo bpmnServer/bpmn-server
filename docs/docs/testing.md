@@ -10,7 +10,8 @@ A model is ready when it passes three kinds of checks:
    services, in bpmn-server, and in the model's own scripts.
 
 The examples below come from `testSampleApp` in the [bpmnServer/bpmn-server](https://github.com/bpmnServer/bpmn-server) repository: its tests are in
-`testSampleApp/test/custom/`.
+`testSampleApp/test/custom/`. `testSampleApp/examples/` has more, one feature each (a sub-process loop, an
+event-based gateway, a multi-instance vote, an escalation, a restart), written to be read and run.
 
 ## Tests in TypeScript
 
@@ -61,8 +62,9 @@ node --import tsx --test test/custom/*.test.ts
 | `run.data`, `run.status`, `run.instance` | The instance's data, status, and the whole instance. |
 | `run.log()` | The engine's log of the instance: what ran, and why each gateway went the way it did. |
 
-**Timers** do not run in tests. A waiting timer, like any waiting event, is completed with `run.complete`: a
-reminder on a task is tested without waiting for it.
+**Timers** are not waited for. A waiting timer, like any waiting event, is completed with `run.complete`: a
+reminder on a task is tested without waiting for it. (A timer that falls due while the test runs, a few seconds,
+still fires on its own.)
 
 ```ts
 await run.complete('timer-event');                       // the reminder fires now
@@ -168,3 +170,9 @@ error, whose stack names this location.
 - A signal that reaches several boundary events of one instance fails after the first: thrown by the instance
   itself, the engine refuses the call back into the instance that is running; thrown from outside, the next
   boundary events are no longer waiting.
+- An error in a start or end listener of a process or a sub-process does not fail the call: the run goes on,
+  and the error is an unhandled rejection. In such a listener, `this` is the execution: it has no `token`.
+- A repeating timer fires once more than its cycle says: `R3/PT1S` fires four times.
+- An inclusive gateway that takes only one of several outgoing flows stops the run
+  (`this.currentNode.getOutbounds is not a function`).
+- Ad hoc sub-processes do not run as documented.
