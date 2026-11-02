@@ -83,6 +83,7 @@ nav:
   - 'Data': data.md 
   - 'Setup': setup.md 
   - 'Checking models': verify.md
+  - 'Testing and debugging models': testing.md
   - 'Application Integration': customization.md 
   - 'Advanced Topics': advanced.md
   - 'Frequently Asked Questions': faq.md
