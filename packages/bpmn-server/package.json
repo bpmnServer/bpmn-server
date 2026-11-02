@@ -1,6 +1,6 @@
 {
   "name": "bpmn-server",
-  "version": "3.2.0",
+  "version": "3.5.0",
   "description": "BPMN 2.0 Server including Modeling, Execution and Persistence, an open source for Node.js",
   "repository": {
     "type": "git",
