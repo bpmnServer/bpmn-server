@@ -1,15 +1,6 @@
-import * as readline from 'node:readline';
 import axios from 'axios';
 import { ApprovalManager } from '../delegates/ApprovalManager.js';
 
-const cl = readline.createInterface(process.stdin, process.stdout);
-const question = function (q) {
-    return new Promise((res, rej) => {
-        cl.question(q, answer => {
-            res(answer);
-        })
-    });
-};
 async function delay(time, result) {
     console.log("delaying ... " + time)
     return new Promise(function (resolve) {

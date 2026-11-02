@@ -1,0 +1,29 @@
+{
+  "model": "Buy Used Car",
+  "scenarios": [
+    {
+      "name": "buy, no repairs",
+      "start": { "data": { "caseId": 1 } },
+      "steps": [
+        { "element": "task_Buy", "data": { "needsCleaning": "No", "needsRepairs": "No" } },
+        { "element": "task_Drive" }
+      ],
+      "checks": [
+        { "at": "end", "kind": "status", "status": "end" },
+        { "at": "after", "step": "task_Buy", "kind": "data", "path": "needsRepairs", "op": "=", "value": "No" },
+        { "kind": "node", "node": "task_repair", "count": 0 }
+      ]
+    },
+    {
+      "name": "buy, needs repairs",
+      "start": { "data": { "caseId": 2 } },
+      "steps": [
+        { "element": "task_Buy", "data": { "needsCleaning": "No", "needsRepairs": "Yes" } },
+        { "element": "task_repair" }
+      ],
+      "checks": [
+        { "kind": "node", "node": "task_repair", "count": 1 }
+      ]
+    }
+  ]
+}
