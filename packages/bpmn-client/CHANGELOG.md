@@ -12,10 +12,13 @@ and here
 
 ### Changed
 -->
-## Unreleased
+## Release 3.5.0 -- 2026-11-02
+Released with bpmn-server and bpmn-web 3.5.0, now in one repository and with the same version; the client's
+API is unchanged from 3.1.0.
 ### Changed
 - `repository` is the bpmnServer/bpmn-server repository, folder `packages/bpmn-client` (it pointed to an earlier
   repository, with a malformed URL).
+- The package's own `package-lock.json` is gone: the repository's workspace lockfile is used.
 
 ## Release 3.1.0 -- 2026-10-29
 Aligns the client with bpmn-web/bpmn-server 3.x; found by the new contract tests. Verified against

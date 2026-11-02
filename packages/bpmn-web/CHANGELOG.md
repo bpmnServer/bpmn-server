@@ -12,11 +12,69 @@ and here
 
 ### Changed
 -->
-## Unreleased — New model editor
+## Release 3.5.0 — New model editor, applications on start() (2026-11-02)
+bpmn-server, bpmn-web and bpmn-client are now one repository (bpmnServer/bpmn-server) and are released
+together, with the same version.
+
+### Changed: bpmn-web is the web host, an application starts it
+**Breaking** for anyone who ran bpmn-web itself as the demo application:
+- bpmn-web no longer bundles a sample application (`src/sample-app`, its models, element templates and the
+  `INSTALL_*` copies are gone). The sample application is what `npx bpmn-server init` creates; with more models
+  and the tests, it is bpmnServer4's `testSampleApp`.
+- `npm start` in bpmn-web runs it on its defaults (models in `./processes`, `WebAppDelegate`, no element
+  templates); `npm run setup` is `start({ setupOnly: true })`; the console and the archive, describe and upgrade
+  scripts use the default configuration. `ELEMENT_TEMPLATES_PATH` is not read: an application passes
+  `elementTemplatesPath` to `start()`.
+- bpmn-web's tests moved to `testSampleApp/test`, where they run against the sample application.
+
+### Applications
+- `start({ config, appDelegate, api, ui, elementTemplatesPath, setupOnly, console })` starts bpmn-web for an
+  application: the configuration from bpmn-web's defaults and the application's settings, the database prepared
+  (indexes, the first user), the web server listening; `webConfiguration()` and `setup()` for hosts that compose
+  their own. A missing models folder is created.
+- `WebAppDelegate`: the generic part of an application's delegate (startup housekeeping, notification emails);
+  applications extend it.
+- `MONGO_DB_URL=memory`: a MongoDB in the process (the application's mongodb-memory-server), to try bpmn-web
+  without a database server; what it holds is gone when the process stops.
+- The console (start processes, list and complete tasks, locks, hung items, users and passwords) is
+  `src/console.ts`, published with the package: `start({ console: true })` runs it on the application's
+  server (an application's `npm run cli`).
+- `UserService` is exported (an application's scripts add users with it).
 
 ### Dashboards
-- The model catalog is not offered for now (the Catalog menu entry and the Design dashboard's "Browse the
-  catalog" button are hidden) until it is fixed; `/dashboard/catalog` still answers.
+- `/dashboard` (every user): tasks assigned to me, tasks available to me, the tasks I completed most recently,
+  and every process I can start, at each start event, with its form. `/dashboard/design` (designers): each
+  model with what the checks find, its test scenarios, recently changed models, the decisions and the element
+  templates. `/dashboard/admin` (administrators): instances by status, the server, locks and hung items (as the
+  console's `ck` and `re`), users, and a backup to download.
+- The model catalog (`/dashboard/catalog`, designers): browse a catalog (`CATALOG_URL`, a web address or a
+  folder) of models with their diagrams, contents, services and problems, and import one (a file that does not
+  match its checksum is refused). It is not offered for now (the Catalog menu entry and the Design dashboard's
+  "Browse the catalog" button are hidden) until it is fixed; `/dashboard/catalog` still answers.
+
+### Model editor
+- A model drop-down opens another model (asking first when there are unsaved changes); an element drop-down
+  lists every element by name and follows the selection. The properties panel opens the groups that have
+  values; a field's help shows when it is hovered or in use; above the panel, the selected element's behaviour
+  (when it starts, when it completes).
+- The Report is the model as an outline, as its XML reads: each element in flow order as `type: id, name` with
+  its settings, the data objects it loads and its problems, its boundary events and outgoing flows under it.
+- Test tab: New, Run all, Clear all; a scenario's Design (start form, steps, checks) and Runs (each kept run
+  with Simulate, Debug, its instance, its steps, result and checks). Checks at the end or after a step: a node
+  (how many times, in what status), a data value, the instance's status. Simulate goes one change at a time
+  (Step, Back, Play); Debug shows the variables as a table that can be changed, and restarts at a step done
+  (the engine's restart with rewind). The engine's reasons for each decision are shown with a run.
+- Modeling rules: each rule says what it checks under its name in the Rules dialog, and for one off by default,
+  why.
+
+### Security
+- nodemailer ^10.3.1 (9.1.1 had two high and ten moderate advisories).
+
+### Fixed
+- In the npm workspace: browser libraries and bpmn-server's README are looked up as Node does (node_modules
+  here, else in a parent folder); `/rules/invoke` answers the decision's file name on Windows too.
+- The package root is cleaned up: tests in `test/`; the broken Dockerfiles and docker-compose (the repository's
+  `docker/` replaces them), IIS and Debian packaging, `src/examples` and old copies removed.
 
 ### Package exports
 - `repository`: bpmnServer/bpmn-server, folder `packages/bpmn-web`.
@@ -54,9 +112,9 @@ and here
   settings listed as not run. The result variable is a data field scripts complete.
 - The Report shows each business rule task's decision table and where its result is saved.
 - Problems: the decision checks of bpmn-server's verifyModel (not named, not found, invalid, result not saved)
-  lead to their fields. They need bpmn-server with DMN checks (the unreleased 3.3).
+  lead to their fields. They need bpmn-server 3.5 or later.
 - `PUT /admin/api/rules/invoke` and `/admin/api2/rules/invoke` evaluate a decision: `{ decision, data }` →
-  `{ decision, file, result }`. They answered "not supported"; they need bpmn-server 3.3 and say so on an earlier one.
+  `{ decision, file, result }`. They answered "not supported"; they need bpmn-server 3.5 and say so on an earlier one.
 - Sample: Business Rules works — its decision reference, input parameters (`$data.creditScore`) and the loan
   approval table's cells (FEEL) are fixed, and the result is saved in `data.loan`.
 
@@ -134,8 +192,7 @@ and here
   two numbers, Echo, Manager approval and Review by requester.
 - `MODELER=classic` keeps the previous editor.
 
-## Unreleased — Separate web host and workflow application (#1)
-
+### Web host and workflow application (#1)
 - Separate reusable web-host integration from the example workflow application.
 - Move application-specific configuration and workflow behavior behind explicit boundaries.
 - Keep the web package focused on adapting HTTP requests to engine operations.

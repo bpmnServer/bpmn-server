@@ -13,18 +13,46 @@ and here
 
 ### Changed
 -->
-## Unreleased
+## Release 3.5.0 — init, ${...} expressions, scripts in the debugger (2026-11-02)
+bpmn-server, bpmn-web and bpmn-client are now one repository (bpmnServer/bpmn-server) and are released
+together, with the same version.
 
-### init: the sample application
-- `npx bpmn-server init` creates the sample application (bpmnServer4's `sampleApp`): models (Hello, Buy Used
+### init: an application on bpmn-server and bpmn-web
+- `npx bpmn-server init [folder]` creates a workflow application with bpmn-server and bpmn-web as its
+  dependencies, then runs `npm install`. It asks what it is not told: `--mongo <url>` or `--memory` (a
+  MongoDB in the application's process, mongodb-memory-server, to try it without a database server),
+  `--port`, `--api-only` / `--ui-only`, `--no-auth` (no sign-in and no security rules, for development);
+  `--no-install`, `--yes`. `.env` gets generated keys; `docker-compose.yml` runs a MongoDB when one is needed.
+- It creates the sample application (bpmnServer4's `sampleApp`): models (Hello, Buy Used
   Car, Leave Application, employee-onboarding, Business Rules with its decision table), the services they call
   and element templates (`connectors/`), the app delegate (`delegates/`), `settings/config.ts`, `index.ts`.
-  `--minimal` creates the one-model Hello application `init` made before.
+  `--minimal` creates a one-model Hello application.
 - The application's `package.json` takes the template's scripts and dependencies; `bpmn-server` and
   `bpmn-web` are this bpmn-server's version (the two are released together, with the same version).
   `.env` has `SERVE` (both, api or ui) for `--api-only` / `--ui-only`.
 - Packing bpmn-server copies `sampleApp` into `templates/app` (`npm run template`, run by `prepack`;
   `postpack` removes it); in the repository, `init` reads `sampleApp` itself.
+
+### Engine
+- `engine.restart(..., { rewind: true })`: an instance that has not ended goes back to an item too, from the
+  save point where it waited: a waiting task waits again, another element runs again.
+- Instance flags, `engine.start(..., { flags })`, saved with the instance: `savePoints`, `saveLogs`; unset, the
+  data store's `enableSavePoints` and `saveLogs` apply.
+- Decisions in the log (entries of type `decision`; `Logger.decision`): a flow's condition with the values it
+  read and whether it was taken; the flows a gateway took and why (the default flow, several conditions held at
+  an exclusive gateway, none could be taken); a joining gateway waiting for its branches; the event that won at
+  an event-based gateway; a timer's due time and what set it.
+- An invoked item's `userName` is the user who invoked it (it kept the user of the call that created it), so
+  completed tasks can be listed by who completed them.
+
+### Fixed
+- A user task whose form has no fields (`<camunda:formData />`) failed to load (`Cannot read properties of
+  undefined (reading 'forEach')`): saving the model failed, and so did the pages that load it, such as the
+  instance page.
+
+### Tests
+- The engine's feature scenarios (`test/scenarios`, mocha) moved to bpmnServer4's `testSampleApp`, where they
+  run on the sample application's delegate; mocha, chai and mocha-cakes-2 are no longer dev dependencies.
 
 ### Scripts and expressions in the debugger
 - A model's scripts and expressions are compiled under names that say where they are,
