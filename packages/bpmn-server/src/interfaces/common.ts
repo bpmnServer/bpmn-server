@@ -39,6 +39,11 @@ interface IConfiguration
     },
     /** How long `shutdown()` waits for running executions, in milliseconds (10000). */
     shutdownTimeout?: number,
+    /**
+     * A public demo: timers are never scheduled (a timer event waits until it is invoked) and service tasks call
+     * nothing (they end with no output). Each says so in the run's decisions. Pair it with SandboxScriptHandler.
+     */
+    demo?: boolean,
 }
 
 interface IDatabaseConfigurationBase {

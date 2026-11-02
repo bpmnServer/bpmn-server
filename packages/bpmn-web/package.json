@@ -23,6 +23,7 @@
   },
   "scripts": {
     "build": "tsc --build && npm run build:modeler",
+    "prepack": "npm run build",
     "build:modeler": "node modeler/build.mjs",
     "watch:modeler": "node modeler/build.mjs --watch",
     "prestart": "npm run build:modeler",

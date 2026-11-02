@@ -13,6 +13,7 @@
   },
   "scripts": {
     "build": "tsc --build",
+    "prepack": "npm run build",
     "clean": "tsc --build --clean",
     "start": "node --import tsx src/cli.ts",
     "cli": "node --import tsx src/cli.ts",

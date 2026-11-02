@@ -16,7 +16,7 @@ import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
 import { listScenarioSets } from '../testing/scenarios.js';
-import { isAdminGroups, isDesignerGroups } from '../userAccess/roles.js';
+import { adminDisabled, engineGroups, isAdminGroups, isDesignerGroups } from '../userAccess/roles.js';
 import User from '../userAccess/models/User.js';
 import { UserService } from '../userAccess/UserService.js';
 import { loadCatalog, findCatalogEntry, readCatalogFile, catalogLocation } from './catalog.js';
@@ -83,9 +83,9 @@ export class Dashboards extends Common {
 
         const secureUser = (req) => process.env.REQUIRE_AUTHENTICATION === 'false'
             ? SecureUser.SystemUser()
-            : new SecureUser({ userName: req.user.userName, userGroups: req.user.userGroups, tenantId: req.user.tenantId });
+            : new SecureUser({ userName: req.user.userName, userGroups: engineGroups(req.user), tenantId: req.user.tenantId });
         const roles = (req) => ({
-            isAdmin: process.env.REQUIRE_AUTHENTICATION === 'false' || isAdminGroups(req.user?.userGroups),
+            isAdmin: !adminDisabled() && (process.env.REQUIRE_AUTHENTICATION === 'false' || isAdminGroups(req.user?.userGroups)),
             isDesigner: process.env.REQUIRE_AUTHENTICATION === 'false' || isDesignerGroups(req.user?.userGroups),
         });
         const render = (req, res, view, data) => res.render('dashboards/' + view, { ...data, ...roles(req), me: req.user?.userName, user: req.user, request: req });

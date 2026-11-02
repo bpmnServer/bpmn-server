@@ -15,6 +15,8 @@ import { BPMNServer, BPMNAdminAPI, verifyModel, Definition } from '../index.js';
 import { Common } from './common.js';
 import { modelNameGuard, isSafeModelName } from './middleware/modelName.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
+import { currentGuest } from '../guests/guests.js';
+import { zip } from './zip.js';
 import { loadScenarios, saveScenarios, checkScenarios, runScenario, startTest, completeTest, findTest, summarize, expectChecks, checksAt, setTestData, restartTest } from '../testing/scenarios.js';
 
 
@@ -92,6 +94,14 @@ export class Model extends Common {
             let procs = await bpmnServer.definitions.getList();
             response.render('models/export', { procs});
 
+        }));
+        /** Every model, diagram and decision of the models folder (a guest's: its own) as one .zip. */
+        router.get('/download-all', awaitHandlerFactory(async (request, response) => {
+            const dir = bpmnServer.configuration.definitionsPath;
+            const files = FS.readdirSync(dir)
+                .filter(file => /\.(bpmn|svg)$|\.dmn(\.xml)?$/i.test(file) && FS.statSync(path.join(dir, file)).isFile())
+                .map(file => ({ name: file, data: FS.readFileSync(path.join(dir, file)) }));
+            response.attachment('models.zip').type('application/zip').send(zip(files));
         }));
         router.get('/download/:file', awaitHandlerFactory(async (request, response) => {
             // basename() defeats traversal via encoded separators in the param
@@ -511,6 +521,15 @@ export class Model extends Common {
             }
             await saveScenarios(request.params.process, scenarios, request.user?.userName);
             response.json({ saved: scenarios.length });
+        }));
+        // a guest (GUEST_ACCESS) reaches only its own test instances
+        router.use('/test', awaitHandlerFactory(async (request, response, next) => {
+            const id = request.body?.instanceId ?? /^\/instance\/([^/]+)/.exec(request.path)?.[1];
+            if (currentGuest() && id && !(await findTest(bpmnServer, decodeURIComponent(String(id))))) {
+                response.status(404).json({ error: 'no such test instance' });
+                return;
+            }
+            next();
         }));
         /** Run a scenario given in the body, or every saved scenario of the model (all: true). */
         router.post('/test/run', awaitHandlerFactory(async (request, response) => {

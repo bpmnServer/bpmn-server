@@ -18,6 +18,7 @@ import multer from 'multer';
 import { BPMNServer, Logger } from 'bpmn-server';
 
 import { UserManager } from './userAccess/UserManager.js';
+import { adminDisabled } from './userAccess/roles.js';
 import type { WorkflowApplication } from './runtime/WorkflowApplication.js';
 import { Workflow } from './routes/workflow.js';
 import { EndUser } from './routes/endUser.js';
@@ -122,7 +123,7 @@ export class WebApp {
 	setupExpress() {
 		const app = this.app;
 
-		this.userManager.setup();
+		this.userManager.setup(this.bpmnServer.configuration);
 
 		this.setupRoutes();
 
@@ -202,8 +203,13 @@ export class WebApp {
 		if (api) {
 			this.app.use('/api', (new API(this)).config());
 			this.app.use('/api2', (new API2(this)).config());
-			this.app.use('/admin/api', (new API(this)).adminConfig());
-			this.app.use('/admin/api2', (new API2(this)).adminConfig());
+			if (!adminDisabled()) {
+				this.app.use('/admin/api', (new API(this)).adminConfig());
+				this.app.use('/admin/api2', (new API2(this)).adminConfig());
+			}
+			else
+				this.app.use(['/admin/api', '/admin/api2'], (req, res) =>
+					res.status(404).json({ errors: 'Administration is turned off on this server' }));
 		}
 		if (ui)
 			this.setupUiRoutes();

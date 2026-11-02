@@ -1,9 +1,11 @@
 import path from 'node:path';
 import fs from 'node:fs';
-import { Configuration, Logger, ModelsDatastore, DataStore, ScriptHandler, NoCacheManager } from 'bpmn-server';
+import { Configuration, Logger, ModelsDatastore, DataStore, ScriptHandler, SandboxScriptHandler, NoCacheManager } from 'bpmn-server';
 import type { IAppDelegate, BPMNServer } from 'bpmn-server';
 import type { WorkflowApplication } from './runtime/WorkflowApplication.js';
 import { WebAppDelegate } from './runtime/WebAppDelegate.js';
+import { guestAccess, checkGuestSettings, guestConfiguration } from './guests/guests.js';
+import { GuestModelsDatastore } from './guests/GuestModelsDatastore.js';
 
 const PACKAGE_ROOT = path.join(import.meta.dirname, '..');
 
@@ -36,7 +38,9 @@ function isTrue(param) {
  */
 export function webConfiguration(settings: Record<string, any> = {}, appDelegate?: StartOptions['appDelegate']) {
 	const Delegate = appDelegate ?? WebAppDelegate;
-	return new Configuration({
+	const guests = guestAccess();
+	checkGuestSettings();
+	const configuration = new Configuration({
 		definitionsPath: path.resolve('processes') + path.sep,
 		templatesPath: path.join(PACKAGE_ROOT, 'emailTemplates') + path.sep,
 		timers: { precision: 3000 },
@@ -56,13 +60,19 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 			const ds = new DataStore(server);
 			ds.enableSavePoints = isTrue('SAVE_POINTS');
 			ds.saveLogs = isTrue('SAVE_LOGS');
-			ds.saveSource = isTrue('SAVE_SOURCE');
+			// with guests, an instance keeps its model's source: it never depends on a guest's folder
+			ds.saveSource = guests || isTrue('SAVE_SOURCE');
 			return ds;
 		},
-		scriptHandler: () => new ScriptHandler(),
+		// DEMO_MODE=true: a public demo. Scripts run in a sandbox, timers and service tasks do not run.
+		scriptHandler: () => isTrue('DEMO_MODE') ? new SandboxScriptHandler() : new ScriptHandler(),
+		demo: isTrue('DEMO_MODE'),
 		cacheManager: server => new NoCacheManager(server),
 		...settings,
+		// GUEST_ACCESS=true: each guest's models in a folder of its own, never cached across guests
+		...(guests ? { definitions: server => new GuestModelsDatastore(server), cacheManager: server => new NoCacheManager(server) } : {}),
 	} as any);
+	return guests ? guestConfiguration(configuration) : configuration;
 }
 
 /** The database's indexes, and the first user (admin, password admin) when there is none. */

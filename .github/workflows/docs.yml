@@ -1,0 +1,44 @@
+# Publishes the docs (docs/, MkDocs Material) to GitHub Pages: https://bpmnserver.github.io/bpmn-server/
+# Runs when a change under docs/ reaches main, or by hand (Actions, Docs, Run workflow).
+# Needs Settings > Pages > Source: GitHub Actions.
+name: Docs
+
+on:
+  push:
+    branches: [main]
+    paths: ['docs/**', '.github/workflows/docs.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install mkdocs==1.6.1 mkdocs-material==9.6.20
+      - run: mkdocs build
+        working-directory: docs
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

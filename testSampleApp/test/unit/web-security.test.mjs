@@ -41,6 +41,41 @@ test('UI authentication fails closed and administrator gate uses persisted group
   }
 });
 
+test('DISABLE_ADMIN=true turns administration off for administrators and with authentication off', () => {
+  const keys = ['REQUIRE_AUTHENTICATION', 'DISABLE_ADMIN'];
+  const previous = keys.map(key => process.env[key]);
+  try {
+    process.env.DISABLE_ADMIN = 'true';
+    const common = new Common({});
+    delete process.env.REQUIRE_AUTHENTICATION;
+    const admin = gateRequest({ userGroups: ['ADMIN'] });
+    common.isAuthenticated(admin.req, admin.res, admin.next);
+    assert.equal(admin.req.isAdmin, false);
+    admin.state.next = false;
+    common.isAdmin(admin.req, admin.res, admin.next);
+    assert.equal(admin.state.status, 404);
+    assert.equal(admin.state.next, false);
+    assert.equal(new User({ userGroups: ['ADMIN'] }).isAdmin, false);
+
+    process.env.REQUIRE_AUTHENTICATION = 'false';
+    const anyone = gateRequest(undefined, false);
+    common.isAdmin(anyone.req, anyone.res, anyone.next);
+    assert.equal(anyone.state.status, 404);
+    common.adminEnabled(anyone.req, anyone.res, anyone.next);
+    assert.equal(anyone.state.next, false);
+
+    delete process.env.DISABLE_ADMIN;
+    const enabled = gateRequest(undefined, false);
+    common.adminEnabled(enabled.req, enabled.res, enabled.next);
+    assert.equal(enabled.state.next, true);
+  } finally {
+    keys.forEach((key, i) => {
+      if (previous[i] === undefined) delete process.env[key];
+      else process.env[key] = previous[i];
+    });
+  }
+});
+
 test('API2 ignores body user/group claims and uses its configured service identity', () => {
   const keys = ['API_SERVICE_USER_NAME', 'API_SERVICE_USER_GROUPS', 'API_SERVICE_TENANT_ID'];
   const previous = keys.map(key => process.env[key]);

@@ -64,6 +64,12 @@ class ServiceTask extends Node {
 
         let ret;
 
+        if (item.context.configuration?.demo) {
+            item.token.decision(`service task ${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}: a real server calls ${this.serviceName ? `the service ${this.serviceName}` : 'its service'} here; in this demo, service tasks do not run, so it ends with no output.`);
+            item.output = {};
+            return NODE_ACTION.end;
+        }
+
         item.log("invoking service:" + this.serviceName + " input:" + JSON.stringify(item.input));
 
         const servicesProvider= await appDelegate.getServicesProvider(item.token.execution);

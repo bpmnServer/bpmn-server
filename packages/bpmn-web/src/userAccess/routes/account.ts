@@ -21,7 +21,7 @@ export class Account extends Common{
 		/**
 		 * Primary app routes.
 		 */
-		router.get('/admin', userController.admin);
+		router.get('/admin', this.adminEnabled, userController.admin);
 		router.get('/login', userController.getLogin);
 		router.post('/login', userController.postLogin);
 		router.get('/logout', userController.logout);

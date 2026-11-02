@@ -1,6 +1,7 @@
 site_name:  bpmnServer docs
 docs_dir: docs
 site_dir: site
+site_url: https://bpmnserver.github.io/bpmn-server/
 repo_url: https://github.com/bpmnServer/bpmn-server
 theme:
   name: material

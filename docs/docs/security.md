@@ -210,6 +210,45 @@ REQUIRE_AUTHENTICATION=true
 ENFORCE_SECURITY=true
 ```
 
+### A public demo
+
+To let the public try a bpmn-web server, turn administration off:
+
+```
+DISABLE_ADMIN=true
+```
+
+With it, nobody can reach the administration pages (`/dashboard/admin`, `/admin`, impersonating another user,
+deleting instances, resetting data, backup, restart) or the `/admin/api` and `/admin/api2` REST APIs. That
+includes administrators, and it holds even with `REQUIRE_AUTHENTICATION=false`; those pages and APIs answer 404.
+Everything else works as usual. To administer the server, use its console (`npm run cli`) on the machine.
+
+A safe demo setup:
+
+```
+REQUIRE_AUTHENTICATION=true
+ENFORCE_SECURITY=true
+DISABLE_ADMIN=true
+```
+
+- Visitors sign up (`/signup`) and sign in. A new account has no groups: it can start processes and work
+  on its own tasks, but it cannot design models or administer anything.
+- Do not give visitors the `DESIGNER` group, and do not run a demo with `REQUIRE_AUTHENTICATION=false`.
+  Without authentication, every visitor is a designer. Models contain scripts, and scripts run inside the
+  server process with its permissions: whoever can save a model can run code on the server.
+- To let visitors write and run their own models, also set `DEMO_MODE=true`:
+    - Scripts and expressions run in a sandbox (QuickJS, a JavaScript engine compiled to WebAssembly). They
+      have no access to Node.js, files, the network or the server's objects, and each one stops after 200 ms.
+      Calling `appServices` from a script returns `undefined`.
+    - Timers are disabled so they do not keep the server busy. A timer event waits until it is invoked, and
+      no process starts on a timer.
+    - Service tasks do not run: they end with no output.
+    - Each of these says so in the run's decisions (the Test tab's "Why").
+- Run the demo on its own machine or container, with its own database. Give it no secrets it does not need
+  (no SMTP account, no API keys of other systems), and reset its database on a schedule.
+- Set `API_KEY` and `ADMIN_API_KEY` to long random values, or leave `SERVE=ui` so that only the web pages
+  are served.
+
 ## Handling Access Control
 
 Here is a typical flow of a Process:

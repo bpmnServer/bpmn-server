@@ -8,7 +8,7 @@
     "toc": "node src/scripts/generate-toc docs/examples.md,docs/scripting.md,docs/data.md",
     "build": "mkdocs build",
     "start": "mkdocs serve",
-    "deploy": "mkdocs gh-deploy",
+    "deploy": "gh workflow run docs.yml --ref main",
     "run": "nodemon --watch ./src/scripts --exec node src/scripts/includeMd.js example1.md example1.out",
     "generate": "npm run _docs:generate:copy && npm run _docs:generate:api",
     "incl": "cd docs && node ../src/scripts/includeMd.js example1.md example1.out",

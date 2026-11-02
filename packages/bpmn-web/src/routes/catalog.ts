@@ -41,7 +41,11 @@ export async function readCatalogFile(file: string): Promise<string> {
         throw new Error(`not a catalog file: ${file}`);
     const base = catalogLocation();
     if (/^https?:\/\//i.test(base)) {
-        const url = new URL(file, base.endsWith('/') ? base : base + '/');
+        const root = base.endsWith('/') ? base : base + '/';
+        const url = new URL(file, root);
+        // a full URL as the file ("http://169.254.169.254/...") would resolve outside the catalog
+        if (!url.href.startsWith(new URL(root).href))
+            throw new Error(`not a catalog file: ${file}`);
         const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
         if (!res.ok)
             throw new Error(`${url}: ${res.status} ${res.statusText}`);

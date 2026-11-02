@@ -1,4 +1,4 @@
-import { isAdminGroups, isDesignerGroups } from '../userAccess/roles.js';
+import { adminDisabled, isAdminGroups, isDesignerGroups } from '../userAccess/roles.js';
 
 export class Common {
     webApp;
@@ -23,7 +23,14 @@ export class Common {
         return next();
     }
 
+    /** Administration turned off (DISABLE_ADMIN=true): answers as if the page did not exist. */
+    adminEnabled(req, res, next) {
+        if (adminDisabled()) return res.status(404).send('Administration is turned off on this server');
+        return next();
+    }
+
     isAdmin(req, res, next) {
+        if (adminDisabled()) return res.status(404).send('Administration is turned off on this server');
         if (process.env.REQUIRE_AUTHENTICATION === 'false' || req.isAdmin === true) return next();
         return res.status(403).send('Administrator permission required');
     }

@@ -10,6 +10,7 @@ import User from './models/User.js';
 import * as passportConfig from './config/passport.js';
 import { Account } from './routes/account.js';
 import { isDesignerGroups } from './roles.js';
+import { guestAccess, guestMiddleware } from '../guests/guests.js';
 
 
 export class UserManager {
@@ -87,7 +88,8 @@ export class UserManager {
 		this.app.use((req, res, next) => apiPath.test(req.path) ? next() : csrf(req, res, next));
 
 	} 
-	setup() {
+	/** configuration: the engine's; with guests, their requests read and write its definitionsPath */
+	setup(configuration?) {
 
 		const app = this.app;
 
@@ -118,6 +120,10 @@ export class UserManager {
 			message: { error: 'Too many attempts, please try again later.' },
 		});
 		app.use(['/login', '/signup', '/forgot', '/reset'], authLimiter);
+
+		// GUEST_ACCESS=true: a visitor's first page makes it a guest; a guest's requests run in its context
+		if (guestAccess() && configuration)
+			app.use(guestMiddleware(configuration));
 
 		app.use((req, res, next) => {
 			res.locals.user = req.user;

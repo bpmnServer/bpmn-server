@@ -21,7 +21,7 @@ does the same under the debugger.
 
 Tests: `npm test` at the root (bpmn-server, bpmn-client, testSampleApp); in testSampleApp also `npm run test:ui`.
 
-To publish: `npm publish -w bpmn-server` (or `-w bpmn-client`, `-w bpmn-web`) after `npm run build`.
+To publish the packages and the docs, see [PUBLISHING.md](https://github.com/bpmnServer/bpmn-server/blob/main/PUBLISHING.md).
 
 
 New Status:

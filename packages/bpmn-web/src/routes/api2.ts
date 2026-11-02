@@ -2,6 +2,7 @@ import express from 'express';
 import FS from 'node:fs';
 
 import { BPMNServer, BPMNAPI, BPMNAdminAPI, dateDiff, Behaviour_names, SecureUser } from '../index.js';
+import { adminDisabled } from '../userAccess/roles.js';
 
 
 
@@ -41,6 +42,7 @@ export class API2 extends Common {
     };
     requireAdmin = (req, res, next) => {
         try {
+            if (adminDisabled()) return res.status(404).json({ errors: 'Administration is turned off on this server' });
             if (this.getUser(req).isAdmin()) return next();
             return res.status(403).json({ errors: 'Administrator permission required' });
         } catch (error) {

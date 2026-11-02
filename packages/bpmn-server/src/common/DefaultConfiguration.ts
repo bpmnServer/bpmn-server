@@ -51,6 +51,7 @@ export class Configuration implements IConfiguration {
 	serverId?: string;
 	locks?: { retryDelay?: number; maxTries?: number; staleAfter?: number; };
 	shutdownTimeout?: number;
+	demo?: boolean;
 
 	/** Each factory given replaces the default one; one left out keeps it. */
 	constructor({
@@ -59,7 +60,7 @@ export class Configuration implements IConfiguration {
 		definitions = undefined,
 		appDelegate = undefined,
 		dataStore = undefined, cacheManager = undefined, scriptHandler = undefined,
-		documentStore = undefined, locker = undefined, serverId = undefined, locks = undefined, shutdownTimeout = undefined }: any) {
+		documentStore = undefined, locker = undefined, serverId = undefined, locks = undefined, shutdownTimeout = undefined, demo = undefined }: any) {
 		this.definitionsPath = definitionsPath;
 		this.templatesPath = templatesPath;
 		this.timers = timers;
@@ -76,6 +77,7 @@ export class Configuration implements IConfiguration {
 		this.serverId = serverId;
 		this.locks = locks;
 		this.shutdownTimeout = shutdownTimeout;
+		this.demo = demo;
 	
 	}
 

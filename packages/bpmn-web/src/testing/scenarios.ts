@@ -14,6 +14,8 @@
 import mongoose from 'mongoose';
 import { randomUUID } from 'node:crypto';
 import vm from 'node:vm';
+import { runSandboxed } from 'bpmn-server';
+import { currentGuest } from '../guests/guests.js';
 
 export interface ScenarioStep {
     /** the waiting element to complete */
@@ -55,19 +57,27 @@ const scenarioSchema = new mongoose.Schema({
 });
 const ScenarioSet = (mongoose.models.TestScenarios as any) || mongoose.model('TestScenarios', scenarioSchema, 'wf_test_scenarios');
 
+/** A model's scenarios are stored under its name; a guest's (GUEST_ACCESS) under guest-<id>/<name>. */
+const scenarioKey = (model: string) => currentGuest() ? `${currentGuest().id}/${model}` : model;
+
 export async function loadScenarios(model: string): Promise<Scenario[]> {
-    const doc = await ScenarioSet.findOne({ model }).lean();
+    const doc = await ScenarioSet.findOne({ model: scenarioKey(model) }).lean();
     return doc?.scenarios ?? [];
 }
 
 export async function saveScenarios(model: string, scenarios: Scenario[], userName?: string): Promise<void> {
-    await ScenarioSet.updateOne({ model }, { $set: { scenarios, updatedAt: new Date(), updatedBy: userName } }, { upsert: true });
+    await ScenarioSet.updateOne({ model: scenarioKey(model) }, { $set: { scenarios, updatedAt: new Date(), updatedBy: userName } }, { upsert: true });
 }
 
 /** Each model's scenarios in summary: how many, when and by whom last saved. */
 export async function listScenarioSets(): Promise<{ model: string; count: number; updatedAt?: Date; updatedBy?: string }[]> {
     const docs = await ScenarioSet.find({}, { model: 1, scenarios: 1, updatedAt: 1, updatedBy: 1 }).lean();
-    return docs.map(d => ({ model: d.model, count: (d.scenarios ?? []).length, updatedAt: d.updatedAt, updatedBy: d.updatedBy }));
+    // a guest's own sets, under their models' names; nobody else sees a guest's
+    const guest = currentGuest();
+    const own = guest
+        ? docs.filter(d => d.model.startsWith(guest.id + '/')).map(d => ({ ...d, model: d.model.slice(guest.id.length + 1) }))
+        : docs.filter(d => !/^guest-[0-9a-f]{12}\//.test(d.model));
+    return own.map(d => ({ model: d.model, count: (d.scenarios ?? []).length, updatedAt: d.updatedAt, updatedBy: d.updatedBy }));
 }
 
 /** Whether a body is a list of scenarios; the reasons when it is not. */
@@ -130,7 +140,7 @@ const message = err => String(err?.message ?? err);
  */
 export async function startTest(server, model: string, startNodeId: string | undefined, data, userName?: string) {
     const execution = await server.engine.start(model, clone(data), startNodeId || null, userName ?? null,
-        { instanceId: `test-${randomUUID()}`, flags: { savePoints: true, saveLogs: true } });
+        { instanceId: `test-${randomUUID()}`, flags: { savePoints: true, saveLogs: true }, tenantId: currentGuest()?.id });
     return execution.instance;
 }
 
@@ -145,7 +155,11 @@ export async function completeTest(server, instanceId: string, itemId: string, d
 }
 
 export async function findTest(server, instanceId: string) {
-    return server.dataStore.findInstance({ id: instanceId }, 'full');
+    // a guest's: only its own (its tenant)
+    const guest = currentGuest();
+    // null when there is none (findInstance throws)
+    const [instance] = await server.dataStore.findInstances(guest ? { id: instanceId, tenantId: guest.id } : { id: instanceId }, 'full');
+    return instance ?? null;
 }
 
 /** Does `actual` have every value of `expected` (objects compared field by field, the rest as JSON)? */
@@ -256,7 +270,7 @@ function shown(value) {
  * The debugger's Evaluate: a JavaScript expression run against a copy of a test instance, to look at its values:
  * `data` (its data), `items` (its items), `instance` (its summary). With `return`, statements (a function's body).
  * It gets copies, so it changes nothing, and stops after a second. node:vm is not a security boundary: this is for
- * designers (the /model routes), as the scripts in their models are.
+ * designers (the /model routes), as the scripts in their models are; with configuration.demo it runs in QuickJS.
  */
 export async function evaluateOnTest(server, instanceId: string, expression: string) {
     if (typeof expression !== 'string' || !expression.trim())
@@ -267,6 +281,11 @@ export async function evaluateOnTest(server, instanceId: string, expression: str
     const sandbox = { data: clone(instance.data), items: clone(summary.items), instance: clone({ ...summary, logs: undefined }) };
     const body = expression.trim().replace(/;\s*$/, '');
     const code = /\breturn\b/.test(body) ? `(() => { ${body} })()` : `(${body})`;
+    if (server.configuration.demo) {
+        // a public demo: in QuickJS, like the models' scripts (node:vm is not a security boundary)
+        const { result } = await runSandboxed(sandbox, /return/.test(body) ? body : `return (${body});`, { name: 'evaluate', timeLimit: 1000 });
+        return shown(result);
+    }
     const value = vm.runInNewContext(code, sandbox, { timeout: 1000, filename: 'evaluate' });
     return shown(await Promise.resolve(value));
 }

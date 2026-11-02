@@ -1,19 +1,22 @@
 # bpmn-server docs
 
-Source of https://bpmnserver.github.io/docs/: MkDocs with the Material theme. The pages are in `docs/`, the
-menu in `mkdocs.yml`.
+Source of https://bpmnserver.github.io/bpmn-server/: MkDocs with the Material theme. The pages are in `docs/`,
+the menu in `mkdocs.yml`.
 
 ```sh
 pip install mkdocs-material   # once
 npm run start                 # mkdocs serve: preview at http://127.0.0.1:8000/, reloads on change
 npm run build                 # mkdocs build: the site in site/
-npm run deploy                # mkdocs gh-deploy: builds and pushes to the gh-pages branch, which is the live site
+npm run deploy                # runs the Docs workflow on GitHub by hand (needs the gh CLI)
 ```
+
+The site is published by the GitHub Actions workflow `.github/workflows/docs.yml`: it builds the site and
+deploys it to GitHub Pages whenever a change under `docs/` reaches `main`.
 
 ## Unreleased features
 
-Pages for features not released yet go in `docs/drafts/`. `mkdocs serve` shows them; `mkdocs build` and
-`gh-deploy` leave them out (`draft_docs` in `mkdocs.yml`). At release, move the page out of `drafts/`, fix its
+Pages for features not released yet go in `docs/drafts/`. `mkdocs serve` shows them; `mkdocs build`, and so
+the published site, leave them out (`draft_docs` in `mkdocs.yml`). At release, move the page out of `drafts/`, fix its
 relative links, and add it to the nav.
 
 ## API reference

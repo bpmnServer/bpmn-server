@@ -1,0 +1,26 @@
+# The install test: a clean Node.js container (tester) and a MongoDB for the application it creates.
+# Run with run.sh / run.cmd, which packs the packages first.
+name: bpmn-install-test
+services:
+  tester:
+    build: .
+    environment:
+      # local: the packages in ./packages (npm pack of this repository); npm: the published ones
+      SOURCE: ${SOURCE:-local}
+      # with SOURCE=npm: the version to install
+      VERSION: ${VERSION:-latest}
+      # sample (the sample application) or minimal (npx bpmn-server init --minimal)
+      TEMPLATE: ${TEMPLATE:-sample}
+    volumes:
+      - ./packages:/pkgs:ro
+    depends_on:
+      mongo:
+        condition: service_healthy
+  mongo:
+    image: mongo:8.0
+    command: ["--wiredTigerCacheSizeGB", "0.25"]
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
