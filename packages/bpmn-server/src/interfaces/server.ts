@@ -119,7 +119,7 @@ interface IEngine {
      */
     //signal(messageId: any, matchingKey: any, data?: {}): Promise<IExecution>;
     throwMessage(messageId, data: {}, matchingQuery: {}): Promise<IExecution>;
-    throwSignal(signalId, data: {}, matchingQuery: {});
+    throwSignal(signalId, data: {}, matchingQuery: {}, from?: IItem);
     restart(itemQuery, data:any,userName, options) :Promise<IExecution>;
     /** Cancels a running instance: terminated and saved, never deleted. */
     cancel(instanceQuery: any, userName?: string, options?: {}): Promise<IExecution>;

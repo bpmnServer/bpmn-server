@@ -164,15 +164,3 @@ numbered from the script's own first line.
 
 A failing script fails the call that ran it (`engine.start`, `run.complete`, ...) with the script's own
 error, whose stack names this location.
-
-### Known limits (bpmn-server 3.5)
-
-- A signal that reaches several boundary events of one instance fails after the first: thrown by the instance
-  itself, the engine refuses the call back into the instance that is running; thrown from outside, the next
-  boundary events are no longer waiting.
-- An error in a start or end listener of a process or a sub-process does not fail the call: the run goes on,
-  and the error is an unhandled rejection. In such a listener, `this` is the execution: it has no `token`.
-- A repeating timer fires once more than its cycle says: `R3/PT1S` fires four times.
-- An inclusive gateway that takes only one of several outgoing flows stops the run
-  (`this.currentNode.getOutbounds is not a function`).
-- Ad hoc sub-processes do not run as documented.

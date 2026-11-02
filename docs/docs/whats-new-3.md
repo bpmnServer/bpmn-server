@@ -23,6 +23,8 @@ npx bpmn-server verify processes/
 | A missing decision | the task failed on a file not found | the task stops with a message naming the decision |
 | `item.userName` of a completed task | the user who created the item | the user who completed it |
 | A failing script or expression | `new Error(...)` made from it | its own error (type, message), its stack naming `bpmn:///<model>/<element>/<label>.js:<line>` |
+| A sub-process's execution listeners | ran twice: on its item, and as process listeners (`this` the execution, no `token`) | once, on its item |
+| A repeating timer `R3/...` | fired four times | fires three times |
 | The model check (`verify`, the editor's Problems) | | more checks: input parameters, `${...}` parts, JUEL operators, names an expression does not have, decisions, data objects, `appServices` references, parameters written without their `$`. Models that checked clean may now show issues. |
 
 bpmn-web 3.5 no longer bundles a sample application: `npx bpmn-server init` creates one; bpmn-web's own
@@ -33,12 +35,6 @@ The source moved: bpmn-server, bpmn-web and bpmn-client are one repository,
 [bpmnServer/bpmn-server](https://github.com/bpmnServer/bpmn-server), its default branch `main`, the engine in
 `packages/bpmn-server`. A `file:../bpmn-server` dependency on a clone of the repository now needs
 `file:../bpmn-server/packages/bpmn-server`.
-
-### Known issue in 3.5
-
-An inclusive gateway that takes only one of its several outgoing flows (for example only its default flow)
-stops the run with `this.currentNode.getOutbounds is not a function`. It is not new in 3.5 (3.2 does the same).
-An employee-onboarding model ran into it, so it is left out of the sample application until this is fixed.
 
 ## Upgrading from 2.x
 

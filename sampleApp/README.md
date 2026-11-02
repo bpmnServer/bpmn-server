@@ -18,7 +18,7 @@ Sign in as `admin`, password `admin`, and **change the password**.
 
 | | |
 |---|---|
-| `processes/` | The models: Hello, Buy Used Car, Leave Application, Business Rules (with its decision table `loanApproval.dmn.xml`). Edit them in the browser (Models) or any BPMN editor. |
+| `processes/` | The models: Hello, Buy Used Car, Leave Application, employee-onboarding, Business Rules (with its decision table `loanApproval.dmn.xml`). Edit them in the browser (Models) or any BPMN editor. |
 | `connectors/appServices.ts` | The services service tasks call by name (`greet`, `echo`, `add`, ...). |
 | `connectors/*.json` | Element templates the model editor offers for configured tasks. |
 | `delegates/appDelegate.ts` | The application delegate (on bpmn-web's `WebAppDelegate`): the services, data objects (`loadDataObject`), engine events. |

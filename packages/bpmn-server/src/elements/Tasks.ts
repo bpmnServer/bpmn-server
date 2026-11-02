@@ -336,52 +336,51 @@ class AdHocSubProcess extends Node {
     get requiresWait() { return true; }
     get canBeInvoked() { return false; }
 
+    /**
+     * Offers every activity without an incoming flow at once, each on its own token. The ad hoc sub-process
+     * completes when all of them are done, when one reaches an end event, or when its completionCondition holds
+     * after one is done (adHocTokenEnded).
+     */
     async start(item): Promise<NODE_ACTION> {
-
-
-
         const token = item.token;
-
-        token.log('..executing a sub process item:' + item.id );
-
-        let nodes=this.getAdHocNodes();
-        const startNode = nodes[0];
+        token.log('..executing an ad hoc sub process item:' + item.id);
 
         item.status = ITEM_STATUS.wait;
 
-        const newToken = await Token.startNewToken(TOKEN_TYPE.SubProcess, token.execution,
-                startNode, this.id, token, item, null, null, true);
+        await this.childProcess.start(token.execution, token);
+        await this.startBoundaryEvents(item, token);
 
-        await this.childProcess.start(token.execution,newToken);
+        const tokens = [];
+        for (const node of this.getAdHocNodes())
+            tokens.push(await Token.startNewToken(TOKEN_TYPE.AdHoc, token.execution, node, this.id, token, item, null, null, true));
+        for (const adHoc of tokens)
+            await adHoc.execute(null);
 
-        await this.startBoundaryEvents(item, newToken);
-        await newToken.execute(null);
-
-        let first=true;
-        nodes.forEach(node=>{
-            if (first)
-                first=false;
-            else {
-                console.log('child node',node.id,node.type,'in bounds',node.inbounds.length);
-                Token.startNewToken(TOKEN_TYPE.AdHoc, token.execution,node, this.id, token, item, null, null, false);
-    //            const newToken = Token.startNewToken(TOKEN_TYPE.SubProcess, token.execution,node, this.id, token, item, null, null, true);
-    
-            }
-  
-        });
-
-
-        return NODE_ACTION.wait;
-    
+        if (item.status == ITEM_STATUS.wait)
+            return NODE_ACTION.wait;
+        else
+            return NODE_ACTION.continue;
+    }
+    /** An activity's token ended (not cancelled): complete the ad hoc sub-process when it is done. */
+    async adHocTokenEnded(item: Item, ended: Token) {
+        if (item.status != ITEM_STATUS.wait)
+            return;
+        const active = item.token.getChildrenTokens().filter(t => t.type == TOKEN_TYPE.AdHoc
+            && t.status != TOKEN_STATUS.end && t.status != TOKEN_STATUS.terminated);
+        let done = active.length == 0 || ended.currentNode.type == BPMN_TYPE.EndEvent;
+        const condition = this.def.completionCondition?.body;
+        if (!done && condition) {
+            done = !!(await item.token.execution.scriptHandler.evaluateExpression(item, condition, 'completionCondition'));
+            item.token.decision(`ad hoc sub-process ${this.id}: completionCondition ${condition} is ${done}`);
+        }
+        if (!done)
+            return;
+        for (const t of active)
+            await t.terminate();
+        await item.token.signal(null);
     }
     async end(item,cancel) {
         return await super.end(item,cancel);
-        const children=item.token.getChildrenTokens();
-        console.log('end of adhoc proc',children);
-        children.forEach(tok=>{
-            if (tok.type==TOKEN_TYPE.AdHoc)
-                tok.end(true);
-        });
     }
     getAdHocNodes() {
         const nodes = this.childProcess.childrenNodes;

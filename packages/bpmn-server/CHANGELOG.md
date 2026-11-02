@@ -27,10 +27,8 @@ Applications on bpmn-web 3.1 get this release on their next install. What can ch
 - `item.userName` of a completed task is the user who completed it.
 - A failing script or expression throws its own error, not a new `Error` made from it.
 - The model check has more checks: models that checked clean may show issues.
-
-**Known issue:** an inclusive gateway that takes only one of its several outgoing flows stops the run
-(`this.currentNode.getOutbounds is not a function`); 3.2 does the same.
-The sample application leaves out its `employee-onboarding` model, which runs into it, until this is fixed.
+- A sub-process's execution listeners run once, on its item (they also ran as process listeners, where `this`
+  was the execution, with no `token`). A repeating timer `R3/...` fires three times, not four.
 
 ### init: an application on bpmn-server and bpmn-web
 - `npx bpmn-server init [folder]` creates a workflow application with bpmn-server and bpmn-web as its
@@ -39,7 +37,7 @@ The sample application leaves out its `employee-onboarding` model, which runs in
   `--port`, `--api-only` / `--ui-only`, `--no-auth` (no sign-in and no security rules, for development);
   `--no-install`, `--yes`. `.env` gets generated keys; `docker-compose.yml` runs a MongoDB when one is needed.
 - It creates the sample application (bpmnServer4's `sampleApp`): models (Hello, Buy Used
-  Car, Leave Application, Business Rules with its decision table), the services they call
+  Car, Leave Application, employee-onboarding, Business Rules with its decision table), the services they call
   and element templates (`connectors/`), the app delegate (`delegates/`), `settings/config.ts`, `index.ts`.
   `--minimal` creates a one-model Hello application.
 - The application's `package.json` takes the template's scripts and dependencies; `bpmn-server` and
@@ -61,6 +59,20 @@ The sample application leaves out its `employee-onboarding` model, which runs in
   completed tasks can be listed by who completed them.
 
 ### Fixed
+- Branches arriving at a parallel join together joined twice: the second join went on from a sequence flow
+  (`this.currentNode.getOutbounds is not a function`, 3.2 too). A branch between two nodes counts as still on
+  its way. Seen after an inclusive gateway taking one flow (the sample's employee-onboarding).
+- A boundary timer firing while a call on its instance was still running (a long service task) left that call
+  waiting for itself: `engine.start` never returned (#124).
+- A process's start and end listeners were not awaited: an error in one was an unhandled rejection; it now
+  fails the call.
+- A signal reaching several boundary events: thrown inside the instance, the engine refused the call back into
+  it (`ReentrantCallError`); now the instance's own catching items are signalled on its running execution
+  (`engine.throwSignal(..., from)`). Thrown from outside, a target that an earlier one ended
+  (`ItemNotWaitingError`) is skipped.
+- Ad hoc sub-processes: every activity without an incoming flow is offered at once; the sub-process completes
+  when all are done, one reaches an end event, or its `completionCondition` holds. It used to end at once (its
+  start event ended it), ending the flow next to it too.
 - A user task whose form has no fields (`<camunda:formData />`) failed to load (`Cannot read properties of
   undefined (reading 'forEach')`): saving the model failed, and so did the pages that load it, such as the
   instance page.
@@ -71,11 +83,7 @@ The sample application leaves out its `employee-onboarding` model, which runs in
 - bpmn-web's old `src/examples` were checked against the tests. The features they showed and no test covered
   are now `testSampleApp/examples` (a sub-process loop, an event-based gateway, a multi-instance vote, an
   escalation, a restart), written to be read; the GitHub issues without a test are `testSampleApp/test/issues`
-  (#124, #233, #245).
-- Known, with todo tests, not fixed yet: an error in a process or sub-process start or end listener is an
-  unhandled rejection instead of failing the call; a repeating timer `R3` fires four times; with #124's model
-  (a boundary timer firing during a long service task), `engine.start` does not return; an ad hoc sub-process
-  does not run as documented.
+  (#124, #233, #245), and the problems found on the way, fixed above.
 
 ### Scripts and expressions in the debugger
 - A model's scripts and expressions are compiled under names that say where they are,

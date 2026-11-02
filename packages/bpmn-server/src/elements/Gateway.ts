@@ -133,8 +133,10 @@ class Gateway extends Node {
 
             if (token.currentItem) 
             {
+                // a running token whose item has ended is on its way to its next node: still to arrive
                 if ( (token.id != item.token.id) &&
-                    (token.currentItem.status != ITEM_STATUS.end && token.currentItem.status != ITEM_STATUS.terminated)) {
+                    ((token.currentItem.status != ITEM_STATUS.end && token.currentItem.status != ITEM_STATUS.terminated)
+                        || (token.status == TOKEN_STATUS.running && !token['joined']))) {
 
                     let canReach=this.canReach(token.currentNode,this);
                     ex.log(`            ..canReach: ${canReach} - token status: ${token.status} - item status ${token.currentItem.status}` );
@@ -195,6 +197,11 @@ class Gateway extends Node {
         item.token.log('Gateway(' + item.element.name+'|'+item.element.id + ').start: node.type=' + item.node.type);
         if (this.inbounds.length > 1) { // converging .....
             item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: Starting a converging gateway this.inbounds.length=' + this.inbounds.length);
+            // Branches arriving together: the one that joined them has ended this one; it does not join again
+            if (item.token.status == TOKEN_STATUS.end || item.token.status == TOKEN_STATUS.terminated) {
+                item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: token ' + item.token.id + ' was joined already');
+                return NODE_ACTION.end;
+            }
 
             let result = this.analyzeConvergingTokens(item);
             // wait for pending tokens
@@ -244,6 +251,8 @@ class Gateway extends Node {
                 item.token.decision(`gateway ${label(this)} joins its branches: all have arrived; continues`);
 
                 const oldCurrentToken = item.token;
+                // it is ended once the parent has gone on: until then, it is not on its way anywhere
+                oldCurrentToken['joined'] = true;
 
                 // -------------------------------------------------------------------------------------------------
                 // Move the waiting token at diverging gateway

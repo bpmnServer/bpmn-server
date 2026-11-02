@@ -57,7 +57,8 @@ class Definition implements IDefinition{
 
         const children = [];
         const process=new Process(processElement,parentProcess);
-        if (processElement.extensionElements && processElement.extensionElements.values) {
+        // a sub-process's listeners are its node's (run on its item); only a process has listeners of its own
+        if (processElement.$type == 'bpmn:Process' && processElement.extensionElements && processElement.extensionElements.values) {
             processElement.extensionElements.values.forEach(ext=>{
                 let scripts = [];
                 var scrs = ext['$children'];

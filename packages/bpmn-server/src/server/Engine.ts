@@ -3,6 +3,7 @@ import { Execution } from '../engine/Execution.js';
 import { ServerComponent } from '../server/ServerComponent.js';
 import { EXECUTION_EVENT, EXECUTION_STATUS, ITEM_STATUS } from '../interfaces/Enums.js';
 import type { IEngine } from '../interfaces/server.js';
+import type { IItem } from '../interfaces/engine.js';
 
 /** Item statuses after which an item is not invoked again. */
 const FINAL: string[] = [ITEM_STATUS.end, ITEM_STATUS.terminated, ITEM_STATUS.cancelled, ITEM_STATUS.discard];
@@ -532,7 +533,12 @@ class Engine extends ServerComponent implements IEngine{
 	 * @param matchingQuery	should match the itemKey (if specified)
 	 * @param data			message data
 	 */
-	async throwSignal(signalId, data = {}, matchingQuery = {} ) {
+	/**
+	 * Throws a signal: starts the models whose start event catches it, and invokes the items waiting for it.
+	 * `from` is the item throwing it inside an instance: that instance's own catching items are signalled on its
+	 * running execution (an engine call on it would be refused: the throwing call holds it).
+	 */
+	async throwSignal(signalId, data = {}, matchingQuery = {}, from?: IItem ) {
 
 		this.logger.log('..^Action:engine.Throw Signal ',signalId,this.sanitizeData(data),matchingQuery);
 
@@ -561,7 +567,15 @@ class Engine extends ServerComponent implements IEngine{
 		itemsQuery["items.signalId"] = signalId;
 		itemsQuery["items.status"] = 'wait';
 
-		const items = await this.dataStore.findItems(itemsQuery);
+		const own = from?.token?.execution;
+		if (own) {
+			for (const target of own.getItems().filter(i => i.signalId == signalId && i.status == ITEM_STATUS.wait && i.id != from.id)) {
+				this.logger.log(`..throwSignal ${signalId} found target in the throwing instance: ${target.id}`);
+				own.promises.push(target.token.signal(this.sanitizeData(data)));
+				instances.push({ instanceId: own.id, itemId: target.id });
+			}
+		}
+		const items = (await this.dataStore.findItems(itemsQuery)).filter(item => !own || item.instanceId != own.id);
 		this.logger.log('^Action:engine.throwSignal ' + signalId + ' targets:' + items.length);
 		if (items.length > 0) {
 			for (var i = 0; i < items.length; i++) {
@@ -572,8 +586,15 @@ class Engine extends ServerComponent implements IEngine{
 			for (var i = 0; i < items.length; i++) {
 				let item = items[i];
 				this.logger.log('..^Action:engine.Throw Signal found target', item.processName,item.id );
-				var res=await this.invoke({ "items.id": item.id }, this.sanitizeData(data));
-				instances.push({instanceId:res.instance.id,itemId:item.id});
+				// an earlier target's path may have ended this one (a terminate end event, an interrupting event)
+				try {
+					var res=await this.invoke({ "items.id": item.id }, this.sanitizeData(data));
+					instances.push({instanceId:res.instance.id,itemId:item.id});
+				}
+				catch (err) {
+					if (!(err instanceof ItemNotWaitingError)) throw err;
+					this.logger.log(`..throwSignal ${signalId}: ${item.id} is no longer waiting`);
+				}
             }
 		}
 		return instances;

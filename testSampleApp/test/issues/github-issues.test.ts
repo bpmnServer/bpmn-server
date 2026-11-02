@@ -3,15 +3,13 @@
 // test/scenarios/feature: Issue124-2.js, Issue186.js, Issue196.js, Issue197A.js, Issue197_cancel_loop.js,
 // Issue233.js. Not here: Issue186A.bpmn reads `rootData`, which the engine does not have, and Issue193.bpmn calls
 // the reporter's own appDelegate.collService.
-//
-// A test marked todo is a problem the engine still has; work/engine-findings.md has the details.
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { testApp, type TestApp } from '../support/testApp.js';
 
 let app: TestApp;      // the issue models
 let ours: TestApp;     // the app's models, processes/
-let local: TestApp;    // test/issues/models
+let local: TestApp;    // test/issues/models: small models for one problem each
 before(async () => {
     app = await testApp({ models: 'test/scenarios/processes/', quiet: true });
     ours = await testApp({ quiet: true });
@@ -30,14 +28,10 @@ test('#124 (2): a boundary timer firing on one branch keeps what the other branc
     assert.deepEqual(run.waiting(), ['Activity_0l5bien'], 'joined, on to the next task');
 });
 
-test('#124 (1): a boundary timer interrupts a service task that is still running', {
-    todo: 'engine: start() never returns when a boundary timer fires during a long service task',
-    timeout: 15000,
-}, async () => {
-    // ST2 (service1, 3.5 s) has a 1 s boundary timer: the timer takes the branch, ST2's late result is dropped
+test('#124 (1): a boundary timer interrupts a service task that is still running', { timeout: 15000 }, async () => {
+    // ST2 (service1, 3.5 s) has a 1 s boundary timer: the timer takes the branch while start() is still running
+    // (it used to wait for itself, and start() never returned), and ST2's late result is dropped
     const run = await app.start('Issue124-1');
-    await delay(4000);
-    await run.refresh();
     assert.equal(run.item('Event_1ntmfqq').status, 'end', 'the timer fired');
     assert.deepEqual(run.waiting(), ['Activity_01c57dc'], 'UT1 waits once, after the join');
 });
@@ -51,8 +45,7 @@ test('#245: a script task\'s bpmnError goes to its error boundary event, the ins
 });
 
 test('#233: a parallel loop inside a sequential loop keys its items outer.inner', async () => {
-    // processes/loop1 without its sub-process listener, which fails (the todo below)
-    const run = await local.start('nested loops');
+    const run = await ours.start('loop1');
     const task = 'Activity_1qe2z25';
     assert.deepEqual(run.items(task).map(i => i.itemKey), ['1.1', '1.2']);
     await run.complete(task);
@@ -65,27 +58,53 @@ test('#233: a parallel loop inside a sequential loop keys its items outer.inner'
 
 // Found going over the old examples: no GitHub issue.
 
-test('a failing start listener of a sub-process fails the run', {
-    todo: 'engine: Process.start and Process.end call doEvent without await; the error is an unhandled rejection',
-}, async () => {
-    // loop1's sub-process listener reads this.token, which a sub-process listener does not have: start goes on,
-    // and the error surfaces later as an unhandled rejection
-    await assert.rejects(ours.start('loop1'), /loop/);
+test('a failing process listener fails the call', async () => {
+    // Process.start and end ran their listeners without await: the run went on, the error came later, unhandled
+    await assert.rejects(local.start('failing listener'), /the process start listener failed/);
 });
 
-test('a repeating timer R3/PT1S fires three times', {
-    todo: 'engine: Timer.ts repeats while repeat > timerCount, counting from 0: R3 fires four times',
-    timeout: 15000,
-}, async () => {
+test('a sub-process listener runs on the sub-process item, once', async () => {
+    // it also ran as a process listener, without this.token (loop1's listener reads this.token.loop)
+    const run = await ours.start('loop1');
+    assert.equal(run.status, 'running');
+    assert.ok(!run.log().some(line => /reading 'loop'/.test(line)), 'no listener error');
+});
+
+test('a repeating timer R3/PT1S fires three times', { timeout: 15000 }, async () => {
     const run = await ours.start('timer-repeat');          // a non-interrupting R3 timer on a user task
     await delay(5500);
     await run.refresh();
-    assert.equal(run.items('Activity_00qabv3').length, 3, 'the reminder script ran three times');
+    assert.equal(run.items('Activity_00qabv3').length, 3, 'the reminder script ran three times (it ran four)');
+    assert.deepEqual(run.waiting(), ['Activity_1fpjmlq'], 'the task still waits, no timer');
 });
 
-test('an ad hoc sub-process: its tasks wait, the flow next to it waits too', {
-    todo: 'engine: in "ad hoc", Task 2 ends at start without being completed, and the ad hoc sub-process never completes',
-}, async () => {
+test('branches arriving at a parallel join together join once', async () => {
+    // employee-onboarding: three service tasks in parallel, then send-welcome and an inclusive gateway; the join
+    // ran twice, and the second run went on from a sequence flow (getOutbounds is not a function)
+    for (const [data, last] of [[{}, 'onboarded'], [{ department: 'engineering' }, 'dev-ready']] as const) {
+        const run = await ours.start('employee-onboarding', data);
+        assert.equal(run.status, 'end', JSON.stringify(data));
+        assert.equal(run.items('send-welcome').length, 1, 'past the join once');
+        assert.ok(run.item(last), `${last} reached`);
+    }
+});
+
+test('an inclusive gateway takes the flows whose conditions hold, or its default', async () => {
+    const run = await ours.start('employee-onboarding', { department: 'engineering', isManager: true });
+    assert.ok(run.item('grant-dev-tools') && run.item('enrol-leadership'), 'both conditional flows');
+    assert.equal(run.item('send-welcome-pack'), undefined, 'not the default');
+});
+
+test('an ad hoc sub-process offers its tasks at once and completes when they are done', async () => {
+    // Task 1 leads to Task 2 and to the ad hoc sub-process (three tasks, no flows). The ad hoc sub-process ended
+    // at once (its empty start event ended it) and Task 2 with it
     const run = await ours.start('ad hoc');
-    assert.ok(run.waiting().includes('Activity_0o0xpek'), `Task 2 waits; waiting: ${run.waiting()}`);
+    const adHocTasks = ['Activity_1318veb', 'Activity_13h5p8m', 'Activity_0gmr9an'];
+    assert.deepEqual(run.waiting().sort(), ['Activity_06iwtah', 'Activity_0o0xpek', ...adHocTasks].sort());
+
+    await run.complete('Activity_13h5p8m');
+    await run.complete('Activity_1318veb');
+    assert.equal(run.item('Activity_06iwtah').status, 'wait', 'one task left');
+    await run.complete('Activity_0gmr9an');
+    assert.equal(run.item('Activity_06iwtah').status, 'end', 'all done: the ad hoc sub-process completes');
 });

@@ -647,6 +647,11 @@ class Token implements IToken {
                 await this.parentToken.signal(null);
 
         }
+        else if (this.type==TOKEN_TYPE.AdHoc && cancel==false && this.parentToken) {
+            const adHoc = this.parentToken.currentNode as any;
+            if (typeof adHoc.adHocTokenEnded === 'function')
+                await adHoc.adHocTokenEnded(this.parentToken.currentItem, this);
+        }
         this.logE('Token('+this.id +').end(): finished!');
     }
 

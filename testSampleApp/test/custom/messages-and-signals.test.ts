@@ -19,13 +19,10 @@ test('a message starts the process, a second one completes it', async () => {
     assert.equal(run.data.amount, 120, 'the message\'s data is merged in');
 });
 
-// Both signal cases fail on the engine today (2026-11-02), and are kept as todo until it is fixed:
-// - thrown inside the process: the throw event calls engine.throwSignal back on its own instance, which the
-//   engine refuses (ReentrantCallError);
-// - thrown from outside: the first boundary event is taken, the next ones fail (ItemNotWaitingError).
-const SIGNAL_TODO = 'engine: a signal reaching several boundary events of one instance fails';
+// Cancel_All goes to the three boundary events; each leads to a terminate end event, so the first one taken ends
+// the instance and the other two with it.
 
-test('the signal Cancel_All, thrown inside the process, interrupts the parallel tasks', { todo: SIGNAL_TODO }, async () => {
+test('the signal Cancel_All, thrown inside the process, interrupts the parallel tasks', async () => {
     const run = await app.start('Signal');
     const tasks = ['Activity_0qilwzd', 'Activity_1j0jypn', 'Activity_0h61osn'];
     for (const task of tasks)
@@ -35,10 +32,12 @@ test('the signal Cancel_All, thrown inside the process, interrupts the parallel 
     await run.refresh();                              // the boundary events ran on the signal
     for (const task of tasks)
         assert.notEqual(run.item(task).status, 'wait', `${task} interrupted`);
+    assert.equal(run.status, 'end', 'terminated');
 });
 
-test('a signal sent from outside does the same', { todo: SIGNAL_TODO }, async () => {
+test('a signal sent from outside does the same', async () => {
     const run = await app.start('Signal');
     await run.signal('Cancel_All');
-    assert.ok(!run.waiting().includes('Activity_0qilwzd'), `waiting: ${run.waiting()}`);
+    assert.deepEqual(run.waiting(), []);
+    assert.equal(run.status, 'end', 'terminated');
 });

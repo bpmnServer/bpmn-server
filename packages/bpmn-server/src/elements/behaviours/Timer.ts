@@ -195,8 +195,10 @@ class TimerBehaviour extends Behaviour {
         {
             //item.token.signal(null);
 
+            // A call is running on this execution (it holds the lock): signal the timer's token alone; the call
+            // waits for exec.promises, then saves. (signalItem would wait for exec.promises too, itself among them.)
             if (exec.isLocked===true)
-                exec.promises.push(exec.signalItem(item.id, {}));
+                exec.promises.push(item.token.signal(null));
             else {
                 // This execution may be an old copy: fire only while the stored item still waits.
                 const stored = (await exec.server.dataStore.findItems({ "items.id": item.id }))[0];
@@ -210,7 +212,8 @@ class TimerBehaviour extends Behaviour {
 
 //console.log('repeating ',item.timerCount);
 
-            if (timer.repeat > item.timerCount) {
+            // this item is fire number timerCount + 1 (the first has 0): R3 fires three times
+            if (Number(timer.repeat) > item.timerCount + 1) {
 
                 let resp=await exec.server.engine.startRepeatTimerEvent(instanceId, item,{});
                 //let newToken=await Token.startNewToken(TOKEN_TYPE.BoundaryEvent, item.token.execution, item.node, null, item.token, item, null);

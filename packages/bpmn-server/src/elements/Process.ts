@@ -43,7 +43,7 @@ class Process {
      * Notify process that it started
      * */
     async start(execution: Execution, parentToken) {
-        this.doEvent(execution, 'start');
+        await this.doEvent(execution, 'start');
 
         this.subProcessEvents = [];
         const events = [];
@@ -69,7 +69,7 @@ class Process {
         if (execution['ending'])
             return;
         execution['ending']=true;
-        this.doEvent(execution, 'end');
+        await this.doEvent(execution, 'end');
         let i;
         /* does not work because subProcessEvents is not saved 
         for (i = 0; i < this.subProcessEvents.length;i++) {
