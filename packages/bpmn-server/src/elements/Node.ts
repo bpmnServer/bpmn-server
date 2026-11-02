@@ -71,7 +71,8 @@ class Node extends Element {
                 var script = scripts[s];
                 item.token.log('--executing script for event:' + event);
 
-                const ret = await item.context.scriptHandler.executeScript(item, script);
+                // named by event (start.js; start-2.js for a second script on the same event)
+                const ret = await item.context.scriptHandler.executeScript(item, script, scripts.length > 1 ? event + '-' + (s + 1) : event);
                 rets.push(ret);
 
                 if (ret && ret.escalation) {

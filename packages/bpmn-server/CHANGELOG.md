@@ -15,6 +15,16 @@ and here
 -->
 ## Unreleased
 
+### Scripts and expressions in the debugger
+- A model's scripts and expressions are compiled under names that say where they are,
+  `bpmn:///<model>/<element>/<label>.js` (labels: the event of a listener, `script`, `condition`, an
+  assignment's attribute, `collection`; a process's own scripts under `process`), numbered from their own first
+  line. A debugger lists them by name and stops at their breakpoints and at `debugger;`; an error's stack points
+  at the element and line.
+- A failing script or expression throws its own error (its type, message and stack), not a new `Error` made from
+  it; the error log names the script instead of printing the generated code.
+- `IScriptHandler.evaluateExpression` and `executeScript` take an optional `label`.
+
 ### Package exports
 - `exports`: `.` is the build as before (`dist/index.js`, its types); with the `bpmn-source` condition it is
   the TypeScript source (`src/index.ts`), for running from the source under tsx (bpmnServer4's `npm run dev`).

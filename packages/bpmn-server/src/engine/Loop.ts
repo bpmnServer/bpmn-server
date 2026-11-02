@@ -73,7 +73,7 @@ class Loop {
     }
     async getItems() {
         if (this._items==null) {
-            this._items=await this.ownerToken.execution.scriptHandler.evaluateExpression(this.ownerToken,this.definition.collection);
+            this._items=await this.ownerToken.execution.scriptHandler.evaluateExpression(this.ownerToken,this.definition.collection, 'collection');
             if (Number.isInteger(this._items))
             {
                 this._items=[...Array(this._items).keys()];

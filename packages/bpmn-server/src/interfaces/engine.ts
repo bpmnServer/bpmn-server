@@ -9,8 +9,10 @@ import type { IDefinition } from './elements.js';
 import type { IBPMNServer, IServerComponent } from './server.js';
 
 interface IScriptHandler {
-    evaluateExpression(scope: IItem|IToken, expression);
-    executeScript(scope: IItem|IExecution, script);
+    /** label: what the expression is (a condition, an assignment): its name for debuggers and errors */
+    evaluateExpression(scope: IItem|IToken, expression, label?: string);
+    /** label: which script it is (an event's, a script task's): its name for debuggers and errors */
+    executeScript(scope: IItem|IExecution, script, label?: string);
 
 }  
 interface IToken {

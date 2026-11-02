@@ -4,6 +4,7 @@ import { Token } from './Token.js';
 import type { IScriptHandler } from '../interfaces/engine.js';
 import { expressionScript, scriptOf, templateParts, evaluateTemplate } from './Expressions.js';
 import { spawn } from 'child_process';
+import vm from 'node:vm';
 
     
 class ScriptHandler implements IScriptHandler{
@@ -57,7 +58,7 @@ class ScriptHandler implements IScriptHandler{
      * @param expression 
      * @returns 
      */
-    async evaluateExpression(scope: Item|Token, expression) {
+    async evaluateExpression(scope: Item|Token, expression, label = 'expression') {
 
         let script=expression;
         let result;
@@ -68,10 +69,9 @@ class ScriptHandler implements IScriptHandler{
         script=scriptOf(expression);       // $js, $(js) or ${js}; any other text is the script itself
 
         try {
-            var js = ScriptHandler.getJSvars(scope) + `
-                return (${script});`;
+            var js = `return (${script});`;
 
-            result = await Function(js).bind(scope)();
+            result = await ScriptHandler.compile(scope, js, label).call(scope);
 			
 			
 			if (result instanceof Promise)
@@ -82,14 +82,14 @@ class ScriptHandler implements IScriptHandler{
 				ret =result;
         }
         catch (exc) {
-            console.log('error in script evaluation', js);
+            console.log('error in script evaluation', ScriptHandler.scriptName(scope, label), script);
             console.log(exc);
-            throw new Error(exc);
+            throw exc instanceof Error ? exc : new Error(exc);   // the error itself: its stack names the model's script (bpmn:///...)
         }
         return ret;
     }
 	// used to be called scopeJS
-    async executeScript(scope: Item|Execution, script) {
+    async executeScript(scope: Item|Execution, script, label = 'script') {
 
         let result;
 		let ret;
@@ -104,7 +104,7 @@ class ScriptHandler implements IScriptHandler{
             result = await func.bind(scope)();
         }
         catch (exc) {
-            console.log('error in script execution', js);
+            console.log('error in script execution', ScriptHandler.scriptName(scope, label), script);
             console.log(exc);
         }
 		
@@ -119,9 +119,8 @@ class ScriptHandler implements IScriptHandler{
             }
            script = script.replace('#','')    //remove symbol '#'
 	    //require return
-            var js = ScriptHandler.getJSvars(scope) + `
-                  ${script};`;
-            result = await Function(js).bind(scope)();
+            var js = `${script};`;
+            result = await ScriptHandler.compile(scope, js, label).call(scope);
 			
 			if (result instanceof Promise)
 			{
@@ -132,12 +131,30 @@ class ScriptHandler implements IScriptHandler{
 				ret =result;
         }
         catch (exc) {
-            console.log('error in script execution', js);
+            console.log('error in script execution', ScriptHandler.scriptName(scope, label), script);
             console.log(exc);
-            throw new Error(exc);            
+            throw exc instanceof Error ? exc : new Error(exc);   // the error itself: its stack names the model's script (bpmn:///...)
         }		
 
 		return ret;
+    }
+    /**
+     * A model's script or expression as a function of its scope, named after where it is in the model
+     * (bpmn:///<model>/<element>/<label>.js) and numbered from its own first line: a debugger lists it by that
+     * name and stops at its breakpoints and at `debugger;`, and an error's stack says where it is.
+     */
+    static compile(scope, body: string, label: string): Function {
+        const prelude = ScriptHandler.getJSvars(scope) + '\n';
+        return vm.compileFunction(prelude + body, [], {
+            filename: ScriptHandler.scriptName(scope, label),
+            lineOffset: -(prelude.split('\n').length - 1),
+        });
+    }
+    /** bpmn:///<model>/<element>/<label>.js: the element is the item's; a process's own scripts are under 'process'. */
+    static scriptName(scope, label: string): string {
+        const execution = scope?.token?.execution ?? scope?.execution ?? scope;
+        const element = scope?.elementId ?? scope?.currentNode?.id ?? 'process';
+        return 'bpmn:///' + [execution?.name ?? 'model', element, label].map(part => encodeURIComponent(String(part))).join('/') + '.js';
     }
     static getJSvars(scope) {
         let isToken = scope.hasOwnProperty('startNodeId');
