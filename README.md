@@ -50,6 +50,23 @@ npm run setup                    # the database's indexes and the first user (ad
 npm start                        # or npm run debug (Node inspector); npm start at the root runs it too
 ```
 
+### Develop with changes picked up
+
+```sh
+npm run dev                      # at the root: testSampleApp from the sources, and the model editor's build, both watching
+```
+
+`npm run dev` runs testSampleApp on the TypeScript sources of bpmn-server and bpmn-web (their `bpmn-source`
+export condition, under tsx), with `node --watch`: a change to `packages/bpmn-server/src`,
+`packages/bpmn-web/src` or the app's code restarts it, without a build. The model editor (`modeler/src`) is
+rebuilt as it changes; refresh the browser. Views (`.pug`) and `public/` need only a refresh. Models
+(`processes/`) do not restart it (the editor saves there): a model changed outside the editor loads on the
+next restart.
+
+In testSampleApp alone: `npm run dev`, or `npm run dev:debug` with the Node inspector. In VS Code, **testSampleApp:
+dev (debug)** does the same with breakpoints in the app and both packages; **Test: current file** runs the
+open test file under the debugger (on the builds: `npm run build` first).
+
 | Tests | |
 |---|---|
 | `npm test` (root) | bpmn-server, bpmn-client and testSampleApp |

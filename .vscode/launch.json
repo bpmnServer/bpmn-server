@@ -1,0 +1,30 @@
+{
+    // testSampleApp from the packages' sources (the bpmn-source export condition): breakpoints in
+    // testSampleApp, packages/bpmn-web/src and packages/bpmn-server/src; restarts when any of them changes.
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "testSampleApp: dev (debug)",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/testSampleApp",
+            "runtimeArgs": ["--watch", "--conditions=bpmn-source", "--import", "tsx"],
+            "program": "${workspaceFolder}/testSampleApp/index.ts",
+            "restart": true,
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+        },
+        {
+            // the tests import the packages' builds (dist/) by path: run them on the builds (npm run build),
+            // whose source maps put breakpoints set in packages/*/src in place
+            "name": "Test: current file",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/testSampleApp",
+            "runtimeArgs": ["--import", "tsx", "--test", "--test-isolation=none"],
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+        }
+    ]
+}

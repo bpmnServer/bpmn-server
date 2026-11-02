@@ -10,6 +10,7 @@ cp .env.example .env      # then set MONGO_DB_URL
 npm run setup             # the database's indexes and the first user (admin / admin)
 npm start                 # or npm run debug (Node inspector); from the repository root: npm start
 npm run cli               # the console
+npm run dev               # from the packages' sources, restarting on changes (dev:debug: with the inspector)
 ```
 
 ## What is where

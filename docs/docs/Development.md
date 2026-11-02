@@ -14,6 +14,11 @@ npm run setup
 npm run debug                    # the sample application with the Node inspector; npm start without it
 ```
 
+While working on bpmn-server or bpmn-web, run `npm run dev` at the root instead: testSampleApp runs on the
+packages' TypeScript sources (the `bpmn-source` export condition) and restarts when any of them changes, and
+the model editor is rebuilt as it changes. In VS Code, the launch configuration **testSampleApp: dev (debug)**
+does the same under the debugger.
+
 Tests: `npm test` at the root (bpmn-server, bpmn-client, testSampleApp); in testSampleApp also `npm run test:ui`.
 
 To publish: `npm publish -w bpmn-server` (or `-w bpmn-client`, `-w bpmn-web`) after `npm run build`.

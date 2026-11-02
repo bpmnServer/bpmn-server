@@ -14,6 +14,10 @@ and here
 -->
 ## Unreleased — New model editor
 
+### Package exports
+- The `bpmn-source` condition gives the TypeScript source (`src/index.ts`) instead of the build, for running
+  from the source under tsx (bpmnServer4's `npm run dev`); `./package.json` is exported.
+
 ### Command line
 - `npm run cli` starts the console (`src/scripts/cli.ts`); there was no script for it. `npm run setup`, which the
   README names, runs `src/scripts/setup.ts`.

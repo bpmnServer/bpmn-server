@@ -15,6 +15,11 @@ and here
 -->
 ## Unreleased
 
+### Package exports
+- `exports`: `.` is the build as before (`dist/index.js`, its types); with the `bpmn-source` condition it is
+  the TypeScript source (`src/index.ts`), for running from the source under tsx (bpmnServer4's `npm run dev`).
+  `./*` keeps every other path of the package importable, as it was without an `exports` map.
+
 ### Expressions: ${...}
 - `${js}` as a whole value is an expression, like `$js` and `$(js)`: conditions, assignments, timers,
   input parameters, loop collections.
