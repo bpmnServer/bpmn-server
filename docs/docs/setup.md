@@ -36,20 +36,32 @@ npm run setup
 npm start
 ```
 
-## installation of bpmn-client
+## bpmn-client: another application calling the server
 
-create a folder or use an existing project
+bpmn-client calls a running bpmn-server application over its REST API, from another Node.js application (in a
+new folder, or an existing project):
 
 ```sh
-git clone .../bpmn-client-sample
-copy sample.env .env
-edit .env file
-
-npm install
-# To Update
-git pull
-npm update
+npm init -y && npm pkg set type=module      # a new project; skip in an existing one
+npm install bpmn-client
+npx bpmn-client-setup                       # writes .env: API_KEY, HOST, PORT
 ```
+
+Set `.env` to the server: `API_KEY` is the server's (from its `.env`), `HOST` and `PORT` where it runs.
+
+```sh
+npx bpmn-client-cli                         # a console on the server: start processes, list and invoke items
+```
+
+```js
+import 'dotenv/config';
+import { BPMNClient2 } from 'bpmn-client';
+
+const client = new BPMNClient2(process.env.HOST, process.env.PORT, process.env.API_KEY);
+const instance = await client.engine.start('Hello', { name: 'Ada' });
+```
+
+See [bpmn-client](bpmn-client.md) for the API. To update: `npm update bpmn-client`.
 
 # Setup bpmn Application with bpmn-server
 

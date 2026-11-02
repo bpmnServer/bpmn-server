@@ -43,6 +43,24 @@ my-app/
   delegates/        the app delegate (on bpmn-web's WebAppDelegate): services, data objects, events
 ```
 
+### Call it from another application (bpmn-client)
+
+```sh
+npm install bpmn-client
+npx bpmn-client-setup            # writes .env: set API_KEY to the server's, HOST and PORT to where it runs
+npx bpmn-client-cli              # a console on the server: start processes, list and invoke items
+```
+
+```js
+import 'dotenv/config';
+import { BPMNClient2 } from 'bpmn-client';
+
+const client = new BPMNClient2(process.env.HOST, process.env.PORT, process.env.API_KEY);
+const instance = await client.engine.start('Hello', { name: 'Ada' });
+```
+
+See [bpmn-client](https://bpmnserver.github.io/docs/bpmn-client) for its API.
+
 ### Programmatic Usage Example
 
 ```js

@@ -19,6 +19,8 @@ API is unchanged from 3.1.0.
 - `repository` is the bpmnServer/bpmn-server repository, folder `packages/bpmn-client` (it pointed to an earlier
   repository, with a malformed URL).
 - The package's own `package-lock.json` is gone: the repository's workspace lockfile is used.
+- README: installing is `npm install bpmn-client`, then `npx bpmn-client-setup` (writes `.env`) and
+  `npx bpmn-client-cli`; cloning bpmn-client-sample is no longer needed (it remains a complete example).
 
 ## Release 3.1.0 -- 2026-10-29
 Aligns the client with bpmn-web/bpmn-server 3.x; found by the new contract tests. Verified against

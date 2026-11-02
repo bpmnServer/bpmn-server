@@ -7,26 +7,26 @@ This is a light-weight package to allow remote access to [bpmn-server](https://g
 
 # Installation
 
-This installs bpmn-client-sample application along with `bpmn-client`
+In the application that calls bpmn-server (a new folder, or an existing Node.js project):
 
 ```sh
-
-git clone https://github.com/bpmnServer/bpmn-client-sample.git
-
-cd bpmn-client-sample
-
-npm install
-
-npm run setup
-
-npm run cli
-
+npm init -y && npm pkg set type=module      # a new project; skip in an existing one
+npm install bpmn-client
+npx bpmn-client-setup                       # writes .env: API_KEY, HOST, PORT
 ```
-the above setup command will copy .env 
-You can edit .env file to point to your implementation of `bpmn-server`
+
+Set `.env` to the server: `API_KEY` is the server's (from its `.env`; `ADMIN_API_KEY` too, for model
+administration), `HOST` and `PORT` where it runs. Then:
+
+```sh
+npx bpmn-client-cli                         # a console on the server: start processes, list and invoke items
+```
+
+A complete example application: [bpmn-client-sample](https://github.com/bpmnServer/bpmn-client-sample).
 
 ### to update to latest release
 
 ```
 $ npm update bpmn-client
 ```
+
