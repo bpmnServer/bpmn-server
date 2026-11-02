@@ -4,7 +4,41 @@ bpmn-server 3 is a modernized engine: an ES module on current Node.js and MongoD
 application, with a runtime API kept apart from model administration, a model checker, and a much faster step.
 
 This page lists what changed since 2.3, and what to change when upgrading.
-The full list is in the [change log](https://github.com/bpmnServer/bpmn-server/blob/master/CHANGELOG.md).
+The full list is in the [change log](https://github.com/bpmnServer/bpmn-server/blob/main/packages/bpmn-server/CHANGELOG.md).
+
+## Upgrading from 3.2 to 3.5
+
+An application on bpmn-web 3.1 gets bpmn-server 3.5 on its next install (it accepts `^3.2.0`). Most models run
+as before, so check a copy of your models first:
+
+```sh
+npx bpmn-server verify processes/
+```
+
+| | 3.2 | 3.5 |
+|---|---|---|
+| A text with `${...}` in it (an input parameter, an assignment, a timer) | kept as written | each `${...}` is evaluated: `Order ${data.id}` becomes `Order 7`. A Camunda-style bare name, `${id}`, now fails the run (`id is not defined`): write `${data.id}`. The check lists them as `expression-unknown-name`. |
+| Decision table columns | read by their label | read by their input expression |
+| A decision table with no matching rule | `{}` | `null` (single hit) or `[]` (multi hit) |
+| A missing decision | the task failed on a file not found | the task stops with a message naming the decision |
+| `item.userName` of a completed task | the user who created the item | the user who completed it |
+| A failing script or expression | `new Error(...)` made from it | its own error (type, message), its stack naming `bpmn:///<model>/<element>/<label>.js:<line>` |
+| The model check (`verify`, the editor's Problems) | | more checks: input parameters, `${...}` parts, JUEL operators, names an expression does not have, decisions, data objects, `appServices` references, parameters written without their `$`. Models that checked clean may now show issues. |
+
+bpmn-web 3.5 no longer bundles a sample application: `npx bpmn-server init` creates one; bpmn-web's own
+`npm start` runs on its defaults, and `ELEMENT_TEMPLATES_PATH` is not read (an application passes
+`elementTemplatesPath` to `start()`).
+
+The source moved: bpmn-server, bpmn-web and bpmn-client are one repository,
+[bpmnServer/bpmn-server](https://github.com/bpmnServer/bpmn-server), its default branch `main`, the engine in
+`packages/bpmn-server`. A `file:../bpmn-server` dependency on a clone of the repository now needs
+`file:../bpmn-server/packages/bpmn-server`.
+
+### Known issue in 3.5
+
+An inclusive gateway that takes only one of its several outgoing flows (for example only its default flow)
+stops the run with `this.currentNode.getOutbounds is not a function`. It is not new in 3.5 (3.2 does the same).
+The `employee-onboarding` model of the sample application runs into it.
 
 ## Upgrading from 2.x
 

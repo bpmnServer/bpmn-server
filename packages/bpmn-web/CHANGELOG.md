@@ -16,6 +16,11 @@ and here
 bpmn-server, bpmn-web and bpmn-client are now one repository (bpmnServer/bpmn-server) and are released
 together, with the same version.
 
+### Upgrading from 3.1
+- What changes for the models (bpmn-server 3.5): see bpmn-server's change log, Upgrading from 3.2, and
+  [What's new in 3.x](https://bpmnserver.github.io/docs/whats-new-3).
+- If you ran bpmn-web itself as the demo application: below.
+
 ### Changed: bpmn-web is the web host, an application starts it
 **Breaking** for anyone who ran bpmn-web itself as the demo application:
 - bpmn-web no longer bundles a sample application (`src/sample-app`, its models, element templates and the

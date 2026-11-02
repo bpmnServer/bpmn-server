@@ -17,6 +17,21 @@ and here
 bpmn-server, bpmn-web and bpmn-client are now one repository (bpmnServer/bpmn-server) and are released
 together, with the same version.
 
+### Upgrading from 3.2
+Applications on bpmn-web 3.1 get this release on their next install. What can change for a model that ran on
+3.2 (details: [What's new in 3.x](https://bpmnserver.github.io/docs/whats-new-3), Upgrading from 3.2):
+- A text with `${...}` in it is evaluated: a Camunda-style bare name (`${id}`) now fails the run; write
+  `${data.id}`. `bpmn-server verify` lists them (`expression-unknown-name`).
+- Decision tables: columns are read by their input expression (not their label); no matching rule gives `null`
+  or `[]` (not `{}`); a missing decision stops the task with a message naming it.
+- `item.userName` of a completed task is the user who completed it.
+- A failing script or expression throws its own error, not a new `Error` made from it.
+- The model check has more checks: models that checked clean may show issues.
+
+**Known issue:** an inclusive gateway that takes only one of its several outgoing flows stops the run
+(`this.currentNode.getOutbounds is not a function`); 3.2 does the same. The sample application's
+`employee-onboarding` model runs into it.
+
 ### init: an application on bpmn-server and bpmn-web
 - `npx bpmn-server init [folder]` creates a workflow application with bpmn-server and bpmn-web as its
   dependencies, then runs `npm install`. It asks what it is not told: `--mongo <url>` or `--memory` (a
