@@ -13,6 +13,9 @@ import { expressionScript, templateParts, evaluateTemplate } from '../engine/Exp
 import type { IAppDelegate, IServiceProvider } from '../interfaces/common.js';
 
 import { DMNEngine } from '../dmn/DMNEngine.js';
+import { ConnectorError } from '../connectors/Connectors.js';
+import { ConnectorBehaviour } from './behaviours/Connector.js';
+import { Behaviour_names } from './behaviours/BehaviourLoader.js';
 
 // ---------------------------------------------
 class ScriptTask extends Node {
@@ -53,10 +56,47 @@ class ServiceTask extends Node {
         }
 
     }
+    /** The task's camunda:connector, when it calls a connector instead of a service. */
+    get connector(): ConnectorBehaviour | undefined {
+        return this.getBehaviour(Behaviour_names.CamundaConnector);
+    }
+
+    /**
+     * A connector's operation called with the connector's inputs; the response is the output. A status other than
+     * 2xx raises the BPMN error HTTP_<status> (a boundary error event catches it), as a service's bpmnError does.
+     */
+    async runConnector(item: Item, connector: ConnectorBehaviour): Promise<NODE_ACTION> {
+        const what = `${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}`;
+        if (item.context.configuration?.demo) {
+            item.token.decision(`service task ${what}: a real server calls the connector ${connector.connectorId} here; in this demo, connectors do not run, so it ends with no output.`);
+            item.output = {};
+            return NODE_ACTION.end;
+        }
+        const connectors = item.token.execution.server?.connectors;
+        if (!connectors)
+            throw new Error(`service task ${what}: this server has no connectors`);
+        try {
+            const { output } = await connectors.call(connector.connectorId, item.input ?? {}, { log: line => item.log(line) });
+            item.output = output;
+        }
+        catch (error) {
+            if (!(error instanceof ConnectorError))
+                throw error;
+            item.log(error.message);
+            item.token.decision(`service task ${what}: the connector ${connector.connectorId} answered HTTP ${error.status}, raised as the BPMN error ${error.code}`);
+            item.output = { status: error.status, error: error.body };
+            await item.token.processError(error.code, item);
+        }
+        return NODE_ACTION.end;
+    }
+
     async run(item: Item): Promise<NODE_ACTION> {
 
         item.context.action = null;
         item.context.item = item;
+        const connector = this.connector;
+        if (connector)
+            return this.runConnector(item, connector);
         // calling appDelegate by service name
         const appDelegate: IAppDelegate = item.token.execution.appDelegate;
 

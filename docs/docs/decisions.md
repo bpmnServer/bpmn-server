@@ -1,8 +1,5 @@
 # Decisions (DMN)
 
-!!! warning "Draft"
-    For the release after bpmn-server 3.2. Not published until then.
-
 A business rule task evaluates a DMN decision: a decision table (or a literal expression) kept in its own file,
 next to the models. The process passes it data, and saves its result in the instance data.
 
@@ -97,12 +94,28 @@ const result = engine.evaluate({ credit_score: 780, income: 90000 });
 
 `DMNParser.check(await DMNParser.loadFile(file))` lists a file's problems without evaluating it.
 
+## Testing a decision
+
+The decision editor (`/model/decision/<name>`) has a **Test** tab, as the model editor has for processes. A test
+gives the decision's inputs and what to check:
+
+- **an output:** its name, or a path into the result (`approval.status`; `0.name` in a multi-hit list), compared
+  with `=`, `<>`, `>`, `<`, `>=` or `<=`;
+- **the rules matched:** how many (0: none matched).
+
+A run evaluates the decision as a business rule task does, and shows the result and the rules that matched. A
+test with no checks passes when the decision evaluates. **Use as checks** makes a run's result the test's checks.
+Each test keeps its runs.
+
+A test names a decision of the file, or uses the file's top decision. Tests are kept per file, with the models'
+test scenarios, and the [Design dashboard](modeler.md#testing-a-model) runs them with the models' tests.
+
 ## When something is wrong
 
 - A decision that can not be found, a cell that is not FEEL, or an evaluation error stops the task with a message
   naming the decision and the rule.
 - The instance log says which rules matched.
-- [`verifyModel`](../verify.md) checks business rule tasks against the decision files: `decision-not-named`,
+- [`verifyModel`](verify.md) checks business rule tasks against the decision files: `decision-not-named`,
   `decision-not-found`, `decision-invalid` (an unknown hit policy, wrong cell counts, FEEL that does not parse),
   `decision-result-not-saved`, and `decision-input-from-data` (info: an input the task does not pass, read from
   the instance data). `parameter-is-text` warns of an input parameter written like an expression but without

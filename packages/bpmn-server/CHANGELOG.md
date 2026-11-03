@@ -13,6 +13,31 @@ and here
 
 ### Changed
 -->
+## Unreleased
+### Added
+- **Connectors** (`src/connectors/`): REST APIs described by OpenAPI 3.0 or 3.1 (JSON or YAML), which a service
+  or send task calls with `camunda:connector` (`<connector>/<operationId>`) and the connector's own input and
+  output parameters. `server.connectors` adds them (from a URL or a document), updates, refreshes, removes, tests
+  and calls them; documents are kept compressed, their local `$ref`s resolved in memory. Keys (bearer, API key,
+  basic) are encrypted with AES-256-GCM (`CONNECTORS_KEY`) and never returned. A call has a timeout, retries for
+  idempotent methods on network errors, 429 and 5xx, a response size limit, and `CONNECTORS_ALLOW_HOSTS`; a
+  non-2xx status is the BPMN error `HTTP_<status>`. Demo mode does not call. `configuration.connectors`:
+  `timeout`, `retries`, `retryDelay`, `maxResponseBytes`. Kept in `wf_connectors`, in the backup.
+- `verifyModel` checks connector tasks: `connector-not-named`, `connector-and-service`, `connector-unknown`,
+  `connector-unreadable`, `connector-operation-unknown`, `connector-input-missing` (errors);
+  `connector-disabled`, `connector-operation-disabled`, `connector-input-unknown` (warnings). A connector task
+  is no longer reported as naming no service.
+- **SQLite storage:** `SqliteDocumentStore(file)` (`node:sqlite`, Node 22.5 or later), a table per collection,
+  unique indexes, WAL so servers can share the file. `npm run test:sqlite` runs every suite on it.
+- The storage port's optional `count`, `DataStore.countInstances`, and `backup()` on the data store and the
+  models datastore.
+
+### Fixed
+- `DocumentQuery`: `null` matches an array element without the field, and a missing field equals `null`, as in
+  MongoDB.
+- An empty `<camunda:inputOutput />` failed to load.
+- Behaviours' fields set in `init()` were reset when running from the TypeScript source (`npm run dev`).
+
 ## Release 3.5.1 (2026-11-02)
 No changes to bpmn-server; released with bpmn-web and bpmn-client 3.5.1, which share its version.
 

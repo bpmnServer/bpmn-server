@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A customer, through the connector shop (test/connectors.test.mjs serves its API): the tier kept; a customer
+     that is not there (404) ends at Unknown. -->
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="customer-lookup-definitions" targetNamespace="http://ai-mde.dev/bpmn/test">
+  <bpmn:error id="NotFoundError" name="Not found" errorCode="HTTP_404" />
+  <bpmn:process id="CustomerLookup" name="Customer lookup" isExecutable="true">
+    <bpmn:startEvent id="Started">
+      <bpmn:outgoing>toFind</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="FindCustomer" name="Find the customer">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:connectorId>shop/getCustomer</camunda:connectorId>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="id">${data.customerId}</camunda:inputParameter>
+            <camunda:outputParameter name="customer">${output}</camunda:outputParameter>
+            <camunda:outputParameter name="tier">${output.tier}</camunda:outputParameter>
+          </camunda:inputOutput>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>toFind</bpmn:incoming>
+      <bpmn:outgoing>toDone</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="NoSuchCustomer" attachedToRef="FindCustomer">
+      <bpmn:outgoing>toUnknown</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="NotFoundError" />
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="Done">
+      <bpmn:incoming>toDone</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Unknown">
+      <bpmn:incoming>toUnknown</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="toFind" sourceRef="Started" targetRef="FindCustomer" />
+    <bpmn:sequenceFlow id="toDone" sourceRef="FindCustomer" targetRef="Done" />
+    <bpmn:sequenceFlow id="toUnknown" sourceRef="NoSuchCustomer" targetRef="Unknown" />
+  </bpmn:process>
+</bpmn:definitions>

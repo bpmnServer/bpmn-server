@@ -1,5 +1,6 @@
 import { CamundaFormData } from './Form.js';
 import { IOBehaviour } from './IOBehaviour.js';
+import { ConnectorBehaviour } from './Connector.js';
 import { LoopBehaviour } from './Loop.js';
 import { MessageEventBehaviour, SignalEventBehaviour } from './MessageSignal.js';
 import { TerminateBehaviour } from './Terminate.js';
@@ -33,7 +34,8 @@ const Behaviour_names = {
     CamundaScript: 'camunda:script',
     CamundaScript2: 'camunda:executionListener',
     CamundaScript3: 'camunda:taskListener',
-    CamundaIO: 'camunda:inputOutput'
+    CamundaIO: 'camunda:inputOutput',
+    CamundaConnector: 'camunda:connector'
 
 }
 
@@ -57,6 +59,11 @@ class BehaviourLoader {
         {
             name: Behaviour_names.CamundaIO, funct: function (node, def) {
                 return new IOBehaviour(node, def);
+            }
+        },
+        {
+            name: Behaviour_names.CamundaConnector, funct: function (node, def) {
+                return new ConnectorBehaviour(node, def);
             }
         },
         {

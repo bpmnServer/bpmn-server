@@ -1,0 +1,86 @@
+# A test API (test/connectors.test.mjs serves it): customers and orders, bearer authorization, and the
+# endpoints that check retries, timeouts and parameters.
+openapi: 3.1.0
+info:
+  title: Shop
+  version: 1.0.0
+servers:
+  - url: /api
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  parameters:
+    customerId:
+      name: id
+      in: path
+      required: true
+      schema: { type: string }
+  schemas:
+    customer:
+      type: object
+      properties:
+        id: { type: string }
+        tier: { type: string }
+security:
+  - bearerAuth: []
+paths:
+  /customers/{id}:
+    parameters:
+      - $ref: '#/components/parameters/customerId'
+    get:
+      operationId: getCustomer
+      summary: A customer
+      responses:
+        '200':
+          description: The customer
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/customer' }
+        '404':
+          description: No such customer
+  /orders:
+    post:
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customerId: { type: string }
+                amount: { type: number }
+      responses:
+        '201':
+          description: The order
+  /flaky:
+    get:
+      operationId: flaky
+      responses:
+        '200': { description: OK }
+  /slow:
+    get:
+      operationId: slow
+      responses:
+        '200': { description: OK }
+  /echo/{value}:
+    get:
+      operationId: echo
+      parameters:
+        - { name: value, in: path, required: true, schema: { type: string } }
+        - { name: tags, in: query, schema: { type: array, items: { type: string } } }
+        - { name: X-Trace, in: header, schema: { type: string } }
+      responses:
+        '200': { description: What the request was }
+  /health:
+    get:
+      operationId: health
+      security: []
+      responses:
+        '200': { description: OK }
+    post:
+      summary: has no operationId, so a model can not name it
+      responses:
+        '200': { description: OK }

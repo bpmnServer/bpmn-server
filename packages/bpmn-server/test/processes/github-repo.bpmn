@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A repository on GitHub, through the connector github (work/connectors.md): its description and how many
+     stars it has. A repository that is not there (404) ends at Not found. -->
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="github-repo-definitions" targetNamespace="http://ai-mde.dev/bpmn/test">
+  <bpmn:error id="NotFoundError" name="Not found" errorCode="HTTP_404" />
+  <bpmn:process id="GitHubRepo" name="GitHub repository" isExecutable="true">
+    <bpmn:startEvent id="Asked">
+      <bpmn:outgoing>toGet</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="GetRepo" name="Get the repository">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:connectorId>github/repos/get</camunda:connectorId>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="owner">${data.owner}</camunda:inputParameter>
+            <camunda:inputParameter name="repo">${data.repo}</camunda:inputParameter>
+            <camunda:outputParameter name="description">${output.description}</camunda:outputParameter>
+            <camunda:outputParameter name="starsCount">${output.stargazers_count}</camunda:outputParameter>
+          </camunda:inputOutput>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>toGet</bpmn:incoming>
+      <bpmn:outgoing>toDone</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="NoSuchRepo" name="No such repository" attachedToRef="GetRepo">
+      <bpmn:outgoing>toNotFound</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="NotFoundError" />
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="Done">
+      <bpmn:incoming>toDone</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="NotFound" name="Not found">
+      <bpmn:incoming>toNotFound</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="toGet" sourceRef="Asked" targetRef="GetRepo" />
+    <bpmn:sequenceFlow id="toDone" sourceRef="GetRepo" targetRef="Done" />
+    <bpmn:sequenceFlow id="toNotFound" sourceRef="NoSuchRepo" targetRef="NotFound" />
+  </bpmn:process>
+</bpmn:definitions>

@@ -83,6 +83,7 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 export async function setup(server: BPMNServer) {
 	await server.dataStore.install();
 	await server.definitions.install();
+	await server.connectors?.install();
 	if (guestAccess())
 		return;
 	const { UserService } = await import('./userAccess/UserService.js');

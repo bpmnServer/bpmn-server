@@ -12,6 +12,32 @@ and here
 
 ### Changed
 -->
+## Unreleased
+### Added
+- **Connectors** (needs bpmn-server with connectors): Administration → Connectors (`/dashboard/admin/connectors`)
+  adds REST APIs from a catalog (`catalog/connectors/api-catalog.json`, or `CONNECTOR_CATALOG_URL`) or from an
+  OpenAPI document, and sets each one's name, base URL, groups, timeout, retries, key (write-only), operations;
+  tests, refreshes and deletes it (listing the models that use it). The Admin dashboard has a Connectors card;
+  the console has `co`, `coa`, `cok`, `coe`, `cot`, `cor`, `cod`, `coc`; setup makes the index.
+- **The connector wizard** in the model editor: a service or send task's *Calls → Connector* opens a window over
+  the editor: the operation found by a search, its inputs (required ones from the data of the same name, enums
+  offered), and the parts of the answer to keep, each with a check box and a data name. Done writes it as one
+  undoable step; Cancel changes nothing. The Service group shows a summary with what is wrong, and
+  **Edit connector…**. `GET /model/connectors` lists the connectors a designer may use.
+- **Decision tests:** the decision editor's Test tab, as the model editor's: inputs, checks on outputs or on the
+  rules matched, runs kept, **Use as checks**. `/model/decision/:name/tests`.
+- **Design dashboard:** each model's and decision's tests with the last run's result (and why it failed); Run for
+  one, **Run all tests**.
+
+### Changed
+- The dashboards make no MongoDB calls: they work on MongoDB, SQLite and the in-memory store. The backup is
+  format 2, plain JSON from each store, with the connectors (their keys encrypted).
+- The editors' scripts and styles are loaded with their build's time in the URL, so a new build is used at the
+  next reload.
+
+### Fixed
+- The Problems tab no longer reports a connector as a Camunda setting with no effect.
+
 ## Release 3.5.1 (2026-11-02)
 ### Added
 - `GET /api/definitions/list`: the models' names with the runtime key (`API_KEY`), as `/api2/model/list`

@@ -7,7 +7,7 @@ import { DefaultAppDelegate } from '../engine/DefaultAppDelegate.js';
 
 import { DataStore } from '../datastore/DataStore.js';
 import { ScriptHandler } from '../engine/ScriptHandler.js';
-import type { IConfiguration, ILogger, IAppDelegate } from '../interfaces/common.js';
+import type { IConfiguration, IConnectorsConfiguration, ILogger, IAppDelegate } from '../interfaces/common.js';
 import type { IModelsDatastore, IDataStore } from '../interfaces/datastore.js';
 import { NoCacheManager } from '../server/CacheManager.js';
 import { Logger } from './Logger.js';import type { IDocumentStore, ILockManager } from '../interfaces/storage.js';
@@ -52,6 +52,7 @@ export class Configuration implements IConfiguration {
 	locks?: { retryDelay?: number; maxTries?: number; staleAfter?: number; };
 	shutdownTimeout?: number;
 	demo?: boolean;
+	connectors?: IConnectorsConfiguration;
 
 	/** Each factory given replaces the default one; one left out keeps it. */
 	constructor({
@@ -60,7 +61,7 @@ export class Configuration implements IConfiguration {
 		definitions = undefined,
 		appDelegate = undefined,
 		dataStore = undefined, cacheManager = undefined, scriptHandler = undefined,
-		documentStore = undefined, locker = undefined, serverId = undefined, locks = undefined, shutdownTimeout = undefined, demo = undefined }: any) {
+		documentStore = undefined, locker = undefined, serverId = undefined, locks = undefined, shutdownTimeout = undefined, demo = undefined, connectors = undefined }: any) {
 		this.definitionsPath = definitionsPath;
 		this.templatesPath = templatesPath;
 		this.timers = timers;
@@ -78,6 +79,7 @@ export class Configuration implements IConfiguration {
 		this.locks = locks;
 		this.shutdownTimeout = shutdownTimeout;
 		this.demo = demo;
+		this.connectors = connectors;
 	
 	}
 

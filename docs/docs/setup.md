@@ -149,8 +149,24 @@ the database.
 ## Storage
 
 Instances and models are kept in MongoDB by default. The configuration's `documentStore` replaces it, for both
-data stores: `MemoryDocumentStore` keeps everything in memory, for tests and demos; an application can
-implement `IDocumentStore` to use its own database.
+data stores:
+
+- `SqliteDocumentStore(file)` keeps everything in one SQLite file (Node's built-in `node:sqlite`, Node 22.5 or
+  later): no database server, for small installs, demos and desktop use. Several servers may share the file.
+- `MemoryDocumentStore` keeps everything in memory, for tests and demos.
+- An application can implement `IDocumentStore` to use its own database.
+
+```ts
+import { SqliteDocumentStore } from 'bpmn-server';
+
+const store = new SqliteDocumentStore('./data/bpmn.sqlite');
+const configuration = new Configuration({
+    // ... as above
+    documentStore: () => store,
+});
+```
+
+Or in memory:
 
 ```ts
 import { MemoryDocumentStore } from 'bpmn-server';

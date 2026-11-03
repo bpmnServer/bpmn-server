@@ -3,6 +3,7 @@
 // bpmn-server's own groups in place of the ones whose fields mean something different here.
 import { UserAssignmentGroup, StartAssignmentGroup } from './AssignmentGroups.jsx';
 import { ServiceGroup, ScriptGroup } from './TaskGroups.jsx';
+import { getConnector, taskInputOutput } from './ConnectorEntries.jsx';
 import { ScriptsGroup } from './ScriptsGroup.jsx';
 import { hasCamundaOnly } from './settings.js';
 import { DefaultFlowGroup } from './DefaultFlowGroup.jsx';
@@ -59,6 +60,10 @@ export default class BpmnServerPropertiesProvider {
                     groups.push(group);
             };
             groups = groups.filter(group => !REMOVED.has(group.id) || hasCamundaOnly(element, group.id));
+            // a task that calls a connector has its inputs and outputs in the Service group (the connector's own);
+            // the task's are shown only when the model has some, so nothing in it is hidden
+            if (getConnector(element) && !taskInputOutput(element))
+                groups = groups.filter(group => group.id !== 'CamundaPlatform__Input' && group.id !== 'CamundaPlatform__Output');
 
             replace('CamundaPlatform__Implementation', ServiceGroup(element, translate) || DecisionGroup(element, translate));
             replace('CamundaPlatform__Condition', ConditionGroup(element, translate));

@@ -27,7 +27,7 @@ class ScriptBehaviour extends Behaviour {
 
 
           */
-    scripts: string[] ;
+    declare scripts: string[];
     init() {
         this.scripts = [];
         var scrs = this.definition['$children']||[];

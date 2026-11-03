@@ -10,7 +10,7 @@ import FS from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 
-import { SecureUser, BPMNAPI, verifyModel, dateDiff } from '../index.js';
+import { SecureUser, BPMNAPI, verifyModel, dateDiff, canEncrypt } from '../index.js';
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
@@ -19,6 +19,7 @@ import { loadDecisionTests, runDecisionTests } from '../testing/decisionTests.js
 import { adminDisabled, engineGroups, isAdminGroups, isDesignerGroups } from '../userAccess/roles.js';
 import { UserService } from '../userAccess/UserService.js';
 import { loadCatalog, findCatalogEntry, readCatalogFile, catalogLocation } from './catalog.js';
+import { loadConnectorCatalog, connectorCatalogLocation } from './connectorCatalog.js';
 import { isSafeModelName } from './middleware/modelName.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 import crypto from 'node:crypto';
@@ -37,6 +38,7 @@ const CONSOLE_COMMANDS = [
     ['se', 'start event'], ['rs', 'restart an instance'], ['d', 'delete instances'], ['lm', 'list models'],
     ['lme', 'list model events'], ['ck', 'check locks (and delete them)'], ['re', 'recover hung items'],
     ['lu', 'list users'], ['spw', 'set a user\'s password'],
+    ['co', 'list connectors (coa add, cok set its key, coe enable or disable, cot test, cor refresh, cod delete, coc call)'],
 ];
 
 /** Why a scenario or a decision's test failed: its failed step, else its failed checks. */
@@ -230,8 +232,9 @@ export class Dashboards extends Common {
             const hung = await server.dataStore.findItems({ 'items.status': 'start' });
             hung.forEach(i => i.fromNow = dateDiff(i.startedAt));
             const users = await new UserService().listUsers();
+            const connectorList = await server.connectors.list();
             render(req, res, 'admin', {
-                title: 'Administration', counts, locks, hung, users,
+                title: 'Administration', counts, locks, hung, users, connectors: connectorList, canEncrypt: canEncrypt(),
                 serverInfo: {
                     bpmnWeb: this.webApp.packageJson?.version ?? packageVersion('bpmn-web'),
                     bpmnServer: packageVersion('bpmn-server'),
@@ -279,6 +282,122 @@ export class Dashboards extends Common {
             catch (exc) {
                 back(res, `Item ${itemId}: ${exc.message}`);
             }
+        }));
+
+        // ---- connectors: REST APIs (OpenAPI) that service tasks call, added with their keys (work/connectors.md)
+        const connectors = () => server.connectors;
+        const backToConnectors = (res, message: string, id?: string) =>
+            res.redirect(`/dashboard/admin/connectors${id ? '/' + encodeURIComponent(id) : ''}?message=` + encodeURIComponent(message));
+        /** Runs an administration action; its error goes back as the page's message. */
+        const action = (fn: (req, res) => Promise<any>) => handler(async (req, res) => {
+            try {
+                await fn(req, res);
+            }
+            catch (exc) {
+                backToConnectors(res, exc.message, req.params.id && req.path.endsWith('/delete') ? undefined : req.params.id);
+            }
+        });
+
+        router.get('/admin/connectors', this.isAdmin, handler(async (req, res) => {
+            const list = await connectors().list();
+            const used = this.connectorUse();
+            // the catalog: APIs to add in one step (an entry already added is marked); unreadable, the page says why
+            let catalog = [], catalogError = null;
+            try {
+                const added = new Set(list.map(c => c.id));
+                catalog = (await loadConnectorCatalog()).map(e => ({ ...e, added: added.has(e.id) }));
+            }
+            catch (exc) {
+                catalogError = exc.message;
+            }
+            render(req, res, 'connectors', {
+                title: 'Connectors', connectors: list.map(c => ({ ...c, models: used.get(c.id) ?? [] })),
+                catalog, catalogError, catalogLocation: connectorCatalogLocation(),
+                canEncrypt: canEncrypt(), message: req.query.message,
+            });
+        }));
+
+        router.post('/admin/connectors', this.isAdmin, action(async (req, res) => {
+            const { id, name, source, document, baseUrl } = req.body;
+            const added = await connectors().add({
+                id: String(id ?? '').trim(), name: name?.trim() || undefined, baseUrl: baseUrl?.trim() || undefined,
+                ...(document?.trim() ? { document } : { source: source?.trim() }),
+            }, req.user?.userName);
+            backToConnectors(res, `Connector '${added.id}' added: ${Object.keys(added.operations).length} operations.`, added.id);
+        }));
+
+        router.get('/admin/connectors/:id', this.isAdmin, handler(async (req, res) => {
+            const connector = await connectors().get(req.params.id);
+            if (!connector)
+                return backToConnectors(res, `No connector '${req.params.id}'.`);
+            const document = await connectors().document(connector.id);
+            const schemes = Object.entries<any>(document.components?.securitySchemes ?? {})
+                .map(([name, s]) => ({ name, text: `${name}: ${s.type}${s.scheme ? ' ' + s.scheme : ''}${s.in ? ` in ${s.in} ${s.name}` : ''}` }));
+            render(req, res, 'connector', {
+                title: `Connector: ${connector.name}`, connector, operations: await connectors().operations(connector.id),
+                schemes, models: this.connectorUse().get(connector.id) ?? [], canEncrypt: canEncrypt(), message: req.query.message,
+            });
+        }));
+
+        router.post('/admin/connectors/:id/settings', this.isAdmin, action(async (req, res) => {
+            const { name, description, baseUrl, groups, timeout, retries, enabled } = req.body;
+            const number = v => v === undefined || String(v).trim() === '' ? null : Number(v);
+            await connectors().update(req.params.id, {
+                name: name?.trim() || undefined, description: description ?? undefined, baseUrl: baseUrl?.trim() || undefined,
+                groups: toList(groups), timeout: number(timeout), retries: number(retries), enabled: enabled === 'on' || enabled === 'true',
+            });
+            backToConnectors(res, 'Settings saved.', req.params.id);
+        }));
+
+        router.post('/admin/connectors/:id/enabled', this.isAdmin, action(async (req, res) => {
+            const on = req.body.enabled === 'true';
+            await connectors().update(req.params.id, { enabled: on });
+            backToConnectors(res, `Connector '${req.params.id}' ${on ? 'enabled' : 'disabled'}.`, req.body.list ? undefined : req.params.id);
+        }));
+
+        router.post('/admin/connectors/:id/operations', this.isAdmin, action(async (req, res) => {
+            const chosen = new Set(toList(req.body.operation));
+            const all = await connectors().operations(req.params.id);
+            await connectors().update(req.params.id, { operations: Object.fromEntries(all.map(op => [op.operationId, chosen.has(op.operationId)])) });
+            backToConnectors(res, `${chosen.size} of ${all.length} operations enabled.`, req.params.id);
+        }));
+
+        router.post('/admin/connectors/:id/key', this.isAdmin, action(async (req, res) => {
+            const { scheme, apiKeyName, apiKeyIn, key, clear } = req.body;
+            if (clear) {
+                await connectors().clearKey(req.params.id);
+                return backToConnectors(res, 'Key removed: calls go without authorization.', req.params.id);
+            }
+            const how = scheme === 'bearer' || scheme === 'basic' ? { type: scheme }
+                : scheme === 'apiKey' ? { type: 'apiKey', in: apiKeyIn || 'header', name: String(apiKeyName ?? '').trim() }
+                : scheme || undefined;
+            const updated = await connectors().setKey(req.params.id, String(key ?? ''), how as any, req.user?.userName);
+            backToConnectors(res, `Key set (${updated.auth.type}, ending ${updated.auth.last4}).`, req.params.id);
+        }));
+
+        router.post('/admin/connectors/:id/test', this.isAdmin, action(async (req, res) => {
+            let input = {};
+            if (String(req.body.input ?? '').trim()) {
+                try {
+                    input = JSON.parse(req.body.input);
+                }
+                catch (exc) {
+                    return backToConnectors(res, `The inputs are not JSON: ${exc.message}`, req.params.id);
+                }
+            }
+            const result = await connectors().test(req.params.id, req.body.operation || undefined, input);
+            backToConnectors(res, `Test of ${result.operation}: ${result.ok ? 'OK' : 'failed'}, ${result.message}`, req.params.id);
+        }));
+
+        router.post('/admin/connectors/:id/refresh', this.isAdmin, action(async (req, res) => {
+            const changed = await connectors().refresh(req.params.id, req.body.document?.trim() ? req.body.document : undefined);
+            backToConnectors(res, `Document read again: ${changed.added.length ? 'added ' + changed.added.join(', ') : 'no operation added'}; `
+                + `${changed.removed.length ? 'removed ' + changed.removed.join(', ') : 'none removed'}.`, req.params.id);
+        }));
+
+        router.post('/admin/connectors/:id/delete', this.isAdmin, action(async (req, res) => {
+            const removed = await connectors().remove(req.params.id);
+            backToConnectors(res, removed ? `Connector '${req.params.id}' deleted.` : `No connector '${req.params.id}'.`);
         }));
 
         router.get('/admin/backup', this.isAdmin, handler(async (req, res) => this.backup(res)));
@@ -343,6 +462,19 @@ export class Dashboards extends Common {
         return router;
     }
 
+    /** The models that call each connector (camunda:connectorId <connector>/<operation>), by connector id. */
+    connectorUse(): Map<string, string[]> {
+        const dir = this.webApp.bpmnServer.configuration.definitionsPath;
+        const used = new Map<string, string[]>();
+        for (const file of FS.existsSync(dir) ? FS.readdirSync(dir).filter(f => f.endsWith('.bpmn')) : []) {
+            const xml = FS.readFileSync(path.join(dir, file), 'utf8');
+            const ids = new Set([...xml.matchAll(/<(?:\w+:)?connectorId>\s*([^<\/\s]+)\//g)].map(m => m[1]));
+            for (const id of ids)
+                used.set(id, [...(used.get(id) ?? []), file.slice(0, -5)]);
+        }
+        return used;
+    }
+
     /** Every model's start events a user can start (no timer, message or signal), with their form fields. */
     async startEvents() {
         const server = this.webApp.bpmnServer;
@@ -364,7 +496,7 @@ export class Dashboards extends Common {
 
     /**
      * A backup to download: the models folder's files and, by collection, what each store keeps (the engine's
-     * instances, archive, locks, models and events; the users; the test scenarios), as one JSON document.
+     * instances, archive, locks, models and events; the connectors, keys encrypted; the users; the test scenarios), as one JSON document.
      * The stores give their own documents, whatever database they are on; the sessions are never in it.
      */
     async backup(res) {
@@ -384,6 +516,7 @@ export class Dashboards extends Common {
         const stores = [
             () => server.dataStore.backup?.() ?? {},
             () => (server.definitions as any).backup?.() ?? {},
+            () => server.connectors?.backup() ?? {},
             () => new UserService().backup(),
             () => backupScenarioSets(),
         ];

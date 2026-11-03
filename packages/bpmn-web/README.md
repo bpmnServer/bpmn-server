@@ -113,7 +113,7 @@ properties panel.
 A template is offered only if bpmn-server runs everything it sets: `property` bindings of the attributes
 the engine reads (the service name, user assignment, form key, decision, called process, script), input and
 output parameters, and JavaScript execution listeners. Templates that set anything else (Java classes, field
-injection, connectors, `camunda:property`, `camunda:in/out`) are left out, with the reason in the server log
+injection, `camunda:connector`, `camunda:property`, `camunda:in/out`) are left out, with the reason in the server log
 and in `GET /model/templates`. A template that names a service the application does not provide is offered,
 with a warning.
 

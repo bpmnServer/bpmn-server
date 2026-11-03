@@ -11,4 +11,6 @@
 | [API](api/readme.md)   | [Multiple Start Events](examples/multiStartEvent.md) | [Transactions](examples/transactions.md) |
 | [Setup](setup.md)    | [Input Fields](examples/inputFields.md) | [Ad Hoc SubProcess](examples/adHoc.md) |
 | [Application Integration](customization.md)   |  [Throwing/Catching Messages](examples/msg-throw-catch.md) |
+| [Model editor](modeler.md) | [Connectors (REST APIs)](connectors.md) | [Decisions (DMN)](decisions.md) |
+| [What's new in 3.5](whats-new-3.5.md) | [Data objects](data-objects.md) | [Checking models](verify.md) |
 |    | [Boundary Events](examples/boundary-events.md) |

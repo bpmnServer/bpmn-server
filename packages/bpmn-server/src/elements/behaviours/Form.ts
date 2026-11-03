@@ -7,7 +7,7 @@ import { Behaviour } from './Behaviour.js';
             </camunda:formData>
             < /extensionElements> */
 class CamundaFormData extends Behaviour {
-    fields;
+    declare fields;
     init() {
         this.fields = [];
         // <camunda:formData /> without fields has no $children

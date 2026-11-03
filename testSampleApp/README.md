@@ -19,13 +19,26 @@ npm run dev               # from the packages' sources, restarting on changes (d
 |---|---|
 | `settings/config.ts` | bpmn-server settings that replace bpmn-web's defaults. |
 | `processes/` | The sample models. |
-| `connectors/` | Element templates (`*.json`) and the services they call (`appServices.ts`). |
+| `connectors/` | Element templates (`*.json`) and the services they call (`appServices.ts`); `openapi/`: OpenAPI documents to add as connectors. |
 | `delegates/` | The app delegate (`appDelegate.ts`, on bpmn-web's `WebAppDelegate`) and the logic it uses. |
 | `scripts/` | `setupDemoUsers.ts` (`npm run setup:users`). |
 | `index.ts` | Starts bpmn-web with the above. |
 | `test/` | bpmn-web's tests, run against this app (`npm test`, `npm run test:ui`). |
 | `test/scenarios/` | the engine's feature scenarios, on this app's delegate (`npm run test:scenarios`). |
 | `test/custom/` | Tests of this app's models (`npm run test:custom`), in memory on its delegate and services: TypeScript (`*.test.ts`, with `test/support/testApp.ts`) and scenario files (`*.json`, the model editor's Test tab format). |
+
+## Connectors
+
+A service task can call a **connector** instead of a service: a REST API, described by OpenAPI, that the
+administrator adds with its key ([Connectors](https://bpmnserver.github.io/docs/connectors)). The model names
+`<connector>/<operationId>`; in the model editor, *Calls → Connector* opens the connector wizard.
+
+The model **GitHub repository** calls `github/repos/get` for an `owner` and `repo`, and keeps the repository's
+`description` and `starsCount`; a repository that is not there (404) ends at Not found. Add the connector from the
+console (`npm run cli`): `coa`, id `github`, document `connectors/openapi/github.json`, the rest empty. Then start
+the model with `owner bpmnServer repo bpmn-server`. `test/web/connectors.test.mjs` does the same through the REST
+API (it calls GitHub, so it is skipped when GitHub can not be reached); `test/ui/connectors*.test.mjs` drive the
+wizard and the Connectors page against a local API.
 
 ## Testing a model
 

@@ -76,6 +76,7 @@ draft_docs: |
 nav:  
 - bpmn-server:
   - Overview:  index.md
+  - "What's new in 3.5": whats-new-3.5.md
   - "What's new in 3.x": whats-new-3.md
   - 'Invoking Workflows': invokation.md 
   - 'Workflow Execution': execution.md
@@ -83,8 +84,12 @@ nav:
   - 'Security': security.md
   - 'Data': data.md 
   - 'Setup': setup.md 
+  - 'Model editor': modeler.md
   - 'Checking models': verify.md
   - 'Testing and debugging models': testing.md
+  - 'Connectors (REST APIs)': connectors.md
+  - 'Decisions (DMN)': decisions.md
+  - 'Data objects': data-objects.md
   - 'Application Integration': customization.md 
   - 'Advanced Topics': advanced.md
   - 'Frequently Asked Questions': faq.md

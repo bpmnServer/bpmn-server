@@ -1,3 +1,4 @@
+import type { Connectors } from '../connectors/Connectors.js';
 import type { ILogger, IConfiguration, IAppDelegate } from './common.js';
 import type { IDataStore, IModelsDatastore } from './datastore.js';
 import type { IExecution, IItem, IScriptHandler } from './engine.js';
@@ -21,6 +22,8 @@ interface IBPMNServer {
     /** The storage adapter the configuration's `documentStore` supplied, shared by the data stores; absent for the MongoDB default. */
     documentStore?: IDocumentStore;
     scriptHandler?: IScriptHandler;
+    /** The connectors an administrator added: REST APIs that service tasks call (camunda:connector). */
+    connectors?: Connectors;
 
 }
 

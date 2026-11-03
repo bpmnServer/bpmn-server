@@ -23,6 +23,7 @@ import TestModule from './testing/index.js';
 import { setupNavigation } from './navigation.js';
 import ElementBehaviour from './properties/ElementBehaviour.js';
 import DecisionsModule from './decisions/index.js';
+import ConnectorsModule from './connectors/index.js';
 import LintRulesModule from './lint/index.js';
 
 const page = document.getElementById('modeler-page');
@@ -45,6 +46,7 @@ const modeler = new BpmnModeler({
         ReportModule,
         TestModule,
         DecisionsModule,
+        ConnectorsModule,
         LintRulesModule,
         { __init__: ['elementBehaviour'], elementBehaviour: ['type', ElementBehaviour] }
     ],
@@ -53,6 +55,7 @@ const modeler = new BpmnModeler({
     elementBehaviour: { parent: '#js-properties-panel' },
     scriptContext: { servicesUrl: '/model/services' },
     decisions: { url: '/model/decisions' },
+    connectors: { url: '/model/connectors' },
     lint: { url: '/model/lint-rules', button: '#js-lint-rules-open' },
     // tests run the saved model: save the editor's changes first
     test: { container: '#js-test', processName, save: () => saveIfChanged() },

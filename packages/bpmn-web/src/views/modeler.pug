@@ -10,7 +10,7 @@ html(lang="en")
     meta(name="csrf-token" content=_csrf)
     //- before the modeler: it adds the token to the modeler's save request
     script(src="/javascripts/csrf.js")
-    link(rel="stylesheet" href="/modeler/modeler.css")
+    link(rel="stylesheet" href=asset("/modeler/modeler.css"))
   body
     #modeler-page(data-process-name=processName)
       header.modeler-header
@@ -46,4 +46,4 @@ html(lang="en")
           button#js-panel-toggle(type="button" title="Show or hide the properties panel" aria-label="Show or hide the properties panel")
         #js-properties-panel.modeler-panel
     script#model-source(type="application/json")!= modelJson
-    script(src="/modeler/modeler.js")
+    script(src=asset("/modeler/modeler.js"))

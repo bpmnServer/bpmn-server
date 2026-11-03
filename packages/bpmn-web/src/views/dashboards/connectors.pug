@@ -1,0 +1,122 @@
+extends layout
+
+block intro
+	p.dash-intro
+		| REST APIs that service tasks call: each is described by an OpenAPI document, and has its address and its key here.
+		| A model names a connector and one of its operations (
+		code &lt;connector&gt;/&lt;operationId&gt;
+		| ), never a key.
+	p: a(href='/dashboard/admin') ← Administration
+
+block dash
+	.dash-grid
+		section.dash-card.wide#connector-list
+			h2 Connectors
+				span.count= connectors.length
+			if connectors.length
+				table
+					tr
+						th Connector
+						th Id
+						th Base URL
+						th Operations
+						th Key
+						th Last test
+						th Used by
+						th
+					each c in connectors
+						- const ops = Object.values(c.operations)
+						tr
+							td: a(href=`/dashboard/admin/connectors/${encodeURIComponent(c.id)}`)= c.name
+							td: code= c.id
+							td: code= c.baseUrl
+							td #{ops.filter(Boolean).length} of #{ops.length}
+							td= c.auth && c.auth.last4 ? `${c.auth.type} …${c.auth.last4}` : 'none'
+							td
+								if c.test
+									span.dash-badge(class=c.test.ok ? 'is-ok' : 'is-error', title=c.test.message)= c.test.ok ? 'OK' : 'failed'
+							td= c.models.length ? c.models.join(', ') : ''
+							td
+								form.inline(method='post', action=`/dashboard/admin/connectors/${encodeURIComponent(c.id)}/enabled`)
+									input(type='hidden', name='_csrf', value=_csrf)
+									input(type='hidden', name='list', value='1')
+									input(type='hidden', name='enabled', value=c.enabled ? 'false' : 'true')
+									button.btn.btn-xs(type='submit', class=c.enabled ? 'btn-default' : 'btn-warning')= c.enabled ? 'Disable' : 'Enable'
+			else
+				p.dash-empty No connectors yet: add one below.
+
+		section.dash-card.wide#connector-catalog
+			h2 From the catalog
+				if catalog.length
+					span.count= catalog.length
+			if catalogError
+				p.dash-muted The catalog could not be read: #{catalogError}. Add an API from its document below.
+			else
+				p.dash-muted
+					| APIs ready to add: their OpenAPI document is read from where the API publishes it. After adding one, set its key
+					| (the usual kind is shown). The catalog is
+					code= catalogLocation
+					| ; CONNECTOR_CATALOG_URL names another.
+				input#catalog-filter.form-control(type='search', placeholder='Filter: a name, or the kind of key', style='max-width:340px;margin-bottom:8px', aria-label='Filter the catalog')
+				div(style='max-height:420px;overflow-y:auto')
+					table#catalog-entries
+						tr
+							th API
+							th Id
+							th Key
+							th Document
+							th
+						each e in catalog
+							tr(data-search=`${e.name} ${e.id} ${e.defaultAuth || ''}`.toLowerCase())
+								td= e.name
+								td: code= e.id
+								td.dash-muted= e.defaultAuth || ''
+								td.dash-muted(title=e.url)= e.url.replace(/^https?:\/\//, '').split('/')[0]
+								td
+									if e.added
+										a.dash-badge.is-ok(href=`/dashboard/admin/connectors/${encodeURIComponent(e.id)}`) added
+									else
+										form.inline(method='post', action='/dashboard/admin/connectors')
+											input(type='hidden', name='_csrf', value=_csrf)
+											input(type='hidden', name='id', value=e.id)
+											input(type='hidden', name='name', value=e.name)
+											input(type='hidden', name='source', value=e.url)
+											button.btn.btn-default.btn-xs(type='submit', title=`Add ${e.name}: read its OpenAPI document from ${e.url}`) Add
+
+		section.dash-card.wide#add-connector
+			h2 Add another API
+			p.dash-muted
+				| An API that is not in the catalog: give its OpenAPI document (3.0 or 3.1, JSON or YAML) by its URL, or paste or choose the file.
+				| The server keeps a copy; Refresh reads it again. The base URL defaults to the document's first server.
+			form.dash-form(method='post', action='/dashboard/admin/connectors')
+				input(type='hidden', name='_csrf', value=_csrf)
+				label(for='connector-id') Id
+				input#connector-id(name='id', required, pattern='[A-Za-z0-9][A-Za-z0-9_-]*', placeholder='e.g. crm: models name it, it can not change')
+				label(for='connector-source') Document URL
+				input#connector-source(name='source', type='url', placeholder='https://api.example.com/openapi.json')
+				label(for='connector-file') or a file
+				input#connector-file(type='file', accept='.json,.yaml,.yml')
+				label(for='connector-document') or the document
+				textarea#connector-document(name='document', rows='6', placeholder='{ "openapi": "3.1.0", ... }')
+				label(for='connector-base') Base URL
+				input#connector-base(name='baseUrl', type='url', placeholder="empty: the document's server")
+				label(for='connector-name') Name
+				input#connector-name(name='name', placeholder="empty: the document's title")
+				button.btn.btn-primary.btn-sm(type='submit') Add the connector
+			if !canEncrypt
+				p.dash-muted(style='margin-top:10px')
+					| Keys are stored encrypted with CONNECTORS_KEY, which is not set: add it to .env (a long random value) and restart before giving a connector its key.
+
+	script.
+		// the catalog filtered as one types
+		const filter = document.getElementById('catalog-filter');
+		if (filter) filter.addEventListener('input', () => {
+			const words = filter.value.toLowerCase().split(/\s+/).filter(Boolean);
+			for (const row of document.querySelectorAll('#catalog-entries tr[data-search]'))
+				row.hidden = !words.every(w => row.dataset.search.includes(w));
+		});
+		// a file chosen: its text into the document field
+		document.getElementById('connector-file').addEventListener('change', async (event) => {
+			const file = event.target.files[0];
+			if (file) document.getElementById('connector-document').value = await file.text();
+		});

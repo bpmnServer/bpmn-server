@@ -1,5 +1,8 @@
 # Service Task
 
+A service task calls a **service**, a method of the application's services, or a **connector**, a REST API the
+administrator added (see [Connectors](../connectors.md)).
+
 In Process definition (.bpmn file), use `implementation` attribute to define name of JavaScript/TypeScript Method to perform the Task:
 
 ![Using Modeler](../images/bb-service.PNG){align=left}

@@ -479,6 +479,46 @@ export class Model extends Common {
             response.json({ saved: decisionFile(name) });
         }));
 
+        // ---- the connectors a designer may use (enabled, for the designer's groups), with their enabled operations:
+        // what a service task's Connector fields offer (work/connectors.md)
+        router.get('/connectors', awaitHandlerFactory(async (request, response) => {
+            const connectors = bpmnServer.connectors;
+            if (!connectors)
+                return response.json({ connectors: [] });
+            const groups: string[] = request.user?.userGroups ?? [];
+            const everyone = process.env.REQUIRE_AUTHENTICATION === 'false';
+            const allowed = c => c.enabled && (everyone || !c.groups?.length || c.groups.some(g => groups.includes(g)));
+            const fields = schema => {
+                const object = schema?.type === 'array' ? schema.items : schema;
+                return object?.properties ? Object.keys(object.properties) : [];
+            };
+            const list = [];
+            for (const c of (await connectors.list()).filter(allowed)) {
+                // a connector whose document can not be read is left out (and said in the log), not the whole list
+                let enabled;
+                try {
+                    enabled = (await connectors.operations(c.id)).filter(op => op.enabled);
+                }
+                catch (exc) {
+                    console.error(`connector '${c.id}' left out of the designer's list: ${exc.message}`);
+                    continue;
+                }
+                const operations = enabled.map(op => {
+                    const success: any = Object.entries<any>(op.responses).find(([status]) => /^2/.test(status))?.[1];
+                    return {
+                        operationId: op.operationId, method: op.method, path: op.path, summary: op.summary,
+                        parameters: op.parameters.map(p => ({ name: p.name, in: p.in, required: p.required, description: p.description,
+                            type: p.schema?.type, enum: p.schema?.enum })),
+                        body: op.body ? { required: op.body.required, fields: fields(op.body.schema), requiredFields: op.body.schema?.required ?? [] } : null,
+                        outputs: fields(success?.schema),
+                        errors: Object.entries<any>(op.responses).filter(([status]) => /^[45]/.test(status)).map(([status, r]) => ({ status, description: r.description })),
+                    };
+                });
+                list.push({ id: c.id, name: c.name, description: c.description, operations });
+            }
+            response.json({ connectors: list });
+        }));
+
         // ---- a decision's tests (the decision editor's Tests panel), run on the saved file
 
         router.get('/decision/:decision/tests', awaitHandlerFactory(async (request, response) => {

@@ -12,6 +12,7 @@ import type { IDocumentStore, ILockManager } from '../interfaces/storage.js';
 import { Engine } from './Engine.js';
 import { Cron } from './Cron.js';
 import { Listener } from './Listener.js';
+import { Connectors } from '../connectors/Connectors.js';
 import type { ILifecycleListener } from '../interfaces/lifecycle.js';
 
 /**
@@ -59,6 +60,8 @@ class BPMNServer implements IBPMNServer {
 	documentStore?: IDocumentStore;
 	/** The lock port the engine uses. */
 	locker: ILockManager;
+	/** The connectors an administrator added: REST APIs service tasks call (work/connectors.md). */
+	connectors: Connectors;
 	error;
 	/** Settles when the server has started: the application delegate's start-up, then (unless `cron: false`) the timers. Rejects with the reason it could not start. */
 	readonly ready: Promise<void>;
@@ -100,6 +103,7 @@ class BPMNServer implements IBPMNServer {
 		this.appDelegate = configuration.appDelegate(this);
 		this.scriptHandler = configuration.scriptHandler(this);
 		this.locker = configuration.locker ? configuration.locker(this) : this.dataStore.locker;
+		this.connectors = new Connectors(this);
 
 		this.logger.log('bpmn-server version ' + BPMNServer.getVersion());
 

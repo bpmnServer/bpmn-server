@@ -1,8 +1,5 @@
 # Data objects
 
-!!! warning "Draft"
-    For the release after bpmn-server 3.2. Not published until then.
-
 A data object in the diagram stands for data the process works on: a client, an order, a policy. bpmn-server
 asks the application for it when an element connected to it runs, and keeps it in the instance data.
 
@@ -37,7 +34,7 @@ element's own scripts already see it.
 
 ## Checks
 
-[`verifyModel`](../verify.md):
+[`verifyModel`](verify.md):
 
 - `data-object-not-loaded`: a data object connected to nothing, so it is never loaded.
 - `no-data-object-loader`: the model has data objects, but the application's delegate has no `loadDataObject`.

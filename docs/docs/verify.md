@@ -42,7 +42,8 @@ if (!result.valid)
 ```
 
 With a server, the checks that need the application run too: whether the services a service task calls exist,
-and whether a called process is a saved model.
+whether a called process is a saved model, and whether a connector task's connector, operation and inputs are
+the server's.
 
 Through the API, by model name or source:
 
@@ -75,7 +76,11 @@ The result:
 | The engine's load | `engine-load-failed` (error) |
 | Scripts, conditions, expressions | `script-syntax` (error), `expression-syntax` (error), `empty-script` (info) |
 | Timers | `timer-not-defined` (error), `timer-invalid` (error): ISO 8601 durations and dates, cron expressions |
-| Services | `service-not-named` (info), `service-not-found` (info) |
+| Services | `service-not-named` (info), `service-not-found` (info), `unknown-app-service` |
+| Connectors ([more](connectors.md#checking-models)) | `connector-not-named` (error), `connector-and-service` (error), `connector-unknown` (error), `connector-unreadable` (error), `connector-operation-unknown` (error), `connector-input-missing` (error), `connector-disabled`, `connector-operation-disabled`, `connector-input-unknown` |
+| Decisions ([more](decisions.md#when-something-is-wrong)) | `decision-not-named`, `decision-not-found`, `decision-invalid`, `decision-result-not-saved`, `decision-input-from-data` (info) |
+| Data objects | `data-object-not-loaded`, `no-data-object-loader` |
+| Parameters and expressions | `parameter-is-text`, `expression-juel`, `expression-unknown-name`, `template-not-closed` |
 | Called processes | `call-activity-no-target` (error), `called-model-missing` |
 
 Codes not marked are warnings.

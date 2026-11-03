@@ -54,10 +54,10 @@ Item Attributes:
 
  */
 class TimerBehaviour extends Behaviour {
-    duration;
+    declare duration;
     repeat=1;
-    timeCycle;
-    timeDate;
+    declare timeCycle;
+    declare timeDate;
     init() {
         let def;
         this.node.subType = NODE_SUBTYPE.timer;

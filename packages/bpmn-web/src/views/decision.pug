@@ -9,7 +9,7 @@ html(lang="en")
     title= `${name} - Decision editor`
     meta(name="csrf-token" content=_csrf)
     script(src="/javascripts/csrf.js")
-    link(rel="stylesheet" href="/modeler/decision.css")
+    link(rel="stylesheet" href=asset("/modeler/decision.css"))
   body
     #decision-page(data-name=name data-exists=exists ? 'true' : 'false')
       header.modeler-header
@@ -33,4 +33,4 @@ html(lang="en")
           .dock-body
             #js-test.dock-test(role="tabpanel" aria-label="Test")
     script#model-source(type="application/json")!= modelJson
-    script(src="/modeler/decision.js")
+    script(src=asset("/modeler/decision.js"))

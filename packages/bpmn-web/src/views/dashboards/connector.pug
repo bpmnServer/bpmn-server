@@ -1,0 +1,139 @@
+extends layout
+
+mixin post(path)
+	form(method='post', action=`/dashboard/admin/connectors/${encodeURIComponent(connector.id)}${path}`)&attributes(attributes)
+		input(type='hidden', name='_csrf', value=_csrf)
+		block
+
+block intro
+	p.dash-intro
+		| Id
+		code= connector.id
+		|  · models call
+		code #{connector.id}/&lt;operationId&gt;
+		if connector.enabled
+			|  ·
+			span.dash-badge.is-ok enabled
+		else
+			|  ·
+			span.dash-badge.is-warning disabled
+	p: a(href='/dashboard/admin/connectors') ← Connectors
+
+block dash
+	.dash-grid
+		section.dash-card#connector-settings
+			h2 Settings
+			+post('/settings').dash-form
+				label(for='c-name') Name
+				input#c-name(name='name', value=connector.name, required)
+				label(for='c-description') Description
+				input#c-description(name='description', value=connector.description || '')
+				label(for='c-base') Base URL
+				input#c-base(name='baseUrl', type='url', value=connector.baseUrl, required)
+				label(for='c-groups') Groups
+				input#c-groups(name='groups', value=(connector.groups || []).join(', '), placeholder='empty: every designer')
+				label(for='c-timeout') Timeout (ms)
+				input#c-timeout(name='timeout', type='number', min='100', value=connector.timeout == null ? '' : connector.timeout, placeholder='empty: the server\'s (30000)')
+				label(for='c-retries') Retries
+				input#c-retries(name='retries', type='number', min='0', max='10', value=connector.retries == null ? '' : connector.retries, placeholder='empty: the server\'s (2); GET, PUT, DELETE only')
+				label(for='c-enabled') Enabled
+				input#c-enabled(name='enabled', type='checkbox', checked=connector.enabled)
+				button.btn.btn-primary.btn-sm(type='submit') Save
+			p.dash-muted(style='margin-top:10px') The groups may design with this connector. Once a model uses it, it runs for anyone who may run the model.
+
+		section.dash-card#connector-key
+			h2 Authorization key
+			if connector.auth && connector.auth.last4
+				- const how = connector.auth.type + (connector.auth.name ? ` (${connector.auth.in} ${connector.auth.name})` : '')
+				- const when = connector.auth.setAt ? `; set ${new Date(connector.auth.setAt).toLocaleString()}${connector.auth.setBy ? ' by ' + connector.auth.setBy : ''}` : ''
+				p Set: #{how}, ending #[code= connector.auth.last4]#{when}
+			else
+				p.dash-muted No key: calls go without authorization.
+			if canEncrypt
+				+post('/key').dash-form#set-key
+					label(for='k-scheme') Scheme
+					select#k-scheme(name='scheme')
+						each s in schemes
+							option(value=s.name)= s.text
+						option(value='bearer') Bearer token
+						option(value='apiKey') API key in a header or the query
+						option(value='basic') Basic (user:password)
+					label(for='k-name') API key name
+					input#k-name(name='apiKeyName', placeholder='apiKey only: e.g. X-API-Key')
+					label(for='k-in') API key in
+					select#k-in(name='apiKeyIn')
+						option(value='header') header
+						option(value='query') query
+						option(value='cookie') cookie
+					label(for='k-key') Key
+					input#k-key(name='key', type='password', autocomplete='off', required)
+					button.btn.btn-primary.btn-sm(type='submit')= connector.auth && connector.auth.last4 ? 'Replace the key' : 'Set the key'
+				p.dash-muted(style='margin-top:8px') The key is stored encrypted and never shown again; a new one replaces it at once.
+				if connector.auth && connector.auth.last4
+					+post('/key')(onsubmit="return confirm('Remove the key? Calls will go without authorization.')")
+						input(type='hidden', name='clear', value='1')
+						button.btn.btn-default.btn-sm(type='submit') Remove the key
+			else
+				p.dash-muted Set CONNECTORS_KEY in .env (a long random value) and restart: keys are stored encrypted with it.
+
+		section.dash-card.wide#connector-operations
+			h2 Operations
+				span.count= operations.length
+			p.dash-muted Designers see the enabled ones; a model calling a disabled one fails.
+			+post('/operations')
+				table
+					tr
+						th
+						th Operation
+						th Method
+						th Path
+						th Summary
+						th Inputs
+					each op in operations
+						tr
+							td: input(type='checkbox', name='operation', value=op.operationId, checked=op.enabled, aria-label=op.operationId)
+							td: code= op.operationId
+							td= op.method
+							td: code= op.path
+							td= op.summary || ''
+							td.dash-muted= op.parameters.map(p => p.name + (p.required ? '*' : '')).concat(op.body ? [op.body.required ? 'body*' : 'body'] : []).join(', ')
+				button.btn.btn-primary.btn-sm(type='submit', style='margin-top:8px') Save the operations
+
+		section.dash-card#connector-test
+			h2 Test the connection
+			if connector.test
+				p
+					span.dash-badge(class=connector.test.ok ? 'is-ok' : 'is-error')= connector.test.ok ? 'OK' : 'failed'
+					|  #{connector.test.operation}: #{connector.test.message} (#{new Date(connector.test.at).toLocaleString()})
+			+post('/test').dash-form
+				label(for='t-op') Operation
+				select#t-op(name='operation')
+					option(value='') a GET that needs no input
+					each op in operations
+						option(value=op.operationId) #{op.operationId} (#{op.method} #{op.path})
+				label(for='t-input') Inputs
+				textarea#t-input(name='input', rows='2', placeholder='JSON, e.g. { "owner": "bpmnServer", "repo": "bpmn-server" }')
+				button.btn.btn-default.btn-sm(type='submit') Test
+
+		section.dash-card#connector-document
+			h2 OpenAPI document
+			p.dash-muted
+				| #{connector.openapi.title || ''} (OpenAPI #{connector.openapi.version}), read #{new Date(connector.openapi.fetchedAt).toLocaleString()}
+				if connector.openapi.source
+					|  from
+					code= connector.openapi.source
+			+post('/refresh').dash-form
+				label(for='r-document') New document
+				textarea#r-document(name='document', rows='3', placeholder=connector.openapi.source ? 'empty: read it again from its URL' : 'paste the new document')
+				button.btn.btn-default.btn-sm(type='submit') Refresh
+			p.dash-muted(style='margin-top:8px') Operations the document no longer has are dropped; new ones are enabled.
+
+		section.dash-card#connector-delete
+			h2 Delete
+			if models.length
+				p
+					| Used by #{models.length} model#{models.length === 1 ? '' : 's'}: #[strong= models.join(', ')]. They fail at this task once it is deleted.
+			else
+				p.dash-muted No model in the models folder uses it.
+			+post('/delete')(onsubmit=`return confirm('Delete the connector ${connector.id}${models.length ? ', which ' + models.length + ' model(s) use' : ''}?')`)
+				button.btn.btn-danger.btn-sm(type='submit') Delete the connector

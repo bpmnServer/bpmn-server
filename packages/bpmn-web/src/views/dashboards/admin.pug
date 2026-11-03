@@ -131,6 +131,33 @@ block dash
 				input#new-groups(name='userGroups', placeholder='e.g. Employee, Manager, DESIGNER, ADMIN')
 				button.btn.btn-primary.btn-sm(type='submit') Add user
 
+		//- connectors: none passed (an older route) shows as none
+		- const connectorList = typeof connectors === 'undefined' || !connectors ? [] : connectors
+		section.dash-card#connectors
+			h2 Connectors
+				span.count= connectorList.length
+			p.dash-muted REST APIs, each described by an OpenAPI document, that service tasks call by name. You add them here with their keys; models never hold a key.
+			if connectorList.length
+				table
+					tr
+						th Connector
+						th Status
+						th Key
+					each c in connectorList
+						tr
+							td: a(href=`/dashboard/admin/connectors/${encodeURIComponent(c.id)}`)= c.name
+							td
+								if c.enabled
+									span.dash-badge.is-ok enabled
+								else
+									span.dash-badge.is-warning disabled
+							td= c.auth && c.auth.last4 ? `${c.auth.type} …${c.auth.last4}` : 'none'
+			else
+				p.dash-empty No connectors yet.
+			if !canEncrypt
+				p.dash-muted Set CONNECTORS_KEY in .env (a long random value) to give connectors their keys: they are stored encrypted with it.
+			a.btn.btn-default.btn-sm#manage-connectors(href='/dashboard/admin/connectors') Manage connectors
+
 		section.dash-card#console
 			h2 Console commands
 			p.dash-muted

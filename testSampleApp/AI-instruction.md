@@ -93,6 +93,11 @@ bpmn-validate skills).
 3. To offer it in the model editor, add `connectors/<name>.json`, modelled on `connectors/echo.json`: a Hidden
    property bound to `camunda:delegateExpression`, one property per input bound to `camunda:inputParameter`.
 
+A REST API with an OpenAPI document needs no service: an administrator adds it as a **connector**
+(Administration, Connectors; or `coa` in `npm run cli`), and the model calls it with a `camunda:connector` naming
+`<connector>/<operationId>`, with the connector's own input and output parameters. Never put its key in a model
+or in code.
+
 ## Checks: run them, report their results
 
 Build the packages once if `../packages/bpmn-web/dist` is missing: `npm run build` in the repository root.

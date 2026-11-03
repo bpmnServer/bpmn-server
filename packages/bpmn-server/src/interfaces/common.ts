@@ -44,6 +44,19 @@ interface IConfiguration
      * nothing (they end with no output). Each says so in the run's decisions. Pair it with SandboxScriptHandler.
      */
     demo?: boolean,
+    /** Connectors' calls (work/connectors.md): the defaults a connector's own timeout and retries override. */
+    connectors?: IConnectorsConfiguration,
+}
+
+interface IConnectorsConfiguration {
+    /** ms a call waits for its answer; default 30000 */
+    timeout?: number;
+    /** further tries of an idempotent call (GET, HEAD, PUT, DELETE) after a network error, 429 or 5xx; default 2 */
+    retries?: number;
+    /** ms before the first retry, doubled for each next one; default 200 */
+    retryDelay?: number;
+    /** the largest answer read, in bytes; default 5 MB */
+    maxResponseBytes?: number;
 }
 
 interface IDatabaseConfigurationBase {
@@ -153,4 +166,4 @@ interface IAppDelegate {
     loadDataObject?(name: string, item: IItem): unknown | Promise<unknown>;
 }
 
-export { ILogger, IAppDelegate, IConfiguration, IServiceProvider }
+export { ILogger, IAppDelegate, IConfiguration, IConnectorsConfiguration, IServiceProvider }

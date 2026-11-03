@@ -302,6 +302,68 @@ class ModelVerifier {
         }
     }
 
+    /**
+     * A task that calls a connector (work/connectors.md): it names `<connector>/<operationId>`, and no service; with a
+     * server, the connector and the operation are there and enabled, the operation's required inputs are given, and
+     * every input is one of the operation's.
+     */
+    private async checkConnector(node: ServiceTask, connector, def) {
+        const ref = connector.connectorId;
+        if (node.serviceName)
+            this.add('error', 'connector-and-service', `The task calls the connector '${ref}' and names the service '${node.serviceName}': it calls the connector; remove the service.`, def);
+        const slash = ref.indexOf('/');
+        if (slash <= 0 || slash === ref.length - 1) {
+            this.add('error', 'connector-not-named', ref
+                ? `'${ref}' does not name a connector's operation: <connector>/<operationId>.`
+                : 'The task calls a connector but does not name it: choose the connector and its operation.', def);
+            return;
+        }
+        const connectors = this.server?.connectors;
+        if (!connectors)
+            return;
+        const id = ref.slice(0, slash), operationId = ref.slice(slash + 1);
+        const found = await connectors.get(id).catch(() => undefined);
+        if (!found) {
+            this.add('error', 'connector-unknown', `The server has no connector '${id}': an administrator adds it (Administration, Connectors).`, def);
+            return;
+        }
+        if (!found.enabled)
+            this.add('warning', 'connector-disabled', `The connector '${id}' is disabled: the task fails until an administrator enables it.`, def);
+        let operation;
+        try {
+            operation = (await connectors.operations(id)).find(op => op.operationId === operationId);
+        }
+        catch (exc) {
+            this.add('error', 'connector-unreadable', `The connector '${id}' can not be read: ${exc.message}`, def);
+            return;
+        }
+        if (!operation) {
+            this.add('error', 'connector-operation-unknown', `The connector '${id}' has no operation '${operationId}'.`, def);
+            return;
+        }
+        if (!operation.enabled)
+            this.add('warning', 'connector-operation-disabled', `The operation '${ref}' is disabled: the task fails until an administrator enables it.`, def);
+        const given = new Set(((connector.io?.parameters ?? []) as any[]).filter(p => p.isInput()).map(p => p.name));
+        const bodyFields = operation.body?.schema?.properties ? Object.keys(operation.body.schema.properties) : [];
+        const inputs = [
+            ...operation.parameters.map(p => ({ name: p.name, required: p.required })),
+            ...(operation.body ? (bodyFields.length
+                ? bodyFields.map(f => ({ name: `body.${f}`, required: (operation.body.schema.required ?? []).includes(f) && !given.has('body') }))
+                : [{ name: 'body', required: operation.body.required }]) : []),
+        ];
+        for (const input of inputs)
+            if (input.required && !given.has(input.name))
+                this.add('error', 'connector-input-missing', `The operation '${ref}' needs the input '${input.name}': the call fails without it.`, def);
+        // a body the operation requires: given whole (body), or by at least one of its fields (body.<field>)
+        if (operation.body?.required && !given.has('body') && ![...given].some(n => n.startsWith('body.'))
+            && !inputs.some(i => i.required && i.name.startsWith('body.')))
+            this.add('error', 'connector-input-missing', `The operation '${ref}' needs a request body: the input 'body', or its fields (body.<field>).`, def);
+        const known = new Set([...inputs.map(i => i.name), ...(operation.body ? ['body'] : [])]);
+        for (const name of given)
+            if (!known.has(name))
+                this.add('warning', 'connector-input-unknown', `'${name}' is not an input of '${ref}': it is not sent.`, def);
+    }
+
     async verifyExecutables(definition: Definition) {
         const handler = this.server && this.server.scriptHandler;
         // scripts and expressions are only checked for the built-in JavaScript handler
@@ -340,7 +402,10 @@ class ModelVerifier {
             const timer = node.getBehaviour(Behaviour_names.TimerEventDefinition);
             if (timer) this.checkTimer(timer, def, checkScripts);
 
-            if (node instanceof ServiceTask && !(node instanceof BusinessRuleTask)) {
+            const connector = node instanceof ServiceTask ? node.connector : undefined;
+            if (connector)
+                await this.checkConnector(node as ServiceTask, connector, def);
+            else if (node instanceof ServiceTask && !(node instanceof BusinessRuleTask)) {
                 const serviceName = node.serviceName;
                 if (!serviceName)
                     this.add('info', 'service-not-named', 'Service task does not name a service (implementation or delegateExpression); appDelegate.serviceCalled will handle it.', def);
@@ -350,7 +415,7 @@ class ModelVerifier {
 
             // a parameter is an expression only with a leading $; without it, it is the text as written
             const io = node.getBehaviour(Behaviour_names.CamundaIO) as any;
-            for (const p of (io && io.parameters) || []) {
+            for (const p of [...((io && io.parameters) || []), ...((connector?.io as any)?.parameters || [])]) {
                 if (typeof p.value == 'string' && /^\s*(data|item|input|output)\.[\w.]+\s*$/.test(p.value))
                     this.add('warning', 'parameter-is-text', `Parameter '${p.name}' is the text '${p.value.trim()}', not its value: write $${p.value.trim()} to read it.`, def);
                 // an input parameter's text is evaluated as an expression, or its ${...} parts filled in

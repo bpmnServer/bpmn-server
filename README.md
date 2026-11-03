@@ -8,12 +8,59 @@ This repository holds the engine (`bpmn-server`), its web application (`bpmn-web
 
 The following diagram illustrates the core components of `bpmn-server` and how they interact:
 
-![Architecture Diagram](https://bpmnserver.github.io/docs/images/architecture-diagram.png)
+```mermaid
+flowchart TB
+  subgraph Users["People and systems"]
+    Browser["Browser<br/>designers, users, administrators"]
+    Remote["Another application<br/>(bpmn-client)"]
+  end
 
-- **Modeler**: Front-end UI for designing BPMN models using bpmn.io.
-- **bpmn-server Core**: Executes BPMN workflows, manages state, and interfaces with external services.
-- **Datastore**: Persists workflow state, variables, and history (MongoDB by default).
-- **Application Layer**: Your Node.js app that integrates with the server, handles user authentication, and invokes workflows.
+  subgraph Web["bpmn-web"]
+    Modeler["Model editor<br/>(bpmn.io, DMN, tests)"]
+    Pages["Dashboards, tasks,<br/>administration"]
+    REST["REST APIs<br/>/api2, /admin/api2"]
+  end
+
+  subgraph App["Your application"]
+    Delegate["App delegate<br/>and services"]
+  end
+
+  subgraph Core["bpmn-server"]
+    Engine["Engine<br/>executions, tokens, items"]
+    Verify["Model checks<br/>(verifyModel)"]
+    DMN["Decisions<br/>(DMN, FEEL)"]
+    Connectors["Connectors<br/>(OpenAPI)"]
+  end
+
+  subgraph Storage["Storage port"]
+    Mongo[("MongoDB")]
+    SQLite[("SQLite")]
+    Memory[("Memory")]
+  end
+
+  APIs["External REST APIs"]
+
+  Browser --> Modeler & Pages
+  Remote --> REST
+  Modeler & Pages & REST --> Engine
+  Modeler --> Verify
+  Engine --> DMN
+  Engine -- service tasks --> Delegate
+  Engine -- service tasks --> Connectors
+  Connectors --> APIs
+  Engine --> Storage
+```
+
+- **bpmn-web**: the web application: the model editor (bpmn.io) with its checks and tests, the decision editor,
+  dashboards and task lists, administration (users, connectors, backups), and the REST APIs.
+- **bpmn-server core**: executes BPMN workflows, evaluates DMN decisions, checks models, and keeps each
+  instance's state and variables.
+- **Your application**: starts bpmn-web (or embeds the engine), and provides the app delegate and the services
+  that service tasks call.
+- **Connectors**: REST APIs described by OpenAPI that an administrator adds with their keys; service tasks call
+  them with no code.
+- **Storage**: instances, models and history through one storage port: MongoDB (the default), SQLite, or memory.
+- **bpmn-client**: another Node.js application drives the server through the REST APIs.
 
 ## Quick Start
 

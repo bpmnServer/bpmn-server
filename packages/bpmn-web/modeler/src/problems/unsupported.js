@@ -29,8 +29,8 @@ const EXTENSION_SETTINGS = {
     'camunda:Field': 'Field injection',
     'camunda:Properties': 'Extension properties',
     'camunda:In': 'Call activity input mapping',
-    'camunda:Out': 'Call activity output mapping',
-    'camunda:Connector': 'Connector'
+    'camunda:Out': 'Call activity output mapping'
+    // camunda:Connector runs: a service task calls a connector (properties/ConnectorEntries.jsx)
 };
 
 const PROCESS_SETTINGS = [

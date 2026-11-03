@@ -6,3 +6,4 @@ export * from './datastore/index.js';
 export * from './interfaces/index.js';
 export * from './API/index.js';
 export * from './dmn/index.js';
+export * from './connectors/index.js';

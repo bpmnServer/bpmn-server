@@ -56,7 +56,8 @@
     "iso8601-duration": "^2.1.4",
     "mongodb": "^7.6.0",
     "quickjs-emscripten-core": "^0.32.0",
-    "xml2js": "^0.6.2"
+    "xml2js": "^0.6.2",
+    "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@types/node": "^26.3.0",

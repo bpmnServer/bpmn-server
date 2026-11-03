@@ -141,12 +141,25 @@ in the instance data under the field's ID.
 
 | Group | Field | In the file | What bpmn-server does |
 | --- | --- | --- | --- |
+| Service | Calls | (one of the two below) | A service of the application, or a connector. A task has one or the other. |
 | Service | Service name | `camunda:delegateExpression` (or `implementation`) | Calls that function of the application's services, with the task's input. Dotted names reach into objects: `notify.email`. Without a matching service, `appDelegate.serviceCalled` handles the call. |
 | Inputs | (see below) | `camunda:inputParameter` | The service's input: `service(input, context)`. |
 | Outputs | (see below) | `camunda:outputParameter` | Where the service's result is stored. |
 
 Example: Service name `add`, inputs `v1` = `2` and `v2` = `$data.fee`, output `sum` with an empty value: the
 sum is stored as `data.sum`.
+
+**A connector** (Calls: Connector) is set up in the connector wizard; the Service group then shows a summary of it
+and **Edit connector…**. The task's own Inputs and Outputs groups are not shown: the connector has its own.
+
+| Wizard step | In the file | What bpmn-server does |
+| --- | --- | --- |
+| Operation | `camunda:connectorId` in `camunda:connector`: `<connector>/<operationId>` | Calls that operation of the connector the administrator added. |
+| Inputs | `camunda:inputParameter` in the connector's `camunda:inputOutput` | Each is a parameter of the operation (path, query, header), or the request body: `body`, or `body.<field>`. Empty inputs are not written. |
+| Outputs | `camunda:outputParameter` in the connector's `camunda:inputOutput` | `${output.<field>}` (or `${output}`, the whole answer), kept in the data under the parameter's name. |
+
+See [Connectors](https://bpmnserver.github.io/docs/connectors) for what happens at run time: HTTP errors as
+`HTTP_<status>`, timeouts, retries.
 
 ## Script task
 
@@ -266,7 +279,7 @@ Problems list says it has no effect.
 | Job execution | `camunda:jobPriority`, `camunda:failedJobRetryTimeCycle` |
 | Java implementations | `camunda:class`, `camunda:expression`, Java listeners (without a script) |
 | External tasks | `camunda:type="external"`, `camunda:topic` |
-| Connectors | `camunda:connector` |
+| Camunda's HTTP connector | a `camunda:connector` whose `connectorId` is not `<connector>/<operation>` (`http-connector`) |
 | Field injection | `camunda:field` |
 | Result variable | `camunda:resultVariable` |
 | Script resource | `camunda:resource` |

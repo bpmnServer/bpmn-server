@@ -147,11 +147,11 @@ JavaScript| { 'key1': 'val1', 'key2': 'val2' , 'key3': [item.data.myExistingVar,
 
 }
 class IOBehaviour extends Behaviour {
-    parameters: IOParameter[];
+    declare parameters: IOParameter[];
 
     init() {
         this.parameters = [];
-        var ios = this.definition['$children'];
+        var ios = this.definition['$children'] ?? [];     // <camunda:inputOutput /> has none
         for (var i = 0; i < ios.length; i++) {
             var io = ios[i];
             this.parameters.push(new IOParameter(io));//['$type'], io['name'], io['$body']));

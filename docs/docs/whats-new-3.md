@@ -3,7 +3,8 @@
 bpmn-server 3 is a modernized engine: an ES module on current Node.js and MongoDB drivers, embeddable in a larger
 application, with a runtime API kept apart from model administration, a model checker, and a much faster step.
 
-This page lists what changed since 2.3, and what to change when upgrading.
+This page lists what changed since 2.3, and what to change when upgrading. For 3.5's new features (connectors,
+SQLite, decisions, the model editor), see [What's new in 3.5](whats-new-3.5.md).
 The full list is in the [change log](https://github.com/bpmnServer/bpmn-server/blob/main/packages/bpmn-server/CHANGELOG.md).
 
 ## Upgrading from 3.2 to 3.5

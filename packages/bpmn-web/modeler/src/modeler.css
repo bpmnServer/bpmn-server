@@ -1164,3 +1164,132 @@ table.test-runs { border-collapse: collapse; font-size: 12px; margin-bottom: 8px
 .test-editor details > summary { cursor: pointer; font-weight: 600; padding: 2px 0; }
 .test-editor details > summary::marker { content: '+ '; color: #6b7079; }
 .test-editor details[open] > summary::marker { content: '− '; }
+
+/* a connector task in the Service group (properties/ConnectorEntries.jsx): what it calls, its inputs and outputs */
+.bio-properties-panel-connector-summary { margin: 4px 12px 10px; }
+.bio-properties-panel-connector-ref code { font-size: 13px; font-weight: 600; word-break: break-all; }
+.bio-properties-panel-connector-ref .bio-properties-panel-description { margin: 2px 0 0; }
+.bio-properties-panel-connector-heading {
+    margin: 10px 0 2px;
+    padding-top: 6px;
+    border-top: 1px solid #e3e6ea;
+    font-size: 12px;
+    font-weight: 600;
+    color: #52575f;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.bio-properties-panel-connector-summary .bio-properties-panel-description { margin: 2px 0; }
+.bio-properties-panel-connector-list { list-style: none; margin: 0; padding: 0; font-size: 13px; }
+.bio-properties-panel-connector-list li { padding: 1px 0; overflow-wrap: anywhere; }
+.bio-properties-panel-connector-list code { font-size: 12px; }
+.bio-properties-panel-connector-name { font-weight: 600; }
+.bio-properties-panel-connector-problem { margin: 6px 0; padding: 4px 6px; border-radius: 3px; background: #fdf3e1; color: #7a4a00; font-size: 12px; }
+.bio-properties-panel-connector-edit {
+    margin-top: 10px;
+    font: inherit;
+    font-size: 13px;
+    padding: 4px 12px;
+    border: 1px solid #1f62c8;
+    border-radius: 3px;
+    background: #1f62c8;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* the connector wizard (connectors/Wizard.jsx): a window over the editor, in three steps */
+dialog.connector-wizard {
+    width: calc(100vw - 48px);
+    height: calc(100vh - 48px);
+    max-width: 1100px;
+    max-height: none;
+    padding: 0;
+    border: 1px solid #c4c8cf;
+    border-radius: 6px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #1f2329;
+}
+dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
+.connector-wizard-frame { display: flex; flex-direction: column; height: 100%; }
+.connector-wizard-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e3e6ea;
+}
+.connector-wizard-header h2 { margin: 0; font-size: 17px; flex: 1 1 auto; }
+.connector-wizard-chosen { font-weight: normal; font-family: monospace; font-size: 14px; color: #52575f; }
+.connector-wizard-steps { display: flex; gap: 4px; list-style: none; margin: 0; padding: 0; }
+.connector-wizard-steps button {
+    font: inherit; font-size: 13px; padding: 4px 10px; border: 1px solid #c4c8cf; border-radius: 14px; background: #fff; cursor: pointer;
+}
+.connector-wizard-steps button.current { background: #1f62c8; border-color: #1f62c8; color: #fff; }
+.connector-wizard-steps button:disabled { opacity: 0.5; cursor: default; }
+.connector-wizard-close { border: none; background: none; font-size: 16px; cursor: pointer; color: #52575f; }
+.connector-wizard-body { flex: 1; overflow-y: auto; padding: 12px 16px; }
+.connector-wizard-footer {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    padding: 10px 16px; border-top: 1px solid #e3e6ea;
+}
+.connector-wizard-footer button {
+    font: inherit; font-size: 13px; padding: 5px 14px; margin-left: 6px; border: 1px solid #c4c8cf; border-radius: 3px; background: #fff; cursor: pointer;
+}
+.connector-wizard-footer button.primary { background: #1f62c8; border-color: #1f62c8; color: #fff; }
+.connector-wizard-footer button:disabled { opacity: 0.5; cursor: default; }
+.connector-wizard-warning { color: #9a3b00; font-size: 13px; }
+.connector-wizard-note { margin: 6px 0 10px; color: #52575f; font-size: 13px; }
+.connector-wizard-description { color: #6b7079; font-size: 12px; font-weight: normal; }
+
+#connector-wizard-search {
+    width: 100%; box-sizing: border-box; font: inherit; font-size: 15px; padding: 8px 10px; border: 1px solid #c4c8cf; border-radius: 4px;
+}
+.connector-wizard-group h3 { margin: 14px 0 4px; font-size: 14px; }
+.connector-wizard-operations { list-style: none; margin: 0; padding: 0; }
+.connector-wizard-operation {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2px 10px;
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    font-size: 13px;
+    padding: 6px 8px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: none;
+    cursor: pointer;
+}
+.connector-wizard-operation:hover, .connector-wizard-operation:focus { background: #f0f4fb; border-color: #c9d6ee; }
+.connector-wizard-operation.picked { background: #e8f0fc; border-color: #1f62c8; }
+.connector-wizard-method { font-weight: 700; font-size: 11px; font-family: monospace; padding-top: 2px; }
+.connector-wizard-method.get { color: #1a7f37; }
+.connector-wizard-method.post { color: #1f62c8; }
+.connector-wizard-method.put, .connector-wizard-method.patch { color: #9a5b00; }
+.connector-wizard-method.delete { color: #b42318; }
+.connector-wizard-path { font-family: monospace; overflow-wrap: anywhere; }
+.connector-wizard-id { color: #52575f; overflow-wrap: anywhere; }
+.connector-wizard-summary { grid-column: 2 / 4; color: #6b7079; font-size: 12px; }
+
+.connector-wizard-table { width: 100%; border-collapse: collapse; }
+.connector-wizard-table th, .connector-wizard-table td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #eceef1; vertical-align: top; }
+.connector-wizard-table th { font-size: 12px; color: #52575f; font-weight: 600; }
+.connector-wizard-table tr.missing .connector-wizard-input-name { color: #b42318; }
+.connector-wizard-table tr.on { background: #f7faff; }
+.connector-wizard-table input:not([type=checkbox]) {
+    width: 100%; box-sizing: border-box; font: inherit; font-size: 13px; padding: 4px 6px; border: 1px solid #c4c8cf; border-radius: 3px;
+}
+.connector-wizard-table input:disabled { background: #f4f5f7; color: #8a8f98; }
+.connector-wizard-input-name { font-weight: 600; font-family: monospace; }
+.connector-wizard-in { color: #52575f; font-size: 12px; white-space: nowrap; }
+.connector-wizard-check { width: 28px; }
+.connector-wizard-value { display: flex; gap: 6px; }
+.connector-wizard-small { font: inherit; font-size: 12px; padding: 2px 8px; border: 1px solid #c4c8cf; border-radius: 3px; background: #fff; cursor: pointer; white-space: nowrap; }
+
+@media (max-width: 640px) {
+    dialog.connector-wizard { width: 100vw; height: 100vh; border-radius: 0; }
+    .connector-wizard-operation { grid-template-columns: 52px minmax(0, 1fr); }
+    .connector-wizard-id, .connector-wizard-summary { grid-column: 2; }
+}

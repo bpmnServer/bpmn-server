@@ -5,6 +5,7 @@ import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { attributeEntry } from './AttributeEntry.jsx';
 import { formatEntry } from './FormatEntry.jsx';
 import { codeEntry } from './code/CodeEntry.jsx';
+import { callsEntry, connectorEntries, getConnector } from './ConnectorEntries.jsx';
 
 export function ServiceGroup(element, translate) {
     if (!is(element, 'bpmn:ServiceTask') && !is(element, 'bpmn:SendTask'))
@@ -16,10 +17,13 @@ export function ServiceGroup(element, translate) {
         label: translate('Service'),
         component: Group,
         entries: [
-            attributeEntry(element, {
-                id: 'service-name', attribute, label: 'Service name',
-                description: 'A service of the application\'s services provider, e.g. notifyManager'
-            })
+            callsEntry(element),
+            ...(getConnector(element) ? connectorEntries(element) : [
+                attributeEntry(element, {
+                    id: 'service-name', attribute, label: 'Service name',
+                    description: 'A service of the application\'s services provider, e.g. notifyManager'
+                })
+            ])
         ]
     };
 }

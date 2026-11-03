@@ -4,6 +4,7 @@
  */
 import { BPMNServer, dateDiff, SystemUser, BPMNAPI } from "bpmn-server";
 import * as readline from "node:readline";
+import FS from "node:fs";
 import { UserService } from "./userAccess/UserService.js";
 
 let server: BPMNServer;
@@ -100,6 +101,7 @@ function menu() {
 	console.log('	re	Recover hung processes');
 	console.log('	lu	List Users');
 	console.log('	spw	Set User Password');
+	console.log('	co	List connectors (coa add, cok set its key, coe enable/disable, cot test, cor refresh, cod delete, coc call)');
 	console.log('	?	repeat this list');
 
 }
@@ -190,6 +192,14 @@ async function completeUserTask() {
 			});
 			console.log();
 			break;
+		case 'co': case 'coa': case 'cok': case 'coe': case 'cot': case 'cor': case 'cod': case 'coc':
+			try {
+				await connectorCommand(option);
+			}
+			catch (error) {
+				console.log('error:', error.message);
+			}
+			break;
 		case 'spw':
 			console.log("setting user password");
 
@@ -206,6 +216,75 @@ async function completeUserTask() {
 	process.exit();
 
 }
+/** Connectors (work/connectors.md): REST APIs described by OpenAPI, which service tasks call. */
+async function connectorCommand(option: string) {
+	const connectors = server.connectors;
+	const id = option === 'co' ? '' : (await question('Connector id: ')).trim();
+	switch (option) {
+		case 'co': {
+			const list = await connectors.list();
+			if (!list.length) console.log('No connectors: coa adds one');
+			for (const c of list) {
+				const ops = Object.values(c.operations);
+				console.log(`${c.id}\t${c.enabled ? 'enabled' : 'DISABLED'}\t${c.name}\t${c.baseUrl}\t${ops.filter(Boolean).length}/${ops.length} operations`
+					+ `\tkey: ${c.auth?.last4 ? `${c.auth.type} ...${c.auth.last4}` : 'none'}${c.test ? `\ttest: ${c.test.ok ? 'ok' : 'failed'} (${c.test.message})` : ''}`);
+			}
+			break;
+		}
+		case 'coa': {
+			const where = (await question('OpenAPI document (a URL, or a file): ')).trim();
+			const isFile = !/^https?:\/\//i.test(where);
+			const baseUrl = (await question('Base URL (empty: the document\'s server): ')).trim();
+			const name = (await question('Name (empty: the document\'s title): ')).trim();
+			const added = await connectors.add({ id, name: name || undefined, baseUrl: baseUrl || undefined,
+				...(isFile ? { document: FS.readFileSync(where, 'utf8') } : { source: where }) });
+			const ops = Object.keys(added.operations);
+			console.log(`added '${added.id}' (${added.baseUrl}): ${ops.length} operations: ${ops.join(', ')}`);
+			break;
+		}
+		case 'cok': {
+			const scheme = (await question('Security scheme (empty: the document\'s only one; or bearer, basic, apiKey:<header>): ')).trim();
+			const key = await question('Key (basic: user:password): ');
+			const how = scheme === 'bearer' || scheme === 'basic' ? { type: scheme as any }
+				: scheme.startsWith('apiKey:') ? { type: 'apiKey' as const, in: 'header' as const, name: scheme.slice(7) } : scheme || undefined;
+			const updated = await connectors.setKey(id, key.trim(), how);
+			console.log(`key set for '${id}': ${updated.auth.type} ...${updated.auth.last4}`);
+			break;
+		}
+		case 'coe': {
+			const on = /^(y|yes|on|enable|true)$/i.test((await question('Enable it? (y/n): ')).trim());
+			await connectors.update(id, { enabled: on });
+			console.log(`'${id}' ${on ? 'enabled' : 'disabled'}`);
+			break;
+		}
+		case 'cot': {
+			const operation = (await question('Operation (empty: a GET that needs no input): ')).trim();
+			const result = await connectors.test(id, operation || undefined);
+			console.log(`${result.ok ? 'ok' : 'failed'}: ${result.operation}: ${result.message}`);
+			break;
+		}
+		case 'cor': {
+			const file = (await question('A new document file (empty: read it again from its URL): ')).trim();
+			const changed = await connectors.refresh(id, file ? FS.readFileSync(file, 'utf8') : undefined);
+			console.log(`refreshed: added ${changed.added.join(', ') || 'none'}; removed ${changed.removed.join(', ') || 'none'}`);
+			break;
+		}
+		case 'cod': {
+			if (!/^y/i.test((await question(`Delete the connector '${id}'? (y/n): `)).trim())) break;
+			console.log(await connectors.remove(id) ? `'${id}' deleted` : `no connector '${id}'`);
+			break;
+		}
+		case 'coc': {
+			const operation = (await question('Operation: ')).trim();
+			const input = await getCriteria('Input');
+			const { status, output } = await connectors.call(`${id}/${operation}`, input ?? {});
+			console.log(`HTTP ${status}`);
+			console.log(JSON.stringify(output, null, 2));
+			break;
+		}
+	}
+}
+
 async function startProc()
 {
   const name = await question('Please provide your process name: ');

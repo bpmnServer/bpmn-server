@@ -1,0 +1,50 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "GitHub (repositories)",
+    "version": "1.0.0",
+    "description": "The part of GitHub's REST API the sample uses: a repository. The operationId is GitHub's own (its published document, github/rest-api-description, has the same), so that document can replace this one."
+  },
+  "servers": [{ "url": "https://api.github.com" }],
+  "components": {
+    "securitySchemes": {
+      "token": { "type": "http", "scheme": "bearer", "description": "A personal access token: optional for public repositories, it raises the rate limit" }
+    },
+    "schemas": {
+      "repository": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "name": { "type": "string" },
+          "full_name": { "type": "string" },
+          "description": { "type": "string", "nullable": true },
+          "html_url": { "type": "string" },
+          "stargazers_count": { "type": "integer" },
+          "forks_count": { "type": "integer" },
+          "open_issues_count": { "type": "integer" },
+          "language": { "type": "string", "nullable": true }
+        }
+      },
+      "error": {
+        "type": "object",
+        "properties": { "message": { "type": "string" }, "documentation_url": { "type": "string" } }
+      }
+    }
+  },
+  "paths": {
+    "/repos/{owner}/{repo}": {
+      "get": {
+        "operationId": "repos/get",
+        "summary": "Get a repository",
+        "parameters": [
+          { "name": "owner", "in": "path", "required": true, "description": "The account that owns the repository", "schema": { "type": "string" } },
+          { "name": "repo", "in": "path", "required": true, "description": "The repository's name", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "The repository", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/repository" } } } },
+          "404": { "description": "No such repository", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/error" } } } }
+        }
+      }
+    }
+  }
+}

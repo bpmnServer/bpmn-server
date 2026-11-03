@@ -87,6 +87,16 @@ export class WebApp {
 		app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 3000);
 		app.set('views', path.join(__dirname, '../src/views'));
 		app.set('view engine', 'pug');
+		// the editors' bundles are cached for a year (public/): their URLs carry their build time, so a new build is
+		// a new URL and a browser never keeps running an old one
+		app.locals.asset = (file: string) => {
+			try {
+				return `${file}?v=${Math.round(fs.statSync(path.join(__dirname, '../public', file)).mtimeMs)}`;
+			}
+			catch {
+				return file;
+			}
+		};
 		app.use(compression());
 		// Security headers. CSP is disabled because the modeler/UI loads inline scripts
 		// and a CDN; HSTS only takes effect over HTTPS (harmless over HTTP).

@@ -86,7 +86,9 @@ export function describeBehaviour(element) {
     else if (is(bo, 'bpmn:Activity')) {
         summary = 'Work done in the process.';
         if (is(bo, 'bpmn:UserTask')) completes = 'When a user completes it (Execute on its task page, or the API\'s invoke)';
-        else if (is(bo, 'bpmn:ServiceTask')) completes = 'When the service it calls returns (the app delegate\'s services)';
+        else if (is(bo, 'bpmn:ServiceTask')) completes = (bo.get('extensionElements')?.get('values') ?? []).some(v => is(v, 'camunda:Connector'))
+            ? 'When the connector answers (an error status is a BPMN error HTTP_<status>)'
+            : 'When the service it calls returns (the app delegate\'s services)';
         else if (is(bo, 'bpmn:ScriptTask')) completes = 'When its script has run';
         else if (is(bo, 'bpmn:BusinessRuleTask')) completes = 'When its decision has been evaluated';
         else if (is(bo, 'bpmn:SendTask')) completes = 'When its message has been sent';
