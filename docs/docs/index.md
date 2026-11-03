@@ -9,6 +9,8 @@ Build and run long-lived business processes **inside your application**. BPMN Se
 
 ## Get started
 
+**Recommended first step:** [Build, test, and run your first workflow](first-workflow.md). Start in the [online demo](https://bpmn.omniworkflow.com/) or install a local application; both paths lead through **Model → Configure → Check → Test → Run → Complete tasks → Inspect results**.
+
 Try a small application without running a database server:
 
 ```sh
