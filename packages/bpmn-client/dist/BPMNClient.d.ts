@@ -64,6 +64,10 @@ declare class ClientDefinitions {
     private client;
     constructor(client: any);
     import(name: any, pathToBPMN: any, pathToSVG?: any): Promise<any>;
+    /**
+     * The models' names, with the runtime key (bpmn-web >= 3.5 serves the list on /api); an older server
+     * only has it under /admin/api, with the admin key.
+     */
     list(): Promise<string[]>;
     delete(name: any): Promise<IDefinitionData>;
     rename(name: any, newName: any): Promise<IDefinitionData>;

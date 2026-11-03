@@ -36,6 +36,12 @@ export class API extends Common {
 
         router.use(['/definitions', '/model'], modelNameGuard);
 
+        // the models' names, read-only (as /api2/model/list), so a client can list them with administration
+        // off (DISABLE_ADMIN); changing models stays under /admin/api
+        router.get('/definitions/list', loggedIn, async function (req, response) {
+            response.json(await bpmnServer.definitions.getList());
+        });
+
         router.get('/status', loggedIn, awaitAppDelegateFactory(async (request, response) => {
 
             let status;

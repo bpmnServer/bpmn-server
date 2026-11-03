@@ -277,8 +277,22 @@ class ClientDefinitions {
         return res;
 
     }
+    /**
+     * The models' names, with the runtime key (bpmn-web >= 3.5 serves the list on /api); an older server
+     * only has it under /admin/api, with the admin key.
+     */
     async list(): Promise<string[]> {
-        var res = await this.client.admin('definitions/list', 'GET', []);
+        var res;
+        try {
+            res = await this.client.get('definitions/list', []);
+        }
+        catch (error) {
+            // older servers: 404, or (before API 404s) the UI's login page
+            if (error.status === 404 || error.isWebPage)
+                res = await this.client.admin('definitions/list', 'GET', []);
+            else
+                throw error;
+        }
         if (res['errors']) {
             console.log(res['errors']);
             throw new Error(res['errors']);

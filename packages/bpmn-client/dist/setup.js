@@ -14,7 +14,7 @@ const cwd = process.cwd();
 createEnv();
 function createEnv() {
     if (!fs.existsSync('.env')) {
-        fs.appendFileSync('.env', "API_KEY = 12345 \nHOST = localhost\nPORT = 3000\nBASE_URL = api");
+        fs.appendFileSync('.env', "API_KEY = 12345 \nADMIN_API_KEY = 12345 \nHOST = localhost\nPORT = 3000\nBASE_URL = api");
         console.log(`file ".env" created.`);
     }
     else

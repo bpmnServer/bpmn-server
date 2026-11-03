@@ -4,7 +4,8 @@ import { BPMNClient } from './index.js';
 import * as readline from 'readline';
 import dotenv from 'dotenv';
 const res = dotenv.config();
-const server = new BPMNClient(process.env.HOST, process.env.PORT, process.env.API_KEY);
+// ADMIN_API_KEY: the model commands (lm) are on the server's administration API
+const server = new BPMNClient(process.env.HOST, process.env.PORT, process.env.API_KEY, { adminApiKey: process.env.ADMIN_API_KEY });
 const question = function (q) {
     const cl = readline.createInterface(process.stdin, process.stdout);
     console.log(q);

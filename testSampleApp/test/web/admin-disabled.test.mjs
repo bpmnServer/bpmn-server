@@ -37,6 +37,14 @@ test('the /admin REST APIs are not served, even with the admin key', async () =>
   assert.equal(res.status, 404, why(res));
 });
 
+test('the models are still listed through the APIs, with the runtime key', async () => {
+  for (const url of ['/api/definitions/list', '/api2/model/list']) {
+    const res = await web.api('GET', url);
+    assert.equal(res.status, 200, `${url}: ${why(res)}`);
+    assert.ok(Array.isArray(res.body) && res.body.length > 0, `${url}: ${JSON.stringify(res.body)}`);
+  }
+});
+
 test('the rest of the app still works', async () => {
   assert.equal((await admin.get('/dashboard')).status, 200);
   assert.equal((await designer.get('/dashboard/design')).status, 200);
