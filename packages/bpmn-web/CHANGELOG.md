@@ -12,6 +12,17 @@ and here
 
 ### Changed
 -->
+## Release 3.5.1 (2026-11-02)
+### Added
+- `GET /api/definitions/list`: the models' names with the runtime key (`API_KEY`), as `/api2/model/list`
+  already was. A client lists models with administration off (`DISABLE_ADMIN=true`); changing models stays
+  under `/admin/api`.
+- `GUEST_ACCESS`: a banner tells a guest that their models are kept for this browser, with a link to download
+  them.
+
+### Changed
+- `GUEST_ACCESS`: setup makes no admin user (a public demo has no account with a known password).
+
 ## Release 3.5.0 — New model editor, applications on start() (2026-11-02)
 bpmn-server, bpmn-web and bpmn-client are now one repository (bpmnServer/bpmn-server) and are released
 together, with the same version.

@@ -13,6 +13,9 @@ and here
 
 ### Changed
 -->
+## Release 3.5.1 (2026-11-02)
+No changes to bpmn-server; released with bpmn-web and bpmn-client 3.5.1, which share its version.
+
 ## Release 3.5.0 — init, ${...} expressions, scripts in the debugger (2026-11-02)
 bpmn-server, bpmn-web and bpmn-client are now one repository (bpmnServer/bpmn-server) and are released
 together, with the same version.

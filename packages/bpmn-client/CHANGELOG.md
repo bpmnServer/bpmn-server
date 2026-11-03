@@ -12,6 +12,14 @@ and here
 
 ### Changed
 -->
+## Release 3.5.1 -- 2026-11-02
+### Fixed
+- `bpmn-client-cli`: `lm` (list models) failed with the admin key's error. `definitions.list()` now reads
+  `/api` with `API_KEY`, so it works with administration off; on a server before 3.5.1 it falls back to
+  `/admin/api`.
+- `bpmn-client-cli` passes `ADMIN_API_KEY` from `.env` for the administration calls, and `bpmn-client-setup`
+  writes it.
+
 ## Release 3.5.0 -- 2026-11-02
 Released with bpmn-server and bpmn-web 3.5.0, now in one repository and with the same version; the client's
 API is unchanged from 3.1.0.
