@@ -1,6 +1,6 @@
 # sampleApp
 
-A workflow application on [bpmn-server](https://bpmnserver.github.io/docs/) and bpmn-web, with a few sample
+A workflow application on [bpmn-server](https://bpmnserver.github.io/bpmn-server/) and bpmn-web, with a few sample
 models, the services they call and the application delegate. `npx bpmn-server init` creates an application
 from it.
 

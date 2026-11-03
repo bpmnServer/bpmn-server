@@ -133,11 +133,14 @@ To enable security Rules, you have to edit `.env'
 ENFORCE_SECURITY=true
 
 ```
-### Security Rules are by-passed if
+### When security checks are bypassed
 
--a. User is and Admin or System
+- A user in the `ADMIN` or `SYSTEM` group has privileged access according to the engine's access-control checks.
+- For a `SecureUser` created without an explicit `enforceSecurity` override, the engine disables task access checks when **either** `REQUIRE_AUTHENTICATION=false` **or** `ENFORCE_SECURITY=false` is set in the environment. This decision is made when that user is constructed.
+- `new SecureUser(userInfo, { enforceSecurity: true })` explicitly enables security checks for that user, regardless of the environment default.
 
--b. `.env` ```REQUIRE_AUTHENTICATION === 'false' || process.env.ENFORCE_SECURITY```
+!!! warning "Production security"
+    Set **both** `REQUIRE_AUTHENTICATION=true` and `ENFORCE_SECURITY=true` for a network-accessible application. The host must authenticate callers and pass a trusted principal; never let an untrusted client choose privileged groups or use `SystemUser`. See the implementation in `packages/bpmn-server/src/API/SecureUser.ts`.
    
 ### User can View/Assign Item if:
 

@@ -1,6 +1,6 @@
 # __NAME__
 
-A workflow application on [bpmn-server](https://bpmnserver.github.io/docs/) and bpmn-web.
+A workflow application on [bpmn-server](https://bpmnserver.github.io/bpmn-server/) and bpmn-web.
 
 ## Run
 
