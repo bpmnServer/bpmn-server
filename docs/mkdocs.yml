@@ -54,7 +54,6 @@ markdown_extensions:
           format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.highlight:
       anchor_linenums: true
-      anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
   - admonition
@@ -73,27 +72,33 @@ draft_docs: |
   drafts/
 
 
-nav:  
-- bpmn-server:
-  - Overview:  index.md
+nav:
+- Getting Started:
+  - Overview: index.md
+  - Installation and Quick Start: setup.md
+  - Application Integration: customization.md
+  - Model editor: modeler.md
   - "What's new in 3.5": whats-new-3.5.md
-  - "What's new in 3.x": whats-new-3.md
-  - 'Invoking Workflows': invokation.md 
-  - 'Workflow Execution': execution.md
-  - 'Scripting': scripting.md
-  - 'Security': security.md
-  - 'Data': data.md 
-  - 'Setup': setup.md 
-  - 'Model editor': modeler.md
-  - 'Checking models': verify.md
-  - 'Testing and debugging models': testing.md
-  - 'Connectors (REST APIs)': connectors.md
-  - 'Decisions (DMN)': decisions.md
-  - 'Data objects': data-objects.md
-  - 'Application Integration': customization.md 
-  - 'Advanced Topics': advanced.md
-  - 'Frequently Asked Questions': faq.md
-  - 'Site Map': map.md
+  - "Upgrade to 3.x": whats-new-3.md
+
+- Core Concepts:
+  - Invoking Workflows: invokation.md
+  - Workflow Execution: execution.md
+  - Data and Persistence: data.md
+  - Scripting: scripting.md
+  - Security: security.md
+
+- Modeling and Integration:
+  - Checking models: verify.md
+  - Testing and debugging models: testing.md
+  - Connectors (REST APIs): connectors.md
+  - Decisions (DMN): decisions.md
+  - Data objects: data-objects.md
+
+- Reference:
+  - Advanced Topics: advanced.md
+  - Frequently Asked Questions: faq.md
+  - Site Map: map.md
 
 - Examples/Features:
   - 'Service Task': examples/serviceTask.md
@@ -118,7 +123,7 @@ nav:
  
 - API:
   - 'API Summary': api-summary.md
-  - 'API Example': examples//BuyCar-Server.md
+  - 'API Example': examples/BuyCar-Server.md
   - 'API': api/readme.md
 
 - Tutorial:
