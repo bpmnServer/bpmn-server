@@ -43,6 +43,7 @@ test('each visitor is a guest of its own, with a copy of the models', async () =
   const list = await a.get('/model/list');
   assert.equal(list.status, 200, why(list));
   assert.match(list.text, /leave-request/);
+  assert.match((await a.get('/dashboard')).text, /trying the demo as a guest/, 'the guest banner');
 });
 
 test("a guest's changes are its own: other guests and the application's models are unchanged", async () => {
@@ -69,6 +70,17 @@ test("a guest's test runs are its own, in its tenant", async () => {
   assert.equal((await b.request('DELETE', `/model/test/instance/${id}`)).status, 404);
   const stored = await web.bpmnServer.dataStore.findInstance({ id }, 'summary');
   assert.match(stored.tenantId, /^guest-/);
+});
+
+test("a guest's instances are its own: started from the workbench, listed only for it", async () => {
+  const started = await a.get('/execute/simple');
+  assert.ok(started.status < 400, why(started));
+  const mine = await a.request('POST', '/query', { json: { query: { name: 'simple' } } });
+  assert.equal(mine.status, 200, why(mine));
+  assert.ok(mine.body.length >= 1, 'the guest sees its instance');
+  const theirs = await b.request('POST', '/query', { json: { query: { name: 'simple' } } });
+  assert.equal(theirs.status, 200, why(theirs));
+  assert.equal(theirs.body.length, 0, "another guest's instances are not listed");
 });
 
 test('a guest downloads its models as a .zip', async () => {

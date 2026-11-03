@@ -1,3 +1,5 @@
 node_modules/
 .env
 *.log
+# GUEST_ACCESS: the guests models folders
+guests/

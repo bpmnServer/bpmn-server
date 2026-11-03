@@ -7,3 +7,5 @@ node_modules/
 
 # demo videos (npm run demo:video)
 /test/demo/out
+# GUEST_ACCESS: the guests models folders
+guests/

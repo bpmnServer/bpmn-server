@@ -244,6 +244,20 @@ DISABLE_ADMIN=true
       no process starts on a timer.
     - Service tasks do not run: they end with no output.
     - Each of these says so in the run's decisions (the Test tab's "Why").
+- To let visitors try it without signing in, also set `GUEST_ACCESS=true`. The server refuses to start with
+  it unless `DEMO_MODE`, `DISABLE_ADMIN`, `REQUIRE_AUTHENTICATION` and `ENFORCE_SECURITY` are all `true`.
+    - A visitor's first page makes them a guest: a user of their own (`guest-<random>`) with a session cookie
+      that lasts a year. A guest can design models.
+    - Each guest has their own models folder (under `GUESTS_PATH`, default `./guests`), started as a copy of
+      the application's models. A guest changes, adds and deletes only their own models; the application's
+      models and other guests' never change.
+    - A guest's instances and test runs carry their own tenant, so nobody else sees them, and they see
+      nobody else's.
+    - Guests download their models one by one or all at once as a `.zip` (Models, Export).
+    - Limits: `GUEST_MAX_MODELS` models per guest (default 50), and `GUEST_RATE_LIMIT` new guests per address
+      per hour (default 20).
+    - Guests' models are not in the models database, so a message or signal does not start another guest's
+      process.
 - Run the demo on its own machine or container, with its own database. Give it no secrets it does not need
   (no SMTP account, no API keys of other systems), and reset its database on a schedule.
 - Set `API_KEY` and `ADMIN_API_KEY` to long random values, or leave `SERVE=ui` so that only the web pages

@@ -75,10 +75,16 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 	return guests ? guestConfiguration(configuration) : configuration;
 }
 
-/** The database's indexes, and the first user (admin, password admin) when there is none. */
+/**
+ * The database's indexes, and the first user (admin, password admin) when there is none. Not with guests
+ * (GUEST_ACCESS): a public demo has no account with a known password, which would design the models every new
+ * guest starts with.
+ */
 export async function setup(server: BPMNServer) {
 	await server.dataStore.install();
 	await server.definitions.install();
+	if (guestAccess())
+		return;
 	const { UserService } = await import('./userAccess/UserService.js');
 	await new UserService().install();
 }
@@ -130,7 +136,9 @@ export async function start(options: StartOptions = {}) {
 	await webApp.bpmnServer.ready;
 	await setup(webApp.bpmnServer);
 	if (options.setupOnly) {
-		console.log('setup done: the database is ready; sign in as admin (password admin) and change the password');
+		console.log(guestAccess()
+			? 'setup done: the database is ready; visitors are guests (GUEST_ACCESS), no admin user is made'
+			: 'setup done: the database is ready; sign in as admin (password admin) and change the password');
 		await webApp.bpmnServer.shutdown();
 		process.exit(0);
 	}

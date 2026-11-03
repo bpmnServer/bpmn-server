@@ -21,7 +21,7 @@ does the same under the debugger.
 
 Tests: `npm test` at the root (bpmn-server, bpmn-client, testSampleApp); in testSampleApp also `npm run test:ui`.
 
-To publish the packages and the docs, see [PUBLISHING.md](https://github.com/bpmnServer/bpmn-server/blob/main/PUBLISHING.md).
+Releases to npm are published by the maintainers.
 
 
 New Status:
