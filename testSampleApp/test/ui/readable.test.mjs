@@ -127,6 +127,8 @@ async function shownFor(id) {
         panel.querySelectorAll('input:not([type=checkbox]), textarea').forEach(e => texts.push(e.value));
         panel.querySelectorAll('select').forEach(e => texts.push(e.value, e.selectedOptions[0]?.textContent || ''));
         panel.querySelectorAll('.cm-content').forEach(e => texts.push(e.innerText));
+        // read-only values (a connector's summary): each marked with the value it shows
+        panel.querySelectorAll('[data-value]').forEach(e => texts.push(e.dataset.value));
         const toggles = Object.fromEntries([...panel.querySelectorAll('[data-entry-id] input[type=checkbox]')]
             .map(e => [e.closest('[data-entry-id]').dataset.entryId, e.checked]));
         return { texts, toggles };

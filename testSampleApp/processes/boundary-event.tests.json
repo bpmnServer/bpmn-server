@@ -1,0 +1,18 @@
+{
+  "model": "boundary-event",
+  "scenarios": [
+    {
+      "name": "Scenario 1",
+      "start": {
+        "data": {}
+      },
+      "steps": [
+        {
+          "element": "Expired-Timer",
+          "data": {}
+        }
+      ],
+      "expect": {}
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "model": "GitHub repository",
+  "scenarios": [
+    {
+      "name": "Scenario 1",
+      "start": {
+        "data": {
+          "owner": "bpmnServer",
+          "repo": "bpmn-server"
+        }
+      },
+      "steps": [],
+      "checks": []
+    }
+  ]
+}

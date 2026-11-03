@@ -28,8 +28,20 @@ and here
   rules matched, runs kept, **Use as checks**. `/model/decision/:name/tests`.
 - **Design dashboard:** each model's and decision's tests with the last run's result (and why it failed); Run for
   one, **Run all tests**.
+- **History tab** in the model editor: every save of the model with when and by whom, and the editor's model;
+  two compared by their report text (the lines changed, under their element and process) and their layout (the
+  elements moved or resized); **Purge history**. `GET /model/history/:name`, `GET /model/history/:name/:version`, `DELETE /model/history/:name`.
+
+- **The Report holds the whole model:** Globals (messages, signals, errors, escalations, with what uses each),
+  Pools and lanes (pools, lanes with their elements, message flows), annotations and associations, connectors,
+  and any setting it has no words of its own for as `key: value`. `report.text(definitions)` gives it as an
+  indented text outline, which History compares. A test checks that every value of every sample model is in it.
 
 ### Changed
+- **The Test tabs' tests are files** beside what they test: `<model>.tests.json` (the scenario file format) and
+  `<decision>.dmn.tests.json`; their runs in `.runs/`. They were in MongoDB (`wf_test_scenarios`): setup moves
+  each set there to its file once (the collection is left as it was). The backup has them with the models
+  folder's files. `npm run lint:models` skips dot folders (`.history`, `.runs`).
 - The dashboards make no MongoDB calls: they work on MongoDB, SQLite and the in-memory store. The backup is
   format 2, plain JSON from each store, with the connectors (their keys encrypted).
 - The editors' scripts and styles are loaded with their build's time in the URL, so a new build is used at the

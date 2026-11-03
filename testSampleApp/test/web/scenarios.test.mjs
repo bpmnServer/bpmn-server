@@ -2,6 +2,8 @@
 // model, with the steps choosing the path and the expectations checked.
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
 import { startWebApp, why } from '../support/webApp.mjs';
 
 const SHORT = {
@@ -35,6 +37,47 @@ test('scenarios are kept per model', async () => {
     res = await designer.request('PUT', '/model/scenarios/leave-request', { json: { scenarios: [{ steps: [{}] }] } });
     assert.equal(res.status, 400);
     assert.match(JSON.parse(res.text).error, /has no name.*step 1: no element/);
+});
+
+test('scenarios are files beside the model, their runs apart; none left: no file', async () => {
+    const file = path.join(web.definitionsPath, 'leave-request.tests.json');
+    const runsFile = path.join(web.definitionsPath, '.runs', 'leave-request.tests.json');
+    const RUN = { instanceId: 'test-1', at: '2026-11-03T10:00:00.000Z', how: 'run', ok: true };
+    let res = await designer.request('PUT', '/model/scenarios/leave-request', { json: { scenarios: [{ ...SHORT, runs: [RUN] }, LONG] } });
+    assert.equal(res.status, 200, why(res));
+    const saved = JSON.parse(fs.readFileSync(file, 'utf8'));
+    assert.equal(saved.model, 'leave-request', 'the format of a scenario file');
+    assert.deepEqual(saved.scenarios.map(s => s.name), [SHORT.name, LONG.name]);
+    assert.ok(saved.scenarios.every(s => !('runs' in s)), 'no runs in the tests file');
+    assert.deepEqual(JSON.parse(fs.readFileSync(runsFile, 'utf8')), { [SHORT.name]: [RUN] });
+    const loaded = JSON.parse((await designer.get('/model/scenarios/leave-request')).text).scenarios;
+    assert.deepEqual(loaded[0].runs, [RUN], 'the runs put back');
+    assert.equal(loaded[1].runs, undefined);
+
+    res = await designer.request('PUT', '/model/scenarios/leave-request', { json: { scenarios: [] } });
+    assert.equal(res.status, 200, why(res));
+    assert.ok(!fs.existsSync(file) && !fs.existsSync(runsFile));
+    // as before, for the tests after this one
+    await designer.request('PUT', '/model/scenarios/leave-request', { json: { scenarios: [SHORT, LONG] } });
+});
+
+test('every save of a model is kept: listed, read, purged; for designers only', async () => {
+    const source = fs.readFileSync(path.join(web.definitionsPath, 'leave-request.bpmn'), 'utf8');
+    const save = xml => designer.request('POST', '/model/edit/leave-request', { json: { processId: 'leave-request', bpmn: xml, svg: '<svg/>' } });
+    assert.equal((await save(source.replace('isExecutable="true"', 'isExecutable="true" '))).status, 200);
+    assert.equal((await save(source)).status, 200);
+    let versions = JSON.parse((await designer.get('/model/history/leave-request')).text).versions;
+    assert.deepEqual(versions.map(v => [v.version, v.savedBy]), [[3, 'designer'], [2, 'designer'], [1, undefined]]);
+    const res = await designer.get('/model/history/leave-request/3');
+    assert.equal(res.status, 200);
+    assert.equal(res.text, source);
+    assert.equal((await designer.get('/model/history/leave-request/99')).status, 404);
+    assert.equal((await designer.get('/model/history/..%2Fx')).status, 400);
+    assert.notEqual((await staff.get('/model/history/leave-request')).status, 200, 'not for staff');
+
+    assert.equal(JSON.parse((await designer.request('DELETE', '/model/history/leave-request')).text).purged, 3);
+    versions = JSON.parse((await designer.get('/model/history/leave-request')).text).versions;
+    assert.deepEqual(versions, []);
 });
 
 test('the steps choose the path, and what is expected is checked', async () => {

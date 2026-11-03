@@ -65,11 +65,11 @@ test('the report lists the process in flow order, with how bpmn-server reads eac
     const settings = await buy.locator('.report-settings').first().innerText();
     assert.match(settings, /^candidateGroups: Employee,Manager$/m);
     assert.match(settings, /^formField: needsRepairs \(boolean\) Repairs Required\?$/m);
-    assert.match(settings, /^on start:\s*\nvar date=new Date\(\);/m);
+    assert.match(settings, /^on start \(JavaScript\):\s*\nvar date=new Date\(\);/m);
     assert.match(await buy.locator('.report-flow').innerText(), /sequenceFlow: flow_buy_gw\s+targetRef: gateway_1/);
 
     const clean = page.locator('.report-element[data-element-id="gateway_1"] .report-flow[data-element-id="flow_gw1_clean"]');
-    assert.match(await clean.innerText(), /targetRef: task_clean\s+conditionExpression: \$\(item\.data\.needsCleaning=="Yes"\)/);
+    assert.match(await clean.innerText(), /targetRef: task_clean\s+conditionExpression \(JavaScript\): \$\(item\.data\.needsCleaning=="Yes"\)/);
     assert.deepEqual(errors, []);
     await close();
 });
@@ -149,4 +149,79 @@ test('what an element holds is nested under it: a sub-process\'s elements, a bou
     assert.deepEqual(errors, []);
     await page.locator('.dock-report').screenshot({ path: fileURLToPath(new URL('./screenshots/report-nested.png', import.meta.url)) }).catch(() => {});
     await close();
+});
+
+/** The report as text, as History compares it: the whole model, read again from the editor's XML. */
+const reportText = page => page.evaluate(async () => {
+    const m = window.bpmnModeler;
+    const { rootElement } = await m.get('moddle').fromXML((await m.saveXML()).xml);
+    return m.get('report').text(rootElement);
+});
+
+test('globals: messages, signals and errors, each with what uses it; pools, lanes and message flows', async () => {
+    let { page, errors, close } = await openReport('report-globals', fs.readFileSync(path.join(SAMPLES, 'multiStart.bpmn'), 'utf8'));
+    const globals = await page.locator('.report-globals tbody tr').allInnerTexts();
+    assert.ok(globals.some(r => /^message\tnewInvoiceMessage \(newInvoice\)\t\tMsg Start catches$/.test(r)), globals.join('|'));
+    assert.ok(globals.some(r => /^signal\tcancelSignal2 \(cancelAll2\)\t\tnot used$/.test(r)), globals.join('|'));
+    await close();
+
+    ({ page, errors, close } = await openReport('report-error', fs.readFileSync(path.join(SAMPLES, 'GitHub repository.bpmn'), 'utf8')));
+    assert.match(await page.innerText('.report-globals'), /error\s+Not found \(NotFoundError\)\s+HTTP_404\s+No such repository catches/);
+    await close();
+
+    ({ page, errors, close } = await openReport('report-lanes', fs.readFileSync(path.join(SAMPLES, 'Buy Used Car.bpmn'), 'utf8')));
+    const lanes = await page.locator('.report-pools tbody tr').allInnerTexts();
+    assert.ok(lanes.some(r => /^Mechanic \(Lane_\w+\)\tProcess_1hf9394\tRepair$/.test(r)), lanes.join('|'));
+    assert.ok(lanes.some(r => /^Cleaner \(Lane_\w+\)\t.*\tClean$/.test(r)), lanes.join('|'));
+    // a lane's link selects it on the diagram
+    await page.locator('.report-pools a', { hasText: 'Mechanic' }).click();
+    assert.equal(await page.evaluate(() => window.bpmnModeler.get('selection').get()[0]?.businessObject.name), 'Mechanic');
+    await close();
+
+    ({ page, errors, close } = await openReport('report-pools', fs.readFileSync(path.join(SAMPLES, 'messageFlow.bpmn'), 'utf8')));
+    const pools = await page.innerText('.report-pools');
+    assert.match(pools, /Primary \(Participant_1k8bqpk\)\s+Process_primary/);
+    assert.match(pools, /Secondary \(Participant_1oj112i\)\s+Process_secondary \(not executable\)/);
+    assert.match(pools, /MessageFlow_1\s+Task 1 \(Primary\)\s+StartEvent_2 \(Secondary\)/, 'a message flow between pools');
+    assert.deepEqual(errors, []);
+    await close();
+});
+
+test('the report text holds the whole model: every value of every sample model, the layout aside', async () => {
+    const files = fs.readdirSync(SAMPLES).filter(f => f.endsWith('.bpmn'));
+    const missing = [];
+    for (const file of files) {
+        const { page, close } = await openReport('report-whole', fs.readFileSync(path.join(SAMPLES, file), 'utf8'));
+        const text = (await reportText(page)).replace(/\s+/g, ' ');
+        // every attribute and text of the model (not of its diagram), as written; but the ids nothing is known by
+        // (the definitions', an event definition's, an association's, ...) and an element's inner data
+        // definitions (ioSpecification: not run by bpmn-server)
+        const values = await page.evaluate(async () => {
+            const xml = (await window.bpmnModeler.saveXML()).xml;
+            const doc = new DOMParser().parseFromString(xml, 'application/xml');
+            const LAYOUT = ['http://www.omg.org/spec/BPMN/20100524/DI', 'http://www.omg.org/spec/DD/20100524/DC', 'http://www.omg.org/spec/DD/20100524/DI'];
+            const SKIP = new Set(['exporter', 'exporterVersion', 'targetNamespace', 'expressionLanguage', 'typeLanguage', 'xsi:type']);
+            const NO_ID = /^(definitions|collaboration|laneSet|association|dataInputAssociation|dataOutputAssociation|dataObjectReference|dataStoreReference|dataObject|group|category|categoryValue|\w+EventDefinition)$/;
+            const found = [];
+            const walk = node => {
+                // a task's bpmn:property is a data association's placeholder (bpmn.io's), not a setting
+                if (LAYOUT.includes(node.namespaceURI) || node.localName === 'ioSpecification' || (node.localName === 'property' && node.namespaceURI === 'http://www.omg.org/spec/BPMN/20100524/MODEL')) return;
+                for (const a of node.attributes)
+                    if (!a.name.startsWith('xmlns') && !SKIP.has(a.name) && !/^(true|false)$/.test(a.value)
+                        && !(a.name === 'id' && NO_ID.test(node.localName)) && !(node.localName === 'laneSet' && a.name === 'name'))
+                        found.push({ where: `${node.localName} ${a.name}`, value: a.value });
+                const own = [...node.childNodes].filter(c => c.nodeType === 3 || c.nodeType === 4).map(c => c.nodeValue).join('').trim();
+                if (own && !['incoming', 'outgoing', 'flowNodeRef', 'sourceRef', 'targetRef'].includes(node.localName))
+                    found.push({ where: node.localName, value: own });
+                [...node.children].forEach(walk);
+            };
+            walk(doc.documentElement);
+            return found;
+        });
+        for (const { where, value } of values)
+            if (!text.includes(value.replace(/\s+/g, ' ').trim()))
+                missing.push(`${file}: ${where} = ${JSON.stringify(value).slice(0, 80)}`);
+        await close();
+    }
+    assert.deepEqual(missing, []);
 });

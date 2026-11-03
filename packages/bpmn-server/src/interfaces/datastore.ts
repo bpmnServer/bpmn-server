@@ -58,7 +58,8 @@ interface IModelsDatastore {
     getList(query): Promise<string[]>;
     getSource(name: any,owner?): Promise<string>;
     getSVG(name: any,owner?): Promise<string>;
-    save(name: any, bpmn: any, svg?: any,owner?): Promise<boolean>;
+    /** `savedBy`: who saves it, kept in the model's history (files-based datastores) */
+    save(name: any, bpmn: any, svg?: any,owner?, savedBy?: string): Promise<boolean>;
 
     load(name: any,owner?): Promise<IDefinition>;
     loadModel(name: any,owner?): Promise<IBpmnModelData>;
@@ -72,6 +73,12 @@ interface IModelsDatastore {
     saveModel(model: IBpmnModelData): Promise<boolean>;
     deleteModel(name: any,owner?): Promise<void>;
     renameModel(name: any,newName: any,owner?): Promise<boolean>;
+    /** A model's saved versions, newest first (files-based datastores: ModelHistory). */
+    history?(name: string): Promise<{ version: number; savedAt: string; savedBy?: string; size: number }[]>;
+    /** A saved version of a model, or null. */
+    historySource?(name: string, version: number): Promise<string | null>;
+    /** Removes a model's history; returns how many versions it had. */
+    purgeHistory?(name: string): Promise<number>;
 }
 
 

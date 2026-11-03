@@ -14,7 +14,7 @@ import { SecureUser, BPMNAPI, verifyModel, dateDiff, canEncrypt } from '../index
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
-import { listScenarioSets, listDecisionTestSets, loadScenarios, runScenario, backupScenarioSets } from '../testing/scenarios.js';
+import { listScenarioSets, listDecisionTestSets, loadScenarios, runScenario } from '../testing/scenarios.js';
 import { loadDecisionTests, runDecisionTests } from '../testing/decisionTests.js';
 import { adminDisabled, engineGroups, isAdminGroups, isDesignerGroups } from '../userAccess/roles.js';
 import { UserService } from '../userAccess/UserService.js';
@@ -454,7 +454,7 @@ export class Dashboards extends Common {
             if (entry.sha256 && crypto.createHash('sha256').update(source).digest('hex') !== entry.sha256)
                 return again(`${entry.bpmn} is not the file the catalog describes (its checksum differs); nothing was imported.`);
             const svg = await bpmnToSvg(source).catch(() => null);
-            await server.definitions.save(name, source, svg);
+            await server.definitions.save(name, source, svg, null, req.user?.userName);
             this.verified.delete(name);
             res.redirect('/model/edit/' + encodeURIComponent(name));
         }));
@@ -496,7 +496,8 @@ export class Dashboards extends Common {
 
     /**
      * A backup to download: the models folder's files and, by collection, what each store keeps (the engine's
-     * instances, archive, locks, models and events; the connectors, keys encrypted; the users; the test scenarios), as one JSON document.
+     * instances, archive, locks, models and events; the connectors, keys encrypted; the users), as one JSON document. The models'
+     * tests are files of the models folder (*.tests.json).
      * The stores give their own documents, whatever database they are on; the sessions are never in it.
      */
     async backup(res) {
@@ -518,7 +519,6 @@ export class Dashboards extends Common {
             () => (server.definitions as any).backup?.() ?? {},
             () => server.connectors?.backup() ?? {},
             () => new UserService().backup(),
-            () => backupScenarioSets(),
         ];
         let first = true;
         for (const store of stores)

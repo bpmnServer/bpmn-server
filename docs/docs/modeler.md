@@ -58,9 +58,22 @@ npm run lint:models [folder]
 
 ## Report
 
-The Report tab is the whole process as one document: its elements in flow order, with their documentation, how
-bpmn-server reads them, and their problems; then the conditions, decision tables and data objects. **Print**
-saves it as a PDF.
+The Report tab is the whole model as one document, everything in it but the diagram's layout:
+
+- **Globals:** the messages, signals, errors (with their codes) and escalations, each with the elements that
+  throw, catch, send or receive it, or "not used".
+- **Pools and lanes:** each pool with its process, each lane with the elements in it, and the message flows
+  between pools.
+- **Each process:** its settings, then its elements in flow order, each with its documentation, its settings as
+  `key: value` lines (scripts in full) and its problems; nested under an element, its boundary events, a
+  sub-process's elements and its outgoing flows with their conditions. Then the data objects and annotations.
+
+A setting the report has no words of its own for (another tool's extension, a form field's validation) is still
+there, as `key: value`. A business rule task shows its decision's table. Clicking an id selects the element on the
+diagram. **Print** saves the report as a PDF.
+
+The report is also what [History](#history) compares: as text, the model's problems and the decisions' tables
+left out (they are not in the model file).
 
 ## Testing a model
 
@@ -83,6 +96,42 @@ Test runs are ordinary instances whose ids start with `test-`: run tests on a de
 
 The **Design dashboard** (`/dashboard/design`) shows each model's and decision's tests with the last run's result
 (and why it failed), runs one model's or decision's tests, or **Run all tests**.
+
+The scenarios are saved in the models folder, beside the model: `<model>.tests.json` (see below).
+
+## History
+
+Every save of a model is kept. The **History** tab lists the saved versions, newest first, with when and by whom
+each was saved, and **Current**: the model in the editor, unsaved changes included. A save that changes nothing
+adds no version; the first save of a model saved before there was a history keeps the file as it was first.
+
+- **Compare:** tick two versions. The older is compared with the newer by their [report](#report) as text: the
+  lines removed and added, each shown under the element and the process it is in. What the text does not hold,
+  the diagram's layout, is listed apart: the elements **moved or resized**. Clicking one selects it on the
+  diagram.
+- **Purge history** deletes every saved version of the model. The model itself stays.
+
+Renaming a model takes its history along; deleting a model deletes its history.
+
+## Where models, tests and history are kept
+
+Everything a designer makes is a file in the models folder, so it can be copied, kept in Git and backed up as a
+folder:
+
+```
+processes/
+  Leave Application.bpmn          the model
+  Leave Application.svg           its diagram
+  Leave Application.tests.json    its Test tab scenarios
+  loan.dmn.xml                    a decision
+  loan.dmn.tests.json             its tests
+  bpmnlint.json                   the team's modeling rules
+  .history/Leave Application/     every save of the model: 0001.bpmn, 0001.json (who and when), ...
+  .runs/                          the Test tabs' runs (they point at instances of this server)
+```
+
+A `*.tests.json` file has the format of a [scenario file](testing.md#scenario-files). `.runs/` is best left out of
+Git. Test sets kept in the database before 3.5 are moved to these files when the server starts.
 
 ## Decisions
 

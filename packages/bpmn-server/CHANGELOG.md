@@ -31,6 +31,10 @@ and here
   unique indexes, WAL so servers can share the file. `npm run test:sqlite` runs every suite on it.
 - The storage port's optional `count`, `DataStore.countInstances`, and `backup()` on the data store and the
   models datastore.
+- **Model history:** every save of a model is kept as files in the models folder, `.history/<name>/0001.bpmn` with
+  `0001.json` (when, who). A save that changes nothing adds nothing. `definitions.save(name, bpmn, svg, owner,
+  savedBy)`; `history(name)`, `historySource(name, version)`, `purgeHistory(name)`; renaming a model moves its
+  history, deleting it deletes it. `ModelHistory` is exported.
 
 ### Fixed
 - `DocumentQuery`: `null` matches an array element without the field, and a missing field equals `null`, as in

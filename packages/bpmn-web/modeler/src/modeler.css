@@ -1293,3 +1293,44 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
     .connector-wizard-operation { grid-template-columns: 52px minmax(0, 1fr); }
     .connector-wizard-id, .connector-wizard-summary { grid-column: 2; }
 }
+
+/* ---- the History tab (history/HistoryPanel.js): the saved versions, two compared */
+
+.dock:not([data-tab="history"]) .dock-history,
+.dock[data-tab="history"] .dock-report,
+.dock[data-tab="history"] .dock-test,
+.dock[data-tab="history"] .problems-list {
+    display: none;
+}
+
+.history-panel { display: flex; min-height: 100%; font-size: 13px; }
+.history-list { flex: none; width: 420px; max-width: 50%; padding: 8px 12px; border-right: 1px solid #dcdfe4; box-sizing: border-box; }
+.history-actions { display: flex; gap: 6px; margin-bottom: 6px; }
+.history-panel button { font: inherit; font-size: 12px; padding: 3px 10px; border: 1px solid #c4c8cf; border-radius: 3px; background: #fff; cursor: pointer; }
+.history-panel button.primary { background: #1f62c8; border-color: #1f62c8; color: #fff; }
+.history-panel button:disabled { opacity: 0.5; cursor: default; }
+.history-versions { width: 100%; border-collapse: collapse; }
+.history-versions th, .history-versions td { text-align: left; padding: 3px 6px; border-bottom: 1px solid #eceef1; white-space: nowrap; }
+.history-versions th { color: #52575f; font-weight: 600; font-size: 12px; }
+.history-versions tr.ticked { background: #eef4fd; }
+.history-note { color: #6b7079; margin: 6px 0; }
+.history-error { color: #b42318; }
+.history-comparison { flex: 1; min-width: 0; padding: 8px 12px; overflow: auto; }
+.history-comparison h4 { margin: 0 0 6px; font-size: 14px; }
+.history-changes h5 { margin: 8px 0 2px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; }
+.history-changes.added h5 { color: #1a7f37; }
+.history-changes.removed h5 { color: #b42318; }
+.history-changes.changed h5 { color: #9a5b00; }
+.history-changes.moved h5 { color: #52575f; }
+.history-changes ul { margin: 0; padding-left: 18px; }
+.history-changes li { margin: 2px 0; }
+.history-element { font-family: monospace; }
+.history-settings { margin: 2px 0 6px; border-collapse: collapse; font-size: 12px; }
+.history-settings th, .history-settings td { text-align: left; vertical-align: top; padding: 1px 8px 1px 0; max-width: 360px; overflow-wrap: anywhere; }
+.history-settings th { color: #52575f; font-weight: 600; }
+.history-settings .before { color: #b42318; text-decoration: line-through; }
+.history-settings .after { color: #1a7f37; }
+.history-text { margin: 4px 0; font-size: 12px; line-height: 1.4; white-space: pre-wrap; }
+.history-text .line.added { background: #e6f4ea; color: #1a5e2a; }
+.history-text .line.removed { background: #fdecea; color: #8a1c12; }
+.history-text .line.skipped { color: #8a8f98; font-style: italic; }

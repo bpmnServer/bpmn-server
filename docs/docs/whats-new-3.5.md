@@ -69,8 +69,15 @@ bpmn-web's editor is rebuilt on current bpmn-js, with a properties panel that of
   and completing the model's data fields, `item`, `instance` and the application's services.
 - **Problems:** bpmn-server's checks and bpmnlint's modeling rules, as the model is edited; clicking one opens
   its field. The team chooses the rules' levels.
-- **Report:** the process as one printable document.
+- **Report:** the whole model as one printable document: its globals (messages, signals, errors, escalations),
+  pools and lanes, and each process's elements in flow order with every setting.
 - **Test:** scenarios for a model, run step by step, repeated, checked, simulated on the diagram and debugged.
+- **History:** every save of a model kept; two versions compared by their report text (and what moved on the
+  diagram); the history purged.
+
+Models, their tests and their history are files in the models folder (`<model>.tests.json`, `.history/`), ready
+for Git and backups: see [Where models, tests and history are kept](modeler.md#where-models-tests-and-history-are-kept).
+Tests kept in the database before are moved to files when the server starts.
 
 The **Design dashboard** shows every model's and decision's tests with their last result, and runs one model's,
 or all of them.

@@ -18,6 +18,7 @@ import multer from 'multer';
 import { BPMNServer, Logger } from 'bpmn-server';
 
 import { UserManager } from './userAccess/UserManager.js';
+import { useTestsFolder } from './testing/scenarios.js';
 import { adminDisabled } from './userAccess/roles.js';
 import type { WorkflowApplication } from './runtime/WorkflowApplication.js';
 import { Workflow } from './routes/workflow.js';
@@ -70,6 +71,8 @@ export class WebApp {
 			application.serverOptions ?? {},
 		);
 		application.initialize?.(this.bpmnServer);
+		// the Test tabs' tests are files beside the models (a guest's folder in a guest's request)
+		useTestsFolder(() => this.bpmnServer.configuration.definitionsPath);
 
 		this.setupExpress();
 	

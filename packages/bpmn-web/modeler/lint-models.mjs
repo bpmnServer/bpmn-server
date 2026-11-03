@@ -20,7 +20,15 @@ const config = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'bpmnlint-')), '.
 fs.writeFileSync(config, JSON.stringify({ ...base, rules: { ...base.rules, ...team } }, null, 2));
 
 const cli = createRequire(import.meta.url).resolve('bpmnlint/bin/bpmnlint.js');
-const pattern = path.join(folder, '**', '*.bpmn').split(path.sep).join('/');
-const { status } = spawnSync(process.execPath, [cli, '--config', config, pattern], { stdio: 'inherit' });
+// the folder's models and its sub-folders', not the saved versions (.history) or anything else in a dot folder
+const models = dir => fs.readdirSync(dir, { withFileTypes: true }).flatMap(e => e.name.startsWith('.') || e.name === 'node_modules' ? []
+    : e.isDirectory() ? models(path.join(dir, e.name)) : e.name.endsWith('.bpmn') ? [path.join(dir, e.name)] : []);
+const files = models(folder);
+if (!files.length) {
+    console.log(`no models in ${folder}`);
+    fs.rmSync(path.dirname(config), { recursive: true, force: true });
+    process.exit(0);
+}
+const { status } = spawnSync(process.execPath, [cli, '--config', config, ...files], { stdio: 'inherit' });
 fs.rmSync(path.dirname(config), { recursive: true, force: true });
 process.exit(status ?? 1);

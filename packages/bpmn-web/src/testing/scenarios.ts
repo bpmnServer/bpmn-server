@@ -8,14 +8,16 @@
  * at the end or after a step: the instance's status, a node (how many times it ran, in what status), a data
  * value (=, <>, >, <, >=, <=). The older `expect` (status, data, passes, avoids) is read as checks at the end.
  *
- * Scenarios are kept per model in the application's MongoDB (the users' database). Instances a run starts
- * are real instances, with ids starting test-, so they can be opened on the instance page.
+ * Scenarios are kept as files beside the models (below: the test sets). Instances a run starts are real
+ * instances, with ids starting test-, so they can be opened on the instance page.
  */
 import mongoose from 'mongoose';
+import fs from 'node:fs';
+import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import vm from 'node:vm';
 import { runSandboxed } from 'bpmn-server';
-import { currentGuest } from '../guests/guests.js';
+import { asGuest, currentGuest, guestContext } from '../guests/guests.js';
 
 export interface ScenarioStep {
     /** the waiting element to complete */
@@ -49,29 +51,74 @@ export interface Scenario {
     expect?: { status?: string; data?: Record<string, any>; passes?: string[]; avoids?: string[] };
 }
 
-const scenarioSchema = new mongoose.Schema({
-    model: { type: String, unique: true },
-    scenarios: { type: Array, default: [] },
-    updatedAt: Date,
-    updatedBy: String,
-});
-const ScenarioSet = (mongoose.models.TestScenarios as any) || mongoose.model('TestScenarios', scenarioSchema, 'wf_test_scenarios');
+// ---- the test sets: a model's scenarios, a decision's tests
+//
+// Files in the models folder (a guest's, with guests), beside what they test:
+//   <model>.tests.json         { "model": "<model>", "scenarios": [ ... ] }   (the format of a scenario file)
+//   <decision>.dmn.tests.json  { "decision": "<decision>", "tests": [ ... ] }
+// The runs the editors keep of each test are not in them (they point at instances of one server): they are in
+// .runs/<the same file name>, by the test's name, and put back on load.
 
-/**
- * A model's scenarios are stored under its name, a decision's tests (testing/decisionTests.ts) under
- * decision:<name>; a guest's (GUEST_ACCESS) under guest-<id>/ followed by that.
- */
-const scenarioKey = (model: string) => currentGuest() ? `${currentGuest().id}/${model}` : model;
 const DECISION = 'decision:';
+let modelsFolder: () => string = () => process.env.DEFINITIONS_PATH || path.resolve('processes');
 
-/** The list saved under a key (a model's scenarios, a decision's tests). */
+/** Where the test sets are: the server's models folder (WebApp sets it; a guest's folder in a guest's request). */
+export function useTestsFolder(folder: () => string) {
+    modelsFolder = folder;
+}
+
+/** A set's file name: `<model>.tests.json`, or `<decision>.dmn.tests.json` for decision:<decision>. */
+function fileName(key: string) {
+    const decision = key.startsWith(DECISION);
+    const name = decision ? key.slice(DECISION.length) : key;
+    if (!name || name.startsWith('.') || /[\\/]/.test(name))
+        throw new Error(`not a model or decision name: ${name}`);
+    return name + (decision ? '.dmn.tests.json' : '.tests.json');
+}
+
+function readJson(file: string) {
+    try {
+        return JSON.parse(fs.readFileSync(file, 'utf8'));
+    }
+    catch (error) {
+        if (error.code === 'ENOENT') return undefined;
+        throw new Error(`${file}: ${error.message}`);
+    }
+}
+
+/** Written whole or not at all; removed when there is nothing to keep. */
+function writeJson(file: string, value: any) {
+    if (value === undefined) {
+        fs.rmSync(file, { force: true });
+        return;
+    }
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    const temporary = `${file}.${process.pid}.tmp`;
+    fs.writeFileSync(temporary, JSON.stringify(value, null, 2) + '\n');
+    fs.renameSync(temporary, file);
+}
+
+/** The list saved under a key (a model's scenarios, a decision's tests), each with its runs. */
 export async function loadTestSet<T = Scenario>(key: string): Promise<T[]> {
-    const doc = await ScenarioSet.findOne({ model: scenarioKey(key) }).lean();
-    return doc?.scenarios ?? [];
+    const folder = modelsFolder(), name = fileName(key);
+    const set = readJson(path.join(folder, name));
+    const list = set?.scenarios ?? set?.tests ?? [];
+    const runs = readJson(path.join(folder, '.runs', name)) ?? {};
+    return list.map(item => runs[item.name]?.length ? { ...item, runs: runs[item.name] } : item);
 }
 
 export async function saveTestSet(key: string, list: any[], userName?: string): Promise<void> {
-    await ScenarioSet.updateOne({ model: scenarioKey(key) }, { $set: { scenarios: list, updatedAt: new Date(), updatedBy: userName } }, { upsert: true });
+    const folder = modelsFolder(), name = fileName(key);
+    const decision = key.startsWith(DECISION);
+    const runs = {};
+    const items = list.map(({ runs: kept, ...item }) => {
+        if (kept?.length) runs[item.name] = kept;
+        return item;
+    });
+    writeJson(path.join(folder, name), items.length
+        ? decision ? { decision: key.slice(DECISION.length), tests: items } : { model: key, scenarios: items }
+        : undefined);
+    writeJson(path.join(folder, '.runs', name), Object.keys(runs).length ? runs : undefined);
 }
 
 export async function loadScenarios(model: string): Promise<Scenario[]> {
@@ -82,33 +129,63 @@ export async function saveScenarios(model: string, scenarios: Scenario[], userNa
     await saveTestSet(model, scenarios, userName);
 }
 
-/** Every set this user sees (a guest only its own), keys without the guest's prefix. */
+/** Every test set of the models folder: its key, how many tests, when last saved. */
 async function ownSets() {
-    const docs = await ScenarioSet.find({}, { model: 1, scenarios: 1, updatedAt: 1, updatedBy: 1 }).lean();
-    // a guest's own sets, under their models' names; nobody else sees a guest's
-    const guest = currentGuest();
-    const own = guest
-        ? docs.filter(d => d.model.startsWith(guest.id + '/')).map(d => ({ ...d, model: d.model.slice(guest.id.length + 1) }))
-        : docs.filter(d => !/^guest-[0-9a-f]{12}\//.test(d.model));
-    return own.map(d => ({ key: d.model as string, count: (d.scenarios ?? []).length, updatedAt: d.updatedAt, updatedBy: d.updatedBy }));
+    const folder = modelsFolder();
+    const files = fs.existsSync(folder) ? fs.readdirSync(folder).filter(f => f.endsWith('.tests.json')) : [];
+    return files.map(file => {
+        const decision = file.endsWith('.dmn.tests.json');
+        const set = readJson(path.join(folder, file));
+        return {
+            key: decision ? DECISION + file.slice(0, -'.dmn.tests.json'.length) : file.slice(0, -'.tests.json'.length),
+            count: (set?.scenarios ?? set?.tests ?? []).length,
+            updatedAt: fs.statSync(path.join(folder, file)).mtime,
+        };
+    });
 }
 
-/** Each model's scenarios in summary: how many, when and by whom last saved. */
-export async function listScenarioSets(): Promise<{ model: string; count: number; updatedAt?: Date; updatedBy?: string }[]> {
+/** Each model's scenarios in summary: how many, when last saved. */
+export async function listScenarioSets(): Promise<{ model: string; count: number; updatedAt?: Date }[]> {
     return (await ownSets()).filter(s => !s.key.startsWith(DECISION)).map(({ key, ...s }) => ({ model: key, ...s }));
 }
 
 /** Each decision's tests in summary, as {@link listScenarioSets}. */
-export async function listDecisionTestSets(): Promise<{ decision: string; count: number; updatedAt?: Date; updatedBy?: string }[]> {
+export async function listDecisionTestSets(): Promise<{ decision: string; count: number; updatedAt?: Date }[]> {
     return (await ownSets()).filter(s => s.key.startsWith(DECISION)).map(({ key, ...s }) => ({ decision: key.slice(DECISION.length), ...s }));
 }
 
 /** The key a decision's tests are saved under. */
 export const decisionTestKey = (decision: string) => DECISION + decision;
 
-/** Every scenario set, guests' too, under the collection's name: for a backup. */
-export async function backupScenarioSets(): Promise<Record<string, any[]>> {
-    return { [ScenarioSet.collection.collectionName]: await ScenarioSet.find({}).lean() };
+/**
+ * Test sets were kept in MongoDB (wf_test_scenarios) before 3.5: each one there whose file is not made yet is
+ * written to its models folder (a guest's to the guest's folder, when it is still there). The collection is
+ * left as it was. Returns how many were written.
+ */
+export async function migrateScenarioSets(): Promise<number> {
+    const ScenarioSet = (mongoose.models.TestScenarios as any) || mongoose.model('TestScenarios',
+        new mongoose.Schema({ model: String, scenarios: Array }), 'wf_test_scenarios');
+    let written = 0;
+    for (const doc of await ScenarioSet.find({}).lean()) {
+        const guest = /^(guest-[0-9a-f]{12})\/(.*)$/.exec(doc.model);
+        const key = guest ? guest[2] : doc.model;
+        const write = async () => {
+            if (fs.existsSync(path.join(modelsFolder(), fileName(key))) || !(doc.scenarios ?? []).length)
+                return;
+            await saveTestSet(key, doc.scenarios);
+            written++;
+        };
+        try {
+            if (!guest)
+                await write();
+            else if (fs.existsSync(guestContext(guest[1]).folder))
+                await asGuest(guestContext(guest[1]), write);
+        }
+        catch (error) {
+            console.error(`test set '${doc.model}' not moved to a file: ${error.message}`);
+        }
+    }
+    return written;
 }
 
 /** Whether a body is a list of scenarios; the reasons when it is not. */

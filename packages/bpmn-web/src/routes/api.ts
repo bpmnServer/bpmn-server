@@ -548,7 +548,7 @@ export class API extends Common {
                                 svgFile= files[1];
 
                             try {
-                                await bpmnServer.definitions.save(name, bpmnFile,svgFile);
+                                await bpmnServer.definitions.save(name, bpmnFile, svgFile, null, request.user?.userName);
                             }
                             catch(exc)
                             {
@@ -631,7 +631,7 @@ export class API extends Common {
                 const name = request.body.name;
                 const bpmn = request.body.xml;
                 const svg = '';
-                await bpmnServer.definitions.save(name, bpmn, svg);
+                await bpmnServer.definitions.save(name, bpmn, svg, null, (request.user as any)?.userName);
                 console.log(" save completed");
 
                 //        console.log(request);

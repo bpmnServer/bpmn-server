@@ -1,6 +1,6 @@
 // The bpmn-web model editor: bpmn-js with the properties panel shaped for bpmn-server.
 // The page (src/views/modeler.pug) provides #js-canvas, #js-properties-panel, #js-panel-resizer, the save
-// buttons, the dock under the canvas (#js-dock: the Problems and Report tabs) and the model as JSON in #model-source. window.saveDiagramFunct(option) saves, as it did in the
+// buttons, the dock under the canvas (#js-dock: the Problems, Report, Test and History tabs) and the model as JSON in #model-source. window.saveDiagramFunct(option) saves, as it did in the
 // classic modeler (hosts and tests call it).
 import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-js.css';
@@ -25,6 +25,7 @@ import ElementBehaviour from './properties/ElementBehaviour.js';
 import DecisionsModule from './decisions/index.js';
 import ConnectorsModule from './connectors/index.js';
 import LintRulesModule from './lint/index.js';
+import HistoryModule from './history/index.js';
 
 const page = document.getElementById('modeler-page');
 const { processName } = page.dataset;
@@ -48,9 +49,11 @@ const modeler = new BpmnModeler({
         DecisionsModule,
         ConnectorsModule,
         LintRulesModule,
+        HistoryModule,
         { __init__: ['elementBehaviour'], elementBehaviour: ['type', ElementBehaviour] }
     ],
     report: { container: '#js-report', processName },
+    history: { container: '#js-history', processName },
     // what the selected element does, above the properties panel
     elementBehaviour: { parent: '#js-properties-panel' },
     scriptContext: { servicesUrl: '/model/services' },
@@ -170,7 +173,7 @@ const dock = document.getElementById('js-dock');
 const MIN_DOCK = 80;
 const maxDock = () => Math.max(MIN_DOCK, Math.floor(page.clientHeight * 0.7));
 
-const DOCK_TABS = ['problems', 'report', 'test'];
+const DOCK_TABS = ['problems', 'report', 'test', 'history'];
 
 function applyDockState() {
     const tab = DOCK_TABS.includes(panelState.dockTab) ? panelState.dockTab : 'problems';
@@ -180,7 +183,7 @@ function applyDockState() {
     for (const name of DOCK_TABS)
         document.getElementById(`js-tab-${name}`).setAttribute('aria-selected', String(name === tab));
     document.getElementById('js-dock-toggle').setAttribute('aria-expanded', String(!panelState.dockCollapsed));
-    for (const [name, view] of [['report', modeler.get('report')], ['test', modeler.get('testPanel')]]) {
+    for (const [name, view] of [['report', modeler.get('report')], ['test', modeler.get('testPanel')], ['history', modeler.get('historyPanel')]]) {
         if (tab === name && !panelState.dockCollapsed)
             view.show();
         else
@@ -197,6 +200,7 @@ function showTab(tab) {
 document.getElementById('js-tab-problems').addEventListener('click', () => showTab('problems'));
 document.getElementById('js-tab-report').addEventListener('click', () => showTab('report'));
 document.getElementById('js-tab-test').addEventListener('click', () => showTab('test'));
+document.getElementById('js-tab-history').addEventListener('click', () => showTab('history'));
 document.getElementById('js-dock-toggle').addEventListener('click', () => {
     panelState.dockCollapsed = !panelState.dockCollapsed;
     applyDockState();
@@ -297,6 +301,7 @@ async function saveDiagram(option) {
             throw new Error(`${response.status} ${response.statusText}`);
         changed = false;
         showStatus('Saved');
+        modeler.get('eventBus').fire('model.saved', { processName });
         if (option === 'run')
             window.open('/execute/' + encodeURIComponent(processName), 'execute')?.focus();
     } catch (err) {

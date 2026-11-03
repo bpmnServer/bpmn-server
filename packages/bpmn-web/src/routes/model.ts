@@ -168,7 +168,7 @@ export class Model extends Common {
                     }
 
                     try {
-                    await definitions.save(name, source, svg);
+                    await definitions.save(name, source, svg, null, req.user?.userName);
                     req.session.processName = name;     // focus the imported model on the home page
                     }
                     catch(exc)
@@ -278,7 +278,7 @@ export class Model extends Common {
             let bpmn = body.bpmn;
             let svg = body.svg;
 
-            await definitions.save(name, bpmn, svg);
+            await definitions.save(name, bpmn, svg, null, request.user?.userName);
             console.log(" save completed");
 
             //        console.log(request);
@@ -293,7 +293,7 @@ export class Model extends Common {
             let bpmn = body.bpmn;
             let svg = body.svg;
 
-            await definitions.save(name, bpmn, svg);
+            await definitions.save(name, bpmn, svg, null, request.user?.userName);
             console.log(" save completed");
 
             //        console.log(request);
@@ -309,7 +309,7 @@ export class Model extends Common {
             let bpmn = body.bpmn;
             let svg = body.svg;
 
-            await definitions.save(name, bpmn, svg);
+            await definitions.save(name, bpmn, svg, null, request.user?.userName);
             console.log(" save completed");
 
             //        console.log(request);
@@ -325,7 +325,7 @@ export class Model extends Common {
             let bpmn = body.bpmn;
             let svg = body.svg;
 
-            await definitions.save(name, bpmn, svg);
+            await definitions.save(name, bpmn, svg, null, request.user?.userName);
             console.log(" save completed");
 
             //        console.log(request);
@@ -576,6 +576,28 @@ export class Model extends Common {
                 }
             }
             response.json({ services });
+        }));
+
+        // ---- the editor's History tab: every save of a model (ModelHistory: files in the models folder's .history)
+
+        router.get('/history/:process', awaitHandlerFactory(async (request, response) => {
+            if (!isSafeModelName(request.params.process))
+                return response.status(400).json({ error: 'Invalid model name' });
+            response.json({ versions: await definitions.history?.(request.params.process) ?? [] });
+        }));
+        router.get('/history/:process/:version', awaitHandlerFactory(async (request, response) => {
+            const version = Number(request.params.version);
+            if (!isSafeModelName(request.params.process) || !Number.isInteger(version) || version < 1)
+                return response.status(400).json({ error: 'Invalid model name or version' });
+            const source = await definitions.historySource?.(request.params.process, version);
+            if (source == null)
+                return response.status(404).json({ error: `'${request.params.process}' has no version ${version}` });
+            response.type('application/xml').send(source);
+        }));
+        router.delete('/history/:process', awaitHandlerFactory(async (request, response) => {
+            if (!isSafeModelName(request.params.process))
+                return response.status(400).json({ error: 'Invalid model name' });
+            response.json({ purged: await definitions.purgeHistory?.(request.params.process) ?? 0 });
         }));
 
         // ---- the editor's Test tab: scenarios per model, run on the saved model

@@ -1,0 +1,13 @@
+{
+  "model": "Property Insurance Claim.bpmn",
+  "scenarios": [
+    {
+      "name": "Scenario 1",
+      "start": {
+        "data": {}
+      },
+      "steps": [],
+      "expect": {}
+    }
+  ]
+}

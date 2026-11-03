@@ -84,7 +84,8 @@ app = await testApp({
 
 ## Scenario files
 
-A scenario can also be written as data, in the format the model editor's **Test** tab uses. A file holds one
+A scenario can also be written as data, in the format the model editor's **Test** tab uses: the Test tab saves a
+model's scenarios in this format, beside the model (`<model>.tests.json` in the models folder). A file holds one
 scenario with its model, or a model's list of them:
 
 ```json

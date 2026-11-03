@@ -84,6 +84,16 @@ export async function setup(server: BPMNServer) {
 	await server.dataStore.install();
 	await server.definitions.install();
 	await server.connectors?.install();
+	// the Test tabs' tests, kept in MongoDB before 3.5, become files beside the models
+	try {
+		const { migrateScenarioSets } = await import('./testing/scenarios.js');
+		const moved = await migrateScenarioSets();
+		if (moved)
+			console.log(`${moved} test set(s) moved from the database to files beside the models (*.tests.json)`);
+	}
+	catch (error) {
+		console.error('the test sets in the database were not moved to files:', error.message);
+	}
 	if (guestAccess())
 		return;
 	const { UserService } = await import('./userAccess/UserService.js');

@@ -107,8 +107,8 @@ A run evaluates the decision as a business rule task does, and shows the result 
 test with no checks passes when the decision evaluates. **Use as checks** makes a run's result the test's checks.
 Each test keeps its runs.
 
-A test names a decision of the file, or uses the file's top decision. Tests are kept per file, with the models'
-test scenarios, and the [Design dashboard](modeler.md#testing-a-model) runs them with the models' tests.
+A test names a decision of the file, or uses the file's top decision. A file's tests are saved beside it, in
+`<name>.dmn.tests.json`, and the [Design dashboard](modeler.md#testing-a-model) runs them with the models' tests.
 
 ## When something is wrong
 

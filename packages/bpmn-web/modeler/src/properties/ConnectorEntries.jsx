@@ -77,14 +77,14 @@ function ConnectorSummary({ element, id }) {
 
     return <div class="bio-properties-panel-connector-summary" id={id}>
         {found.id ? <div class="bio-properties-panel-connector-ref">
-            <code id={`${id}-ref`}>{ref}</code>
+            <code id={`${id}-ref`} data-value={ref}>{ref}</code>
             {op ? <div class="bio-properties-panel-description">{op.method} {op.path}{op.summary ? `: ${op.summary}` : ''}</div> : null}
         </div> : null}
         {problem ? <p class="bio-properties-panel-connector-problem" id={`${id}-problem`}>{problem}</p> : null}
 
         <h4 class="bio-properties-panel-connector-heading">{translate('Inputs')}</h4>
         {inputs.length ? <ul class="bio-properties-panel-connector-list" id={`${id}-inputs`}>
-            {inputs.map(p => <li key={p.get('name')}><span>{p.get('name')}</span> = <code>{p.get('value')}</code></li>)}
+            {inputs.map(p => <li key={p.get('name')}><span data-value={p.get('name')}>{p.get('name')}</span> = <code data-value={p.get('value')}>{p.get('value')}</code></li>)}
         </ul> : <p class="bio-properties-panel-description">{translate('None')}</p>}
 
         <h4 class="bio-properties-panel-connector-heading">{translate('Outputs')}</h4>
@@ -92,8 +92,8 @@ function ConnectorSummary({ element, id }) {
             {outputs.map(p => {
                 const field = fieldOf(p.get('value'));
                 return <li key={p.get('name')}>
-                    {field === null ? <code>{p.get('value')}</code> : <span>{field || translate('the whole response')}</span>}
-                    {' → '}<span class="bio-properties-panel-connector-name">{p.get('name')}</span>
+                    {field === null ? <code data-value={p.get('value')}>{p.get('value')}</code> : <span data-value={p.get('value')} title={p.get('value')}>{field || translate('the whole response')}</span>}
+                    {' → '}<span class="bio-properties-panel-connector-name" data-value={p.get('name')}>{p.get('name')}</span>
                 </li>;
             })}
         </ul> : <p class="bio-properties-panel-description">{translate('None: nothing of the response is kept')}</p>}

@@ -1,0 +1,173 @@
+// The History tab: every save of the model (GET /model/history/<name>), newest first, with who saved it and when,
+// and the model in the editor (unsaved changes included) as "Current". Two ticked are compared by their report
+// text (the Report tab's outline of the whole model: Report.text), its changed lines shown with the element and
+// process they are in; and the elements moved or resized on the diagram, which the text does not hold.
+// Purge history removes every saved version (the model itself stays).
+import { textChanges, layoutChanges } from './compare.js';
+
+const CURRENT = 'current';
+
+function el(tag, attributes = {}, ...children) {
+    const element = document.createElement(tag);
+    for (const [name, value] of Object.entries(attributes)) {
+        if (name === 'class') element.className = value;
+        else if (name.startsWith('on')) element.addEventListener(name.slice(2), value);
+        else if (value !== undefined && value !== null && value !== false) element.setAttribute(name, value === true ? '' : value);
+    }
+    element.append(...children.flat().filter(c => c !== null && c !== undefined && c !== false));
+    return element;
+}
+
+const when = iso => new Date(iso).toLocaleString();
+const size = bytes => bytes < 1024 ? `${bytes} B` : `${(bytes / 1024).toFixed(1)} KB`;
+
+export default class HistoryPanel {
+    constructor(config, eventBus, bpmnjs, moddle, elementRegistry, canvas, selection, report) {
+        this._config = config || {};
+        this._report = report;
+        this._bpmnjs = bpmnjs;
+        this._moddle = moddle;
+        this._elementRegistry = elementRegistry;
+        this._canvas = canvas;
+        this._selection = selection;
+        this._root = document.querySelector(this._config.container);
+        this._visible = false;
+        this._versions = [];
+        this._ticked = [];          // the versions ticked, in the order ticked (CURRENT for the editor's model)
+        this._comparison = null;
+        if (!this._root)
+            return;
+        eventBus.on('model.saved', () => { if (this._visible) this.load(); });
+    }
+
+    get _url() {
+        return '/model/history/' + encodeURIComponent(this._config.processName);
+    }
+
+    show() {
+        this._visible = true;
+        this.load();
+    }
+
+    hide() {
+        this._visible = false;
+    }
+
+    async load() {
+        try {
+            const response = await fetch(this._url);
+            if (!response.ok)
+                throw new Error(`${response.status} ${response.statusText}`);
+            this._versions = (await response.json()).versions ?? [];
+            this._error = null;
+        } catch (err) {
+            this._error = 'The history could not be read: ' + err.message;
+        }
+        this._ticked = this._ticked.filter(v => v === CURRENT || this._versions.some(x => x.version === v));
+        this.render();
+    }
+
+    /** A version's model: a saved one from the server, the current one from the editor. */
+    async source(version) {
+        if (version === CURRENT)
+            return (await this._bpmnjs.saveXML({ format: true })).xml;
+        const response = await fetch(`${this._url}/${version}`);
+        if (!response.ok)
+            throw new Error(`version ${version}: ${response.status} ${response.statusText}`);
+        return response.text();
+    }
+
+    tick(version, on) {
+        this._ticked = this._ticked.filter(v => v !== version);
+        if (on)
+            this._ticked = [...this._ticked, version].slice(-2);      // two at most: the earliest ticked goes
+        this.render();
+    }
+
+    async compare() {
+        // the older first; the editor's model is the newest
+        const [before, after] = [...this._ticked].sort((a, b) => (a === CURRENT ? Infinity : a) - (b === CURRENT ? Infinity : b));
+        try {
+            const [a, b] = await Promise.all([this.source(before), this.source(after)]);
+            const [older, newer] = (await Promise.all([this._moddle.fromXML(a), this._moddle.fromXML(b)])).map(r => r.rootElement);
+            const [from, to] = [this._report.text(older), this._report.text(newer)];
+            this._comparison = { before, after, same: from === to, lines: textChanges(from, to), moved: layoutChanges(older, newer) };
+        } catch (err) {
+            this._comparison = { before, after, error: err.message };
+        }
+        this.render();
+    }
+
+    async purge() {
+        if (!window.confirm(`Delete all ${this._versions.length} saved versions of '${this._config.processName}'? The model itself stays.`))
+            return;
+        try {
+            const response = await fetch(this._url, { method: 'DELETE' });
+            if (!response.ok)
+                throw new Error(`${response.status} ${response.statusText}`);
+        } catch (err) {
+            window.alert('The history was not purged: ' + err.message);
+        }
+        this._comparison = null;
+        this.load();
+    }
+
+    /** Back to the diagram, with the element selected and in view. */
+    reveal(id) {
+        const element = this._elementRegistry.get(id);
+        if (!element)
+            return;
+        if (element !== this._canvas.getRootElement())
+            this._canvas.scrollToElement(element);
+        this._selection.select(element);
+    }
+
+    render() {
+        if (!this._root || !this._visible)
+            return;
+        const label = v => v === CURRENT ? 'Current' : `Version ${v}`;
+        const row = (version, cells) => el('tr', { class: this._ticked.includes(version) ? 'ticked' : '' },
+            el('td', {}, el('input', {
+                type: 'checkbox', class: 'history-tick', 'data-version': String(version), 'aria-label': label(version),
+                checked: this._ticked.includes(version), onchange: e => this.tick(version, e.target.checked)
+            })),
+            ...cells.map(c => el('td', {}, c)));
+
+        const list = el('div', { class: 'history-list' },
+            el('div', { class: 'history-actions' },
+                el('button', { type: 'button', class: 'history-compare primary', disabled: this._ticked.length !== 2, onclick: () => this.compare() },
+                    'Compare'),
+                el('button', { type: 'button', class: 'history-purge', disabled: !this._versions.length, onclick: () => this.purge() }, 'Purge history')),
+            this._error ? el('p', { class: 'history-error' }, this._error) : null,
+            el('table', { class: 'history-versions' },
+                el('thead', {}, el('tr', {}, el('th', {}), el('th', {}, 'Version'), el('th', {}, 'Saved'), el('th', {}, 'By'), el('th', {}, 'Size'))),
+                el('tbody', {},
+                    row(CURRENT, ['Current', 'in the editor', '', '']),
+                    this._versions.map(v => row(v.version, [String(v.version), when(v.savedAt), v.savedBy ?? '', size(v.size)])))),
+            this._versions.length ? null : el('p', { class: 'history-note' }, 'No saved versions yet: each save keeps one.'),
+            el('p', { class: 'history-note' }, 'Tick two to compare them.'));
+
+        this._root.replaceChildren(el('div', { class: 'history-panel' }, list, this.renderComparison(label)));
+    }
+
+    renderComparison(label) {
+        const c = this._comparison;
+        if (!c)
+            return el('div', { class: 'history-comparison empty' });
+        const title = el('h4', {}, `${label(c.before)} → ${label(c.after)}`);
+        if (c.error)
+            return el('div', { class: 'history-comparison' }, title, el('p', { class: 'history-error' }, 'Could not compare: ' + c.error));
+        const name = e => el('span', {},
+            el('a', { href: '#', class: 'history-element', 'data-id': e.id, onclick: ev => { ev.preventDefault(); this.reveal(e.id); } }, e.id),
+            ` ${e.type}${e.name ? ': ' + e.name : ''}`);
+        return el('div', { class: 'history-comparison' },
+            title,
+            c.same && !c.moved.length ? el('p', { class: 'history-note' }, 'No differences.') : null,
+            c.same ? null : el('pre', { class: 'history-text' }, c.lines.map(l => el('div', { class: `line ${l.kind}` },
+                l.kind === 'added' ? '+ ' : l.kind === 'removed' ? '- ' : l.kind === 'skipped' ? '… ' : '  ', l.text))),
+            c.moved.length ? el('section', { class: 'history-changes moved' }, el('h5', {}, `Moved or resized on the diagram (${c.moved.length})`),
+                el('ul', {}, c.moved.map(e => el('li', {}, name(e))))) : null);
+    }
+}
+
+HistoryPanel.$inject = ['config.history', 'eventBus', 'bpmnjs', 'moddle', 'elementRegistry', 'canvas', 'selection', 'report'];

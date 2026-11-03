@@ -1,0 +1,191 @@
+{
+  "model": "Buy Used Car",
+  "scenarios": [
+    {
+      "name": "Scenario 1",
+      "start": {
+        "data": {}
+      },
+      "steps": [
+        {
+          "element": "task_Buy",
+          "data": {
+            "needsRepairs": "No",
+            "needsCleaning": "No"
+          },
+          "itemId": "bee916a8-ac27-4116-bad7-ac5f16bea930",
+          "after": {
+            "starterUserId": "",
+            "startDate": "",
+            "needsRepairs": "No",
+            "needsCleaning": "No"
+          },
+          "checks": []
+        },
+        {
+          "element": "task_Drive",
+          "data": {},
+          "itemId": "2b0ce8f0-bd37-4686-a481-250b483c0afb",
+          "after": {
+            "starterUserId": "",
+            "startDate": "",
+            "needsRepairs": "No",
+            "needsCleaning": "No"
+          },
+          "checks": []
+        }
+      ],
+      "checks": []
+    },
+    {
+      "name": "Scenario 2 ",
+      "start": {
+        "data": {}
+      },
+      "steps": [
+        {
+          "element": "task_Buy",
+          "data": {
+            "needsRepairs": "Yes",
+            "needsCleaning": "Yes"
+          },
+          "itemId": "61c62329-f742-40e8-a14a-327ffb4391fc",
+          "after": {
+            "starterUserId": null,
+            "startDate": null,
+            "needsRepairs": "Yes",
+            "needsCleaning": "Yes"
+          },
+          "checks": []
+        },
+        {
+          "element": "task_repair",
+          "data": {},
+          "itemId": "a14a327f-fb43-41fc-9d09-932bf77fc1a0",
+          "after": {
+            "starterUserId": null,
+            "startDate": null,
+            "needsRepairs": "Yes",
+            "needsCleaning": "Yes"
+          },
+          "checks": []
+        },
+        {
+          "element": "task_clean",
+          "data": {},
+          "itemId": "4a327ffb-4391-4c1d-8993-2bf77fc1a0e5",
+          "after": {
+            "starterUserId": null,
+            "startDate": null,
+            "needsRepairs": "Yes",
+            "needsCleaning": "Yes"
+          },
+          "checks": []
+        },
+        {
+          "element": "task_Drive",
+          "data": {},
+          "itemId": "d1f8a749-7e12-450c-b8e6-80c14bed4754",
+          "after": {
+            "starterUserId": null,
+            "startDate": null,
+            "needsRepairs": "Yes",
+            "needsCleaning": "Yes"
+          },
+          "checks": []
+        }
+      ],
+      "checks": [
+        {
+          "kind": "node",
+          "node": "gateway_2",
+          "status": "end"
+        }
+      ]
+    },
+    {
+      "name": "Scenario 3",
+      "start": {
+        "data": {}
+      },
+      "steps": [
+        {
+          "element": "task_Buy",
+          "data": {
+            "needsRepairs": "Yes",
+            "needsCleaning": "No"
+          },
+          "itemId": "f5b8c0b4-7c64-489e-b4eb-549fb4700dbf",
+          "after": {
+            "starterUserId": null,
+            "startDate": null,
+            "needsRepairs": "Yes",
+            "needsCleaning": "No"
+          },
+          "checks": []
+        },
+        {
+          "element": "task_repair",
+          "data": {},
+          "itemId": "f4eb549f-b470-4dbf-b781-f1a86c8ac0fc",
+          "after": {
+            "starterUserId": null,
+            "startDate": null,
+            "needsRepairs": "Yes",
+            "needsCleaning": "No"
+          },
+          "checks": []
+        },
+        {
+          "element": "task_Drive",
+          "data": {},
+          "itemId": "a86c8ac0-fc6e-4ae9-99fd-eb1a41d1359c",
+          "after": {
+            "starterUserId": null,
+            "startDate": null,
+            "needsRepairs": "Yes",
+            "needsCleaning": "No"
+          },
+          "checks": []
+        }
+      ],
+      "checks": []
+    },
+    {
+      "name": "Scenario 4",
+      "start": {
+        "data": {}
+      },
+      "steps": [
+        {
+          "element": "task_Buy",
+          "data": {
+            "needsRepairs": "No",
+            "needsCleaning": "No"
+          },
+          "itemId": "27a44c2f-7aff-47f9-a93e-b19cedfe1a5d",
+          "after": {
+            "starterUserId": null,
+            "startDate": null,
+            "needsRepairs": "No",
+            "needsCleaning": "No"
+          },
+          "checks": []
+        },
+        {
+          "element": "task_Drive",
+          "data": {},
+          "itemId": "9cedfe1a-5dcb-4c5a-be4b-104b90fc6757",
+          "after": {
+            "starterUserId": null,
+            "startDate": null,
+            "needsRepairs": "No",
+            "needsCleaning": "No"
+          },
+          "checks": []
+        }
+      ],
+      "checks": []
+    }
+  ]
+}

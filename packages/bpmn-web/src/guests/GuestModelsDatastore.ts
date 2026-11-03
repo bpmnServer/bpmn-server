@@ -15,18 +15,20 @@ export class GuestModelsDatastore extends ModelsDatastore {
     private records = new Map<string, { store: ModelsDatastoreDB; times: Map<string, number> }>();
     private static readonly KEPT = 100;
 
-    async save(name, bpmn, svg?, owner = null): Promise<boolean> {
+    async save(name, bpmn, svg?, owner = null, savedBy?: string): Promise<boolean> {
         const guest = currentGuest();
         if (!guest)
-            return super.save(name, bpmn, svg, owner);
+            return super.save(name, bpmn, svg, owner, savedBy);
         const file = this.file(guest, name, 'bpmn');
         if (!fs.existsSync(file) && this.names(guest).length >= maxGuestModels())
             throw new Error(`a guest may have ${maxGuestModels()} models: delete one first`);
         // parsing it first: a model that does not load leaves the files as they were
         await new Definition(name, bpmn, this.server).load();
+        const before = await this.before(file);
         write(file, bpmn);
         if (svg)
             write(this.file(guest, name, 'svg'), svg);
+        await this.keepVersion(this.modelHistory, name, bpmn, savedBy, before);
         return true;
     }
 
@@ -36,6 +38,7 @@ export class GuestModelsDatastore extends ModelsDatastore {
             return super.deleteModel(name, owner);
         for (const type of ['bpmn', 'svg'])
             fs.rmSync(this.file(guest, name, type), { force: true });
+        await this.modelHistory.purge(name);
     }
 
     async renameModel(name, newName, owner = null): Promise<boolean> {
@@ -45,6 +48,7 @@ export class GuestModelsDatastore extends ModelsDatastore {
         for (const type of ['bpmn', 'svg'])
             if (fs.existsSync(this.file(guest, name, type)))
                 fs.renameSync(this.file(guest, name, type), this.file(guest, newName, type));
+        await this.modelHistory.rename(name, newName);
         return true;
     }
 

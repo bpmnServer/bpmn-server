@@ -390,7 +390,7 @@ class APIModel extends APIModelReader {
     public async save(name, source, svg, user?: ISecureUser) {
         user=this.getUser(user);
         if (await user.canModifyModel(name))
-            return await this.server.definitions.save(name, source, svg, user.modelsOwner);
+            return await this.server.definitions.save(name, source, svg, user.modelsOwner, user.userName);
         else
             return false;
     }

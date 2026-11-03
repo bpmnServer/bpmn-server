@@ -4,6 +4,7 @@ const require = createRequire(import.meta.url);
 import { Definition } from '../elements/Definition.js';
 import type { IBPMNServer } from '../interfaces/server.js';
 import {ModelsDatastoreDB} from "./ModelsDatastoreDB.js";
+import { ModelHistory, type IModelVersion } from "./ModelHistory.js";
 
 import type { IModelsDatastore } from '../interfaces/datastore.js';
 
@@ -97,16 +98,57 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
         return this.getFile(name, 'svg');
     }
 
-    async save(name, bpmn, svg?,owner=null): Promise<boolean> {
+    /** Every save of a model, kept beside it (`.history/<name>/`), in the models folder of the moment (a guest's, with guests). */
+    get modelHistory() { return new ModelHistory(this.definitionsPath); }
 
+    /** The model's file and its time before a save: kept first when the model has no history yet. */
+    protected async before(file: string): Promise<{ source: string; savedAt: Date } | undefined> {
+        const fs = require('fs');
+        try {
+            return { source: await fs.promises.readFile(file, 'utf8'), savedAt: (await fs.promises.stat(file)).mtime };
+        }
+        catch (error) {
+            if (error.code === 'ENOENT') return undefined;
+            throw error;
+        }
+    }
+
+    /** Keeps a save in the model's history; a history that can not be written does not fail the save. */
+    protected async keepVersion(history: ModelHistory, name, bpmn, savedBy, before) {
+        try {
+            await history.keep(name, bpmn, savedBy, before);
+        }
+        catch (error) {
+            this.logger.error(`the history of '${name}' was not kept: ${error.message}`);
+        }
+    }
+
+    /** Saves the model; `savedBy` (a user name) is kept with the version in its history. */
+    async save(name, bpmn, svg?,owner=null, savedBy?: string): Promise<boolean> {
+
+        const before = await this.before(this.getPath(name, 'bpmn'));
         // The database's record first: it parses the model, so a model that does not load leaves the files as they were.
         await super.save(name, bpmn, svg);
         await this.saveFile(name, 'bpmn', bpmn);
         if (svg)
             await this.saveFile(name, 'svg', svg);
+        await this.keepVersion(this.modelHistory, name, bpmn, savedBy, before);
 
         return true;
 
+    }
+
+    /** The model's saved versions, newest first. */
+    async history(name: string): Promise<IModelVersion[]> {
+        return this.modelHistory.list(name);
+    }
+    /** A saved version of the model, or null. */
+    async historySource(name: string, version: number): Promise<string | null> {
+        return this.modelHistory.source(name, version);
+    }
+    /** Removes the model's history; returns how many versions it had. */
+    async purgeHistory(name: string): Promise<number> {
+        return this.modelHistory.purge(name);
     }
 
     async deleteModel(name: any,owner=null): Promise<void> {
@@ -116,6 +158,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
             try { await fs.promises.unlink(this.definitionsPath + name + '.' + extension); }
             catch (error) { if (error.code !== 'ENOENT') throw error; }
         }
+        await this.modelHistory.purge(name);
     }
     async renameModel(name: any, newName: any,owner=null): Promise<boolean> {
         const fs = require('fs');
@@ -124,6 +167,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
             try { await fs.promises.rename(this.definitionsPath + name + '.' + extension, this.definitionsPath + newName + '.' + extension); }
             catch (error) { if (error.code !== 'ENOENT') throw error; }
         }
+        await this.modelHistory.rename(name, newName);
         return true;
     }
     /**

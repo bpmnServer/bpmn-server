@@ -92,7 +92,7 @@ test('administration: server, users, add a user, locks, backup', async () => {
   assert.equal(data.version, 2);
   assert.ok(data.files.some(f => f.name === MODEL + '.bpmn'), 'the models folder');
   assert.ok(Object.keys(data.collections).some(c => /users/i.test(c)), 'the users');
-  for (const name of ['wf_instances', 'wf_archive', 'wf_locks', 'wf_models', 'wf_events', 'wf_test_scenarios'])
+  for (const name of ['wf_instances', 'wf_archive', 'wf_locks', 'wf_models', 'wf_events'])
     assert.ok(Array.isArray(data.collections[name]), name);
   assert.ok(data.collections.wf_models.some(m => m.name === MODEL), 'the models collection');
   assert.ok(!('sessions' in data.collections), 'never the sessions');

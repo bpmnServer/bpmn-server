@@ -1,0 +1,29 @@
+{
+  "model": "Leave Application",
+  "scenarios": [
+    {
+      "name": "Scenario 1",
+      "start": {
+        "data": {}
+      },
+      "steps": [
+        {
+          "element": "Request",
+          "data": {
+            "RequestReason": "",
+            "LeaveType": "",
+            "StartDate": "",
+            "EndDate": ""
+          }
+        },
+        {
+          "element": "Approve",
+          "data": {
+            "approval": ""
+          }
+        }
+      ],
+      "expect": {}
+    }
+  ]
+}
