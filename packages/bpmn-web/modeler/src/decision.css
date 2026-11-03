@@ -31,6 +31,25 @@
     border-color: #1f62c8;
 }
 
+/* the decision above, the dock (the Test tab, modeler.css) under it */
+.decision-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* a decision test's inputs: the input's name, its value */
+.test-input-row .test-input-name {
+    min-width: 140px;
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 12px;
+}
+
+.test-input-row .test-input-value {
+    flex: 1;
+}
+
 .decision-canvas {
     flex: 1;
     min-height: 0;

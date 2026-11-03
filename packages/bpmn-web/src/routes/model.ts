@@ -17,6 +17,7 @@ import { modelNameGuard, isSafeModelName } from './middleware/modelName.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
 import { currentGuest } from '../guests/guests.js';
 import { zip } from './zip.js';
+import { loadDecisionTests, saveDecisionTests, checkDecisionTests, runDecisionTests } from '../testing/decisionTests.js';
 import { loadScenarios, saveScenarios, checkScenarios, runScenario, startTest, completeTest, findTest, summarize, expectChecks, checksAt, setTestData, restartTest } from '../testing/scenarios.js';
 
 
@@ -476,6 +477,36 @@ export class Model extends Common {
                 return response.status(400).json({ errors: 'Not a DMN file' });
             FS.writeFileSync(path.join(bpmnServer.configuration.definitionsPath, decisionFile(name)), xml);
             response.json({ saved: decisionFile(name) });
+        }));
+
+        // ---- a decision's tests (the decision editor's Tests panel), run on the saved file
+
+        router.get('/decision/:decision/tests', awaitHandlerFactory(async (request, response) => {
+            if (!isSafeModelName(request.params.decision))
+                return response.status(400).json({ error: 'Invalid decision name' });
+            response.json({ tests: await loadDecisionTests(request.params.decision) });
+        }));
+        router.put('/decision/:decision/tests', awaitHandlerFactory(async (request, response) => {
+            const tests = request.body?.tests;
+            const problems = isSafeModelName(request.params.decision) ? checkDecisionTests(tests) : ['Invalid decision name'];
+            if (problems.length)
+                return response.status(400).json({ error: problems.join('; ') });
+            await saveDecisionTests(request.params.decision, tests, request.user?.userName);
+            response.json({ saved: tests.length });
+        }));
+        /** Run the tests given in the body, or the saved ones. */
+        router.post('/decision/:decision/tests/run', awaitHandlerFactory(async (request, response) => {
+            const name = request.params.decision;
+            if (!isSafeModelName(name))
+                return response.status(400).json({ error: 'Invalid decision name' });
+            const file = path.join(bpmnServer.configuration.definitionsPath, decisionFile(name));
+            if (!FS.existsSync(file))
+                return response.status(404).json({ error: `No decision file ${decisionFile(name)}: save the decision first` });
+            const tests = request.body?.tests ?? await loadDecisionTests(name);
+            const problems = checkDecisionTests(tests);
+            if (problems.length)
+                return response.status(400).json({ error: problems.join('; ') });
+            response.json({ results: await runDecisionTests(file, tests) });
         }));
 
         router.get('/services', awaitHandlerFactory(async (request, response) => {

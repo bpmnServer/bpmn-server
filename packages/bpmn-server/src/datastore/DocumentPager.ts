@@ -49,7 +49,7 @@ export class DocumentPager {
             }
             else rows = instances.map(project);
 
-            const value = (row) => DocumentQuery.values(row, sortField)[0];
+            const value = (row) => DocumentQuery.first(row, sortField);
             const compare = (a, b) => (DocumentQuery.compare(value(a), value(b)) || DocumentQuery.compare(String(a._id), String(b._id))) * direction;
             rows.sort(compare);
             if (after) {

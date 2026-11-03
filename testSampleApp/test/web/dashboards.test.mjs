@@ -89,8 +89,12 @@ test('administration: server, users, add a user, locks, backup', async () => {
   assert.match(backup.headers.get('content-disposition'), /bpmn-backup-.*\.json/);
   const data = JSON.parse(backup.text);
   assert.equal(data.format, 'bpmn-web-backup');
+  assert.equal(data.version, 2);
   assert.ok(data.files.some(f => f.name === MODEL + '.bpmn'), 'the models folder');
   assert.ok(Object.keys(data.collections).some(c => /users/i.test(c)), 'the users');
+  for (const name of ['wf_instances', 'wf_archive', 'wf_locks', 'wf_models', 'wf_events', 'wf_test_scenarios'])
+    assert.ok(Array.isArray(data.collections[name]), name);
+  assert.ok(data.collections.wf_models.some(m => m.name === MODEL), 'the models collection');
   assert.ok(!('sessions' in data.collections), 'never the sessions');
   assert.equal((await staff.get('/dashboard/admin/backup')).status, 403);
 });

@@ -56,6 +56,16 @@ class MongoDB implements IDocumentStore {
         }
     }
 
+    async count(dbName, collName, qry) {
+        const client = await this.getClient();
+        this.profilerStart('>mongo.count:' + collName);
+        try {
+            return await client.db(dbName).collection(collName).countDocuments(qry);
+        } finally {
+            this.profilerEnd();
+        }
+    }
+
     // db.collection.createIndex({ "a.loc": 1, "a.qty": 1 }, { unique: true })
     async createIndex(dbName, collName, index, unique: any = {}) {
         const client = await this.getClient();

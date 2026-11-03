@@ -14,6 +14,7 @@
 // Each scenario keeps its runs (the latest RUNS_KEPT): when, how, the result and the instance, which stays in
 // the database; an earlier run can be opened again, its items, data and log shown and simulated.
 import { is } from 'bpmn-js/lib/util/ModelUtil';
+import { el, json, parse, parseValue, showValue, request, CHECK_OPS, RUNS_KEPT } from './common.js';
 
 const STATUSES = ['', 'end', 'wait', 'running', 'terminated'];
 /** The steps, as the instance page offers them (src/testing/scenarios.ts isStep): user tasks and events. */
@@ -22,50 +23,13 @@ const isStep = item => item.status === 'wait' && (item.type === 'bpmn:UserTask' 
 const stepAction = item => item.type === 'bpmn:UserTask' ? 'Execute' : 'Force';
 const MARKERS = ['test-started', 'test-passed', 'test-waiting', 'test-failed'];
 const SIMULATION_STEP = 450;    // ms between the elements a simulation shows
-const RUNS_KEPT = 20;
 const HOW = { start: 'Start', run: 'Run', all: 'Run all' };
 
-function el(tag, attrs = {}, ...children) {
-    const node = document.createElement(tag);
-    for (const [key, value] of Object.entries(attrs)) {
-        if (value === undefined || value === null || value === false) continue;
-        if (key === 'class') node.className = value;
-        else if (key.startsWith('on')) node.addEventListener(key.slice(2), value);
-        else if (key === 'value') node.value = value;
-        else node.setAttribute(key, value === true ? '' : value);
-    }
-    for (const child of children.flat(Infinity))
-        if (child !== undefined && child !== null && child !== false)
-            node.append(child instanceof Node ? child : document.createTextNode(String(child)));
-    return node;
-}
-
-/** Short JSON on one line, longer pretty-printed. */
-const json = value => {
-    const line = JSON.stringify(value ?? {});
-    return line.length <= 80 ? line : JSON.stringify(value ?? {}, null, 2);
-};
-function parse(text) {
-    if (!text.trim()) return { value: {} };
-    try {
-        const value = JSON.parse(text);
-        if (!value || typeof value !== 'object' || Array.isArray(value)) return { error: 'Must be an object: { "field": value }' };
-        return { value };
-    } catch (err) {
-        return { error: err.message };
-    }
-}
 const sameSteps = (a, b) => a.length <= b.length && a.every((step, i) => step.element === b[i].element);
 const clone = value => JSON.parse(JSON.stringify(value ?? {}));
 
 const CHECK_KINDS = [['node', 'Node'], ['data', 'Data'], ['status', 'Instance status']];
-const CHECK_OPS = ['=', '<>', '>', '<', '>=', '<='];
 const ITEM_STATUSES = ['', 'end', 'wait', 'start', 'terminated'];
-/** A value typed in: JSON when it reads as JSON (5, true, "x", {..}), else the text itself. */
-function parseValue(text) {
-    try { return JSON.parse(text); } catch { return text; }
-}
-const showValue = value => typeof value === 'string' ? value : JSON.stringify(value ?? '');
 
 /** The older `expect` (status, data, passes, avoids) as checks at the end (src/testing/scenarios.ts expectChecks). */
 function expectChecks(expect) {
@@ -128,19 +92,8 @@ export default class TestPanel {
 
     // ---- the server
 
-    async _request(method, url, body, options = {}) {
-        const response = await fetch(url, {
-            method, headers: body ? { 'Content-Type': 'application/json' } : {},
-            body: body ? JSON.stringify(body) : undefined, ...options
-        });
-        const data = await response.json().catch(() => ({}));
-        if (!response.ok) {
-            const error = new Error(data.error || `${response.status} ${response.statusText}`);
-            error.instance = data.instance;
-            error.reported = Boolean(data.error);      // the route answered (not a 404 for a route the server lacks)
-            throw error;
-        }
-        return data;
+    _request(method, url, body, options = {}) {
+        return request(method, url, body, options);
     }
 
     async _load() {

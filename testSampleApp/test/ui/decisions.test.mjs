@@ -136,6 +136,50 @@ test('the decision editor opens a file on its table and saves changes', async ()
     await editor.close();
 });
 
+test('the decision editor\'s Test tab, as the model editor\'s: a test designed, run, its result made its checks, kept', async () => {
+    const editor = await context.newPage();
+    const editorErrors = [];
+    editor.on('pageerror', e => editorErrors.push(e.message));
+    await editor.goto(`${web.base}/model/decision/loan_approval#tests`);
+    await editor.waitForSelector('.tjs-table');
+    await editor.waitForSelector('#js-test .test-panel');
+    assert.match(await editor.innerText('#js-test .test-hint'), /add one with New/);
+
+    // New: a test with the table's inputs to fill in, a check on the first output
+    await editor.click('#js-test .test-new');
+    assert.deepEqual(await editor.locator('.test-input-name').allInnerTexts(), ['credit_score', 'income']);
+    await editor.fill('.test-input-value[aria-label="credit_score"]', '800');
+    await editor.fill('.test-input-value[aria-label="income"]', '90000');
+    await editor.click('.test-check-add');
+    assert.equal(await editor.inputValue('.test-check-path'), 'approvalStatus', 'the first output, offered');
+    await editor.fill('.test-check-value', 'Rejected');
+
+    // Run: the run is kept and shown in Runs, with why
+    await editor.click('.test-design .test-replay');
+    await editor.waitForSelector('.test-result.failed');
+    assert.match(await editor.innerText('.test-result .test-checks'), /✗ approvalStatus is "Rejected" \(is "Approved"\)/);
+    assert.equal(await editor.locator('.test-runs tr').count(), 1);
+    assert.match(await editor.innerText('.test-list li.selected'), /✗/);
+    assert.match(await editor.innerText('.test-decisions'), /rules matched: 3/);
+
+    // its result made its checks; Run all then passes
+    await editor.click('.test-use-result');
+    assert.deepEqual(await editor.locator('.test-check-path').evaluateAll(inputs => inputs.map(i => i.value)), ['approvalStatus', 'maxAmount']);
+    await editor.click('.test-run-all');
+    await editor.waitForSelector('.test-result.ok');
+    assert.equal(await editor.innerText('#js-test .test-status'), 'Passed');
+    assert.equal(await editor.locator('.test-runs tr').count(), 2);
+
+    // kept: the test and its runs
+    await editor.reload();
+    await editor.waitForSelector('#js-test .test-list li');
+    assert.match(await editor.innerText('.test-list li'), /✓\s*Test 1/);
+    await editor.click('.test-tab-runs');
+    assert.equal(await editor.locator('.test-runs tr').count(), 2);
+    assert.deepEqual(editorErrors, []);
+    await editor.close();
+});
+
 test('the Report shows a business rule task\'s decision table and where its result goes', async () => {
     await openEditor();
     await page.click('#js-tab-report');

@@ -20,6 +20,14 @@ export class UserService implements IUserService {
 	async findUser(query) {
 		return await User.findOne(query);
 	}
+	/** Every user, by user name, as plain objects. */
+	async listUsers() {
+		return await User.find({}).sort({ userName: 1 }).lean();
+	}
+	/** Every user document, under the users collection's name: for a backup. */
+	async backup(): Promise<Record<string, any[]>> {
+		return { [User.collection.collectionName]: await User.find({}).lean() };
+	}
 	async addUser(userName, email, password, userGroups) {
 		let exist = await User.findOne({ userName: userName });
 		if (exist) {

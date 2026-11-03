@@ -6,8 +6,18 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   BPMNServer, Configuration, ModelsDatastore, DataStore, NoCacheManager, Logger,
-  DefaultAppDelegate, ScriptHandler, MemoryDocumentStore,
+  DefaultAppDelegate, ScriptHandler, MemoryDocumentStore, SqliteDocumentStore,
 } from '../dist/index.js';
+
+/**
+ * A new, empty store for a test: in memory, or a SQLite file of its own with BPMN_TEST_STORE=sqlite
+ * (`npm run test:sqlite` runs the suites so).
+ */
+export function newStore() {
+  if (process.env.BPMN_TEST_STORE === 'sqlite')
+    return new SqliteDocumentStore(path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-sqlite-')), 'test.db'));
+  return new MemoryDocumentStore();
+}
 
 export const PROCESSES = fileURLToPath(new URL('./processes/', import.meta.url));
 export const quiet = () => new Logger({ toConsole: false });
@@ -30,10 +40,10 @@ export function definitionsFolder() {
 }
 
 /**
- * A server on `store` (a new in-memory store when absent), its definitions in `dir`.
+ * A server on `store` (a new one when absent: see newStore), its definitions in `dir`.
  * `cron: false` unless asked; locks retry quickly.
  */
-export async function makeServer({ store = new MemoryDocumentStore(), dir = definitionsFolder(), services = {}, serverId, cron = false, locks = {}, timers = {}, logger = quiet(), extra = {} } = {}) {
+export async function makeServer({ store = newStore(), dir = definitionsFolder(), services = {}, serverId, cron = false, locks = {}, timers = {}, logger = quiet(), extra = {} } = {}) {
   const configuration = new Configuration({
     definitionsPath: dir,
     timers: { precision: 1000, pollInterval: 0, ...timers },

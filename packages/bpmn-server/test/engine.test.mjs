@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { MemoryDocumentStore, InstanceLocker, DuplicateKeyError, BPMNServer, ItemNotWaitingError, SecureUser } from '../dist/index.js';
-import { makeServer, coverage, until, TestDelegate } from './helpers.mjs';
+import { makeServer, coverage, until, TestDelegate, newStore } from './helpers.mjs';
 
 const waiting = (execution) => execution.instance.items.filter(i => i.status === 'wait').map(i => i.elementId);
 
@@ -45,7 +45,7 @@ test('an uncovered claim takes the default flow and is rejected', async () => {
 });
 
 test('a waiting instance survives its server: another server on the same store continues it', async () => {
-  const store = new MemoryDocumentStore();
+  const store = newStore();
   const a = await makeServer({ store, services: coverage(true), serverId: 'a' });
   const started = await a.server.engine.start('property-claim', { claimId: 'C-3', policy: { id: 'P-9' } });
   const task = started.instance.items.find(i => i.elementId === 'AssessClaim');
@@ -88,7 +88,7 @@ test('cancel terminates a waiting instance and keeps it; its task is not invoked
 });
 
 test('two completions of one task: the second is refused, the process advances once', async () => {
-  const store = new MemoryDocumentStore();
+  const store = newStore();
   const a = await makeServer({ store, services: coverage(true), serverId: 'a' });
   const b = await makeServer({ store, dir: a.dir, services: coverage(true), serverId: 'b' });
   const started = await a.server.engine.start('property-claim', {});
@@ -105,7 +105,7 @@ test('two completions of one task: the second is refused, the process advances o
 });
 
 test('locks: one owner at a time, released only by the owner, a stale lock taken over', async () => {
-  const store = new MemoryDocumentStore();
+  const store = newStore();
   const a = new InstanceLocker(store, { database: 'd', owner: 'a', retryDelay: 5, maxTries: 3, staleAfter: 60_000 });
   const b = new InstanceLocker(store, { database: 'd', owner: 'b', retryDelay: 5, maxTries: 3, staleAfter: 60_000 });
   await a.install();
@@ -130,7 +130,7 @@ test('locks: a storage failure is thrown as it is, not retried as contention', a
 });
 
 test('claims: one claimant per key, across owners', async () => {
-  const store = new MemoryDocumentStore();
+  const store = newStore();
   await new InstanceLocker(store, { database: 'd', owner: 'a' }).install();
   const claims = await Promise.all(['a', 'b', 'c'].map(o => new InstanceLocker(store, { database: 'd', owner: o }).claim('timer:x:1')));
   assert.deepEqual(claims.filter(Boolean).length, 1);
@@ -149,7 +149,7 @@ test('a timer fires once and the process continues; scheduled by the server, cou
 });
 
 test('a timer left by a stopped server is fired by another, once, though two servers recover it', async () => {
-  const store = new MemoryDocumentStore();
+  const store = newStore();
   const reminded = [];
   const services = { remind: async (input, context) => { reminded.push(context.item.token.execution.id); } };
   const a = await makeServer({ store, services, serverId: 'a' });
@@ -217,7 +217,7 @@ test('a failed start rejects `ready`, and `BPMNServer.create` throws it', async 
   await assert.rejects(makeServer({ cron: true, extra: { definitions: () => failing } }), /models unreachable/);
   const { server } = await makeServer();
   const configuration = Object.assign(Object.create(Object.getPrototypeOf(server.configuration)), server.configuration,
-    { timers: { pollInterval: 0 }, definitions: () => failing, documentStore: () => new MemoryDocumentStore() });
+    { timers: { pollInterval: 0 }, definitions: () => failing, documentStore: () => newStore() });
   await server.shutdown();
   await assert.rejects(BPMNServer.create(configuration, server.logger), /models unreachable/);
 });

@@ -277,6 +277,23 @@ class DataStore extends ServerComponent  implements IDataStore {
 		return items;
 	}
 
+	/** Every document of the instances, archive and locks collections, by collection name: for a backup. */
+	async backup(): Promise<Record<string, any[]>> {
+		const { db: database, Instance_collection, Archive_collection, Locks_collection } = this.dbConfiguration;
+		const collections = {};
+		for (const name of [Instance_collection, Archive_collection, Locks_collection])
+			collections[name] = await this.db.find(database, name, {});
+		return collections;
+	}
+
+	/** How many instances match `query` (MongoDB's query language, as {@link findInstances}). */
+	async countInstances(query): Promise<number> {
+		const { db: database, Instance_collection: collection } = this.dbConfiguration;
+		if (typeof this.db.count === 'function')
+			return await this.db.count(database, collection, query);
+		return (await this.db.find(database, collection, query, { id: 1 })).length;
+	}
+
 	async updateInstanceSource(instanceId: string, source: string): Promise<void> {
 		await this.db.update(this.dbConfiguration.db, this.dbConfiguration.Instance_collection, { id: instanceId }, { $set: { source } });
 	}

@@ -22,7 +22,11 @@ export class DocumentQuery {
         });
     }
 
-    /** The values at a dotted path, descending into arrays (as MongoDB does): every value reached, arrays included as themselves. */
+    /**
+     * The values at a dotted path, descending into arrays (as MongoDB does): every value reached, arrays included
+     * as themselves. An array's element that lacks the field gives `undefined`, so `{ 'items.assignee': null }`
+     * matches an item without an assignee, as in MongoDB, whether the field is absent or `undefined`.
+     */
     static values(doc: any, path: string): any[] {
         let current = [doc];
         for (const part of path.split('.')) {
@@ -31,13 +35,18 @@ export class DocumentQuery {
                 if (value == null) continue;
                 if (Array.isArray(value)) {
                     if (/^\d+$/.test(part) && value[Number(part)] !== undefined) next.push(value[Number(part)]);
-                    for (const element of value) if (element != null && typeof element === 'object' && !Array.isArray(element) && part in element) next.push(element[part]);
+                    for (const element of value) if (element != null && typeof element === 'object' && !Array.isArray(element)) next.push(element[part]);
                 }
                 else if (typeof value === 'object' && part in value) next.push(value[part]);
             }
             current = next;
         }
         return current;
+    }
+
+    /** The first value at a path that is there: what a sort or a unique index is keyed by. */
+    static first(doc: any, path: string): any {
+        return DocumentQuery.values(doc, path).find(v => v !== undefined);
     }
 
     private static list(condition: any, operator: string): StorageQuery[] {
@@ -73,7 +82,7 @@ export class DocumentQuery {
                 case '$gte': return candidates.some(v => v != null && DocumentQuery.compare(v, argument) >= 0);
                 case '$lt': return candidates.some(v => v != null && DocumentQuery.compare(v, argument) < 0);
                 case '$lte': return candidates.some(v => v != null && DocumentQuery.compare(v, argument) <= 0);
-                case '$exists': return argument ? values.length > 0 : values.length === 0;
+                case '$exists': return argument ? values.some(v => v !== undefined) : !values.some(v => v !== undefined);
                 case '$elemMatch':
                     return values.some(v => Array.isArray(v) && v.some(element =>
                         DocumentQuery.isOperatorObject(argument) ? DocumentQuery.matchCondition([element], argument) : DocumentQuery.matches(element, argument)));
@@ -90,6 +99,7 @@ export class DocumentQuery {
     }
 
     static equal(a: any, b: any): boolean {
+        if (a == null && b == null) return true;   // a missing field equals null, as in MongoDB
         const x = DocumentQuery.comparable(a), y = DocumentQuery.comparable(b);
         if (x === y) return true;
         if (x !== null && y !== null && typeof x === 'object' && typeof y === 'object') return JSON.stringify(x) === JSON.stringify(y);
@@ -125,7 +135,7 @@ export class DocumentQuery {
         const keys = Object.entries(sort);
         return [...docs].sort((a, b) => {
             for (const [key, direction] of keys) {
-                const c = DocumentQuery.compare(DocumentQuery.values(a, key)[0], DocumentQuery.values(b, key)[0]);
+                const c = DocumentQuery.compare(DocumentQuery.first(a, key), DocumentQuery.first(b, key));
                 if (c !== 0) return c * direction;
             }
             return 0;
@@ -164,7 +174,7 @@ export class DocumentQuery {
 
     /** The values a unique index is keyed by, or null when the document has none of its fields. */
     static indexKey(doc: any, fields: string[]): string | null {
-        const values = fields.map(f => DocumentQuery.values(doc, f)[0]);
+        const values = fields.map(f => DocumentQuery.first(doc, f));
         if (values.every(v => v === undefined)) return null;
         return JSON.stringify(values.map(v => DocumentQuery.comparable(v ?? null)));
     }

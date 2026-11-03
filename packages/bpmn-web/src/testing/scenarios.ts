@@ -57,27 +57,58 @@ const scenarioSchema = new mongoose.Schema({
 });
 const ScenarioSet = (mongoose.models.TestScenarios as any) || mongoose.model('TestScenarios', scenarioSchema, 'wf_test_scenarios');
 
-/** A model's scenarios are stored under its name; a guest's (GUEST_ACCESS) under guest-<id>/<name>. */
+/**
+ * A model's scenarios are stored under its name, a decision's tests (testing/decisionTests.ts) under
+ * decision:<name>; a guest's (GUEST_ACCESS) under guest-<id>/ followed by that.
+ */
 const scenarioKey = (model: string) => currentGuest() ? `${currentGuest().id}/${model}` : model;
+const DECISION = 'decision:';
 
-export async function loadScenarios(model: string): Promise<Scenario[]> {
-    const doc = await ScenarioSet.findOne({ model: scenarioKey(model) }).lean();
+/** The list saved under a key (a model's scenarios, a decision's tests). */
+export async function loadTestSet<T = Scenario>(key: string): Promise<T[]> {
+    const doc = await ScenarioSet.findOne({ model: scenarioKey(key) }).lean();
     return doc?.scenarios ?? [];
 }
 
-export async function saveScenarios(model: string, scenarios: Scenario[], userName?: string): Promise<void> {
-    await ScenarioSet.updateOne({ model: scenarioKey(model) }, { $set: { scenarios, updatedAt: new Date(), updatedBy: userName } }, { upsert: true });
+export async function saveTestSet(key: string, list: any[], userName?: string): Promise<void> {
+    await ScenarioSet.updateOne({ model: scenarioKey(key) }, { $set: { scenarios: list, updatedAt: new Date(), updatedBy: userName } }, { upsert: true });
 }
 
-/** Each model's scenarios in summary: how many, when and by whom last saved. */
-export async function listScenarioSets(): Promise<{ model: string; count: number; updatedAt?: Date; updatedBy?: string }[]> {
+export async function loadScenarios(model: string): Promise<Scenario[]> {
+    return loadTestSet(model);
+}
+
+export async function saveScenarios(model: string, scenarios: Scenario[], userName?: string): Promise<void> {
+    await saveTestSet(model, scenarios, userName);
+}
+
+/** Every set this user sees (a guest only its own), keys without the guest's prefix. */
+async function ownSets() {
     const docs = await ScenarioSet.find({}, { model: 1, scenarios: 1, updatedAt: 1, updatedBy: 1 }).lean();
     // a guest's own sets, under their models' names; nobody else sees a guest's
     const guest = currentGuest();
     const own = guest
         ? docs.filter(d => d.model.startsWith(guest.id + '/')).map(d => ({ ...d, model: d.model.slice(guest.id.length + 1) }))
         : docs.filter(d => !/^guest-[0-9a-f]{12}\//.test(d.model));
-    return own.map(d => ({ model: d.model, count: (d.scenarios ?? []).length, updatedAt: d.updatedAt, updatedBy: d.updatedBy }));
+    return own.map(d => ({ key: d.model as string, count: (d.scenarios ?? []).length, updatedAt: d.updatedAt, updatedBy: d.updatedBy }));
+}
+
+/** Each model's scenarios in summary: how many, when and by whom last saved. */
+export async function listScenarioSets(): Promise<{ model: string; count: number; updatedAt?: Date; updatedBy?: string }[]> {
+    return (await ownSets()).filter(s => !s.key.startsWith(DECISION)).map(({ key, ...s }) => ({ model: key, ...s }));
+}
+
+/** Each decision's tests in summary, as {@link listScenarioSets}. */
+export async function listDecisionTestSets(): Promise<{ decision: string; count: number; updatedAt?: Date; updatedBy?: string }[]> {
+    return (await ownSets()).filter(s => s.key.startsWith(DECISION)).map(({ key, ...s }) => ({ decision: key.slice(DECISION.length), ...s }));
+}
+
+/** The key a decision's tests are saved under. */
+export const decisionTestKey = (decision: string) => DECISION + decision;
+
+/** Every scenario set, guests' too, under the collection's name: for a backup. */
+export async function backupScenarioSets(): Promise<Record<string, any[]>> {
+    return { [ScenarioSet.collection.collectionName]: await ScenarioSet.find({}).lean() };
 }
 
 /** Whether a body is a list of scenarios; the reasons when it is not. */
@@ -186,7 +217,7 @@ export function expectChecks(expect: Scenario['expect']): Check[] {
 export const scenarioChecks = (scenario: Scenario): Check[] => [...expectChecks(scenario?.expect), ...(scenario?.checks ?? [])];
 
 /** A value at a path of the data: a.b.c, items.0.name */
-function valueAt(data, path: string) {
+export function valueAt(data, path: string) {
     return String(path ?? '').split('.').filter(Boolean).reduce((value, key) => value == null ? undefined : value[key], data);
 }
 
@@ -198,7 +229,7 @@ function same(actual, expected): boolean {
     return contains(actual, expected);
 }
 
-function compare(actual, op: string, expected): boolean {
+export function compare(actual, op: string, expected): boolean {
     switch (op ?? '=') {
         case '=': return same(actual, expected);
         case '<>': return !same(actual, expected);

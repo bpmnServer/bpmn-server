@@ -9,15 +9,14 @@ import express from 'express';
 import FS from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
-import mongoose from 'mongoose';
 
 import { SecureUser, BPMNAPI, verifyModel, dateDiff } from '../index.js';
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
-import { listScenarioSets } from '../testing/scenarios.js';
+import { listScenarioSets, listDecisionTestSets, loadScenarios, runScenario, backupScenarioSets } from '../testing/scenarios.js';
+import { loadDecisionTests, runDecisionTests } from '../testing/decisionTests.js';
 import { adminDisabled, engineGroups, isAdminGroups, isDesignerGroups } from '../userAccess/roles.js';
-import User from '../userAccess/models/User.js';
 import { UserService } from '../userAccess/UserService.js';
 import { loadCatalog, findCatalogEntry, readCatalogFile, catalogLocation } from './catalog.js';
 import { isSafeModelName } from './middleware/modelName.js';
@@ -39,6 +38,13 @@ const CONSOLE_COMMANDS = [
     ['lme', 'list model events'], ['ck', 'check locks (and delete them)'], ['re', 'recover hung items'],
     ['lu', 'list users'], ['spw', 'set a user\'s password'],
 ];
+
+/** Why a scenario or a decision's test failed: its failed step, else its failed checks. */
+function failedChecks(result): string {
+    const step = result.steps?.find(s => !s.ok);
+    if (step) return `step ${step.element}: ${step.error}`;
+    return (result.checks ?? []).filter(c => !c.ok).map(c => `${c.what} (was ${JSON.stringify(c.actual)})`).join('; ');
+}
 
 /** What restarts this process when it exits, if anything does. */
 function supervisor(): string | null {
@@ -157,29 +163,73 @@ export class Dashboards extends Common {
             }
             const tests = new Map((await listScenarioSets()).map(s => [s.model, s]));
             models.forEach(m => m.tests = tests.get(m.name)?.count ?? 0);
+            const decisionTests = new Map((await listDecisionTestSets()).map(s => [s.decision, s.count]));
             models.sort((a, b) => (b.errors - a.errors) || (b.warnings - a.warnings) || a.name.localeCompare(b.name));
             const recent = [...models].sort((a, b) => b.saved - a.saved).slice(0, 5);
-            const decisions = files.filter(f => DMN_FILE.test(f)).map(f => f.replace(DMN_FILE, ''));
+            const decisions = files.filter(f => DMN_FILE.test(f)).map(f => {
+                const name = f.replace(DMN_FILE, '');
+                return { name, tests: decisionTests.get(name) ?? 0 };
+            });
             const catalog = loadTemplateCatalog(this.webApp.application?.elementTemplatesPath, undefined);
             render(req, res, 'design', {
-                title: 'Design', models, recent, decisions,
+                title: 'Design', models, recent, decisions, runs: req.session?.testRuns ?? { models: {}, decisions: {} },
+                message: req.query.message,
                 templates: catalog.templates ?? [], rejectedTemplates: catalog.rejected ?? [],
                 problems: { errors: models.filter(m => m.errors).length, warnings: models.filter(m => !m.errors && m.warnings).length },
             });
         }));
 
+        // run the tests of a model (model), of a decision (decision), or every test (neither); the results are
+        // kept in the session, by model and decision, and shown on the dashboard
+        router.post('/design/tests', this.isDesigner, handler(async (req, res) => {
+            const { model, decision } = req.body ?? {};
+            const dir = folder();
+            const files = FS.existsSync(dir) ? FS.readdirSync(dir) : [];
+            const runs = req.session.testRuns ??= { models: {}, decisions: {} };
+            const at = new Date().toISOString();
+            let passed = 0, failed = 0;
+            const note = (into, name, results) => {
+                const failures = results.filter(r => !r.ok).map(r => ({ name: r.name, why: r.error || failedChecks(r) }));
+                into[name] = { passed: results.length - failures.length, failed: failures.length, failures, at };
+                passed += results.length - failures.length;
+                failed += failures.length;
+            };
+
+            if (!decision) {
+                const names = model ? [String(model)] : (await listScenarioSets()).filter(s => s.count).map(s => s.model);
+                for (const name of names) {
+                    if (!files.includes(name + '.bpmn'))
+                        continue;
+                    const results = [];
+                    for (const scenario of await loadScenarios(name))      // one after another: they may share state
+                        results.push(await runScenario(server, name, scenario, req.user?.userName));
+                    note(runs.models, name, results);
+                }
+            }
+            if (!model) {
+                const names = decision ? [String(decision)] : (await listDecisionTestSets()).filter(s => s.count).map(s => s.decision);
+                for (const name of names) {
+                    const file = files.find(f => DMN_FILE.test(f) && f.replace(DMN_FILE, '') === name);
+                    if (file)
+                        note(runs.decisions, name, await runDecisionTests(path.join(dir, file), await loadDecisionTests(name)));
+                }
+            }
+            const what = model || decision ? `${model || decision}: ` : 'All tests: ';
+            const message = passed + failed === 0 ? `${what}no tests to run.` : `${what}${passed} passed, ${failed} failed.`;
+            res.redirect('/dashboard/design?message=' + encodeURIComponent(message) + '#tests');
+        }));
+
         // ---- administration ---------------------------------------------------------------------------------
         router.get('/admin', this.isAdmin, handler(async (req, res) => {
-            const instances = mongoose.connection.db.collection(server.configuration.database.MongoDB.Instance_collection);
             const counts = {};
             for (const status of ['running', 'end', 'terminated', 'error'])
-                counts[status] = await instances.countDocuments({ status });
-            counts['waiting'] = await instances.countDocuments({ 'items.status': 'wait' });
+                counts[status] = await server.dataStore.countInstances({ status });
+            counts['waiting'] = await server.dataStore.countInstances({ 'items.status': 'wait' });
             const locks = await server.dataStore.locker.list();
             locks.forEach(l => l.fromNow = dateDiff(l.time));
             const hung = await server.dataStore.findItems({ 'items.status': 'start' });
             hung.forEach(i => i.fromNow = dateDiff(i.startedAt));
-            const users = await User.find({}).sort({ userName: 1 }).lean();
+            const users = await new UserService().listUsers();
             render(req, res, 'admin', {
                 title: 'Administration', counts, locks, hung, users,
                 serverInfo: {
@@ -203,7 +253,7 @@ export class Dashboards extends Common {
             const groups = toList(req.body.userGroups);
             if (!userName || !email || !password)
                 return back(res, 'A new user needs a user name, an email and a password.');
-            if (await User.findOne({ $or: [{ userName }, { email }] }))
+            if (await new UserService().findUser({ $or: [{ userName }, { email }] }))
                 return back(res, `A user named '${userName}' or with the email '${email}' already exists.`);
             await new UserService().addUser(userName, email, password, groups);
             back(res, `User '${userName}' added.`);
@@ -313,16 +363,16 @@ export class Dashboards extends Common {
     }
 
     /**
-     * A backup to download: the models folder's files and every database collection but the sessions,
-     * as one JSON document (collections in MongoDB Extended JSON, so types survive a restore).
+     * A backup to download: the models folder's files and, by collection, what each store keeps (the engine's
+     * instances, archive, locks, models and events; the users; the test scenarios), as one JSON document.
+     * The stores give their own documents, whatever database they are on; the sessions are never in it.
      */
     async backup(res) {
         const server = this.webApp.bpmnServer;
-        const { EJSON } = (mongoose as any).mongo.BSON;
         const stamp = new Date().toISOString().replace(/[:.]/g, '-');
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Content-Disposition', `attachment; filename="bpmn-backup-${stamp}.json"`);
-        res.write(`{"format":"bpmn-web-backup","version":1,"createdAt":${JSON.stringify(new Date())},`);
+        res.write(`{"format":"bpmn-web-backup","version":2,"createdAt":${JSON.stringify(new Date())},`);
         res.write(`"bpmnServer":${JSON.stringify(packageVersion('bpmn-server'))},"bpmnWeb":${JSON.stringify(this.webApp.packageJson?.version ?? '')},`);
 
         const dir = server.configuration.definitionsPath;
@@ -331,17 +381,20 @@ export class Dashboards extends Common {
         files.forEach((e, i) => res.write((i ? ',' : '') + JSON.stringify({ name: e.name, content: FS.readFileSync(path.join(dir, e.name), 'utf8') })));
         res.write('],"collections":{');
 
-        const db = mongoose.connection.db;
-        const names = (await db.listCollections({}, { nameOnly: true }).toArray()).map(c => c.name).filter(n => n !== 'sessions' && !n.startsWith('system.')).sort();
-        for (let i = 0; i < names.length; i++) {
-            res.write(`${i ? ',' : ''}${JSON.stringify(names[i])}:[`);
-            let first = true;
-            for await (const doc of db.collection(names[i]).find({})) {
-                res.write((first ? '' : ',') + EJSON.stringify(doc, { relaxed: false }));
+        const stores = [
+            () => server.dataStore.backup?.() ?? {},
+            () => (server.definitions as any).backup?.() ?? {},
+            () => new UserService().backup(),
+            () => backupScenarioSets(),
+        ];
+        let first = true;
+        for (const store of stores)
+            for (const [name, docs] of Object.entries(await store())) {
+                res.write(`${first ? '' : ','}${JSON.stringify(name)}:[`);
+                (docs as any[]).forEach((doc, i) => res.write((i ? ',' : '') + JSON.stringify(doc)));
+                res.write(']');
                 first = false;
             }
-            res.write(']');
-        }
         res.end('}}');
     }
 }

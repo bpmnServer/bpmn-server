@@ -43,6 +43,10 @@ interface IDataStore {
     findInstance(query: any, options: any): Promise<IInstanceData>;
     findInstances(query: any, option: 'summary' | 'full'|any): Promise<IInstanceData[]>;
     findItems(query: any): Promise<IItemData[]>;
+    /** How many instances match `query`. */
+    countInstances(query: any): Promise<number>;
+    /** Every document the data store keeps, by collection name: for a backup. */
+    backup?(): Promise<Record<string, any[]>>;
     deleteInstances(query?: any): Promise<void>;
     install(); 
     archive(query);
@@ -60,8 +64,10 @@ interface IModelsDatastore {
     loadModel(name: any,owner?): Promise<IBpmnModelData>;
     findEvents(query: any,owner?): Promise<any[]>;
     rebuild(model?: any): Promise<void>
+    /** Every document the models datastore keeps, by collection name: for a backup. */
+    backup?(): Promise<Record<string, any[]>>;
 
-    install(); 
+    install();
     import(data);
     saveModel(model: IBpmnModelData): Promise<boolean>;
     deleteModel(name: any,owner?): Promise<void>;

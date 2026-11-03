@@ -20,7 +20,8 @@
     "pretest": "tsc --build",
     "bench": "node test/perf/bench.mjs",
     "pretest:load": "tsc --build",
-    "test:load": "node --test --test-concurrency=1 \"test/load/*.test.mjs\""
+    "test:load": "node --test --test-concurrency=1 \"test/load/*.test.mjs\"",
+    "test:sqlite": "node --env-file=test/sqlite.env --test --test-concurrency=1 \"test/*.test.mjs\""
   },
   "main": "dist/index.js",
   "bin": {

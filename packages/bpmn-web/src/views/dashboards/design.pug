@@ -9,6 +9,21 @@ mixin checks(m)
 	if !m.errors && !m.warnings
 		span.dash-badge.is-ok OK
 
+//- the last run of a model's or a decision's tests (this session): passed, or failed with why
+mixin run(r)
+	if r
+		if r.failed
+			span.dash-badge.is-error(title=r.failures.map(f => `${f.name}: ${f.why}`).join('\n')) #{r.failed} of #{r.passed + r.failed} failed
+		else
+			span.dash-badge.is-ok #{r.passed} passed
+
+//- a button that runs the tests of one model or decision
+mixin runButton(field, name)
+	form.inline(method='post', action='/dashboard/design/tests')
+		input(type='hidden', name='_csrf', value=_csrf)
+		input(type='hidden', name=field, value=name)
+		button.btn.btn-default.btn-xs(type='submit') Run
+
 block intro
 	p.dash-intro The models, what their checks find, their tests, decisions and configured tasks.
 
@@ -30,17 +45,26 @@ block dash
 					b= models.filter(m => m.tests).length
 					span with tests
 				.dash-stat
+					b= models.reduce((n, m) => n + m.tests, 0) + decisions.reduce((n, d) => n + d.tests, 0)
+					span tests
+				.dash-stat
 					b= decisions.length
 					span decisions
 				.dash-stat
 					b= templates.length
 					span task templates
-			p(style='margin:14px 0 0')
+			//- a div: a form (Run all tests) can not be inside a p
+			div(style='margin:14px 0 0')
 				a.btn.btn-primary.btn-sm(href='/model/new') New model
 				|
 				a.btn.btn-default.btn-sm(href='/model/import') Import
 				|
 				a.btn.btn-default.btn-sm(href='/model/decision/new-decision') New decision
+				if models.some(m => m.tests) || decisions.some(d => d.tests)
+					|
+					form.inline(method='post', action='/dashboard/design/tests')
+						input(type='hidden', name='_csrf', value=_csrf)
+						button.btn.btn-default.btn-sm(type='submit' title='Every model\'s scenarios and every decision\'s tests') Run all tests
 				//- the catalog is hidden until it is fixed
 				//- |
 				//- a.btn.btn-default.btn-sm(href='/dashboard/catalog') Browse the catalog
@@ -67,7 +91,16 @@ block dash
 			if decisions.length
 				table
 					each d in decisions
-						tr: td: a(href=`/model/decision/${encodeURIComponent(d)}`)= d
+						tr
+							td: a(href=`/model/decision/${encodeURIComponent(d.name)}`)= d.name
+							td
+								if d.tests
+									a(href=`/model/decision/${encodeURIComponent(d.name)}#tests`) #{d.tests} test#{d.tests === 1 ? '' : 's'}
+							td
+								+run(runs.decisions[d.name])
+							td
+								if d.tests
+									+runButton('decision', d.name)
 			else
 				p.dash-empty No decision tables (.dmn) in the models folder.
 			h2(style='margin-top:18px') Task templates
@@ -84,21 +117,28 @@ block dash
 				p.dash-muted #{rejectedTemplates.length} template file(s) left out: #{rejectedTemplates.map(r => r.file).join(', ')}
 
 		section.dash-card.wide#models
+			a#tests
 			h2 Models
 				span.count= models.length
-			p.dash-muted Models with errors first. Open one to see its Problems list and to run its tests.
+			p.dash-muted Models with errors first. Run a model's tests here, or open it to see its Problems list and its tests (the Test tab).
 			if models.length
 				table
 					tr
 						th Model
 						th Checks
 						th Tests
+						th Last run
+						th
 						th Changed
 					each m in models
 						tr
 							td: a(href=`/model/edit/${encodeURIComponent(m.name)}`)= m.name
 							td: +checks(m)
 							td= m.tests ? m.tests + ' scenario' + (m.tests === 1 ? '' : 's') : ''
+							td: +run(runs.models[m.name])
+							td
+								if m.tests
+									+runButton('model', m.name)
 							td= m.fromNow
 			else
 				p.dash-empty No models in the models folder.

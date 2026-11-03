@@ -21,6 +21,16 @@ html(lang="en")
         nav#js-views.decision-views(aria-label="Decisions")
         nav.modeler-actions
           button#js-save.primary(type="button" title="Ctrl+S") Save
-      #js-decision.decision-canvas
+      .decision-body
+        #js-decision.decision-canvas
+        //- the dock, as the model editor's: here the Test tab
+        section#js-dock.dock(data-tab="test")
+          #js-dock-resizer.dock-resizer(title="Drag to resize")
+          .dock-bar(role="tablist")
+            button#js-tab-test.dock-tab(type="button" role="tab" aria-selected="true" aria-controls="js-test") Test
+            .dock-actions
+              button#js-dock-toggle(type="button" aria-expanded="true" title="Hide or show" aria-label="Hide or show the tests")
+          .dock-body
+            #js-test.dock-test(role="tabpanel" aria-label="Test")
     script#model-source(type="application/json")!= modelJson
     script(src="/modeler/decision.js")

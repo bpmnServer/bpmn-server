@@ -31,6 +31,13 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
     async close(): Promise<void> {
         if (this.ownsDb) await this.db.close?.();
     }
+    /** Every document of the models and events collections, by collection name: for a backup. */
+    async backup(): Promise<Record<string, any[]>> {
+        const collections = {};
+        for (const name of [Definition_collection, Events_collection])
+            collections[name] = await this.db.find(this.dbConfiguration.db, name, {});
+        return collections;
+    }
     async get(query={}): Promise<object[]> {
 
         const list=await this.db.find(this.dbConfiguration.db, Definition_collection,query, {});

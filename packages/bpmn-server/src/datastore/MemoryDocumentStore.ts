@@ -25,6 +25,10 @@ export class MemoryDocumentStore implements IDocumentStore {
         return DocumentQuery.sort(found, sort).map(d => DocumentQuery.project(structuredClone(d), projection));
     }
 
+    async count(database: string, collection: string, query: StorageQuery): Promise<number> {
+        return this.docs(database, collection).filter(d => DocumentQuery.matches(d, query ?? {})).length;
+    }
+
     async insert(database: string, collection: string, documents: any[]): Promise<number> {
         const docs = this.docs(database, collection);
         const added = documents.map(d => ({ _id: d._id ?? randomUUID(), ...structuredClone(d) }));

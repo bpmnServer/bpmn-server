@@ -16,6 +16,8 @@ export type StorageSort = Record<string, 1 | -1> | null;
 export interface IDocumentStore {
     /** Documents of `collection` matching `query`, projected and sorted. `database` names the logical database (MongoDB's db name; ignored by single-database adapters). */
     find(database: string, collection: string, query: StorageQuery, projection?: StorageProjection, sort?: StorageSort): Promise<any[]>;
+    /** How many documents of `collection` match `query`. Optional: without it, callers count what {@link find} returns. */
+    count?(database: string, collection: string, query: StorageQuery): Promise<number>;
     /** Inserts all of `documents`, or none: a unique-index conflict throws a {@link DuplicateKeyError}; any other failure throws as it is. Returns how many were inserted. */
     insert(database: string, collection: string, documents: any[]): Promise<number>;
     /** Updates the first document matching `query` (`$set` fields, or replaces it); `{ upsert: true }` inserts when none matches. Returns how many were modified. */

@@ -7,4 +7,5 @@ export * from '../datastore/InstanceLocker.js';
 export * from '../datastore/QueryTranslator.js';
 export * from '../datastore/DocumentQuery.js';
 export * from '../datastore/MemoryDocumentStore.js';
+export * from '../datastore/SqliteDocumentStore.js';
 export * from '../datastore/DocumentPager.js';

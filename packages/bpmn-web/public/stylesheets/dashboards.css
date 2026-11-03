@@ -21,6 +21,7 @@
 .dash-badge.is-error { background: #fbe4e4; color: #a12626; }
 .dash-badge.is-warning { background: #fdf1d8; color: #8a5a00; }
 .dash-badge.is-ok { background: #e3f3e6; color: #22662f; }
+.dash-badge[title] { cursor: help; }
 .dash-start { border-top: 1px solid #f0f3f6; padding: 10px 0; }
 .dash-start:first-of-type { border-top: 0; }
 .dash-start summary { cursor: pointer; }

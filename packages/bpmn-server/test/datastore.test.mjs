@@ -21,6 +21,18 @@ test('queries: dotted paths into arrays, $elemMatch, $or/$nor, comparisons, $exi
   assert.equal(m({ status: { $in: ['end', 'wait'] }, 'data.missing': { $exists: false } }), true);
 });
 
+test('queries: null matches an array element without the field, as in MongoDB; $exists counts only fields there', () => {
+  const task = { items: [{ id: 'a', assignee: 'sam' }, { id: 'b' }] };
+  const m = (q, d = task) => DocumentQuery.matches(d, q);
+  assert.equal(m({ 'items.assignee': null }), true, 'item b has no assignee');
+  assert.equal(m({ 'items.assignee': null }, { items: [{ assignee: 'sam' }] }), false);
+  assert.equal(m({ 'items.candidateUsers': { $exists: true } }), false, 'no item has the field');
+  assert.equal(m({ 'items.candidateUsers': { $exists: false } }), true);
+  assert.equal(m({ 'items.assignee': { $exists: true } }), true);
+  assert.equal(m({ 'items.assignee': { $ne: null } }), false, 'item b\'s is null');
+  assert.deepEqual(DocumentQuery.sort([{ items: [{}, { n: 2 }] }, { items: [{ n: 1 }] }], { 'items.n': 1 }).map(d => d.items.at(-1).n), [1, 2]);
+});
+
 test('queries: an operator the store does not know is refused, not ignored', () => {
   assert.throws(() => DocumentQuery.matches(doc, { name: { $regex: 'cl' } }), /Unsupported query operator \$regex/);
   assert.throws(() => DocumentQuery.matches(doc, { $where: 'true' }), /Unsupported/);
@@ -89,6 +101,32 @@ test('paged search on a store that is not MongoDB: pages by a cursor, items unwo
     const expected = d.items.filter(i => i.status === 'end').sort((x, y) => y.seq - x.seq)[0];
     assert.equal(d.lastItem.id, expected.id, 'its ended item with the highest seq');
   }
+  await server.shutdown();
+});
+
+test('counts and backups through the port: with the store\'s count, without it, and what each store keeps', async () => {
+  const { server, store } = await makeServer({ services: coverage(true) });
+  const first = await server.engine.start('property-claim', {});
+  await server.engine.start('property-claim', {});
+  await server.engine.invoke({ 'items.id': first.instance.items.find(i => i.elementId === 'AssessClaim').id }, {});
+  const counts = async () => [await server.dataStore.countInstances({}), await server.dataStore.countInstances({ items: { $elemMatch: { status: 'wait', elementId: 'AssessClaim' } } })];
+  assert.deepEqual(await counts(), [2, 1]);
+  assert.equal(await store.count('bpmn_test', 'wf_instances', { name: 'property-claim' }), 2);
+  // an adapter without count: the data store counts what find returns
+  const { count } = store;
+  store.count = undefined;
+  try {
+    assert.deepEqual(await counts(), [2, 1]);
+  } finally {
+    store.count = count;
+  }
+
+  const engine = await server.dataStore.backup();
+  assert.deepEqual(Object.keys(engine).sort(), ['wf_archive', 'wf_instances', 'wf_locks']);
+  assert.equal(engine.wf_instances.length, 2);
+  const models = await server.definitions.backup();
+  assert.deepEqual(Object.keys(models).sort(), ['wf_events', 'wf_models']);
+  assert.ok(models.wf_models.some(m => m.name === 'property-claim'));
   await server.shutdown();
 });
 
