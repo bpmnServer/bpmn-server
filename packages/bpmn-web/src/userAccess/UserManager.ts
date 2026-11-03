@@ -9,7 +9,7 @@ import MongoStore from 'connect-mongo';
 import User from './models/User.js';
 import * as passportConfig from './config/passport.js';
 import { Account } from './routes/account.js';
-import { isDesignerGroups, isGuest } from './roles.js';
+import { canDesign, isGuest, signupDisabled } from './roles.js';
 import { guestAccess, guestMiddleware } from '../guests/guests.js';
 
 
@@ -128,7 +128,8 @@ export class UserManager {
 		app.use((req, res, next) => {
 			res.locals.user = req.user;
 			// views show the model actions (new, import, open, rename, delete) to designers
-			res.locals.canDesign = process.env.REQUIRE_AUTHENTICATION === 'false' || isDesignerGroups(req.user?.userGroups);
+			res.locals.canDesign = canDesign(req.user);
+			res.locals.canSignup = !signupDisabled();
 			res.locals.isGuest = isGuest(req.user);
 			next();
 		});

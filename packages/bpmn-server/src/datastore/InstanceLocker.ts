@@ -64,6 +64,22 @@ class InstanceLocker implements ILockManager {
         await this.store.createIndex(this.database, this.collection, { id: 1 }, { unique: true });
     }
 
+    private indexed: Promise<void> | null = null;
+    /**
+     * Makes sure of the unique index before the first lock or claim, once per locker: without it two servers
+     * could both "acquire" an instance. A database that `install()` (npm run setup) never ran on — a new one,
+     * or the one locks moved to when the database is named (databaseName) — is protected all the same.
+     * Creating an index that exists does nothing; when it cannot be made (no privilege), it is reported and
+     * locking goes on, relying on the index being there.
+     */
+    private ensureIndex(): Promise<void> {
+        this.indexed ??= this.install().catch(error => {
+            this.logger?.warn?.(`the unique index on ${this.database}.${this.collection} could not be made (${error?.message ?? error}); `
+                + 'locks exclude only if it exists: run the setup (dataStore.install) as a user that may create indexes');
+        });
+        return this.indexed;
+    }
+
     async lock(id: string): Promise<boolean> {
         for (let tries = 1; tries <= this.maxTries; tries++) {
             if (await this.try(id)) return true;
@@ -76,6 +92,7 @@ class InstanceLocker implements ILockManager {
 
     /** One attempt: true when acquired, false on contention; any other failure throws. */
     async try(id: string, kind = 'lock'): Promise<boolean> {
+        await this.ensureIndex();
         try {
             await this.store.insert(this.database, this.collection, [{ id, kind, server: this.owner, time: new Date() }]);
             return true;

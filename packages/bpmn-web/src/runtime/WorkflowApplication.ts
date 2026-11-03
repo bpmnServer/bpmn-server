@@ -18,6 +18,12 @@ export interface WorkflowApplication {
 	api?: boolean;
 	/** The web pages (tasks, instances, model editor, administration) and their files; default true. */
 	ui?: boolean;
+	/**
+	 * The application's own routes, mounted before bpmn-web's: before the APIs' JSON 404 and before the UI
+	 * router at '/', which sends any request without a session to /login. Mount under '/api' (with apiKeyAuth)
+	 * to extend the REST API; a path bpmn-web also serves answers from the application first.
+	 */
+	routes?: (app, webApp) => void;
 }
 
 export function defineWorkflowApplication(application: WorkflowApplication): WorkflowApplication {

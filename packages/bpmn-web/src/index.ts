@@ -6,6 +6,8 @@ export {
 	type WorkflowApplication,
 } from './runtime/WorkflowApplication.js';
 export { WebAppDelegate } from './runtime/WebAppDelegate.js';
+// for an application's own API routes (StartOptions.routes): the same x-api-key check bpmn-web's APIs use
+export { apiKeyAuth } from './routes/middleware/apiKeyAuth.js';
 export { UserService } from './userAccess/UserService.js';
 export { start, setup, webConfiguration, type StartOptions } from './start.js';
 // the model editor's Test tab scenarios: run them on any server (an app's tests, in memory)

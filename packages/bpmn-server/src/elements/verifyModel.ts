@@ -131,10 +131,32 @@ class ModelVerifier {
         // 4. load it as the engine does, then check what only the engine knows how to read
         if (!this.issues.some(i => i.severity == 'error' && (i.code == 'unresolved-reference' || i.code == 'duplicate-id'))) {
             const definition = await this.loadDefinition(name, source);
-            if (definition)
+            if (definition) {
                 await this.verifyExecutables(definition);
+                await this.verifyApplication(name, source, definition);
+            }
         }
         return this.result();
+    }
+
+    /**
+     * 5. the application's own checks (appDelegate.verifyModel), reported with these. A check that throws is
+     * reported as a warning: it never stops the model being verified.
+     */
+    async verifyApplication(name: string, source: string, definition) {
+        const delegate = this.server && this.server.appDelegate;
+        if (!delegate || typeof delegate.verifyModel !== 'function') return;
+        try {
+            const issues = await delegate.verifyModel({ name, source, definition });
+            for (const issue of issues || []) {
+                if (!issue || !issue.code || !issue.message) continue;
+                const severity: ModelIssueSeverity = ['error', 'warning', 'info'].includes(issue.severity) ? issue.severity : 'error';
+                this.issues.push({ ...issue, severity, ...(this.processId ? { processId: this.processId } : {}) });
+            }
+        }
+        catch (exc) {
+            this.add('warning', 'application-check-failed', `The application's model check failed: ${exc && exc.message || exc}`);
+        }
     }
 
     /**

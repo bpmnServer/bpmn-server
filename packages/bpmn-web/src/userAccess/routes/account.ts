@@ -7,6 +7,13 @@ import express from 'express';
  * Controllers (route handlers).
  */
 import { UserController as userController } from '../controllers/user.js';
+import { signupDisabled } from '../roles.js';
+
+/** DISABLE_SIGNUP=true: the sign-up pages answer as if they did not exist. */
+export function signupEnabled(req, res, next) {
+	if (signupDisabled()) return res.status(404).send('Sign-up is turned off on this server: ask an administrator for an account');
+	return next();
+}
 
 export class Account extends Common{
 	passport;
@@ -29,8 +36,8 @@ export class Account extends Common{
 		router.post('/forgot', userController.postForgot);
 		router.get('/reset/:token', userController.getReset);
 		router.post('/reset/:token', userController.postReset);
-		router.get('/signup', userController.getSignup);
-		router.post('/signup', userController.postSignup);
+		router.get('/signup', signupEnabled, userController.getSignup);
+		router.post('/signup', signupEnabled, userController.postSignup);
 		router.get('/account/edit/:id', this.isAuthenticated, this.isAdmin, userController.getEdit);
 		router.post('/account/edit', this.isAuthenticated, this.isAdmin, userController.postEdit);
 		router.get('/account/verify', this.isAuthenticated, userController.getVerifyEmail);

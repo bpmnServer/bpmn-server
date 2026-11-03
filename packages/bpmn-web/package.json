@@ -31,6 +31,8 @@
     "start:prod": "node dist/main.js",
     "cli": "node --import tsx src/scripts/cli.ts",
     "setup": "node --import tsx src/scripts/setup.ts",
+    "verify:models": "node --import tsx src/scripts/verifyModels.ts",
+    "upgrade:running": "node --import tsx src/scripts/upgradeRunning.ts",
     "clean": "tsc --build --clean",
     "lint:models": "node modeler/lint-models.mjs",
     "test": "npm --prefix ../../testSampleApp test"

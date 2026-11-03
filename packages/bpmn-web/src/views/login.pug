@@ -12,7 +12,8 @@ block content
          input(type='password', name='password' class='form-control', placeholder='Password', required)
          button(class='btn btn-lg btn-primary btn-block', type='submit') Sign in
           span.clearfix
-          a(href='/signup', class='text-center new-account') Create an account
+          if canSignup !== false
+            a(href='/signup', class='text-center new-account') Create an account
           #message
           if message
            h1.text-center.error-message #{message}

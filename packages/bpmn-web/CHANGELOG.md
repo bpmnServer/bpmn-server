@@ -36,6 +36,33 @@ and here
   Pools and lanes (pools, lanes with their elements, message flows), annotations and associations, connectors,
   and any setting it has no words of its own for as `key: value`. `report.text(definitions)` gives it as an
   indented text outline, which History compares. A test checks that every value of every sample model is in it.
+- `npm run upgrade:running -- [--dry-run] [--json] [model ...]`: moves running instances onto their model's
+  saved source (bpmn-server's `engine.upgradeRunning`); no names = every model with running instances. Exit
+  code 1 when a model is refused or an instance is stranded, busy or failed. The existing
+  `upgradeInstances.ts` (afterNode style) is unchanged.
+- `npm run verify:models [--json] [model ...]`: checks the models saved in the database (not files) with
+  `verifyModel`; exit code 1 when any has errors.
+- `POST /admin/api/definitions/verify` `{ name }` or `{ source }`: the same check over the API, nothing saved.
+- `VERIFY_MODELS_ON_IMPORT=warn|enforce|off` (default `warn`) for the model import and save APIs
+  (`/admin/api/definitions/import`, `/admin/api/model/save`, `/admin/api2/model/import`): `warn` saves and logs
+  the issues, `enforce` saves nothing and answers `{ errors, issues }`: on the import APIs with 200, like
+  their other failures (bpmn-client rejects with that body and no HTTP status), on `model/save` with 422. The model editor's own saves are not
+  checked: a model being drawn is allowed to be incomplete.
+- Engine settings from the environment: `LOCK_RETRY_DELAY_MS`, `LOCK_MAX_TRIES`, `LOCK_STALE_AFTER_MS`,
+  `ENGINE_SHUTDOWN_TIMEOUT_MS` and `MONGO_DB_NAME` (the database, when `MONGO_DB_URL` names none). Settings
+  passed to `start({ config })` still win.
+- `start({ routes })` (`WorkflowApplication.routes`): the application's own routes, mounted before bpmn-web's.
+  Routes added after `start()` could not be reached: the APIs answer unknown paths with a JSON 404 and the UI
+  router at `/` sends any request without a session to `/login`. `apiKeyAuth` is exported for them.
+- `DISABLE_DESIGN=true`: model design off in the web pages for everyone, administrators included (no model
+  editor, design dashboard, catalog or model test runs), for a server whose models arrive only through the admin
+  REST APIs from a review or release process elsewhere. The admin APIs stay on.
+- `DISABLE_SIGNUP=true`: no self-registration; `/signup` answers 404 and the pages drop their sign-up links.
+  Administrators add accounts from the admin dashboard or `npm run cli`.
+
+### Fixed
+- `start()` added the user admin (password admin, group ADMIN) on every start to any database without a user
+  named `admin`, including one whose users have other names. It is now added only to a database with no users.
 
 ### Changed
 - **The Test tabs' tests are files** beside what they test: `<model>.tests.json` (the scenario file format) and

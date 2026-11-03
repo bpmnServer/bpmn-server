@@ -15,8 +15,21 @@ export function inGroups(userGroups, groups: string[]): boolean {
  */
 export const adminDisabled = () => process.env.DISABLE_ADMIN === 'true';
 
+/**
+ * DISABLE_DESIGN=true turns model design off in the web pages for everyone, administrators included: no model
+ * editor, no design dashboard, catalog or model test runs. For a server whose models arrive only through the
+ * admin REST APIs (/admin/api, /admin/api2: a review or release process elsewhere), which stay on.
+ */
+export const designDisabled = () => process.env.DISABLE_DESIGN === 'true';
+
+/** DISABLE_SIGNUP=true: no self-registration; administrators add the accounts (dashboard, npm run cli). */
+export const signupDisabled = () => process.env.DISABLE_SIGNUP === 'true';
+
 export const isAdminGroups = (userGroups) => !adminDisabled() && inGroups(userGroups, ADMIN_GROUPS);
-export const isDesignerGroups = (userGroups) => inGroups(userGroups, DESIGNER_GROUPS);
+export const isDesignerGroups = (userGroups) => !designDisabled() && inGroups(userGroups, DESIGNER_GROUPS);
+/** May this request's user design models (REQUIRE_AUTHENTICATION=false: everyone, unless DISABLE_DESIGN). */
+export const canDesign = (user) => !designDisabled()
+    && (process.env.REQUIRE_AUTHENTICATION === 'false' || isDesignerGroups(user?.userGroups));
 
 /** A guest of a public demo (GUEST_ACCESS=true): a visitor who did not sign in. */
 export const isGuest = (user) => inGroups(user?.userGroups, ['GUEST']);

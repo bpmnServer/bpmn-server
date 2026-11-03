@@ -11,6 +11,19 @@ import type { IDocumentStore } from '../interfaces/storage.js';
  *  - `ObjectID` was renamed to `ObjectId`.
  *  - `useUnifiedTopology` is the default and is no longer an accepted option.
  */
+/**
+ * The database a MongoDB configuration means: its `db`, else the database named in `db_url`'s path, else
+ * `test` — the one the MongoDB driver itself uses when `client.db()` is given no name. Naming it lets every
+ * component use the same database: without it the instance, archive and model collections followed the
+ * driver while the lock manager used the literal 'bpmn', so locks were kept in a database of their own.
+ */
+export function databaseName(dbConfig: { db?: string; db_url?: string } | undefined): string {
+    if (dbConfig?.db) return dbConfig.db;
+    // mongodb://[user:pass@]host[:port][,host2...]/<db>[?options], and mongodb+srv://
+    const match = /^mongodb(?:\+srv)?:\/\/[^/]+\/([^?/]+)/.exec(String(dbConfig?.db_url ?? '').trim());
+    return match ? decodeURIComponent(match[1]) : 'test';
+}
+
 /** The MongoDB adapter of the storage port: one client, opened on first use, closed by `close()`. */
 class MongoDB implements IDocumentStore {
     client: MongoClient | null = null;
