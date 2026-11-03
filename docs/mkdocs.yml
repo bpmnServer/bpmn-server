@@ -75,6 +75,7 @@ draft_docs: |
 nav:
 - Getting Started:
   - Overview: index.md
+  - Your First Workflow: first-workflow.md
   - Installation and Quick Start: setup.md
   - Application Integration: customization.md
   - Model editor: modeler.md
