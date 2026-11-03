@@ -6,7 +6,7 @@
 
 The following diagram illustrates the core components of `bpmn-server` and how they interact:
 
-![Architecture Diagram](https://bpmnserver.github.io/docs/images/architecture-diagram.png)
+![Architecture Diagram](https://bpmnserver.github.io/bpmn-server/images/architecture-diagram.png)
 
 - **Modeler**: Front-end UI for designing BPMN models using bpmn.io.
 - **bpmn-server Core**: Executes BPMN workflows, manages state, and interfaces with external services.
@@ -56,7 +56,7 @@ const inputData = { amount: 1200 };
 })();
 ```
 
-For more advanced examples, see the [API documentation](https://bpmnserver.github.io/docs/api).
+For more advanced examples, see the [API documentation](https://bpmnserver.github.io/bpmn-server/api).
 
 ---
 
@@ -64,15 +64,15 @@ For more advanced examples, see the [API documentation](https://bpmnserver.githu
 
 `bpmn-server` provides a modeling tool based on `bpmn.io` with a customized property panel, eliminating the need to manually edit BPMN files.
 
-![](https://bpmnserver.github.io/docs/images/Modeler.png)
+![](https://bpmnserver.github.io/bpmn-server/images/Modeler.png)
 
 You can also import BPMN models from other tools.
 
 Each model is defined in a BPMN XML file and consists of various elements. An `element` can be a `node` (such as events, tasks, or gateways) or a `flow`.
 
-Models are managed by `bpmn-server` and can be queried using the [Model API](https://bpmnserver.github.io/docs/api/interfaces/IAPIModel).
+Models are managed by `bpmn-server` and can be queried using the [Model API](https://bpmnserver.github.io/bpmn-server/api/interfaces/IAPIModel).
 
-All BPMN 2.0 elements are supported. [See Modeling Support](https://bpmnserver.github.io/docs/examples)
+All BPMN 2.0 elements are supported. [See Modeling Support](https://bpmnserver.github.io/bpmn-server/examples)
 
 ## Execution
 
@@ -84,18 +84,18 @@ Execution follows the BPMN model logic and supports extensions such as scripting
 
 During execution, both Model Listeners and Application Listeners are invoked.
 
-Access the execution engine via the [Engine API](https://bpmnserver.github.io/docs/api/interfaces/IAPIEngine).
+Access the execution engine via the [Engine API](https://bpmnserver.github.io/bpmn-server/api/interfaces/IAPIEngine).
 
-- [Invoking the Execution Engine](https://bpmnserver.github.io/docs/invokation)
-- [Execution Behavior](https://bpmnserver.github.io/docs/execution)
+- [Invoking the Execution Engine](https://bpmnserver.github.io/bpmn-server/invokation)
+- [Execution Behavior](https://bpmnserver.github.io/bpmn-server/execution)
 
 ## Datastore
 
 Execution data, including instances and their elements, are persisted to a datastore (MongoDB by default).
 
-You can query this data through the [Data API](https://bpmnserver.github.io/docs/api/interfaces/IAPIData).
+You can query this data through the [Data API](https://bpmnserver.github.io/bpmn-server/api/interfaces/IAPIData).
 
-- [Data Management Documentation](https://bpmnserver.github.io/docs/data)
+- [Data Management Documentation](https://bpmnserver.github.io/bpmn-server/data)
 
 ## User Management and Security
 
@@ -107,7 +107,7 @@ You can query this data through the [Data API](https://bpmnserver.github.io/docs
 
 The `bpmn-web` demo application demonstrates full user management using Passport and MongoDB.
 
-- [Security Documentation](https://bpmnserver.github.io/docs/security)
+- [Security Documentation](https://bpmnserver.github.io/bpmn-server/security)
 
 ## Demo Web Application
 
@@ -120,16 +120,16 @@ Features include:
 - Property panel supporting all `bpmn-server` features
 - Execution with input forms for defined fields
 
-![](https://bpmnserver.github.io/docs/images/inputFields.png)
+![](https://bpmnserver.github.io/bpmn-server/images/inputFields.png)
 
 - Task and workflow lists
 - Instance detail view
 
-![](https://bpmnserver.github.io/docs//images/instance-details1.png)
+![](https://bpmnserver.github.io/bpmn-server/images/instance-details1.png)
 
 - Model specification viewer
 
-![](https://bpmnserver.github.io/docs//images/instance-details2.png)
+![](https://bpmnserver.github.io/bpmn-server/images/instance-details2.png)
 </details>
 
 ## Live Demo
@@ -271,22 +271,22 @@ npm update bpmn-server
 
 ## Application Integration
 
-`bpmn-server` is designed to be embedded into your application. [See customization guide](https://bpmnserver.github.io/docs/customization)
+`bpmn-server` is designed to be embedded into your application. [See customization guide](https://bpmnserver.github.io/bpmn-server/customization)
 
 ## Documentation
 
-- [Invoking Workflows](https://bpmnserver.github.io/docs/invokation)
-- [Execution](https://bpmnserver.github.io/docs/execution)
-- [Scripting](https://bpmnserver.github.io/docs/scripting)
-- [Security](https://bpmnserver.github.io/docs/security)
-- [Data](https://bpmnserver.github.io/docs/data)
-  - [Input/Output](https://bpmnserver.github.io/docs/data#input-output-data)
-  - [Data Query](https://bpmnserver.github.io/docs/data#dataQuery)
-- [Examples](https://bpmnserver.github.io/docs/examples)
-- [API Summary](https://bpmnserver.github.io/docs/api-summary)
-- [API Reference](https://bpmnserver.github.io/docs/api)
-- [Setup](https://bpmnserver.github.io/docs/setup)
-- [Application Integration](https://bpmnserver.github.io/docs/customization)
+- [Invoking Workflows](https://bpmnserver.github.io/bpmn-server/invokation)
+- [Execution](https://bpmnserver.github.io/bpmn-server/execution)
+- [Scripting](https://bpmnserver.github.io/bpmn-server/scripting)
+- [Security](https://bpmnserver.github.io/bpmn-server/security)
+- [Data](https://bpmnserver.github.io/bpmn-server/data)
+  - [Input/Output](https://bpmnserver.github.io/bpmn-server/data#input-output-data)
+  - [Data Query](https://bpmnserver.github.io/bpmn-server/data#dataQuery)
+- [Examples](https://bpmnserver.github.io/bpmn-server/examples)
+- [API Summary](https://bpmnserver.github.io/bpmn-server/api-summary)
+- [API Reference](https://bpmnserver.github.io/bpmn-server/api)
+- [Setup](https://bpmnserver.github.io/bpmn-server/setup)
+- [Application Integration](https://bpmnserver.github.io/bpmn-server/customization)
 
 ## License
 
