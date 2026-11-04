@@ -2,11 +2,15 @@ div.tasks-content
 	h3 Pending Tasks
 	if !waiting.length
 		p.empty-state There are no pending tasks for this user.
+	//- the application's extra columns (TASK_COLUMNS, runtime/listColumns.ts), from each task's instance data
+	- var extraColumns = (typeof listColumns !== 'undefined' && listColumns.tasks) || [];
 	table
 		tr
 			th Name -id
 			th Model
 			th CaseId
+			each column in extraColumns
+				th #{column.label}
 			th Started
 			th Action 
 			th Assignee
@@ -24,6 +28,8 @@ div.tasks-content
 				td #{item.name} - #{item.elementId}
 				td #{item.processName} 
 				td #{caseId}
+				each column in extraColumns
+					td #{columnValue(item.instanceData || item.data, column.field)}
 				td #{item.fromNow}
 				td
 					//- assignment is optional: whoever may see a task (assignee, candidate, unassigned) may execute it
