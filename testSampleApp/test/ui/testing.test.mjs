@@ -338,7 +338,7 @@ test('debug: a check after a step; the variables changed; a step restarted and r
 
     // why: the gateway's condition with the value it read
     const why = await page.locator('.test-decisions').innerText();
-    assert.match(why, /condition .*days.* is false \(days=2\); not taken/);
+    assert.match(why, /action: not taken\s+why:[^]*condition[^]*days[^]*result: false \(days=2\)/);
     assert.match(why, /takes its default flow/);
     assert.deepEqual(errors, []);
     await close();

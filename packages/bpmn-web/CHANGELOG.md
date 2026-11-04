@@ -12,6 +12,22 @@ and here
 
 ### Changed
 -->
+## [Unreleased]
+### Added
+- **The instance page's Rationale:** the run as the log tells it, in order: each item's start, waits and end
+  (completed by whom, a branch arriving at a join), each flow taken, and each decision with its why (a condition
+  with the values it read, what a gateway chose, what a join waits for), with the time from the start. Closed at
+  first.
+- **Filters on the instance page:** a type of element and an element of that type, for the items, the Rationale
+  and the logs (the lines that name it). At first: the user tasks.
+
+### Changed
+- The model and decision editors have the pages' menu: Workbench, Dashboard (My work, Design, Administration),
+  the user's menu and About.
+- The instance page numbers items by their seq, from 1: the items table, the Rationale and the diagram's numbers
+  agree (the diagram counted its items, which differed once seqs had gaps); the replay finds each element's
+  number by its seq. Decision entries in the logs keep their lines.
+
 ## Release 3.5.2 (2026-11-04)
 ### Added
 - **One menu on every page** (`views/includes/menu.pug`): Workbench first, then Dashboard: My work for end users;

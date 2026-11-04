@@ -244,7 +244,10 @@ class Node extends Element {
         else if (ret ==NODE_ACTION.end) {
             await this.doEvent(item, EXECUTION_EVENT.node_end, ITEM_STATUS.end);
 
-            item.token.info(`{"seq":${item.seq},"type":'${this.type}',"id":'${this.id}',"action":'Ended'}`);
+            // once: a join's item was ended already, by the token that went on from it
+            if (!item['endLogged'])
+                item.token.info(`{"seq":${item.seq},"type":'${this.type}',"id":'${this.id}',"action":'Ended'}`);
+            item['endLogged'] = true;
 
             item.token.log('Node('+this.name+'|'+this.id+').execute: start complete ...token:'+item.token.id+' ret:'+ret);
             return ret;
@@ -305,7 +308,10 @@ class Node extends Element {
         const what = this.name ? `'${this.name}' (${this.id})` : this.id;
         if (this.exceptionsAsErrors && code && item.token.getScopeCatchEvent('error', code)) {
             item.log(`exception: ${message}`);
-            item.token.decision(`${what}: the exception "${message}" raised as the BPMN error ${code} (exceptions as BPMN errors)`);
+            item.token.decision({
+                seq: item.seq, element: what, action: `raises the BPMN error ${code}`,
+                why: [`the exception "${message}"`, 'exceptions raise BPMN errors here, and an error event catches it'],
+            });
             item.output = { error: message, code };
             await item.token.processError(code, item);
             item.statusDetails = { ...(item.statusDetails ?? {}), exception: message };
@@ -436,6 +442,7 @@ class Node extends Element {
             item.token.info(`{"seq":${item.seq},"type":'${this.type}',"id":'${this.id}',"action":'Cancelled'}`);
         else 
         item.token.info(`{"seq":${item.seq},"type":'${this.type}',"id":'${this.id}',"action":'Ended'}`);
+        item['endLogged'] = true;
 
         item.token.logS('Node('+this.name+'|'+this.id+'|'+item.seq+').end: item=' + item.id+ ' cancel:'+cancel + ' attachments:'+this.attachments.length);
 

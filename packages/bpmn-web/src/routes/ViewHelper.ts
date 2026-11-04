@@ -73,7 +73,8 @@ export class ViewHelper {
                 else
                     color = 'black';
             }
-            let decor = {type:'seq', id: item.elementId, color, seq };
+            // the item's own seq, as the items table, the Rationale and the log give it
+            let decor = {type:'seq', id: item.elementId, color, seq: item.seq ?? seq };
 
             decors.push(decor);
             let tokenDecor=item.tokenId;

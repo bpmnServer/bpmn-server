@@ -13,6 +13,24 @@ and here
 
 ### Changed
 -->
+## [Unreleased]
+### Fixed
+- A joining gateway is one item. Each branch that arrived added one (a join of 3 branches showed 3 gateway
+  items, since the first release); now the item that goes on keeps the first arrival's seq and start, and the
+  waiting branches' items are dropped. Its log tells it as one item: Started, Waiting, `Arrived` (a later
+  branch), Ended.
+- An item's end is logged once (a join's item logged `Ended` twice).
+- A restored instance numbers its new items after its highest seq; it counted its items, which gave two items
+  the same seq once seqs had a gap.
+
+### Changed
+- Items are numbered from 1 (`item.seq`; it was from 0), as bpmn-web shows them. Instances already started
+  keep their numbers.
+- Decisions in the log are a block each: `seq:` (the item's seq) and the element, `action:` (taken, not taken,
+  takes ..., waits, continues, ...) and `why:` (the condition, its result and the values it read, a gateway's flows,
+  what a join waits for). The log entry also keeps `seq`, `element` and `action`. `token.decision()` takes an
+  `ExecutionDecision` (`{ seq, element, action, why }`); a string is still logged as it is.
+
 ## Release 3.5.2 (2026-11-04)
 ### Added
 - **Connectors** (`src/connectors/`): REST APIs described by OpenAPI 3.0 or 3.1 (JSON or YAML), which a service

@@ -656,7 +656,10 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
             const item = Item.load(execution, i, token);
             token.path.push(item);
             items.push(item);
-            }); 
+            });
+        // the next item's seq: after the highest (loading counted the items, and seqs may have gaps: a join's)
+        const highest = items.reduce((max, it) => it.seq != null && it.seq > max ? it.seq : max, -1);
+        execution.uids['item'] = Math.max(execution.uids['item'] ?? 0, highest + 1);
 
         // token.originItem
 
@@ -742,9 +745,10 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
 
     uids= {};
 
+    /** The next id of a scope; items are numbered from 1 (their seq), tokens and loops from 0. */
     getNewId(scope: string) {
         if (!this.uids[scope]) {
-            this.uids[scope] = 0;
+            this.uids[scope] = scope === 'item' ? 1 : 0;
         }
         return this.uids[scope]++;
     }
@@ -789,9 +793,17 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
     info(...msg) {
         this.record(this.logger.info(...msg));
     }
-    /** Why the engine took a path: kept in the instance's log, as a 'decision' entry. */
+    /**
+     * Why the engine took a path: kept in the instance's log, as a 'decision' entry. A decision object is written as a block
+     * (seq and element, action, why); the entry also keeps its seq, element and action.
+     */
     decision(...msg) {
-        this.record(typeof this.logger.decision === 'function' ? this.logger.decision(...msg) : this.logger.info('decision:', ...msg));
+        const d: ExecutionDecision = msg.length === 1 && typeof msg[0] === 'object' && msg[0]?.action ? msg[0] : null;
+        const args = d ? [formatDecision(d)] : msg;
+        const entry = typeof this.logger.decision === 'function' ? this.logger.decision(...args) : this.logger.info('decision:', ...args);
+        if (d && entry && typeof entry === 'object')
+            Object.assign(entry, { seq: d.seq, element: d.element, action: d.action });
+        this.record(entry);
     }
     error(msg) {
         this.doExecutionEvent(this, EXECUTION_EVENT.process_error);
@@ -828,3 +840,35 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
 
 
 export { Execution }
+
+/** Why the engine did something at an element: its item's seq, the element, what it did, and the reasons. */
+export interface ExecutionDecision {
+    seq?: number;
+    /** e.g. "flow 'yes' (f1)", "gateway 'Covered?' (Covered)" */
+    element: string;
+    /** e.g. "taken", "not taken", "takes 'yes' (f1)", "waits", "continues" */
+    action: string;
+    /** The reasons, a line each; a list is written under the line before it, indented. */
+    why?: (string | string[])[];
+}
+
+/**
+ * A decision as a block:
+ *
+ *     seq: 3   flow 'repair' (flow_gw1_repair)
+ *     action: taken
+ *     why:
+ *         condition
+ *             (item.data.needsRepairs=="Yes") || item.data.needsRepairs
+ *         result: true (needsRepairs="Yes")
+ */
+export function formatDecision(d: ExecutionDecision): string {
+    const lines = [`seq: ${d.seq ?? '-'}   ${d.element}`, `action: ${d.action}`];
+    if (d.why?.length) {
+        lines.push('why:');
+        for (const reason of d.why)
+            for (const line of Array.isArray(reason) ? reason.map(r => '    ' + r) : [reason])
+                lines.push('    ' + line);
+    }
+    return lines.join('\n');
+}

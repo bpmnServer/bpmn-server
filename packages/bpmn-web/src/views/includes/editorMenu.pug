@@ -1,8 +1,31 @@
-//- The menu in the editors' header (they have no navbar): the same places as the pages' menu (menu.pug).
-nav.editor-menu(aria-label="Menu")
-  a(href='/') Workbench
-  a(href='/dashboard') My work
-  if canDesign
-    a(href='/dashboard/design') Design
-  if canAdminister
-    a(href='/dashboard/admin') Administration
+//- The menu in the editors' header (they have no navbar): the pages' menu (menu.pug), drawn without Bootstrap.
+//- +editorMenu: Workbench, Dashboard (My work, Design, Administration); +editorUser: the user's menu and About.
+//- A drop-down opens on hover or focus (CSS: modeler.css).
+mixin editorMenu
+  nav.editor-menu(aria-label="Menu")
+    a(href='/') Workbench
+    if canDesign || canAdminister
+      .editor-dropdown
+        button(type='button' aria-haspopup='true')
+          | Dashboard
+          span.editor-caret
+        .editor-dropdown-menu
+          a(href='/dashboard') My work
+          if canDesign
+            a(href='/dashboard/design') Design
+          if canAdminister
+            a(href='/dashboard/admin') Administration
+    else
+      a(href='/dashboard') My work
+
+mixin editorUser
+  nav.editor-menu.editor-menu-right(aria-label="Account")
+    if user
+      .editor-dropdown
+        button(type='button' aria-haspopup='true')
+          | #{user.userName || user.email}
+          span.editor-caret
+        .editor-dropdown-menu.editor-dropdown-right
+          a(href='/account') My account
+          a(href='/logout') Sign out
+    a(href='https://bpmnserver.github.io/bpmn-server/' target='docs') About

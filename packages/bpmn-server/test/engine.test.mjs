@@ -360,15 +360,60 @@ test('the instance log gives the reason for each decision: a condition with the 
   const decisions = execution => execution.instance.logs.filter(l => l.type === 'decision').map(l => l.message);
   const { server } = await makeServer({ services: coverage(false) });
   const rejected = decisions(await server.engine.start('property-claim', {}));
-  assert.ok(rejected.some(d => /condition .*data\.covered === true.* is false \(covered=false\); not taken/.test(d)), rejected.join('\n'));
-  assert.ok(rejected.some(d => /gateway 'Covered\?' \(Covered\): none of the conditions of its other flows held .*takes its default flow/.test(d)), rejected.join('\n'));
+  // each a block: seq and element, action, why
+  const flow = rejected.find(d => d.startsWith('seq: ') && d.includes('flow covered\n'));
+  assert.match(flow, /^seq: \d+   flow covered\naction: not taken\nwhy:\n    from 'Covered\?' \(Covered\) to .*\n    condition\n        \$\(data\.covered === true\)\n    result: false \(covered=false\)$/, rejected.join('\n\n'));
+  assert.ok(rejected.some(d => /gateway 'Covered\?' \(Covered\)\naction: takes its default flow notCovered\nwhy:\n    none of the conditions of its other flows held\n        covered$/.test(d)), rejected.join('\n\n'));
+  // the entry keeps the parts
+  const entry = (await server.engine.start('property-claim', {})).instance.logs.find(l => l.type === 'decision' && l.element === 'flow covered');
+  assert.equal(entry.action, 'not taken');
+  assert.equal(typeof entry.seq, 'number');
   await server.shutdown();
 
   const covered = await makeServer({ services: coverage(true) });
   const taken = decisions(await covered.server.engine.start('property-claim', {}));
-  assert.ok(taken.some(d => /is true \(covered=true\); taken/.test(d)));
-  assert.ok(taken.some(d => /gateway 'Covered\?' \(Covered\): takes covered of covered, notCovered/.test(d)));
+  assert.ok(taken.some(d => /flow covered\naction: taken\n[^]*result: true \(covered=true\)$/.test(d)), taken.join('\n\n'));
+  assert.ok(taken.some(d => /gateway 'Covered\?' \(Covered\)\naction: takes covered\nwhy:\n    of covered, notCovered\n    its default flow notCovered only when no other holds$/.test(d)), taken.join('\n\n'));
   const timed = decisions(await covered.server.engine.start('reminder', {}));
-  assert.ok(timed.some(d => /^timer .*: due at \d{4}-.*\((duration|cycle|date) /.test(d)), timed.join('\n'));
+  assert.ok(timed.some(d => /^seq: \d+   timer .*\naction: due at \d{4}-.*\nwhy:\n    (duration|cycle|date) /.test(d)), timed.join('\n\n'));
   await covered.server.shutdown();
+});
+
+test('a joining gateway is one item: it waits from the first branch, and goes on when the last arrives', async () => {
+  const { server, dir } = await makeServer();
+  const fs = await import('node:fs');
+  fs.writeFileSync(dir + 'join-once.bpmn', `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="d" targetNamespace="urn:test">
+  <bpmn:process id="P" isExecutable="true">
+    <bpmn:startEvent id="Start" /><bpmn:parallelGateway id="Split" />
+    <bpmn:userTask id="A" /><bpmn:userTask id="B" /><bpmn:parallelGateway id="Join" /><bpmn:userTask id="C" /><bpmn:endEvent id="End" />
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="Split" /><bpmn:sequenceFlow id="f2" sourceRef="Split" targetRef="A" />
+    <bpmn:sequenceFlow id="f3" sourceRef="Split" targetRef="B" /><bpmn:sequenceFlow id="f4" sourceRef="A" targetRef="Join" />
+    <bpmn:sequenceFlow id="f5" sourceRef="B" targetRef="Join" /><bpmn:sequenceFlow id="f6" sourceRef="Join" targetRef="C" /><bpmn:sequenceFlow id="f7" sourceRef="C" targetRef="End" />
+  </bpmn:process>
+</bpmn:definitions>`);
+  await server.definitions.rebuild();
+  const started = await server.engine.start('join-once', {});
+  const first = await server.engine.invoke({ id: started.instance.id, 'items.elementId': 'A' }, {});
+  const waited = first.instance.items.filter(i => i.elementId === 'Join');
+  assert.equal(waited.length, 1);
+  assert.equal(waited[0].status, 'wait');
+  await server.engine.invoke({ id: started.instance.id, 'items.elementId': 'B' }, {});
+  // restored again after the join: new items number on from the highest seq
+  const done = await server.engine.invoke({ id: started.instance.id, 'items.elementId': 'C' }, {});
+  const joins = done.instance.items.filter(i => i.elementId === 'Join');
+  assert.equal(joins.length, 1, 'one item for the gateway, not one per branch');
+  assert.equal(joins[0].seq, waited[0].seq, 'the seq of the first arrival');
+  assert.equal(new Date(joins[0].startedAt).getTime(), new Date(waited[0].startedAt).getTime(), 'started when the first branch arrived');
+  assert.equal(joins[0].status, 'end');
+  assert.equal(done.instance.status, 'end');
+  const seqs = done.instance.items.map(i => i.seq);
+  assert.equal(new Set(seqs).size, seqs.length, 'no two items share a seq');
+  const decisions = done.instance.logs.filter(l => l.type === 'decision' && l.element === 'gateway Join');
+  assert.deepEqual(decisions.map(d => [d.seq, d.action]), [[waited[0].seq, 'waits'], [waited[0].seq, 'continues']], 'the Rationale: one item, waits then continues');
+  // the log tells it as one item: started, waits, the second branch arrived, ended (once)
+  const events = done.instance.logs.filter(l => l.type === 'info' && /"id":'Join'/.test(l.message))
+    .map(l => l.message.replace(/^\{"seq":(\d+),.*"action":'(\w+)'\}$/, '$1 $2'));
+  assert.deepEqual(events, ['Started', 'Waiting', 'Arrived', 'Ended'].map(a => `${waited[0].seq} ${a}`));
+  await server.shutdown();
 });

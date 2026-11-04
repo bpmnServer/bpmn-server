@@ -17,12 +17,14 @@ html(lang="en")
         a.brand(href="/" title="Home")
           img(src="https://demo.omniworkflow.com/web//images/omniworkflow_icon.png" alt="Home")
         include includes/editorMenu.pug
+        +editorMenu
         h1= processName
         span#js-save-status.modeler-status(role="status")
         nav.modeler-actions
           a(href=`/execute/${processName}` target="execute") Run
           button#js-save-run(type="button") Save &amp; Run
           button#js-save.primary(type="button" title="Ctrl+S") Save
+        +editorUser
       .modeler-body
         .modeler-main
           #js-canvas.modeler-canvas

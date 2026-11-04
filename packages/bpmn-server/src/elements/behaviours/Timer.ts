@@ -159,7 +159,10 @@ class TimerBehaviour extends Behaviour {
         const config = item.context.configuration;
         if (config.demo) {
             const definition = this.duration ? `duration ${this.duration}` : this.timeCycle ? `cycle ${this.timeCycle}` : this.timeDate ? `date ${this.timeDate}` : 'no time';
-            item.token.decision(`timer ${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id} (${definition}): in this demo, timers are disabled so they do not keep the server busy. It waits here until you invoke it.`);
+            item.token.decision({
+                seq: item.seq, element: `timer ${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}`, action: 'waits until invoked',
+                why: [definition, 'in this demo, timers are disabled so they do not keep the server busy'],
+            });
             return;
         }
         if (config.timers && config.timers.forceTimersDelay) {
@@ -171,7 +174,10 @@ class TimerBehaviour extends Behaviour {
 
         item.token.log("timer is set at " + item.timeDue + " - "+ new Date(item.timeDue).toISOString());
         const definition = this.duration ? `duration ${this.duration}` : this.timeCycle ? `cycle ${this.timeCycle}` : this.timeDate ? `date ${this.timeDate}` : 'no time';
-        item.token.decision(`timer ${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}: due at ${new Date(item.timeDue).toISOString()} (${timerModifier ? `the configuration's timers.forceTimersDelay, ${timerModifier} ms, instead of its ${definition}` : definition})`);
+        item.token.decision({
+            seq: item.seq, element: `timer ${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}`, action: `due at ${new Date(item.timeDue).toISOString()}`,
+            why: [timerModifier ? `the configuration's timers.forceTimersDelay, ${timerModifier} ms, instead of its ${definition}` : definition],
+        });
 
         const seconds = ((new Date(item.timeDue)).getTime()/1000) - (new Date().getTime()/1000);
 

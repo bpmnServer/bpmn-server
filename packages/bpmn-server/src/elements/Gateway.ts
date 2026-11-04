@@ -52,15 +52,19 @@ class Gateway extends Node {
         const names = (list) => list.map(f => label(f.element ?? f)).join(', ');
         const defaultFlow = this.def.default ? flows.find(f => f.id === this.def.default.id) : null;
         const takesDefault = defaultFlow && chosen.some(c => c.element?.id === defaultFlow.id);
-        const gateway = `gateway ${label(this)}`;
+        const decide = (action: string, why: (string | string[])[]) =>
+            item.token.decision({ seq: item.seq, element: `gateway ${label(this)}`, action, why });
         if (!chosen.length)
-            item.token.decision(`${gateway}: no flow can be taken: none of its conditions held (${names(flows)}) and it has no default flow`);
+            decide('takes no flow', ['none of its conditions held', [names(flows)], 'and it has no default flow']);
         else if (takesDefault)
-            item.token.decision(`${gateway}: none of the conditions of its other flows held (${names(flows.filter(f => f !== defaultFlow))}); takes its default flow ${label(defaultFlow)}`);
+            decide(`takes its default flow ${label(defaultFlow)}`, ['none of the conditions of its other flows held', [names(flows.filter(f => f !== defaultFlow))]]);
         else if (chosen.length < held.length)
-            item.token.decision(`${gateway}: the conditions of ${names(held)} held; an exclusive gateway takes one, the first: ${names(chosen)}`);
+            decide(`takes ${names(chosen)}`, [`the conditions of ${names(held)} held`, 'an exclusive gateway takes one, the first']);
         else
-            item.token.decision(`${gateway}: takes ${names(chosen)}${chosen.length < flows.length ? ` of ${names(flows)}` : ' (all its flows)'}${defaultFlow ? `; its default flow ${label(defaultFlow)} only when no other holds` : ''}`);
+            decide(`takes ${names(chosen)}`, [
+                chosen.length < flows.length ? `of ${names(flows)}` : 'all its flows',
+                ...(defaultFlow ? [`its default flow ${label(defaultFlow)} only when no other holds`] : []),
+            ]);
     }
 
     /** The outgoing flows whose conditions hold; the default flow when none does. */
@@ -214,13 +218,20 @@ class Gateway extends Node {
                         t.currentItem.status = ITEM_STATUS.end;
                         await t.terminate();
                     });
-                    item.token.decision(`gateway ${label(this)} (exclusive) joins: the first branch arrived; the others are cancelled (at ${[...new Set(result.pendingTokens.map(t => label(t.currentNode)))].join(', ')})`);
+                    item.token.decision({
+                        seq: item.seq, element: `gateway ${label(this)}`, action: 'continues',
+                        why: ['joins its branches (exclusive): the first to arrive goes on',
+                            `the others are cancelled (at ${[...new Set(result.pendingTokens.map(t => label(t.currentNode)))].join(', ')})`],
+                    });
 
                 }
                 else {
                     item.token.log('Gateway(' + item.element.name + '|' + item.element.id + ').start: result.pendingTokens.length = ' + result.pendingTokens.length + ' > 0 return NODE_ACTION.wait');
                     const at = [...new Set(result.pendingTokens.map(t => label(t.currentNode)))].join(', ');
-                    item.token.decision(`gateway ${label(this)} joins its branches: waits for ${result.pendingTokens.length} still on the way (at ${at})`);
+                    item.token.decision({
+                        seq: item.seq, element: `gateway ${label(this)}`, action: 'waits',
+                        why: ['joins its branches', `waits for ${result.pendingTokens.length} still on the way (at ${at})`],
+                    });
                     return NODE_ACTION.wait;
                 }
             }
@@ -231,13 +242,30 @@ class Gateway extends Node {
 
                 item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: let us converge now waitingTokens.length=' + result.waitingTokens.length);
                 item.token.log('..let us converge now ');
-                result.waitingTokens.forEach(async t => {
+                // The gateway is one item: the branches that waited here gave theirs; this one, which goes on, takes the
+                // first one's seq and start (when the first branch arrived), and theirs are dropped
+                const arrivedAs = item.seq;
+                const logs: any[] = item.token.execution.instance?.logs ?? [];
+                for (const t of result.waitingTokens) {
                     item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: ..converging ending token ' + t.id);
                     item.token.log("..converging ending token #" + t.id);
-                    t.currentItem.status = ITEM_STATUS.end;
+                    const waited = t.currentItem;
+                    waited.status = ITEM_STATUS.end;
                     await t.end(true);
                     //await t.terminate();
-                });
+                    if (waited !== item && waited.node?.id === this.id) {
+                        if (waited.seq != null && (item.seq == null || waited.seq < item.seq)) item.seq = waited.seq;
+                        if (waited.startedAt && (!item.startedAt || waited.startedAt < item.startedAt)) item.startedAt = waited.startedAt;
+                        const at = t.path.indexOf(waited);
+                        if (at >= 0) t.path.splice(at, 1);
+                    }
+                }
+                // the log as one item: this branch's start is its arrival at the gateway
+                if (item.seq !== arrivedAs) {
+                    const action = (seq, what) => `{"seq":${seq},"type":'${this.type}',"id":'${this.id}',"action":'${what}'}`;
+                    const started = logs.findIndex(l => l?.message === action(arrivedAs, 'Started'));
+                    if (started >= 0) logs[started].message = action(item.seq, 'Arrived');
+                }
 
                 
                 // -------------------------------------------------------------------------------------------------
@@ -248,7 +276,7 @@ class Gateway extends Node {
                 //item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: new Token created ');
 
                 item.token.log('Gateway(' + item.element.name+'|'+item.element.id +  ').start: converged! all waiting tokens ended');
-                item.token.decision(`gateway ${label(this)} joins its branches: all have arrived; continues`);
+                item.token.decision({ seq: item.seq, element: `gateway ${label(this)}`, action: 'continues', why: ['joins its branches: all have arrived'] });
 
                 const oldCurrentToken = item.token;
                 // it is ended once the parent has gone on: until then, it is not on its way anywhere
@@ -342,7 +370,10 @@ class EventBasedGateway extends Gateway {
                      {
 
                     endingItem.token.log(`..EventBasedGateway:<${self.id}>-- cancelling  ${token.currentNode.id} `);
-                    endingItem.token.decision(`event-based gateway ${label(self)}: ${label(endingItem.node)} happened first; ${label(token.currentNode)} is cancelled`);
+                    endingItem.token.decision({
+                        seq: endingItem.seq, element: `event-based gateway ${label(self)}`, action: `cancels ${label(token.currentNode)}`,
+                        why: [`${label(endingItem.node)} happened first`],
+                    });
 
                     await token.terminate();
                 }

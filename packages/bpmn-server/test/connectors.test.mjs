@@ -102,7 +102,8 @@ test('a service task calls the connector: the inputs in the request, the answer 
   assert.equal(missing.instance.status, 'end');
   assert.ok(missing.instance.items.some(i => i.elementId === 'Unknown' && i.status === 'end'), 'the boundary error event caught HTTP_404');
   assert.ok(!missing.instance.items.some(i => i.elementId === 'Done'));
-  assert.match(JSON.stringify(missing.instance.decisions ?? missing.instance.logs), /answered HTTP 404, raised as the BPMN error HTTP_404/);
+  const raised = missing.instance.logs.filter(l => l.type === 'decision').map(l => l.message);
+  assert.ok(raised.some(d => /action: raises the BPMN error HTTP_404\nwhy:\n    the connector \S+ answered HTTP 404/.test(d)), raised.join('\n\n'));
   await server.shutdown();
 });
 

@@ -16,12 +16,14 @@ html(lang="en")
         a.brand(href="/" title="Home")
           img(src="https://demo.omniworkflow.com/web//images/omniworkflow_icon.png" alt="Home")
         include includes/editorMenu.pug
+        +editorMenu
         h1= name
         span.decision-file= `${name}.dmn.xml`
         span#js-save-status.modeler-status(role="status")
         nav#js-views.decision-views(aria-label="Decisions")
         nav.modeler-actions
           button#js-save.primary(type="button" title="Ctrl+S") Save
+        +editorUser
       .decision-body
         #js-decision.decision-canvas
         //- the dock, as the model editor's: here the Test tab

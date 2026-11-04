@@ -167,7 +167,7 @@ async function playWithoutGsap(flowInfo, run) {
             element.classList.remove('Pending');
             element.classList.add(item.action === 'Ended' ? 'Completed' : 'Cancelled');
         }
-        if (item.seq) $('#seq_' + item.seq).show();
+        if (item.seq != null) $('#seq_' + item.seq).show();
         await new Promise(resolve => setTimeout(resolve, 300));
     }
     if (run === animationRun) animationStatus('Replay complete. Click again to restart.');
@@ -214,8 +214,8 @@ function startAnimation() {
     for(let i=0;i<flowInfo.length;i++)
         {
             let item=flowInfo[i];
-            if (item.seq)
-                $('#seq_'+(item.seq+1)).hide();
+            if (item.seq != null)
+                $('#seq_'+item.seq).hide();
         }
 
     
@@ -230,17 +230,17 @@ function startAnimation() {
                 tl.to(firstElement, { scale: 1.2, duration: 0.5, repeat: 1, yoyo: true });
         }
         else if (item.type==='bpmn:SequenceFlow')
-            tl.call(() => animateFlow(item.id,item.seq+1), null, "+=0.5"); // Activate task and wait
+            tl.call(() => animateFlow(item.id,item.seq), null, "+=0.5"); // Activate task and wait
            // tl.add(animateFlow(item.id), "+=0.5"); // Animate flow and wait
         else 
             {
                 if (item.action==='Waiting')
                 {
-                    tl.call(() => activateTask(item.id,item.seq+1), null, "+=0.5"); // Activate task and wait
+                    tl.call(() => activateTask(item.id,item.seq), null, "+=0.5"); // Activate task and wait
 //                    tl.addPause("waiting");
 }
                 else if (item.action==='Ended' || item.action==='Cancelled')
-                    tl.call(() => endAnimation(item.id,item.seq+1,item.action), null, "+=0.5"); 
+                    tl.call(() => endAnimation(item.id,item.seq,item.action), null, "+=0.5"); 
             }
     }
     tl.play();
@@ -259,7 +259,7 @@ let svg;
     info.forEach(item => {
         try {
             let fl=JSON.parse(item.message.replaceAll(`'`,`"`));
-            if (fl.id && fl.seq && fl.action) flow.push(fl);
+            if (fl.id && fl.seq != null && fl.action) flow.push(fl);
         }
         catch(exc) {}
     });
@@ -267,7 +267,7 @@ let svg;
         const itemJson = document.getElementById('animationItems');
         if (itemJson) {
             const items = JSON.parse(itemJson.textContent);
-            flow = items.filter(item => item.id && item.seq).map(item => ({
+            flow = items.filter(item => item.id && item.seq != null).map(item => ({
                 id: item.id, seq: item.seq, type: item.type,
                 action: item.type === 'bpmn:SequenceFlow' ? 'Taken' : item.status === 'wait' ? 'Waiting' : 'Ended'
             }));

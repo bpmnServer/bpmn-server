@@ -68,7 +68,10 @@ class ServiceTask extends Node {
     async runConnector(item: Item, connector: ConnectorBehaviour): Promise<NODE_ACTION> {
         const what = `${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}`;
         if (item.context.configuration?.demo) {
-            item.token.decision(`service task ${what}: a real server calls the connector ${connector.connectorId} here; in this demo, connectors do not run, so it ends with no output.`);
+            item.token.decision({
+                seq: item.seq, element: `service task ${what}`, action: 'ends with no output',
+                why: [`a real server calls the connector ${connector.connectorId} here`, 'in this demo, connectors do not run'],
+            });
             item.output = {};
             return NODE_ACTION.end;
         }
@@ -83,7 +86,10 @@ class ServiceTask extends Node {
             if (!(error instanceof ConnectorError))
                 throw error;
             item.log(error.message);
-            item.token.decision(`service task ${what}: the connector ${connector.connectorId} answered HTTP ${error.status}, raised as the BPMN error ${error.code}`);
+            item.token.decision({
+                seq: item.seq, element: `service task ${what}`, action: `raises the BPMN error ${error.code}`,
+                why: [`the connector ${connector.connectorId} answered HTTP ${error.status}`],
+            });
             item.output = { status: error.status, error: error.body };
             await item.token.processError(error.code, item);
         }
@@ -105,7 +111,10 @@ class ServiceTask extends Node {
         let ret;
 
         if (item.context.configuration?.demo) {
-            item.token.decision(`service task ${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}: a real server calls ${this.serviceName ? `the service ${this.serviceName}` : 'its service'} here; in this demo, service tasks do not run, so it ends with no output.`);
+            item.token.decision({
+                seq: item.seq, element: `service task ${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}`, action: 'ends with no output',
+                why: [`a real server calls ${this.serviceName ? `the service ${this.serviceName}` : 'its service'} here`, 'in this demo, service tasks do not run'],
+            });
             item.output = {};
             return NODE_ACTION.end;
         }
@@ -411,7 +420,10 @@ class AdHocSubProcess extends Node {
         const condition = this.def.completionCondition?.body;
         if (!done && condition) {
             done = !!(await item.token.execution.scriptHandler.evaluateExpression(item, condition, 'completionCondition'));
-            item.token.decision(`ad hoc sub-process ${this.id}: completionCondition ${condition} is ${done}`);
+            item.token.decision({
+                seq: item.seq, element: `ad hoc sub-process ${this.id}`, action: done ? 'completes' : 'goes on',
+                why: ['completionCondition', [condition], `result: ${done}`],
+            });
         }
         if (!done)
             return;

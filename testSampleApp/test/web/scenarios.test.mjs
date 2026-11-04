@@ -254,7 +254,7 @@ test('checks after a step and at the end: a node\'s count and status, data compa
         ['passes Approve request, end, 1 time', true],
     ]);
     assert.equal(result.ok, false);
-    const decisions = result.instance.logs.filter(l => /condition .* is true \(days=10\); taken/.test(l));
+    const decisions = result.instance.logs.filter(l => /\naction: taken\n[^]*\n    result: true \(days=10\)$/.test(l));
     assert.equal(decisions.length, 1, 'the log gives the gateway\'s reason');
 });
 

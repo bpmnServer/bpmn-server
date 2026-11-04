@@ -64,7 +64,10 @@ class Flow extends Element implements IFlow {
         let result = await this.evaluateCondition(item);
         if (this.def.conditionExpression) {
             const expression = this.def.conditionExpression.body;
-            item.token.decision(`flow ${label(this)} from ${label(this.from)} to ${label(this.to)}: condition ${expression} is ${result === true}${valuesRead(expression, item.token.data)}; ${result === true ? 'taken' : 'not taken'}`);
+            item.token.decision({
+                seq: item.seq, element: `flow ${label(this)}`, action: result === true ? 'taken' : 'not taken',
+                why: [`from ${label(this.from)} to ${label(this.to)}`, 'condition', [expression], `result: ${result === true}${valuesRead(expression, item.token.data)}`],
+            });
         }
         if (result !== true) {
             action = FLOW_ACTION.discard;

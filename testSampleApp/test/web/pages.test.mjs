@@ -89,6 +89,36 @@ test('the instance page shows the diagram with its elements and the replay data'
   assert.match(res.text, /\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/, 'dates are formatted');
 });
 
+test('the instance page gives the Rationale: the run from start to end, each step with what happened and why', async () => {
+  const { instance } = await web.bpmnServer.engine.start(MODEL, {});
+  await web.bpmnServer.engine.invoke({ id: instance.id, 'items.elementId': 'Submit' }, { days: 10 }, 'admin');
+  const page = await admin.get(`/instanceDetails?id=${instance.id}`);
+  assert.equal(page.status, 200, why(page));
+  assert.match(page.text, /<h2 id="rationale-heading">Rationale<\/h2>/);
+  const table = page.text.match(/<table class="instance-table rationale-table">([^]*?)<\/table>/)[1];
+  const text = html => html.replace(/<[^>]+>/g, '').replace(/&#39;/g, "'").replace(/&gt;/g, '>');
+  const rows = [...table.matchAll(/<tr[^>]*><td>(\d*)<\/td><td[^>]*>([^<]*)<\/td><td>([^<]*)<\/td><td>([^]*?)<\/td><td class="rationale-why">([^]*?)<\/td><\/tr>/g)]
+    .map(([, seq, at, element, happened, why]) => ({ seq: Number(seq), at, element: text(element), happened: text(happened), why: text(why) }));
+  // the log, in its order: each item's start (waiting as it starts: one row), end, and each decision where made
+  assert.deepEqual(rows.map(r => [r.seq, r.element, r.happened]), [
+    [1, "start event 'Leave requested' (Requested)", 'started'],
+    [1, "start event 'Leave requested' (Requested)", 'ended'],
+    [2, 'sequence flow ToSubmit', 'taken'],
+    [3, "user task 'Submit request' (Submit)", 'started · waits'],
+    [3, "user task 'Submit request' (Submit)", 'completed by admin'],
+    [4, 'sequence flow ToGateway', 'taken'],
+    [5, "exclusive gateway 'More than 5 days?' (LongLeave)", 'started'],
+    [5, "exclusive gateway 'More than 5 days?' (LongLeave)", 'ended'],
+    [6, "flow 'yes' (ToApprove)", 'taken'],
+    [6, "sequence flow 'yes' (ToApprove)", 'taken'],
+    [5, "gateway 'More than 5 days?' (LongLeave)", "takes 'yes' (ToApprove)"],
+    [7, "user task 'Approve request' (Approve)", 'started · waits'],
+  ], 'every event, in the order logged');
+  assert.match(rows[0].at, /^\d+\.\ds$/, 'when, from the start');
+  assert.match(rows[8].why, /^from .*\ncondition\n    \$\(Number\(item\.data\.days\) > 5\)\nresult: true \(days=10\)$/, 'the why of a decision');
+  assert.equal(rows[4].why, '', 'no why for an event');
+});
+
 test('static assets are served', async () => {
   for (const url of ['/stylesheets/app.css', '/javascripts/SVGHelper.js', '/javascripts/modeller-withPropertyPanel.js'])
     assert.equal((await admin.get(url)).status, 200, url);

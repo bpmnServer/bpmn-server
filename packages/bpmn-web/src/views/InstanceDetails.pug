@@ -26,7 +26,49 @@ block content
         if (td.textContent.startsWith('debug:')) td.classList.add('log-debug');
         if (td.textContent.startsWith('log:Action:')) td.classList.add('log-action');
       });
+      setUpFilters();
     });
+    // Filters: a type, an element; the items and the Rationale by their rows' element, the logs by the element ids
+    // a line names (its action, 'Node(name|id)', a flow's id, ...)
+    function setUpFilters() {
+      var typeSelect = document.getElementById('filter-type');
+      var elementSelect = document.getElementById('filter-element');
+      if (!typeSelect || !elementSelect) return;
+      var elements = JSON.parse(document.getElementById('filterElements').textContent || '[]');
+      var typeOf = {};
+      elements.forEach(function (e) { typeOf[e.id] = e.type; });
+      var escape = function (s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); };
+      var mentions = function (text, ids) {
+        return ids.some(function (id) { return new RegExp('(^|[^\\w-])' + escape(id) + '($|[^\\w-])').test(text); });
+      };
+      function apply() {
+        var type = typeSelect.value, element = elementSelect.value;
+        // the element list: those of the type
+        Array.prototype.forEach.call(elementSelect.options, function (o) { o.hidden = !!(o.value && type && o.dataset.type !== type); });
+        if (element && type && typeOf[element] !== type) { elementSelect.value = ''; element = ''; }
+        var ids = element ? [element] : type ? elements.filter(function (e) { return e.type === type; }).map(function (e) { return e.id; }) : null;
+        var shown = 0, all = 0;
+        document.querySelectorAll('#dataTable tbody tr[data-element], .rationale-table tbody tr[data-element]').forEach(function (tr) {
+          var show = !ids || ids.indexOf(tr.dataset.element) >= 0;
+          tr.hidden = !show;
+          if (tr.closest('#dataTable')) { all++; if (show) shown++; }
+        });
+        document.querySelectorAll('#logs tr.log-row').forEach(function (tr) {
+          tr.hidden = !!ids && !mentions(tr.textContent, ids);
+        });
+        document.getElementById('filter-count').textContent = ids ? shown + ' of ' + all + ' items' : '';
+      }
+      typeSelect.addEventListener('change', apply);
+      elementSelect.addEventListener('change', apply);
+      document.getElementById('filter-clear').addEventListener('click', function () {
+        typeSelect.value = ''; elementSelect.value = ''; apply();
+      });
+      // at first: the user tasks, when the instance has any
+      if (elements.some(function (e) { return e.type === 'bpmn:UserTask'; })) {
+        typeSelect.value = 'bpmn:UserTask';
+        apply();
+      }
+    }
 
   main#instances.instance-page
     header.instance-page-header
@@ -94,6 +136,25 @@ block content
       script(type="application/json" id="jsonInfo")!= JSON.stringify(info)
       script(type="application/json" id="animationItems")!= JSON.stringify((items || []).map(item => ({ id: item.elementId, seq: item.seq, type: item.type, status: item.status }))).replace(/</g, '\\u003c')
 
+    //- Filters for the items, the Rationale and the logs: a type of element, an element (of that type)
+    - var kindOf = t => String(t || '').replace(/^bpmn:/, '').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase();
+    - var filterTypes = [...new Set((items || []).map(i => i.type).filter(Boolean))].sort();
+    - var filterElements = []; (items || []).forEach(i => { if (i.elementId && !filterElements.some(e => e.id === i.elementId)) filterElements.push({ id: i.elementId, name: i.name, type: i.type }); });
+    section.instance-card.instance-filters(aria-label="Filters")
+      label(for="filter-type") Type
+      select#filter-type.form-control
+        option(value="") All types
+        each t in filterTypes
+          option(value=t) #{kindOf(t)}
+      label(for="filter-element") Element
+      select#filter-element.form-control
+        option(value="") All elements
+        each el in filterElements
+          option(value=el.id data-type=el.type) #{el.name ? `${el.name} (${el.id})` : el.id}
+      button#filter-clear.btn.btn-default(type="button") Clear
+      span#filter-count.instance-hint(role="status")
+      script(type="application/json" id="filterElements")!= JSON.stringify(filterElements.map(e => ({ id: e.id, type: e.type }))).replace(/</g, '\\u003c')
+
     section.instance-card(aria-labelledby="items-heading")
       .instance-card-heading
         div
@@ -127,8 +188,9 @@ block content
               - if (user && user.isAdmin() && item.status === 'wait' && item.type.includes('Event')) label = 'Force';
               - var key = item.itemKey ? `[${item.itemKey}]` : '';
               - seq++;
-              tr
-                td #{seq}
+              tr(data-element=item.elementId)
+                //- the engine's seq (from 1), as the Rationale, the diagram and the log give it
+                td #{item.seq != null ? item.seq : seq}
                 td.instance-nowrap #{item.elementId}
                 td #{item.name} #{key}
                 td.instance-nowrap #{prettyDate(item.startedAt)}
@@ -159,6 +221,68 @@ block content
               tr
                 td(colspan="15") No items to show.
 
+    //- The run as it happened: the log, in its order, a row for each event of an item (started, waits, ended, taken,
+    //- ...) and for each decision (why a flow was taken, what a gateway chose, why a join waited).
+    -
+      var ACTION = /^\{"seq":(\d+),"type":'([^']*)',"id":'([^']*)',"action":'([^']*)'\}$/;
+      var WORDS = { Started: 'started', Waiting: 'waits', Arrived: 'a branch arrived', Ended: 'ended', Taken: 'taken', Aborted: 'aborted', Cancelled: 'cancelled' };
+      var kind = t => String(t || '').replace(/^bpmn:/, '').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase();
+      var whyOf = d => d.action ? (String(d.message || '').split('\nwhy:\n')[1] || '').replace(/^ {4}/gm, '') : String(d.message || '');
+      var bySeq = {};
+      (items || []).forEach(i => { bySeq[i.seq] = i; });
+      var t0 = instance.startedAt ? new Date(instance.startedAt).getTime() : null;
+      var elapsed = at => { if (!at || t0 == null) return ''; var s = Math.max(0, (new Date(at).getTime() - t0) / 1000); return s < 60 ? s.toFixed(1) + 's' : Math.floor(s / 60) + 'm ' + Math.round(s % 60) + 's'; };
+      var events = [];
+      (logs || []).forEach(l => {
+        var m = l && l.type === 'info' && ACTION.exec(String(l.message || ''));
+        if (m) {
+          var item = bySeq[Number(m[1])];
+          var word = WORDS[m[4]] || m[4].toLowerCase();
+          if (m[4] === 'Ended' && item && /UserTask/.test(item.type)) word = 'completed' + (item.userName ? ' by ' + item.userName : '');
+          // waiting as it starts: one row, "started · waits"
+          var startedRow = m[4] === 'Waiting' && [...events].reverse().find(e => e.seq === Number(m[1]) && e.raw !== 'decision');
+          if (startedRow && startedRow.raw === 'Started') { startedRow.word += ' · waits'; startedRow.raw = 'Waiting'; return; }
+          events.push({ id: m[3], seq: Number(m[1]), date: l.date, element: kind(m[2]) + ' ' + (item && item.name ? `'${item.name}' (${m[3]})` : m[3]), word, raw: m[4], decisions: [] });
+        }
+        else if (l && l.type === 'decision')
+          events.push({ id: (/\(([^()]+)\)$/.exec(l.element || '') || /(\S+)$/.exec(l.element || '') || [])[1], seq: l.seq, date: l.date, element: l.element || '', word: '', raw: 'decision', decisions: [l] });
+      });
+    section.instance-card.instance-collapsible(aria-labelledby="rationale-heading")
+      .instance-card-heading
+        div
+          h2#rationale-heading Rationale
+          p.instance-hint What happened, in order, from the start to the end, and why: conditions with the values they read, gateways, joins, timers.
+        button#showRationale.btn.btn-default(type="button", onclick="toggleDetails('rationale', 'showRationale')", aria-expanded="false", aria-controls="rationale", aria-label="Toggle the Rationale")
+          i.fa.fa-chevron-down(aria-hidden="true")
+      #rationale.instance-table-scroll(hidden)
+        table.instance-table.rationale-table
+          thead
+            tr
+              th(scope="col") Seq
+              th(scope="col") At
+              th(scope="col") Element
+              th(scope="col") What happened
+              th(scope="col") Why
+          tbody
+            each e in events
+              tr(class=e.decisions.length ? 'rationale-chose' : undefined data-element=e.id)
+                td #{e.seq != null ? e.seq : ''}
+                td.instance-nowrap #{elapsed(e.date)}
+                td #{e.element}
+                td
+                  if e.word
+                    span.rationale-action(class=e.raw === 'Waiting' ? 'rationale-stop' : e.raw === 'Aborted' || e.raw === 'Cancelled' ? 'rationale-failed' : 'rationale-plain') #{e.word}
+                  each d in e.decisions
+                    if d.action && d.action !== e.word
+                      div
+                        span.rationale-action(class=/^not taken|waits|takes no flow|raises/.test(d.action) ? 'rationale-stop' : undefined) #{d.action}
+                td.rationale-why
+                  each d in e.decisions
+                    div #{whyOf(d)}
+            if !events.length
+              tr
+                td(colspan="5") Nothing to show: the server keeps an instance's log when its configuration says so (SAVE_LOGS).
+
     section.instance-card.instance-collapsible(aria-labelledby="docs-heading")
       .instance-card-heading
         h2#docs-heading Model report
@@ -178,9 +302,9 @@ block content
         table.instance-table
           tbody
             each log in (logs || [])
-              tr
+              tr.log-row
                 td.instance-nowrap #{prettyDate(log.date)}
-                td #{log.message}
+                td(class=log.type === 'decision' ? 'log-decision' : undefined) #{log.message}
             if !logs || !logs.length
               tr
                 td(colspan="2") No logs to show.

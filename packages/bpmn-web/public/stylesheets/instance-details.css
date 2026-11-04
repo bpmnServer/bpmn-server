@@ -43,6 +43,8 @@
 .instance-page #docs td, .instance-page #docs th { padding: 8px 10px !important; border-bottom: 1px solid #e5ebf0; text-align: left !important; }
 .instance-page .log-debug { color: #2b7043; }
 .instance-page .log-action { font-weight: 600; }
+/* why the engine took a path: a block (seq and element, action, why) */
+.instance-page .log-decision { white-space: pre-wrap; font-family: Consolas, Menlo, monospace; font-size: 12px; color: #1d4ed8; }
 @media (max-width: 800px) {
   .instance-page { padding: 16px 12px 40px; }
   .instance-page-header { display: block; }
@@ -53,3 +55,18 @@
 
 /* the model's Report, as the editor's Report tab shows it (/modeler/report.js) */
 .instance-report { padding: 4px 16px 16px; overflow-x: auto; }
+
+/* the Rationale: the log's decisions */
+.instance-page .rationale-table td { vertical-align: top; }
+.instance-page .rationale-why { white-space: pre-wrap; font-family: Consolas, Menlo, monospace; font-size: 12px; }
+.instance-page .rationale-action { display: inline-block; padding: 1px 8px; border-radius: 10px; background: #e7f5ec; color: #1f6f43; white-space: nowrap; font-size: 12px; }
+.instance-page .rationale-action.rationale-stop { background: #f3f4f6; color: #4b5563; }
+.instance-page .rationale-action.rationale-plain { background: transparent; color: #4b5563; padding-left: 0; }
+.instance-page .rationale-action.rationale-failed { background: #fde8e8; color: #b42318; }
+.instance-page .rationale-table tr.rationale-chose td { background: #f8fbff; }
+.instance-page .rationale-table td > div + div { margin-top: 8px; }
+/* the filters of the items, the Rationale and the logs */
+.instance-page .instance-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 14px 20px; }
+.instance-page .instance-filters label { margin: 0; font-weight: 600; }
+.instance-page .instance-filters select.form-control { width: auto; min-width: 200px; display: inline-block; }
+.instance-page .instance-filters .instance-hint { margin: 0; }

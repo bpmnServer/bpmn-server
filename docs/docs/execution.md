@@ -163,3 +163,39 @@ be called, is then raised as a BPMN error, caught as one returned with `{bpmnErr
   <bpmn:errorEventDefinition errorRef="Refused" />
 </bpmn:boundaryEvent>
 ```
+
+## Why the engine took a path
+
+The instance's log keeps a **decision** entry (`type: 'decision'`) each time the engine chooses: a flow's
+condition, a gateway's flows, a join that waits, the event that won after an event-based gateway, a timer, an
+exception raised as a BPMN error. Each is a block: the item's `seq` and the element, the `action`, and `why`:
+
+```text
+seq: 3   flow 'repair' (flow_gw1_repair)
+action: taken
+why:
+    from 'Needs repairs?' (gateway_1) to 'Repair' (task_repair)
+    condition
+        (item.data.needsRepairs=="Yes") || item.data.needsRepairs
+    result: true (needsRepairs="Yes")
+
+seq: 2   gateway 'Needs repairs?' (gateway_1)
+action: takes 'repair' (flow_gw1_repair)
+why:
+    of 'repair' (flow_gw1_repair), 'clean' (flow_gw1_clean), flow_gw1_gw2
+    its default flow flow_gw1_gw2 only when no other holds
+
+seq: 6   gateway gateway_2
+action: waits
+why:
+    joins its branches
+    waits for 1 still on the way (at 'Clean' (task_clean))
+
+seq: 9   gateway gateway_2
+action: continues
+why:
+    joins its branches: all have arrived
+```
+
+The entry also keeps `seq`, `element` and `action`, to filter on. The instance page shows them under **Instance
+logs**; a test reads them with `run.log()`.
