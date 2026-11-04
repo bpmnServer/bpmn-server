@@ -8,6 +8,9 @@ below show what to configure, what to run, and what to check in the result.
 | [Call a REST API](examples/github-connector.md) | Map GitHub repository data and catch an HTTP 404 in BPMN. | 3.5.2 |
 | [Evaluate and test a DMN decision](examples/Business%20Rules.md) | Run the loan approval table, test its outputs, and read the result in a process. | 3.5.x (decision tests in 3.5.2) |
 | [Retry a failed task](examples/retry-task.md) | Inspect a persisted failure, retry the same item, or route a known failure through BPMN. | 3.5.2 |
+| [Load a BPMN data object](examples/load-client-data.md) | Load a client through the app delegate and read it from instance data. | 3.5.x |
+| [Use model expressions](examples/model-expressions.md) | Try `${...}` as a typed value and inside text. | 3.5.x |
+| [Review Report and History](examples/report-and-history.md) | Inspect a model report and compare a task edit with a layout change. | 3.5.2 |
 | [Keep a waiting instance in SQLite](examples/sqlite-resume.md) | Stop the app, restart it, and complete the same task. | 3.5.2 |
 | [Revise a model with running instances](examples/revise-running-model.md) | Compare saved versions and preview which running instances can use the new model. | 3.5.2 |
 
