@@ -84,6 +84,8 @@ Every project must have a configuration file that is an instance of [Configurati
 
 This configuration file is passed to the BPMNServer constructor.
 
+Per-machine settings (the database, keys, switches) are environment variables in `.env`: see [The environment](environment.md).
+
 For testing purposes, you can have a different configuration than production in same environemnt by passign a different object.
 
 ## Example
@@ -203,6 +205,10 @@ dataStore: (server) => {
     return ds;
 },
 ```
+
+The engine's defaults are `saveLogs` and `saveSource` on, `enableSavePoints` off. bpmn-web's configuration
+(`webConfiguration`) turns each on only when `.env` asks (`SAVE_LOGS`, `SAVE_SOURCE`, `SAVE_POINTS`), unless the
+application gives its own `dataStore`. See [The environment](environment.md).
 
 ## Processes Folder
 

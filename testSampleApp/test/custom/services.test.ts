@@ -1,4 +1,4 @@
-// @features: app-delegate, service-task
+// @features: app-delegate, script-scope, service-task
 // serviceTask: add (inputs v1=5, v2=3), then "Add 2 Using scripts" (its input script sets v1, v2; its end
 // script uses the output), then service1 (a slow service: here replaced by a stub).
 import { test, before, after } from 'node:test';

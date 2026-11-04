@@ -1,4 +1,4 @@
-// @features: expressions
+// @features: expressions, script-scope
 // ${...} in models: a whole value ${js} is an expression like $js and $(js); a text with ${...} parts has each
 // part filled in; and the model check reports Camunda habits (JUEL operators, variables read by name).
 import test from 'node:test';

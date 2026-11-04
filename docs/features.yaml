@@ -12,6 +12,7 @@ areas:
   modeling: Modeling — BPMN elements and their settings
   engine: Engine — running instances
   decisions: Decisions (DMN)
+  scripting: Scripting — expressions, listeners, where scripts run
   connectors: Connectors — REST APIs
   data: Data and storage
   api: APIs and the client
@@ -243,13 +244,6 @@ features:
     docs: [docs/docs/data.md]
     code: [packages/bpmn-server/src/elements/behaviours/IOBehaviour.ts]
     tests: [testSampleApp/test/scenarios/feature/serviceInput.js]
-  - id: listeners
-    area: modeling
-    name: "Scripts on events (listeners)"
-    what: "Scripts on an element's or the process's events (enter, start, wait, end, assign, validate, take ...)."
-    docs: [docs/docs/scripting.md, docs/docs/examples/scriptEvents.md]
-    code: [packages/bpmn-server/src/elements/behaviours/Script.ts]
-    tests: [testSampleApp/test/web/script-events.test.mjs, packages/bpmn-server/test/script-names.test.mjs]
   - id: assignment
     area: modeling
     name: "Assignment and access"
@@ -257,13 +251,6 @@ features:
     docs: [docs/docs/security.md, docs/docs/data.md]
     code: [packages/bpmn-server/src/elements/Process.ts, packages/bpmn-server/src/API/SecureUser.ts]
     tests: [packages/bpmn-server/test/api-security.test.mjs, testSampleApp/test/custom/buy-used-car.test.ts]
-  - id: expressions
-    area: modeling
-    name: "Expressions and conditions"
-    what: "JavaScript expressions in conditions and attributes ($(...), data.x, item, services)."
-    docs: [docs/docs/scripting.md, docs/docs/data.md]
-    code: [packages/bpmn-server/src/engine/Expressions.ts]
-    tests: [packages/bpmn-server/test/expressions.test.mjs]
   - id: verify-model
     area: modeling
     name: "Model verification"
@@ -308,13 +295,6 @@ features:
     docs: [docs/docs/modeler.md, docs/docs/testing.md]
     code: [packages/bpmn-server/src/engine/Token.ts]
     tests: [packages/bpmn-server/test/engine.test.mjs, testSampleApp/test/ui/testing.test.mjs]
-  - id: sandbox
-    area: engine
-    name: "Sandboxed scripts"
-    what: "Scripts run in a sandbox (isolated-vm) when the configuration asks; the demo mode."
-    docs: [docs/docs/security.md, docs/docs/scripting.md]
-    code: [packages/bpmn-server/src/engine/SandboxScriptHandler.ts]
-    tests: [packages/bpmn-server/test/sandbox.test.mjs]
   - id: locking
     area: engine
     name: "Locking and several servers"
@@ -351,6 +331,57 @@ features:
     docs: [docs/docs/decisions.md, docs/docs/modeler.md]
     code: [packages/bpmn-web/modeler/src/decision.js, packages/bpmn-web/src/testing/decisionTests.ts]
     tests: [testSampleApp/test/web/decision-tests.test.mjs, testSampleApp/test/ui/decisions.test.mjs]
+# --------------------------------------------------------------------------------------------------------- scripting
+  - id: expressions
+    area: scripting
+    name: "Expressions and conditions"
+    what: "JavaScript expressions in conditions and attributes ($(...), data.x, item, services)."
+    docs: [docs/docs/scripting.md, docs/docs/data.md]
+    code: [packages/bpmn-server/src/engine/Expressions.ts]
+    tests: [packages/bpmn-server/test/expressions.test.mjs]
+  - id: listeners
+    area: scripting
+    name: "Scripts on events (listeners)"
+    what: "Scripts on an element's or the process's events (enter, start, wait, end, assign, validate, take ...)."
+    docs: [docs/docs/scripting.md, docs/docs/examples/scriptEvents.md]
+    code: [packages/bpmn-server/src/elements/behaviours/Script.ts]
+    tests: [testSampleApp/test/web/script-events.test.mjs, packages/bpmn-server/test/script-names.test.mjs]
+  - id: sandbox
+    area: scripting
+    name: "Sandboxed scripts"
+    what: "SandboxScriptHandler: scripts run in QuickJS (WebAssembly), with no Node.js, files, network or application; 200 ms, 32 MB. DEMO_MODE, or the configuration's scriptHandler."
+    docs: [docs/docs/scripting.md#where-scripts-run-in-the-server-or-in-a-sandbox, docs/docs/security.md]
+    code: [packages/bpmn-server/src/engine/SandboxScriptHandler.ts]
+    tests: [packages/bpmn-server/test/sandbox.test.mjs]
+  - id: script-scope
+    area: scripting
+    name: "What a script sees"
+    what: "this, data, input, output, item, instance; appServices, appDelegate and appUtils, to call the application."
+    docs: [docs/docs/scripting.md#scripts-scope-and-variables]
+    code: [packages/bpmn-server/src/engine/ScriptHandler.ts]
+    tests: [packages/bpmn-server/test/expressions.test.mjs, testSampleApp/test/custom/services.test.ts]
+  - id: script-handler
+    area: scripting
+    name: "Where scripts run: in the server or in a sandbox"
+    what: "The configuration's scriptHandler: ScriptHandler (the server's process, the default) or SandboxScriptHandler; what each allows and costs."
+    docs: [docs/docs/scripting.md#where-scripts-run-in-the-server-or-in-a-sandbox]
+    code: [packages/bpmn-server/src/engine/ScriptHandler.ts, packages/bpmn-server/src/engine/SandboxScriptHandler.ts, packages/bpmn-web/src/start.ts]
+    tests: [packages/bpmn-server/test/sandbox.test.mjs]
+  - id: script-names
+    area: scripting
+    name: "Scripts by name, for the debugger"
+    what: "Each script compiled under its element's name, so the Test tab's debugger shows and stops in it (not in the sandbox)."
+    docs: [docs/docs/testing.md]
+    code: [packages/bpmn-server/src/engine/ScriptHandler.ts]
+    tests: [packages/bpmn-server/test/script-names.test.mjs]
+  - id: python-scripts
+    area: scripting
+    name: "Python scripts ($py)"
+    what: "A script starting with $py runs in Python (PYTHON_CMD)."
+    docs: [docs/docs/scripting.md#python]
+    code: [packages/bpmn-server/src/engine/ScriptHandler.ts]
+    status: not-supported
+    note: "A prototype: it writes test values into the item's data, and has no tests. Do not use it in models."
 # -------------------------------------------------------------------------------------------------------- connectors
   - id: connectors
     area: connectors
@@ -612,10 +643,10 @@ features:
   - id: setup-env
     area: install
     name: "Setup and settings (.env)"
-    what: "The application's settings from .env (database, models folder, keys, MODEL_HISTORY, DISABLE_*), checked at start."
-    docs: [docs/docs/setup.md]
-    code: [packages/bpmn-web/src/start.ts, packages/bpmn-web/src/runtime/loadEnv.ts, packages/bpmn-web/src/runtime/bootConfig.ts]
-    tests: [testSampleApp/test/unit/app-hosting.test.mjs, packages/bpmn-server/test/database-name.test.mjs]
+    what: "Every per-machine setting is an environment variable (.env): one documented contract, checked at start; a test keeps the page complete."
+    docs: [docs/docs/environment.md, docs/docs/setup.md]
+    code: [packages/bpmn-web/src/start.ts, packages/bpmn-web/src/runtime/loadEnv.ts, packages/bpmn-web/src/runtime/bootConfig.ts, packages/bpmn-web/src/runtime/engineEnv.ts]
+    tests: [testSampleApp/test/unit/environment.test.mjs, testSampleApp/test/unit/app-hosting.test.mjs, packages/bpmn-server/test/database-name.test.mjs]
   - id: new-app
     area: install
     name: "A new application"

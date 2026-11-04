@@ -42,6 +42,18 @@ and here
   agree (the diagram counted its items, which differed once seqs had gaps); the replay finds each element's
   number by its seq. Decision entries in the logs keep their lines.
 
+### Fixed
+- `DEFINITIONS_PATH` names the models folder of an application on `start()`/`webConfiguration()`: it was read
+  only by the sample application's own configuration and the Test tab, so another application's models stayed
+  in `./processes`.
+
+### Documentation
+- **The environment** (`docs/docs/environment.md`): every variable bpmn-web, bpmn-server and bpmn-client read,
+  with its default, and the rules (where values come from, switches, failing closed, the checks at start).
+  `testSampleApp/test/unit/environment.test.mjs` fails when the code reads a variable the page does not list.
+- **Where scripts run** (`scripting.md`): the server's process or the sandbox, what each allows and costs, and
+  what changes when a model moves to the sandbox. `$py` scripts are marked a prototype.
+
 ## Release 3.5.2 (2026-11-04)
 ### Added
 - **One menu on every page** (`views/includes/menu.pug`): Workbench first, then Dashboard: My work for end users;

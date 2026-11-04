@@ -1,4 +1,4 @@
-// @features: listeners, script-task
+// @features: listeners, script-names, script-task
 // A model's scripts and expressions are compiled under names that say where they are in the model
 // (bpmn:///<model>/<element>/<label>.js), numbered from their own first line: a debugger lists them by name and
 // stops at their breakpoints, and an error's stack points at the element and line.

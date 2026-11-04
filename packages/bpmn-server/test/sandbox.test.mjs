@@ -1,4 +1,4 @@
-// @features: sandbox, script-task
+// @features: sandbox, script-handler, script-task
 // A public demo: scripts and expressions run in SandboxScriptHandler (QuickJS: no Node.js, a time limit), timers
 // are not scheduled and service tasks call nothing (configuration.demo); each says so in the run's decisions.
 import test from 'node:test';

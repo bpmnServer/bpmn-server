@@ -98,6 +98,7 @@ nav:
 
 - Reference:
   - Features: features.md
+  - "The environment (.env)": environment.md
   - Advanced Topics: advanced.md
   - Frequently Asked Questions: faq.md
   - Site Map: map.md

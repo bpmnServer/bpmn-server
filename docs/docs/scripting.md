@@ -13,6 +13,7 @@
   - [Item Scope](#item-scope)
   - [Execution Scope](#execution-scope)
   - [Application Listener](#application-listener)
+- [Where scripts run: in the server or in a sandbox](#where-scripts-run-in-the-server-or-in-a-sandbox)
 
 <!-- tocstop -->
 
@@ -20,7 +21,7 @@
 
 BPMN-Server provides scripting throughout the workflow.
 - The primary(default) script language is `JavaScript`.
-- `Python` support is also available, using prefix `$py` at the start of any script.
+- `Python`, with the prefix `$py` at the start of a script, is a prototype: see [Python](#python).
 
 Scripts are passed parameters values to the context:
 
@@ -235,3 +236,65 @@ Example:
     });
 
 ```
+
+# Where scripts run: in the server or in a sandbox
+
+Every script and expression in a model runs through the configuration's `scriptHandler`. bpmn-server has two:
+
+- **`ScriptHandler`, the default.** Scripts run in the server's own Node.js process, with its permissions. They
+  see the real objects (`this`, `data`, `item`, `appServices`, `appDelegate`) and may call the application,
+  `await` its services and use Node.js.
+- **`SandboxScriptHandler`.** Scripts run in QuickJS, a JavaScript engine compiled to WebAssembly, with no
+  access to Node.js, files, the network or the server's objects. bpmn-web uses it when `DEMO_MODE=true`
+  ([A public demo](security.md#a-public-demo)).
+
+The default is chosen because the sandbox takes away what most applications use scripts for. **Use the
+sandbox when the people who write the models are not trusted to run code on the server.** Otherwise, keep the
+default.
+
+| | `ScriptHandler` (default) | `SandboxScriptHandler` |
+|---|---|---|
+| Who may write models | People trusted with the server: whoever saves a model can run code on it | Anyone |
+| The application (`appServices`, `appDelegate`, `appUtils`) | Called directly | Calling one returns `undefined`, and the run's decisions say so |
+| `require`, Node.js, files, network | Available | None |
+| Data | The real objects | JSON copies in; only the keys a script changed are copied back |
+| An item's fields a script may set | Any | `assignee`, `candidateUsers`, `candidateGroups`, `dueDate`, `followUpDate`, `priority`, `vars` |
+| Limits | None | 200 ms and 32 MB per script |
+| Cost of a script | Microseconds | A few milliseconds (copies, a QuickJS context); 650 KB of WebAssembly loaded on first use |
+| Breakpoints in the Test tab's debugger | Yes: each script is compiled under its element's name | No: Node's inspector does not see into QuickJS (Evaluate still works) |
+| JavaScript engine | V8, as the rest of the server | QuickJS: `Date`, `Intl`, error messages and stack traces can differ |
+
+## What changes when a model moves to the sandbox
+
+A model written for the default handler may still run, or may fail or behave differently. Watch for:
+
+1. **Calls to the application.** A script that reads `appServices.lookUp(...)` gets `undefined`. Move that
+   work into a service task, which the application implements.
+2. **Objects that are not plain data.** Class instances, functions, Buffers and object identity do not
+   survive the copy. Dates do when the script leaves them alone.
+3. **Long or heavy scripts.** A loop over a large data set, or a wait on something slow, stops at the time or
+   memory limit with an error.
+4. **Writes the sandbox does not copy back.** Setting any other field of `item`, or anything on `this`,
+   is lost.
+
+## Choosing the handler
+
+In bpmn-web, `DEMO_MODE=true` picks the sandbox and also stops timers and service tasks (see
+[the environment](environment.md)). An application that wants the sandbox without the rest of the demo sets
+the handler in its configuration:
+
+```ts
+import { SandboxScriptHandler } from 'bpmn-server';
+
+const configuration = webConfiguration({
+    scriptHandler: () => new SandboxScriptHandler({ timeLimit: 500, memoryLimit: 64 * 1024 * 1024 }),
+});
+```
+
+`runSandboxed(values, body)`, from the same module, runs other code the same way.
+
+## Python
+
+A script that starts with `$py` is meant to run in Python (`PYTHON_CMD`, default `python`). **This is a
+prototype:** it writes test values into the item's data and is not covered by tests, so do not use it in
+models yet.

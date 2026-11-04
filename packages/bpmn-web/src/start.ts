@@ -37,7 +37,7 @@ function isTrue(param) {
 }
 
 /**
- * bpmn-web's configuration: models in ./processes, MongoDB at MONGO_DB_URL, the app's delegate;
+ * bpmn-web's configuration: models in DEFINITIONS_PATH (default ./processes), MongoDB at MONGO_DB_URL, the app's delegate;
  * `settings` replace any of them.
  */
 export function webConfiguration(settings: Record<string, any> = {}, appDelegate?: StartOptions['appDelegate']) {
@@ -48,7 +48,7 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 	const { invalid, db, ...engineEnv } = engineSettingsFromEnv();
 	invalid.forEach(message => console.warn('[config] ' + message));
 	const configuration = new Configuration({
-		definitionsPath: path.resolve('processes') + path.sep,
+		definitionsPath: path.resolve(process.env.DEFINITIONS_PATH || 'processes') + path.sep,
 		templatesPath: path.join(PACKAGE_ROOT, 'emailTemplates') + path.sep,
 		timers: { precision: 3000 },
 		database: {
