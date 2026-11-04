@@ -11,6 +11,8 @@ model that ran on 3.2. The full lists are in the change logs of
 [bpmn-server](https://github.com/bpmnServer/bpmn-server/blob/main/packages/bpmn-server/CHANGELOG.md) and
 [bpmn-web](https://github.com/bpmnServer/bpmn-server/blob/main/packages/bpmn-web/CHANGELOG.md).
 
+Try the [3.5 feature examples](examples.md) for connectors, DMN, task recovery, SQLite, and model revisions.
+
 ## Connectors: REST APIs without code
 
 A service task can call a **connector** instead of a service: a REST API, described by an OpenAPI 3.0 or 3.1
