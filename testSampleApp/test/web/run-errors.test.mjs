@@ -1,3 +1,4 @@
+// @features: failed-retry
 // A process that fails while running is answered with what went wrong and what the model's checks find,
 // not an error 500 (src/routes/runErrors.ts).
 import test from 'node:test';

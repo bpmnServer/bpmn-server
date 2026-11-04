@@ -128,6 +128,12 @@ export class Dashboards extends Common {
             render(req, res, 'user', { title: 'My work', mine, available, completed, starts: await this.startEvents() });
         }));
 
+        // the start page of a model: its start events a user can start, each with its start form
+        router.get('/start/:processName', handler(async (req, res) => {
+            const processName = req.params.processName;
+            render(req, res, 'start', { title: 'Start a process', processName, starts: await this.startEvents(processName) });
+        }));
+
         // start a process at one of its start events, with the start form's fields
         router.post('/start', handler(async (req, res) => {
             const { processName, startNodeId } = req.body;
@@ -476,10 +482,12 @@ export class Dashboards extends Common {
     }
 
     /** Every model's start events a user can start (no timer, message or signal), with their form fields. */
-    async startEvents() {
+    /** The start events a user can start, with their start forms' fields: every model's, or one model's. */
+    async startEvents(model?: string) {
         const server = this.webApp.bpmnServer;
         const starts = [];
-        for (const { name } of await server.definitions.getList({})) {
+        const names = model ? [{ name: model }] : await server.definitions.getList({});
+        for (const { name } of names) {
             try {
                 const definition = await server.definitions.load(name);
                 for (const node of definition.getStartNodes(true)) {

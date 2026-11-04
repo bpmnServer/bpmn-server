@@ -1,3 +1,4 @@
+// @features: sub-process
 // SubProcess: Design Campaign, then a sub-process (Send Emails to Clients, a script; Follow-up with Clients, a
 // user task), then Finalize.
 import { test, before, after } from 'node:test';

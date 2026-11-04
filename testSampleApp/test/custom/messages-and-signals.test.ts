@@ -1,3 +1,4 @@
+// @features: messages-signals, send-receive-task
 // Messages and signals.
 // MsgCatch: started by the message newInvoiceMessage; waits for newInvoiceMessage2; then throws its own.
 // Signal: three parallel tasks, each with a boundary event on the signal Cancel_All; the task "Cancel ?" throws it.

@@ -1,3 +1,4 @@
+// @features: performance
 // Stress: many requests at once. Each test checks that every instance comes out right (its own data,
 // its own path, no lock left behind); the last one measures how throughput and latency hold up as more
 // requests run together. Settings in ./setup.mjs (LOAD_SCALE, LOAD_MONGO_URL).

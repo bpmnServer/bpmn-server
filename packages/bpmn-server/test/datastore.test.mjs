@@ -1,3 +1,4 @@
+// @features: memory-store, queries
 // The storage port's shared query semantics, the models datastore's files, and upgrade through
 // the data store's typed operation.
 import test from 'node:test';

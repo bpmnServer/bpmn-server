@@ -1,3 +1,4 @@
+// @features: forms, run-one-element, test-tab
 // The editor's Test tab: a scenario is started from its start form and run step by step (what waits shows as the
 // next steps), its steps are kept, Run / Run all repeat them, its checks run after a step or at the end; the
 // path is marked on the diagram and simulated one change at a time; Debug changes the variables and restarts a step.
@@ -376,6 +377,43 @@ test('the runs: a kept run debugged again and restarted at a step; a run deleted
     await page.waitForSelector('.test-status:text("runs cleared")');
     assert.equal(await page.locator('.test-runs tbody tr').count(), 0);
     assert.equal(await page.locator('.test-clear-all').isDisabled(), true);
+    assert.deepEqual(errors, []);
+    await close();
+});
+
+test('Test this task: the task selected on the diagram, by itself; a script runs, a user task waits for its step; nothing after', async () => {
+    const { page, errors, close } = await openTestTab();
+    const select = id => page.evaluate(id => window.bpmnModeler.get('selection').select(window.bpmnModeler.get('elementRegistry').get(id)), id);
+
+    // a script task: its input, then what it did
+    await select('AutoApprove');
+    await page.click('.test-task');
+    assert.equal(await page.inputValue('.test-name'), 'Approve automatically by itself');
+    assert.equal(await page.inputValue('.test-start-event'), 'AutoApprove');
+    assert.equal(await page.locator('.test-start-go').innerText(), 'Run the task');
+    await page.fill('textarea.test-start-data', '{"days": 2}');
+    await page.click('.test-start-go');
+    await page.waitForSelector('.test-finished');
+    assert.match(await page.locator('.test-finished').innerText(), /the instance is end/);
+    const items = await page.locator('.test-items tbody tr').evaluateAll(trs => trs.map(tr => tr.dataset.elementId));
+    assert.deepEqual(items, ['AutoApprove'], 'that task only');
+
+    // a user task: it waits; its step completes it, and the run ends there
+    await page.click('.test-stop');
+    await select('Approve');
+    await page.click('.test-task');
+    await page.click('.test-start-go');
+    await page.waitForSelector('.test-step.pending');
+    assert.deepEqual(await pendingNames(page), ['Approve request (Approve)']);
+    await runStep(page, 'Approve', { approved: true });
+    await page.waitForSelector('.test-finished');
+    assert.deepEqual(await page.locator('.test-items tbody tr').evaluateAll(trs => trs.map(tr => tr.dataset.elementId)), ['Approve']);
+
+    // nothing selected: a message
+    await page.click('.test-stop');
+    await page.evaluate(() => window.bpmnModeler.get('selection').select(null));
+    await page.click('.test-task');
+    assert.match(await page.locator('.test-status').innerText(), /Select a task on the diagram first/);
     assert.deepEqual(errors, []);
     await close();
 });

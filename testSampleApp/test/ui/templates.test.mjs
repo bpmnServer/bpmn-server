@@ -1,3 +1,4 @@
+// @features: modeler
 // Element templates in the model editor: the chooser offers the catalog's templates for the selected element,
 // and a task made from one runs on bpmn-server as the template says.
 //   npm run test:ui

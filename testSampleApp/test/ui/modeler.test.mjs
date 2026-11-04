@@ -1,3 +1,4 @@
+// @features: modeler
 // The model editor (modeler/src, built into public/modeler): layout, the properties shaped for bpmn-server,
 // and that what the panel writes is saved in the form the engine reads.
 //   npm run test:ui

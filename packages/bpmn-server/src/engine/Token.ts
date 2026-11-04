@@ -716,6 +716,15 @@ class Token implements IToken {
         this.log('Token('+this.id +').goNext(): currentNodeId=' + this.currentNode.id +' type='+this.currentNode.type+' currentItem.status='+this.currentItem.status);
         //this.log(`..token.goNext from ${this.currentNode.id} ${this.currentNode.type}`);
 
+        // an instance that runs one element (flags.only, a test of a task by itself): done once it is
+        if (this.execution.instance?.flags?.only && this.execution.instance.flags.only === this.currentNode.id) {
+            this.decision({ seq: this.currentItem.seq, element: this.currentNode.id, action: 'ends the run',
+                why: ['this instance runs this element only (flags.only)'] });
+            await this.end();
+            this.logE('Token('+this.id +').goNext(): flags.only: ending at '+this.currentNode.id);
+            return;
+        }
+
         if (!await this.preNext()) {
             this.logE('Token('+this.id +').goNext(): no more outbounds - ending this token '+this.id);
             return;

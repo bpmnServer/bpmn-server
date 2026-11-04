@@ -111,7 +111,7 @@ scenario with its model, or a model's list of them:
 
 | | |
 |---|---|
-| `start` | `data` the instance starts with; `startNodeId` picks one of several start events. |
+| `start` | `data` the instance starts with; `startNodeId` picks one of several start events, or a task, with `"only": true`, to run by itself (the run ends once it is done). |
 | `steps` | In order, each a waiting `element` (by id) to complete, with its `data`. The data decides the branches a gateway takes; the order decides which of several waiting elements happens first (an event-based gateway's events, a boundary timer, parallel tasks). |
 | `checks` | Each at the end (`"at": "end"`, the default) or after a step (`"at": "after"`, `"step"`: its element). `status`: the instance's status. `node`: an element ran (`count` times, optionally in a `status`). `data`: a value at `path` (`a.b.c`) compared with `op` (`=`, `<>`, `>`, `<`, `>=`, `<=`) to `value`. |
 

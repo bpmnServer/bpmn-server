@@ -1,3 +1,4 @@
+// @features: messages-signals
 import { fileURLToPath as __f2p } from 'url';
 import { dirname as __dn } from 'path';
 const __filename = __f2p(import.meta.url);

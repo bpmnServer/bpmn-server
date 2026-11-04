@@ -1,3 +1,4 @@
+// @features: business-rule-task, dmn
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';

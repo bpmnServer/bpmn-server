@@ -1,3 +1,4 @@
+// @features: backup, dashboards, forms, start-events, start-page
 // The dashboards: my work for every user, design for designers, administration for administrators.
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -104,4 +105,43 @@ test('restart without a supervisor does not stop the server', async () => {
   assert.equal(res.status, 302);
   assert.match(decodeURIComponent(res.location), /Nothing restarts this process/);
   assert.equal((await admin.get('/dashboard')).status, 200, 'still running');
+});
+
+test('Run on a model with several start events, or a start form, asks first: the start page, then the start chosen with its data', async () => {
+  const fs = await import('node:fs');
+  fs.writeFileSync(web.definitionsPath + 'multi-start.bpmn', `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="d" targetNamespace="urn:test">
+  <bpmn:message id="Msg" name="order" />
+  <bpmn:process id="P" isExecutable="true">
+    <bpmn:startEvent id="ByMessage" name="By message"><bpmn:messageEventDefinition messageRef="Msg" /></bpmn:startEvent>
+    <bpmn:startEvent id="ByHand" name="By hand">
+      <bpmn:extensionElements><camunda:formData><camunda:formField id="customer" label="Customer" type="string" /></camunda:formData></bpmn:extensionElements>
+    </bpmn:startEvent>
+    <bpmn:startEvent id="Quick" name="Quick" />
+    <bpmn:userTask id="FromMessage" /><bpmn:userTask id="FromHand" /><bpmn:userTask id="FromQuick" />
+    <bpmn:sequenceFlow id="f1" sourceRef="ByMessage" targetRef="FromMessage" />
+    <bpmn:sequenceFlow id="f2" sourceRef="ByHand" targetRef="FromHand" />
+    <bpmn:sequenceFlow id="f3" sourceRef="Quick" targetRef="FromQuick" />
+  </bpmn:process>
+</bpmn:definitions>`);
+  await web.bpmnServer.definitions.rebuild();
+
+  const run = await admin.get('/execute/multi-start');
+  assert.equal(run.status, 302);
+  assert.match(run.location, /\/dashboard\/start\/multi-start$/);
+  const page = (await admin.get('/dashboard/start/multi-start')).text;
+  assert.match(page, /name="startNodeId" value="ByHand"/);
+  assert.match(page, /name="startNodeId" value="Quick"/);
+  assert.doesNotMatch(page, /value="ByMessage"/, 'a message start is not started by hand');
+  assert.match(page, /name="field.customer"/, 'its start form');
+
+  const started = await admin.post('/dashboard/start', { processName: 'multi-start', startNodeId: 'ByHand', 'field.customer': 'ACME' });
+  assert.equal(started.status, 302, why(started));
+  const id = new URL(started.location, web.base).searchParams.get('id');
+  const instance = await web.bpmnServer.dataStore.findInstance({ id }, 'full');
+  assert.equal(instance.data.customer, 'ACME');
+  assert.deepEqual(instance.items.filter(i => i.status === 'wait').map(i => i.elementId), ['FromHand']);
+
+  // one start, no form: Run starts at once, as before
+  assert.match((await admin.get('/execute/' + MODEL)).location, /\/instanceDetails\?id=/);
 });

@@ -1,3 +1,4 @@
+// @features: web-security
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Common } from '../../../packages/bpmn-web/dist/routes/common.js';

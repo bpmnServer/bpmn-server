@@ -1,3 +1,4 @@
+// @features: modeler
 // Scripts and expressions in the properties panel: highlighted code fields that check the code as bpmn-server
 // compiles it and complete the names it can use.
 //   npm run test:ui

@@ -1,3 +1,4 @@
+// @features: performance
 // Speed: budgets for the engine's main operations, set well above today's figures so that only a real
 // regression fails them (the figures themselves are printed). CPU time is asserted rather than elapsed
 // time where possible, since elapsed time on a shared machine varies about 2x from run to run.

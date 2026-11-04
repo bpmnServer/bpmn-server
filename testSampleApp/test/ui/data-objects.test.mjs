@@ -1,3 +1,4 @@
+// @features: data-objects
 // Data objects in the model editor: what a data object is in the instance data and what loads it (the panel),
 // data.client in completion, and the data objects in the Report.
 //   npm run test:ui

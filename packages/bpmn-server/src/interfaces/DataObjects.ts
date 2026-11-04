@@ -55,6 +55,8 @@ interface IInstanceFlags {
     savePoints?: boolean;
     /** its log lines kept and saved (dataStore.saveLogs) */
     saveLogs?: boolean;
+    /** the one element it runs: started at it (engine.start's startNodeId), it ends when that element is done */
+    only?: string;
 }
 
 

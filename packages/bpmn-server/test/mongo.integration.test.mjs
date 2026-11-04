@@ -1,3 +1,4 @@
+// @features: mongodb
 // The engine on a real MongoDB, through the default MongoDB adapter (no storage injected): the
 // claim workflow across a restart, locking between two servers, and a recovered timer.
 // Runs when BPMN_TEST_MONGO_URL is set (CI provides a MongoDB service); skipped otherwise.

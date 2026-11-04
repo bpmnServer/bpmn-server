@@ -1,3 +1,4 @@
+// @features: connectors
 // Connectors (docs/docs/connectors.md): REST APIs described by OpenAPI, added with an authorization key, called by
 // service tasks (camunda:connector). A local server plays the shop API; one test calls GitHub itself, and is
 // skipped when GitHub can not be reached.

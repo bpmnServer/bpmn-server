@@ -1,3 +1,4 @@
+// @features: assignment, inclusive-gateway, scenario-files, user-task
 // Buy Used Car: the buyer buys the car (Buy), then drives it (Drive); a car that needs cleaning or repairs
 // goes through Clean / Repair first.
 import { test, before, after } from 'node:test';

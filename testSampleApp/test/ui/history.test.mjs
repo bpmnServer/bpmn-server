@@ -1,3 +1,4 @@
+// @features: history
 // The model editor's History tab (modeler/src/history): every save of the model listed, two versions (or a
 // version and the editor's model) compared by their report text and their layout, the history purged.
 //   npm run test:ui

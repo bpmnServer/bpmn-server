@@ -1,3 +1,4 @@
+// @features: users
 // Authentication and authorization of the UI and the APIs, as they behave today.
 import test from 'node:test';
 import assert from 'node:assert/strict';

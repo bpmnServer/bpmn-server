@@ -1,3 +1,4 @@
+// @features: bpmn-server-cli, new-app
 // The command line: `bpmn-server verify <file-or-folder>... [--json]`, run as a user would run it.
 import test from 'node:test';
 import assert from 'node:assert/strict';

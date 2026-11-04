@@ -1,3 +1,4 @@
+// @features: decision-log, health-operations, instance-page
 // Every UI page renders, for an administrator and for a regular user.
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -97,22 +98,24 @@ test('the instance page gives the Rationale: the run from start to end, each ste
   assert.match(page.text, /<h2 id="rationale-heading">Rationale<\/h2>/);
   const table = page.text.match(/<table class="instance-table rationale-table">([^]*?)<\/table>/)[1];
   const text = html => html.replace(/<[^>]+>/g, '').replace(/&#39;/g, "'").replace(/&gt;/g, '>');
-  const rows = [...table.matchAll(/<tr[^>]*><td>(\d*)<\/td><td[^>]*>([^<]*)<\/td><td>([^<]*)<\/td><td>([^]*?)<\/td><td class="rationale-why">([^]*?)<\/td><\/tr>/g)]
-    .map(([, seq, at, element, happened, why]) => ({ seq: Number(seq), at, element: text(element), happened: text(happened), why: text(why) }));
+  // each row's cells: seq, at, id, name, type, what happened, why (as the items: the element's id, name and type)
+  const rows = [...table.matchAll(/<tr[^>]*>([^]*?)<\/tr>/g)].slice(1)
+    .map(r => [...r[1].matchAll(/<td[^>]*>([^]*?)<\/td>/g)].map(c => text(c[1])))
+    .map(([seq, at, id, name, type, happened, why]) => ({ seq: Number(seq), at, id, name, type, happened, why }));
   // the log, in its order: each item's start (waiting as it starts: one row), end, and each decision where made
-  assert.deepEqual(rows.map(r => [r.seq, r.element, r.happened]), [
-    [1, "start event 'Leave requested' (Requested)", 'started'],
-    [1, "start event 'Leave requested' (Requested)", 'ended'],
-    [2, 'sequence flow ToSubmit', 'taken'],
-    [3, "user task 'Submit request' (Submit)", 'started · waits'],
-    [3, "user task 'Submit request' (Submit)", 'completed by admin'],
-    [4, 'sequence flow ToGateway', 'taken'],
-    [5, "exclusive gateway 'More than 5 days?' (LongLeave)", 'started'],
-    [5, "exclusive gateway 'More than 5 days?' (LongLeave)", 'ended'],
-    [6, "flow 'yes' (ToApprove)", 'taken'],
-    [6, "sequence flow 'yes' (ToApprove)", 'taken'],
-    [5, "gateway 'More than 5 days?' (LongLeave)", "takes 'yes' (ToApprove)"],
-    [7, "user task 'Approve request' (Approve)", 'started · waits'],
+  assert.deepEqual(rows.map(r => [r.seq, r.id, r.name, r.type, r.happened]), [
+    [1, 'Requested', 'Leave requested', 'bpmn:StartEvent', 'started'],
+    [1, 'Requested', 'Leave requested', 'bpmn:StartEvent', 'ended'],
+    [2, 'ToSubmit', '', 'bpmn:SequenceFlow', 'taken'],
+    [3, 'Submit', 'Submit request', 'bpmn:UserTask', 'started · waits'],
+    [3, 'Submit', 'Submit request', 'bpmn:UserTask', 'completed by admin'],
+    [4, 'ToGateway', '', 'bpmn:SequenceFlow', 'taken'],
+    [5, 'LongLeave', 'More than 5 days?', 'bpmn:ExclusiveGateway', 'started'],
+    [5, 'LongLeave', 'More than 5 days?', 'bpmn:ExclusiveGateway', 'ended'],
+    [6, 'ToApprove', 'yes', 'bpmn:SequenceFlow', 'taken'],
+    [6, 'ToApprove', 'yes', 'bpmn:SequenceFlow', 'taken'],
+    [5, 'LongLeave', 'More than 5 days?', 'bpmn:ExclusiveGateway', "takes 'yes' (ToApprove)"],
+    [7, 'Approve', 'Approve request', 'bpmn:UserTask', 'started · waits'],
   ], 'every event, in the order logged');
   assert.match(rows[0].at, /^\d+\.\ds$/, 'when, from the start');
   assert.match(rows[8].why, /^from .*\ncondition\n    \$\(Number\(item\.data\.days\) > 5\)\nresult: true \(days=10\)$/, 'the why of a decision');

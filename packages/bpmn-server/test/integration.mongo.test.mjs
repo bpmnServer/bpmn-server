@@ -1,3 +1,4 @@
+// @features: mongodb
 // Real-server integration test — run in YOUR environment where Mongo is reachable.
 //   MONGO_URL="mongodb://localhost:27017" node --test integration.mongo.test.mjs
 // Skips itself if MONGO_URL is unset, so it's CI-safe.

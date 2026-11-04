@@ -1,3 +1,4 @@
+// @features: rest-api
 // Unit tests for the /api|/api2 API-key middleware. No DB or server required.
 //   node --test apikey-auth.test.mjs
 import test from 'node:test';

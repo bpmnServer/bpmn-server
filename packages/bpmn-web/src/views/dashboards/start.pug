@@ -1,0 +1,22 @@
+extends layout
+
+include ../includes/startForm.pug
+
+block intro
+	p.dash-intro
+		| Start #[b= processName]: choose where it starts, and fill in its start form.
+
+block dash
+	section.dash-card#start-events
+		h2 Start events
+			span.count= starts.length
+		if starts.length
+			each start in starts
+				details.dash-start(open=starts.length === 1)
+					summary
+						b= start.name
+						if start.fields.length
+							|  · #{start.fields.length} field#{start.fields.length === 1 ? '' : 's'}
+					+startForm(start)
+		else
+			p.dash-empty #{processName} has no start event a user can start (its starts are messages, signals or timers).

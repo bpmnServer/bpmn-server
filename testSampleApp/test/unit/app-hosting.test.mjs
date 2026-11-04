@@ -1,3 +1,4 @@
+// @features: setup-env
 // What an application hosting bpmn-web relies on: its own routes ahead of bpmn-web's, model design
 // turned off in the pages (DISABLE_DESIGN), and no admin/admin user added to a database that has users.
 import test from 'node:test';

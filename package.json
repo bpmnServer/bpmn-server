@@ -13,7 +13,8 @@
     "test": "npm test -w bpmn-server -w bpmn-client -w test-sample-app",
     "start": "npm start -w test-sample-app",
     "dev": "concurrently -k -n app,modeler -c blue,magenta \"npm run dev -w test-sample-app\" \"npm run watch:modeler -w bpmn-web\"",
-    "docs": "cd docs && npm run start"
+    "docs": "cd docs && npm run start",
+    "features": "node scripts/features.mjs"
   },
   "overrides": {
     "preact": "^10.29.8",

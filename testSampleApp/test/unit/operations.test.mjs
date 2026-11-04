@@ -1,3 +1,4 @@
+// @features: health-operations
 // Operating bpmn-web: boot checks, engine settings from the environment, shutdown order,
 // model verification on import, and the upgrade:running report. No database needed.
 import test from 'node:test';

@@ -1,3 +1,4 @@
+// @features: boundary-events, user-task
 // Leave Application: the requester (the starting user) fills in Request; a manager decides in Approve, which
 // a non-interrupting timer reminds about; Approved goes on to Process, Reject ends, InformationRequired goes
 // back to Request.

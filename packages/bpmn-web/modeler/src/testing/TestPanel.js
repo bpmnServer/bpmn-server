@@ -185,7 +185,7 @@ export default class TestPanel {
         try {
             await this._modelSaved();
             const { instance } = await this._request('POST', '/model/test/start', {
-                processName: this._config.processName, startNodeId: scenario.start?.startNodeId, data: scenario.start?.data ?? {}
+                processName: this._config.processName, startNodeId: scenario.start?.startNodeId, only: !!scenario.start?.only, data: scenario.start?.data ?? {}
             });
             this._live = { scenario, instance, done: [], checks: null, stepChecks: [], failed: null, startData: clone(instance.data),
                 run: { instanceId: instance.id, at: new Date().toISOString(), how: 'start', ok: null } };
@@ -849,9 +849,23 @@ export default class TestPanel {
             this._scheduleSave();
             this._select(scenario);
         };
+        // a scenario of the task selected on the diagram, by itself
+        const addTask = () => {
+            const bo = this._selection.get()[0]?.businessObject;
+            if (!bo || !this._isTask(bo))
+                return this._status('Select a task on the diagram first, then Test this task', true);
+            const scenario = { name: `${bo.get('name') || bo.id} by itself`, start: { startNodeId: bo.id, only: true, data: {} }, steps: [], expect: {} };
+            this._scenarios.push(scenario);
+            this._scheduleSave();
+            this._select(scenario);
+            this._section = 'design';
+            this.openStart(scenario);
+        };
         return el('div', { class: 'test-list' },
             el('div', { class: 'test-list-actions' },
                 el('button', { type: 'button', class: 'test-new', onclick: add }, 'New'),
+                el('button', { type: 'button', class: 'test-task', onclick: addTask,
+                    title: 'A scenario that runs the task selected on the diagram by itself: its input, then what it did' }, 'Test this task'),
                 el('button', { type: 'button', class: 'test-run-all', onclick: () => this.runAll(), disabled: !this._scenarios.length,
                     title: 'Run every scenario\'s saved steps' }, 'Run all'),
                 el('button', { type: 'button', class: 'test-clear-all', onclick: () => this.clearAll(),
@@ -881,11 +895,21 @@ export default class TestPanel {
         return el('label', { class: 'test-field' }, el('span', {}, label), area, message);
     }
 
-    /** The start form: the start event (when there are several), its form fields or the start data, and Start. */
+    /** A task that can run by itself (Test this task): an activity, not a sub-process. */
+    _isTask(bo) {
+        return is(bo, 'bpmn:Activity') && !is(bo, 'bpmn:SubProcess');
+    }
+
+    /**
+     * The start form: where it starts (a start event, or a task by itself), the start event's form fields or the data
+     * (a task's input), and Start.
+     */
     _renderStart(scenario, starts) {
         const changed = () => this._scheduleSave();
+        const tasks = this._elements(['bpmn:Activity']).filter(e => this._isTask(e));
+        const only = !!scenario.start?.only;
         const startId = scenario.start?.startNodeId || starts[0]?.id;
-        const fields = startId ? this._formFields(startId) : [];
+        const fields = startId && !only ? this._formFields(startId) : [];
         let read;
         let input;
         if (fields.length) {
@@ -893,7 +917,7 @@ export default class TestPanel {
             input = form.node;
             read = () => form.read();
         } else {
-            input = this._jsonField('Start data', scenario.start?.data, () => { }, { class: 'test-json test-start-data' });
+            input = this._jsonField(only ? 'Data (the task\'s input)' : 'Start data', scenario.start?.data, () => { }, { class: 'test-json test-start-data' });
             read = () => parse(input.querySelector('textarea').value);
         }
         const go = () => {
@@ -904,12 +928,18 @@ export default class TestPanel {
             this.start(scenario);
         };
         return el('fieldset', { class: 'test-start' }, el('legend', {}, 'Start'),
-            starts.length > 1 ? el('label', { class: 'test-field' }, el('span', {}, 'Start event'),
-                el('select', { class: 'test-start-event', onchange: e => { scenario.start = { ...scenario.start, startNodeId: e.target.value || undefined }; changed(); this.render(); } },
-                    starts.map(s => el('option', { value: s.id, selected: s.id === startId }, s.get('name') || s.id)))) : null,
+            starts.length > 1 || tasks.length ? el('label', { class: 'test-field' }, el('span', {}, 'Start at'),
+                el('select', { class: 'test-start-event', onchange: e => {
+                    const id = e.target.value || undefined;
+                    scenario.start = { ...scenario.start, startNodeId: id, only: tasks.some(t => t.id === id) || undefined };
+                    changed(); this.render();
+                } },
+                    el('optgroup', { label: 'The process, from' }, starts.map(s => el('option', { value: s.id, selected: !only && s.id === startId }, s.get('name') || s.id))),
+                    tasks.length ? el('optgroup', { label: 'A task by itself' }, tasks.map(t => el('option', { value: t.id, selected: only && t.id === startId }, t.get('name') ? `${t.get('name')} (${t.id})` : t.id))) : null)) : null,
+            only ? el('p', { class: 'test-hint' }, 'Runs this task alone, with the data below as its input; the run ends when it is done.') : null,
             input,
             el('div', { class: 'test-start-actions' },
-                el('button', { type: 'button', class: 'test-start-go primary', onclick: go }, 'Start the process'),
+                el('button', { type: 'button', class: 'test-start-go primary', onclick: go }, only ? 'Run the task' : 'Start the process'),
                 el('button', { type: 'button', class: 'test-start-cancel', onclick: () => { this._starting = null; this.render(); } }, 'Cancel')));
     }
 

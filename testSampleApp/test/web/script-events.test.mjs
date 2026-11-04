@@ -1,3 +1,4 @@
+// @features: listeners
 // The script events the model editor offers (modeler/src/properties/ScriptsGroup.jsx) are the ones bpmn-server
 // runs: a model with a script on each is run, and each script must have run. Scripts the editor does not offer
 // (on sequence flows, on transformOutput) must still not run; if bpmn-server starts running them, offer them.

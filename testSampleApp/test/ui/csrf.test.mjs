@@ -1,3 +1,4 @@
+// @features: web-security
 // Browser checks that the pages send the CSRF token on every path that changes state: plain forms,
 // the multipart import (fetch with the header) and the modeler's save (jQuery bundled in the modeler).
 //   npm run test:ui

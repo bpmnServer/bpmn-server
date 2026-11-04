@@ -1,3 +1,4 @@
+// @features: failed-retry
 // A task whose work throws (a service, a script, a connector that can not be called):
 // - with camunda:exceptionsAsErrors="true", the exception is raised as a BPMN error when an error event can catch
 //   it: a boundary error event on the task, or an error event sub-process around it. One with no error code

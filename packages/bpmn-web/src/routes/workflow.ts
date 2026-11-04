@@ -100,6 +100,11 @@ export class Workflow extends Common {
 
             let processName = request.params.processName;
             request.session.processName = processName;
+            // something to ask first (which start event, its start form): the start page
+            const definition = await bpmnServer.definitions.load(processName).catch(() => null);
+            const starts = definition?.getStartNodes(true) ?? [];
+            if (starts.length > 1 || starts.some(node => (definition.getNodeInfo(node.id).fields ?? []).length))
+                return response.redirect('/dashboard/start/' + encodeURIComponent(processName));
             let context = await runProcess(bpmnServer, { processName: processName }, () => bpmnAPI.engine.start(processName, { caseId: caseId++ },getSecureUser(request)));
 
             if (context.errors) {

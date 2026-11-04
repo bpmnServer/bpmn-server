@@ -1,3 +1,4 @@
+// @features: performance
 // Speed and memory guards: what made the engine slow and large, kept from coming back. These check
 // structure (no fixed waits, nothing accumulating, one type registry), and one memory ceiling far
 // above today's figure; timings are reported by `npm run bench`, not asserted.

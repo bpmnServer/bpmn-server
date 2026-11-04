@@ -1,3 +1,4 @@
+// @features: bpmn-client
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { loadClientScript } from './load.mjs';

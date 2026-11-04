@@ -1,3 +1,4 @@
+// @features: decision-editor
 // Business rule tasks in the model editor: the Decision group lists the decision files of the models folder and
 // says what the named one reads and gives, the Report shows its table, and the decision editor (dmn-js) opens,
 // creates and saves them.

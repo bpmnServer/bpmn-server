@@ -14,12 +14,21 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **The start page** (`/dashboard/start/<model>`): Run on a model with several start events a user can start, or
+  a start form, asks first: each start event with its form, as My work shows them. It started at once, with no
+  data, at whichever start event was drawn first.
 - **The instance page's Rationale:** the run as the log tells it, in order: each item's start, waits and end
   (completed by whom, a branch arriving at a join), each flow taken, and each decision with its why (a condition
   with the values it read, what a gateway chose, what a join waits for), with the time from the start. Closed at
   first.
 - **Filters on the instance page:** a type of element and an element of that type, for the items, the Rationale
   and the logs (the lines that name it). At first: the user tasks.
+
+- **A task by itself in the Test tab:** Test this task (the task selected on the diagram), or Start at → A task
+  by itself: the scenario runs that task alone with the data given as its input (`start.only` in scenario files);
+  its run, Debug and checks as any other.
+- **Connectors list:** each connector's key with a link to set or change it (its page's key form), and Delete,
+  whose confirmation names the models that use it.
 
 ### Changed
 - The model and decision editors have the pages' menu: Workbench, Dashboard (My work, Design, Administration),

@@ -1,3 +1,4 @@
+// @features: connector-wizard
 // What a designer does with connectors in the model editor, step by step: the connector wizard (connectors/Wizard.jsx)
 // and the Service group's summary (properties/ConnectorEntries.jsx); and what an administrator's changes do to it: a local "shop" API (OpenAPI 3.1) stands for the connector's server.
 //   npm run test:ui

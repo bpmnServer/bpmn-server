@@ -1,3 +1,4 @@
+// @features: problems
 // The model editor's Problems list: bpmn-server's checks (verifyModel) on the model being edited, marked on
 // the canvas and in the properties panel, and an issue takes the user to its field.
 //   npm run test:ui

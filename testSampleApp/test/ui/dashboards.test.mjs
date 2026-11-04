@@ -1,3 +1,4 @@
+// @features: dashboards
 // The dashboards in a browser: each opens without failed requests or page errors, and a process
 // starts from the start form.   npm run test:ui
 import test from 'node:test';

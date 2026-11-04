@@ -1,3 +1,4 @@
+// @features: models-files, parallel-gateway, test-tab
 // Test scenarios of the model editor's Test tab (src/testing/scenarios.ts): kept per model, run on the saved
 // model, with the steps choosing the path and the expectations checked.
 import test from 'node:test';

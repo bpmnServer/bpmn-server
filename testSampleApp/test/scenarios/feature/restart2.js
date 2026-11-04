@@ -1,3 +1,4 @@
+// @features: restart-rewind
 import { fileURLToPath as __f2p } from 'url';
 import { dirname as __dn } from 'path';
 const __filename = __f2p(import.meta.url);
@@ -52,7 +53,8 @@ Feature('Start Restart Process', () => {
             });
 
             Then('check for output after restart', () => {
-                let task1=response.instance.items.filter(item => { return (item.elementId =='task1' && item.seq>2); })[0];
+                // the restarted task1: the latest (items are numbered from 1; the first task1 ended before the restart)
+                let task1=response.instance.items.filter(item => item.elementId =='task1').sort((a, b) => b.seq - a.seq)[0];
 
                 console.log('response.instance.status:',response.instance.status)
                 report(response);

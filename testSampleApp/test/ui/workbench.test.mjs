@@ -1,3 +1,4 @@
+// @features: menu-workbench
 // Browser tests of the workbench: what users do, in Chromium (Playwright), against an in-process
 // bpmn-web (test/support/webApp.mjs). Every page also fails the test on a script error or a missing
 // local asset. Screenshots go to test/ui/screenshots/.   npm run test:ui

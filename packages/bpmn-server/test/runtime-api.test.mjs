@@ -1,3 +1,4 @@
+// @features: engine-api, queries, start-invoke
 // The runtime API (BPMNAPI) as an application's task portal uses it, with non-admin principals:
 // find what one may start, read a model's documentation and task forms, start, list one's tasks,
 // open a task with its data, complete it. bpmn-server 3.1.0 broke these for non-admins (model reads

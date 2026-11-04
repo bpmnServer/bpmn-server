@@ -1,3 +1,4 @@
+// @features: decision-log, locking, logging, parallel-gateway, run-one-element, start-events, start-invoke, user-task
 // The engine through its public API, on the in-memory storage adapter: a workflow end to end,
 // recovery across servers, cancellation, versions, locking, timers, lifecycle and shutdown.
 import test from 'node:test';
@@ -415,5 +416,55 @@ test('a joining gateway is one item: it waits from the first branch, and goes on
   const events = done.instance.logs.filter(l => l.type === 'info' && /"id":'Join'/.test(l.message))
     .map(l => l.message.replace(/^\{"seq":(\d+),.*"action":'(\w+)'\}$/, '$1 $2'));
   assert.deepEqual(events, ['Started', 'Waiting', 'Arrived', 'Ended'].map(a => `${waited[0].seq} ${a}`));
+  await server.shutdown();
+});
+
+test('one element by itself (flags.only): started at it, the run ends once it is done; a user task waits first', async () => {
+  const { server, dir } = await makeServer();
+  const fs = await import('node:fs');
+  fs.writeFileSync(dir + 'only-one.bpmn', `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="d" targetNamespace="urn:test">
+  <bpmn:process id="P" isExecutable="true">
+    <bpmn:startEvent id="Start" />
+    <bpmn:scriptTask id="Compute" scriptFormat="JavaScript"><bpmn:script>item.data.total = item.data.a + item.data.b;</bpmn:script></bpmn:scriptTask>
+    <bpmn:userTask id="Review" /><bpmn:scriptTask id="After" scriptFormat="JavaScript"><bpmn:script>item.data.after = true;</bpmn:script></bpmn:scriptTask>
+    <bpmn:endEvent id="End" />
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="Compute" /><bpmn:sequenceFlow id="f2" sourceRef="Compute" targetRef="Review" />
+    <bpmn:sequenceFlow id="f3" sourceRef="Review" targetRef="After" /><bpmn:sequenceFlow id="f4" sourceRef="After" targetRef="End" />
+  </bpmn:process>
+</bpmn:definitions>`);
+  await server.definitions.rebuild();
+
+  const script = await server.engine.start('only-one', { a: 2, b: 3 }, 'Compute', null, { flags: { only: 'Compute' } });
+  assert.equal(script.instance.status, 'end');
+  assert.equal(script.instance.data.total, 5);
+  assert.deepEqual(script.instance.items.map(i => i.elementId), ['Compute'], 'nothing before or after it');
+
+  const task = await server.engine.start('only-one', {}, 'Review', null, { flags: { only: 'Review' } });
+  assert.deepEqual(waiting(task), ['Review']);
+  const done = await server.engine.invoke({ id: task.instance.id, 'items.elementId': 'Review' }, { approved: true });
+  assert.equal(done.instance.status, 'end');
+  assert.equal(done.instance.data.after, undefined, 'what follows does not run');
+  assert.deepEqual(done.instance.items.map(i => i.elementId), ['Review']);
+  await server.shutdown();
+});
+
+test('several start events: started with none named, it begins at one a user can start, not at the message start drawn first', async () => {
+  const { server, dir } = await makeServer();
+  const fs = await import('node:fs');
+  fs.writeFileSync(dir + 'multi-start.bpmn', `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="d" targetNamespace="urn:test">
+  <bpmn:message id="Msg" name="order" />
+  <bpmn:process id="P" isExecutable="true">
+    <bpmn:startEvent id="ByMessage"><bpmn:messageEventDefinition messageRef="Msg" /></bpmn:startEvent>
+    <bpmn:startEvent id="ByHand" />
+    <bpmn:userTask id="FromMessage" /><bpmn:userTask id="FromHand" />
+    <bpmn:sequenceFlow id="f1" sourceRef="ByMessage" targetRef="FromMessage" />
+    <bpmn:sequenceFlow id="f2" sourceRef="ByHand" targetRef="FromHand" />
+  </bpmn:process>
+</bpmn:definitions>`);
+  await server.definitions.rebuild();
+  assert.deepEqual(waiting(await server.engine.start('multi-start', {})), ['FromHand']);
+  assert.deepEqual(waiting(await server.engine.start('multi-start', {}, 'ByMessage')), ['FromMessage'], 'named: that one');
   await server.shutdown();
 });

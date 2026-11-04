@@ -1,3 +1,4 @@
+// @features: catalog
 // The model catalog in a browser: filter it, see a model's problems, import it into the editor.
 import test from 'node:test';
 import assert from 'node:assert/strict';

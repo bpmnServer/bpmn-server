@@ -1,3 +1,4 @@
+// @features: ad-hoc-sub-process, errors-escalations, multi-instance
 // GitHub issues of bpmnServer/bpmn-server, each on the model it was reported with (test/scenarios/processes),
 // and engine problems found going over the old bpmn-web examples. The other issues have scenarios in
 // test/scenarios/feature: Issue124-2.js, Issue186.js, Issue196.js, Issue197A.js, Issue197_cancel_loop.js,

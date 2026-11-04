@@ -1,3 +1,4 @@
+// @features: scenario-files
 // Runs scenario files: test/custom/*.json, or the files named on the command line
 //   node --import tsx --test test/custom/scenarios.test.ts                       every scenario file
 //   node --import tsx test/custom/scenarios.test.ts test/custom/buy-used-car.json   one file (VS Code: Scenarios: current file)

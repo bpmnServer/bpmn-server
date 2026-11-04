@@ -1,3 +1,4 @@
+// @features: connector-admin
 // The Connectors pages of the administration dashboard (docs/docs/connectors.md): a connector added from its OpenAPI
 // document, its key set (never shown again), its operations chosen, its connection tested, and deleted. Only
 // administrators reach them. A local API stands for the connector's server.
@@ -125,6 +126,14 @@ test('the catalog: an API added in one step, then marked added; an unreadable ca
     } finally {
         process.env.CONNECTOR_CATALOG_URL = saved;
     }
+});
+
+test('the list: each connector\'s key, with a link to set it, and Delete (naming the models that use it)', async () => {
+    const page = (await admin.get('/dashboard/admin/connectors')).text;
+    assert.match(page, /href="\/dashboard\/admin\/connectors\/github#connector-key">(set a key|change)<\/a>/);
+    assert.match(page, /action="\/dashboard\/admin\/connectors\/github\/delete"[^>]*onsubmit="return confirm\(&quot;Delete the connector github\? [^"]*use it/);
+    assert.match(page, /action="\/dashboard\/admin\/connectors\/status\/delete"/);
+    assert.match((await admin.get('/dashboard/admin/connectors/status')).text, /id="connector-key"/, 'the key form the link opens');
 });
 
 test('settings, operations and enabled; delete', async () => {

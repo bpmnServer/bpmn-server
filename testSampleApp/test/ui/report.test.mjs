@@ -1,3 +1,4 @@
+// @features: report
 // The editor's Report tab (under the diagram, beside Problems): the whole process as one document, from the
 // model being edited.
 //   npm run test:ui

@@ -1,3 +1,4 @@
+// @features: decision-editor
 // Tests for decisions (src/testing/decisionTests.ts), kept per decision file and run on the saved file, and the
 // Design dashboard running a model's, a decision's or every test.
 import test from 'node:test';

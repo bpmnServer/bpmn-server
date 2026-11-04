@@ -1,3 +1,4 @@
+// @features: verify-model
 // appDelegate.verifyModel: an application's own checks, reported with verifyModel's.
 import test from 'node:test';
 import assert from 'node:assert/strict';

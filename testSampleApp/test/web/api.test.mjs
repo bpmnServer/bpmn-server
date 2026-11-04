@@ -1,3 +1,4 @@
+// @features: rest-api
 // The REST APIs (/api2, the authorized API; /api, the legacy one) driving the leave-request process.
 // The API key stands for one service account (API_SERVICE_USER_*: groups staff,manager in the tests).
 import test from 'node:test';

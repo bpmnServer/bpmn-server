@@ -1,3 +1,4 @@
+// @features: problems
 // The team's modeling rules (bpmnlint levels): read and saved by designers, in bpmnlint.json of the models folder.
 import test from 'node:test';
 import assert from 'node:assert/strict';

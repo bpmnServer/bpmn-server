@@ -1,3 +1,4 @@
+// @features: history, models-files
 // A model's history (ModelHistory): every save kept as files in the models folder's .history/<name>/, who saved
 // it and when; a save that changes nothing adds nothing; renaming and deleting the model take its history along;
 // purging removes it.

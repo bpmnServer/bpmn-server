@@ -70,3 +70,7 @@
 .instance-page .instance-filters label { margin: 0; font-weight: 600; }
 .instance-page .instance-filters select.form-control { width: auto; min-width: 200px; display: inline-block; }
 .instance-page .instance-filters .instance-hint { margin: 0; }
+/* the Rationale, as the items: a decision's action under the event, its why in the last column */
+.instance-page .rationale-table .rationale-decision { font-weight: 600; color: #1f6f43; }
+.instance-page .rationale-table .rationale-decision.rationale-not { color: #6b7280; }
+.instance-page .rationale-table td > .rationale-decision:not(:first-child) { margin-top: 4px; }

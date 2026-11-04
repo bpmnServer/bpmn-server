@@ -1,3 +1,4 @@
+// @features: instance-page
 // The instance page's filters: a type of element, then an element of it; the items, the Rationale and the logs
 // show only their rows.
 //   npm run test:ui
@@ -71,7 +72,7 @@ test('a flow: the gateway\'s choice of it is not its row, its condition is', asy
     await page.click('#showRationale');
     await page.selectOption('#filter-element', 'ToApprove');
     const rows = await page.locator('.rationale-table tbody tr').evaluateAll(trs => trs.filter(tr => !tr.hidden).map(tr => tr.innerText.replace(/\s+/g, ' ').trim()));
-    assert.ok(rows.some(r => /flow 'yes' \(ToApprove\) taken .*result: true \(days=10\)/.test(r)), rows.join('\n'));
+    assert.ok(rows.some(r => /ToApprove yes bpmn:SequenceFlow taken .*result: true \(days=10\)/.test(r)), rows.join('\n'));
     assert.ok(rows.every(r => /ToApprove/.test(r)));
     await close();
 });

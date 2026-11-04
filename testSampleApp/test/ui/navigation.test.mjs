@@ -1,3 +1,4 @@
+// @features: menu-workbench
 // Getting around the editor: the model drop-down opens another model, the element drop-down shows and selects
 // an element (and follows the selection), the properties panel opens the groups that have values, and a field's
 // description shows on hover.   npm run test:ui

@@ -45,7 +45,8 @@ export interface Check {
 
 export interface Scenario {
     name: string;
-    start?: { startNodeId?: string; data?: Record<string, any> };
+    /** only: the element at startNodeId by itself (a task tested alone): the run ends once it is done */
+    start?: { startNodeId?: string; only?: boolean; data?: Record<string, any> };
     steps?: ScenarioStep[];
     checks?: Check[];
     expect?: { status?: string; data?: Record<string, any>; passes?: string[]; avoids?: string[] };
@@ -255,9 +256,12 @@ const message = err => String(err?.message ?? err);
  * Start an instance of the model for a test (the Test tab's recording, and runScenario): its flags keep save points
  * (the debugger restarts it at a step) and its log (the decisions the engine took), whatever the data store's settings.
  */
-export async function startTest(server, model: string, startNodeId: string | undefined, data, userName?: string) {
+export async function startTest(server, model: string, startNodeId: string | undefined, data, userName?: string, only = false) {
+    if (only && !startNodeId)
+        throw new Error('A task by itself: which task (startNodeId)?');
+    const flags = { savePoints: true, saveLogs: true, ...(only ? { only: startNodeId } : {}) };
     const execution = await server.engine.start(model, clone(data), startNodeId || null, userName ?? null,
-        { instanceId: `test-${randomUUID()}`, flags: { savePoints: true, saveLogs: true }, tenantId: currentGuest()?.id });
+        { instanceId: `test-${randomUUID()}`, flags, tenantId: currentGuest()?.id });
     return execution.instance;
 }
 
@@ -444,7 +448,7 @@ export async function runScenario(server, model: string, scenario: Scenario, use
     const checks = [];
     let instance, error = null;
     try {
-        instance = await startTest(server, model, scenario.start?.startNodeId, scenario.start?.data, userName);
+        instance = await startTest(server, model, scenario.start?.startNodeId, scenario.start?.data, userName, !!scenario.start?.only);
     }
     catch (err) {
         return { name: scenario.name, ok: false, error: `Starting failed: ${message(err)}`, steps, checks: [], instance: null };

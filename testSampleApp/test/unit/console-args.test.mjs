@@ -1,3 +1,4 @@
+// @features: console
 // The console's command from the command line (npm run cli -- cod asana): the words after --cli.
 import test from 'node:test';
 import assert from 'node:assert/strict';

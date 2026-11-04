@@ -1,3 +1,4 @@
+// @features: modeler
 // The properties panel shaped for bpmn-server: conditions, loops, forms and process settings offer what the
 // engine runs, saved as it reads them, and Camunda settings it does not run are listed under Problems.
 //   npm run test:ui

@@ -1,3 +1,4 @@
+// @features: roles
 // The model designer: list, import (with layout and preview), modeler save, rename, delete, export,
 // the model check, and that only designers and administrators reach it.
 import test from 'node:test';

@@ -1,3 +1,4 @@
+// @features: dmn
 // Decisions (DMN) in the models folder: listed for the editor, opened and saved in the decision editor (designers
 // only), and evaluated by PUT /admin/api/rules/invoke.
 import test from 'node:test';

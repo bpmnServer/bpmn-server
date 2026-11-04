@@ -640,9 +640,9 @@ export class Model extends Common {
         }));
         /** Recording: start, then complete waiting items one at a time. */
         router.post('/test/start', awaitHandlerFactory(async (request, response) => {
-            const { processName, startNodeId, data } = request.body ?? {};
+            const { processName, startNodeId, data, only } = request.body ?? {};
             try {
-                response.json({ instance: summarize(await startTest(bpmnServer, processName, startNodeId, data ?? {}, request.user?.userName)) });
+                response.json({ instance: summarize(await startTest(bpmnServer, processName, startNodeId, data ?? {}, request.user?.userName, only === true)) });
             } catch (exc) {
                 response.status(422).json({ error: String(exc?.message ?? exc) });
             }

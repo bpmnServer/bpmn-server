@@ -1,5 +1,7 @@
 extends layout
 
+include ../includes/startForm.pug
+
 mixin taskRow(item)
 	tr
 		td
@@ -72,22 +74,6 @@ block dash
 							b= start.processName
 							if start.name !== start.processName
 								|  · #{start.name}
-						form(method='post', action='/dashboard/start')
-							input(type='hidden', name='_csrf', value=_csrf)
-							input(type='hidden', name='processName', value=start.processName)
-							input(type='hidden', name='startNodeId', value=start.startNodeId)
-							each field in start.fields
-								label(for=`${start.startNodeId}-${field.id}`)= field.label || field.id
-								if field.type === 'enum' && field.values && field.values.length
-									select(id=`${start.startNodeId}-${field.id}`, name=`field.${field.id}`)
-										each v in field.values
-											option(value=v.id, selected=(v.id === field.defaultValue))= v.name || v.id
-								else if field.type === 'boolean'
-									select(id=`${start.startNodeId}-${field.id}`, name=`field.${field.id}`)
-										option(value='true') Yes
-										option(value='false', selected=(field.defaultValue !== 'true')) No
-								else
-									input(id=`${start.startNodeId}-${field.id}`, name=`field.${field.id}`, type=(field.type === 'date' ? 'date' : field.type === 'long' ? 'number' : 'text'), value=field.defaultValue || '')
-							button.btn.btn-primary.btn-sm(type='submit') Start
+						+startForm(start)
 			else
 				p.dash-empty No process can be started by hand.

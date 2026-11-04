@@ -1,3 +1,4 @@
+// @features: mongodb, setup-env
 // One database for instances, archive, models and locks; and the locks' unique index made on first use.
 import test from 'node:test';
 import assert from 'node:assert/strict';

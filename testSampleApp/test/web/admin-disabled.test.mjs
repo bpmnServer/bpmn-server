@@ -1,3 +1,4 @@
+// @features: roles
 // DISABLE_ADMIN=true (a public demo): no administration pages or /admin APIs, for administrators too;
 // everything else works as usual.
 import test from 'node:test';

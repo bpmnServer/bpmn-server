@@ -1,3 +1,4 @@
+// @features: guests
 // GUEST_ACCESS=true (a public demo): a visitor without a session becomes a guest with models of its own (a copy
 // of the application's), test runs of its own, and nothing of anyone else's.
 import test from 'node:test';

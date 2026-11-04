@@ -1,3 +1,4 @@
+// @features: upgrade-running
 // engine.upgradeRunning: instances that have not ended move onto their model's saved source and run it from
 // where they are; ended ones keep theirs; a step the new model lacks, a held lock and a model with errors are
 // reported, not forced.

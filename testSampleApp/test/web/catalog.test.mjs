@@ -1,3 +1,4 @@
+// @features: catalog
 // The model catalog: browse a catalog (CATALOG_URL, here a local folder) and import its models.
 import test from 'node:test';
 import assert from 'node:assert/strict';

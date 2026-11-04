@@ -1,3 +1,4 @@
+// @features: errors-escalations, event-sub-process
 
 import { BPMNServer  , Logger } from './index.js';
 import { configuration } from './index.js';

@@ -31,7 +31,11 @@ block dash
 							td: code= c.id
 							td: code= c.baseUrl
 							td #{ops.filter(Boolean).length} of #{ops.length}
-							td= c.auth && c.auth.last4 ? `${c.auth.type} …${c.auth.last4}` : 'none'
+							//- the key, and the way to set it (the connector's page, its key form)
+							td
+								| #{c.auth && c.auth.last4 ? `${c.auth.type} …${c.auth.last4}` : 'none'}
+								|  ·
+								a(href=`/dashboard/admin/connectors/${encodeURIComponent(c.id)}#connector-key`)= c.auth && c.auth.last4 ? 'change' : 'set a key'
 							td
 								if c.test
 									span.dash-badge(class=c.test.ok ? 'is-ok' : 'is-error', title=c.test.message)= c.test.ok ? 'OK' : 'failed'
@@ -42,6 +46,11 @@ block dash
 									input(type='hidden', name='list', value='1')
 									input(type='hidden', name='enabled', value=c.enabled ? 'false' : 'true')
 									button.btn.btn-xs(type='submit', class=c.enabled ? 'btn-default' : 'btn-warning')= c.enabled ? 'Disable' : 'Enable'
+								|
+								form.inline(method='post', action=`/dashboard/admin/connectors/${encodeURIComponent(c.id)}/delete`,
+									onsubmit=`return confirm(${JSON.stringify(`Delete the connector ${c.id}?` + (c.models.length ? ` ${c.models.join(', ')} use it: they fail at its tasks once it is deleted.` : ''))})`)
+									input(type='hidden', name='_csrf', value=_csrf)
+									button.btn.btn-xs.btn-danger(type='submit') Delete
 			else
 				p.dash-empty No connectors yet: add one below.
 

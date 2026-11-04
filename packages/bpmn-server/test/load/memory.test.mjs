@@ -1,3 +1,4 @@
+// @features: performance
 // Memory: nothing kept after work is done (no leaks), and what is kept while it runs stays bounded.
 // Heap is read after full collections. Settings in ./setup.mjs (LOAD_SCALE, LOAD_MONGO_URL).
 import test from 'node:test';

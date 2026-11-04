@@ -1,3 +1,4 @@
+// @features: problems
 // bpmnlint's modeling rules in the editor: listed under Problems with bpmn-server's checks, named and linked to
 // the rule's documentation, marked on the canvas, and cleared when the model is fixed.
 //   npm run test:ui

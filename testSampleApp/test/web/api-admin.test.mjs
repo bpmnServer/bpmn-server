@@ -1,3 +1,4 @@
+// @features: rest-api
 // Model administration over /admin/api2 and system operations, with a service account in the ADMIN and SYSTEM groups.
 import test from 'node:test';
 import assert from 'node:assert/strict';

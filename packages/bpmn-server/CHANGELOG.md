@@ -15,6 +15,8 @@ and here
 -->
 ## [Unreleased]
 ### Fixed
+- A model with several start events, started with none named, begins at one a user can start; it began at the
+  first drawn, a message, signal or timer start included.
 - A joining gateway is one item. Each branch that arrived added one (a join of 3 branches showed 3 gateway
   items, since the first release); now the item that goes on keeps the first arrival's seq and start, and the
   waiting branches' items are dropped. Its log tells it as one item: Started, Waiting, `Arrived` (a later
@@ -22,6 +24,10 @@ and here
 - An item's end is logged once (a join's item logged `Ended` twice).
 - A restored instance numbers its new items after its highest seq; it counted its items, which gave two items
   the same seq once seqs had a gap.
+
+### Added
+- `flags.only` (engine.start's `options.flags`): the instance runs one element, the one it starts at
+  (`startNodeId`), and ends once that element is done; a user task waits first. To test a task by itself.
 
 ### Changed
 - Items are numbered from 1 (`item.seq`; it was from 0), as bpmn-web shows them. Instances already started

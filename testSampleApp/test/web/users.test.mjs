@@ -1,3 +1,4 @@
+// @features: users
 // Administrators edit users, groups included (/account/edit/:id); the page acts on the user shown, never on
 // the administrator signed in. A user's own profile can not change their groups.
 import test from 'node:test';

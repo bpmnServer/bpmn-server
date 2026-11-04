@@ -1,3 +1,4 @@
+// @features: timers
 // Timers further away than setTimeout can wait (2^31-1 ms, about 24.8 days). Node runs a longer delay after
 // 1 ms, so a 30-day start timer would start an instance every millisecond; timers are waited out in steps.
 import test, { mock } from 'node:test';

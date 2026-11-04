@@ -366,8 +366,9 @@ references:
         return starts;
     }
 
+    /** Where a start with no start event named begins: one a user can start (not a message, signal, timer or error start), else the first. */
     public getStartNode() {
-        return this.getStartNodes()[0];
+        return this.getStartNodes(true)[0] ?? this.getStartNodes()[0];
     }
     public getNodeById(id) {
             return this.nodes.get(id);

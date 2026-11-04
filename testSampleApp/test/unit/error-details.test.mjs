@@ -1,3 +1,4 @@
+// @features: web-security
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { describeError, errorDetailsHandler, redactSecrets } from '../../../packages/bpmn-web/dist/routes/middleware/errorDetails.js';

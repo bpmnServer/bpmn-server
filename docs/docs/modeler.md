@@ -89,6 +89,12 @@ The **Test** tab keeps test scenarios for the model and runs them:
    stopping, and check what the scenario expects at the end: the status, data values, and the elements passed
    and not passed.
 
+**A task by itself:** select a task on the diagram and click **Test this task** (or choose it under **Start at**,
+*A task by itself*). The scenario runs that task alone, with the data you give as its input: a script or a service
+runs and the run ends; a user task waits for its step, then the run ends. Nothing before or after it runs. Its run
+has the items, the data and the decisions as any other, and **Debug** changes its data and runs it again. It is
+saved, repeated and checked as the other scenarios.
+
 Each scenario keeps its latest 20 runs with their instances. **Simulate** plays a run on the diagram: an element
 turns blue when it starts and green when it ends, orange if it still waits, numbered in the order they started;
 **Pause**, **Continue** and **Step** while it plays.

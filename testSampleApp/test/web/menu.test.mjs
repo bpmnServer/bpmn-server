@@ -1,3 +1,4 @@
+// @features: menu-workbench
 // The one menu of every page (views/includes/menu.pug): Workbench first; Dashboard a drop-down for designers and
 // administrators (My work, Design, Administration as their role allows), My work alone for everyone else; the
 // editors carry the same places in their header (editorMenu.pug).

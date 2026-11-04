@@ -1,3 +1,4 @@
+// @features: sqlite
 // The SQLite adapter of the storage port: the in-memory store's semantics on a file, dates kept, the file
 // reopened, and two connections to one file (two servers) sharing unique indexes, locks and instances.
 import test from 'node:test';

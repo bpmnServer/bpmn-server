@@ -1,3 +1,4 @@
+// @features: connector-admin, connector-wizard
 // A service task that calls a connector, in the model editor's Service group (properties/ConnectorEntries.jsx):
 // Calls (Service or Connector); Connector opens the connector wizard (connectors/Wizard.jsx): the operation found by a
 // search, its required inputs filled in from the data of the same name, the parts of the response ticked and named.
