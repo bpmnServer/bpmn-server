@@ -1,4 +1,4 @@
-// Connectors in the application (work/connectors.md): the sample model "GitHub repository" calls the connector
+// Connectors in the application (docs/docs/connectors.md): the sample model "GitHub repository" calls the connector
 // github (connectors/openapi/github.json), started through the REST API, and keeps the repository's description
 // and stars. It calls GitHub itself, so it is skipped when GitHub can not be reached.
 import test from 'node:test';

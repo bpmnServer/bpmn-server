@@ -216,7 +216,7 @@ async function completeUserTask() {
 	process.exit();
 
 }
-/** Connectors (work/connectors.md): REST APIs described by OpenAPI, which service tasks call. */
+/** Connectors (docs/docs/connectors.md): REST APIs described by OpenAPI, which service tasks call. */
 async function connectorCommand(option: string) {
 	const connectors = server.connectors;
 	const id = option === 'co' ? '' : (await question('Connector id: ')).trim();

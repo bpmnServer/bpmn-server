@@ -53,6 +53,7 @@ export class Configuration implements IConfiguration {
 	shutdownTimeout?: number;
 	demo?: boolean;
 	connectors?: IConnectorsConfiguration;
+	modelHistory?: boolean;
 
 	/** Each factory given replaces the default one; one left out keeps it. */
 	constructor({
@@ -61,7 +62,7 @@ export class Configuration implements IConfiguration {
 		definitions = undefined,
 		appDelegate = undefined,
 		dataStore = undefined, cacheManager = undefined, scriptHandler = undefined,
-		documentStore = undefined, locker = undefined, serverId = undefined, locks = undefined, shutdownTimeout = undefined, demo = undefined, connectors = undefined }: any) {
+		documentStore = undefined, locker = undefined, serverId = undefined, locks = undefined, shutdownTimeout = undefined, demo = undefined, connectors = undefined, modelHistory = undefined }: any) {
 		this.definitionsPath = definitionsPath;
 		this.templatesPath = templatesPath;
 		this.timers = timers;
@@ -80,6 +81,7 @@ export class Configuration implements IConfiguration {
 		this.shutdownTimeout = shutdownTimeout;
 		this.demo = demo;
 		this.connectors = connectors;
+		this.modelHistory = modelHistory;
 	
 	}
 

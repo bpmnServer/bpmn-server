@@ -80,7 +80,9 @@ enum ITEM_STATUS {
     end = 'end',
     terminated = 'terminated',
     cancelled = 'cancelled',
-    discard = 'discard'
+    discard = 'discard',
+    /** the work threw: kept with its message in statusDetails, to be retried (engine.retry) */
+    error = 'error'
 
 }
 

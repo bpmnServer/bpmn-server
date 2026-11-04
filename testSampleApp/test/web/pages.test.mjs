@@ -107,11 +107,13 @@ test('errors show details without secrets', async () => {
   assert.ok(!/at .*\.js:\d+/.test(res.text), 'no stack trace');
 });
 
-test('the instance page documents each sequence flow once', async () => {
+test('the instance page carries its model for the Report (drawn by /modeler/report.js as in the editor)', async () => {
   const page = await admin.get(`/instanceDetails?id=${instanceId}`);
   assert.equal(page.status, 200, why(page));
-  const flows = page.text.slice(page.text.indexOf('Sequence Flows'));
-  // the conditional flow is listed (it has details), and once: the model was loaded twice, listing each flow twice
-  const rows = flows.match(/<td>ToApprove<\/td>/g) ?? [];
-  assert.equal(rows.length, 1, `ToApprove listed ${rows.length} times`);
+  assert.match(page.text, /<script type="application\/json" data-report-source="model-report">/);
+  assert.match(page.text, /src="\/modeler\/report.js"/);
+  const json = page.text.match(/data-report-source="model-report">([^]*?)<\/script>/)[1];
+  assert.ok(!json.includes('<'), 'no < in the script element: a model can not end it early');
+  assert.match(JSON.parse(json), /id="ToApprove"/, 'the model, its flows included');
+  assert.equal((await admin.get('/modeler/report.js')).status, 200);
 });

@@ -14,7 +14,7 @@
 // targets and conditions. Clicking an id goes back to the diagram with it selected. It is rebuilt with each
 // check of the model (Problems), so it follows unsaved edits.
 import { is, isAny, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
-import { dataObjectName, dataField, loadersOf } from '../properties/DataObjectGroup.jsx';
+import { dataObjectName, dataField, loadersOf } from '../properties/dataObjects.js';
 
 const DATA_REFERENCES = ['bpmn:DataObjectReference', 'bpmn:DataStoreReference'];
 

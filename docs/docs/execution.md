@@ -136,9 +136,30 @@ The current item status will be `error` and execution will continue at the Error
 
 ## Throwing Exceptions
 ```
-    new error('error message');
+    throw new Error('error message');
 ```
 
-This will raise an Excption, stop workflow execution and save the instance datatake action
+An exception is not a BPMN error: by default an error event does not catch it. The call that ran the task
+(`engine.start`, `invoke`, ...) fails with the exception, and the task is saved with the status `error` and the
+exception's message (`statusDetails.error`, with its `code` when it has one). The instance waits there: its page
+shows **failed at** the task and why, and an administrator's **Retry** runs the task's work again, then the
+instance goes on (`engine.retry({ 'items.id': id })`, `api.engine.retry(...)`).
 
+### Exceptions as BPMN errors
+A service, send or script task can choose otherwise: **Exceptions raise a BPMN error** in its properties
+(`camunda:exceptionsAsErrors="true"`). An exception of its work, a service that throws or a connector that can not
+be called, is then raised as a BPMN error, caught as one returned with `{bpmnError}`:
 
+- its error code is the exception's `code` when it has one (`ECONNREFUSED`, `ETIMEDOUT`), else its name
+  (`TypeError`);
+- an error event with no error catches any exception; one whose error has that `errorCode` catches only it;
+- with no error event to catch it, it is an exception as above.
+
+```xml
+<bpmn:error id="Refused" errorCode="ECONNREFUSED" />
+...
+<bpmn:serviceTask id="Notify" implementation="notify" camunda:exceptionsAsErrors="true" />
+<bpmn:boundaryEvent id="Unreachable" attachedToRef="Notify">
+  <bpmn:errorEventDefinition errorRef="Refused" />
+</bpmn:boundaryEvent>
+```

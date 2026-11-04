@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- A repository on GitHub, through the connector github (work/connectors.md): its description and how many
+<!-- A repository on GitHub, through the connector github (docs/docs/connectors.md): its description and how many
      stars it has. A repository that is not there (404) ends at Not found. -->
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="github-repo-definitions" targetNamespace="http://ai-mde.dev/bpmn/test">
   <bpmn:error id="NotFoundError" name="Not found" errorCode="HTTP_404" />

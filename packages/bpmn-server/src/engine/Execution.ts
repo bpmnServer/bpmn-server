@@ -4,7 +4,7 @@ import { Token, TOKEN_TYPE  } from './Token.js';
 import { Loop} from './Loop.js';
 import { Definition } from '../elements/Definition.js';
 import { Process } from '../elements/Process.js';
-import { CallActivity } from '../elements/Tasks.js';import { EXECUTION_EVENT, TOKEN_STATUS, EXECUTION_STATUS, NODE_ACTION } from '../interfaces/Enums.js';
+import { CallActivity } from '../elements/Tasks.js';import { EXECUTION_EVENT, TOKEN_STATUS, EXECUTION_STATUS, NODE_ACTION, ITEM_STATUS } from '../interfaces/Enums.js';
 import type { IDefinition } from '../interfaces/elements.js';
 import type { IInstanceData } from '../interfaces/DataObjects.js';
 import type { IExecution } from '../interfaces/engine.js';
@@ -343,6 +343,29 @@ class Execution extends ServerComponent implements IExecution {
      * @param inputData
      *
      */
+
+/** Runs a failed item's work again (an item whose status is `error`), and on from it. */
+public async retry(itemId, userName?: string) :Promise<IExecution>  {
+    this.log('Execution('+this.name+').retry: item ' + itemId);
+    this.operation = 'retry';
+    this.userName = userName;
+    let token: Token = null;
+    this.tokens.forEach(t => { if (t.currentItem && t.currentItem.id == itemId) token = t; });
+    const item = token?.currentItem;
+    if (!item || item.status !== ITEM_STATUS.error)
+        throw new Error(`Item ${itemId} has not failed: only an item whose status is error can be retried`);
+    this.servicesProvider = await this.appDelegate.getServicesProvider();
+    this.process = this.tokens.get(0).path[0].node.process;
+    this.appDelegate.executionStarted(this);
+    this.item = item;
+    this.info(JSON.stringify({ type: 'execution', label: 'Retry Item', action: 'retry', id: item.elementId, itemId, userName }));
+    await token.retry(item);
+    await this.checkEnd();
+    await Promise.all(this.promises);
+    this.report();
+    await this.save();
+    return this;
+}
 
 public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecution>  {
 

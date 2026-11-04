@@ -65,3 +65,42 @@ test('completing a task that is no longer waiting says so', async () => {
     assert.match(res.text, /This task can not be completed/);
     assert.match(res.text, /is not waiting/);
 });
+
+/** Start, a script task that throws until `globalThis.__workUp`, end. */
+const FLAKY = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="d2" targetNamespace="urn:test">
+  <bpmn:process id="Flaky" isExecutable="true">
+    <bpmn:startEvent id="Start" />
+    <bpmn:scriptTask id="Work" name="Call out" scriptFormat="JavaScript"><bpmn:script>if (!globalThis.__workUp) throw new Error('service down');</bpmn:script></bpmn:scriptTask>
+    <bpmn:endEvent id="End" />
+    <bpmn:sequenceFlow id="f1" sourceRef="Start" targetRef="Work" />
+    <bpmn:sequenceFlow id="f2" sourceRef="Work" targetRef="End" />
+  </bpmn:process>
+</bpmn:definitions>`;
+
+test('a task whose work threw: the instance page says it failed and why, and Retry runs it again', async () => {
+    fs.writeFileSync(path.join(web.definitionsPath, 'flaky.bpmn'), FLAKY);
+    await web.bpmnServer.definitions.rebuild();
+    globalThis.__workUp = false;
+    await assert.rejects(web.bpmnServer.engine.start('flaky', {}), /service down/);
+    const [instance] = await web.bpmnServer.dataStore.findInstances({ name: 'flaky' }, 'full');
+    const failed = instance.items.find(i => i.elementId === 'Work');
+    assert.equal(failed.status, 'error');
+
+    let page = (await admin.get('/instanceDetails?id=' + instance.id)).text;
+    assert.match(page, /failed at Call out/);
+    assert.match(page, /class="item-error">service down/);
+    assert.match(page, /action="\/retryItem"/);
+
+    let res = await staff.post('/retryItem', { itemId: failed.id });
+    assert.notEqual(res.status, 302, 'administrators only');
+
+    globalThis.__workUp = true;
+    res = await admin.post('/retryItem', { itemId: failed.id });
+    assert.ok([200, 302].includes(res.status), why(res));
+    const [after] = await web.bpmnServer.dataStore.findInstances({ id: instance.id }, 'full');
+    assert.equal(after.status, 'end');
+    assert.equal(after.items.find(i => i.elementId === 'Work').status, 'end');
+    page = (await admin.get('/instanceDetails?id=' + instance.id)).text;
+    assert.doesNotMatch(page, /retryItem|failed at/);
+});

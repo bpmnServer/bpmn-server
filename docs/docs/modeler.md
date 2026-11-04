@@ -58,7 +58,8 @@ npm run lint:models [folder]
 
 ## Report
 
-The Report tab is the whole model as one document, everything in it but the diagram's layout:
+The Report tab is the whole model as one document, everything in it but the diagram's layout. An instance's
+page shows the same report of its model (under **Model report**), and the History tab compares versions by it:
 
 - **Globals:** the messages, signals, errors (with their codes) and escalations, each with the elements that
   throw, catch, send or receive it, or "not used".
@@ -107,11 +108,18 @@ adds no version; the first save of a model saved before there was a history keep
 
 - **Compare:** tick two versions. The older is compared with the newer by their [report](#report) as text: the
   lines removed and added, each shown under the element and the process it is in. What the text does not hold,
-  the diagram's layout, is listed apart: the elements **moved or resized**. Clicking one selects it on the
-  diagram.
+  the diagram's layout, is listed apart: the elements **moved or resized**, each with what changed (moved,
+  resized, path changed, label moved) and a flow by its two ends. Clicking one selects it on the diagram.
+  Below, the newer version's diagram is marked: **+** added, **M** changed (amber) or only moved or resized
+  (grey), and the removed elements drawn dashed in red, with **−**, where they were.
 - **Purge history** deletes every saved version of the model. The model itself stays.
 
 Renaming a model takes its history along; deleting a model deletes its history.
+
+Each version is one file, `.history/<model>/0002.ann.bpmn`: its number, who saved it (when known), and the model as
+saved; when it was saved and its size are the file's own. `MODEL_HISTORY=false` in `.env` (or `modelHistory:
+false` in the configuration) keeps no versions and removes the History tab; versions already kept stay as they
+are.
 
 ## Where models, tests and history are kept
 
@@ -126,8 +134,8 @@ processes/
   loan.dmn.xml                    a decision
   loan.dmn.tests.json             its tests
   bpmnlint.json                   the team's modeling rules
-  .history/Leave Application/     every save of the model: 0001.bpmn, 0001.json (who and when), ...
-  .runs/                          the Test tabs' runs (they point at instances of this server)
+  .history/Leave Application/     every save of the model: 0001.bpmn, 0002.ann.bpmn (ann saved it), ...
+  .runs/Leave Application.runs.json   the Test tab's runs (they point at instances of this server)
 ```
 
 A `*.tests.json` file has the format of a [scenario file](testing.md#scenario-files). `.runs/` is best left out of

@@ -72,6 +72,9 @@ test('each save is listed with who saved it; two versions compared by their repo
     assert.ok((await lines('added')).some(l => new RegExp(`userTask: ${task}, Check the request$`).test(l.trim())), (await lines('added')).join('|'));
     assert.ok((await lines('same')).some(l => /process: /.test(l)), 'the process it is in');
     assert.equal(await page.locator('.history-changes.moved').count(), 0, 'the layout did not change');
+    // the newer version's diagram, the renamed task marked M
+    await page.waitForSelector(`.history-diagram .history-badge.changed[data-id="${task}"]`);
+    assert.equal(await page.locator('.history-diagram .history-badge').count(), 1, 'nothing else marked');
 
     // a third ticked: the earliest ticked goes; the editor's model (not saved) against the last save
     await tick('current');
@@ -93,9 +96,23 @@ test('each save is listed with who saved it; two versions compared by their repo
     await page.waitForSelector('.history-changes.moved');
     assert.ok((await lines('added')).some(l => /^\s*serviceTask: \S+$/.test(l.replace(/^\+ /, ''))), (await lines('added')).join('|'));
     assert.match(await page.innerText('.history-changes.moved'), new RegExp(shape), 'moved: in the layout, not in the text');
+    assert.match(await page.innerText('.history-changes.moved'), new RegExp(`^start event .*${shape}.*: moved`, 'm'), 'said in words');
     // the moved element's link selects it on the diagram
     await page.click(`.history-changes.moved .history-element[data-id="${shape}"]`);
     assert.deepEqual(await page.evaluate(() => window.bpmnModeler.get('selection').get().map(e => e.id)), [shape]);
+    // marked on the diagram: + the new task, M (moved) the start event
+    const added = await page.evaluate(() => window.bpmnModeler.get('elementRegistry').filter(e => e.type === 'bpmn:ServiceTask').pop().id);
+    await page.waitForSelector(`.history-diagram .history-badge.added[data-id="${added}"]`);
+    assert.equal(await page.locator(`.history-diagram .history-badge.moved[data-id="${shape}"]`).count(), 1);
+    // − an element removed: drawn where it was, dashed
+    const end = await page.evaluate(() => {
+        const m = window.bpmnModeler, end = m.get('elementRegistry').filter(e => e.type === 'bpmn:EndEvent')[0];
+        m.get('modeling').removeElements([end]);
+        return end.id;
+    });
+    await page.click('.history-compare');
+    await page.waitForSelector(`.history-diagram .history-removed[data-id="${end}"] rect`);
+    await page.evaluate(() => window.bpmnModeler.get('commandStack').undo());     // as it was, for the next test
 });
 
 test('a save that changes nothing adds no version; Purge history empties the list', async () => {

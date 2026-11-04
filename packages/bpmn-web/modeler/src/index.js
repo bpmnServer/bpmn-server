@@ -9,6 +9,7 @@ import '@bpmn-io/properties-panel/dist/assets/properties-panel.css';
 import 'bpmn-js-element-templates/dist/assets/element-templates.css';
 import '@bpmn-io/element-template-chooser/dist/element-template-chooser.css';
 import './modeler.css';
+import './report/report.css';
 
 import BpmnModeler from 'bpmn-js/lib/Modeler';
 import { BpmnPropertiesPanelModule, BpmnPropertiesProviderModule, CamundaPlatformPropertiesProviderModule } from 'bpmn-js-properties-panel';
@@ -173,7 +174,8 @@ const dock = document.getElementById('js-dock');
 const MIN_DOCK = 80;
 const maxDock = () => Math.max(MIN_DOCK, Math.floor(page.clientHeight * 0.7));
 
-const DOCK_TABS = ['problems', 'report', 'test', 'history'];
+// History only when the server keeps it (MODEL_HISTORY)
+const DOCK_TABS = ['problems', 'report', 'test', 'history'].filter(name => document.getElementById(`js-tab-${name}`));
 
 function applyDockState() {
     const tab = DOCK_TABS.includes(panelState.dockTab) ? panelState.dockTab : 'problems';
@@ -200,7 +202,7 @@ function showTab(tab) {
 document.getElementById('js-tab-problems').addEventListener('click', () => showTab('problems'));
 document.getElementById('js-tab-report').addEventListener('click', () => showTab('report'));
 document.getElementById('js-tab-test').addEventListener('click', () => showTab('test'));
-document.getElementById('js-tab-history').addEventListener('click', () => showTab('history'));
+document.getElementById('js-tab-history')?.addEventListener('click', () => showTab('history'));
 document.getElementById('js-dock-toggle').addEventListener('click', () => {
     panelState.dockCollapsed = !panelState.dockCollapsed;
     applyDockState();

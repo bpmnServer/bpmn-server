@@ -249,16 +249,26 @@ class Node extends Element {
             item.token.log('Node('+this.name+'|'+this.id+').execute: start complete ...token:'+item.token.id+' ret:'+ret);
             return ret;
         }
+        return this.perform(item);
+    }
+    /**
+     * Steps 4 and 5 of execute: the work (run), then on. Also a failed item's retry (Token.retry): the work again.
+     */
+    async perform(item: Item) {
         //  4   run  perform the work
         //  --------
         //  Save before performing the work
         await item.token.execution.save();
-        //item.token.info(`{"seq":${item.seq},"type":'${this.type}',"id":'${this.id}',"action":'Started'}`);
 
         item.token.log('Node('+this.name+'|'+this.id+').execute: execute run ...token:'+item.token.id);
-        //item.token.log('..>run ' + this.id);
 
-        ret = await this.run(item);
+        let ret;
+        try {
+            ret = await this.run(item);
+        }
+        catch (error) {
+            ret = await this.failed(item, error);
+        }
         switch (ret) {
             case NODE_ACTION.error:
                 item.token.log('Node('+this.name+'|'+this.id+').execute: start complete ...token:'+item.token.id+' ret:'+ret);
@@ -278,6 +288,39 @@ class Node extends Element {
         item.token.logE('Node('+this.name+'|'+this.id+').execute: execute continue...');
         return ret2;
 
+    }
+    /** `camunda:exceptionsAsErrors="true"`: an exception of the task's work is raised as a BPMN error. */
+    get exceptionsAsErrors(): boolean {
+        return String(this.def?.$attrs?.['camunda:exceptionsAsErrors'] ?? this.def?.exceptionsAsErrors ?? '') === 'true';
+    }
+    /**
+     * The task's work threw. With exceptionsAsErrors and an error event that catches it (by the exception's code,
+     * else its name; an error event with no code catches any), it is raised there as a BPMN error and the task
+     * ends. Otherwise the item's status is `error`, with the message, saved so the instance shows it and the item
+     * can be retried (engine.retry), and the exception is thrown to the caller as before.
+     */
+    async failed(item: Item, error): Promise<NODE_ACTION> {
+        const message = error?.message ?? String(error);
+        const code = error?.code != null && error.code !== '' ? String(error.code) : error?.name;
+        const what = this.name ? `'${this.name}' (${this.id})` : this.id;
+        if (this.exceptionsAsErrors && code && item.token.getScopeCatchEvent('error', code)) {
+            item.log(`exception: ${message}`);
+            item.token.decision(`${what}: the exception "${message}" raised as the BPMN error ${code} (exceptions as BPMN errors)`);
+            item.output = { error: message, code };
+            await item.token.processError(code, item);
+            item.statusDetails = { ...(item.statusDetails ?? {}), exception: message };
+            return NODE_ACTION.end;
+        }
+        item.status = ITEM_STATUS.error;
+        item.statusDetails = { ...(item.statusDetails ?? {}), error: message, ...(code ? { code } : {}) };
+        item.log(`exception: ${message}; the item's status is error, it can be retried`);
+        try {
+            await item.token.execution.save();
+        }
+        catch (saveError) {
+            item.token.log('the failed item could not be saved: ' + saveError?.message);
+        }
+        throw error;
     }
     /*
      *  called by execute or by token.invoke to continue work already started

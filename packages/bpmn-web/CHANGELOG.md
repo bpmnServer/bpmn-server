@@ -12,7 +12,7 @@ and here
 
 ### Changed
 -->
-## Unreleased
+## Release 3.5.2 (2026-11-04)
 ### Added
 - **Connectors** (needs bpmn-server with connectors): Administration → Connectors (`/dashboard/admin/connectors`)
   adds REST APIs from a catalog (`catalog/connectors/api-catalog.json`, or `CONNECTOR_CATALOG_URL`) or from an
@@ -28,9 +28,14 @@ and here
   rules matched, runs kept, **Use as checks**. `/model/decision/:name/tests`.
 - **Design dashboard:** each model's and decision's tests with the last run's result (and why it failed); Run for
   one, **Run all tests**.
+- **The instance page's model report** is the model editor's Report (of the instance's own model), in place of
+  the older model documentation table.
+- **History:** the compared versions' diagram, marked + added, M changed or moved, − removed.
+- **Failed tasks:** the instance page says **failed at** the task and why, and **Retry** (administrators) runs
+  its work again. The editor's **Exceptions raise a BPMN error** on service, send and script tasks.
 - **History tab** in the model editor: every save of the model with when and by whom, and the editor's model;
   two compared by their report text (the lines changed, under their element and process) and their layout (the
-  elements moved or resized); **Purge history**. `GET /model/history/:name`, `GET /model/history/:name/:version`, `DELETE /model/history/:name`.
+  elements moved or resized, and how); **Purge history**. `MODEL_HISTORY=false` keeps no versions and removes the tab. `GET /model/history/:name`, `GET /model/history/:name/:version`, `DELETE /model/history/:name`.
 
 - **The Report holds the whole model:** Globals (messages, signals, errors, escalations, with what uses each),
   Pools and lanes (pools, lanes with their elements, message flows), annotations and associations, connectors,
@@ -68,7 +73,7 @@ and here
 
 ### Changed
 - **The Test tabs' tests are files** beside what they test: `<model>.tests.json` (the scenario file format) and
-  `<decision>.dmn.tests.json`; their runs in `.runs/`. They were in MongoDB (`wf_test_scenarios`): setup moves
+  `<decision>.dmn.tests.json`; their runs in `.runs/<model>.runs.json`. They were in MongoDB (`wf_test_scenarios`): setup moves
   each set there to its file once (the collection is left as it was). The backup has them with the models
   folder's files. `npm run lint:models` skips dot folders (`.history`, `.runs`).
 - The dashboards make no MongoDB calls: they work on MongoDB, SQLite and the in-memory store. The backup is

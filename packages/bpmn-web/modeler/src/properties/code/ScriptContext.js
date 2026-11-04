@@ -2,7 +2,7 @@
 // the editor's code fields. The application's service names come from GET config.scriptContext.servicesUrl;
 // the data fields from the model (form fields, outputs, the start event's initiator).
 import { is, isAny } from 'bpmn-js/lib/util/ModelUtil';
-import { dataObjectName } from '../DataObjectGroup.jsx';
+import { dataObjectName } from '../dataObjects.js';
 
 /** In a task's (or event's, or flow's) scripts and expressions `this` is the item. */
 const ITEM_NAMES = [

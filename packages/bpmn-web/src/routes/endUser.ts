@@ -480,6 +480,8 @@ async function instanceDetails(request,response,instanceId) {
             title: 'Instance Details',
             logs,items: instance.items, svg,
             decorations, definition: defJson, lastItem,
+            // the model as the Report shows it (report/view.js): the instance's own source, else the model's
+            modelJson: JSON.stringify(instance.source || await definitions.getSource(instance.name)).replace(/</g, '\\u003c'),
         });
 
 }

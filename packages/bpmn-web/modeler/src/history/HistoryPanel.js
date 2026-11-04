@@ -1,9 +1,20 @@
 // The History tab: every save of the model (GET /model/history/<name>), newest first, with who saved it and when,
 // and the model in the editor (unsaved changes included) as "Current". Two ticked are compared by their report
 // text (the Report tab's outline of the whole model: Report.text), its changed lines shown with the element and
-// process they are in; and the elements moved or resized on the diagram, which the text does not hold.
-// Purge history removes every saved version (the model itself stays).
-import { textChanges, layoutChanges } from './compare.js';
+// process they are in; and the elements moved or resized on the diagram, which the text does not hold. The newer
+// version's diagram shows each element marked: + added, M changed (or moved), and the removed ones drawn where
+// they were, dashed, with −. Purge history removes every saved version (the model itself stays).
+import NavigatedViewer from 'bpmn-js/lib/NavigatedViewer';
+import camundaModdle from '../moddle.js';
+import { textChanges, layoutChanges, diagramChanges } from './compare.js';
+
+const SVG = 'http://www.w3.org/2000/svg';
+function svg(tag, attributes) {
+    const element = document.createElementNS(SVG, tag);
+    for (const [name, value] of Object.entries(attributes))
+        element.setAttribute(name, value);
+    return element;
+}
 
 const CURRENT = 'current';
 
@@ -45,6 +56,8 @@ export default class HistoryPanel {
     }
 
     show() {
+        if (!this._root)
+            return;
         this._visible = true;
         this.load();
     }
@@ -91,11 +104,69 @@ export default class HistoryPanel {
             const [a, b] = await Promise.all([this.source(before), this.source(after)]);
             const [older, newer] = (await Promise.all([this._moddle.fromXML(a), this._moddle.fromXML(b)])).map(r => r.rootElement);
             const [from, to] = [this._report.text(older), this._report.text(newer)];
-            this._comparison = { before, after, same: from === to, lines: textChanges(from, to), moved: layoutChanges(older, newer) };
+            this._comparison = { before, after, same: from === to, lines: textChanges(from, to), moved: layoutChanges(older, newer),
+                diagram: diagramChanges(older, newer), xml: b };
         } catch (err) {
             this._comparison = { before, after, error: err.message };
         }
         this.render();
+        if (this._comparison.xml)
+            await this.drawDiagram(this._comparison);
+    }
+
+    /** The newer version's diagram, its elements marked: + added, M changed or moved, − removed (where they were). */
+    async drawDiagram({ xml, diagram }) {
+        if (!this._viewer) {
+            this._diagramHost = el('div', { class: 'history-diagram' });
+            this._viewer = new NavigatedViewer({ container: this._diagramHost, moddleExtensions: { camunda: camundaModdle } });
+        }
+        this.render();
+        try {
+            await this._viewer.importXML(xml);
+        } catch (err) {
+            this._diagramHost.replaceChildren(el('p', { class: 'history-error' }, 'The diagram could not be drawn: ' + err.message));
+            return;
+        }
+        const canvas = this._viewer.get('canvas'), overlays = this._viewer.get('overlays'), registry = this._viewer.get('elementRegistry');
+        const mark = (id, kind, sign, title) => {
+            if (!registry.get(id))
+                return;
+            canvas.addMarker(id, `history-${kind}`);
+            const badge = el('span', { class: `history-badge ${kind}`, title, 'data-id': id, onclick: () => this.reveal(id) }, sign);
+            overlays.add(id, 'history', { position: { top: -10, right: 10 }, html: badge });
+        };
+        diagram.added.forEach(id => mark(id, 'added', '+', 'added'));
+        diagram.changed.forEach(id => mark(id, 'changed', 'M', 'changed'));
+        diagram.moved.forEach(id => mark(id, 'moved', 'M', 'moved or resized'));
+        // the removed ones, drawn where they were in the older version
+        const layer = canvas.getLayer('history-removed', 1);
+        layer.replaceChildren();
+        for (const removed of diagram.removed) {
+            const title = svg('title', {});
+            title.textContent = `removed: ${removed.type} ${removed.name || removed.id}`;
+            const group = svg('g', { class: 'history-removed', 'data-id': removed.id });
+            group.append(title);
+            if (removed.bounds) {
+                const [x, y, width, height] = removed.bounds;
+                group.append(svg('rect', { x, y, width, height, rx: 8 }));
+                const sign = svg('text', { x: x + width - 4, y: y + 4, class: 'history-removed-sign' });
+                sign.textContent = '−';
+                group.append(sign);
+                if (removed.name) {
+                    const name = svg('text', { x: x + width / 2, y: y + height / 2, class: 'history-removed-name' });
+                    name.textContent = removed.name;
+                    group.append(name);
+                }
+            }
+            else if (removed.points?.length)
+                group.append(svg('polyline', { points: removed.points.map(p => p.join(',')).join(' ') }));
+            layer.append(group);
+        }
+        canvas.zoom('fit-viewport');
+        // room around it for the marks on the elements at its edges
+        const box = canvas.viewbox();
+        const margin = Math.max(box.width, box.height) * 0.06;
+        canvas.viewbox({ x: box.x - margin, y: box.y - margin, width: box.width + 2 * margin, height: box.height + 2 * margin });
     }
 
     async purge() {
@@ -157,16 +228,28 @@ export default class HistoryPanel {
         const title = el('h4', {}, `${label(c.before)} → ${label(c.after)}`);
         if (c.error)
             return el('div', { class: 'history-comparison' }, title, el('p', { class: 'history-error' }, 'Could not compare: ' + c.error));
+        // "end event Not found (NotFound): moved"; a flow by its ends: "sequence flow Get repository → Not found (toNotFound): path changed"
         const name = e => el('span', {},
-            el('a', { href: '#', class: 'history-element', 'data-id': e.id, onclick: ev => { ev.preventDefault(); this.reveal(e.id); } }, e.id),
-            ` ${e.type}${e.name ? ': ' + e.name : ''}`);
+            `${e.type} `,
+            el('a', { href: '#', class: 'history-element', 'data-id': e.id, onclick: ev => { ev.preventDefault(); this.reveal(e.id); } },
+                e.from !== undefined ? `${e.from} → ${e.to}` : e.name || e.id),
+            e.from !== undefined || e.name ? el('span', { class: 'history-id' }, ` (${e.id})`) : null,
+            `: ${e.how.join(', ')}`);
         return el('div', { class: 'history-comparison' },
             title,
             c.same && !c.moved.length ? el('p', { class: 'history-note' }, 'No differences.') : null,
             c.same ? null : el('pre', { class: 'history-text' }, c.lines.map(l => el('div', { class: `line ${l.kind}` },
                 l.kind === 'added' ? '+ ' : l.kind === 'removed' ? '- ' : l.kind === 'skipped' ? '… ' : '  ', l.text))),
             c.moved.length ? el('section', { class: 'history-changes moved' }, el('h5', {}, `Moved or resized on the diagram (${c.moved.length})`),
-                el('ul', {}, c.moved.map(e => el('li', {}, name(e))))) : null);
+                el('ul', {}, c.moved.map(e => el('li', {}, name(e))))) : null,
+            this._diagramHost && c.diagram ? el('section', { class: 'history-changes diagram' },
+                el('h5', {}, `${label(c.after)}, marked`),
+                el('p', { class: 'history-legend' },
+                    el('span', { class: 'history-badge added' }, '+'), ' added  ',
+                    el('span', { class: 'history-badge changed' }, 'M'), ' changed  ',
+                    el('span', { class: 'history-badge moved' }, 'M'), ' moved or resized  ',
+                    el('span', { class: 'history-badge removed' }, '−'), ' removed (dashed, where it was)'),
+                this._diagramHost) : null);
     }
 }
 

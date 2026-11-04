@@ -312,6 +312,12 @@ export class Workflow extends Common {
         });
 
         router.post('/deleteInstance', this.isAdmin, awaitAppDelegateFactory(deleteInstance));
+        // a failed item (status error): its work again
+        router.post('/retryItem', this.isAdmin, awaitAppDelegateFactory(async (request, response) => {
+            const id = request.body.itemId;
+            const result = await runProcess(bpmnServer, { itemId: id }, () => bpmnAPI.engine.retry({ "items.id": id }, getSecureUser(request)));
+            return await afterOperation(request, response, result);
+        }));
         return router;
     }
     async tasks(request, response) {
@@ -553,6 +559,8 @@ async function instanceDetails(request,response,instanceId,version) {
             title: 'Instance Details',
             logs,items:items, svg,
             decorations, definition: defJson, lastItem,
+            // the model as the Report shows it (report/view.js): the instance's own source, else the model's
+            modelJson: JSON.stringify(instance.source || await definitions.getSource(instance.name)).replace(/</g, '\\u003c'),
         });
 
 }//export default router;

@@ -370,175 +370,6 @@ body {
 }
 
 
-/* ---- the report */
-
-.report-document {
-    max-width: 960px;
-    padding: 12px 24px 32px;
-}
-
-.report-title h1 {
-    font-size: 22px;
-    margin: 0 0 4px;
-}
-
-.report-summary {
-    color: #52575f;
-    margin: 0 0 16px;
-}
-
-.report-process > h2 {
-    font-size: 18px;
-    margin: 24px 0 8px;
-    padding-bottom: 6px;
-    border-bottom: 2px solid #dcdfe4;
-}
-
-.report-type {
-    margin-left: 10px;
-    font-size: 12px;
-    font-weight: normal;
-    color: #6b7079;
-}
-
-/* the outline: `type: id, name`, then `key: value` lines, what an element holds indented under it */
-.report-head {
-    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-    font-weight: normal;
-    font-size: 13px;
-    margin: 0;
-    line-height: 1.6;
-}
-
-.report-process > h2.report-head {
-    font-size: 15px;
-    font-weight: 600;
-}
-
-.report-key {
-    color: #6b4fbb;
-}
-
-.report-head .report-key {
-    font-weight: 600;
-}
-
-.report-name {
-    color: #1d2127;
-}
-
-.report-body {
-    margin-left: 26px;
-    padding-left: 10px;
-    border-left: 1px dashed #d7dbe1;
-}
-
-.report-elements {
-    margin-top: 6px;
-}
-
-.report-element {
-    margin: 10px 0;
-}
-
-.report-element h3 {
-    font-size: 13px;
-    margin: 0;
-}
-
-.report-flow {
-    margin: 4px 0;
-}
-
-.report-settings {
-    display: block;
-    margin: 2px 0;
-}
-
-.report-line {
-    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-    font-size: 12.5px;
-    line-height: 1.6;
-    overflow-wrap: anywhere;
-}
-
-.report-line .report-key {
-    color: #52575f;
-}
-
-.report-value {
-    color: #0b5d3b;
-}
-
-pre.report-value {
-    margin: 2px 0 4px 18px;
-    padding: 4px 8px;
-    background: #f6f8fa;
-    border-radius: 4px;
-    white-space: pre-wrap;
-    font-size: 12px;
-}
-
-.report-id,
-.report-element h3 a,
-.report-flows a {
-    color: #1f62c8;
-    text-decoration: none;
-}
-
-.report-id:hover,
-.report-element h3 a:hover,
-.report-flows a:hover {
-    text-decoration: underline;
-}
-
-.report-documentation {
-    margin: 4px 0;
-    white-space: pre-wrap;
-    color: #33373d;
-}
-
-.report-issues {
-    list-style: none;
-    padding: 0;
-    margin: 6px 0;
-    font-size: 13px;
-}
-
-.report-issues .severity {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.report-issues .severity-error .severity { color: #b42318; }
-.report-issues .severity-warning .severity { color: #b54708; }
-.report-issues .severity-info .severity { color: #1f62c8; }
-
-.report-flows-title {
-    font-size: 15px;
-    margin: 20px 0 6px;
-}
-
-.report-flows {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-}
-
-.report-flows th,
-.report-flows td {
-    text-align: left;
-    padding: 5px 8px;
-    border-bottom: 1px solid #eef0f3;
-    vertical-align: top;
-}
-
-.report-flows td:nth-child(3) {
-    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-    font-size: 12px;
-}
-
 @media print {
     /* the report only, at full length */
     #modeler-page { height: auto; overflow: visible; }
@@ -1002,23 +833,6 @@ pre.report-value {
     cursor: pointer;
 }
 
-/* A decision table in the Report: inputs, then outputs, one row per rule. */
-.report-decision-title {
-    margin: 8px 0 4px;
-}
-
-.report-decision-table caption {
-    text-align: left;
-    font-size: 12px;
-    color: #52575f;
-    padding-bottom: 2px;
-}
-
-.report-decision-table th.decision-output,
-.report-decision-table td.decision-output {
-    background: #f3f7fd;
-}
-
 /* A bpmnlint finding names its rule, linked to the rule's documentation. */
 .problems-list .problem .rule {
     margin-left: 8px;
@@ -1324,7 +1138,8 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 .history-changes.moved h5 { color: #52575f; }
 .history-changes ul { margin: 0; padding-left: 18px; }
 .history-changes li { margin: 2px 0; }
-.history-element { font-family: monospace; }
+.history-element { font-weight: 600; }
+.history-id { color: #6b7280; font-family: monospace; font-size: 11px; }
 .history-settings { margin: 2px 0 6px; border-collapse: collapse; font-size: 12px; }
 .history-settings th, .history-settings td { text-align: left; vertical-align: top; padding: 1px 8px 1px 0; max-width: 360px; overflow-wrap: anywhere; }
 .history-settings th { color: #52575f; font-weight: 600; }
@@ -1334,3 +1149,18 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 .history-text .line.added { background: #e6f4ea; color: #1a5e2a; }
 .history-text .line.removed { background: #fdecea; color: #8a1c12; }
 .history-text .line.skipped { color: #8a8f98; font-style: italic; }
+
+/* the compared versions' diagram (HistoryPanel.drawDiagram): + added, M changed or moved, − removed */
+.history-diagram { height: 320px; border: 1px solid #dcdfe4; border-radius: 4px; background: #fff; margin-top: 4px; }
+.history-legend { margin: 2px 0 4px; font-size: 12px; color: #52575f; }
+.history-badge { display: inline-block; min-width: 16px; padding: 0 4px; border-radius: 8px; color: #fff; font: 600 11px/16px sans-serif; text-align: center; cursor: pointer; }
+.history-badge.added { background: #1a7f37; }
+.history-badge.changed { background: #9a5b00; }
+.history-badge.moved { background: #6b7280; }
+.history-badge.removed { background: #b42318; }
+.history-diagram .history-added .djs-visual > :first-child { stroke: #1a7f37 !important; stroke-width: 3px !important; }
+.history-diagram .history-changed .djs-visual > :first-child { stroke: #9a5b00 !important; stroke-width: 3px !important; }
+.history-diagram .history-moved .djs-visual > :first-child { stroke: #6b7280 !important; stroke-dasharray: 4 2; }
+.history-removed rect, .history-removed polyline { fill: none; stroke: #b42318; stroke-width: 2px; stroke-dasharray: 6 4; }
+.history-removed-sign { fill: #b42318; font: 700 16px sans-serif; text-anchor: end; dominant-baseline: hanging; }
+.history-removed-name { fill: #b42318; font: 12px sans-serif; text-anchor: middle; dominant-baseline: middle; }

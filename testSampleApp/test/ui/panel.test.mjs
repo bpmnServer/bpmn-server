@@ -97,6 +97,36 @@ test('a multi-instance task offers its collection only', async () => {
     await close();
 });
 
+test('a service task can raise its exceptions as BPMN errors: saved as camunda:exceptionsAsErrors, said in the Report', async () => {
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="d" targetNamespace="urn:test">
+  <bpmn:process id="p" isExecutable="true"><bpmn:serviceTask id="Call" name="Call out" implementation="callOut" /></bpmn:process>
+  <bpmndi:BPMNDiagram id="dg"><bpmndi:BPMNPlane id="pl" bpmnElement="p">
+    <bpmndi:BPMNShape id="Call_di" bpmnElement="Call"><dc:Bounds x="200" y="100" width="100" height="80" /></bpmndi:BPMNShape>
+  </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>`;
+    const model = await addModel('panel-exceptions', { xml });
+    const { page, errors, close } = await openEditor(model);
+    await select(page, 'Call');
+    await openGroup(page, 'Service');
+    const box = page.locator('#bio-properties-panel-exceptions-as-errors');
+    assert.equal(await box.isChecked(), false);
+    await box.check();
+    const saved = await save(page, model);
+    assert.match(saved, /<bpmn:serviceTask id="Call"[^>]*camunda:exceptionsAsErrors="true"/);
+    await page.click('#js-tab-report');
+    assert.match(await page.innerText('#js-report'), /exceptionsAsErrors/i);
+    // the panel again, after the Report: unchecked, the attribute goes
+    await select(page, 'Call');
+    await openGroup(page, 'Service');
+    await page.waitForFunction(() => document.querySelector('#bio-properties-panel-exceptions-as-errors')?.checked === true);
+    await box.click();
+    await page.waitForFunction(() => document.querySelector('#bio-properties-panel-exceptions-as-errors')?.checked === false);
+    assert.doesNotMatch(await save(page, model), /exceptionsAsErrors/);
+    assert.deepEqual(errors, []);
+    await close();
+});
+
 test('form fields are started on a task that has none', async () => {
     const model = await addModel('panel-form', { sample: 'Users Vote' });
     const { page, errors, close } = await openEditor(model);

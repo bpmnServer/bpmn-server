@@ -57,7 +57,7 @@ export interface Scenario {
 //   <model>.tests.json         { "model": "<model>", "scenarios": [ ... ] }   (the format of a scenario file)
 //   <decision>.dmn.tests.json  { "decision": "<decision>", "tests": [ ... ] }
 // The runs the editors keep of each test are not in them (they point at instances of one server): they are in
-// .runs/<the same file name>, by the test's name, and put back on load.
+// .runs/<model>.runs.json (.runs/<decision>.dmn.runs.json), by the test's name, and put back on load.
 
 const DECISION = 'decision:';
 let modelsFolder: () => string = () => process.env.DEFINITIONS_PATH || path.resolve('processes');
@@ -74,6 +74,15 @@ function fileName(key: string) {
     if (!name || name.startsWith('.') || /[\\/]/.test(name))
         throw new Error(`not a model or decision name: ${name}`);
     return name + (decision ? '.dmn.tests.json' : '.tests.json');
+}
+
+/** The file of a set's runs: .runs/<model>.runs.json; one named as its set (before 3.5's release) is moved to it. */
+function runsFile(folder: string, name: string) {
+    const file = path.join(folder, '.runs', name.replace(/\.tests\.json$/, '.runs.json'));
+    const older = path.join(folder, '.runs', name);
+    if (!fs.existsSync(file) && fs.existsSync(older))
+        fs.renameSync(older, file);
+    return file;
 }
 
 function readJson(file: string) {
@@ -103,7 +112,7 @@ export async function loadTestSet<T = Scenario>(key: string): Promise<T[]> {
     const folder = modelsFolder(), name = fileName(key);
     const set = readJson(path.join(folder, name));
     const list = set?.scenarios ?? set?.tests ?? [];
-    const runs = readJson(path.join(folder, '.runs', name)) ?? {};
+    const runs = readJson(runsFile(folder, name)) ?? {};
     return list.map(item => runs[item.name]?.length ? { ...item, runs: runs[item.name] } : item);
 }
 
@@ -118,7 +127,7 @@ export async function saveTestSet(key: string, list: any[], userName?: string): 
     writeJson(path.join(folder, name), items.length
         ? decision ? { decision: key.slice(DECISION.length), tests: items } : { model: key, scenarios: items }
         : undefined);
-    writeJson(path.join(folder, '.runs', name), Object.keys(runs).length ? runs : undefined);
+    writeJson(runsFile(folder, name), Object.keys(runs).length ? runs : undefined);
 }
 
 export async function loadScenarios(model: string): Promise<Scenario[]> {

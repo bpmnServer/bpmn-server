@@ -13,7 +13,7 @@ and here
 
 ### Changed
 -->
-## Unreleased
+## Release 3.5.2 (2026-11-04)
 ### Added
 - **Connectors** (`src/connectors/`): REST APIs described by OpenAPI 3.0 or 3.1 (JSON or YAML), which a service
   or send task calls with `camunda:connector` (`<connector>/<operationId>`) and the connector's own input and
@@ -31,8 +31,14 @@ and here
   unique indexes, WAL so servers can share the file. `npm run test:sqlite` runs every suite on it.
 - The storage port's optional `count`, `DataStore.countInstances`, and `backup()` on the data store and the
   models datastore.
-- **Model history:** every save of a model is kept as files in the models folder, `.history/<name>/0001.bpmn` with
-  `0001.json` (when, who). A save that changes nothing adds nothing. `definitions.save(name, bpmn, svg, owner,
+- **Exceptions:** a task whose work throws is saved with the status `error` and the message
+  (`statusDetails.error`, `.code`) instead of staying `start` with nothing to say why; `engine.retry(itemQuery)`
+  (and `api.engine.retry`) runs its work again. `camunda:exceptionsAsErrors="true"` on a service, send or script
+  task raises its exceptions as BPMN errors (the code: the exception's `code`, else its name) for an error event
+  to catch.
+- **Model history:** every save of a model is kept as a file in the models folder, `.history/<name>/0002.ann.bpmn`
+  (the version, who saved it; when and the size are the file's). A save that changes nothing adds nothing.
+  `modelHistory: false` in the configuration keeps none. `definitions.save(name, bpmn, svg, owner,
   savedBy)`; `history(name)`, `historySource(name, version)`, `purgeHistory(name)`; renaming a model moves its
   history, deleting it deletes it. `ModelHistory` is exported.
 - `engine.upgradeRunning(models?, { dryRun? })`: moves the instances that have not ended onto their model's

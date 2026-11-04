@@ -4,23 +4,31 @@ import path from 'node:path';
 /** A saved version of a model. */
 export interface IModelVersion {
     version: number;
-    /** when it was saved (ISO); for the version kept from before the history, the file's time */
+    /** when it was saved (ISO): its file's time */
     savedAt: string;
     /** who saved it, when known */
     savedBy?: string;
-    /** its size in bytes */
+    /** its size in bytes: its file's */
     size: number;
 }
 
 const pad = (version: number) => String(version).padStart(4, '0');
 
+// 0002.bpmn, or 0002.ann.bpmn when ann saved it (a user name is encoded: any character goes in a file name)
+const fileName = (version: number, savedBy?: string) =>
+    pad(version) + (savedBy ? '.' + encodeURIComponent(savedBy).replace(/\*/g, '%2A') : '') + '.bpmn';
+const VERSION_FILE = /^(\d+)(?:\.(.+))?\.bpmn$/;
+
 /**
- * A model's history: every save kept, as files beside the models, in `<models folder>/.history/<name>/`:
- * `0001.bpmn` the model as saved and `0001.json` its record (`IModelVersion`). A save that changes nothing adds
- * nothing. The first save of a model that has a file but no history keeps that file first, as it was.
- * Purging removes the model's history folder.
+ * A model's history: every save kept, as files beside the models, in `<models folder>/.history/<name>/`: one file
+ * per version, `0001.bpmn`, or `0001.<user>.bpmn` with who saved it. When it was saved and its size are the file's.
+ * A save that changes nothing adds nothing. The first save of a model that has a file but no history keeps that
+ * file first, as it was (with its time). Purging removes the model's history folder.
  */
 export class ModelHistory {
+    /** Saves of a model's history take turns in this process, by its folder: two saves at once are two versions. */
+    private static readonly turns = new Map<string, Promise<unknown>>();
+
     constructor(private readonly folder: string) { }
 
     private dir(name: string) {
@@ -31,31 +39,42 @@ export class ModelHistory {
         return dir;
     }
 
-    /** The model's versions, newest first. */
-    async list(name: string): Promise<IModelVersion[]> {
-        const dir = this.dir(name);
+    /** The version files: [{ version, savedBy, file }], newest first. */
+    private async files(name: string) {
         let files: string[];
         try {
-            files = await fs.promises.readdir(dir);
+            files = await fs.promises.readdir(this.dir(name));
         }
         catch (error) {
             if (error.code === 'ENOENT') return [];
             throw error;
         }
+        return files.map(file => VERSION_FILE.exec(file)).filter(Boolean)
+            .map(([file, version, savedBy]) => ({ version: Number(version), savedBy: savedBy && decodeURIComponent(savedBy), file }))
+            .sort((a, b) => b.version - a.version || a.file.localeCompare(b.file));
+    }
+
+    /** The model's versions, newest first. */
+    async list(name: string): Promise<IModelVersion[]> {
+        const dir = this.dir(name);
         const versions: IModelVersion[] = [];
-        for (const file of files.filter(f => /^\d+\.json$/.test(f))) {
+        for (const { version, savedBy, file } of await this.files(name)) {
             try {
-                versions.push(JSON.parse(await fs.promises.readFile(path.join(dir, file), 'utf8')));
+                const stat = await fs.promises.stat(path.join(dir, file));
+                versions.push({ version, savedAt: stat.mtime.toISOString(), ...(savedBy ? { savedBy } : {}), size: stat.size });
             }
-            catch { /* a record being written, or damaged: not listed */ }
+            catch { /* removed meanwhile: not listed */ }
         }
-        return versions.sort((a, b) => b.version - a.version);
+        return versions;
     }
 
     /** A version's model, or null when there is no such version. */
     async source(name: string, version: number): Promise<string | null> {
+        const found = (await this.files(name)).find(f => f.version === version);
+        if (!found)
+            return null;
         try {
-            return await fs.promises.readFile(path.join(this.dir(name), pad(version) + '.bpmn'), 'utf8');
+            return await fs.promises.readFile(path.join(this.dir(name), found.file), 'utf8');
         }
         catch (error) {
             if (error.code === 'ENOENT') return null;
@@ -70,36 +89,60 @@ export class ModelHistory {
      */
     async keep(name: string, source: string, savedBy?: string, before?: { source: string; savedAt: Date }): Promise<IModelVersion | null> {
         const dir = this.dir(name);
+        const previous = ModelHistory.turns.get(dir) ?? Promise.resolve();
+        const turn = previous.catch(() => undefined).then(() => this.keepNow(dir, name, source, savedBy, before));
+        ModelHistory.turns.set(dir, turn);
+        try {
+            return await turn;
+        }
+        finally {
+            if (ModelHistory.turns.get(dir) === turn)
+                ModelHistory.turns.delete(dir);
+        }
+    }
+
+    private async keepNow(dir: string, name: string, source: string, savedBy?: string, before?: { source: string; savedAt: Date }) {
         await fs.promises.mkdir(dir, { recursive: true });
         let versions = await this.list(name);
         if (!versions.length && before && before.source !== source) {
-            await this.write(dir, 1, before.source, { savedAt: before.savedAt.toISOString() });
+            await this.write(dir, name, 1, before.source, undefined, before.savedAt);
             versions = await this.list(name);
         }
         const latest = versions[0];
         if (latest && await this.source(name, latest.version) === source)
             return null;
-        // the next number, claimed by creating its file: two saves at once get two versions
         for (let version = (latest?.version ?? 0) + 1; ; version++) {
-            try {
-                return await this.write(dir, version, source, { savedAt: new Date().toISOString(), savedBy });
-            }
-            catch (error) {
-                if (error.code !== 'EEXIST') throw error;
-            }
+            if ((await this.files(name)).some(f => f.version === version))
+                continue;
+            const kept = await this.write(dir, name, version, source, savedBy);
+            if (kept)
+                return kept;
         }
     }
 
-    private async write(dir: string, version: number, source: string, record: { savedAt: string; savedBy?: string }) {
-        await fs.promises.writeFile(path.join(dir, pad(version) + '.bpmn'), source, { flag: 'wx' });
-        const kept: IModelVersion = { version, savedAt: record.savedAt, ...(record.savedBy ? { savedBy: record.savedBy } : {}), size: Buffer.byteLength(source) };
-        await fs.promises.writeFile(path.join(dir, pad(version) + '.json'), JSON.stringify(kept, null, 2));
-        return kept;
+    /** Writes a version's file; null when the number is taken (by a save in another process), to try the next. */
+    private async write(dir: string, name: string, version: number, source: string, savedBy?: string, savedAt?: Date): Promise<IModelVersion | null> {
+        const file = path.join(dir, fileName(version, savedBy));
+        try {
+            await fs.promises.writeFile(file, source, { flag: 'wx' });
+        }
+        catch (error) {
+            if (error.code === 'EEXIST') return null;
+            throw error;
+        }
+        if ((await this.files(name)).some(f => f.version === version && f.file !== path.basename(file))) {
+            await fs.promises.rm(file, { force: true });
+            return null;
+        }
+        if (savedAt)
+            await fs.promises.utimes(file, savedAt, savedAt);
+        const stat = await fs.promises.stat(file);
+        return { version, savedAt: stat.mtime.toISOString(), ...(savedBy ? { savedBy } : {}), size: stat.size };
     }
 
     /** Removes the model's history; returns how many versions it had. */
     async purge(name: string): Promise<number> {
-        const count = (await this.list(name)).length;
+        const count = (await this.files(name)).length;
         await fs.promises.rm(this.dir(name), { recursive: true, force: true });
         return count;
     }

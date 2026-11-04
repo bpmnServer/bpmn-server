@@ -44,7 +44,9 @@ interface IConfiguration
      * nothing (they end with no output). Each says so in the run's decisions. Pair it with SandboxScriptHandler.
      */
     demo?: boolean,
-    /** Connectors' calls (work/connectors.md): the defaults a connector's own timeout and retries override. */
+    /** Each save of a model keeps a version in `.history/<name>/` beside it, for the editor's History tab (default true). */
+    modelHistory?: boolean,
+    /** Connectors' calls (docs/docs/connectors.md): the defaults a connector's own timeout and retries override. */
     connectors?: IConnectorsConfiguration,
 }
 

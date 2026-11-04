@@ -4,7 +4,7 @@ import type { Item } from '../../engine/Item.js';
 
 /**
  * camunda:connector on a service-task-like element: the connector's operation (`<connector>/<operationId>`, see
- * work/connectors.md) and its own input/output parameters, which make the call's input and map its output (the
+ * docs/docs/connectors.md) and its own input/output parameters, which make the call's input and map its output (the
  * response) back to the data, as a task's camunda:inputOutput does. The task runs it (ServiceTask.run).
  *
  * ```xml

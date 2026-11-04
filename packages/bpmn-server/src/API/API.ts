@@ -276,6 +276,11 @@ class APIEngine extends APIComponent implements IAPIEngine {
         const instance = await this.server.dataStore.findInstance(user.qualifyInstances({ id: query }), 'summary');
         return await this.server.engine.startEvent(instance.id, elementId, data,user.userName,options);
     }
+    /** Runs a failed item's work again (its status `error`), and the instance on from it. */
+    public async retry(itemQuery, user?: ISecureUser): Promise<IExecution> {
+        user = this.getUser(user);
+        return await this.server.engine.retry(user.qualifyItems({ ...itemQuery }), user.userName);
+    }
     public async restart(itemQuery, data:any,user:ISecureUser, options={}) :Promise<IExecution>  {
         user = this.getUser(user);
         return await this.server.engine.restart(user.qualifyItems({ ...itemQuery }), data,user.userName, options);

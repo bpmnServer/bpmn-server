@@ -123,6 +123,8 @@ interface IEngine {
     //signal(messageId: any, matchingKey: any, data?: {}): Promise<IExecution>;
     throwMessage(messageId, data: {}, matchingQuery: {}): Promise<IExecution>;
     throwSignal(signalId, data: {}, matchingQuery: {}, from?: IItem);
+    /** Runs a failed item's work again (an item whose status is `error`), and the instance on from it. */
+    retry(itemQuery, userName?: string): Promise<IExecution>;
     restart(itemQuery, data:any,userName, options) :Promise<IExecution>;
     /** Cancels a running instance: terminated and saved, never deleted. */
     cancel(instanceQuery: any, userName?: string, options?: {}): Promise<IExecution>;

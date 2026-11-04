@@ -31,8 +31,23 @@ test('every save is kept, with who saved it; an unchanged save adds nothing; the
     await server.definitions.save(NAME, original, null, null, 'bob');
     versions = await server.definitions.history(NAME);
     assert.deepEqual(versions.map(v => [v.version, v.savedBy]), [[3, 'bob'], [2, 'ann'], [1, undefined]]);
-    assert.ok(fs.existsSync(path.join(dir, '.history', NAME, '0003.bpmn')), 'files beside the models');
+    assert.deepEqual(fs.readdirSync(path.join(dir, '.history', NAME)).sort(), ['0001.bpmn', '0002.ann.bpmn', '0003.bob.bpmn'],
+        'one file per version, beside the models: who saved it in its name; its time and size are the files');
+    assert.equal(versions[0].size, fs.statSync(path.join(dir, '.history', NAME, '0003.bob.bpmn')).size);
     assert.equal(await server.definitions.historySource(NAME, 9), null);
+    await server.shutdown?.();
+});
+
+test('the version kept from before the history has the file time; any user name goes in a file name', async () => {
+    const { server, dir } = await makeServer();
+    const file = path.join(dir, NAME + '.bpmn');
+    const then = new Date('2026-01-02T03:04:05Z');
+    fs.utimesSync(file, then, then);
+    const original = fs.readFileSync(file, 'utf8');
+    await server.definitions.save(NAME, original.replace(/name="([^"]+)"/, 'name="$1, edited"'), null, null, "Ann O'Neil/HR*");
+    const versions = await server.definitions.history(NAME);
+    assert.equal(versions[1].savedAt, then.toISOString());
+    assert.equal(versions[0].savedBy, "Ann O'Neil/HR*");
     await server.shutdown?.();
 });
 
@@ -75,4 +90,16 @@ test('two saves at once are two versions; a name that leaves the folder is refus
     assert.deepEqual(new Set([await history.source('m', 1), await history.source('m', 2)]), new Set(['<a/>', '<b/>']));
     await assert.rejects(history.list('../outside'), /not a model name/);
     await assert.rejects(history.list('.hidden'), /not a model name/);
+});
+
+test('modelHistory: false keeps no versions; the save itself is as before', async () => {
+    const { server, dir } = await makeServer();
+    server.configuration.modelHistory = false;
+    const original = fs.readFileSync(path.join(dir, NAME + '.bpmn'), 'utf8');
+    const edited = original.replace(/name="([^"]+)"/, 'name="$1, edited"');
+    await server.definitions.save(NAME, edited, null, null, 'ann');
+    assert.equal(fs.readFileSync(path.join(dir, NAME + '.bpmn'), 'utf8'), edited);
+    assert.deepEqual(await server.definitions.history(NAME), []);
+    assert.ok(!fs.existsSync(path.join(dir, '.history', NAME)));
+    await server.shutdown?.();
 });

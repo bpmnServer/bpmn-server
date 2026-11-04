@@ -19,6 +19,9 @@
 .status-badge { display: inline-block; padding: 3px 9px; border-radius: 999px; background: #e9f2f7; color: #22506c; font-size: 12px; font-weight: 600; }
 .status-wait { background: #fff2d8; color: #855000; }
 .status-end { background: #e7f4e9; color: #28643a; }
+.status-error { background: #fde8e7; color: #a4251b; }
+.item-error { margin-top: 4px; color: #a4251b; font-size: 12px; max-width: 28em; overflow-wrap: anywhere; }
+.retry-form { display: inline; margin: 0; }
 .instance-toolbar { display: flex; flex-wrap: wrap; gap: 8px; }
 .instance-toolbar .fa { margin-right: 6px; }
 .instance-diagram { margin-top: 16px; padding: 18px; overflow: auto; background: #f7fafc; border: 1px solid #e5ebf0; border-radius: 5px; }
@@ -47,3 +50,6 @@
   .instance-summary-grid, .instance-facts { grid-template-columns: 1fr; }
   .instance-card { padding: 15px; }
 }
+
+/* the model's Report, as the editor's Report tab shows it (/modeler/report.js) */
+.instance-report { padding: 4px 16px 16px; overflow-x: auto; }

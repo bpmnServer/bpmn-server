@@ -60,7 +60,7 @@ class BPMNServer implements IBPMNServer {
 	documentStore?: IDocumentStore;
 	/** The lock port the engine uses. */
 	locker: ILockManager;
-	/** The connectors an administrator added: REST APIs service tasks call (work/connectors.md). */
+	/** The connectors an administrator added: REST APIs service tasks call (docs/docs/connectors.md). */
 	connectors: Connectors;
 	error;
 	/** Settles when the server has started: the application delegate's start-up, then (unless `cron: false`) the timers. Rejects with the reason it could not start. */

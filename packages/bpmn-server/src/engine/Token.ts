@@ -332,6 +332,30 @@ class Token implements IToken {
         return result;
 
     }
+    /** A failed item's work again (its status `error`): then on, as execute goes on after its node. */
+    async retry(item: Item) {
+        this.log('Token(' + this.id + ').retry: item=' + item.id + ' ' + item.elementId);
+        this.status = TOKEN_STATUS.running;
+        item.status = ITEM_STATUS.start;
+        const { error, code, ...kept } = (item.statusDetails ?? {}) as any;
+        item.statusDetails = Object.keys(kept).length ? kept : undefined;
+        const ret = await item.node.perform(item);
+        if (ret == NODE_ACTION.wait) {
+            this.status = TOKEN_STATUS.wait;
+            return;
+        }
+        if (ret == NODE_ACTION.error)
+            return;
+        if (ret == NODE_ACTION.abort) {
+            await this.execution.terminate();
+            return;
+        }
+        if (ret == NODE_ACTION.end) {
+            this.status = TOKEN_STATUS.end;
+            return;
+        }
+        return this.goNext();
+    }
     addItemToPath(item) {
         this.path.push(item);
         this.setCurrentNode(item.node);

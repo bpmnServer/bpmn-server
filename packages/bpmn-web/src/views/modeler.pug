@@ -33,7 +33,8 @@ html(lang="en")
                 span#js-problems-counts.problems-counts
               button#js-tab-report.dock-tab(type="button" role="tab" aria-selected="false" aria-controls="js-report") Report
               button#js-tab-test.dock-tab(type="button" role="tab" aria-selected="false" aria-controls="js-test") Test
-              button#js-tab-history.dock-tab(type="button" role="tab" aria-selected="false" aria-controls="js-history") History
+              if modelHistory
+                button#js-tab-history.dock-tab(type="button" role="tab" aria-selected="false" aria-controls="js-history") History
               span#js-problems-status.problems-status(role="status")
               .dock-actions
                 button#js-lint-rules-open(type="button" title="The modeling rules (bpmnlint) checked for every designer") Rules
@@ -43,7 +44,8 @@ html(lang="en")
               ul#js-problems.problems-list(role="tabpanel" aria-label="Problems")
               #js-report.dock-report(role="tabpanel" aria-label="Report")
               #js-test.dock-test(role="tabpanel" aria-label="Test")
-              #js-history.dock-history(role="tabpanel" aria-label="History")
+              if modelHistory
+                #js-history.dock-history(role="tabpanel" aria-label="History")
         #js-panel-resizer.modeler-resizer(title="Drag to resize the properties panel")
           button#js-panel-toggle(type="button" title="Show or hide the properties panel" aria-label="Show or hide the properties panel")
         #js-properties-panel.modeler-panel

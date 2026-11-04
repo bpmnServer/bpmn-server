@@ -85,7 +85,7 @@ export class Model extends Common {
 
             console.log('adding ' + processName);
 
-            let view = new ModelerWProp();
+            let view = new ModelerWProp(bpmnServer);
 
             view.displayNew(processName, request, response);
 
@@ -264,7 +264,7 @@ export class Model extends Common {
             }
             title = processName;
 
-            let view = new ModelerWProp();
+            let view = new ModelerWProp(bpmnServer);
 
             response.setHeader('Content-Security-Policy', `frame-ancestors 'self' ${process.env.ITSM_HOST}`);
             view.display(processName,xml, request, response);
@@ -463,7 +463,7 @@ export class Model extends Common {
             const xml = exists ? FS.readFileSync(file, 'utf8') : newDecision(name);
             response.render('decision', {
                 name, exists,
-                modelJson: JSON.stringify(xml).replace(/</g, '<'),
+                modelJson: JSON.stringify(xml).replace(/</g, '\\u003c'),
                 cspHost: process.env.ITSM_HOST,
             });
         }));
@@ -480,7 +480,7 @@ export class Model extends Common {
         }));
 
         // ---- the connectors a designer may use (enabled, for the designer's groups), with their enabled operations:
-        // what a service task's Connector fields offer (work/connectors.md)
+        // what a service task's Connector fields offer (docs/docs/connectors.md)
         router.get('/connectors', awaitHandlerFactory(async (request, response) => {
             const connectors = bpmnServer.connectors;
             if (!connectors)

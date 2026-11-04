@@ -1,5 +1,5 @@
 /**
- * OpenAPI 3.0 and 3.1 documents, as connectors use them (work/connectors.md): parsed from JSON or YAML, their
+ * OpenAPI 3.0 and 3.1 documents, as connectors use them (docs/docs/connectors.md): parsed from JSON or YAML, their
  * local `$ref`s resolved, and their operations listed by operationId with what calling one needs.
  */
 import { parse as parseYaml } from 'yaml';

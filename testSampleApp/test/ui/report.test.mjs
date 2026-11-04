@@ -225,3 +225,30 @@ test('the report text holds the whole model: every value of every sample model, 
     }
     assert.deepEqual(missing, []);
 });
+
+test('an instance\'s page shows the same report as the editor (of the instance\'s model)', async () => {
+    const xml = fs.readFileSync(path.join(FIXTURES, '..', 'fixtures', 'buy-used-car.bpmn'), 'utf8');
+    const { page, close } = await openReport('report-instance', xml);
+    // the editor's report of the model, not live (no problems, no title), as the instance's page shows it
+    const editor = await page.evaluate(() => {
+        const report = window.bpmnModeler.get('report');
+        const div = document.body.appendChild(document.createElement('div'));
+        div.append(report.document(window.bpmnModeler.getDefinitions(), false));
+        const text = div.innerText;
+        div.remove();
+        return text;
+    });
+    const { instance } = await web.bpmnServer.engine.start('report-instance', {});
+    await page.goto(`${web.base}/logout`).catch(() => {});
+    await page.context().clearCookies();
+    await page.goto(web.base + '/login');
+    await page.fill('#userName', 'admin');
+    await page.fill('#password', PASSWORD);
+    await Promise.all([page.waitForURL(url => !url.pathname.startsWith('/login')), page.click('button[type=submit]')]);
+    await page.goto(`${web.base}/instanceDetails?id=${instance.id}`);
+    await page.click('#showDoc');
+    await page.waitForSelector('#model-report .report-element');
+    assert.equal(await page.innerText('#model-report'), editor);
+    assert.ok(editor.includes('Buy'), 'a report of the model');
+    await close();
+});

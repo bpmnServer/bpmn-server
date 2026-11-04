@@ -130,6 +130,33 @@ class Engine extends ServerComponent implements IEngine{
 
 	}
 
+	/**
+	 * Runs a failed item's work again: an item whose status is `error` (its work threw; statusDetails.error says
+	 * why), and the instance on from it.
+	 */
+	public async retry(itemQuery, userName: string = null): Promise<Execution> {
+		this.assertOpen();
+		this.logger.log(`^Action:engine.retry`);
+		let execution;
+		this.runningCounter++;
+		this.callsCounter++;
+		try {
+			const item = await this.findOneItem(itemQuery);
+			execution = await this.restore(item.instanceId);
+			await execution.retry(item.id, userName);
+			await this.release(execution);
+			return execution;
+		}
+		catch (exc) {
+			return await this.exception(exc, execution);
+		}
+		finally {
+			this.runningCounter--;
+			if (execution && execution.isLocked)
+				await this.release(execution);
+		}
+	}
+
 	public async restart(itemQuery, data:any,userName, options={}) :Promise<Execution>  {
 
 		this.assertOpen();

@@ -149,8 +149,11 @@ catches it:
 Without one, the instance ends, as it does for a service's BPMN error. The run's decisions say which status
 raised which error.
 
-**No answer** (the network, the timeout), or a connector or operation that is missing or disabled, fails the
-task with the reason, as a service that throws does.
+**No answer** (the network, the timeout), or a connector or operation that is missing or disabled, is an
+exception, as for a service that throws: the task's status is `error` with the reason, and **Retry** on the
+instance's page calls it again ([Throwing Exceptions](execution.md#throwing-exceptions)). With **Exceptions raise
+a BPMN error** checked on the task, it is a BPMN error instead: a boundary error event with no error catches it,
+or one whose `errorCode` is the exception's code (`ECONNREFUSED`, `ETIMEDOUT`).
 
 In **demo mode** (`DEMO_MODE=true`), connectors are not called: the task ends with no output, and the run's
 decisions say so.

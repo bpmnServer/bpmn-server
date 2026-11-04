@@ -1,11 +1,27 @@
 // Service and script tasks as bpmn-server runs them: a service task calls a service by name (Tasks.ts reads
 // implementation, then camunda:delegateExpression), a script task runs JavaScript with the item as `this`.
-import { Group } from '@bpmn-io/properties-panel';
+import { Group, CheckboxEntry, isCheckboxEntryEdited } from '@bpmn-io/properties-panel';
+import { useService } from 'bpmn-js-properties-panel';
 import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { attributeEntry } from './AttributeEntry.jsx';
 import { formatEntry } from './FormatEntry.jsx';
 import { codeEntry } from './code/CodeEntry.jsx';
 import { callsEntry, connectorEntries, getConnector } from './ConnectorEntries.jsx';
+
+function ExceptionsAsErrorsField({ element, id }) {
+    const modeling = useService('modeling');
+    const translate = useService('translate');
+    return <CheckboxEntry
+        element={element}
+        id={id}
+        label={translate('Exceptions raise a BPMN error')}
+        description={translate('When the service or connector can not be called, or the script throws, a BPMN error is raised: its code is the exception\'s code (ECONNREFUSED, ETIMEDOUT), else its name (TypeError). An error event with no error catches any. Unchecked, the instance stops at the task, which can be retried.')}
+        getValue={() => Boolean(getBusinessObject(element).get('camunda:exceptionsAsErrors'))}
+        setValue={value => modeling.updateProperties(element, { 'camunda:exceptionsAsErrors': value || undefined })}
+    />;
+}
+
+const exceptionsEntry = element => ({ id: 'exceptions-as-errors', element, component: ExceptionsAsErrorsField, isEdited: isCheckboxEntryEdited });
 
 export function ServiceGroup(element, translate) {
     if (!is(element, 'bpmn:ServiceTask') && !is(element, 'bpmn:SendTask'))
@@ -23,7 +39,8 @@ export function ServiceGroup(element, translate) {
                     id: 'service-name', attribute, label: 'Service name',
                     description: 'A service of the application\'s services provider, e.g. notifyManager'
                 })
-            ])
+            ]),
+            exceptionsEntry(element)
         ]
     };
 }
@@ -44,7 +61,8 @@ export function ScriptGroup(element, translate) {
                 setValue: (text, { modeling }) => modeling.updateProperties(element, {
                     scriptFormat: getBusinessObject(element).get('scriptFormat') || 'JavaScript', script: text || undefined
                 })
-            })
+            }),
+            exceptionsEntry(element)
         ]
     };
 }

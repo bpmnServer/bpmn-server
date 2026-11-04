@@ -325,7 +325,7 @@ class ModelVerifier {
     }
 
     /**
-     * A task that calls a connector (work/connectors.md): it names `<connector>/<operationId>`, and no service; with a
+     * A task that calls a connector (docs/docs/connectors.md): it names `<connector>/<operationId>`, and no service; with a
      * server, the connector and the operation are there and enabled, the operation's required inputs are given, and
      * every input is one of the operation's.
      */

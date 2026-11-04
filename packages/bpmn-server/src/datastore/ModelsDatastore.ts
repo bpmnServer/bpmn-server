@@ -113,8 +113,13 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
         }
     }
 
+    /** Is a version kept for each save (`modelHistory`, default true)? */
+    get keepsHistory() { return this.server.configuration.modelHistory !== false; }
+
     /** Keeps a save in the model's history; a history that can not be written does not fail the save. */
     protected async keepVersion(history: ModelHistory, name, bpmn, savedBy, before) {
+        if (!this.keepsHistory)
+            return;
         try {
             await history.keep(name, bpmn, savedBy, before);
         }

@@ -75,6 +75,8 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 		// DEMO_MODE=true: a public demo. Scripts run in a sandbox, timers and service tasks do not run.
 		scriptHandler: () => isTrue('DEMO_MODE') ? new SandboxScriptHandler() : new ScriptHandler(),
 		demo: isTrue('DEMO_MODE'),
+		// MODEL_HISTORY=false: saves keep no versions, and the editor has no History tab
+		modelHistory: process.env.MODEL_HISTORY?.toLowerCase() !== 'false',
 		cacheManager: server => new NoCacheManager(server),
 		...engineEnv,
 		...settings,

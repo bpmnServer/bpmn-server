@@ -1,4 +1,4 @@
-// A service task that calls a connector (work/connectors.md): a REST API the administrator added, named with one of
+// A service task that calls a connector (docs/docs/connectors.md): a REST API the administrator added, named with one of
 // its operations, `<connector>/<operationId>`, in camunda:connector, with the connector's own input/output
 // parameters. The panel shows what the task calls; the connector wizard (connectors/Wizard.jsx) sets it up: the
 // operation found by a search, its inputs, the parts of the response kept.

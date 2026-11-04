@@ -12,6 +12,9 @@ and here
 
 ### Changed
 -->
+## Release 3.5.2 (2026-11-04)
+No changes to bpmn-client; released with bpmn-server and bpmn-web 3.5.2, which share its version.
+
 ## Release 3.5.1 -- 2026-11-02
 ### Fixed
 - `bpmn-client-cli`: `lm` (list models) failed with the admin key's error. `definitions.list()` now reads

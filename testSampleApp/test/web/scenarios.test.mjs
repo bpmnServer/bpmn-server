@@ -41,7 +41,7 @@ test('scenarios are kept per model', async () => {
 
 test('scenarios are files beside the model, their runs apart; none left: no file', async () => {
     const file = path.join(web.definitionsPath, 'leave-request.tests.json');
-    const runsFile = path.join(web.definitionsPath, '.runs', 'leave-request.tests.json');
+    const runsFile = path.join(web.definitionsPath, '.runs', 'leave-request.runs.json');
     const RUN = { instanceId: 'test-1', at: '2026-11-03T10:00:00.000Z', how: 'run', ok: true };
     let res = await designer.request('PUT', '/model/scenarios/leave-request', { json: { scenarios: [{ ...SHORT, runs: [RUN] }, LONG] } });
     assert.equal(res.status, 200, why(res));
@@ -78,6 +78,37 @@ test('every save of a model is kept: listed, read, purged; for designers only', 
     assert.equal(JSON.parse((await designer.request('DELETE', '/model/history/leave-request')).text).purged, 3);
     versions = JSON.parse((await designer.get('/model/history/leave-request')).text).versions;
     assert.deepEqual(versions, []);
+});
+
+test('modelHistory off (MODEL_HISTORY=false): saves keep no versions, and the editor has no History tab', async () => {
+    const configuration = web.bpmnServer.configuration;
+    assert.match((await designer.get('/model/edit/leave-request')).text, /id="js-tab-history"/);
+    configuration.modelHistory = false;
+    try {
+        const source = fs.readFileSync(path.join(web.definitionsPath, 'leave-request.bpmn'), 'utf8');
+        const res = await designer.request('POST', '/model/edit/leave-request', { json: { processId: 'leave-request', bpmn: source.replace('isExecutable="true"', 'isExecutable="true" '), svg: '<svg/>' } });
+        assert.equal(res.status, 200);
+        assert.deepEqual(JSON.parse((await designer.get('/model/history/leave-request')).text).versions, []);
+        const page = (await designer.get('/model/edit/leave-request')).text;
+        assert.doesNotMatch(page, /js-tab-history|js-history/);
+        assert.match(page, /id="js-tab-test"/);
+        await designer.request('POST', '/model/edit/leave-request', { json: { processId: 'leave-request', bpmn: source, svg: '<svg/>' } });
+    }
+    finally {
+        configuration.modelHistory = true;
+    }
+});
+
+test('runs kept under the older name (.runs/<model>.tests.json) are moved to .runs/<model>.runs.json', async () => {
+    const runs = path.join(web.definitionsPath, '.runs');
+    const RUN = { instanceId: 'test-old', at: '2026-11-01T10:00:00.000Z', how: 'run', ok: true };
+    fs.rmSync(path.join(runs, 'leave-request.runs.json'), { force: true });
+    fs.mkdirSync(runs, { recursive: true });
+    fs.writeFileSync(path.join(runs, 'leave-request.tests.json'), JSON.stringify({ [SHORT.name]: [RUN] }));
+    const loaded = JSON.parse((await designer.get('/model/scenarios/leave-request')).text).scenarios;
+    assert.deepEqual(loaded.find(s => s.name === SHORT.name).runs, [RUN]);
+    assert.ok(fs.existsSync(path.join(runs, 'leave-request.runs.json')));
+    assert.ok(!fs.existsSync(path.join(runs, 'leave-request.tests.json')));
 });
 
 test('the steps choose the path, and what is expected is checked', async () => {

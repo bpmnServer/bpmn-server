@@ -1,5 +1,5 @@
 /**
- * Connectors (work/connectors.md): REST APIs, each described by an OpenAPI document, that an administrator adds to
+ * Connectors (docs/docs/connectors.md): REST APIs, each described by an OpenAPI document, that an administrator adds to
  * the server with an authorization key. A service task names one and an operation, `<connector>/<operationId>`
  * (camunda:connector); the server calls it.
  *

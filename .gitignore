@@ -1,3 +1,6 @@
 node_modules/
 # apps made with bpmn-server init while trying it
 my-new-app*/
+
+# notes and drafts: kept in bpmn-internal/work
+work/

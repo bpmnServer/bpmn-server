@@ -1,4 +1,4 @@
-// The Connectors pages of the administration dashboard (work/connectors.md): a connector added from its OpenAPI
+// The Connectors pages of the administration dashboard (docs/docs/connectors.md): a connector added from its OpenAPI
 // document, its key set (never shown again), its operations chosen, its connection tested, and deleted. Only
 // administrators reach them. A local API stands for the connector's server.
 import test from 'node:test';

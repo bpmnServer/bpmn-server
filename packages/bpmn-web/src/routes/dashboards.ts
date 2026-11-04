@@ -284,7 +284,7 @@ export class Dashboards extends Common {
             }
         }));
 
-        // ---- connectors: REST APIs (OpenAPI) that service tasks call, added with their keys (work/connectors.md)
+        // ---- connectors: REST APIs (OpenAPI) that service tasks call, added with their keys (docs/docs/connectors.md)
         const connectors = () => server.connectors;
         const backToConnectors = (res, message: string, id?: string) =>
             res.redirect(`/dashboard/admin/connectors${id ? '/' + encodeURIComponent(id) : ''}?message=` + encodeURIComponent(message));

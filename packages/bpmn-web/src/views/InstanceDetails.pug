@@ -2,6 +2,7 @@ extends layout
 
 block content
   link(rel="stylesheet", href="/stylesheets/instance-details.css")
+  link(rel="stylesheet", href="/modeler/report.css")
   - var docs = JSON.parse(definition || '{}');
   - var info = (logs || []).filter(l => l.type === 'info');
   include includes/dates.pug
@@ -46,7 +47,11 @@ block content
             dd #{instance.name}
           div
             dt Status
-            dd: span.status-badge(class=lastItem && lastItem.status === 'wait' ? 'status-wait' : 'status-end') #{lastItem ? lastItem.status : 'Unknown'}
+            - const failedItem = (items || []).find(i => i.status === 'error');
+            if failedItem
+              dd: span.status-badge.status-error(title=failedItem.statusDetails && failedItem.statusDetails.error) failed at #{failedItem.name || failedItem.elementId}
+            else
+              dd: span.status-badge(class=lastItem && lastItem.status === 'wait' ? 'status-wait' : 'status-end') #{lastItem ? lastItem.status : 'Unknown'}
           div
             dt Started
             dd #{prettyDate(instance.startedAt) || '—'}
@@ -128,10 +133,18 @@ block content
                 td #{item.name} #{key}
                 td.instance-nowrap #{prettyDate(item.startedAt)}
                 td.instance-nowrap #{prettyDate(item.endedAt)}
-                td: span.status-badge(class=item.status === 'wait' ? 'status-wait' : 'status-end') #{item.status}
+                td
+                  span.status-badge(class=item.status === 'wait' ? 'status-wait' : item.status === 'error' ? 'status-error' : 'status-end') #{item.status}
+                  if item.status === 'error' && item.statusDetails && item.statusDetails.error
+                    div.item-error #{item.statusDetails.error}
                 td.instance-nowrap #{item.type}
                 td #{item.userName}
                 td.instance-actions
+                  if item.status === 'error' && user && user.isAdmin()
+                    form.retry-form(action="/retryItem" method="post")
+                      input(type="hidden" name="_csrf" value=_csrf)
+                      input(type="hidden" name="itemId" value=item.id)
+                      button.btn.btn-primary.btn-xs(type="submit" title="Run the task's work again") Retry
                   if label
                     a.btn.btn-primary.btn-xs(href=`/invokeItem${ref}`) #{label}
                     if label2
@@ -148,11 +161,13 @@ block content
 
     section.instance-card.instance-collapsible(aria-labelledby="docs-heading")
       .instance-card-heading
-        h2#docs-heading Model documentation
-        button#showDoc.btn.btn-default(type="button", onclick="showDocs()", aria-expanded="false", aria-controls="docs", aria-label="Toggle model documentation")
+        h2#docs-heading Model report
+        button#showDoc.btn.btn-default(type="button", onclick="showDocs()", aria-expanded="false", aria-controls="docs", aria-label="Toggle the model report")
           i.fa.fa-chevron-down(aria-hidden="true")
-      #docs.instance-table-scroll(hidden)
-        include includes/modelDoc.pug
+      #docs.instance-report(hidden)
+        script(type="application/json" data-report-source="model-report")!= modelJson
+        #model-report
+      script(src="/modeler/report.js" defer)
 
     section.instance-card.instance-collapsible(aria-labelledby="logs-heading")
       .instance-card-heading
