@@ -60,15 +60,16 @@ export class UserService implements IUserService {
 
 	}
 	/**
-	 * The first user (admin, password admin), only when there are no users at all. start() runs this on every
-	 * start: a server whose users have other names must not gain an administrator with a known password.
-	 * Returns true when it made the user.
+	 * The first user: admin, with the password ADMIN_PASSWORD (a server's install sets it), else 'admin'; only when
+	 * there are no users at all. start() runs this on every start: a server whose users have other names must not
+	 * gain an administrator with a known password. Returns true when it made the user.
 	 */
 	async install(): Promise<boolean> {
 		if (await User.countDocuments({}) > 0)
 			return false;
-		console.log(` adding new User for 'admin'  password: 'admin'`);
-		await this.addUser('admin', 'admin@mySite.com', 'admin', ['ADMIN']);
+		const password = process.env.ADMIN_PASSWORD || 'admin';
+		console.log(` adding new User for 'admin'  password: ${process.env.ADMIN_PASSWORD ? '(ADMIN_PASSWORD)' : "'admin'"}`);
+		await this.addUser('admin', 'admin@mySite.com', password, ['ADMIN']);
 		return true;
     }
 

@@ -22,6 +22,18 @@ models. (`init` ships with bpmn-server 3.5.)
 npm update bpmn-server bpmn-web
 ```
 
+### On a server, in one line
+
+On a new Linux server (Ubuntu 22.04 or 24.04), one line installs everything (Node.js, MongoDB, the application,
+nginx, a service; HTTPS with `--domain`) and prints the address and a generated admin password:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/deploy/install.sh | sudo bash
+```
+
+It also works as a cloud server's launch script (AWS Lightsail's "Add launch script"). See
+[deploy/](https://github.com/bpmnServer/bpmn-server/tree/main/deploy).
+
 ## The source, with the sample application
 
 bpmn-server, bpmn-client, bpmn-web, the sample application (`sampleApp`) and the working application with the tests (`testSampleApp`) are one repository, [bpmnServer/bpmn-server](https://github.com/bpmnServer/bpmn-server):

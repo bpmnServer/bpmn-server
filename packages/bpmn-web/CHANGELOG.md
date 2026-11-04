@@ -59,6 +59,8 @@ and here
   REST APIs from a review or release process elsewhere. The admin APIs stay on.
 - `DISABLE_SIGNUP=true`: no self-registration; `/signup` answers 404 and the pages drop their sign-up links.
   Administrators add accounts from the admin dashboard or `npm run cli`.
+- `npm run setup` makes the first user, admin, with the password `ADMIN_PASSWORD` when it is set (else
+  `admin`). The repository's `deploy/install.sh` installs a server in one line with a generated one.
 
 ### Fixed
 - `start()` added the user admin (password admin, group ADMIN) on every start to any database without a user

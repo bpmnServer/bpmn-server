@@ -85,7 +85,8 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 }
 
 /**
- * The database's indexes, and the first user (admin, password admin) when there are no users at all. Not with guests
+ * The database's indexes, and the first user (admin, password ADMIN_PASSWORD, else admin) when there are no users at
+ * all. Not with guests
  * (GUEST_ACCESS): a public demo has no account with a known password, which would design the models every new
  * guest starts with.
  */
@@ -163,9 +164,11 @@ export async function start(options: StartOptions = {}) {
 	if (options.setupOnly) {
 		console.log(guestAccess()
 			? 'setup done: the database is ready; visitors are guests (GUEST_ACCESS), no admin user is made'
-			: madeAdmin
-				? 'setup done: the database is ready; sign in as admin (password admin) and change the password'
-				: 'setup done: the database is ready; it already has users, none was added');
+			: !madeAdmin
+				? 'setup done: the database is ready; it already has users, none was added'
+				: process.env.ADMIN_PASSWORD
+					? 'setup done: the database is ready; sign in as admin with the password ADMIN_PASSWORD gave'
+					: 'setup done: the database is ready; sign in as admin (password admin) and change the password');
 		await webApp.bpmnServer.shutdown();
 		process.exit(0);
 	}
