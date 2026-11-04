@@ -12,6 +12,15 @@ and here
 
 ### Changed
 -->
+## Unreleased
+### Added
+- **Extra columns in the Instances list and the Pending Tasks table:** `INSTANCE_COLUMNS` and `TASK_COLUMNS`
+  (`Label:field` pairs, comma-separated; `field` is a path in the instance data, e.g. `customer.name`), or
+  `start({ listColumns: { instances, tasks } })`, which wins for a table it names. They follow Case Id; a task's
+  values come from its instance's data. A missing field is empty, a list or object is shown as text, values are
+  escaped, and an entry that is not `Label:field` is left out with a `[config]` warning. Without them the tables
+  are as before (`runtime/listColumns.ts`; the types `IListColumn` and `IListColumns` are exported).
+
 ## Release 3.5.2 (2026-11-04)
 ### Added
 - **Connectors** (needs bpmn-server with connectors): Administration → Connectors (`/dashboard/admin/connectors`)
