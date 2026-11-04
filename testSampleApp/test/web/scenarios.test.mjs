@@ -62,7 +62,7 @@ test('scenarios are files beside the model, their runs apart; none left: no file
     await designer.request('PUT', '/model/scenarios/leave-request', { json: { scenarios: [SHORT, LONG] } });
 });
 
-test('every save of a model is kept: listed, read, purged; for designers only', async () => {
+test('every save of a model is kept: listed, read, one deleted, purged; for designers only', async () => {
     const source = fs.readFileSync(path.join(web.definitionsPath, 'leave-request.bpmn'), 'utf8');
     const save = xml => designer.request('POST', '/model/edit/leave-request', { json: { processId: 'leave-request', bpmn: xml, svg: '<svg/>' } });
     assert.equal((await save(source.replace('isExecutable="true"', 'isExecutable="true" '))).status, 200);
@@ -76,7 +76,13 @@ test('every save of a model is kept: listed, read, purged; for designers only', 
     assert.equal((await designer.get('/model/history/..%2Fx')).status, 400);
     assert.notEqual((await staff.get('/model/history/leave-request')).status, 200, 'not for staff');
 
-    assert.equal(JSON.parse((await designer.request('DELETE', '/model/history/leave-request')).text).purged, 3);
+    assert.notEqual((await staff.request('DELETE', '/model/history/leave-request/2')).status, 200, 'staff delete no version');
+    // one version deleted; then a version that is not there, and one that is not a number
+    assert.equal(JSON.parse((await designer.request('DELETE', '/model/history/leave-request/2')).text).deleted, 2);
+    assert.equal((await designer.request('DELETE', '/model/history/leave-request/2')).status, 404);
+    assert.equal((await designer.request('DELETE', '/model/history/leave-request/x')).status, 400);
+    assert.deepEqual(JSON.parse((await designer.get('/model/history/leave-request')).text).versions.map(v => v.version), [3, 1], 'the others keep their numbers');
+    assert.equal(JSON.parse((await designer.request('DELETE', '/model/history/leave-request')).text).purged, 2);
     versions = JSON.parse((await designer.get('/model/history/leave-request')).text).versions;
     assert.deepEqual(versions, []);
 });

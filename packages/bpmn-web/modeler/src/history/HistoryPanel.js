@@ -3,7 +3,10 @@
 // text (the Report tab's outline of the whole model: Report.text), its changed lines shown with the element and
 // process they are in; and the elements moved or resized on the diagram, which the text does not hold. The newer
 // version's diagram shows each element marked: + added, M changed (or moved), and the removed ones drawn where
-// they were, dashed, with −. Restore loads a saved version into the editor, unsaved: Save keeps it as a new version,
+// they were, dashed, with −. View shows one version alone, read only: its diagram, and its report in the tab. A
+// diagram (a version's, or the compared ones', marked) opens in the main area, over the editor, until Close. Delete
+// removes one saved version (the others keep their numbers). Restore
+// loads a saved version into the editor, unsaved: Save keeps it as a new version,
 // so the history keeps every version and a restore can itself be undone. Purge history removes every saved version
 // (the model itself stays).
 import NavigatedViewer from 'bpmn-js/lib/NavigatedViewer';
@@ -68,6 +71,22 @@ export default class HistoryPanel {
 
     hide() {
         this._visible = false;
+        if (this._stage)
+            this._stage.hidden = true;
+    }
+
+    /** The main area's view of a version or a comparison: over the editor's canvas, until Close. */
+    get stage() {
+        if (!this._stage) {
+            this._stage = el('div', { class: 'history-stage', hidden: true });
+            document.querySelector(this._config.stage || '#js-canvas')?.append(this._stage);
+        }
+        return this._stage;
+    }
+
+    close() {
+        this._comparison = null;
+        this.render();
     }
 
     async load() {
@@ -118,7 +137,22 @@ export default class HistoryPanel {
             await this.drawDiagram(this._comparison);
     }
 
-    /** The newer version's diagram, its elements marked: + added, M changed or moved, − removed (where they were). */
+    /** One version alone: its diagram (read only) and its report text; nothing compared. */
+    async view(version) {
+        this._ticked = [];      // one version, not a comparison
+        try {
+            const xml = await this.source(version);
+            const { rootElement } = await this._moddle.fromXML(xml);
+            this._comparison = { view: version, xml, definitions: rootElement };
+        } catch (err) {
+            this._comparison = { view: version, error: err.message };
+        }
+        this.render();
+        if (this._comparison.xml)
+            await this.drawDiagram(this._comparison);
+    }
+
+    /** A version's diagram; compared, the newer one's elements marked: + added, M changed or moved, − removed (where they were). */
     async drawDiagram({ xml, diagram }) {
         if (!this._viewer) {
             this._diagramHost = el('div', { class: 'history-diagram' });
@@ -139,13 +173,13 @@ export default class HistoryPanel {
             const badge = el('span', { class: `history-badge ${kind}`, title, 'data-id': id, onclick: () => this.reveal(id) }, sign);
             overlays.add(id, 'history', { position: { top: -10, right: 10 }, html: badge });
         };
-        diagram.added.forEach(id => mark(id, 'added', '+', 'added'));
-        diagram.changed.forEach(id => mark(id, 'changed', 'M', 'changed'));
-        diagram.moved.forEach(id => mark(id, 'moved', 'M', 'moved or resized'));
+        diagram?.added.forEach(id => mark(id, 'added', '+', 'added'));
+        diagram?.changed.forEach(id => mark(id, 'changed', 'M', 'changed'));
+        diagram?.moved.forEach(id => mark(id, 'moved', 'M', 'moved or resized'));
         // the removed ones, drawn where they were in the older version
         const layer = canvas.getLayer('history-removed', 1);
         layer.replaceChildren();
-        for (const removed of diagram.removed) {
+        for (const removed of diagram?.removed ?? []) {
             const title = svg('title', {});
             title.textContent = `removed: ${removed.type} ${removed.name || removed.id}`;
             const group = svg('g', { class: 'history-removed', 'data-id': removed.id });
@@ -194,6 +228,23 @@ export default class HistoryPanel {
         this.render();
     }
 
+    /** One saved version removed; the others keep their numbers, and the model in the editor stays. */
+    async deleteVersion(version) {
+        if (!window.confirm(`Delete version ${version} of '${this._config.processName}'? The other versions and the model stay.`))
+            return;
+        try {
+            const response = await fetch(`${this._url}/${version}`, { method: 'DELETE' });
+            if (!response.ok)
+                throw new Error(`${response.status} ${response.statusText}`);
+        } catch (err) {
+            window.alert(`Version ${version} was not deleted: ${err.message}`);
+            return;
+        }
+        if (this._comparison && [this._comparison.view, this._comparison.before, this._comparison.after].includes(version))
+            this._comparison = null;
+        this.load();
+    }
+
     async purge() {
         if (!window.confirm(`Delete all ${this._versions.length} saved versions of '${this._config.processName}'? The model itself stays.`))
             return;
@@ -240,21 +291,54 @@ export default class HistoryPanel {
                 el('tbody', {},
                     row(CURRENT, ['Current', this._restored != null ? `version ${this._restored}, not saved` : 'in the editor', '', '', '']),
                     this._versions.map(v => row(v.version, [String(v.version), when(v.savedAt), v.savedBy ?? '', size(v.size),
-                        el('button', { type: 'button', class: 'history-restore', 'data-version': String(v.version),
-                            title: `Load version ${v.version} into the editor`, onclick: () => this.restore(v.version) }, 'Restore')])))),
+                        el('span', { class: 'history-row-actions' },
+                            el('button', { type: 'button', class: 'history-view', 'data-version': String(v.version),
+                                title: `Show version ${v.version}`, onclick: () => this.view(v.version) }, 'View'),
+                            el('button', { type: 'button', class: 'history-restore', 'data-version': String(v.version),
+                                title: `Load version ${v.version} into the editor`, onclick: () => this.restore(v.version) }, 'Restore'),
+                            el('button', { type: 'button', class: 'history-delete', 'data-version': String(v.version),
+                                title: `Delete version ${v.version}`, onclick: () => this.deleteVersion(v.version) }, 'Delete'))])))),
             this._versions.length ? null : el('p', { class: 'history-note' }, 'No saved versions yet: each save keeps one.'),
             this._restored != null
                 ? el('p', { class: 'history-restored' }, `Version ${this._restored} is in the editor, not saved: Save to keep it as a new version.`)
                 : null,
-            el('p', { class: 'history-note' }, 'Tick two to compare them. Restore loads a version into the editor; Save keeps it.'));
+            el('p', { class: 'history-note' }, 'View shows a version. Tick two to compare them. Restore loads a version into the editor; Save keeps it.'));
 
         this._root.replaceChildren(el('div', { class: 'history-panel' }, list, this.renderComparison(label)));
+        this.renderStage(label);
+    }
+
+    /** The diagram in the main area: the version viewed, or the newer compared one, marked; with its bar. */
+    renderStage(label) {
+        const c = this._comparison;
+        const stage = this.stage;
+        if (!c || c.error || !this._diagramHost || !this._visible) {
+            stage.hidden = true;
+            return;
+        }
+        const version = c.view !== undefined ? this._versions.find(v => v.version === c.view) : null;
+        const bar = el('div', { class: 'history-stage-bar' },
+            el('h4', {}, c.view !== undefined ? label(c.view) : `${label(c.before)} → ${label(c.after)}, marked`,
+                version ? el('span', { class: 'history-id' }, ` saved ${when(version.savedAt)}${version.savedBy ? ' by ' + version.savedBy : ''}`) : null),
+            c.view === undefined ? el('span', { class: 'history-legend' },
+                el('span', { class: 'history-badge added' }, '+'), ' added  ',
+                el('span', { class: 'history-badge changed' }, 'M'), ' changed  ',
+                el('span', { class: 'history-badge moved' }, 'M'), ' moved or resized  ',
+                el('span', { class: 'history-badge removed' }, '−'), ' removed (dashed, where it was)') : null,
+            el('span', { class: 'history-stage-actions' },
+                c.view !== undefined && c.view !== CURRENT
+                    ? el('button', { type: 'button', class: 'history-restore', onclick: () => this.restore(c.view) }, 'Restore this version') : null,
+                el('button', { type: 'button', class: 'history-close', onclick: () => this.close() }, 'Close')));
+        stage.replaceChildren(bar, this._diagramHost);
+        stage.hidden = false;
     }
 
     renderComparison(label) {
         const c = this._comparison;
         if (!c)
             return el('div', { class: 'history-comparison empty' });
+        if (c.view !== undefined)
+            return this.renderView(label);
         const title = el('h4', {}, `${label(c.before)} → ${label(c.after)}`);
         if (c.error)
             return el('div', { class: 'history-comparison' }, title, el('p', { class: 'history-error' }, 'Could not compare: ' + c.error));
@@ -272,15 +356,19 @@ export default class HistoryPanel {
                 l.kind === 'added' ? '+ ' : l.kind === 'removed' ? '- ' : l.kind === 'skipped' ? '… ' : '  ', l.text))),
             c.moved.length ? el('section', { class: 'history-changes moved' }, el('h5', {}, `Moved or resized on the diagram (${c.moved.length})`),
                 el('ul', {}, c.moved.map(e => el('li', {}, name(e))))) : null,
-            this._diagramHost && c.diagram ? el('section', { class: 'history-changes diagram' },
-                el('h5', {}, `${label(c.after)}, marked`),
-                el('p', { class: 'history-legend' },
-                    el('span', { class: 'history-badge added' }, '+'), ' added  ',
-                    el('span', { class: 'history-badge changed' }, 'M'), ' changed  ',
-                    el('span', { class: 'history-badge moved' }, 'M'), ' moved or resized  ',
-                    el('span', { class: 'history-badge removed' }, '−'), ' removed (dashed, where it was)'),
-                this._diagramHost) : null);
+            el('p', { class: 'history-note' }, `The diagram of ${label(c.after)}, its changes marked, is in the main area.`));
     }
 }
+
+/** A version viewed alone, in the tab: its report (its diagram is in the main area). */
+HistoryPanel.prototype.renderView = function (label) {
+    const c = this._comparison;
+    const title = el('h4', {}, `${label(c.view)}: report`);
+    if (c.error)
+        return el('div', { class: 'history-comparison history-view-of' }, title, el('p', { class: 'history-error' }, 'Could not show it: ' + c.error));
+    return el('div', { class: 'history-comparison history-view-of', 'data-version': String(c.view) },
+        title,
+        el('div', { class: 'history-report dock-report' }, this._report.document(c.definitions, false)));
+};
 
 HistoryPanel.$inject = ['config.history', 'eventBus', 'bpmnjs', 'moddle', 'elementRegistry', 'canvas', 'selection', 'report'];

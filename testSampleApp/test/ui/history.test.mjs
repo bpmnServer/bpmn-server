@@ -117,6 +117,18 @@ test('each save is listed with who saved it; two versions compared by their repo
     await page.evaluate(() => window.bpmnModeler.get('commandStack').undo());     // as it was, for the next test
 });
 
+test('View shows one version alone: its diagram in the main area, its report in the tab, without comparing', async () => {
+    await page.click('.history-view[data-version="1"]');
+    await page.waitForSelector('#js-canvas .history-stage:not([hidden]) .history-diagram .djs-shape');
+    assert.match(await page.innerText('.history-stage h4'), /^Version 1/);
+    assert.equal(await page.locator('.history-tick:checked').count(), 0, 'nothing ticked');
+    assert.equal(await page.locator('.history-stage .history-badge').count(), 0, 'nothing marked: not a comparison');
+    assert.match(await page.innerText('.history-view-of[data-version="1"] .history-report'), /process/i, 'its report');
+    await page.click('.history-stage .history-close');
+    assert.equal(await page.locator('.history-stage:not([hidden])').count(), 0, 'closed: the editor again');
+    assert.equal(await page.locator('.history-view-of').count(), 0);
+});
+
 test('Restore loads a version into the editor, unsaved; Save keeps it as a new version, the history whole', async () => {
     await save();       // the changes of the test before
     await page.waitForFunction(() => document.querySelectorAll('.history-versions tbody tr').length === 4);
@@ -141,12 +153,19 @@ test('Restore loads a version into the editor, unsaved; Save keeps it as a new v
     assert.equal(await name(), 'Check the request');
 });
 
+test('Delete removes one version; the others keep their numbers', async () => {
+    const before = (await rows()).map(r => r[0]);
+    await page.click('.history-delete[data-version="2"]');
+    await page.waitForFunction(n => document.querySelectorAll('.history-versions tbody tr').length === n, before.length - 1);
+    assert.deepEqual((await rows()).map(r => r[0]), before.filter(v => v !== '2'));
+});
+
 test('a save that changes nothing adds no version; Purge history empties the list', async () => {
-    await save();       // version 3, restored by the test before
-    await page.waitForFunction(() => document.querySelectorAll('.history-versions tbody tr').length === 6);
+    await save();       // version 3, restored by the tests before
+    await page.waitForFunction(() => document.querySelectorAll('.history-versions tbody tr').length === 5);
     await save();
     await page.waitForTimeout(500);
-    assert.equal((await rows()).length, 6, 'unchanged: no new version');
+    assert.equal((await rows()).length, 5, 'unchanged: no new version');
     await page.click('.history-purge');
     await page.waitForFunction(() => document.querySelectorAll('.history-versions tbody tr').length === 1);
     assert.match(await page.innerText('#js-history'), /No saved versions yet/);

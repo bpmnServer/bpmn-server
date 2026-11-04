@@ -28,6 +28,8 @@ and here
 ### Added
 - `flags.only` (engine.start's `options.flags`): the instance runs one element, the one it starts at
   (`startNodeId`), and ends once that element is done; a user task waits first. To test a task by itself.
+- `ModelsDatastore.deleteVersion(name, version)` (`ModelHistory.remove`): one saved version of a model removed; the
+  others keep their numbers. It takes its turn with the saves.
 
 ### Changed
 - Items are numbered from 1 (`item.seq`; it was from 0), as bpmn-web shows them. Instances already started

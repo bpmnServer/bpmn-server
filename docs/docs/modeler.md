@@ -112,15 +112,20 @@ Every save of a model is kept. The **History** tab lists the saved versions, new
 each was saved, and **Current**: the model in the editor, unsaved changes included. A save that changes nothing
 adds no version; the first save of a model saved before there was a history keeps the file as it was first.
 
+- **View** shows one version, read only: its diagram in the main area, over the editor, and its
+  [report](#report) in the tab. **Close** returns to the editor.
 - **Compare:** tick two versions. The older is compared with the newer by their [report](#report) as text: the
   lines removed and added, each shown under the element and the process it is in. What the text does not hold,
   the diagram's layout, is listed apart: the elements **moved or resized**, each with what changed (moved,
   resized, path changed, label moved) and a flow by its two ends. Clicking one selects it on the diagram.
-  Below, the newer version's diagram is marked: **+** added, **M** changed (amber) or only moved or resized
-  (grey), and the removed elements drawn dashed in red, with **−**, where they were.
+  The newer version's diagram opens in the main area, marked: **+** added, **M** changed (amber) or only moved or resized
+  (grey), and the removed elements drawn dashed in red, with **−**, where they were. **Close** returns to the
+  editor.
 - **Restore** loads a saved version into the editor in place of its model, unsaved: the status says so, and the
   editor's unsaved changes are replaced (you are asked first). **Save** keeps it as the newest version; nothing in
   the history is removed, so a restore is undone by restoring the version before it.
+- **Delete** removes one saved version (you are asked first). The other versions keep their numbers, and the model
+  stays as it is.
 - **Purge history** deletes every saved version of the model. The model itself stays.
 
 Renaming a model takes its history along; deleting a model deletes its history.

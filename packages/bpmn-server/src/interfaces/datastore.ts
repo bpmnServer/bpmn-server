@@ -77,6 +77,8 @@ interface IModelsDatastore {
     history?(name: string): Promise<{ version: number; savedAt: string; savedBy?: string; size: number }[]>;
     /** A saved version of a model, or null. */
     historySource?(name: string, version: number): Promise<string | null>;
+    /** Removes one saved version of a model; false when there is none. */
+    deleteVersion?(name: string, version: number): Promise<boolean>;
     /** Removes a model's history; returns how many versions it had. */
     purgeHistory?(name: string): Promise<number>;
 }

@@ -594,6 +594,14 @@ export class Model extends Common {
                 return response.status(404).json({ error: `'${request.params.process}' has no version ${version}` });
             response.type('application/xml').send(source);
         }));
+        router.delete('/history/:process/:version', awaitHandlerFactory(async (request, response) => {
+            const version = Number(request.params.version);
+            if (!isSafeModelName(request.params.process) || !Number.isInteger(version) || version < 1)
+                return response.status(400).json({ error: 'Invalid model name or version' });
+            if (!await definitions.deleteVersion?.(request.params.process, version))
+                return response.status(404).json({ error: `'${request.params.process}' has no version ${version}` });
+            response.json({ deleted: version });
+        }));
         router.delete('/history/:process', awaitHandlerFactory(async (request, response) => {
             if (!isSafeModelName(request.params.process))
                 return response.status(400).json({ error: 'Invalid model name' });

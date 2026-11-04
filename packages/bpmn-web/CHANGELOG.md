@@ -29,8 +29,11 @@ and here
   its run, Debug and checks as any other.
 - **Connectors list:** each connector's key with a link to set or change it (its page's key form), and Delete,
   whose confirmation names the models that use it.
-- **Restore in the History tab:** a saved version loaded into the editor, unsaved; Save keeps it as the newest
-  version, and no version is removed (a restore is undone by restoring the one before).
+- **History tab: View, Restore, Delete.** View shows one version without comparing: its diagram in the main area,
+  over the editor, and its report in the tab. Restore loads a saved version into the editor, unsaved; Save keeps
+  it as the newest version, and no version is removed. Delete removes one version (`DELETE
+  /model/history/<model>/<version>`); the others keep their numbers.
+- **History tab:** a comparison's marked diagram opens in the main area, over the editor, instead of in the tab.
 
 ### Changed
 - The model and decision editors have the pages' menu: Workbench, Dashboard (My work, Design, Administration),

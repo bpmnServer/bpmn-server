@@ -151,6 +151,10 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
     async historySource(name: string, version: number): Promise<string | null> {
         return this.modelHistory.source(name, version);
     }
+    /** Removes one saved version of the model; false when there is none. */
+    async deleteVersion(name: string, version: number): Promise<boolean> {
+        return this.modelHistory.remove(name, version);
+    }
     /** Removes the model's history; returns how many versions it had. */
     async purgeHistory(name: string): Promise<number> {
         return this.modelHistory.purge(name);

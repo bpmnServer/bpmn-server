@@ -140,6 +140,29 @@ export class ModelHistory {
         return { version, savedAt: stat.mtime.toISOString(), ...(savedBy ? { savedBy } : {}), size: stat.size };
     }
 
+    /**
+     * Removes one version; false when there is no such version. It takes its turn with the saves, so a save and a
+     * delete at once do not cross. The other versions keep their numbers.
+     */
+    async remove(name: string, version: number): Promise<boolean> {
+        const dir = this.dir(name);
+        const previous = ModelHistory.turns.get(dir) ?? Promise.resolve();
+        const turn = previous.catch(() => undefined).then(async () => {
+            const found = (await this.files(name)).filter(f => f.version === version);
+            for (const { file } of found)
+                await fs.promises.rm(path.join(dir, file), { force: true });
+            return found.length > 0;
+        });
+        ModelHistory.turns.set(dir, turn);
+        try {
+            return await turn;
+        }
+        finally {
+            if (ModelHistory.turns.get(dir) === turn)
+                ModelHistory.turns.delete(dir);
+        }
+    }
+
     /** Removes the model's history; returns how many versions it had. */
     async purge(name: string): Promise<number> {
         const count = (await this.files(name)).length;

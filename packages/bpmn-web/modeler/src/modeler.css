@@ -1133,11 +1133,13 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 }
 
 .history-panel { display: flex; min-height: 100%; font-size: 13px; }
-.history-list { flex: none; width: 420px; max-width: 50%; padding: 8px 12px; border-right: 1px solid #dcdfe4; box-sizing: border-box; }
+.history-list { flex: none; width: 520px; max-width: 60%; padding: 8px 12px; border-right: 1px solid #dcdfe4; box-sizing: border-box; }
 .history-actions { display: flex; gap: 6px; margin-bottom: 6px; }
 .history-panel button { font: inherit; font-size: 12px; padding: 3px 10px; border: 1px solid #c4c8cf; border-radius: 3px; background: #fff; cursor: pointer; }
 .history-panel button.primary { background: #1f62c8; border-color: #1f62c8; color: #fff; }
 .history-panel button:disabled { opacity: 0.5; cursor: default; }
+.history-row-actions { display: inline-flex; gap: 4px; }
+.history-row-actions button { padding: 1px 6px; font-size: 11px; }
 .history-restored { margin: 6px 0; padding: 4px 8px; border-left: 3px solid #1f62c8; background: #eef4fd; }
 .history-versions { width: 100%; border-collapse: collapse; }
 .history-versions th, .history-versions td { text-align: left; padding: 3px 6px; border-bottom: 1px solid #eceef1; white-space: nowrap; }
@@ -1166,8 +1168,16 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 .history-text .line.removed { background: #fdecea; color: #8a1c12; }
 .history-text .line.skipped { color: #8a8f98; font-style: italic; }
 
-/* the compared versions' diagram (HistoryPanel.drawDiagram): + added, M changed or moved, − removed */
-.history-diagram { height: 320px; border: 1px solid #dcdfe4; border-radius: 4px; background: #fff; margin-top: 4px; }
+/* a version's diagram, or the compared ones' (HistoryPanel.drawDiagram), in the main area over the editor's canvas:
+   + added, M changed or moved, − removed */
+.history-stage { position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column; background: #fff; }
+.history-stage[hidden] { display: none; }
+.history-stage-bar { display: flex; align-items: center; gap: 12px; padding: 6px 12px; border-bottom: 1px solid #dcdfe4; background: #f6f8fb; font-size: 13px; }
+.history-stage-bar h4 { margin: 0; font-size: 14px; }
+.history-stage-actions { margin-left: auto; display: flex; gap: 6px; }
+.history-stage button { font: inherit; font-size: 12px; padding: 3px 10px; border: 1px solid #c4c8cf; border-radius: 3px; background: #fff; cursor: pointer; }
+.history-stage .history-diagram { flex: 1; min-height: 0; }
+.history-diagram { height: 320px; background: #fff; }
 .history-legend { margin: 2px 0 4px; font-size: 12px; color: #52575f; }
 .history-badge { display: inline-block; min-width: 16px; padding: 0 4px; border-radius: 8px; color: #fff; font: 600 11px/16px sans-serif; text-align: center; cursor: pointer; }
 .history-badge.added { background: #1a7f37; }
