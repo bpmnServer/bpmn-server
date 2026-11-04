@@ -2,7 +2,7 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import { Execution } from '../engine/Execution.js';
 import { ServerComponent } from '../server/ServerComponent.js';
 import { EXECUTION_EVENT, EXECUTION_STATUS, ITEM_STATUS } from '../interfaces/Enums.js';
-import type { IEngine } from '../interfaces/server.js';
+import type { IEngine, IUpgradeReport, IUpgradeInstanceReport } from '../interfaces/server.js';
 import type { IItem } from '../interfaces/engine.js';
 
 /** Item statuses after which an item is not invoked again. */
@@ -645,6 +645,102 @@ class Engine extends ServerComponent implements IEngine{
 				}
 		}
 		return resIds;
+	}
+
+	/**
+	 * Moves the instances that have not ended onto their model's current saved source: a model saved again
+	 * (with the data store's saveSource, each instance runs the source it started with) reaches the instances
+	 * still running, not only those started afterwards. Unlike upgrade(), it needs no node ids and leaves the
+	 * ended instances alone: their source is the record of what ran.
+	 *
+	 * - The saved model must pass verifyModel; one with errors is refused and none of its instances changed.
+	 * - An instance on a step (waiting, or part-way) that the new model does not have would be stranded: it is
+	 *   left as it is and reported.
+	 * - Each instance changes under its instance lock and is checked again once the lock is held; one another
+	 *   call holds past the lock wait is reported as busy, to try again.
+	 *
+	 * @param models  the models to upgrade; none: every model that has instances still running
+	 * @param options dryRun: report what would change, change nothing
+	 */
+	async upgradeRunning(models: string[] = [], options: { dryRun?: boolean } = {}): Promise<IUpgradeReport[]> {
+		const { verifyModel } = await import('../elements/verifyModel.js');
+		const { Definition } = await import('../elements/Definition.js');
+		const ds = this.server.dataStore;
+		const ENDED: string[] = [EXECUTION_STATUS.end, EXECUTION_STATUS.terminated];
+		const OPEN: string[] = [ITEM_STATUS.wait, ITEM_STATUS.start, ITEM_STATUS.enter];
+
+		if (!models.length) {
+			const running = await ds.findInstances({ status: { $nin: ENDED } }, { projection: { name: 1 } });
+			models = [...new Set<string>(running.map(i => i.name))].sort();
+		}
+		const reports: IUpgradeReport[] = [];
+		for (const model of models) {
+			const report: IUpgradeReport = { model, instances: [] };
+			reports.push(report);
+			let source: string;
+			try {
+				source = await this.server.definitions.getSource(model);
+			}
+			catch (exc) {
+				report.refused = `no saved model: ${exc?.message ?? exc}`;
+				continue;
+			}
+			if (!source) {
+				report.refused = 'no saved model';
+				continue;
+			}
+			const check = await verifyModel(source, this.server, model);
+			if (!check.valid) {
+				const errors = check.issues.filter(i => i.severity === 'error').map(i => `${i.code}: ${i.message}`);
+				report.refused = `the saved model has errors (${errors.slice(0, 3).join('; ')}${errors.length > 3 ? '; …' : ''})`;
+				continue;
+			}
+			// the model's elements, loaded as verifyModel does: no events reach the application
+			const definition = new Definition(model, source, {
+				logger: this.logger, appDelegate: { moddleOptions: this.server.appDelegate?.moddleOptions },
+				listener: { emit: async () => { } },
+			} as any);
+			await definition.load();
+			const exists = (id: string) => !!definition.getNodeById(id) || definition.flows.some(f => f.id === id);
+			const judge = (inst): IUpgradeInstanceReport | null => {
+				const at = { model, instanceId: inst?.id };
+				if (!inst) return { ...at, outcome: 'failed', detail: 'instance not found' };
+				if (ENDED.includes(inst.status)) return { ...at, outcome: 'ended' };
+				if (inst.source === source) return { ...at, outcome: 'current' };
+				const missing = [...new Set<string>(inst.items.filter(i => OPEN.includes(i.status)).map(i => i.elementId))].filter(e => !exists(e));
+				if (missing.length) return { ...at, outcome: 'stranded', detail: `on ${missing.join(', ')}, which the saved model does not have` };
+				return null;
+			};
+			const load = async (id: string) => (await ds.findInstances({ id }, { projection: { id: 1, status: 1, source: 1, items: 1 } }))[0];
+
+			const candidates = await ds.findInstances({ name: model, status: { $nin: ENDED } }, { projection: { id: 1 } });
+			for (const { id } of candidates) {
+				const before = judge(await load(id));
+				if (before) { report.instances.push(before); continue; }
+				if (options.dryRun) { report.instances.push({ model, instanceId: id, outcome: 'would-upgrade' }); continue; }
+				try {
+					await this.lock(id);
+				}
+				catch (exc) {
+					report.instances.push({ model, instanceId: id, outcome: 'busy', detail: exc?.message ?? String(exc) });
+					continue;
+				}
+				try {
+					const now = judge(await load(id));	// it may have moved on while the lock was awaited
+					if (now) { report.instances.push(now); continue; }
+					await ds.updateInstanceSource(id, source);
+					report.instances.push({ model, instanceId: id, outcome: 'upgraded' });
+					this.logger.log(`^Action:engine.upgradeRunning ${model} instance ${id}`);
+				}
+				catch (exc) {
+					report.instances.push({ model, instanceId: id, outcome: 'failed', detail: exc?.message ?? String(exc) });
+				}
+				finally {
+					await this.release(null, id);
+				}
+			}
+		}
+		return reports;
 	}
 
 	/** The one item `itemQuery` names; none, or more than one, is an error. */

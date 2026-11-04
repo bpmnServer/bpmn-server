@@ -30,6 +30,7 @@ import { API } from './routes/api.js';
 import { API2 } from './routes/api2.js';
 import { errorDetailsHandler } from './routes/middleware/errorDetails.js';
 import { processRunErrorHandler } from './routes/runErrors.js';
+import { gracefulShutdown } from './runtime/shutdown.js';
 
 const __dirname = import.meta.dirname;
 console.log('app.ts from ', import.meta.filename);
@@ -189,16 +190,27 @@ export class WebApp {
 
 	/**
 	 * Process-level resilience: log unhandled errors, and on SIGTERM/SIGINT stop
-	 * accepting connections, let in-flight requests finish, close Mongo, then exit
-	 * (force-exit after a timeout so a stuck connection can't block restart).
+	 * accepting connections, stop the engine (timers off, running executions given
+	 * ENGINE_SHUTDOWN_TIMEOUT_MS to finish and release their locks), close Mongo, then
+	 * exit (force-exit after a timeout so a stuck connection can't block restart).
 	 */
 	installShutdownHandlers(server) {
+		let stopping = false;
 		const shutdown = (signal) => {
+			if (stopping) return;
+			stopping = true;
 			console.log(`${signal} received — shutting down gracefully...`);
-			server.close(() => {
-				Promise.resolve(mongoose.connection.close(false)).finally(() => process.exit(0));
-			});
-			setTimeout(() => process.exit(1), 10000).unref();
+			const engineTimeoutMs = this.bpmnServer?.configuration?.shutdownTimeout ?? 10_000;
+			const graceMs = 5_000;
+			// the backstop: every stage below is bounded, this only catches what is not
+			setTimeout(() => process.exit(1), engineTimeoutMs + 3 * graceMs).unref();
+			gracefulShutdown({
+				server,
+				bpmnServer: this.bpmnServer,
+				closeDatabase: () => mongoose.connection.close(false),
+				engineTimeoutMs,
+				graceMs,
+			}).then(result => process.exit(result.clean ? 0 : 1), () => process.exit(1));
 		};
 		process.on('SIGTERM', () => shutdown('SIGTERM'));
 		process.on('SIGINT', () => shutdown('SIGINT'));
@@ -211,8 +223,9 @@ export class WebApp {
 
 	setupRoutes() {
 		const { api = true, ui = true } = this.application;
-		// API routers first: the UI router at '/' requires a session for every path it sees,
-		// which would send API-key callers to /login.
+		// the application's routes first, then the API routers: the UI router at '/' requires a session
+		// for every path it sees, which would send API-key callers to /login.
+		this.application.routes?.(this.app, this);
 		if (api) {
 			this.app.use('/api', (new API(this)).config());
 			this.app.use('/api2', (new API2(this)).config());

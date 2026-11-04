@@ -59,10 +59,17 @@ export class UserService implements IUserService {
 		await user.save();
 
 	}
-	async install() {
+	/**
+	 * The first user (admin, password admin), only when there are no users at all. start() runs this on every
+	 * start: a server whose users have other names must not gain an administrator with a known password.
+	 * Returns true when it made the user.
+	 */
+	async install(): Promise<boolean> {
+		if (await User.countDocuments({}) > 0)
+			return false;
 		console.log(` adding new User for 'admin'  password: 'admin'`);
-		//await this.init();
 		await this.addUser('admin', 'admin@mySite.com', 'admin', ['ADMIN']);
+		return true;
     }
 
 	init() {

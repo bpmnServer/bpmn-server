@@ -1,6 +1,6 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-import { MongoDB } from './MongoDB.js';
+import { MongoDB, databaseName } from './MongoDB.js';
 
 import { Definition } from '../elements/Definition.js';
 import type { IBPMNServer } from "../interfaces/server.js";
@@ -24,6 +24,9 @@ class ModelsDatastoreDB extends ServerComponent implements IModelsDatastore {
         super(server);
 
         this.dbConfiguration = this.configuration.database?.MongoDB ?? { db: 'bpmn' };
+        // the database the data store uses too (see databaseName)
+        if (!this.dbConfiguration.db)
+            this.dbConfiguration.db = databaseName(this.dbConfiguration);
         this.ownsDb = !server.documentStore;
         this.db = server.documentStore ?? new MongoDB(this.dbConfiguration, this.logger);
 

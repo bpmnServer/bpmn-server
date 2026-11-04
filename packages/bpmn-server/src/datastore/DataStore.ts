@@ -1,4 +1,4 @@
-import { MongoDB } from './MongoDB.js';
+import { MongoDB, databaseName } from './MongoDB.js';
 import { DataHandler } from '../engine/DataHandler.js';
 import { Execution } from '../engine/Execution.js';
 import type { IInstanceData, IItemData } from '../interfaces/DataObjects.js';
@@ -47,6 +47,9 @@ class DataStore extends ServerComponent  implements IDataStore {
 			this.dbConfiguration.Locks_collection='wf_locks';
 		if (!this.dbConfiguration.Archive_collection)
 			this.dbConfiguration.Archive_collection='wf_archive';
+		// One database for the instances, the archive and the locks (see databaseName).
+		if (!this.dbConfiguration.db)
+			this.dbConfiguration.db = databaseName(this.dbConfiguration);
 
 
 		this.ownsDb = !server.documentStore;

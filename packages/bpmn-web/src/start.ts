@@ -6,6 +6,8 @@ import type { WorkflowApplication } from './runtime/WorkflowApplication.js';
 import { WebAppDelegate } from './runtime/WebAppDelegate.js';
 import { guestAccess, checkGuestSettings, guestConfiguration } from './guests/guests.js';
 import { GuestModelsDatastore } from './guests/GuestModelsDatastore.js';
+import { engineSettingsFromEnv } from './runtime/engineEnv.js';
+import { checkBootConfig, reportBootConfig } from './runtime/bootConfig.js';
 
 const PACKAGE_ROOT = path.join(import.meta.dirname, '..');
 
@@ -25,6 +27,8 @@ export interface StartOptions {
 	setupOnly?: boolean;
 	/** The console instead of the web server (start processes, tasks, locks, users): an app's `npm run cli`. */
 	console?: boolean;
+	/** The application's own routes, mounted before bpmn-web's (WorkflowApplication.routes). */
+	routes?: WorkflowApplication['routes'];
 }
 
 function isTrue(param) {
@@ -40,6 +44,9 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 	const Delegate = appDelegate ?? WebAppDelegate;
 	const guests = guestAccess();
 	checkGuestSettings();
+	// LOCK_*, ENGINE_SHUTDOWN_TIMEOUT_MS, MONGO_DB_NAME (runtime/engineEnv.ts)
+	const { invalid, db, ...engineEnv } = engineSettingsFromEnv();
+	invalid.forEach(message => console.warn('[config] ' + message));
 	const configuration = new Configuration({
 		definitionsPath: path.resolve('processes') + path.sep,
 		templatesPath: path.join(PACKAGE_ROOT, 'emailTemplates') + path.sep,
@@ -47,6 +54,7 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 		database: {
 			MongoDB: {
 				db_url: process.env.MONGO_DB_URL,
+				...(db ? { db } : {}),
 				Locks_collection: 'wf_locks',
 				Instance_collection: 'wf_instances',
 				Archive_collection: 'wf_archive',
@@ -68,6 +76,7 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 		scriptHandler: () => isTrue('DEMO_MODE') ? new SandboxScriptHandler() : new ScriptHandler(),
 		demo: isTrue('DEMO_MODE'),
 		cacheManager: server => new NoCacheManager(server),
+		...engineEnv,
 		...settings,
 		// GUEST_ACCESS=true: each guest's models in a folder of its own, never cached across guests
 		...(guests ? { definitions: server => new GuestModelsDatastore(server), cacheManager: server => new NoCacheManager(server) } : {}),
@@ -76,7 +85,7 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 }
 
 /**
- * The database's indexes, and the first user (admin, password admin) when there is none. Not with guests
+ * The database's indexes, and the first user (admin, password admin) when there are no users at all. Not with guests
  * (GUEST_ACCESS): a public demo has no account with a known password, which would design the models every new
  * guest starts with.
  */
@@ -97,7 +106,7 @@ export async function setup(server: BPMNServer) {
 	if (guestAccess())
 		return;
 	const { UserService } = await import('./userAccess/UserService.js');
-	await new UserService().install();
+	return await new UserService().install();
 }
 
 /**
@@ -126,6 +135,10 @@ async function startMemoryDatabase() {
  *   await start({ config, appDelegate: AppDelegate, api: true, ui: true });
  */
 export async function start(options: StartOptions = {}) {
+	// the web server: in production an unsafe setting stops it here, elsewhere it is a warning (runtime/bootConfig.ts)
+	if (!options.setupOnly && !options.console
+		&& !reportBootConfig(checkBootConfig(process.env, { api: options.api ?? true, ui: options.ui ?? true })))
+		throw new Error('bpmn-web refused to start: unsafe settings for production (see the [config] messages above)');
 	if (process.env.MONGO_DB_URL === 'memory')
 		await startMemoryDatabase();
 	if (!process.env.MONGO_DB_URL)
@@ -140,16 +153,19 @@ export async function start(options: StartOptions = {}) {
 		api: options.api ?? true,
 		ui: options.ui ?? true,
 		elementTemplatesPath: fs.existsSync(templates) ? templates : undefined,
+		routes: options.routes,
 		serverOptions: options.setupOnly || options.console ? { cron: false } : {},
 	};
 	const { WebApp } = await import('./app.js');
 	const webApp = new WebApp(application);
 	await webApp.bpmnServer.ready;
-	await setup(webApp.bpmnServer);
+	const madeAdmin = await setup(webApp.bpmnServer);
 	if (options.setupOnly) {
 		console.log(guestAccess()
 			? 'setup done: the database is ready; visitors are guests (GUEST_ACCESS), no admin user is made'
-			: 'setup done: the database is ready; sign in as admin (password admin) and change the password');
+			: madeAdmin
+				? 'setup done: the database is ready; sign in as admin (password admin) and change the password'
+				: 'setup done: the database is ready; it already has users, none was added');
 		await webApp.bpmnServer.shutdown();
 		process.exit(0);
 	}

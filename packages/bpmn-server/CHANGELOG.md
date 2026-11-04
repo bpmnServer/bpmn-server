@@ -35,12 +35,31 @@ and here
   `0001.json` (when, who). A save that changes nothing adds nothing. `definitions.save(name, bpmn, svg, owner,
   savedBy)`; `history(name)`, `historySource(name, version)`, `purgeHistory(name)`; renaming a model moves its
   history, deleting it deletes it. `ModelHistory` is exported.
+- `engine.upgradeRunning(models?, { dryRun? })`: moves the instances that have not ended onto their model's
+  current saved source. With `saveSource` each instance keeps the source it started with, so a corrected model
+  never reaches it otherwise. Before any change the model is checked with `verifyModel` (a model with errors is
+  refused); an instance is upgraded under its lock, and only when every step it has open still exists in the new
+  model. Ended instances are never touched (`engine.upgrade` rewrites them too). The report gives each instance's
+  outcome: `upgraded`, `would-upgrade` (dry run), `current`, `ended`, `stranded` (an open step is gone; listed
+  with the step), `busy` (locked by a running step; run it again) or `failed`. Running it twice changes nothing.
+- `appDelegate.verifyModel({ name, source, definition })` (optional): the application's own model checks, run by
+  `verifyModel` after its own and reported with them (`severity` defaults to `error`). The model editor's check,
+  the import checks and `verify` with a server all include them. A check that throws becomes a warning
+  (`application-check-failed`).
 
 ### Fixed
 - `DocumentQuery`: `null` matches an array element without the field, and a missing field equals `null`, as in
   MongoDB.
 - An empty `<camunda:inputOutput />` failed to load.
 - Behaviours' fields set in `init()` were reset when running from the TypeScript source (`npm run dev`).
+- Locks were kept in a database named `bpmn` when the configuration named no database (`database.MongoDB.db`
+  unset), while the instances went to the database in `db_url` (or the driver's default, `test`). Every
+  application on the default configuration therefore shared one lock collection, and dropping or restoring the
+  application's database left its locks behind. The database is now the one `db_url` names (`databaseName()`),
+  for the instances, the models and the locks alike; `db` still wins when set.
+- The locks' unique index was only made by `npm run setup` (`dataStore.install()`). A server started on a
+  database without it could lock the same instance twice from two processes. The locker now makes the index
+  before its first lock; if it cannot (no permission), it logs one warning and carries on as before.
 
 ## Release 3.5.1 (2026-11-02)
 No changes to bpmn-server; released with bpmn-web and bpmn-client 3.5.1, which share its version.

@@ -21,6 +21,7 @@ import { modelNameGuard } from './middleware/modelName.js';
 import { Common } from './common.js';
 import { invokeDecision } from './decisions.js';
 import { ViewHelper } from './ViewHelper.js';
+import { assertModelAcceptable, sendModelRejection } from '../runtime/modelVerification.js';
 import { json } from 'body-parser';
 //////////////////////////////////////////////////////////////////////
 
@@ -469,6 +470,7 @@ export class API2 extends Common {
                             svgFile= files[1];
 
                         try {
+                            await assertModelAcceptable(bpmnServer, name, bpmnFile);
                             const saved = await api.model.save(name, bpmnFile,svgFile,self.getUser(request));
                             if (saved === false) {
                                 response.status(403).json({ errors: 'Model modification denied' });
@@ -477,6 +479,7 @@ export class API2 extends Common {
                             }
                         catch(exc)
                             {
+                            if (sendModelRejection(response, exc)) return;
                             console.log('error in api.ts import ',exc.message,exc);
                             response.json({errors:  exc.message});
                             return;

@@ -26,6 +26,7 @@ import { modelNameGuard } from './middleware/modelName.js';
 import { Common } from './common.js';
 import { invokeDecision } from './decisions.js';
 import { ViewHelper } from './ViewHelper.js';
+import { assertModelAcceptable, checkModel, sendModelRejection } from '../runtime/modelVerification.js';
 
 export class API extends Common {
     get bpmnServer() { return this.webApp.bpmnServer; }
@@ -548,10 +549,12 @@ export class API extends Common {
                                 svgFile= files[1];
 
                             try {
+                                await assertModelAcceptable(bpmnServer, name, bpmnFile);
                                 await bpmnServer.definitions.save(name, bpmnFile, svgFile, null, request.user?.userName);
                             }
                             catch(exc)
                             {
+                                if (sendModelRejection(response, exc)) return;
                                 console.log('error in api.ts import ',exc.message,exc);
                                 response.json({errors:  exc.message});
                                 return;
@@ -626,18 +629,53 @@ export class API extends Common {
                 }
             });
 
-            router.post('/model/save', loggedIn, async function (request, response) {
+            router.post('/model/save', loggedIn, awaitAppDelegateFactory(async function (request, response) {
 
                 const name = request.body.name;
                 const bpmn = request.body.xml;
                 const svg = '';
+                try {
+                    await assertModelAcceptable(bpmnServer, name, bpmn);
+                }
+                catch (exc) {
+                    // the model editor's save: 422 (no bpmn-client caller)
+                    if (sendModelRejection(response, exc, 422)) return;
+                    throw exc;
+                }
                 await bpmnServer.definitions.save(name, bpmn, svg, null, (request.user as any)?.userName);
                 console.log(" save completed");
 
                 //        console.log(request);
                 response.status(200).send("");
 
-            });
+            }));
+
+            // check a model without saving it: { name } for a saved model, or { source } (and an optional name)
+            router.post('/definitions/verify', loggedIn, awaitAppDelegateFactory(async (request, response) => {
+                const { name, source } = request.body ?? {};
+                if (!source && !name) {
+                    response.status(400).json({ errors: 'Give the model\'s name, or its source' });
+                    return;
+                }
+                let xml = source;
+                if (!xml) {
+                    try {
+                        xml = await bpmnServer.definitions.getSource(name);
+                    }
+                    catch {
+                        response.status(404).json({ errors: `No model ${name}` });
+                        return;
+                    }
+                }
+                // always verified here, whatever VERIFY_MODELS_ON_IMPORT says
+                const check = await checkModel(bpmnServer, name ?? 'model', xml, 'warn');
+                response.json({
+                    name: name ?? null,
+                    valid: check.errors.length === 0,
+                    errors: check.errors,
+                    warnings: check.warnings,
+                });
+            }));
 
             router.delete('/datastore/deleteInstances', loggedIn, awaitAppDelegateFactory(async (request, response) => {
 

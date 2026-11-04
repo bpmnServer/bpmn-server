@@ -164,6 +164,25 @@ interface IAppDelegate {
      * @param item  the running item: its element, token and the instance data (item.data)
      */
     loadDataObject?(name: string, item: IItem): unknown | Promise<unknown>;
+
+    /**
+     * Optional. The application's own checks on a model, run by verifyModel (the model editor's check, the
+     * import checks, `bpmn-server verify` with a server) after its own, on a model the engine could load.
+     * Returns issues in verifyModel's form; `severity` defaults to 'error'. Called without a running execution.
+     *
+     * @param model  the model's name, its XML and the loaded Definition
+     */
+    verifyModel?(model: { name: string; source: string; definition: any }): IAppModelIssue[] | Promise<IAppModelIssue[]>;
 }
 
-export { ILogger, IAppDelegate, IConfiguration, IConnectorsConfiguration, IServiceProvider }
+/** An issue an application's verifyModel reports (verifyModel's IModelIssue). */
+interface IAppModelIssue {
+    severity?: 'error' | 'warning' | 'info';
+    /** stable identifier of the check, e.g. 'ambiguous-route' */
+    code: string;
+    message: string;
+    elementId?: string;
+    elementName?: string;
+}
+
+export { ILogger, IAppDelegate, IAppModelIssue, IConfiguration, IConnectorsConfiguration, IServiceProvider }

@@ -1,4 +1,4 @@
-import { adminDisabled, isAdminGroups, isDesignerGroups } from '../userAccess/roles.js';
+import { adminDisabled, designDisabled, isAdminGroups, isDesignerGroups } from '../userAccess/roles.js';
 
 export class Common {
     webApp;
@@ -37,6 +37,7 @@ export class Common {
 
     /** Model design (the model routes): designers and administrators. */
     isDesigner(req, res, next) {
+        if (designDisabled()) return res.status(404).send('Model design is turned off on this server');
         if (process.env.REQUIRE_AUTHENTICATION === 'false' || req.isDesigner === true) return next();
         return res.status(403).send('Designer permission required');
     }

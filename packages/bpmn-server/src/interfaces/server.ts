@@ -128,7 +128,26 @@ interface IEngine {
     cancel(instanceQuery: any, userName?: string, options?: {}): Promise<IExecution>;
 
     upgrade(model:string,afterNodeIds:string[]):Promise<string[]|{errors}>;
+    /** Moves the instances that have not ended onto their model's current saved source (see Engine.upgradeRunning). */
+    upgradeRunning(models?: string[], options?: { dryRun?: boolean }): Promise<IUpgradeReport[]>;
 
+}
+
+/** What upgradeRunning did with an instance. */
+type IUpgradeOutcome = 'upgraded' | 'would-upgrade' | 'current' | 'ended' | 'stranded' | 'busy' | 'failed';
+
+interface IUpgradeInstanceReport {
+    model: string;
+    instanceId: string;
+    outcome: IUpgradeOutcome;
+    detail?: string;
+}
+
+interface IUpgradeReport {
+    model: string;
+    /** why none of the model's instances was considered: no saved model, or one with errors */
+    refused?: string;
+    instances: IUpgradeInstanceReport[];
 }
 
 interface ICron {
@@ -151,4 +170,4 @@ interface ICacheManager {
 }
 
 
-export { IBPMNServer , IEngine , ICron ,ICacheManager , IServerComponent }
+export { IBPMNServer , IEngine , ICron ,ICacheManager , IServerComponent, IUpgradeOutcome, IUpgradeInstanceReport, IUpgradeReport }

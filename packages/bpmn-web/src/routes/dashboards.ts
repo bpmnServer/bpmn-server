@@ -16,7 +16,7 @@ import { runProcess } from './runErrors.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
 import { listScenarioSets, listDecisionTestSets, loadScenarios, runScenario } from '../testing/scenarios.js';
 import { loadDecisionTests, runDecisionTests } from '../testing/decisionTests.js';
-import { adminDisabled, engineGroups, isAdminGroups, isDesignerGroups } from '../userAccess/roles.js';
+import { adminDisabled, canDesign, engineGroups, isAdminGroups } from '../userAccess/roles.js';
 import { UserService } from '../userAccess/UserService.js';
 import { loadCatalog, findCatalogEntry, readCatalogFile, catalogLocation } from './catalog.js';
 import { loadConnectorCatalog, connectorCatalogLocation } from './connectorCatalog.js';
@@ -94,7 +94,7 @@ export class Dashboards extends Common {
             : new SecureUser({ userName: req.user.userName, userGroups: engineGroups(req.user), tenantId: req.user.tenantId });
         const roles = (req) => ({
             isAdmin: !adminDisabled() && (process.env.REQUIRE_AUTHENTICATION === 'false' || isAdminGroups(req.user?.userGroups)),
-            isDesigner: process.env.REQUIRE_AUTHENTICATION === 'false' || isDesignerGroups(req.user?.userGroups),
+            isDesigner: canDesign(req.user),
         });
         const render = (req, res, view, data) => res.render('dashboards/' + view, { ...data, ...roles(req), me: req.user?.userName, user: req.user, request: req });
 
