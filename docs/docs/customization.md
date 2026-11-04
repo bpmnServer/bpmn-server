@@ -89,6 +89,27 @@ await start({
 
 Configure `api` or `ui` to `false` when the host should serve only the other surface. The sample also uses `setupOnly` and `console` modes. The host, not the engine package alone, serves HTTP routes.
 
+### Extra columns in the task and instance tables
+
+The pages' Pending Tasks table and Instances list show the case id of each instance. An application whose instances carry other identifying fields can show those too, after Case Id, without its own copy of the views. Name them in `.env` as `Label:field` pairs, where `field` is a path in the instance data:
+
+```
+INSTANCE_COLUMNS=Order:orderNo, Customer:customer.name
+TASK_COLUMNS=Order:orderNo
+```
+
+or in code, which wins for a table it names:
+
+```ts
+await start({
+  config: config(),
+  appDelegate: AppDelegate,
+  listColumns: { instances: [{ label: 'Order', field: 'orderNo' }], tasks: [{ label: 'Order', field: 'orderNo' }] },
+});
+```
+
+A task's values come from its instance's data. A missing field shows as empty; lists and objects show as text. An entry that is not a valid `Label:field` is left out with a `[config]` warning at start.
+
 ## Embed only the engine
 
 For an existing Node.js host, create the engine with application configuration and keep the reference for its lifetime:

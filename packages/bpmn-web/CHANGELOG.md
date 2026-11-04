@@ -35,6 +35,12 @@ and here
 - The Settings page's tables are made from the settings schema (`npm run features`), so the two can not drift; some
   descriptions in the schema now say what the page said.
 - `npm run test:web:sqlite` in testSampleApp runs the web tests with each app on a SQLite file of its own.
+- **Extra columns in the Instances list and the Pending Tasks table:** `INSTANCE_COLUMNS` and `TASK_COLUMNS`
+  (`Label:field` pairs, comma-separated; `field` is a path in the instance data, e.g. `customer.name`), or
+  `start({ listColumns: { instances, tasks } })`, which wins for a table it names. They follow Case Id; a task's
+  values come from its instance's data. A missing field is empty, a list or object is shown as text, values are
+  escaped, and an entry that is not `Label:field` is left out with a `[config]` warning. Without them the tables
+  are as before (`runtime/listColumns.ts`; the types `IListColumn` and `IListColumns` are exported).
 
 ### Changed
 - **My work and the start page use API v3's operations in the server's process**, as the person API v3 would take
