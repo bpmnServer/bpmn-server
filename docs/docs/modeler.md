@@ -118,6 +118,9 @@ adds no version; the first save of a model saved before there was a history keep
   resized, path changed, label moved) and a flow by its two ends. Clicking one selects it on the diagram.
   Below, the newer version's diagram is marked: **+** added, **M** changed (amber) or only moved or resized
   (grey), and the removed elements drawn dashed in red, with **−**, where they were.
+- **Restore** loads a saved version into the editor in place of its model, unsaved: the status says so, and the
+  editor's unsaved changes are replaced (you are asked first). **Save** keeps it as the newest version; nothing in
+  the history is removed, so a restore is undone by restoring the version before it.
 - **Purge history** deletes every saved version of the model. The model itself stays.
 
 Renaming a model takes its history along; deleting a model deletes its history.

@@ -479,7 +479,7 @@ features:
   - id: history
     area: web
     name: "Model history"
-    what: "Every save kept; two versions compared (text, moved or resized, marks on the diagram); purge."
+    what: "Every save kept; two versions compared (text, moved or resized, marks on the diagram); a version restored into the editor (Save keeps it as a new version); purge."
     docs: [docs/docs/modeler.md]
     code: [packages/bpmn-web/modeler/src/history, packages/bpmn-server/src/datastore/ModelHistory.ts]
     tests: [testSampleApp/test/ui/history.test.mjs, packages/bpmn-server/test/model-history.test.mjs]

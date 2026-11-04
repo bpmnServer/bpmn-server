@@ -29,6 +29,8 @@ and here
   its run, Debug and checks as any other.
 - **Connectors list:** each connector's key with a link to set or change it (its page's key form), and Delete,
   whose confirmation names the models that use it.
+- **Restore in the History tab:** a saved version loaded into the editor, unsaved; Save keeps it as the newest
+  version, and no version is removed (a restore is undone by restoring the one before).
 
 ### Changed
 - The model and decision editors have the pages' menu: Workbench, Dashboard (My work, Design, Administration),

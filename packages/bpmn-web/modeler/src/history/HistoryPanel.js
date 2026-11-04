@@ -3,7 +3,9 @@
 // text (the Report tab's outline of the whole model: Report.text), its changed lines shown with the element and
 // process they are in; and the elements moved or resized on the diagram, which the text does not hold. The newer
 // version's diagram shows each element marked: + added, M changed (or moved), and the removed ones drawn where
-// they were, dashed, with −. Purge history removes every saved version (the model itself stays).
+// they were, dashed, with −. Restore loads a saved version into the editor, unsaved: Save keeps it as a new version,
+// so the history keeps every version and a restore can itself be undone. Purge history removes every saved version
+// (the model itself stays).
 import NavigatedViewer from 'bpmn-js/lib/NavigatedViewer';
 import camundaModdle from '../moddle.js';
 import { textChanges, layoutChanges, diagramChanges } from './compare.js';
@@ -41,6 +43,8 @@ export default class HistoryPanel {
         this._elementRegistry = elementRegistry;
         this._canvas = canvas;
         this._selection = selection;
+        this._eventBus = eventBus;
+        this._restored = null;      // the version last loaded into the editor, until the editor's model is saved
         this._root = document.querySelector(this._config.container);
         this._visible = false;
         this._versions = [];
@@ -48,7 +52,7 @@ export default class HistoryPanel {
         this._comparison = null;
         if (!this._root)
             return;
-        eventBus.on('model.saved', () => { if (this._visible) this.load(); });
+        eventBus.on('model.saved', () => { this._restored = null; if (this._visible) this.load(); });
     }
 
     get _url() {
@@ -169,6 +173,27 @@ export default class HistoryPanel {
         canvas.viewbox({ x: box.x - margin, y: box.y - margin, width: box.width + 2 * margin, height: box.height + 2 * margin });
     }
 
+    /**
+     * A saved version into the editor, in place of its model: not saved (the editor says "Unsaved changes"), so
+     * nothing is lost until Save, which keeps it as the newest version.
+     */
+    async restore(version) {
+        if (!window.confirm(`Load version ${version} of '${this._config.processName}' into the editor? `
+            + 'It replaces the model in the editor, unsaved changes included; Save keeps it as a new version.'))
+            return;
+        try {
+            await this._bpmnjs.importXML(await this.source(version));
+        } catch (err) {
+            window.alert(`Version ${version} could not be loaded: ${err.message}`);
+            return;
+        }
+        this._restored = version;
+        this._comparison = null;
+        this._ticked = [];
+        this._eventBus.fire('model.restored', { version });
+        this.render();
+    }
+
     async purge() {
         if (!window.confirm(`Delete all ${this._versions.length} saved versions of '${this._config.processName}'? The model itself stays.`))
             return;
@@ -211,12 +236,17 @@ export default class HistoryPanel {
                 el('button', { type: 'button', class: 'history-purge', disabled: !this._versions.length, onclick: () => this.purge() }, 'Purge history')),
             this._error ? el('p', { class: 'history-error' }, this._error) : null,
             el('table', { class: 'history-versions' },
-                el('thead', {}, el('tr', {}, el('th', {}), el('th', {}, 'Version'), el('th', {}, 'Saved'), el('th', {}, 'By'), el('th', {}, 'Size'))),
+                el('thead', {}, el('tr', {}, el('th', {}), el('th', {}, 'Version'), el('th', {}, 'Saved'), el('th', {}, 'By'), el('th', {}, 'Size'), el('th', {}))),
                 el('tbody', {},
-                    row(CURRENT, ['Current', 'in the editor', '', '']),
-                    this._versions.map(v => row(v.version, [String(v.version), when(v.savedAt), v.savedBy ?? '', size(v.size)])))),
+                    row(CURRENT, ['Current', this._restored != null ? `version ${this._restored}, not saved` : 'in the editor', '', '', '']),
+                    this._versions.map(v => row(v.version, [String(v.version), when(v.savedAt), v.savedBy ?? '', size(v.size),
+                        el('button', { type: 'button', class: 'history-restore', 'data-version': String(v.version),
+                            title: `Load version ${v.version} into the editor`, onclick: () => this.restore(v.version) }, 'Restore')])))),
             this._versions.length ? null : el('p', { class: 'history-note' }, 'No saved versions yet: each save keeps one.'),
-            el('p', { class: 'history-note' }, 'Tick two to compare them.'));
+            this._restored != null
+                ? el('p', { class: 'history-restored' }, `Version ${this._restored} is in the editor, not saved: Save to keep it as a new version.`)
+                : null,
+            el('p', { class: 'history-note' }, 'Tick two to compare them. Restore loads a version into the editor; Save keeps it.'));
 
         this._root.replaceChildren(el('div', { class: 'history-panel' }, list, this.renderComparison(label)));
     }

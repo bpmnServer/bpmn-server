@@ -1,6 +1,7 @@
 // @features: history
 // The model editor's History tab (modeler/src/history): every save of the model listed, two versions (or a
-// version and the editor's model) compared by their report text and their layout, the history purged.
+// version and the editor's model) compared by their report text and their layout, a version restored, the history
+// purged.
 //   npm run test:ui
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -116,12 +117,36 @@ test('each save is listed with who saved it; two versions compared by their repo
     await page.evaluate(() => window.bpmnModeler.get('commandStack').undo());     // as it was, for the next test
 });
 
-test('a save that changes nothing adds no version; Purge history empties the list', async () => {
+test('Restore loads a version into the editor, unsaved; Save keeps it as a new version, the history whole', async () => {
     await save();       // the changes of the test before
     await page.waitForFunction(() => document.querySelectorAll('.history-versions tbody tr').length === 4);
+    const task = await page.evaluate(() => window.bpmnModeler.get('elementRegistry').filter(e => e.type === 'bpmn:UserTask')[0].id);
+    const name = () => page.evaluate(id => window.bpmnModeler.get('elementRegistry').get(id)?.businessObject.name, task);
+    assert.equal(await name(), 'Check the request');
+
+    await page.click('.history-restore[data-version="1"]');            // the file as it first was
+    await page.waitForSelector('.history-restored');
+    assert.notEqual(await name(), 'Check the request', 'version 1 is in the editor');
+    assert.equal(await page.innerText('#js-save-status'), 'Version 1 restored: unsaved');
+    assert.match(await page.innerText('.history-restored'), /Version 1 is in the editor, not saved/);
+    assert.deepEqual((await rows())[0], ['Current', ''], 'Current: version 1, not saved');
+    assert.match(await page.innerText('.history-versions tbody tr:first-child'), /version 1, not saved/);
+
+    await save();
+    await page.waitForFunction(() => document.querySelectorAll('.history-versions tbody tr').length === 5);
+    assert.deepEqual((await rows()).map(r => r[0]), ['Current', '4', '3', '2', '1'], 'kept as a new version; none removed');
+    assert.equal(await page.locator('.history-restored').count(), 0);
+    await page.click('.history-restore[data-version="3"]');            // and back: a restore is undone by another
+    await page.waitForSelector('.history-restored');
+    assert.equal(await name(), 'Check the request');
+});
+
+test('a save that changes nothing adds no version; Purge history empties the list', async () => {
+    await save();       // version 3, restored by the test before
+    await page.waitForFunction(() => document.querySelectorAll('.history-versions tbody tr').length === 6);
     await save();
     await page.waitForTimeout(500);
-    assert.equal((await rows()).length, 4, 'unchanged: no new version');
+    assert.equal((await rows()).length, 6, 'unchanged: no new version');
     await page.click('.history-purge');
     await page.waitForFunction(() => document.querySelectorAll('.history-versions tbody tr').length === 1);
     assert.match(await page.innerText('#js-history'), /No saved versions yet/);

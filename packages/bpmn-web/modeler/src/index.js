@@ -79,6 +79,11 @@ modeler.on('commandStack.changed', () => {
     if (status.textContent === 'Saved')
         showStatus('Unsaved changes');
 });
+// the History tab loaded a saved version into the editor: it is a change, until saved
+modeler.on('model.restored', ({ version }) => {
+    changed = true;
+    showStatus(`Version ${version} restored: unsaved`);
+});
 window.addEventListener('beforeunload', event => {
     if (changed) {
         event.preventDefault();

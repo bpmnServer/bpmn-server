@@ -1138,6 +1138,7 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 .history-panel button { font: inherit; font-size: 12px; padding: 3px 10px; border: 1px solid #c4c8cf; border-radius: 3px; background: #fff; cursor: pointer; }
 .history-panel button.primary { background: #1f62c8; border-color: #1f62c8; color: #fff; }
 .history-panel button:disabled { opacity: 0.5; cursor: default; }
+.history-restored { margin: 6px 0; padding: 4px 8px; border-left: 3px solid #1f62c8; background: #eef4fd; }
 .history-versions { width: 100%; border-collapse: collapse; }
 .history-versions th, .history-versions td { text-align: left; padding: 3px 6px; border-bottom: 1px solid #eceef1; white-space: nowrap; }
 .history-versions th { color: #52575f; font-weight: 600; font-size: 12px; }
