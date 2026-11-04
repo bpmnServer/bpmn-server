@@ -30,6 +30,11 @@ body {
     background: #f7f8fa;
 }
 
+/* the menu in the header (views/includes/editorMenu.pug) */
+.editor-menu { display: flex; gap: 12px; font-size: 13px; padding-right: 12px; border-right: 1px solid #dcdfe4; }
+.editor-menu a { color: #343a40; text-decoration: none; white-space: nowrap; }
+.editor-menu a:hover { color: #1f62c8; text-decoration: underline; }
+
 .modeler-header .brand img {
     height: 28px;
     display: block;

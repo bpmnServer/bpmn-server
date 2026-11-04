@@ -1,0 +1,38 @@
+//- The one menu of every page (layouts include it; the editors have a compact copy in their header):
+//- Workbench, the home; Dashboard: My work for everyone, a drop-down with Design and Administration for designers
+//- and administrators (as their role and DISABLE_DESIGN / DISABLE_ADMIN allow). res.locals: user, canDesign,
+//- canAdminister, canSignup, currentPath (UserManager).
+- const here = typeof currentPath === 'string' ? currentPath : '';
+- const on = (path) => (path === '/' ? here === '/' : here === path || here.startsWith(path + '/')) ? 'active' : undefined;
+ul.nav.navbar-nav.app-menu
+  if user
+    li(class=on('/')): a(href='/') Workbench
+    if canDesign || canAdminister
+      li.dropdown(class=on('/dashboard'))
+        a.dropdown-toggle(href='#' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false')
+          | Dashboard
+          span.caret
+        ul.dropdown-menu
+          li(class=here === '/dashboard' ? 'active' : undefined): a(href='/dashboard') My work
+          if canDesign
+            li(class=on('/dashboard/design')): a(href='/dashboard/design') Design
+          if canAdminister
+            li(class=on('/dashboard/admin')): a(href='/dashboard/admin') Administration
+    else
+      li(class=on('/dashboard')): a(href='/dashboard') My work
+ul.nav.navbar-nav.navbar-right.app-menu
+  if user
+    li.dropdown(class=on('/account'))
+      a.dropdown-toggle(href='#' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false')
+        i.fa.fa-user(aria-hidden='true')
+        | &nbsp;#{user.userName || user.email}
+        span.caret
+      ul.dropdown-menu.dropdown-menu-right
+        li: a(href='/account') My account
+        li.divider(role='separator')
+        li: a(href='/logout') Sign out
+  else
+    li(class=on('/login')): a(href='/login') Sign in
+    if canSignup !== false
+      li(class=on('/signup')): a(href='/signup') Create account
+  li: a(href='https://bpmnserver.github.io/bpmn-server/' target='docs') About

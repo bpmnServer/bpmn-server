@@ -93,6 +93,8 @@ See [Model editor](modeler.md).
   sample application.
 - **Dashboards:** tasks and processes for every user, the Design dashboard for designers, the Admin dashboard
   (instances, the server, locks, hung items, users, connectors, a backup).
+- **One menu on every page:** Workbench, then Dashboard (My work; a drop-down with Design and Administration for
+  designers and administrators); the editors show the same places in their header.
 - **The console** (`npm run cli`): start processes, list and complete tasks, recover hung items, users,
   connectors.
 

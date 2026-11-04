@@ -72,6 +72,7 @@ The install adds a `bpmn` command for the everyday work (it asks for `sudo` itse
 | `bpmn restart`, `stop`, `start` | the service |
 | `bpmn update` | the newest bpmn-server and bpmn-web, then a restart |
 | `bpmn env` | edit its `.env`, then a restart |
+| `bpmn cli [command ...]` | its console; with a command and its answers, just that, e.g. `bpmn cli co` (the connectors), `bpmn cli cod asana` (delete one) |
 | `bpmn domain <name> [email]` | the site's domain name, and HTTPS for it (below) |
 | `bpmn https` | HTTPS now, or why not yet |
 | `bpmn access <user>` | let another user edit the application's files |

@@ -15,6 +15,7 @@ html(lang="en")
       header.modeler-header
         a.brand(href="/" title="Home")
           img(src="https://demo.omniworkflow.com/web//images/omniworkflow_icon.png" alt="Home")
+        include includes/editorMenu.pug
         h1= name
         span.decision-file= `${name}.dmn.xml`
         span#js-save-status.modeler-status(role="status")

@@ -388,6 +388,7 @@ case "${1:-help}" in
     https) https_now ;;
     access) shift; access "$@" ;;
     env) ${EDITOR:-nano} "$APP_DIR/.env" && systemctl restart "$SERVICE" ;;
+    cli) shift; runuser -u "$APP_USER" -- env HOME="$HOME_DIR" bash -c 'cd "$0" && npm run --silent cli -- "$@"' "$APP_DIR" "$@" ;;
     *) cat <<EOF
 bpmn: the bpmn-server application in $APP_DIR (the service $SERVICE)
 
@@ -397,6 +398,7 @@ bpmn: the bpmn-server application in $APP_DIR (the service $SERVICE)
   bpmn restart | stop | start
   bpmn update                   the newest bpmn-server and bpmn-web, then a restart
   bpmn env                      edit its .env, then a restart
+  bpmn cli [command ...]        its console (npm run cli); with a command, just that: bpmn cli cod asana
   bpmn domain <name> [email]    the site's domain name, and HTTPS for it once its DNS points here
   bpmn https                    HTTPS now (or why not yet)
   bpmn access <user>            let a user edit the application's files (the group $APP_USER)

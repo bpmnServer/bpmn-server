@@ -9,6 +9,14 @@ This is a sample web application (running Node.js and Express.js) to allow you t
 
 Please [see bpmn-server for full documentation](https://github.com/bpmnserver/bpmn-server)
 
+## The menu
+
+Every page has the same menu: **Workbench** (the home page: models, pending tasks, instances), then
+**Dashboard**. For a designer or an administrator, Dashboard is a drop-down: **My work** (their tasks and
+processes), **Design** (the models and decisions, their tests) and, for administrators, **Administration**;
+everyone else has **My work** alone. On the right: the user (My account, Sign out) and About. The model and
+decision editors show the same places in their header.
+
 # Installation
 
 This package requires Node.js and an access to MongoDB ()

@@ -28,6 +28,18 @@ Enter Command, q to quit, or ? to list commands
 >
 ```
 
+### One command, from the command line
+
+A command after `--`, with the answers to its questions, runs just that and quits: for scripts, and for a server
+(on one made by the installer, `bpmn cli ...` does the same). A yes/no question it does not answer is yes.
+
+```sh
+npm run cli -- lm                 # the models
+npm run cli -- co                 # the connectors
+npm run cli -- cod asana          # delete the connector asana
+npm run cli -- spw alice N3w-pass # set alice's password
+```
+
 ## Instance Locking
 
 Instance Locking is provided to ensure concurrencies supporting multiple nodeJS servers running against same MongoDB.

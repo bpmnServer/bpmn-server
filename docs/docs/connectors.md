@@ -115,6 +115,9 @@ operations:
 | `cod` | delete it |
 | `coc` | call one of its operations with inputs |
 
+From the command line, the command and its answers: `npm run cli -- cod asana` deletes the connector `asana`
+(and quits), `npm run cli -- co` lists them.
+
 ### Who may use a connector
 
 - **In the editor,** the wizard lists only the connectors that are enabled and allowed to the designer's groups,

@@ -33,6 +33,9 @@ let cl: readline.Interface;
 const pending: string[] = [];
 let waiting: ((answer: string) => void) | null = null;
 let ended = false;
+// a command given on the command line (npm run cli -- cod asana): it runs, its words answering its questions in
+// order (then the keyboard), and the console quits
+let fromCommandLine = false;
 function listen() {
 cl = readline.createInterface({input: process.stdin, output: process.stdout,terminal:false});
 cl.on('line', line => {
@@ -53,6 +56,12 @@ cl.on('close', () => {
 
 const question = function(q):Promise<string> {
 
+	// answered by the command line: the question and its answer
+	if (fromCommandLine && pending.length) {
+		const answer = pending.shift();
+		if (q) console.log(`${String(q).trimEnd()} ${answer}`);
+		return Promise.resolve(answer);
+	}
     console.log(q);
 	if (ended)
 		process.stdout.write('>');
@@ -69,14 +78,37 @@ const question = function(q):Promise<string> {
 }
 
 
-/** Runs the console on a server until the user quits (q), then exits the process. */
-export async function runConsole(bpmnServer: BPMNServer) {
+/**
+ * Runs the console on a server until the user quits (q), then exits the process. `args`: a command and the answers
+ * to its questions (default: the words after --cli, as in `npm run cli -- cod asana`): it runs, then the console
+ * quits; a yes/no question it does not answer is yes (the command line said so).
+ */
+export async function runConsole(bpmnServer: BPMNServer, args: string[] = commandLineArgs()) {
 	server = bpmnServer;
 	api = new BPMNAPI(server);
 	userService = new UserService();
 	listen();
+	if (args.length) {
+		fromCommandLine = true;
+		pending.push(...args);
+	}
 	console.log('');
 	await completeUserTask();
+}
+
+/** The words after --cli on the command line. */
+export function commandLineArgs(argv = process.argv): string[] {
+	const at = argv.indexOf('--cli');
+	return at < 0 ? [] : argv.slice(at + 1).filter(word => word !== '--');
+}
+
+/** A yes/no question; from the command line, one its words do not answer is yes. */
+async function confirm(q: string): Promise<boolean> {
+	if (fromCommandLine && !pending.length) {
+		console.log(q + ' yes (the command line)');
+		return true;
+	}
+	return /^y/i.test((await question(q)).trim());
 }
 
 
@@ -103,16 +135,23 @@ function menu() {
 	console.log('	spw	Set User Password');
 	console.log('	co	List connectors (coa add, cok set its key, coe enable/disable, cot test, cor refresh, cod delete, coc call)');
 	console.log('	?	repeat this list');
+	console.log('');
+	console.log('From the command line, a command and its answers: npm run cli -- cod asana (then it quits)');
 
 }
 async function completeUserTask() {
 
-	menu();
+	if (!fromCommandLine)
+		menu();
   let option='';
   let command = '';
+  let commands = 0;
   while(option!=='q')
   {
-	command= await question('Enter Command, q to quit, or ? to list commands');
+	// from the command line: its one command, then quit
+	if (fromCommandLine && commands++ > 0)
+		break;
+	command= await question(fromCommandLine ? '' : 'Enter Command, q to quit, or ? to list commands');
 	let opts=command.split(' ');
 	option=opts[0];
 	switch(option)
@@ -270,7 +309,7 @@ async function connectorCommand(option: string) {
 			break;
 		}
 		case 'cod': {
-			if (!/^y/i.test((await question(`Delete the connector '${id}'? (y/n): `)).trim())) break;
+			if (!await confirm(`Delete the connector '${id}'? (y/n): `)) break;
 			console.log(await connectors.remove(id) ? `'${id}' deleted` : `no connector '${id}'`);
 			break;
 		}

@@ -9,7 +9,7 @@ import MongoStore from 'connect-mongo';
 import User from './models/User.js';
 import * as passportConfig from './config/passport.js';
 import { Account } from './routes/account.js';
-import { canDesign, isGuest, signupDisabled } from './roles.js';
+import { adminDisabled, canDesign, isAdminGroups, isGuest, signupDisabled } from './roles.js';
 import { guestAccess, guestMiddleware } from '../guests/guests.js';
 
 
@@ -131,6 +131,10 @@ export class UserManager {
 			res.locals.canDesign = canDesign(req.user);
 			res.locals.canSignup = !signupDisabled();
 			res.locals.isGuest = isGuest(req.user);
+			// the menu (views/includes/menu.pug): Administration for administrators; the page it is on
+			res.locals.canAdminister = !adminDisabled()
+				&& (process.env.REQUIRE_AUTHENTICATION === 'false' || isAdminGroups(req.user?.userGroups));
+			res.locals.currentPath = req.path;
 			next();
 		});
 

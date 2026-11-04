@@ -14,6 +14,12 @@ and here
 -->
 ## Release 3.5.2 (2026-11-04)
 ### Added
+- **One menu on every page** (`views/includes/menu.pug`): Workbench first, then Dashboard: My work for end users;
+  for designers and administrators a drop-down with My work, Design and Administration. The user (My account,
+  Sign out) on the right. The model and decision editors carry the same places in their header. It replaces
+  the three menus the pages had (the dashboards', the Workbench's and the other pages').
+- **The console from the command line:** `npm run cli -- cod asana` runs one command, its words answering its
+  questions, and quits (a yes/no question it does not answer is yes).
 - **Connectors** (needs bpmn-server with connectors): Administration → Connectors (`/dashboard/admin/connectors`)
   adds REST APIs from a catalog (`catalog/connectors/api-catalog.json`, or `CONNECTOR_CATALOG_URL`) or from an
   OpenAPI document, and sets each one's name, base URL, groups, timeout, retries, key (write-only), operations;

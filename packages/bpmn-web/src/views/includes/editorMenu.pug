@@ -1,0 +1,8 @@
+//- The menu in the editors' header (they have no navbar): the same places as the pages' menu (menu.pug).
+nav.editor-menu(aria-label="Menu")
+  a(href='/') Workbench
+  a(href='/dashboard') My work
+  if canDesign
+    a(href='/dashboard/design') Design
+  if canAdminister
+    a(href='/dashboard/admin') Administration
