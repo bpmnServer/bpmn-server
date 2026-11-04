@@ -1,0 +1,73 @@
+name: Contributor quality gates
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: contributor-quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Build, tests, feature catalog
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    services:
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ping:1}).ok' | grep 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      CI: 'true'
+      NODE_ENV: test
+      BPMN_TEST_MONGO_URL: mongodb://127.0.0.1:27017
+      MONGO_DB_URL: mongodb://127.0.0.1:27017/bpmn
+      API_KEY: ci-test-api-key
+      ADMIN_API_KEY: ci-test-admin-key
+      SESSION_SECRET: ci-test-session-secret
+      CONNECTORS_KEY: ci-test-connector-encryption-key-not-production
+      REQUIRE_AUTHENTICATION: 'false'
+      ENFORCE_SECURITY: 'false'
+      DEMO_MODE: 'false'
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build workspaces
+        run: npm run build
+
+      - name: Verify feature catalog and test tags
+        run: npm run features -- --check
+
+      - name: Verify generated feature page is current
+        run: |
+          npm run features
+          git diff --exit-code -- docs/docs/features.md docs/features.yaml
+          # The generator also writes // @features tags into test files.
+          git diff --exit-code -- packages/bpmn-server/test testSampleApp/test testSampleApp/examples
+
+      - name: Test workspaces
+        run: npm test
