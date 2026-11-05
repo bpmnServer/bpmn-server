@@ -6,7 +6,6 @@ export {
 	type WorkflowApplication,
 } from './runtime/WorkflowApplication.js';
 export { WebAppDelegate } from './runtime/WebAppDelegate.js';
-export type { IListColumn, IListColumns } from './runtime/listColumns.js';
 // for an application's own API routes (StartOptions.routes): the same x-api-key check bpmn-web's APIs use
 export { apiKeyAuth } from './routes/middleware/apiKeyAuth.js';
 // for an application's own API routes taking its session cookie: refuse a change posted from another site (CSRF)

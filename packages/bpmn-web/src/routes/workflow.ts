@@ -2,7 +2,7 @@ import express from 'express';
 import FS from 'node:fs';
 import path from 'node:path';
 
-import { BPMNServer, dateDiff, Behaviour_names   } from '../index.js';
+import { BPMNServer, dateDiff, Behaviour_names, labelInstances, labelItems } from '../index.js';
 import { BPMNAPI , SecureUser } from '../index.js';
 import { answerMessage, Common } from './common.js';
 import { packageReadme } from './docs.js';
@@ -456,6 +456,9 @@ async function display(req,res, title, output, logs = [], items = []) {
     
     var instances = await apiOf(req).data.findInstances({ ...notATest }, user,{sort:{saved:-1}});
     let waiting = await apiOf(req).data.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask', ...notATest }, getSecureUser(req));
+    // labels, filled in from each case's model (engine/Labels.ts)
+    await labelInstances(serverOf(req), instances);
+    await labelItems(serverOf(req), waiting);
 
     waiting.forEach(item => {
         item['fromNow'] = dateDiff(item.startedAt);
@@ -522,6 +525,7 @@ async function instanceDetails(request,response,instanceId,version) {
     if (visibleItems.length === 0) return response.status(403).send('Instance access denied');
 
     let instance = await serverOf(request).dataStore.findInstance({ id: instanceId }, 'Full');
+    await labelInstances(serverOf(request), [instance]);
 
     let logs = instance.logs;
     if (!logs)

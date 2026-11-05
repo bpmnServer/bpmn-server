@@ -8,3 +8,4 @@ export * from './ScriptHandler.js';
 export * from './SandboxScriptHandler.js';
 export * from './DataHandler.js';
 export * from './TestStubs.js';
+export * from './Labels.js';

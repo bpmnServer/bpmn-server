@@ -15,6 +15,12 @@ and here
 
 ## [Unreleased]
 ### Added
+- **Labels** (docs/docs/labels.md, `engine/Labels.ts`): `camunda:label` on the process, `camunda:label` and
+  `camunda:endLabel` on any element, templates with their values named (`Client: ${Client = data.clientId}`);
+  filled in when shown, from the case's data and its own model, nothing stored: `labelInstances`, `labelItems`,
+  `fillTemplate`, `templateProblems` (`engine/LabelTemplate.ts`, no dependencies). A missing value takes its name
+  along. Defaults: the delegate's optional `instanceLabel(instance)`, else `<model> #<caseId>`. `verifyModel`
+  reports a label that is not a template of data paths (`label-template`).
 - **`bpmn-server setup [folder]`**: an application's `.env` settings step by step, from bpmn-web's settings schema:
   the database (checked), the first administrator, the site, sign-in and design, email, the API keys, AI access, the
   environment and API trace. A profile (production, development) suggests the values; nothing is written until the

@@ -6,7 +6,6 @@ import type { IAppDelegate, BPMNServer } from 'bpmn-server';
 import type { WorkflowApplication } from './runtime/WorkflowApplication.js';
 import type { IUserManager } from './userAccess/IUserManager.js';
 import type { UserService } from './userAccess/UserService.js';
-import type { IListColumns } from './runtime/listColumns.js';
 import { WebAppDelegate } from './runtime/WebAppDelegate.js';
 import { engineSettingsFromEnv } from './runtime/engineEnv.js';
 import { runSetting } from './runtime/runSettings.js';
@@ -58,8 +57,6 @@ export interface StartOptions {
 	userManager?: IUserManager;
 	/** The API's settings (keys, service account, impersonation) of this server; default `.env`'s (runtime/hostSettings.ts). */
 	hostSettings?: WorkflowApplication['hostSettings'];
-	/** Extra columns in the instance list and the pending-task table (else INSTANCE_COLUMNS / TASK_COLUMNS). */
-	listColumns?: IListColumns;
 }
 
 function isTrue(param) {
@@ -215,7 +212,6 @@ export async function start(options: StartOptions = {}) {
 		routes: options.routes,
 		userManager: options.userManager,
 		hostSettings: options.hostSettings,
-		listColumns: options.listColumns,
 		serverOptions: options.setupOnly || options.console ? { cron: false } : {},
 	};
 	const { WebApp } = await import('./app.js');

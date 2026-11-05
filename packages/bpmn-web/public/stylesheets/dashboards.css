@@ -51,3 +51,6 @@
 .catalog-import input { flex: 1 1 160px; min-width: 0; padding: 4px 8px; }
 @media (max-width: 600px) { .dash-catalog { grid-template-columns: 1fr; } }
 .model-description { max-width: 360px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* what a task is for: its label and its case's (engine/Labels.ts) */
+.task-label { color: #667085; font-size: 0.85em; }

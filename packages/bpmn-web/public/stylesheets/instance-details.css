@@ -81,3 +81,9 @@
 .instance-page .rationale-table tr.rationale-step { cursor: pointer; }
 .instance-page .rationale-caret { width: 12px; margin-right: 4px; }
 .instance-page .rationale-table tbody.rationale-group:not(.rationale-open) tr:not(.rationale-step) { display: none; }
+
+/* an item's label under its name (camunda:label, camunda:endLabel) */
+.item-label {
+  color: var(--muted, #667085);
+  font-size: 0.85em;
+}

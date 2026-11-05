@@ -10,6 +10,7 @@ import { DefaultFlowGroup } from './DefaultFlowGroup.jsx';
 import { OtherAttributesGroup } from './OtherAttributesGroup.jsx';
 import { TemplateValuesGroup } from './TemplateValuesGroup.jsx';
 import { DataObjectGroup } from './DataObjectGroup.jsx';
+import { LabelGroup } from './LabelGroup.jsx';
 import { ConditionGroup, MultiInstanceGroup, FormGroup, NewFormFieldsGroup, DecisionGroup, CalledProcessGroup } from './FlowGroups.jsx';
 
 const LOW_PRIORITY = 400;
@@ -88,6 +89,11 @@ export default class BpmnServerPropertiesProvider {
             const dataObject = DataObjectGroup(element, translate);
             if (dataObject)
                 groups.splice(Math.min(groups.length, 1), 0, dataObject);
+
+            // what a case or an element is called (engine/Labels.ts), after the General group
+            const label = LabelGroup(element, translate);
+            if (label)
+                groups.splice(Math.min(groups.length, 1), 0, label);
 
             const other = OtherAttributesGroup(element, translate);
             if (other)

@@ -322,7 +322,7 @@ class UserTask extends Node {
         //console.log('----setAttVal', attr, exp, val);
     }
     describe() {
-        let attrs = ["assignee","candidateGroups", "candidateUsers", "dueDate", "followUpDate", "priority"];
+        let attrs = ["assignee","candidateGroups", "candidateUsers", "label", "endLabel", "dueDate", "followUpDate", "priority"];
         let desc = super.describe();
 
         attrs.forEach(attr => {

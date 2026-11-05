@@ -14,6 +14,14 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **Labels in the pages** (docs/docs/labels.md): the Instances list's Case column, the Pending Tasks table's Label
+  column, My work (under each task's name), and the instance page (the case's label; each element's under its
+  name), filled in from each case's model when shown.
+- **The model editor's Label group:** *Case label* on the process, *Label* and *Label once done* on any element of
+  the diagram; a template checked as it is typed (`camunda:label`, `camunda:endLabel` declared in the editor's
+  descriptor).
+- PR #281 (extra columns from `INSTANCE_COLUMNS` / `TASK_COLUMNS`) is superseded by labels: its safe reading and
+  display of values is kept in `engine/LabelTemplate.ts`; columns from labels' named values come next.
 - **An application's own sign-in: `start({ userManager })`.** An application that signs people in itself gives
   bpmn-web its user manager (`IUserManager`: `init(app)` for its sessions and `req.user`, `setup(app)` for `/login` and
   `/logout`, optional `apiUser(req)` for its API credential). bpmn-web then keeps no users, sessions or credentials of

@@ -1,7 +1,7 @@
 // The Camunda 7 descriptor that bpmn-server models use, plus the attributes bpmn-server reads that Camunda
 // does not define. The engine reads camunda:candidateUsers and camunda:candidateGroups on start events
-// (who may start the process), so they are declared on bpmn:StartEvent here; and camunda:exceptionsAsErrors on
-// service, send and script tasks.
+// (who may start the process), so they are declared on bpmn:StartEvent here; camunda:exceptionsAsErrors on
+// service, send and script tasks; and camunda:label, camunda:endLabel on the process and its elements.
 import camunda from 'camunda-bpmn-moddle/resources/camunda.json';
 
 export default {
@@ -15,6 +15,16 @@ export default {
             properties: [
                 { name: 'candidateUsers', isAttr: true, type: 'String' },
                 { name: 'candidateGroups', isAttr: true, type: 'String' }
+            ]
+        },
+        {
+            // bpmn-server's own labels (engine/Labels.ts): a template, with its values named
+            name: 'Labeled',
+            isAbstract: true,
+            extends: ['bpmn:Process', 'bpmn:FlowNode'],
+            properties: [
+                { name: 'label', isAttr: true, type: 'String' },
+                { name: 'endLabel', isAttr: true, type: 'String' }
             ]
         },
         {

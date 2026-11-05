@@ -12,6 +12,7 @@ areas:
   modeling: Modeling — BPMN elements and their settings
   engine: Engine — running instances
   decisions: Decisions (DMN)
+  application: The application — what its cases and tasks are called
   connectors: Connectors — REST APIs
   data: Data and storage
   api: APIs and the client
@@ -350,6 +351,14 @@ features:
     docs: [docs/docs/decisions.md, docs/docs/modeler.md]
     code: [packages/bpmn-web/modeler/src/decision.js, packages/bpmn-web/src/testing/decisionTests.ts]
     tests: [apps/testSampleApp/test/web/decision-tests.test.mjs, apps/testSampleApp/test/ui/decisions.test.mjs]
+# ------------------------------------------------------------------------------------------------------- application
+  - id: labels
+    area: application
+    name: "Labels of cases and tasks"
+    what: "camunda:label (and camunda:endLabel) templates in the model, their values named (Client: ${Client = data.clientId}); filled in when shown, from the case's own model; the lists, My work, the instance page; the editor's Label group."
+    docs: [docs/docs/labels.md, docs/design/labels.md]
+    code: [packages/bpmn-server/src/engine/Labels.ts, packages/bpmn-server/src/engine/LabelTemplate.ts, packages/bpmn-web/modeler/src/properties/LabelGroup.jsx]
+    tests: [packages/bpmn-server/test/labels.test.mjs, apps/testSampleApp/test/web/labels.test.mjs, apps/testSampleApp/test/ui/labels.test.mjs]
 # -------------------------------------------------------------------------------------------------------- connectors
   - id: connectors
     area: connectors
