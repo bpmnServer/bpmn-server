@@ -173,7 +173,7 @@ One box, matching any named value's path of any model listed:
 
 ```
 ┌ Pending Tasks ────────────────────────────────────────────────────────────────────────┐
-│ Field [Any ▾]   ( Case: Client · Order · Project · Priority │ Task: Amount · Level )   │
+│ (not filtered on the Workbench: the bar is in the Instances section)                  │
 ├──────────┬────────────────────────────────────────────────────────────┬──────────────┤
 │ Task     │ Label                                                      │ Assignee     │
 ├──────────┼────────────────────────────────────────────────────────────┼──────────────┤
@@ -203,7 +203,8 @@ One box, matching any named value's path of any model listed:
   the model filter.
 - **The value control:** *contains* and *is* for text; *from–to* for numbers and dates; a pick list for a value
   with a few known choices.
-- **Case and task fields** are grouped in Pending Tasks (*Case: …*, *Task: …*).
+- **Where it is:** on the Workbench, in the Instances section, filtering that list only (not Models, not Pending
+  Tasks); on My work, its own bar for the tasks listed. Task fields (*Task: Amount*) are not offered yet.
 - **Text-only labels** (Onboarding) have no named values; they are found by the model filter and by
   *search everything* only if they name a value.
 - **Filters combine,** with each other and with the model filter, and become one database query on the cases'

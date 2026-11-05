@@ -47,15 +47,23 @@ test("My work: a task's own label under its name, its case's in the Case column"
     assert.match(mine, /Approve<\/a>\s*<div class="task-label">Amount: 240<\/div><\/td>\s*<td>Client: abc · Order: 1234<\/td>\s*<td>Claim<\/td>/);
 });
 
-test('the filter by label: the bar offers the named values; the lists and My work show what it finds', async () => {
+test('the filter by label: the bar offers the named values; Instances and My work show what it finds', async () => {
     const home = (await admin.get('/')).text;
     assert.match(home, /<form class="label-filter"/);
     assert.match(home, /<option value="Client" title="Claim: data.clientId">Client<\/option>/);
+    // on the Workbench the bar is in the Instances section, and filters that section only
+    const instancesOf = html => html.slice(html.indexOf('id="instances"'));
+    const tasksOf = html => html.slice(html.indexOf('id="tasks"'), html.indexOf('id="instances"'));
+    assert.doesNotMatch(tasksOf(home), /label-filter/);
+    assert.match(instancesOf(home), /<form class="label-filter"/);
+    assert.equal((home.match(/<form class="label-filter"/g) ?? []).length, 1, 'one bar');
     const filtered = (await admin.get('/?field=Client&op=contains&value=ZET')).text;
-    assert.match(filtered, /Client: zeta · Order: 77/);
-    assert.doesNotMatch(filtered, /Client: abc · Order: 1234/, 'the other case, and its task, left out');
+    assert.match(instancesOf(filtered), /Client: zeta · Order: 77/);
+    assert.doesNotMatch(instancesOf(filtered), /Client: abc · Order: 1234/, 'the other case left out');
+    assert.match(tasksOf(filtered), /Client: abc · Order: 1234/, 'Pending Tasks not filtered');
     assert.match(filtered, /× Clear/);
-    assert.match((await admin.get('/?search=1234')).text, /Client: abc · Order: 1234/, 'search everything, a number');
+    assert.match(instancesOf((await admin.get('/?search=1234')).text), /Client: abc · Order: 1234/, 'search everything, a number');
+    assert.match(instancesOf((await admin.get('/?search=no-such-value')).text), /No instances match this filter/);
     const mine = (await manager.get('/dashboard?field=Order&op=is&value=77')).text;
     assert.match(mine, /Client: zeta · Order: 77/);
     assert.doesNotMatch(mine, /Client: abc · Order: 1234/);

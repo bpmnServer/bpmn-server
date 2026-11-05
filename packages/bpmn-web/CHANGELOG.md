@@ -17,7 +17,7 @@ and here
 - **Labels in the pages** (docs/docs/labels.md): the Instances list's Case column, the Pending Tasks table's Label
   column, My work (under each task's name), and the instance page (the case's label; each element's under its
   name), filled in from each case's model when shown.
-- **Filters by label** on the home page (Instances, Pending Tasks) and My work: a model; a named value of the
+- **Filters by label** on the Workbench's Instances section and on My work: a model; a named value of the
   cases' labels that contains, or is, a value; or search everything. A database query on the values' data paths,
   kept in the URL (`?field=Car&op=contains&value=porsche`) (`routes/labelFilter.ts`, `includes/labelFilter.pug`).
 - **My work:** a Case column with each task's case's label; a task's own label under its name.

@@ -12,9 +12,6 @@ block content
 				a(href='#tasks') Pending tasks
 				a(href='#instances') Instances
 		include includes/dashboardHeader.pug
-		include includes/labelFilter.pug
-		if labelFilter
-			+labelFilter(labelFilter)
 		div#workbench-sections
 			div#processes.workbench-section
 				include includes/processes.pug
