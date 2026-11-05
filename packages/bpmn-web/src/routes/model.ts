@@ -694,14 +694,14 @@ export class Model extends Common {
          * (after: { element, name }): those of `checks` (and the older `expect`) due then.
          */
         router.post('/test/check', awaitHandlerFactory(async (request, response) => {
-            const { instanceId, expect, checks, after } = request.body ?? {};
+            const { instanceId, expect, checks, after, at } = request.body ?? {};
             const instance = String(instanceId || '').startsWith('test-') ? await findTest(bpmnServer, instanceId) : null;
             if (!instance) {
                 response.status(404).json({ error: 'no such test instance' });
                 return;
             }
             const all = [...expectChecks(expect), ...(Array.isArray(checks) ? checks : [])];
-            response.json({ checks: checksAt(all, after?.element ? after : 'end', instance), instance: summarize(instance) });
+            response.json({ checks: checksAt(all, after?.element ? after : at === 'start' ? 'start' : 'end', instance), instance: summarize(instance) });
         }));
 
         /** The debugger: a test instance's data replaced (the next steps run with it). */

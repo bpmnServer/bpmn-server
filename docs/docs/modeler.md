@@ -88,8 +88,8 @@ under it; the selected one is on the right: its result, its steps and its checks
    (the events after an event-based gateway, a boundary timer, parallel tasks). **Stop** ends it part way.
 3. The steps you completed are saved as the scenario's. **Run** and **Run all** repeat them on a new instance without
    stopping, and run its checks.
-4. **Add check** adds a check, at the end or after a step: the instance's status, a data value, or an element passed
-   (how many times, in what status). A failed check shows the value it found.
+4. **Add check** adds a check, at the start, after a step or at the end, and it shows under its step, in words, with **Edit**: the instance's status, a data value, or an element passed
+   (how many times, in what status).
 
 **A task by itself:** select a task on the diagram and choose **New**, *The task selected* (or choose it under
 **Start at**, *A task by itself*). The scenario runs that task alone, with the data you give as its input: a script or a service
@@ -104,7 +104,9 @@ and the commands for that run, **Simulate** and **Debug** each opening its panel
   still waits, numbered in the order they started; **Back**, **Step**, **Play** and **Stop**.
 - **Debug** changes the instance's variables for the next steps; **Restart here**, on a step done, goes back to it.
 
-**Inspect this run** shows its data, items, the engine's decisions and log.
+**Inspect this run** shows its data, items, the engine's decisions and log. **Add as a check**, on an item or a value,
+checks it is as it is there: its status or its value, where the run waits (after the last step done, or at the start
+when none is), else at the end.
 
 **Full window**, in the bar of the tabs, puts them over the whole page; **Back to the editor** or Esc returns, and so does
 Simulate, which shows on the diagram.

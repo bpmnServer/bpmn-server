@@ -25,9 +25,9 @@ export interface ScenarioStep {
     data?: Record<string, any>;
 }
 
-/** A check of a run: at its end, or after a step (each time that step's element is completed). */
+/** A check of a run: at its start (once it has started), at its end, or after a step (each time that step's element is completed). */
 export interface Check {
-    at?: 'end' | 'after';
+    at?: 'start' | 'end' | 'after';
     /** at 'after': the step's element, by id or name */
     step?: string;
     kind: 'status' | 'node' | 'data';
@@ -332,7 +332,7 @@ export function compare(actual, op: string, expected): boolean {
 
 /** What a check says, in words. */
 export function describeCheck(check: Check): string {
-    const where = check.at === 'after' ? `after ${check.step}: ` : '';
+    const where = check.at === 'after' ? `after ${check.step}: ` : check.at === 'start' ? 'at the start: ' : '';
     if (check.kind === 'status') return `${where}status is ${check.status}`;
     if (check.kind === 'node') {
         const status = check.status ? `, ${check.status},` : '';
@@ -360,10 +360,10 @@ export function evaluateCheck(check: Check, instance) {
     return { what, ok: compare(actual, check.op, check.value), actual };
 }
 
-/** The checks due at the end, or after a step on an element (by id or name). */
-export function checksAt(checks: Check[], at: 'end' | { element: string; name?: string }, instance) {
+/** The checks due at the start, at the end, or after a step on an element (by id or name). */
+export function checksAt(checks: Check[], at: 'start' | 'end' | { element: string; name?: string }, instance) {
     return checks
-        .filter(c => at === 'end' ? (c.at ?? 'end') === 'end' : c.at === 'after' && (c.step === at.element || (at.name && c.step === at.name)))
+        .filter(c => at === 'start' ? c.at === 'start' : at === 'end' ? (c.at ?? 'end') === 'end' : c.at === 'after' && (c.step === at.element || (at.name && c.step === at.name)))
         .map(c => evaluateCheck(c, instance));
 }
 
@@ -453,6 +453,7 @@ export async function runScenario(server, model: string, scenario: Scenario, use
     catch (err) {
         return { name: scenario.name, ok: false, error: `Starting failed: ${message(err)}`, steps, checks: [], instance: null };
     }
+    checks.push(...checksAt(all, 'start', instance));
     for (const [index, step] of (scenario.steps ?? []).entries()) {
         const waiting = (instance.items ?? []).filter(isStep);
         const item = waiting.find(i => i.elementId === step.element);
