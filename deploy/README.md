@@ -1,3 +1,56 @@
+# Docker deployment on an existing AWS Lightsail Ubuntu server
+
+If you **already created the Lightsail instance**, use the Docker scripts below instead of `deploy/install.sh`. That older installer sets up a **non-Docker** Node.js + MongoDB + nginx installation; do not run both on the same host unless you deliberately plan port/resource allocation.
+
+## 1. Install Docker once
+
+SSH to your Lightsail Ubuntu 22.04/24.04 instance and run:
+
+```bash
+curl -fsSLo /tmp/bpmn-install-docker.sh https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/deploy/docker/install-docker.sh
+less /tmp/bpmn-install-docker.sh
+sudo bash /tmp/bpmn-install-docker.sh
+```
+
+## 2. Deploy one client
+
+```bash
+curl -fsSLo /tmp/bpmn-deploy-client.sh https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/deploy/docker/deploy-client.sh
+less /tmp/bpmn-deploy-client.sh
+sudo bash /tmp/bpmn-deploy-client.sh acme 3101
+```
+
+This uses the existing `ralphhanna/bpmn-web` image referenced in `docker/docker-compose.yml` plus a private MongoDB container. The script pulls the image and runs it; it **does not build a client-customized image**. Pass a reviewed/pinned custom image as the third argument when you have one:
+
+```bash
+sudo bash /tmp/bpmn-deploy-client.sh acme 3101 registry.example.com/client-bpmn:v1
+```
+
+Each client has its own Compose project, persistent `mongodb` and `processes` volumes, MongoDB not published externally, and random `API_KEY`, `ADMIN_API_KEY`, and `SESSION_SECRET` in `/opt/bpmn-clients/<client>/.env` (root-readable). The HTTP port is bound to **127.0.0.1 only**. Configure nginx/Caddy on the host to reverse-proxy each client's hostname to its local port, enable HTTPS, and open only 80/443 in Lightsail. This script deliberately does **not** create DNS records or TLS certificates.
+
+For example: `acme.trial.omniworkflow.com → 127.0.0.1:3101`, `beta.trial.omniworkflow.com → 127.0.0.1:3102`.
+
+**Important:** the existing Docker image may initialize a default `admin` account/password. Verify the running image and immediately set a strong admin password via its supported management interface before exposing it. This script does not automate administrator provisioning. Also, the current image is built from the older `bpmn-web` repository; validate compatibility with the current monorepo and pin a known-good image tag/digest before production use. Docker containers alone are **not** a secure sandbox for arbitrary untrusted customer JavaScript.
+
+### MongoDB fails on kernel 6.19+ (SERVER-121912)
+
+MongoDB 8 can refuse to start on Linux 6.19 through 7.0.13 due to a TCMalloc/rseq compatibility issue. The deployment script now configures the MongoDB container with `GLIBC_TUNABLES=glibc.pthread.rseq=1` as a temporary workaround. On an already deployed client, download the updated `deploy/docker/deploy-client.sh` and rerun it with the **same** client and port; it preserves the named volumes and secrets and recreates the unhealthy container. The long-term remedy is an OS/kernel version incorporating the fix. See [MongoDB production notes](https://www.mongodb.com/docs/manual/administration/production-notes/) and [SERVER-121912](https://jira.mongodb.org/browse/SERVER-121912).
+
+### Operations
+
+```bash
+cd /opt/bpmn-clients/acme
+sudo docker compose ps
+sudo docker compose logs -f web
+sudo docker compose stop
+sudo docker compose start
+sudo docker compose pull && sudo docker compose up -d
+```
+
+Re-running `deploy-client.sh` with the same client and port preserves stored data and secrets. Do not use `docker compose down -v` unless you intend to delete the client's database and models. For a 4 GB Lightsail host, **one MongoDB container per client is expensive**; measure `docker stats` and use fewer simultaneously running tenants, or design an authenticated shared MongoDB service with separate tenant credentials.
+
+---
+
 # Installing on a server
 
 [`install.sh`](install.sh) installs bpmn-server on a new Linux server (Ubuntu 22.04 or 24.04), ready to use:

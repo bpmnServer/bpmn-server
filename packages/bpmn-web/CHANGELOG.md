@@ -48,6 +48,10 @@ and here
   display of values is kept in `engine/LabelTemplate.ts`; columns from labels' named values come next.
 
 ### Changed
+- **The Docker image** is built from the npm release, as users install it (`npx bpmn-server init`), not from a git
+  clone: one version per image, no `.env` inside, production mode. `up.cmd` and `up.sh` also make a random `ADMIN_PASSWORD`
+  and print it; `PORT` in `.env` picks the host's port. The database volume is now `database`: see `docker/README.md`
+  to bring data over. `docker/image/test.mjs` tests the image.
 - The model and decision editors have the pages' menu: Workbench, Dashboard (My work, Design, Administration),
   the user's menu and About.
 - The instance page numbers items by their seq, from 1: the items table, the Rationale and the diagram's numbers

@@ -3,7 +3,8 @@ services:
   bpmn-web:
     image: ralphhanna/bpmn-web
     ports:
-      - 3000:3000
+      # PORT in .env for another port of this machine
+      - ${PORT:-3000}:3000
     environment:
       MONGO_DB_URL: mongodb://mongo:27017/bpmn
       REQUIRE_AUTHENTICATION: "true"
@@ -15,6 +16,8 @@ services:
       API_KEY: ${API_KEY:?run up.cmd or up.sh, or set API_KEY in .env}
       ADMIN_API_KEY: ${ADMIN_API_KEY:?set ADMIN_API_KEY in .env}
       SESSION_SECRET: ${SESSION_SECRET:?set SESSION_SECRET in .env}
+      # the password of admin, when the first user is made; without it, admin (up.cmd and up.sh set it)
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
     volumes:
       - processes:/app/processes
     depends_on:
@@ -27,7 +30,7 @@ services:
     # its cache would otherwise take half the machine's memory
     command: ["--wiredTigerCacheSizeGB", "0.5"]
     volumes:
-      - mongodb:/data/db
+      - database:/data/db
     healthcheck:
       test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
       interval: 5s
@@ -36,7 +39,8 @@ services:
     restart: unless-stopped
 volumes:
   # the database. A Docker volume, not a folder of this machine: on Windows and macOS, MongoDB hangs on a
-  # folder shared from the host.
-  mongodb:
+  # folder shared from the host. Not named mongodb: the 2024 setup's volume of that name is bound to a folder, and
+  # Compose would use it again.
+  database:
   # the models (the processes folder); filled from the image the first time
   processes:
