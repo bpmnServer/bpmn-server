@@ -28,7 +28,9 @@ test('queries mean what they mean on the in-memory store', async () => {
     assert.deepEqual(await ids(sqlite), await ids(memory), JSON.stringify(query));
     assert.equal(await sqlite.count('d', 'c', query), await memory.count('d', 'c', query), 'count ' + JSON.stringify(query));
   }
-  await assert.rejects(sqlite.find('d', 'c', { name: { $regex: 'cl' } }), /Unsupported query operator/);
+  for (const query of [{ name: { $regex: 'cl' } }, { name: { $regex: 'CL', $options: 'i' } }])      // as the memory store
+    assert.deepEqual((await sqlite.find('d', 'c', query, null, { id: 1 })).map(d => d.id), (await memory.find('d', 'c', query, null, { id: 1 })).map(d => d.id));
+  await assert.rejects(sqlite.find('d', 'c', { name: { $where: 'true' } }), /Unsupported query operator/);
   await sqlite.close();
 });
 

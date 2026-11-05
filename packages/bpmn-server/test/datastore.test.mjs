@@ -35,8 +35,17 @@ test('queries: null matches an array element without the field, as in MongoDB; $
 });
 
 test('queries: an operator the store does not know is refused, not ignored', () => {
-  assert.throws(() => DocumentQuery.matches(doc, { name: { $regex: 'cl' } }), /Unsupported query operator \$regex/);
+  assert.throws(() => DocumentQuery.matches(doc, { name: { $where: 'true' } }), /Unsupported query operator \$where/);
   assert.throws(() => DocumentQuery.matches(doc, { $where: 'true' }), /Unsupported/);
+});
+
+test("queries: $regex, with $options, as MongoDB: strings only (the lists' filters by label)", () => {
+  const m = (q) => DocumentQuery.matches(doc, q);
+  assert.equal(m({ name: { $regex: 'cl' } }), true);
+  assert.equal(m({ name: { $regex: 'CL' } }), false, 'case matters');
+  assert.equal(m({ name: { $regex: 'CL', $options: 'i' } }), true, 'unless $options say');
+  assert.equal(m({ 'data.amount': { $regex: '5' } }), false, 'a number is not a string');
+  assert.equal(m({ 'items.status': { $regex: '^wa' } }), true, 'into arrays');
 });
 
 test('the memory store: copies in and out, projections, upsert, unique indexes', async () => {
