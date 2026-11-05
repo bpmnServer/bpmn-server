@@ -20,10 +20,10 @@ mixin editorMenu
 
 mixin editorUser
   nav.editor-menu.editor-menu-right(aria-label="Account")
-    if user
+    if account
       .editor-dropdown
         button(type='button' aria-haspopup='true')
-          | #{user.userName || user.email}
+          | #{account.userName || account.email}
           span.editor-caret
         .editor-dropdown-menu.editor-dropdown-right
           a(href='/account') My account

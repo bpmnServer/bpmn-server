@@ -58,6 +58,14 @@ and here
 - `DEFINITIONS_PATH` names the models folder of an application on `start()`/`webConfiguration()`: it was read
   only by the sample application's own configuration and the Test tab, so another application's models stayed
   in `./processes`.
+- The menu with sign-in off (`REQUIRE_AUTHENTICATION=false`): every page has the same places, and none offers Sign in,
+  Create account or a Sign out. It depended on the page: the dashboards, the docs and the model list showed Sign in
+  and no places, the home and instance pages a "system" user. The menu goes by who is signed in (`account`,
+  `signInOff`), not by the `user` a page passes.
+- The editors' logo comes from the application; it was loaded from another site, and broken without it.
+- `/model/list` has a title of its own, not "bpmn-server Workbench Demo WF2".
+- History tab, View: the version's report shows in the tab. The tab's rule hiding the Report tab's panel
+  (`.dock-report`) hid it too.
 
 ### Documentation
 - **The environment** (`docs/docs/environment.md`): every variable bpmn-web, bpmn-server and bpmn-client read,

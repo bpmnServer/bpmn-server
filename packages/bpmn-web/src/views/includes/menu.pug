@@ -1,11 +1,12 @@
 //- The one menu of every page (layouts include it; the editors have a compact copy in their header):
 //- Workbench, the home; Dashboard: My work for everyone, a drop-down with Design and Administration for designers
 //- and administrators (as their role and DISABLE_DESIGN / DISABLE_ADMIN allow). res.locals: user, canDesign,
-//- canAdminister, canSignup, currentPath (UserManager).
+//- canAdminister, canSignup, currentPath, account (who is signed in), signInOff (UserManager). It goes by account, not
+//- `user`: a page may pass its own `user`. With sign-in off, everyone has the places, and there is nothing to sign in to.
 - const here = typeof currentPath === 'string' ? currentPath : '';
 - const on = (path) => (path === '/' ? here === '/' : here === path || here.startsWith(path + '/')) ? 'active' : undefined;
 ul.nav.navbar-nav.app-menu
-  if user
+  if account || signInOff
     li(class=on('/')): a(href='/') Workbench
     if canDesign || canAdminister
       li.dropdown(class=on('/dashboard'))
@@ -21,17 +22,17 @@ ul.nav.navbar-nav.app-menu
     else
       li(class=on('/dashboard')): a(href='/dashboard') My work
 ul.nav.navbar-nav.navbar-right.app-menu
-  if user
+  if account
     li.dropdown(class=on('/account'))
       a.dropdown-toggle(href='#' data-toggle='dropdown' role='button' aria-haspopup='true' aria-expanded='false')
         i.fa.fa-user(aria-hidden='true')
-        | &nbsp;#{user.userName || user.email}
+        | &nbsp;#{account.userName || account.email}
         span.caret
       ul.dropdown-menu.dropdown-menu-right
         li: a(href='/account') My account
         li.divider(role='separator')
         li: a(href='/logout') Sign out
-  else
+  else if !signInOff
     li(class=on('/login')): a(href='/login') Sign in
     if canSignup !== false
       li(class=on('/signup')): a(href='/signup') Create account
