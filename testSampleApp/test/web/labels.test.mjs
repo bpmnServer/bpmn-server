@@ -54,9 +54,9 @@ test('the filter by label: the bar offers the named values; Instances and My wor
     // on the Workbench the bar is in the Instances section, and filters that section only
     const instancesOf = html => html.slice(html.indexOf('id="instances"'));
     const tasksOf = html => html.slice(html.indexOf('id="tasks"'), html.indexOf('id="instances"'));
-    assert.doesNotMatch(tasksOf(home), /label-filter/);
+    assert.match(tasksOf(home), /<form class="label-filter"/);
     assert.match(instancesOf(home), /<form class="label-filter"/);
-    assert.equal((home.match(/<form class="label-filter"/g) ?? []).length, 1, 'one bar');
+    assert.equal((home.match(/<form class="label-filter"/g) ?? []).length, 2, "a bar for each list");
     const filtered = (await admin.get('/?field=Client&op=contains&value=ZET')).text;
     assert.match(instancesOf(filtered), /Client: zeta · Order: 77/);
     assert.doesNotMatch(instancesOf(filtered), /Client: abc · Order: 1234/, 'the other case left out');
@@ -64,6 +64,21 @@ test('the filter by label: the bar offers the named values; Instances and My wor
     assert.match(filtered, /× Clear/);
     assert.match(instancesOf((await admin.get('/?search=1234')).text), /Client: abc · Order: 1234/, 'search everything, a number');
     assert.match(instancesOf((await admin.get('/?search=no-such-value')).text), /No instances match this filter/);
+
+    // Pending Tasks' own filter: only that list
+    const tasksFiltered = (await admin.get('/?task_field=Client&task_op=contains&task_value=ZET')).text;
+    assert.match(tasksOf(tasksFiltered), /Amount: 10 — Client: zeta · Order: 77/);
+    assert.doesNotMatch(tasksOf(tasksFiltered), /Client: abc · Order: 1234/, 'the other task left out');
+    assert.match(instancesOf(tasksFiltered), /Client: abc · Order: 1234/, 'Instances not filtered');
+    assert.match(tasksOf((await admin.get('/?task_search=no-such-value')).text), /No pending tasks match this filter/);
+
+    // both at once; each bar keeps the other's filter, and clearing one keeps the other
+    const both = (await admin.get('/?field=Client&value=abc&task_field=Client&task_value=zeta')).text;
+    assert.doesNotMatch(tasksOf(both), /Client: abc · Order: 1234/);
+    assert.doesNotMatch(instancesOf(both), /Client: zeta · Order: 77/);
+    assert.match(tasksOf(both), /<input type="hidden" name="value" value="abc"/, "the tasks' bar keeps the instances' filter");
+    assert.match(instancesOf(both), /<input type="hidden" name="task_value" value="zeta"/, "the instances' bar keeps the tasks' filter");
+    assert.match(tasksOf(both), /href="\/\?[^"#]*field=Client[^"#]*#tasks"[^>]*>× Clear/);
     const mine = (await manager.get('/dashboard?field=Order&op=is&value=77')).text;
     assert.match(mine, /Client: zeta · Order: 77/);
     assert.doesNotMatch(mine, /Client: abc · Order: 1234/);

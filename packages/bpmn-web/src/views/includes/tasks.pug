@@ -1,7 +1,14 @@
+include labelFilter.pug
 div.tasks-content
 	h3 Pending Tasks
+	//- this list's filter (routes/labelFilter.ts): by the named values of the tasks' cases
+	if taskFilter
+		+labelFilter(taskFilter)
 	if !waiting.length
-		p.empty-state There are no pending tasks for this user.
+		if taskFilter && taskFilter.active
+			p.empty-state No pending tasks match this filter.
+		else
+			p.empty-state There are no pending tasks for this user.
 	table
 		tr
 			th Name -id
