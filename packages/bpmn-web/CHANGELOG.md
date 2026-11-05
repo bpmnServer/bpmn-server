@@ -48,6 +48,13 @@ and here
   display of values is kept in `engine/LabelTemplate.ts`; columns from labels' named values come next.
 
 ### Changed
+- **The Test tab is one screen**: the Design and Runs sections are gone. A scenario has **Run** and **Record** (it was
+  Start, then Start the process, Execute); its result in one line; its steps with their results; one list of checks.
+  A recording closes by itself at the end. The runs are in a tree, under their scenario. Simulate, Debug and Delete are
+  by the result, Simulate and Debug each with a panel of its own; Inspect this run has the data, items, decisions and
+  log. New has *The whole process* and *The task selected* (was Test this task); Clear all is **Delete all runs**, Duplicate
+  and Delete are under **⋯**. The scenario files are unchanged.
+- **Full window** in the editor's panel: the Problems, Report, Test and History tabs over the whole page; Esc comes back.
 - **The Docker image** is built from the npm release, as users install it (`npx bpmn-server init`), not from a git
   clone: one version per image, no `.env` inside, production mode. `up.cmd` and `up.sh` also make a random `ADMIN_PASSWORD`
   and print it; `PORT` in `.env` picks the host's port. The database volume is now `database`: see `docker/README.md`

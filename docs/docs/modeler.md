@@ -78,26 +78,36 @@ left out (they are not in the model file).
 
 ## Testing a model
 
-The **Test** tab keeps test scenarios for the model and runs them:
+The **Test** tab keeps test scenarios for the model and runs them. The scenarios are on the left, each with its runs
+under it; the selected one is on the right: its result, its steps and its checks.
 
-1. **Start** starts the process with the scenario's start data, and shows what waits as the next steps: user
-   tasks (**Execute**) and events (**Force**), each with its data.
-2. Running a step shows what waits next, until nothing waits. The data chooses the branches; which step you run
-   first chooses between elements that wait together (the events after an event-based gateway, a boundary
-   timer, parallel tasks).
-3. The steps you ran are saved as the scenario's. **Run** and **Run all** repeat them on a new instance without
-   stopping, and check what the scenario expects at the end: the status, data values, and the elements passed
-   and not passed.
+1. **New** adds a scenario, and **Record** starts the process with its start data and shows what waits as the next
+   steps: user tasks (**Complete step**) and events (**Trigger event**), each with its data.
+2. Completing a step shows what waits next, until nothing waits: the recording then closes by itself and shows its
+   result. The data chooses the branches; which step you complete first chooses between elements that wait together
+   (the events after an event-based gateway, a boundary timer, parallel tasks). **Stop** ends it part way.
+3. The steps you completed are saved as the scenario's. **Run** and **Run all** repeat them on a new instance without
+   stopping, and run its checks.
+4. **Add check** adds a check, at the end or after a step: the instance's status, a data value, or an element passed
+   (how many times, in what status). A failed check shows the value it found.
 
-**A task by itself:** select a task on the diagram and click **Test this task** (or choose it under **Start at**,
-*A task by itself*). The scenario runs that task alone, with the data you give as its input: a script or a service
+**A task by itself:** select a task on the diagram and choose **New**, *The task selected* (or choose it under
+**Start at**, *A task by itself*). The scenario runs that task alone, with the data you give as its input: a script or a service
 runs and the run ends; a user task waits for its step, then the run ends. Nothing before or after it runs. Its run
 has the items, the data and the decisions as any other, and **Debug** changes its data and runs it again. It is
 saved, repeated and checked as the other scenarios.
 
-Each scenario keeps its latest 20 runs with their instances. **Simulate** plays a run on the diagram: an element
-turns blue when it starts and green when it ends, orange if it still waits, numbered in the order they started;
-**Pause**, **Continue** and **Step** while it plays.
+Each scenario keeps its latest 20 runs with their instances; click one to show it. By its result are **Open instance**
+and the commands for that run, **Simulate** and **Debug** each opening its panel under them, and **Delete**:
+
+- **Simulate** plays the run on the diagram: an element turns blue when it starts and green when it ends, orange if it
+  still waits, numbered in the order they started; **Back**, **Step**, **Play** and **Stop**.
+- **Debug** changes the instance's variables for the next steps; **Restart here**, on a step done, goes back to it.
+
+**Inspect this run** shows its data, items, the engine's decisions and log.
+
+**Full window**, in the bar of the tabs, puts them over the whole page; **Back to the editor** or Esc returns, and so does
+Simulate, which shows on the diagram.
 
 Test runs are ordinary instances whose ids start with `test-`: run tests on a development or test server.
 

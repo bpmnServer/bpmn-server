@@ -1190,3 +1190,71 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 .history-removed rect, .history-removed polyline { fill: none; stroke: #b42318; stroke-width: 2px; stroke-dasharray: 6 4; }
 .history-removed-sign { fill: #b42318; font: 700 16px sans-serif; text-anchor: end; dominant-baseline: hanging; }
 .history-removed-name { fill: #b42318; font: 12px sans-serif; text-anchor: middle; dominant-baseline: middle; }
+
+/* The Test tab: one screen: the actions, the result, the steps with their checks, Inspect this run */
+.test-menu { position: relative; display: inline-block; }
+.test-menu > summary { list-style: none; cursor: pointer; padding: 3px 10px; border: 1px solid #c4c8cf; border-radius: 4px; background: #fff; font-size: 13px; white-space: nowrap; }
+.test-menu > summary::-webkit-details-marker { display: none; }
+.test-menu > summary:hover { background: #f0f4fb; }
+.test-editor details.test-menu { margin: 0; }
+.test-editor details.test-menu > summary { font-weight: 400; padding: 3px 10px; }
+.test-menu-items { position: absolute; z-index: 5; top: 100%; left: 0; margin-top: 3px; padding: 4px; min-width: 150px; display: flex; flex-direction: column; gap: 2px; background: #fff; border: 1px solid #c4c8cf; border-radius: 4px; box-shadow: 0 6px 18px rgba(20,45,66,.16); }
+.test-scenario-menu .test-menu-items { left: auto; right: 0; }
+.test-panel .test-menu-items button { border: none; background: none; text-align: left; white-space: nowrap; }
+.test-panel .test-menu-items button:hover:not(:disabled) { background: #edf5fa; }
+.test-summary { margin: 8px 0; padding: 7px 10px; border-left: 4px solid #c4c8cf; background: #f7f9fc; }
+.test-summary.ok { border-left-color: #067647; background: #f0faf4; }
+.test-summary.failed { border-left-color: #b42318; background: #fef3f2; }
+.test-summary.recording { border-left-color: #1f62c8; background: #eef4fd; }
+.test-summary-line { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.test-summary-title { font-size: 14px; }
+.test-summary.ok .test-summary-title { color: #067647; }
+.test-summary.failed .test-summary-title { color: #b42318; }
+.test-summary .test-checks { margin: 6px 0 0; }
+.test-run-history { max-width: 280px; }
+.test-timeline { display: flex; flex-direction: column; gap: 4px; margin: 8px 0; }
+.test-timeline .test-step { border: 1px solid #e4e7ec; border-radius: 4px; padding: 5px 8px; margin: 0; }
+.test-timeline .test-step.failed { border-color: #b42318; }
+.test-timeline .test-step-start, .test-timeline .test-step-end { background: #f7f9fc; }
+.test-step > .test-step-check-editor, .test-step > .test-step-error { grid-column: 1 / -1; }
+.test-panel button.test-check-add { border: none; background: none; color: #1f62c8; padding: 2px 0; font-size: 12px; margin-top: 2px; }
+.test-panel button.test-check-add:hover { text-decoration: underline; }
+.test-editor details.test-inspect { margin-top: 10px; border-top: 1px solid #e4e7ec; padding-top: 4px; }
+.test-editor details.test-menu > summary::marker { content: none; }
+
+/* The Test tab's tree: scenarios, their runs under them */
+.test-list ul.test-tree, .test-list ul.test-tree-runs { list-style: none; margin: 0; padding: 0; }
+.test-list li.test-tree-scenario { display: block; padding: 0; border: none; cursor: default; background: none; }
+.test-tree-row { display: flex; align-items: center; gap: 5px; padding: 4px 8px 4px 4px; cursor: pointer; }
+.test-tree-row:hover { background: #f0f4fb; }
+.test-tree-row.selected { background: #e8f0fc; font-weight: 600; }
+.test-panel button.test-tree-toggle { border: none; background: none; padding: 0; width: 16px; flex: none; color: #52575f; }
+.test-tree-toggle-space { width: 16px; flex: none; }
+.test-tree-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.test-tree-count { color: #6b7079; font-size: 11px; font-weight: 400; }
+.test-list li.test-tree-run { display: flex; align-items: center; gap: 5px; padding: 2px 8px 2px 26px; font-size: 12px; cursor: pointer; border: none; background: none; }
+.test-list li.test-tree-run:hover { background: #f0f4fb; }
+.test-list li.test-tree-run.shown { background: #dfe9f9; }
+.test-tree-when { white-space: nowrap; }
+.test-tree-how { margin-left: auto; color: #6b7079; white-space: nowrap; }
+
+/* The Test tab: Simulate's and Debug's panels, under the run's commands */
+.test-command-panel { margin: 0 0 8px; padding: 7px 10px; border: 1px solid #b9c6da; border-left: 4px solid #1f62c8; border-radius: 4px; background: #fbfcfe; }
+.test-command-panel[hidden] { display: none; }
+.test-sim-panel { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.test-sim-text { flex: 1 1 240px; margin-left: 6px; color: #3d4450; font-size: 12px; }
+.test-debug-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 6px; }
+.test-debug-head .test-hint { margin: 0; }
+.test-debug-stop { margin-left: auto; }
+.test-debug-panel .test-variables { border: none; padding: 0; margin: 0; background: none; }
+
+/* The Test tab's checks: one list under the steps */
+.test-checks-editor { margin: 10px 0; }
+.test-checks-editor h5 { margin: 0 0 4px; font-size: 13px; font-weight: 600; }
+.test-panel button.test-check-add { border: 1px solid #c4c8cf; background: #fff; color: inherit; padding: 3px 10px; font-size: 13px; margin-top: 4px; }
+.test-panel button.test-check-add:hover { background: #f0f4fb; text-decoration: none; }
+
+/* The dock over the whole window */
+.dock.full { position: fixed; inset: 0; z-index: 1000; height: auto; }
+.dock.full .dock-resizer { display: none; }
+.dock.full .dock-body { flex: 1; height: auto; min-height: 0; }

@@ -427,26 +427,25 @@ test('run from the Test tab: the start data reaches the connector, the answer is
     await page.waitForSelector('#js-canvas .djs-shape');
     await page.click('#js-tab-test');
     await page.waitForSelector('#js-test .test-panel');
+    await page.click('#js-test .test-new-menu summary');
     await page.click('#js-test .test-new');
-    await page.click('#js-test .test-design .test-run');
+    await page.click('#js-test .test-run');
     await page.waitForSelector('.test-start');
     const data = page.locator('.test-start textarea');
     assert.equal(await data.count(), 1, 'the start asks for its data');
     await data.fill('{ "customerId": "C-1" }');
     await page.click('.test-start-go');
-    await page.waitForSelector('.test-finished');
-    assert.match(await page.innerText('.test-finished'), /instance is end/);
+    await page.waitForSelector('.test-summary.ok');
     const runs = await web.bpmnServer.dataStore.findInstances({ name: MODEL }, 'full');
     const stored = runs.at(-1);
     // the outputs as the test before saved them: tier kept as level, and an expression of its own
     assert.deepEqual([stored.data.level, stored.data.custom], ['gold', 'gold!'], JSON.stringify(runs.map(r => ({ id: r.id, status: r.status, data: r.data, items: r.items.map(i => i.elementId + ':' + i.status) }))));
     assert.ok(stored.items.some(i => i.elementId === 'Done'));
 
-    await page.click('#js-test .test-tab-design');
-    await page.click('#js-test .test-design .test-run');
+    await page.click('#js-test .test-run');
     await page.locator('.test-start textarea').fill('{ "customerId": "nobody" }');
     await page.click('.test-start-go');
-    await page.waitForSelector('.test-finished');
+    await page.waitForFunction(() => document.querySelectorAll('#js-test .test-tree-run').length === 2);
     const missing = (await web.bpmnServer.dataStore.findInstances({ name: MODEL }, 'full')).at(-1);
     assert.ok(missing.items.some(i => i.elementId === 'NotFound'), 'HTTP_404 caught');
 });
