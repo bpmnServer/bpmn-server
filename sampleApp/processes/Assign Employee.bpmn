@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="assign-employee-definitions" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:error id="NotFoundError" name="Not found" errorCode="HTTP_404" />
+  <bpmn:process id="AssignEmployee" name="Assign Employee" isExecutable="true">
+    <bpmn:startEvent id="Asked">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="employeeId" label="Employee ID" type="string" defaultValue="EMP-009" />
+          <camunda:formField id="projectId" label="Project ID" type="string" defaultValue="PRJ-001" />
+          <camunda:formField id="role" label="Role" type="string" defaultValue="Analyst" />
+          <camunda:formField id="allocation" label="Allocation %" type="long" defaultValue="50" />
+          <camunda:formField id="startDate" label="Start date" type="string" defaultValue="2026-12-01" />
+          <camunda:formField id="endDate" label="End date" type="string" defaultValue="2026-12-31" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>toGet</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="GetEmployee" name="Read the employee">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="id">${data.employeeId}</camunda:inputParameter>
+            <camunda:outputParameter name="firstName">${output.firstName}</camunda:outputParameter>
+            <camunda:outputParameter name="lastName">${output.lastName}</camunda:outputParameter>
+            <camunda:outputParameter name="jobTitle">${output.jobTitle}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>hr/getEmployee</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>toGet</bpmn:incoming>
+      <bpmn:outgoing>toAdd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="AddAssignment" name="Add the assignment">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="body.employeeId">${data.employeeId}</camunda:inputParameter>
+            <camunda:inputParameter name="body.projectId">${data.projectId}</camunda:inputParameter>
+            <camunda:inputParameter name="body.role">${data.role}</camunda:inputParameter>
+            <camunda:inputParameter name="body.allocation">${Number(data.allocation)}</camunda:inputParameter>
+            <camunda:inputParameter name="body.startDate">${data.startDate}</camunda:inputParameter>
+            <camunda:inputParameter name="body.endDate">${data.endDate}</camunda:inputParameter>
+            <camunda:inputParameter name="body.status">Active</camunda:inputParameter>
+            <camunda:outputParameter name="assignmentId">${output.assignmentId}</camunda:outputParameter>
+            <camunda:outputParameter name="projectName">${output.projectName}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>hr/createAssignment</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>toAdd</bpmn:incoming>
+      <bpmn:outgoing>toDone</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Done" name="Done">
+      <bpmn:incoming>toDone</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="NoSuchEmployee" name="No such employee" attachedToRef="GetEmployee">
+      <bpmn:outgoing>toNotFound</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="NotFoundError" />
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="NotFound" name="Not found">
+      <bpmn:incoming>toNotFound</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="toGet" sourceRef="Asked" targetRef="GetEmployee" />
+    <bpmn:sequenceFlow id="toAdd" sourceRef="GetEmployee" targetRef="AddAssignment" />
+    <bpmn:sequenceFlow id="toDone" sourceRef="AddAssignment" targetRef="Done" />
+    <bpmn:sequenceFlow id="toNotFound" sourceRef="NoSuchEmployee" targetRef="NotFound" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_AssignEmployee">
+    <bpmndi:BPMNPlane id="BPMNPlane_AssignEmployee" bpmnElement="AssignEmployee">
+      <bpmndi:BPMNShape id="Asked_di" bpmnElement="Asked">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GetEmployee_di" bpmnElement="GetEmployee">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AddAssignment_di" bpmnElement="AddAssignment">
+        <dc:Bounds x="345" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Done_di" bpmnElement="Done">
+        <dc:Bounds x="522" y="52" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="527" y="88" width="26" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NotFound_di" bpmnElement="NotFound">
+        <dc:Bounds x="372" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="366" y="198" width="48" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NoSuchEmployee_di" bpmnElement="NoSuchEmployee">
+        <dc:Bounds x="207" y="92" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="170" y="128" width="49" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="toGet_di" bpmnElement="toGet">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toAdd_di" bpmnElement="toAdd">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="345" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toDone_di" bpmnElement="toDone">
+        <di:waypoint x="445" y="70" />
+        <di:waypoint x="522" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toNotFound_di" bpmnElement="toNotFound">
+        <di:waypoint x="225" y="128" />
+        <di:waypoint x="225" y="180" />
+        <di:waypoint x="372" y="180" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
