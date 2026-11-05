@@ -118,6 +118,25 @@ test('runs kept under the older name (.runs/<model>.tests.json) are moved to .ru
     assert.ok(!fs.existsSync(path.join(runs, 'leave-request.tests.json')));
 });
 
+test('a test instance is not in the lists of instances and work; it opens by its id', async () => {
+    const waitingId = instance => instance.items.find(i => i.status === 'wait').id;
+    const real = (await web.bpmnServer.engine.start('leave-request', {}, null, 'designer')).instance;
+    const res = await designer.request('POST', '/model/test/start', { json: { processName: 'leave-request', data: {} } });
+    assert.equal(res.status, 200, why(res));
+    const instance = JSON.parse(res.text).instance;
+    const tested = instance.id;
+    assert.match(tested, /^test-/);
+    // the waiting task is the staff's
+    for (const [url, user] of [['/', designer], ['/dashboard', staff], ['/tasks', staff]]) {
+        const page = await user.get(url);
+        assert.equal(page.status, 200, `${url}: ${why(page)}`);
+        // a list of instances has their ids, a list of tasks the tasks'
+        assert.ok(![tested, waitingId(instance)].some(id => page.text.includes(id)), `${url} does not list the test instance`);
+        assert.ok([real.id, waitingId(real)].some(id => page.text.includes(id)), `${url} lists the real one`);
+    }
+    assert.equal((await designer.get(`/instanceDetails?id=${tested}`)).status, 200);
+});
+
 test('the steps choose the path, and what is expected is checked', async () => {
     for (const scenario of [SHORT, LONG]) {
         const res = await run({ scenario });
@@ -136,7 +155,7 @@ test('a failed expectation and a step that can not be done are reported', async 
     assert.equal(result.ok, false);
     assert.deepEqual(result.checks.map(c => [c.what, c.ok, c.actual]), [
         ['data.approvedBy is "manager"', false, 'system'],
-        ['passes Approve', false, undefined]
+        ['passes Approve', false, 0]
     ]);
 
     [result] = JSON.parse((await run({ scenario: { name: 'wrong order', steps: [{ element: 'Approve' }] } })).text).results;

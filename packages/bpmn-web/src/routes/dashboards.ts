@@ -14,7 +14,7 @@ import { SecureUser, BPMNAPI, verifyModel, dateDiff, canEncrypt, labelItems } fr
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
-import { listScenarioSets, listDecisionTestSets, loadScenarios, runScenario } from '../testing/scenarios.js';
+import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, runScenario } from '../testing/scenarios.js';
 import { loadDecisionTests, runDecisionTests } from '../testing/decisionTests.js';
 import { labelFilterOf } from './labelFilter.js';
 import { adminDisabled, canDesign, engineGroups, isAdminGroups } from '../userAccess/roles.js';
@@ -108,7 +108,7 @@ export class Dashboards extends Common {
             // filtered by the labels' named values, as the URL says (routes/labelFilter.ts)
             const labelFilter = await labelFilterOf(server, req, '/dashboard');
             const filtered = labelFilter.query ?? {};
-            const waiting: any[] = await api.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask', ...filtered }, user);
+            const waiting: any[] = await api.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask', ...filtered, ...notATest }, user);
             const mine = [], available = [];
             for (const item of waiting) {
                 item.fromNow = dateDiff(item.startedAt);
@@ -122,7 +122,7 @@ export class Dashboards extends Common {
                     available.push(item);
             }
 
-            const ended: any[] = await api.data.findItems({ 'items.status': 'end', 'items.type': 'bpmn:UserTask', 'items.userName': me, ...filtered }, user);
+            const ended: any[] = await api.data.findItems({ 'items.status': 'end', 'items.type': 'bpmn:UserTask', 'items.userName': me, ...filtered, ...notATest }, user);
             const completed = ended
                 .filter(i => i.userName === me && i.status === 'end' && i.type === 'bpmn:UserTask')
                 .sort((a, b) => new Date(b.endedAt).getTime() - new Date(a.endedAt).getTime())

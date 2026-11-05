@@ -78,8 +78,8 @@ left out (they are not in the model file).
 
 ## Testing a model
 
-The **Test** tab keeps test scenarios for the model and runs them. The scenarios are on the left, each with its runs
-under it; the selected one is on the right: its result, its steps and its checks.
+The **Test** tab keeps test scenarios for the model and runs them. The scenarios are on the left, each with the result
+of its last run; the selected one is on the right: its result, its steps and its checks.
 
 1. **New** adds a scenario, and **Record** starts the process with its start data and shows what waits as the next
    steps: user tasks (**Complete step**) and events (**Trigger event**), each with its data.
@@ -89,7 +89,7 @@ under it; the selected one is on the right: its result, its steps and its checks
 3. The steps you completed are saved as the scenario's. **Run** and **Run all** repeat them on a new instance without
    stopping, and run its checks.
 4. **Add check** adds a check, at the start, after a step or at the end, and it shows under its step, in words, with **Edit**: the instance's status, a data value, or an element passed
-   (how many times, in what status).
+   (how many times, in what status). After a run its shield is green or red, and a failed check says what was found.
 
 **A task by itself:** select a task on the diagram and choose **New**, *The task selected* (or choose it under
 **Start at**, *A task by itself*). The scenario runs that task alone, with the data you give as its input: a script or a service
@@ -97,21 +97,22 @@ runs and the run ends; a user task waits for its step, then the run ends. Nothin
 has the items, the data and the decisions as any other, and **Debug** changes its data and runs it again. It is
 saved, repeated and checked as the other scenarios.
 
-Each scenario keeps its latest 20 runs with their instances; click one to show it. By its result are **Open instance**
+Each scenario keeps its last run with its instance; the next run replaces them. By its result are **Open instance**
 and the commands for that run, **Simulate** and **Debug** each opening its panel under them, and **Delete**:
 
 - **Simulate** plays the run on the diagram: an element turns blue when it starts and green when it ends, orange if it
   still waits, numbered in the order they started; **Back**, **Step**, **Play** and **Stop**.
 - **Debug** changes the instance's variables for the next steps; **Restart here**, on a step done, goes back to it.
 
-**Inspect this run** shows its data, items, the engine's decisions and log. **Add as a check**, on an item or a value,
+**Inspect this run** shows its data, items, the Rationale (as on the instance page: what happened, in order, and why) and log. **Add as a check**, on an item or a value,
 checks it is as it is there: its status or its value, where the run waits (after the last step done, or at the start
 when none is), else at the end.
 
 **Full window**, in the bar of the tabs, puts them over the whole page; **Back to the editor** or Esc returns, and so does
 Simulate, which shows on the diagram.
 
-Test runs are ordinary instances whose ids start with `test-`: run tests on a development or test server.
+Test runs are ordinary instances whose ids start with `test-`: run tests on a development or test server. They are left
+out of the lists of instances and tasks; **Open instance** opens one.
 
 The **Design dashboard** (`/dashboard/design`) shows each model's and decision's tests with the last run's result
 (and why it failed), runs one model's or decision's tests, or **Run all tests**.

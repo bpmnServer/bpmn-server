@@ -8,6 +8,8 @@ import { engineGroups } from '../userAccess/roles.js';
 import { answerMessage, Common } from './common.js';
 import { packageReadme } from './docs.js';
 import { ViewHelper } from './ViewHelper.js';
+import { rationaleEvents } from '../testing/rationale.js';
+import { notATest } from '../testing/scenarios.js';
 import { runProcess } from './runErrors.js';
 
 
@@ -292,7 +294,7 @@ console.log('fields',fields);
         console.log('Session:', request.session);
 */
 
-        let items = await bpmnAPI.data.findItems({ "items.type": "bpmn:UserTask", "items.status": "wait" }, getSecureUser(request));
+        let items = await bpmnAPI.data.findItems({ "items.type": "bpmn:UserTask", "items.status": "wait", ...notATest }, getSecureUser(request));
 
         items.forEach(item => {
             item['fromNow'] = dateDiff(item.startedAt);
@@ -403,11 +405,11 @@ function setForUser(req) {
 async function display(req,res, title, logs = [], items = []) {
 
     let user = getSecureUser(req);
-    let query={};
+    let query: any={...notATest};
     let process=req.session.processName;
 
     if (process)
-        query={"name":process};
+        query={...query,"name":process};
     var instances = await bpmnAPI.data.findInstances(query, user,'summary');
         query["items.status"]='wait';
         query["items.type"]='bpmn:UserTask';
@@ -485,6 +487,7 @@ async function instanceDetails(request,response,instanceId) {
             title: 'Instance Details',
             logs,items: instance.items, svg,
             decorations, definition: defJson, lastItem,
+            rationale: rationaleEvents(logs, instance.items, instance.startedAt),
             // the model as the Report shows it (report/view.js): the instance's own source, else the model's
             modelJson: JSON.stringify(instance.source || await definitions.getSource(instance.name)).replace(/</g, '\\u003c'),
         });

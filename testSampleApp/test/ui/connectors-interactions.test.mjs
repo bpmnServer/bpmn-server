@@ -445,7 +445,7 @@ test('run from the Test tab: the start data reaches the connector, the answer is
     await page.click('#js-test .test-run');
     await page.locator('.test-start textarea').fill('{ "customerId": "nobody" }');
     await page.click('.test-start-go');
-    await page.waitForFunction(() => document.querySelectorAll('#js-test .test-tree-run').length === 2);
+    await page.waitForSelector('#js-test .test-items tbody tr[data-element-id="NotFound"]');
     const missing = (await web.bpmnServer.dataStore.findInstances({ name: MODEL }, 'full')).at(-1);
     assert.ok(missing.items.some(i => i.elementId === 'NotFound'), 'HTTP_404 caught');
 });

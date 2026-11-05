@@ -926,12 +926,11 @@ body {
 .test-start { background: #f7f9fc; }
 .test-start-actions { display: flex; gap: 6px; margin-top: 6px; }
 
-.test-check-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 4px 0; }
+.test-check-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 1px 0; }
 .test-check-row select, .test-check-row input { padding: 2px 4px; }
 .test-check-count { width: 70px; }
 .test-check-path, .test-check-value { width: 140px; }
 .test-check-add { margin-top: 4px; }
-.test-step-checks { margin: 4px 0 0 18px; font-size: 12px; }
 
 .test-variables { border: 1px dashed #b9c6da; border-radius: 4px; padding: 6px 10px; margin: 8px 0; background: #fbfcfe; }
 .test-variables h5 { margin: 0 0 2px; font-size: 13px; }
@@ -947,7 +946,6 @@ body {
 .test-decisions ol { margin: 4px 0; padding-left: 22px; font-size: 12px; }
 .test-decisions li { margin: 2px 0; }
 /* a step's checks and its debugger take the step's whole width */
-.test-step > .test-step-checks,
 .test-step > .test-step-debug { grid-column: 1 / -1; }
 .test-check-node { max-width: 260px; }
 
@@ -1211,8 +1209,12 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 .test-summary.ok .test-summary-title { color: #067647; }
 .test-summary.failed .test-summary-title { color: #b42318; }
 .test-run-history { max-width: 280px; }
-.test-timeline { display: flex; flex-direction: column; gap: 4px; margin: 8px 0; }
-.test-timeline .test-step { border: 1px solid #e4e7ec; border-radius: 4px; padding: 5px 8px; margin: 0; }
+.test-timeline { display: flex; flex-direction: column; gap: 3px; margin: 6px 0; }
+.test-timeline .test-step { border: 1px solid #e4e7ec; border-radius: 4px; padding: 2px 8px; margin: 0; row-gap: 1px; line-height: 1.3; align-items: center; }
+.test-timeline .test-step.pending { padding: 5px 8px; row-gap: 6px; align-items: start; }
+.test-timeline .test-step:not(.pending) .test-step-name, .test-timeline .test-step:not(.pending) .test-step-data { padding-top: 0; }
+.test-panel .test-timeline button.test-step-remove { padding: 0 6px; font-size: 11px; line-height: 16px; }
+.test-timeline .test-check-prose { line-height: 1.3; }
 .test-timeline .test-step.failed { border-color: #b42318; }
 .test-timeline .test-step-start, .test-timeline .test-step-end { background: #f7f9fc; }
 .test-step > .test-step-check-editor, .test-step > .test-step-error { grid-column: 1 / -1; }
@@ -1222,20 +1224,12 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 .test-editor details.test-menu > summary::marker { content: none; }
 
 /* The Test tab's tree: scenarios, their runs under them */
-.test-list ul.test-tree, .test-list ul.test-tree-runs { list-style: none; margin: 0; padding: 0; }
+.test-list ul.test-tree { list-style: none; margin: 0; padding: 0; }
 .test-list li.test-tree-scenario { display: block; padding: 0; border: none; cursor: default; background: none; }
-.test-tree-row { display: flex; align-items: center; gap: 5px; padding: 4px 8px 4px 4px; cursor: pointer; }
+.test-tree-row { display: flex; align-items: center; gap: 5px; padding: 4px 8px; cursor: pointer; }
 .test-tree-row:hover { background: #f0f4fb; }
 .test-tree-row.selected { background: #e8f0fc; font-weight: 600; }
-.test-panel button.test-tree-toggle { border: none; background: none; padding: 0; width: 16px; flex: none; color: #52575f; }
-.test-tree-toggle-space { width: 16px; flex: none; }
 .test-tree-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.test-tree-count { color: #6b7079; font-size: 11px; font-weight: 400; }
-.test-list li.test-tree-run { display: flex; align-items: center; gap: 5px; padding: 2px 8px 2px 26px; font-size: 12px; cursor: pointer; border: none; background: none; }
-.test-list li.test-tree-run:hover { background: #f0f4fb; }
-.test-list li.test-tree-run.shown { background: #dfe9f9; }
-.test-tree-when { white-space: nowrap; }
-.test-tree-how { margin-left: auto; color: #6b7079; white-space: nowrap; }
 
 /* The Test tab: Simulate's and Debug's panels, under the run's commands */
 .test-command-panel { margin: 0 0 8px; padding: 7px 10px; border: 1px solid #b9c6da; border-left: 4px solid #1f62c8; border-radius: 4px; background: #fbfcfe; }
@@ -1269,7 +1263,7 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 .test-panel button.test-add-check.added { border-color: transparent; background: none; color: #067647; opacity: 1; }
 
 /* The Test tab: a check under its step */
-.test-step > .test-step-check-rows { grid-column: 1 / -1; margin-top: 4px; padding-left: 10px; border-left: 2px solid #dce4ec; }
+.test-step > .test-step-check-rows { grid-column: 1 / -1; margin: 1px 0 2px; padding-left: 10px; border-left: 2px solid #dce4ec; }
 
 /* The Test tab: a check in words */
 .test-check-read { flex-wrap: nowrap; }
@@ -1279,3 +1273,23 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 /* The Test tab: a step's icon, by its type; a check's: a shield with a tick */
 .test-step-icon { display: inline-block; margin-right: 5px; font-size: 16px; line-height: 1; vertical-align: -2px; color: #3d4450; }
 .test-check-icon { flex: none; display: inline-block; width: 15px; height: 15px; background: no-repeat center / contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f62c8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2.5 4 5.5v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10v-6z'/%3E%3Cpath d='m8.5 12 2.5 2.5 4.5-5'/%3E%3C/svg%3E"); }
+
+/* The Test tab: what the run shown found for a check: a green shield, or a red one with a cross and what was there */
+.test-check-icon.ok { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23067647' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2.5 4 5.5v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10v-6z'/%3E%3Cpath d='m8.5 12 2.5 2.5 4.5-5'/%3E%3C/svg%3E"); }
+.test-check-icon.failed { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b42318' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2.5 4 5.5v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10v-6z'/%3E%3Cpath d='m9 9 6 6m0-6-6 6'/%3E%3C/svg%3E"); }
+.test-check-found { display: block; color: #b42318; font-size: 12px; }
+
+/* The Test tab: the Rationale, as the instance page shows it */
+.test-rationale-scroll { overflow-x: auto; }
+.test-rationale table { border-collapse: collapse; width: 100%; font-size: 12px; }
+.test-rationale th, .test-rationale td { padding: 3px 8px; border-bottom: 1px solid #eef0f3; text-align: left; vertical-align: top; }
+.test-rationale th { font-weight: 600; white-space: nowrap; }
+.test-rationale tr.chose td { background: #f8fbff; }
+.test-rationale tr:has(+ tr > .test-rationale-why) td { border-bottom: 0; padding-bottom: 0; }
+.test-rationale td.test-rationale-why { white-space: pre-wrap; font-family: Consolas, Menlo, monospace; padding-left: 16px; }
+.test-rationale-why > div + div { margin-top: 8px; }
+.test-rationale-decision { font-weight: 600; color: #1f6f43; }
+.test-rationale-decision.not { color: #6b7280; }
+.test-rationale-badge { display: inline-block; padding: 0 8px; border-radius: 10px; }
+.test-rationale-badge.wait { background: #fff4e0; color: #9a5b00; }
+.test-rationale-badge.error { background: #fde8e8; color: #b42318; }
