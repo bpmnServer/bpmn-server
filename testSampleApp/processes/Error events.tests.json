@@ -1,0 +1,99 @@
+{
+  "model": "Error events",
+  "scenarios": [
+    {
+      "name": "Scenario 1",
+      "start": {
+        "data": {}
+      },
+      "steps": [
+        {
+          "element": "UserTask2",
+          "data": {
+            "Require_Review": "",
+            "Error_Code": ""
+          },
+          "itemId": "6c0f3c66-23ce-4613-8a99-dd0774258d3d",
+          "after": {
+            "SubProcess_A": {
+              "Require_Review": "",
+              "Error_Code": ""
+            }
+          },
+          "checks": []
+        }
+      ],
+      "checks": []
+    },
+    {
+      "name": "Scenario 2",
+      "start": {
+        "data": {}
+      },
+      "steps": [
+        {
+          "element": "Event_catch_all",
+          "data": {},
+          "itemId": "a21c49ce-8bec-4c94-b6a9-f3e56e17afe1",
+          "after": {
+            "SubProcess_A": {}
+          },
+          "checks": []
+        }
+      ],
+      "checks": []
+    },
+    {
+      "name": "Scenario 3",
+      "start": {
+        "data": {}
+      },
+      "steps": [
+        {
+          "element": "Event_catchEsclation",
+          "data": {},
+          "itemId": "d552f64a-2f86-4271-956b-5e3155621518",
+          "after": {
+            "SubProcess_A": {}
+          },
+          "checks": []
+        },
+        {
+          "element": "Event_catch_all",
+          "data": {},
+          "itemId": "53d552f6-4a2f-46a2-b155-6b5e31556215",
+          "after": {
+            "SubProcess_A": {}
+          },
+          "checks": []
+        }
+      ],
+      "checks": []
+    },
+    {
+      "name": "Scenario 4",
+      "start": {
+        "data": {}
+      },
+      "steps": [],
+      "checks": []
+    },
+    {
+      "name": "Scenario 5",
+      "start": {
+        "data": {}
+      },
+      "steps": [],
+      "checks": []
+    },
+    {
+      "name": "Scenario 6",
+      "start": {
+        "data": {}
+      },
+      "steps": [],
+      "expect": {},
+      "checks": []
+    }
+  ]
+}

@@ -92,7 +92,7 @@ this.dueDate=date.toISOString();</camunda:script>
       <bpmn:incoming>flow_gw1_repair</bpmn:incoming>
       <bpmn:outgoing>flow_repair_gw2</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="task_Drive" camunda:label="Test drive the ${data.carModel}" camunda:endLabel="Driven by ${completedBy}" name="Drive" camunda:candidateUsers="$data.starterUserId" camunda:dueDate="$new Date().setDate(new Date(instance.startedAt).getDate()+10)" camunda:followUpDate="$new Date().setDate(new Date(instance.startedAt).getDate()+5)">
+    <bpmn:userTask id="task_Drive" camunda:label="Test drive the ${data.carModel}" camunda:endLabel="Driven by ${completedBy}" name="Test Drive" camunda:candidateUsers="$data.starterUserId" camunda:dueDate="$new Date().setDate(new Date(instance.startedAt).getDate()+10)" camunda:followUpDate="$new Date().setDate(new Date(instance.startedAt).getDate()+5)">
       <bpmn:incoming>flow_gw2_drive</bpmn:incoming>
       <bpmn:outgoing>flow_drive_end</bpmn:outgoing>
     </bpmn:userTask>

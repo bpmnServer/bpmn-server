@@ -149,7 +149,11 @@
           "checks": []
         }
       ],
-      "checks": []
+      "checks": [
+        {
+          "kind": "node"
+        }
+      ]
     },
     {
       "name": "Scenario 4",
