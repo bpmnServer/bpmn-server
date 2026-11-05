@@ -71,6 +71,9 @@ services:
       - no-new-privileges:true
   mongo:
     image: mongo:8.0
+    # Workaround for MongoDB TCMalloc/rseq incompatibility on Linux kernels 6.19+ (SERVER-121912).
+    environment:
+      GLIBC_TUNABLES: "glibc.pthread.rseq=1"
     command: ["--wiredTigerCacheSizeGB", "0.25"]
     volumes:
       - mongodb:/data/db
