@@ -472,7 +472,7 @@ features:
   - id: test-tab
     area: web
     name: "The Test tab"
-    what: "Scenarios run step by step, checks, Run all, Simulate, Debug and Restart here, a task by itself."
+    what: "Scenarios recorded step by step and run again, checks, runs in a tree, Simulate, Debug and Restart here, a task by itself, full window."
     docs: [docs/docs/modeler.md, docs/docs/testing.md]
     code: [packages/bpmn-web/modeler/src/testing/TestPanel.js, packages/bpmn-web/src/testing/scenarios.ts]
     tests: [testSampleApp/test/ui/testing.test.mjs, testSampleApp/test/web/scenarios.test.mjs]

@@ -62,7 +62,7 @@ const modeler = new BpmnModeler({
     connectors: { url: '/model/connectors' },
     lint: { url: '/model/lint-rules', button: '#js-lint-rules-open' },
     // tests run the saved model: save the editor's changes first
-    test: { container: '#js-test', processName, save: () => saveIfChanged() },
+    test: { container: '#js-test', processName, save: () => saveIfChanged(), showDiagram: () => setDockFull(false) },
     problems: { list: '#js-problems', counts: '#js-problems-counts', status: '#js-problems-status', url: '/model/verify', processName },
     moddleExtensions: { camunda: camundaModdle }
 });
@@ -182,8 +182,21 @@ const maxDock = () => Math.max(MIN_DOCK, Math.floor(page.clientHeight * 0.7));
 // History only when the server keeps it (MODEL_HISTORY)
 const DOCK_TABS = ['problems', 'report', 'test', 'history'].filter(name => document.getElementById(`js-tab-${name}`));
 
+// Full window: the dock over the whole page, until asked back (Esc); not remembered, the editor opens on its diagram
+let dockFull = false;
+function setDockFull(full) {
+    if (full === dockFull) return;
+    dockFull = full;
+    if (full) panelState.dockCollapsed = false;
+    applyDockState();
+}
+
 function applyDockState() {
     const tab = DOCK_TABS.includes(panelState.dockTab) ? panelState.dockTab : 'problems';
+    dock.classList.toggle('full', dockFull);
+    const fullButton = document.getElementById('js-dock-full');
+    fullButton.textContent = dockFull ? '⤡ Back to the editor' : '⤢ Full window';
+    fullButton.setAttribute('aria-pressed', String(dockFull));
     dock.style.setProperty('--dock-height', Math.min(Math.max(panelState.dockHeight, MIN_DOCK), maxDock()) + 'px');
     dock.classList.toggle('collapsed', panelState.dockCollapsed);
     dock.dataset.tab = tab;
@@ -208,7 +221,10 @@ document.getElementById('js-tab-problems').addEventListener('click', () => showT
 document.getElementById('js-tab-report').addEventListener('click', () => showTab('report'));
 document.getElementById('js-tab-test').addEventListener('click', () => showTab('test'));
 document.getElementById('js-tab-history')?.addEventListener('click', () => showTab('history'));
+document.getElementById('js-dock-full').addEventListener('click', () => setDockFull(!dockFull));
+document.addEventListener('keydown', event => { if (event.key === 'Escape' && dockFull) setDockFull(false); });
 document.getElementById('js-dock-toggle').addEventListener('click', () => {
+    dockFull = false;
     panelState.dockCollapsed = !panelState.dockCollapsed;
     applyDockState();
     savePanelState(panelState);
