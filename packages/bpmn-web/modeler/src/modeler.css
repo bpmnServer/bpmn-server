@@ -1210,7 +1210,6 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 .test-summary-title { font-size: 14px; }
 .test-summary.ok .test-summary-title { color: #067647; }
 .test-summary.failed .test-summary-title { color: #b42318; }
-.test-summary .test-checks { margin: 6px 0 0; }
 .test-run-history { max-width: 280px; }
 .test-timeline { display: flex; flex-direction: column; gap: 4px; margin: 8px 0; }
 .test-timeline .test-step { border: 1px solid #e4e7ec; border-radius: 4px; padding: 5px 8px; margin: 0; }
@@ -1258,3 +1257,25 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 .dock.full { position: fixed; inset: 0; z-index: 1000; height: auto; }
 .dock.full .dock-resizer { display: none; }
 .dock.full .dock-body { flex: 1; height: auto; min-height: 0; }
+
+/* The Test tab: the run's data, a value a row; Add as a check */
+.test-data-table { border-collapse: collapse; width: 100%; font-size: 12px; }
+.test-data-table td { padding: 2px 8px 2px 0; border-bottom: 1px solid #eef0f3; vertical-align: top; }
+.test-data-path { font-weight: 600; white-space: nowrap; width: 1%; }
+.test-data-value { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; overflow-wrap: anywhere; }
+.test-data-table td:last-child { white-space: nowrap; width: 1%; padding-right: 0; }
+.test-item-commands { white-space: nowrap; }
+.test-panel button.test-add-check { padding: 1px 7px; font-size: 11px; }
+.test-panel button.test-add-check.added { border-color: transparent; background: none; color: #067647; opacity: 1; }
+
+/* The Test tab: a check under its step */
+.test-step > .test-step-check-rows { grid-column: 1 / -1; margin-top: 4px; padding-left: 10px; border-left: 2px solid #dce4ec; }
+
+/* The Test tab: a check in words */
+.test-check-read { flex-wrap: nowrap; }
+.test-check-prose { flex: 1; min-width: 0; font-size: 13px; overflow-wrap: anywhere; }
+.test-panel button.test-check-edit, .test-panel .test-check-read button.test-check-remove { padding: 1px 7px; font-size: 11px; }
+
+/* The Test tab: a step's icon, by its type; a check's: a shield with a tick */
+.test-step-icon { display: inline-block; margin-right: 5px; font-size: 16px; line-height: 1; vertical-align: -2px; color: #3d4450; }
+.test-check-icon { flex: none; display: inline-block; width: 15px; height: 15px; background: no-repeat center / contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f62c8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2.5 4 5.5v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10v-6z'/%3E%3Cpath d='m8.5 12 2.5 2.5 4.5-5'/%3E%3C/svg%3E"); }

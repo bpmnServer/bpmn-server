@@ -64,6 +64,11 @@ async function newTask(page) {
 const pick = (page, name) => page.locator('.test-tree-row', { hasText: name }).click();
 /** The tree's scenarios: their result and name. */
 const listed = page => page.locator('.test-tree-row').evaluateAll(rows => rows.map(r => `${r.querySelector('.test-badge').textContent} ${r.querySelector('.test-tree-name').textContent}`));
+/** What the last result's checks found (the result line says only Passed or Failed). */
+const checkResults = page => page.evaluate(() => {
+    const panel = window.bpmnModeler.get('testPanel');
+    return panel._results.get(panel._current).checks.map(c => `${c.ok ? '✓' : '✗'} ${c.what}${!c.ok && c.actual !== undefined ? ` (is ${JSON.stringify(c.actual)})` : ''}`);
+});
 const savedNames = page => page.locator('.test-step.saved .test-step-name').allInnerTexts();
 const runsOf = (page, name) => page.locator('.test-tree-scenario', { hasText: name }).locator('.test-tree-run');
 
@@ -150,7 +155,8 @@ test('Run shows what waits; running a step shows what waits next, until the end'
     assert.equal(await page.locator('.test-stop-recording').count(), 0);
     assert.equal(await page.locator('.test-finished').count(), 0);
     assert.equal(await page.locator('.test-inspect').evaluate(d => d.open), true, 'Inspect this run shows');
-    assert.deepEqual(await page.locator('.test-checks li').allInnerTexts(), ['✓ status is end', '✓ passes Approve']);
+    assert.deepEqual(await checkResults(page), ['✓ status is end', '✓ passes Approve']);
+    assert.equal(await page.locator('.test-summary .test-checks').count(), 0, 'Passed or Failed is enough at the top');
     assert.deepEqual(await marked(page, 'test-passed'), ['Approve', 'Approved', 'LongLeave', 'Requested', 'Submit']);
 
     // the items, in the order they ran; a row selects its element
@@ -177,6 +183,7 @@ test('another run follows the saved steps, prefilled; a different choice changes
     await page.click('.test-scenario-menu summary');
     await page.click('.test-duplicate');
     await page.fill('.test-name', 'Short leave');
+    await page.locator('.test-check-row', { hasText: 'Approve' }).locator('.test-check-edit').click();
     await page.locator('.test-check-node').selectOption('AutoApprove');
     await startRun(page);
     await runStep(page, 'Submit', { days: 2 });         // 5 days or fewer: approved automatically, nothing waits
@@ -357,7 +364,7 @@ test('debug: a check after a step; the variables changed; a step restarted and r
     await variables.locator('.test-variable-value').last().fill('checked');
     await variables.locator('.test-variables-apply').click();
     await page.waitForSelector('.test-status:text("Variables changed")');
-    assert.match(await page.locator('.test-inspect .test-data').first().innerText(), /"note": "checked"/);
+    assert.match(await page.locator('.test-data-row[data-path="note"]').innerText(), /"checked"/);
 
     // back to Submit: it waits again, and a short leave goes the other way
     await done.locator('.test-restart').click();
@@ -368,7 +375,7 @@ test('debug: a check after a step; the variables changed; a step restarted and r
     await runStep(page, 'Submit', { days: 2 });
     await page.waitForSelector('.test-summary.failed');
     assert.equal(await page.locator('.test-summary-title').innerText(), '✗ Failed');
-    assert.deepEqual(await page.locator('.test-summary .test-checks li').allInnerTexts(), ['✗ after Submit: data.days > 5 (is 2)']);
+    assert.deepEqual(await checkResults(page), ['✗ after Submit: data.days > 5 (is 2)']);
     assert.equal(await page.locator('.test-debug-panel').count(), 0, 'closed with the recording');
 
     // why: the gateway's condition with the value it read
@@ -453,6 +460,87 @@ test('New, The task selected: the task selected on the diagram, by itself; a scr
     await page.evaluate(() => window.bpmnModeler.get('selection').select(null));
     await newTask(page);
     assert.match(await page.locator('.test-status').innerText(), /Select a task on the diagram first/);
+    assert.deepEqual(errors, []);
+    await close();
+});
+
+test('Add as a check: an item or a value of the run, as it is there, under its step: at the start, after the last step, else at the end', async () => {
+    const { page, errors, close } = await openTestTab();
+    const addItem = id => page.locator(`.test-items tbody tr[data-element-id="${id}"] .test-add-check`).click();
+    const addValue = path => page.locator(`.test-data-row[data-path="${path}"] .test-add-check`).click();
+    const prose = locator => locator.locator('.test-check-prose').allInnerTexts();
+    const atStart = page.locator('.test-step-start .test-check-row');
+    const afterSubmit = page.locator('.test-step[data-element-id="Submit"] .test-check-row');
+    const atEnd = page.locator('.test-checks-editor .test-check-row');
+    await newScenario(page);
+    await page.fill('.test-name', 'Checks from the run');
+    await startRun(page);
+
+    // just started, no step done: at the start, under the Start row, in words, times filled in
+    await addItem('Submit');
+    assert.deepEqual(await prose(atStart), ['Submit request (Submit) was reached 1 time, and is waiting']);
+    assert.equal(await atEnd.count(), 0, 'not in the list at the end');
+
+    // Edit opens its fields; Done back to words
+    await atStart.locator('.test-check-edit').click();
+    assert.equal(await atStart.locator('.test-check-at').inputValue(), 'start');
+    assert.equal(await atStart.locator('.test-check-kind').inputValue(), 'node');
+    assert.equal(await atStart.locator('.test-check-node').inputValue(), 'Submit');
+    assert.equal(await atStart.locator('.test-check-status').inputValue(), 'wait');
+    assert.equal(await atStart.locator('.test-check-count').inputValue(), '1');
+    await atStart.locator('.test-check-done').click();
+    assert.equal(await atStart.locator('.test-check-at').count(), 0);
+
+    await runStep(page, 'Submit', { days: 10, nested: { level: 3 } });
+
+    // the run waits at Approve: after Submit, the last step done, under it
+    await addItem('Approve');
+    await addValue('days');
+    await addValue('nested.level');     // a value inside an object: its own row
+    assert.deepEqual(await prose(afterSubmit), ['Approve request (Approve) was reached 1 time, and is waiting', 'days is 10', 'nested.level is 3']);
+    await afterSubmit.nth(1).locator('.test-check-edit').click();
+    assert.equal(await afterSubmit.nth(1).locator('.test-check-at').inputValue(), 'after:Submit');
+    assert.equal(await afterSubmit.nth(1).locator('.test-check-path').inputValue(), 'days');
+    assert.equal(await afterSubmit.nth(1).locator('.test-check-value').inputValue(), '10');
+    await afterSubmit.nth(1).locator('.test-check-done').click();
+    assert.equal(await page.locator('.test-data-row[data-path="days"] .test-add-check').innerText(), '✓ In checks', 'not twice');
+    assert.equal(await page.locator('.test-data-row[data-path="days"] .test-add-check').isDisabled(), true);
+
+    // a click on the button does not select the row's element
+    assert.deepEqual(await page.evaluate(() => window.bpmnModeler.get('selection').get().map(e => e.id)), []);
+
+    // finished: at the end, in the list; a flow, as any item, reads with its id
+    await runStep(page, 'Approve', { approved: true });
+    await page.waitForSelector('.test-summary.ok');
+    await addItem('Approved');
+    await addItem('ToSubmit');
+    assert.equal(await atEnd.count(), 2, 'in the list at the end');
+    assert.match((await prose(atEnd))[0], /^At the end: .*Approved.* was reached 1 time, and has ended$/);
+    assert.match((await prose(atEnd))[1], /^At the end: .*ToSubmit.* was reached 1 time, and has ended$/);
+    await atEnd.nth(1).locator('.test-check-edit').click();
+    assert.equal(await atEnd.nth(1).locator('.test-check-node').inputValue(), 'ToSubmit');
+    await atEnd.nth(1).locator('.test-check-done').click();
+
+    // Run: what was added holds on the same path
+    await page.waitForTimeout(800);
+    await page.click('.test-replay');
+    await page.waitForSelector('.test-status:text("Checks from the run: passed")');
+    const checks = await checkResults(page);
+    assert.equal(checks.length, 6, checks.join(' | '));
+    assert.ok(checks.every(c => c.startsWith('✓')), checks.join(' | '));
+    assert.ok(checks.includes('✓ at the start: passes Submit, wait, 1 time'), checks.join(' | '));
+
+    // Add check opens its fields; while recording it is where the recording waits; its When moves it; Done: in words
+    await startRun(page);
+    await page.click('.test-check-add');
+    assert.equal(await atStart.count(), 2);
+    await atStart.last().locator('.test-check-at').selectOption('end');
+    assert.equal(await atStart.count(), 1);
+    assert.equal(await atEnd.last().locator('.test-check-done').count(), 1);
+    await atEnd.last().locator('.test-check-done').click();
+    assert.match((await prose(atEnd)).at(-1), /At the end: A node: none chosen yet/);
+    await atEnd.last().locator('.test-check-remove').click();
+    await page.click('.test-stop-recording');
     assert.deepEqual(errors, []);
     await close();
 });
