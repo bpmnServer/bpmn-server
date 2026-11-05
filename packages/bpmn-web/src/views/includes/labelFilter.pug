@@ -1,25 +1,28 @@
 //- The lists' filter (docs/design/labels.md): a model; a named value of the cases' labels that contains, or is, a
 //- value; or any named value. A GET form: the filter is in the URL, to bookmark and share (routes/labelFilter.ts).
+//- f.prefix names its parameters, when a page has two lists; f.keep is the other list's filter, which stays.
 mixin labelFilter(f)
 	link(rel="stylesheet", href="/stylesheets/label-filter.css")
 	form.label-filter(method="get", action=f.action, role="search", aria-label="Filter by label")
+		each k in f.keep || []
+			input(type="hidden", name=k.name, value=k.value)
 		label
 			span Model
-			select(name="model")
+			select(name=(f.prefix || '') + "model")
 				option(value="") All
 				each m in f.models
 					option(value=m, selected=f.filter.model === m)= m
 		label
 			span Field
-			select(name="field")
+			select(name=(f.prefix || '') + "field")
 				option(value="") Any
 				each g in f.groups
 					option(value=g.name, selected=f.filter.field === g.name, title=g.where)= g.name
-		select(name="op", aria-label="How it matches")
+		select(name=(f.prefix || '') + "op", aria-label="How it matches")
 			option(value="contains", selected=f.filter.op !== 'is') contains
 			option(value="is", selected=f.filter.op === 'is') is
-		input(type="text", name="value", value=f.filter.value || '', placeholder="value", aria-label="Value")
-		input(type="search", name="search", value=f.filter.search || '', placeholder="Search everything", aria-label="Search everything")
+		input(type="text", name=(f.prefix || '') + "value", value=f.filter.value || '', placeholder="value", aria-label="Value")
+		input(type="search", name=(f.prefix || '') + "search", value=f.filter.search || '', placeholder="Search everything", aria-label="Search everything")
 		button(type="submit") Filter
 		if f.active
-			a.label-filter-clear(href=f.action) × Clear
+			a.label-filter-clear(href=f.clear || f.action) × Clear

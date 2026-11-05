@@ -455,10 +455,11 @@ async function display(req,res, title, output, logs = [], items = []) {
 
     let user = getSecureUser(req);
     
-    // the Instances section's filter by the labels' named values, as the URL says (routes/labelFilter.ts)
-    const labelFilter = await labelFilterOf(serverOf(req), req, '/#instances');
+    // each list's own filter by the labels' named values, as the URL says (routes/labelFilter.ts)
+    const labelFilter = await labelFilterOf(serverOf(req), req, '/#instances', { other: 'task_' });
+    const taskFilter = await labelFilterOf(serverOf(req), req, '/#tasks', { prefix: 'task_', other: '' });
     var instances = await apiOf(req).data.findInstances({ ...notATest, ...(labelFilter.query ?? {}) }, user,{sort:{saved:-1}});
-    let waiting = await apiOf(req).data.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask', ...notATest }, getSecureUser(req));
+    let waiting = await apiOf(req).data.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask', ...notATest, ...(taskFilter.query ?? {}) }, getSecureUser(req));
     // labels, filled in from each case's model (engine/Labels.ts)
     await labelInstances(serverOf(req), instances);
     await labelItems(serverOf(req), waiting);
@@ -492,6 +493,7 @@ async function display(req,res, title, output, logs = [], items = []) {
             waiting: waiting,
             instances,
             labelFilter: labelFilter.view,
+            taskFilter: taskFilter.view,
             request: req,
             logs, items,
             forUserGroups: req.session.forUserGroups, forUserName: req.session.forUserName

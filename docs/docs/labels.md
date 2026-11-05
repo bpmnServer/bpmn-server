@@ -116,7 +116,8 @@ each case gets `label` and `labelValues` (its named values), each task `label`, 
 
 ## Filters
 
-The Workbench's Instances section and My work have a filter bar. On the Workbench it filters that section only:
+The Workbench's Instances and Pending Tasks sections each have a filter bar, and so does My work. Each filters its own
+list, and using one doesn't clear the other. Tasks are filtered by the named values of their cases:
 
 ![The filter bar: Car contains porsche](images/labels/filter-bar.png)
 
@@ -131,6 +132,10 @@ contains "porsche" (any case) for Buy Used Car's cases, and on each model's own 
 so a filtered list can be bookmarked and shared.
 
 ![Instances, filtered: Car contains porsche](images/labels/instances-filtered.png)
+
+![Pending Tasks, filtered: Car contains porsche](images/labels/pending-tasks-filtered.png)
+
+Pending Tasks' settings have their own names in the URL: `/?task_field=Car&task_op=contains&task_value=porsche#tasks`.
 
 Filters query the data as it is; they need no index. On many cases, indexes on the paths filtered most will matter,
 but indexing is configuration, apart from labels.

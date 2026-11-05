@@ -80,7 +80,8 @@ test('the properties panel opens the groups that have values; a description show
         assert.equal(g.open, true, `${g.title} has values: open`);
     assert.ok(groups.some(g => !g.set && !g.open), 'a group without values stays closed');
 
-    const description = page.locator('#js-properties-panel .bio-properties-panel-entry .bio-properties-panel-description').first();
+    // in an open group: a closed group's fields can't be hovered
+    const description = page.locator('#js-properties-panel .bio-properties-panel-group:has(.bio-properties-panel-group-header.open) .bio-properties-panel-entry .bio-properties-panel-description').first();
     if (await description.count()) {
         assert.equal(await description.isVisible(), false, 'hidden until hovered');
         await description.locator('xpath=ancestor::div[contains(@class, "bio-properties-panel-entry")][1]').hover();

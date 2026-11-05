@@ -67,8 +67,10 @@ const shot = (page, name, options = {}) => page.screenshot({ path: path.join(OUT
     await page.locator('#tasks').screenshot({ path: path.join(OUT, 'pending-tasks.png') });
     await page.locator('#instances').screenshot({ path: path.join(OUT, 'instances.png') });
     await page.goto(web.base + '/?field=Car&op=contains&value=porsche');
-    await page.locator('.label-filter').screenshot({ path: path.join(OUT, 'filter-bar.png') });
+    await page.locator('#instances .label-filter').screenshot({ path: path.join(OUT, 'filter-bar.png') });
     await page.locator('#instances').screenshot({ path: path.join(OUT, 'instances-filtered.png') });
+    await page.goto(web.base + '/?task_field=Car&task_op=contains&task_value=porsche');
+    await page.locator('#tasks').screenshot({ path: path.join(OUT, 'pending-tasks-filtered.png') });
     await page.goto(`${web.base}/instanceDetails?id=${porsche.id}`);
     await page.locator('.instance-page-header').screenshot({ path: path.join(OUT, 'instance-header.png') });
     await page.locator('#dataTable').screenshot({ path: path.join(OUT, 'instance-items.png') });
