@@ -58,9 +58,9 @@ services:
       DISABLE_SIGNUP: "true"
       API_SERVICE_USER_NAME: integration
       API_SERVICE_USER_GROUPS: SYSTEM
-      API_KEY: ${API_KEY:?missing}
-      ADMIN_API_KEY: ${ADMIN_API_KEY:?missing}
-      SESSION_SECRET: ${SESSION_SECRET:?missing}
+      API_KEY: \${API_KEY:?missing}
+      ADMIN_API_KEY: \${ADMIN_API_KEY:?missing}
+      SESSION_SECRET: \${SESSION_SECRET:?missing}
     volumes:
       - processes:/app/processes
     depends_on:
@@ -94,4 +94,4 @@ docker compose ps
 echo "Client $client deployed on localhost:$port"
 echo "Configure a separate HTTPS reverse-proxy vhost for this client; do NOT open port $port in Lightsail."
 echo "IMPORTANT: ensure the application's first admin password is changed BEFORE internet exposure."
-echo "Manage: cd $dir && sudo docker compose logs -f web | sudo docker compose stop | sudo docker compose start"
+echo "Manage: cd $dir; sudo docker compose ps; sudo docker compose logs -f web; sudo docker compose stop/start"
