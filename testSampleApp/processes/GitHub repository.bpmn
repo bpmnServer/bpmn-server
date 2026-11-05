@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="github-repo-definitions" targetNamespace="http://bpmn.io/schema/bpmn">
   <bpmn:error id="NotFoundError" name="Not found" errorCode="HTTP_404" />
+  <bpmn:collaboration id="Collaboration_0ctcjs9">
+    <bpmn:participant id="Participant_12okp3q" processRef="GitHubRepo" />
+  </bpmn:collaboration>
   <bpmn:process id="GitHubRepo" name="GitHub repository" isExecutable="true">
     <bpmn:startEvent id="Asked">
       <bpmn:extensionElements>
@@ -26,44 +29,67 @@
       <bpmn:incoming>toGet</bpmn:incoming>
       <bpmn:outgoing>toDone</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:endEvent id="Done">
+      <bpmn:incoming>Flow_0n1y7b6</bpmn:incoming>
+    </bpmn:endEvent>
     <bpmn:boundaryEvent id="NoSuchRepo" name="No such repository" attachedToRef="GetRepo">
       <bpmn:outgoing>toNotFound</bpmn:outgoing>
       <bpmn:errorEventDefinition errorRef="NotFoundError" />
     </bpmn:boundaryEvent>
-    <bpmn:endEvent id="Done">
-      <bpmn:incoming>Flow_0n1y7b6</bpmn:incoming>
-    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="toGet" sourceRef="Asked" targetRef="GetRepo" />
+    <bpmn:sequenceFlow id="toDone" sourceRef="GetRepo" targetRef="test1" />
+    <bpmn:sequenceFlow id="Flow_0n1y7b6" sourceRef="test1" targetRef="Done" />
+    <bpmn:sequenceFlow id="toNotFound" sourceRef="NoSuchRepo" targetRef="NotFound" />
     <bpmn:endEvent id="NotFound" name="Not found">
       <bpmn:incoming>toNotFound</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="toGet" sourceRef="Asked" targetRef="GetRepo" />
-    <bpmn:sequenceFlow id="toDone" sourceRef="GetRepo" targetRef="test1" />
-    <bpmn:sequenceFlow id="toNotFound" sourceRef="NoSuchRepo" targetRef="NotFound" />
-    <bpmn:task id="test1">
+    <bpmn:serviceTask id="test1" name="test">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="owner">${data.owner}</camunda:inputParameter>
+            <camunda:inputParameter name="repo">${data.repo}</camunda:inputParameter>
+            <camunda:inputParameter name="page">${data.page}</camunda:inputParameter>
+            <camunda:inputParameter name="per_page">${data.per_page}</camunda:inputParameter>
+            <camunda:inputParameter name="type">${data.type}</camunda:inputParameter>
+            <camunda:outputParameter name="automations">${output.automations}</camunda:outputParameter>
+            <camunda:outputParameter name="total_count">${output.total_count}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>github/agent-automations/list-repo-automations</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
       <bpmn:incoming>toDone</bpmn:incoming>
       <bpmn:outgoing>Flow_0n1y7b6</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:sequenceFlow id="Flow_0n1y7b6" sourceRef="test1" targetRef="Done" />
+    </bpmn:serviceTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_GitHubRepo">
-    <bpmndi:BPMNPlane id="BPMNPlane_GitHubRepo" bpmnElement="GitHubRepo">
+    <bpmndi:BPMNPlane id="BPMNPlane_GitHubRepo" bpmnElement="Collaboration_0ctcjs9">
+      <bpmndi:BPMNShape id="Participant_12okp3q_di" bpmnElement="Participant_12okp3q" isHorizontal="true">
+        <dc:Bounds x="3" y="10" width="670" height="250" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Asked_di" bpmnElement="Asked">
         <dc:Bounds x="57" y="52" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GetRepo_di" bpmnElement="GetRepo">
         <dc:Bounds x="175" y="30" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="NotFound_di" bpmnElement="NotFound">
-        <dc:Bounds x="357" y="192" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0p38tyt_di" bpmnElement="test1">
-        <dc:Bounds x="410" y="30" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Done_di" bpmnElement="Done">
         <dc:Bounds x="612" y="52" width="36" height="36" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NotFound_di" bpmnElement="NotFound">
+        <dc:Bounds x="302" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="246" y="203" width="48" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0j8j8g8_di" bpmnElement="test1">
+        <dc:Bounds x="390" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="NoSuchRepo_di" bpmnElement="NoSuchRepo">
         <dc:Bounds x="207" y="92" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="201" y="128" width="49" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="toGet_di" bpmnElement="toGet">
         <di:waypoint x="93" y="70" />
@@ -71,16 +97,16 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="toDone_di" bpmnElement="toDone">
         <di:waypoint x="275" y="70" />
-        <di:waypoint x="410" y="70" />
+        <di:waypoint x="390" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0n1y7b6_di" bpmnElement="Flow_0n1y7b6">
+        <di:waypoint x="490" y="70" />
+        <di:waypoint x="612" y="70" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="toNotFound_di" bpmnElement="toNotFound">
         <di:waypoint x="225" y="128" />
-        <di:waypoint x="225" y="210" />
-        <di:waypoint x="357" y="210" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0n1y7b6_di" bpmnElement="Flow_0n1y7b6">
-        <di:waypoint x="510" y="70" />
-        <di:waypoint x="612" y="70" />
+        <di:waypoint x="225" y="200" />
+        <di:waypoint x="302" y="200" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_Approval" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="Approval" name="Approval" isExecutable="true" camunda:label="Approval: ${data.subject} (${data.amount})">
+    <bpmn:documentation>A reusable approval (docs/design/approvals.md), called by other models (Purchase Request). In: subject, amount, reminderEvery (an ISO duration, default P2D), reminderTimes (default 5). Out: decision (approved, rejected), history (each level's decision, who, comment). The chain of levels depends on the amount; each level is a group; a level that waits gets a reminder as often and as many times as the caller says (every two days, five times, if it says nothing), and nothing else happens: the level still waits (modeled, not an assignment rule).</bpmn:documentation>
+    <bpmn:startEvent id="ApprovalRequested" name="Approval requested">
+      <bpmn:outgoing>toPlan</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="PlanChain" name="Plan the chain" scriptFormat="JavaScript">
+      <bpmn:incoming>toPlan</bpmn:incoming>
+      <bpmn:outgoing>toNext</bpmn:outgoing>
+      <bpmn:script>// the levels this amount needs; a real application would ask a decision table (DMN)
+const amount = Number(this.data.amount || 0);
+const chain = [{ level: 1, group: 'manager' }];
+if (amount &gt; 1000) chain.push({ level: 2, group: 'director' });
+if (amount &gt; 5000) chain.push({ level: 3, group: 'finance' });
+this.data.chain = chain;
+this.data.levels = chain.length;
+this.data.level = 0;
+this.data.history = [];
+// a waiting level's reminders: as often and as many times as the caller says (reminderEvery, an ISO duration such
+// as P1D or PT4H; reminderTimes), else every 2 days, 5 times; the timer reads reminderCycle
+const every = /^P(?=\d|T\d)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?$/.test(String(this.data.reminderEvery || '')) ? this.data.reminderEvery : 'P2D';
+const times = Number(this.data.reminderTimes);
+this.data.reminderCycle = 'R' + (Number.isInteger(times) &amp;&amp; times &gt; 0 ? times : 5) + '/' + every;</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="NextLevel" name="Next level" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_11za4my</bpmn:incoming>
+      <bpmn:outgoing>toApprove</bpmn:outgoing>
+      <bpmn:script>const step = this.data.chain[this.data.level];
+this.data.level = step.level;
+this.data.approverGroup = step.group;
+this.data.decision = null;
+this.data.comment = null;</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="Approve" name="Approve" camunda:candidateGroups="${data.approverGroup}" camunda:label="Level ${data.level} of ${data.levels}: approve ${data.subject}" camunda:endLabel="Level ${data.level}: ${data.decision} by ${completedBy}">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">this.data.history = (this.data.history || []).concat([{ level: this.data.level, group: this.data.approverGroup, decision: this.data.decision, comment: this.data.comment || '', by: this.userName }]);</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>toApprove</bpmn:incoming>
+      <bpmn:outgoing>toDecided</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="ReminderTimer" name="Remind while waiting" cancelActivity="false" attachedToRef="Approve">
+      <bpmn:outgoing>toRemind</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="ReminderTimer_timer">
+        <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">${data.reminderCycle}</bpmn:timeCycle>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:scriptTask id="Remind" name="Remind the approvers" scriptFormat="JavaScript">
+      <bpmn:incoming>toRemind</bpmn:incoming>
+      <bpmn:script>// a real application sends a notice to the level's group
+this.data.reminders = (this.data.reminders || 0) + 1;</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="Decided" name="Decided?" default="toApproved">
+      <bpmn:incoming>Flow_16n9nv6</bpmn:incoming>
+      <bpmn:outgoing>toRejected</bpmn:outgoing>
+      <bpmn:outgoing>toNextAgain</bpmn:outgoing>
+      <bpmn:outgoing>toApproved</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Rejected" name="Rejected">
+      <bpmn:incoming>toRejected</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Approved" name="Approved">
+      <bpmn:incoming>toApproved</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="toPlan" sourceRef="ApprovalRequested" targetRef="PlanChain" />
+    <bpmn:sequenceFlow id="toNext" sourceRef="PlanChain" targetRef="Gateway_1ljytyz" />
+    <bpmn:sequenceFlow id="toApprove" sourceRef="NextLevel" targetRef="Approve" />
+    <bpmn:sequenceFlow id="toDecided" sourceRef="Approve" targetRef="Activity_03aunku" />
+    <bpmn:sequenceFlow id="toRejected" name="rejected" sourceRef="Decided" targetRef="Rejected">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">data.decision == 'rejected'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="toNextAgain" name="approved, more levels" sourceRef="Decided" targetRef="Gateway_1ljytyz">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">data.decision != 'rejected' &amp;&amp; data.level &lt; data.levels</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="toApproved" name="approved, last level" sourceRef="Decided" targetRef="Approved" />
+    <bpmn:sequenceFlow id="toRemind" sourceRef="ReminderTimer" targetRef="Remind" />
+    <bpmn:exclusiveGateway id="Gateway_1ljytyz">
+      <bpmn:incoming>toNext</bpmn:incoming>
+      <bpmn:incoming>toNextAgain</bpmn:incoming>
+      <bpmn:outgoing>Flow_11za4my</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_11za4my" sourceRef="Gateway_1ljytyz" targetRef="NextLevel" />
+    <bpmn:sequenceFlow id="Flow_16n9nv6" sourceRef="Activity_03aunku" targetRef="Decided" />
+    <bpmn:scriptTask id="Activity_03aunku" name="Decide Next Step" scriptFormat="JavaScript">
+      <bpmn:documentation>Based on the previous Task outcome, it decide what action to take, i.e. what approval level to take</bpmn:documentation>
+      <bpmn:incoming>toDecided</bpmn:incoming>
+      <bpmn:outgoing>Flow_16n9nv6</bpmn:outgoing>
+      <bpmn:script>// check for approval 
+</bpmn:script>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_Approval">
+    <bpmndi:BPMNPlane id="Plane_Approval" bpmnElement="Approval">
+      <bpmndi:BPMNShape id="ApprovalRequested_di" bpmnElement="ApprovalRequested">
+        <dc:Bounds x="152" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="135" y="255" width="70" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="PlanChain_di" bpmnElement="PlanChain">
+        <dc:Bounds x="240" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NextLevel_di" bpmnElement="NextLevel">
+        <dc:Bounds x="440" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Approve_di" bpmnElement="Approve">
+        <dc:Bounds x="600" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Decided_di" bpmnElement="Decided" isMarkerVisible="true">
+        <dc:Bounds x="915" y="205" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="976" y="243" width="48" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Rejected_di" bpmnElement="Rejected">
+        <dc:Bounds x="1062" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1058" y="255" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Approved_di" bpmnElement="Approved">
+        <dc:Bounds x="1062" y="342" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1056" y="385" width="48" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1ljytyz_di" bpmnElement="Gateway_1ljytyz" isMarkerVisible="true">
+        <dc:Bounds x="365" y="205" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_06ijhfv_di" bpmnElement="Activity_03aunku">
+        <dc:Bounds x="760" y="190" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Remind_di" bpmnElement="Remind">
+        <dc:Bounds x="600" y="350" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ReminderTimer_di" bpmnElement="ReminderTimer">
+        <dc:Bounds x="632" y="252" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="660" y="292" width="60" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="toPlan_di" bpmnElement="toPlan">
+        <di:waypoint x="188" y="230" />
+        <di:waypoint x="240" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toNext_di" bpmnElement="toNext">
+        <di:waypoint x="340" y="230" />
+        <di:waypoint x="365" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toApprove_di" bpmnElement="toApprove">
+        <di:waypoint x="540" y="230" />
+        <di:waypoint x="600" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toDecided_di" bpmnElement="toDecided">
+        <di:waypoint x="700" y="230" />
+        <di:waypoint x="760" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toRejected_di" bpmnElement="toRejected">
+        <di:waypoint x="965" y="230" />
+        <di:waypoint x="1062" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="993" y="212" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toNextAgain_di" bpmnElement="toNextAgain">
+        <di:waypoint x="940" y="205" />
+        <di:waypoint x="940" y="120" />
+        <di:waypoint x="390" y="120" />
+        <di:waypoint x="390" y="205" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="615" y="102" width="110" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toApproved_di" bpmnElement="toApproved">
+        <di:waypoint x="940" y="255" />
+        <di:waypoint x="940" y="360" />
+        <di:waypoint x="1062" y="360" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="952" y="342" width="98" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toRemind_di" bpmnElement="toRemind">
+        <di:waypoint x="650" y="288" />
+        <di:waypoint x="650" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11za4my_di" bpmnElement="Flow_11za4my">
+        <di:waypoint x="415" y="230" />
+        <di:waypoint x="440" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16n9nv6_di" bpmnElement="Flow_16n9nv6">
+        <di:waypoint x="860" y="230" />
+        <di:waypoint x="915" y="230" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

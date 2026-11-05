@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_PurchaseRequest" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="PurchaseRequest" name="Purchase Request" isExecutable="true" camunda:label="Purchase: ${data.item} (${data.amount})">
+    <bpmn:documentation>A main model that just says "Approval" (docs/design/approvals.md): the call activity starts the Approval model with the subject and the amount, and goes on with its decision.</bpmn:documentation>
+    <bpmn:startEvent id="Requested" name="Purchase requested">
+      <bpmn:outgoing>toDescribe</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Describe" name="Describe the purchase" camunda:role="Employee">
+      <bpmn:incoming>toDescribe</bpmn:incoming>
+      <bpmn:outgoing>toApproval</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="IsApproved" name="Approved?" default="toTell">
+      <bpmn:incoming>toApproved</bpmn:incoming>
+      <bpmn:outgoing>toOrder</bpmn:outgoing>
+      <bpmn:outgoing>toTell</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="PlaceOrder" name="Place the order" camunda:role="Finance" camunda:endLabel="Ordered ${data.item} (${completedBy})">
+      <bpmn:incoming>toOrder</bpmn:incoming>
+      <bpmn:outgoing>toOrdered</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Ordered" name="Ordered">
+      <bpmn:incoming>toOrdered</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="TellRequester" name="Read the decision" camunda:role="Employee" camunda:label="Not approved: ${data.item}">
+      <bpmn:incoming>toTell</bpmn:incoming>
+      <bpmn:outgoing>toNotApproved</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="NotApproved" name="Not approved">
+      <bpmn:incoming>toNotApproved</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="toDescribe" sourceRef="Requested" targetRef="Describe" />
+    <bpmn:sequenceFlow id="toApproval" sourceRef="Describe" targetRef="GetApproval" />
+    <bpmn:sequenceFlow id="toApproved" sourceRef="GetApproval" targetRef="IsApproved" />
+    <bpmn:sequenceFlow id="toOrder" name="yes" sourceRef="IsApproved" targetRef="PlaceOrder">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">data.decision == 'approved'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="toTell" name="no" sourceRef="IsApproved" targetRef="TellRequester" />
+    <bpmn:sequenceFlow id="toOrdered" sourceRef="PlaceOrder" targetRef="Ordered" />
+    <bpmn:sequenceFlow id="toNotApproved" sourceRef="TellRequester" targetRef="NotApproved" />
+    <bpmn:subProcess id="GetApproval" name="Approval">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="subject">$item.data.item</camunda:inputParameter>
+          <camunda:inputParameter name="amount">$item.data.amount</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>toApproval</bpmn:incoming>
+      <bpmn:outgoing>toApproved</bpmn:outgoing>
+      <bpmn:startEvent id="Event_04y02h3" />
+    </bpmn:subProcess>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_PurchaseRequest">
+    <bpmndi:BPMNPlane id="Plane_PurchaseRequest" bpmnElement="PurchaseRequest">
+      <bpmndi:BPMNShape id="Ordered_di" bpmnElement="Ordered">
+        <dc:Bounds x="1102" y="7" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1100" y="50" width="40" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NotApproved_di" bpmnElement="NotApproved">
+        <dc:Bounds x="1102" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1087" y="255" width="66" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TellRequester_di" bpmnElement="TellRequester">
+        <dc:Bounds x="850" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="PlaceOrder_di" bpmnElement="PlaceOrder">
+        <dc:Bounds x="870" y="-15" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Requested_di" bpmnElement="Requested">
+        <dc:Bounds x="-28" y="82" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="-46" y="125" width="72" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Describe_di" bpmnElement="Describe">
+        <dc:Bounds x="70" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IsApproved_di" bpmnElement="IsApproved" isMarkerVisible="true">
+        <dc:Bounds x="695" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="755" y="106" width="52" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0zl47j7_di" bpmnElement="GetApproval" isExpanded="true">
+        <dc:Bounds x="275" y="20" width="355" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_04y02h3_di" bpmnElement="Event_04y02h3">
+        <dc:Bounds x="315.3333333333333" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="toDescribe_di" bpmnElement="toDescribe">
+        <di:waypoint x="8" y="100" />
+        <di:waypoint x="70" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toApproval_di" bpmnElement="toApproval">
+        <di:waypoint x="170" y="100" />
+        <di:waypoint x="275" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toApproved_di" bpmnElement="toApproved">
+        <di:waypoint x="630" y="120" />
+        <di:waypoint x="695" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toOrder_di" bpmnElement="toOrder">
+        <di:waypoint x="720" y="95" />
+        <di:waypoint x="720" y="25" />
+        <di:waypoint x="870" y="25" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="786" y="7" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toTell_di" bpmnElement="toTell">
+        <di:waypoint x="720" y="145" />
+        <di:waypoint x="720" y="230" />
+        <di:waypoint x="850" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="728" y="184" width="14" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toOrdered_di" bpmnElement="toOrdered">
+        <di:waypoint x="970" y="25" />
+        <di:waypoint x="1102" y="25" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toNotApproved_di" bpmnElement="toNotApproved">
+        <di:waypoint x="950" y="230" />
+        <di:waypoint x="1102" y="230" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
