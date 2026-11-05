@@ -32,6 +32,10 @@ For example: `acme.trial.omniworkflow.com → 127.0.0.1:3101`, `beta.trial.omniw
 
 **Important:** the existing Docker image may initialize a default `admin` account/password. Verify the running image and immediately set a strong admin password via its supported management interface before exposing it. This script does not automate administrator provisioning. Also, the current image is built from the older `bpmn-web` repository; validate compatibility with the current monorepo and pin a known-good image tag/digest before production use. Docker containers alone are **not** a secure sandbox for arbitrary untrusted customer JavaScript.
 
+### MongoDB fails on kernel 6.19+ (SERVER-121912)
+
+MongoDB 8 can refuse to start on Linux 6.19 through 7.0.13 due to a TCMalloc/rseq compatibility issue. The deployment script now configures the MongoDB container with `GLIBC_TUNABLES=glibc.pthread.rseq=1` as a temporary workaround. On an already deployed client, download the updated `deploy/docker/deploy-client.sh` and rerun it with the **same** client and port; it preserves the named volumes and secrets and recreates the unhealthy container. The long-term remedy is an OS/kernel version incorporating the fix. See [MongoDB production notes](https://www.mongodb.com/docs/manual/administration/production-notes/) and [SERVER-121912](https://jira.mongodb.org/browse/SERVER-121912).
+
 ### Operations
 
 ```bash
