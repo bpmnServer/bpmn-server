@@ -1,5 +1,12 @@
 extends layoutDocs
 block content
+	//- the docs' own pages; the bar above is the same on every page
+	p.docs-links(style="margin-left:250px")
+		a(href='/docs/api-summary.md') API
+		| &nbsp;&middot;&nbsp;
+		a(href='/docs/examples.md') Examples
+		| &nbsp;&middot;&nbsp;
+		a(href='/docs') ReadMe
 	table(style="width:100%")
 		tr
 			if (sidebar)

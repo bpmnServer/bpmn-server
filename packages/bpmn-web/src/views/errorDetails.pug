@@ -1,0 +1,12 @@
+extends layout
+
+//- A failure, for a browser (routes/middleware/errorDetails.ts)
+block content
+  .container
+    h3 Error #{details.status}: #{details.error}
+    table.table.table-condensed
+      each value, name in details
+        tr
+          th= name
+          td(style="font-family:monospace;white-space:pre-wrap")= value
+    p Quote the reference when reporting this problem; full details are in the server log.

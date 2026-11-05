@@ -42,6 +42,23 @@ test('the editors: the same places, the logo from the application itself', async
     }
 });
 
+test('no account with sign-in off: a page that says so, with the menu', async () => {
+    for (const path of ['/account', '/account/edit/x']) {
+        const res = await fetch(web.base + path, { headers: { accept: 'text/html' } });
+        assert.equal(res.status, 404, path);
+        const html = await res.text();
+        assert.match(html, /Sign-in is off on this server/, path);
+        assert.match(html, /href="\/dashboard\/design">Design</, path);
+    }
+    const post = await fetch(web.base + '/account/profile', { method: 'POST' });
+    assert.notEqual(post.status, 500);
+});
+
+test('the user pages work with sign-in off', async () => {
+    for (const path of ['/user', '/user/home'])
+        assert.match(await page(path), /href="\/dashboard\/design">Design</, path);
+});
+
 test('the old list page has no old title', async () => {
     assert.doesNotMatch(await page('/model/list'), /Demo WF2/);
 });

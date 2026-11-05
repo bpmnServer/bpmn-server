@@ -44,7 +44,7 @@ html(lang="en-CA" class="no-js")
             a.navbar-brand(href="/")
               img(src="/images/omniworkflow_icon.png")
           #navbarCollapse.collapse.navbar-collapse
-            ul.nav.navbar-nav
+            include includes/menu.pug
             ul.nav.navbar-nav.navbar-right
               if withProps
                 li: a(href=`/execute/${processName}` target="execute") Run

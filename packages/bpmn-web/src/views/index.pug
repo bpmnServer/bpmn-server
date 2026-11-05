@@ -5,6 +5,11 @@ block content
 	main.workbench-home
 		h1 bpmn-server Workbench
 		p.workbench-intro Explore models, work on pending tasks, and follow running instances.
+		//- the page's own sections; the bar above is the same on every page
+		nav.workbench-navigation(aria-label="Workbench sections")
+			a(href='#processes') Models
+			a(href='#tasks') Pending tasks
+			a(href='#instances') Instances
 		include includes/dashboardHeader.pug
 		div#workbench-sections
 			div#processes.workbench-section

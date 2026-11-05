@@ -51,6 +51,16 @@ and here
 - `/model/list` has a title of its own, not "bpmn-server Workbench Demo WF2".
 - History tab, View: the version's report shows in the tab. The tab's rule hiding the Report tab's panel
   (`.dock-report`) hid it too.
+- The same menu bar on every page. The Workbench's sections (Models, Pending tasks, Instances) and the docs' pages
+  (API, Examples, ReadMe) were added to the bar, and the model list showed the Workbench's sections, which it does not
+  have: they are now links in the Workbench's and the docs' own pages. `/model/editNoProp` had no menu.
+- Pages for "not found", "not allowed" and a failure have the menu; they were bare text. Scripts still get the plain
+  text: only a browser opening a page gets the page.
+- `/account` with sign-in off said Error 500; it now says there is no account, and so do the pages under it. `/user`
+  and `/user/home` with sign-in off no longer fail.
+- `/account/verify` said Error 500 when the email could not be sent; it now says so on the account page. Without
+  `SMTP_USER` and `SMTP_PASSWORD` the mail server is not tried.
+- The model list's Execute links went to `/wf/...`, which does not exist; its Select link had nothing to go to and is gone.
 
 ## Release 3.5.2 (2026-11-04)
 ### Added

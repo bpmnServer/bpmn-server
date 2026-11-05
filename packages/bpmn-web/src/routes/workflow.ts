@@ -5,7 +5,7 @@ import path from 'node:path';
 import { BPMNServer, dateDiff, Behaviour_names   } from '../index.js';
 import { BPMNAPI , SecureUser } from '../index.js';
 import { engineGroups } from '../userAccess/roles.js';
-import { Common } from './common.js';
+import { answerMessage, Common } from './common.js';
 import { packageReadme } from './docs.js';
 import { ViewHelper } from './ViewHelper.js';
 import { runProcess } from './runErrors.js';
@@ -181,7 +181,7 @@ export class Workflow extends Common {
 
             // findItem authorizes the task; findInstances no longer returns data or items to non-admins
             const item = await bpmnAPI.data.findItem({ "items.id": id }, getSecureUser(request));
-            if (!item) return response.status(403).send('Item not found or not authorized');
+            if (!item) return answerMessage(request, response, 403, 'Item not found or not authorized');
             const instance = await bpmnServer.dataStore.findInstance({ id: item.instanceId }, 'full');
 
             let definition=await bpmnServer.definitions.loadFromInstance(instance);

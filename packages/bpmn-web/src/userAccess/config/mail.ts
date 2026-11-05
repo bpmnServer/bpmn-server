@@ -7,6 +7,8 @@ import nodemailer from 'nodemailer';
  * Helper Function to Send Mail.
  */
 async  function sendMail({from,to,subject,text,html}: {from?:any;to?:any;subject?:any;text?:any;html?:any}) {
+    // no mail settings: do not try the mail server without them
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASSWORD) throw new Error('Mail is not set up: SMTP_USER, SMTP_PASSWORD');
     // send mail with defined transport object
     const transporter = nodemailer.createTransport({
         service: 'gmail',

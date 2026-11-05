@@ -1,6 +1,7 @@
 .workbench-home { max-width: 1600px; margin: 0 auto; padding: 18px 24px 56px; color: #182b3c; }
 .workbench-home h1 { font-size: 29px; margin: 0 0 5px; }
-.workbench-intro { color: #637588; font-size: 14px; margin-bottom: 22px; }
+.workbench-intro { color: #637588; font-size: 14px; margin-bottom: 10px; }
+.workbench-navigation { display: flex; gap: 18px; margin-bottom: 22px; }
 .workbench-home > form { margin-bottom: 24px; }
 .workbench-section { scroll-margin-top: 20px; }
 .workbench-section + .workbench-section { margin-top: 36px; padding-top: 26px; border-top: 1px solid #dce4ec; }

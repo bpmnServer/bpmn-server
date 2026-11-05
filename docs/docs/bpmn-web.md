@@ -15,7 +15,8 @@ Every page has the same menu: **Workbench** (the home page: models, pending task
 **Dashboard**. For a designer or an administrator, Dashboard is a drop-down: **My work** (their tasks and
 processes), **Design** (the models and decisions, their tests) and, for administrators, **Administration**;
 everyone else has **My work** alone. On the right: the user (My account, Sign out) and About. The model and
-decision editors show the same places in their header.
+decision editors show the same places in their header. A page's own links (the Workbench's sections, the docs' pages)
+are in the page, not in the menu, and pages that only say something (not found, not allowed, an error) have the menu too.
 
 # Installation
 
@@ -46,17 +47,26 @@ Open http://localhost:3000 and sign in as `admin`, password `admin`, then change
 application with more models and the tests as `testSampleApp`: see [Installation](setup.md).
 
 ### Docker installation
-bpmn-web and MongoDB in two containers, from [bpmnServer/docker](https://github.com/bpmnServer/docker):
+bpmn-web and MongoDB in two containers. Docker is all you need, and two files. On Linux or macOS:
 
 ```sh
-git clone https://github.com/bpmnServer/docker.git
-cd docker
-up.cmd          # Windows
-sh up.sh        # Linux, macOS
+mkdir bpmn-web && cd bpmn-web
+curl -O https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/docker-compose.yml
+curl -O https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/up.sh
+sh up.sh
 ```
 
-Open http://localhost:3000 and sign in as `admin`, password `admin`, then change the password. The first start
-creates `.env` next to `docker-compose.yml` with random API keys; see the repository's README.
+On Windows (PowerShell):
+
+```powershell
+mkdir bpmn-web; cd bpmn-web
+curl.exe -O https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/docker-compose.yml
+curl.exe -O https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/up.cmd
+.\up.cmd
+```
+
+Open http://localhost:3000 and sign in as `admin`. The first start creates `.env` next to `docker-compose.yml`
+with random keys and the password, and prints the password; see [Docker](docker.md).
 
 ### Command Line Interface
 

@@ -53,6 +53,8 @@ export async function startWebApp({ env = {} } = {}) {
     const definitionsPath = definitionsFolder();
     // the app reads its settings from the environment; dotenv never overrides these
     Object.assign(process.env, {
+        // no test reaches a real mail server, whatever the folder's .env says
+        SMTP_USER: '', SMTP_PASSWORD: '',
         NODE_ENV: 'production',
         PORT: '0',
         MONGO_DB_URL: dbUrl,

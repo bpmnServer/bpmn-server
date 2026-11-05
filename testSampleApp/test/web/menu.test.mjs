@@ -31,6 +31,52 @@ test('an end user: Workbench, then My work alone (no Dashboard drop-down)', asyn
     assert.doesNotMatch(page.text, />\s*Dashboard\s*<span class="caret"/);
 });
 
+test('the whole bar is the same, page by page: their own links are in the page', async () => {
+    const bar = html => {
+        const nav = html.slice(html.indexOf('<nav'), html.indexOf('</nav>'));
+        return [...nav.matchAll(/<a[^>]*href="([^"#][^"]*)"/g)].map(m => m[1]);
+    };
+    const expected = bar((await admin.get('/dashboard')).text);
+    assert.ok(expected.includes('/account'));
+    const { instance } = await web.bpmnServer.engine.start('leave-request', {});
+    for (const path of ['/', '/tasks', '/model/list', '/model/new', '/docs', '/account', '/admin', '/dashboard/design', '/dashboard/admin',
+        '/instanceDetails?id=' + instance.id, '/user', '/executeInput/leave-request']) {
+        const page = await admin.get(path);
+        assert.equal(page.status, 200, path + ' ' + why(page));
+        assert.deepEqual(bar(page.text), expected, path);
+    }
+    const old = bar((await admin.get('/model/editNoProp/leave-request')).text);
+    assert.deepEqual(old.filter(href => !href.startsWith('javascript:')), expected, 'the classic modeler: the menu and its command');
+});
+
+test('a browser that is refused or lost still has the menu; a script gets the plain text', async () => {
+    const opening = (cookie, path) => fetch(web.base + path, { headers: { accept: 'text/html', cookie } });
+    for (const [client, path, status, message] of [
+        [staff, '/model/list', 403, 'Designer permission required'],
+        [staff, '/dashboard/admin', 403, 'Administrator permission required'],
+        [admin, '/no-such-page', 404, 'There is no page /no-such-page'],
+    ]) {
+        const res = await opening(client.cookieHeader, path);
+        assert.equal(res.status, status, path);
+        const html = await res.text();
+        assert.match(html, /class="[^"]*app-menu/, path);
+        assert.ok(html.includes(message), path);
+    }
+    const script = await fetch(web.base + '/model/list', { headers: { cookie: staff.cookieHeader } });
+    assert.equal(script.status, 403);
+    assert.equal(await script.text(), 'Designer permission required');
+});
+
+test('the verification email can not be sent (no mail set up here): back to the account, not a failure', async () => {
+    const res = await staff.get('/account/verify');
+    assert.equal(res.status, 302, why(res));
+    assert.equal(res.headers.get('location'), '/account');
+});
+
+test('the model list links to pages that exist', async () => {
+    assert.doesNotMatch((await admin.get('/model/list')).text, /\/wf\//);
+});
+
 test('a designer: Dashboard is a drop-down with My work and Design; an administrator also has Administration', async () => {
     let links = hrefs((await designer.get('/dashboard')).text);
     assert.deepEqual(links.slice(0, 3), ['/', '/dashboard', '/dashboard/design']);
@@ -47,7 +93,8 @@ test('the same menu on the Workbench, a dashboard and an instance page; the edit
     const first = page => hrefs(page).slice(0, 4);
     assert.deepEqual(first(workbench), first(dashboard));
     assert.deepEqual(first(instancePage), first(dashboard));
-    assert.match(workbench, /workbench-navigation/, 'the Workbench keeps its own sections');
+    const sections = workbench.indexOf('workbench-navigation');
+    assert.ok(sections > workbench.indexOf('</nav>'), "the Workbench's own sections are in the page, not in the bar");
     const editor = (await admin.get('/model/edit/leave-request')).text;
     assert.match(editor, /class="editor-menu"/);
     for (const href of ['/', '/dashboard', '/dashboard/design', '/dashboard/admin'])
