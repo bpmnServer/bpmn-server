@@ -260,10 +260,10 @@ features:
   - id: expressions
     area: modeling
     name: "Expressions and conditions"
-    what: "JavaScript expressions in conditions and attributes ($(...), data.x, item, services)."
+    what: "JavaScript expressions in conditions and attributes ($(...), data.x, item, services); FEEL conditions (language=\"FEEL\")."
     docs: [docs/docs/scripting.md, docs/docs/data.md]
-    code: [packages/bpmn-server/src/engine/Expressions.ts]
-    tests: [packages/bpmn-server/test/expressions.test.mjs]
+    code: [packages/bpmn-server/src/engine/Expressions.ts, packages/bpmn-server/src/engine/ScriptHandler.ts]
+    tests: [packages/bpmn-server/test/expressions.test.mjs, packages/bpmn-server/test/feel-conditions.test.mjs, testSampleApp/test/ui/feel-conditions.test.mjs]
   - id: verify-model
     area: modeling
     name: "Model verification"

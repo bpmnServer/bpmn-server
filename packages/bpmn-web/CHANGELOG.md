@@ -9,6 +9,7 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- The editor's **Condition** follows its **Language**, which now offers FEEL: a FEEL condition is no longer marked as not compiling.
 
 ### Changed
 -->

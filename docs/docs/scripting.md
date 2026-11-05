@@ -14,6 +14,8 @@
   - [Execution Scope](#execution-scope)
   - [Application Listener](#application-listener)
 
+- [Conditions in FEEL](#conditions-in-feel)
+
 <!-- tocstop -->
 
 ## Introduction
@@ -235,3 +237,15 @@ Example:
     });
 
 ```
+
+# Conditions in FEEL
+
+A sequence flow's condition is JavaScript unless it says otherwise: `language="FEEL"` makes it FEEL, over the data's values by name
+(and `data` itself). `${...}` around a condition is a wrapper, and does not change its language. As with JavaScript, the flow is taken
+only when the value is `true`.
+
+```xml
+<bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="FEEL">amount > 1000</bpmn:conditionExpression>
+```
+
+In the editor, a flow's **Language** offers FEEL. The Condition field follows it; the Problems tab checks a FEEL condition.

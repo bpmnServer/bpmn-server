@@ -64,6 +64,9 @@ export function scriptOf(expression: string): string {
     return expressionScript(expression) ?? expression;
 }
 
+/** A condition's language attribute says FEEL (FEEL, or the spec's URI for it). No language, or any other, is JavaScript. */
+export const isFeel = (language: any): boolean => /feel/i.test(String(language ?? ''));
+
 /** A value that is evaluated when the process runs: an expression, or a text with ${...} parts. */
 export function isEvaluated(value: any): boolean {
     return expressionScript(value) !== null || templateParts(value) !== null;

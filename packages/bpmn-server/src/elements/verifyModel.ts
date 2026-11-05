@@ -3,7 +3,8 @@ import { Definition } from './Definition.js';
 import { Behaviour_names } from './behaviours/BehaviourLoader.js';
 import { ServiceTask, BusinessRuleTask, CallActivity } from './Tasks.js';
 import { ScriptHandler } from '../engine/ScriptHandler.js';
-import { expressionScript, scriptOf, templateParts, isEvaluated, freeNames } from '../engine/Expressions.js';
+import { expressionScript, scriptOf, templateParts, isEvaluated, freeNames, isFeel } from '../engine/Expressions.js';
+import { feelParses } from '../dmn/DMNParser.js';
 import { Cron } from '../server/Cron.js';
 import type { IBPMNServer } from '../interfaces/server.js';
 import { DMNEngine } from '../dmn/DMNEngine.js';
@@ -457,8 +458,12 @@ class ModelVerifier {
                 const def = flow.def;
                 const body = def && def.conditionExpression && def.conditionExpression.body;
                 this.processId = flow.from && flow.from.processId;
-                if (body && String(body).trim())
-                    this.checkExpression(String(body), 'condition', def);
+                if (body && String(body).trim()) {
+                    if (!isFeel(def.conditionExpression.language))
+                        this.checkExpression(String(body), 'condition', def);
+                    else if (!feelParses(scriptOf(String(body).trim()), false))
+                        this.add('error', 'expression-syntax', 'The condition expression is not valid FEEL.', def);
+                }
             });
         }
         this.processId = undefined;

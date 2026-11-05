@@ -11,6 +11,8 @@ import type { IBPMNServer, IServerComponent } from './server.js';
 interface IScriptHandler {
     /** label: what the expression is (a condition, an assignment): its name for debuggers and errors */
     evaluateExpression(scope: IItem|IToken, expression, label?: string);
+    /** a sequence flow's condition, in its language attribute's language (FEEL, else JavaScript); without it, evaluateExpression */
+    evaluateCondition?(scope: IItem|IToken, expression, language?: string, label?: string);
     /** label: which script it is (an event's, a script task's): its name for debuggers and errors */
     executeScript(scope: IItem|IExecution, script, label?: string);
 

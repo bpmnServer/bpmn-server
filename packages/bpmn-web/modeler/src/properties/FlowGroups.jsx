@@ -22,6 +22,8 @@ export function ConditionGroup(element, translate) {
     const bo = getBusinessObject(element);
     // a flow that has a condition shows it, wherever it starts: the engine evaluates it
     const condition = bo.get('conditionExpression');
+    // the field follows the condition's language: FEEL is not JavaScript
+    const feel = /feel/i.test(String(condition?.get('language') ?? ''));
     if (!condition) {
         if (!isAny(element.source, CONDITIONAL_SOURCES))
             return null;
@@ -34,8 +36,10 @@ export function ConditionGroup(element, translate) {
         component: Group,
         entries: [
             codeEntry(element, {
-                id: 'conditionExpression', label: 'Condition', mode: 'expression', rows: 2,
-                description: 'A JavaScript expression, e.g. data.days > 5; the flow is taken when it is true',
+                id: 'conditionExpression', label: 'Condition', mode: feel ? 'feel' : 'expression', rows: 2,
+                description: feel
+                    ? 'A FEEL expression, e.g. days > 5 (the data\'s values by name); the flow is taken when it is true'
+                    : 'A JavaScript expression, e.g. data.days > 5; the flow is taken when it is true',
                 getValue: () => bo.get('conditionExpression')?.get('body') || '',
                 setValue: (value, { commandStack, bpmnFactory }) => {
                     const condition = bo.get('conditionExpression');
@@ -52,7 +56,8 @@ export function ConditionGroup(element, translate) {
             }),
             ...(condition ? [formatEntry(element, {
                 id: 'conditionLanguage', label: 'Language', allowEmpty: true,
-                target: () => bo.get('conditionExpression'), property: 'language'
+                target: () => bo.get('conditionExpression'), property: 'language',
+                languages: ['JavaScript', 'FEEL'], description: 'bpmn-server runs JavaScript or FEEL here'
             })] : [])
         ]
     };

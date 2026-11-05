@@ -2,12 +2,30 @@ import { Execution } from './Execution.js';
 import { Item } from './Item.js';
 import { Token } from './Token.js';
 import type { IScriptHandler } from '../interfaces/engine.js';
-import { expressionScript, scriptOf, templateParts, evaluateTemplate } from './Expressions.js';
+import { expressionScript, scriptOf, templateParts, evaluateTemplate, isFeel } from './Expressions.js';
+import { evaluate as feelEvaluate } from 'feelin';
 import { spawn } from 'child_process';
 import vm from 'node:vm';
 
     
 class ScriptHandler implements IScriptHandler{
+
+    /**
+     * A sequence flow's condition, in the language it says: FEEL when it says so, any other is JavaScript. A ${...}
+     * around it is a wrapper, whatever the language.
+     */
+    async evaluateCondition(scope: Item|Token, expression, language?: string, label = 'condition') {
+        if (isFeel(language))
+            return this.evaluateFeel(scope, expression);
+        return this.evaluateExpression(scope, expression, label);
+    }
+
+    /** A FEEL expression over the data: its values by name, and `data` itself. */
+    async evaluateFeel(scope, expression) {
+        const data = scope?.data ?? {};
+        const { value } = feelEvaluate(scriptOf(String(expression).trim()), { ...data, data });
+        return value === undefined ? null : value;
+    }
 
 
     /**

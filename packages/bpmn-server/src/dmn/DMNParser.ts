@@ -170,7 +170,7 @@ function columnName(input: InputClause) {
 }
 
 /** The FEEL text parses: as unary tests (an input cell) or as an expression. */
-function feelParses(source: string, unary: boolean): boolean {
+export function feelParses(source: string, unary: boolean): boolean {
     const s = legacyTest(source);
     if (unary && (s === '' || s === '-'))
         return true;

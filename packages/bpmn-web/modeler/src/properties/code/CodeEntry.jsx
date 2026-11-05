@@ -1,5 +1,6 @@
 // A JavaScript field of the properties panel: scripts (script tasks, scripts on events) and expressions
-// (conditions, collections). Highlighted, checked as it is typed the way bpmn-server compiles it
+// (conditions, collections). A condition in FEEL is not checked here: the Problems tab checks it, on the server.
+// Highlighted, checked as it is typed the way bpmn-server compiles it
 // (ScriptHandler: a script is a function body, an expression `return (...)`, a leading $ dropped), and
 // completing the names a script can use (ScriptContext): data fields, the item, the application's services.
 import { useEffect, useRef } from '@bpmn-io/properties-panel/preact/hooks';
@@ -15,7 +16,7 @@ import { javascript } from '@codemirror/lang-javascript';
 
 /** The compile error bpmn-server would hit, or null. */
 export function compileError(code, mode) {
-    if (!code.trim())
+    if (!code.trim() || mode === 'feel')
         return null;
     try {
         if (mode === 'expression')
@@ -29,10 +30,11 @@ export function compileError(code, mode) {
     }
 }
 
+/** `mode` reads the field's mode as it is now: the language can change while the field is open. */
 function lintSource(mode) {
     return view => {
         const code = view.state.doc.toString();
-        const message = compileError(code, mode);
+        const message = compileError(code, mode());
         if (!message)
             return [];
         // where the parser gave up, else the whole text
@@ -81,6 +83,10 @@ function CodeField(props) {
     const value = getValue(element) || '';
     const latest = useRef({ setValue, value });
     latest.current = { setValue: text => setValue(text, services), value };
+    const currentMode = useRef(mode);
+    currentMode.current = mode;
+    const checker = useRef(new Compartment());
+    const newChecker = () => linter(lintSource(() => currentMode.current), { delay: 300 });
 
     useEffect(() => {
         let timer, pending = null;
@@ -102,7 +108,7 @@ function CodeField(props) {
                     bracketMatching(),
                     closeBrackets(),
                     autocompletion({ override: [completionSource(scriptContext, element)], activateOnTyping: true }),
-                    linter(lintSource(mode), { delay: 300 }),
+                    checker.current.of(newChecker()),
                     lintGutter(),
                     EditorView.lineWrapping,
                     placeholder ? placeholderText(placeholder) : [],
@@ -122,6 +128,11 @@ function CodeField(props) {
         showRef.current = { focus: () => editor.focus() };     // Problems' "go to field"
         return () => { flush(); editor.destroy(); };
     }, [element]);
+
+    // the language changed: checked again as it now is (a new checker: nothing else runs one until the text changes)
+    useEffect(() => {
+        view.current?.dispatch({ effects: checker.current.reconfigure(newChecker()) });
+    }, [mode]);
 
     // a change from elsewhere (undo, another field, a template): shown unless the field is being edited
     useEffect(() => {

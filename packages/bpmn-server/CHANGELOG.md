@@ -9,6 +9,8 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- **FEEL conditions**: a sequence flow's condition with `language="FEEL"` is FEEL, over the data's values by name. JavaScript stays the
+  default, and `${...}` is a wrapper whatever the language.
 - `engine.start(..., options.instanceId)`: the caller may name the instance (an application whose record of it shares its id).
 
 ### Changed
