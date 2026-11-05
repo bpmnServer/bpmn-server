@@ -43,6 +43,19 @@ export class API extends Common {
             response.json(await bpmnServer.definitions.getList());
         });
 
+        // a model's BPMN XML, read-only: who may run a process may read what it does
+        router.get('/definitions/load/:name', loggedIn, async function (request, response) {
+            const name = (request.params as any).name;
+            let source;
+            try {
+                source = await bpmnServer.definitions.getSource(name);
+            } catch {
+                response.status(404).json({ errors: `No process definition named ${name}` });
+                return;
+            }
+            response.type('application/xml').send(source);
+        });
+
         router.get('/status', loggedIn, awaitAppDelegateFactory(async (request, response) => {
 
             let status;

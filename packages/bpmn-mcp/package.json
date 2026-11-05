@@ -3,11 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Local MCP adapter for BPMN Server client and standalone model workflows",
+  "description": "BPMN Server's MCP: the running server's API over stdio, for AI clients",
   "bin": { "bpmn-mcp": "./src/index.mjs" },
   "scripts": {
-    "start": "node src/index.mjs",
-    "test": "node --test test/*.test.mjs"
+    "start": "node src/index.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",

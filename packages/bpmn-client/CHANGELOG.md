@@ -12,6 +12,11 @@ and here
 
 ### Changed
 -->
+## [Unreleased]
+### Changed
+- `definitions.load()` reads `/api` with `API_KEY`, so reading a model needs no administration; on an older server
+  it falls back to `/admin/api`.
+
 ## Release 3.5.2 (2026-11-04)
 No changes to bpmn-client; released with bpmn-server and bpmn-web 3.5.2, which share its version.
 
