@@ -10,32 +10,89 @@
         {
           "element": "task_Buy",
           "data": {
-            "needsRepairs": "No",
-            "needsCleaning": "No"
+            "needsRepairs": "Yes",
+            "needsCleaning": "Yes",
+            "carModel": "Porche"
           },
-          "itemId": "bee916a8-ac27-4116-bad7-ac5f16bea930",
+          "itemId": "faedba73-841f-4832-bb24-84aed11186e7",
           "after": {
-            "starterUserId": "",
-            "startDate": "",
-            "needsRepairs": "No",
-            "needsCleaning": "No"
+            "starterUserId": "admin",
+            "startDate": null,
+            "needsRepairs": "Yes",
+            "needsCleaning": "Yes",
+            "carModel": "Porche"
+          },
+          "checks": []
+        },
+        {
+          "element": "task_repair",
+          "data": {},
+          "itemId": "fb2484ae-d111-46e7-a9df-183be3dffdd5",
+          "after": {
+            "starterUserId": "admin",
+            "startDate": null,
+            "needsRepairs": "Yes",
+            "needsCleaning": "Yes",
+            "carModel": "Porche"
+          },
+          "checks": []
+        },
+        {
+          "element": "task_clean",
+          "data": {},
+          "itemId": "2484aed1-1186-47a9-9f18-3be3dffdd5de",
+          "after": {
+            "starterUserId": "admin",
+            "startDate": null,
+            "needsRepairs": "Yes",
+            "needsCleaning": "Yes",
+            "carModel": "Porche"
           },
           "checks": []
         },
         {
           "element": "task_Drive",
           "data": {},
-          "itemId": "2b0ce8f0-bd37-4686-a481-250b483c0afb",
+          "itemId": "a0deb281-3791-46d7-99f9-e60b5e67136a",
           "after": {
-            "starterUserId": "",
-            "startDate": "",
-            "needsRepairs": "No",
-            "needsCleaning": "No"
+            "starterUserId": "admin",
+            "startDate": null,
+            "needsRepairs": "Yes",
+            "needsCleaning": "Yes",
+            "carModel": "Porche"
           },
           "checks": []
         }
       ],
-      "checks": []
+      "checks": [
+        {
+          "kind": "node",
+          "node": "task_Buy",
+          "status": "wait",
+          "at": "start"
+        },
+        {
+          "kind": "node",
+          "node": "task_Buy",
+          "status": "end",
+          "at": "after",
+          "step": "task_Buy"
+        },
+        {
+          "kind": "data",
+          "path": "carModel",
+          "op": "=",
+          "value": "Porche",
+          "at": "after",
+          "step": "task_repair"
+        },
+        {
+          "kind": "data",
+          "path": "needsRepairs",
+          "op": "=",
+          "value": "Yes"
+        }
+      ]
     },
     {
       "name": "Scenario 2 ",
@@ -47,14 +104,16 @@
           "element": "task_Buy",
           "data": {
             "needsRepairs": "Yes",
-            "needsCleaning": "Yes"
+            "needsCleaning": "Yes",
+            "carModel": "Porche"
           },
-          "itemId": "61c62329-f742-40e8-a14a-327ffb4391fc",
+          "itemId": "b02d2951-93d9-401e-81fe-3ce3dae440e9",
           "after": {
-            "starterUserId": null,
+            "starterUserId": "admin",
             "startDate": null,
             "needsRepairs": "Yes",
-            "needsCleaning": "Yes"
+            "needsCleaning": "Yes",
+            "carModel": "Porche"
           },
           "checks": []
         },
@@ -98,8 +157,8 @@
       "checks": [
         {
           "kind": "node",
-          "node": "gateway_2",
-          "status": "end"
+          "node": "task_Buy",
+          "status": "wait"
         }
       ]
     },
@@ -149,11 +208,7 @@
           "checks": []
         }
       ],
-      "checks": [
-        {
-          "kind": "node"
-        }
-      ]
+      "checks": []
     },
     {
       "name": "Scenario 4",
@@ -185,6 +240,45 @@
             "startDate": null,
             "needsRepairs": "No",
             "needsCleaning": "No"
+          },
+          "checks": []
+        }
+      ],
+      "checks": []
+    },
+    {
+      "name": "Scenario 5",
+      "start": {
+        "data": {}
+      },
+      "steps": [
+        {
+          "element": "task_Buy",
+          "data": {
+            "needsRepairs": "No",
+            "needsCleaning": "No",
+            "carModel": "Porche"
+          },
+          "itemId": "859944c7-78db-4971-a995-3109f2f86354",
+          "after": {
+            "starterUserId": "admin",
+            "startDate": null,
+            "needsRepairs": "No",
+            "needsCleaning": "No",
+            "carModel": "Porche"
+          },
+          "checks": []
+        },
+        {
+          "element": "task_Drive",
+          "data": {},
+          "itemId": "09f2f863-54fe-4965-9733-e844ac85c621",
+          "after": {
+            "starterUserId": "admin",
+            "startDate": null,
+            "needsRepairs": "No",
+            "needsCleaning": "No",
+            "carModel": "Porche"
           },
           "checks": []
         }

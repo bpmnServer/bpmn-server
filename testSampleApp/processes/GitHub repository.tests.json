@@ -11,6 +11,38 @@
       },
       "steps": [],
       "checks": []
+    },
+    {
+      "name": "test by itself",
+      "start": {
+        "startNodeId": "test1",
+        "only": true,
+        "data": {}
+      },
+      "steps": [],
+      "checks": []
+    },
+    {
+      "name": "Get the repository by itself",
+      "start": {
+        "startNodeId": "GetRepo",
+        "only": true,
+        "data": {}
+      },
+      "steps": [],
+      "checks": []
+    },
+    {
+      "name": "Scenario 4",
+      "start": {
+        "data": {
+          "owner": "bpmnServer",
+          "repo": "bpmn-server"
+        }
+      },
+      "steps": [],
+      "expect": {},
+      "checks": []
     }
   ]
 }

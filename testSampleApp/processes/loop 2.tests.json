@@ -1,0 +1,429 @@
+{
+  "model": "loop 2",
+  "scenarios": [
+    {
+      "name": "Scenario 1",
+      "start": {
+        "data": {}
+      },
+      "steps": [
+        {
+          "element": "Activity_0mkzuuo",
+          "data": {
+            "field1": ""
+          },
+          "itemId": "f7eaca24-35cd-4619-9a6c-18339068246c",
+          "after": {
+            "Activity_0mkzuuo": {
+              "0": {
+                "field1": ""
+              },
+              "1": {}
+            },
+            "Activity_1ifvldg": {
+              "A": {},
+              "B": {},
+              "C": {},
+              "D": {}
+            },
+            "Activity_046mi5n": {
+              "1001": {}
+            }
+          },
+          "checks": []
+        },
+        {
+          "element": "Activity_046mi5n",
+          "data": {
+            "field1": ""
+          },
+          "itemId": "eaca2435-cd96-49da-ac18-339068246c6c",
+          "after": {
+            "Activity_0mkzuuo": {
+              "0": {
+                "field1": ""
+              },
+              "1": {}
+            },
+            "Activity_1ifvldg": {
+              "A": {},
+              "B": {},
+              "C": {},
+              "D": {}
+            },
+            "Activity_046mi5n": {
+              "1001": {
+                "field1": ""
+              },
+              "1002": {}
+            }
+          },
+          "checks": []
+        },
+        {
+          "element": "Activity_1ifvldg",
+          "data": {
+            "field1": ""
+          },
+          "itemId": "ca2435cd-9619-4a6c-9833-9068246c6c44",
+          "after": {
+            "Activity_0mkzuuo": {
+              "0": {
+                "field1": ""
+              },
+              "1": {}
+            },
+            "Activity_1ifvldg": {
+              "A": {
+                "field1": ""
+              },
+              "B": {},
+              "C": {},
+              "D": {}
+            },
+            "Activity_046mi5n": {
+              "1001": {
+                "field1": ""
+              },
+              "1002": {}
+            }
+          },
+          "checks": []
+        },
+        {
+          "element": "Activity_1ifvldg",
+          "data": {
+            "field1": ""
+          },
+          "itemId": "2435cd96-19da-4c18-b390-68246c6c4416",
+          "after": {
+            "Activity_0mkzuuo": {
+              "0": {
+                "field1": ""
+              },
+              "1": {}
+            },
+            "Activity_1ifvldg": {
+              "A": {
+                "field1": ""
+              },
+              "B": {
+                "field1": ""
+              },
+              "C": {},
+              "D": {}
+            },
+            "Activity_046mi5n": {
+              "1001": {
+                "field1": ""
+              },
+              "1002": {}
+            }
+          },
+          "checks": []
+        },
+        {
+          "element": "Activity_1ifvldg",
+          "data": {
+            "field1": ""
+          },
+          "itemId": "35cd9619-da6c-4833-9068-246c6c441696",
+          "after": {
+            "Activity_0mkzuuo": {
+              "0": {
+                "field1": ""
+              },
+              "1": {}
+            },
+            "Activity_1ifvldg": {
+              "A": {
+                "field1": ""
+              },
+              "B": {
+                "field1": ""
+              },
+              "C": {
+                "field1": ""
+              },
+              "D": {}
+            },
+            "Activity_046mi5n": {
+              "1001": {
+                "field1": ""
+              },
+              "1002": {}
+            }
+          },
+          "checks": []
+        },
+        {
+          "element": "Activity_1ifvldg",
+          "data": {
+            "field1": ""
+          },
+          "itemId": "cd9619da-6c18-4390-a824-6c6c441696a6",
+          "after": {
+            "Activity_0mkzuuo": {
+              "0": {
+                "field1": ""
+              },
+              "1": {}
+            },
+            "Activity_1ifvldg": {
+              "A": {
+                "field1": ""
+              },
+              "B": {
+                "field1": ""
+              },
+              "C": {
+                "field1": ""
+              },
+              "D": {
+                "field1": ""
+              }
+            },
+            "Activity_046mi5n": {
+              "1001": {
+                "field1": ""
+              },
+              "1002": {}
+            }
+          },
+          "checks": []
+        },
+        {
+          "element": "Activity_0mkzuuo",
+          "data": {
+            "field1": ""
+          },
+          "itemId": "1696a606-beae-4d01-92e5-2caac4979601",
+          "after": {
+            "Activity_0mkzuuo": {
+              "0": {
+                "field1": ""
+              },
+              "1": {
+                "field1": ""
+              },
+              "2": {}
+            },
+            "Activity_1ifvldg": {
+              "A": {
+                "field1": ""
+              },
+              "B": {
+                "field1": ""
+              },
+              "C": {
+                "field1": ""
+              },
+              "D": {
+                "field1": ""
+              }
+            },
+            "Activity_046mi5n": {
+              "1001": {
+                "field1": ""
+              },
+              "1002": {}
+            }
+          },
+          "checks": []
+        },
+        {
+          "element": "Activity_046mi5n",
+          "data": {
+            "field1": ""
+          },
+          "itemId": "36d5cfbf-a496-442b-9ebc-b9b06f4ff05c",
+          "after": {
+            "Activity_0mkzuuo": {
+              "0": {
+                "field1": ""
+              },
+              "1": {
+                "field1": ""
+              },
+              "2": {}
+            },
+            "Activity_1ifvldg": {
+              "A": {
+                "field1": ""
+              },
+              "B": {
+                "field1": ""
+              },
+              "C": {
+                "field1": ""
+              },
+              "D": {
+                "field1": ""
+              }
+            },
+            "Activity_046mi5n": {
+              "1001": {
+                "field1": ""
+              },
+              "1002": {
+                "field1": ""
+              },
+              "1003": {}
+            }
+          },
+          "checks": []
+        },
+        {
+          "element": "Activity_0mkzuuo",
+          "data": {
+            "field1": ""
+          },
+          "itemId": "561fcb61-bdd1-4f2d-9ac2-4f4805775d73",
+          "after": {
+            "Activity_0mkzuuo": {
+              "0": {
+                "field1": ""
+              },
+              "1": {
+                "field1": ""
+              },
+              "2": {
+                "field1": ""
+              },
+              "3": {}
+            },
+            "Activity_1ifvldg": {
+              "A": {
+                "field1": ""
+              },
+              "B": {
+                "field1": ""
+              },
+              "C": {
+                "field1": ""
+              },
+              "D": {
+                "field1": ""
+              }
+            },
+            "Activity_046mi5n": {
+              "1001": {
+                "field1": ""
+              },
+              "1002": {
+                "field1": ""
+              },
+              "1003": {}
+            }
+          },
+          "checks": []
+        },
+        {
+          "element": "Activity_046mi5n",
+          "data": {
+            "field1": ""
+          },
+          "itemId": "5d01f7cd-3fe8-43d5-bbb7-3f8903a28c3c",
+          "after": {
+            "Activity_0mkzuuo": {
+              "0": {
+                "field1": ""
+              },
+              "1": {
+                "field1": ""
+              },
+              "2": {
+                "field1": ""
+              },
+              "3": {}
+            },
+            "Activity_1ifvldg": {
+              "A": {
+                "field1": ""
+              },
+              "B": {
+                "field1": ""
+              },
+              "C": {
+                "field1": ""
+              },
+              "D": {
+                "field1": ""
+              }
+            },
+            "Activity_046mi5n": {
+              "1001": {
+                "field1": ""
+              },
+              "1002": {
+                "field1": ""
+              },
+              "1003": {
+                "field1": ""
+              }
+            }
+          },
+          "checks": []
+        },
+        {
+          "element": "Activity_0mkzuuo",
+          "data": {
+            "field1": ""
+          },
+          "itemId": "a6fe2802-ff4e-473a-8301-be3e7d83aced",
+          "after": {
+            "Activity_0mkzuuo": {
+              "0": {
+                "field1": ""
+              },
+              "1": {
+                "field1": ""
+              },
+              "2": {
+                "field1": ""
+              },
+              "3": {
+                "field1": ""
+              }
+            },
+            "Activity_1ifvldg": {
+              "A": {
+                "field1": ""
+              },
+              "B": {
+                "field1": ""
+              },
+              "C": {
+                "field1": ""
+              },
+              "D": {
+                "field1": ""
+              }
+            },
+            "Activity_046mi5n": {
+              "1001": {
+                "field1": ""
+              },
+              "1002": {
+                "field1": ""
+              },
+              "1003": {
+                "field1": ""
+              }
+            }
+          },
+          "checks": []
+        }
+      ],
+      "expect": {},
+      "checks": [
+        {
+          "kind": "data",
+          "path": "Activity_1ifvldg.A.field1",
+          "op": "=",
+          "value": ""
+        }
+      ]
+    }
+  ]
+}
