@@ -1126,7 +1126,7 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 /* ---- the History tab (history/HistoryPanel.js): the saved versions, two compared */
 
 .dock:not([data-tab="history"]) .dock-history,
-.dock[data-tab="history"] .dock-report,
+.dock[data-tab="history"] .dock-report:not(.history-report),
 .dock[data-tab="history"] .dock-test,
 .dock[data-tab="history"] .problems-list {
     display: none;
