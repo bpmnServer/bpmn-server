@@ -123,7 +123,8 @@ test('BPMNClient (legacy) calls: method, path, key', async () => {
     [() => c.datastore.findItems({ id: 'i1' }), 'GET', '/api/datastore/findItems', API_KEY],
     [() => c.datastore.findInstances({ id: 'i1' }), 'GET', '/api/datastore/findInstances', API_KEY],
     [() => c.datastore.deleteInstances({ id: 'i1' }), 'DELETE', '/admin/api/datastore/deleteInstances', ADMIN_KEY],
-    [() => c.definitions.list(), 'GET', '/admin/api/definitions/list', ADMIN_KEY],
+    // listing models is a runtime call: no administration needed (bpmn-web >= 3.5 serves it on /api)
+    [() => c.definitions.list(), 'GET', '/api/definitions/list', API_KEY],
     [() => c.definitions.rename('a', 'b'), 'POST', '/admin/api/definitions/rename', ADMIN_KEY],
     [() => c.definitions.delete('a'), 'POST', '/admin/api/definitions/delete', ADMIN_KEY],
   ];
@@ -131,6 +132,14 @@ test('BPMNClient (legacy) calls: method, path, key', async () => {
     await call();
     assert.deepEqual([last().method, last().path, last().key], [method, url, key], url);
   }
+});
+
+test('BPMNClient (legacy) lists models on an older server: /api has no list, so /admin/api with the admin key', async () => {
+  reply = r => r.path === '/api/definitions/list' ? { status: 404, body: { error: 'not found' } } : { body: ['a', 'b'] };
+  const names = await client1().definitions.list();
+  assert.deepEqual(names, ['a', 'b']);
+  assert.deepEqual(requests.map(r => [r.method, r.path, r.key]),
+    [['GET', '/api/definitions/list', API_KEY], ['GET', '/admin/api/definitions/list', ADMIN_KEY]]);
 });
 
 test('the admin key defaults to the API key', async () => {
