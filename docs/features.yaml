@@ -497,7 +497,7 @@ features:
     what: "One menu on every page, the editors' included; the Workbench, home."
     docs: [docs/docs/bpmn-web.md]
     code: [packages/bpmn-web/src/views/includes/menu.pug, packages/bpmn-web/src/views/includes/editorMenu.pug]
-    tests: [testSampleApp/test/web/menu.test.mjs, testSampleApp/test/ui/workbench.test.mjs, testSampleApp/test/ui/navigation.test.mjs]
+    tests: [testSampleApp/test/web/menu.test.mjs, testSampleApp/test/web/menu-no-signin.test.mjs, testSampleApp/test/ui/workbench.test.mjs, testSampleApp/test/ui/navigation.test.mjs]
   - id: dashboards
     area: pages
     name: "Dashboards — My work, Design, Administration"

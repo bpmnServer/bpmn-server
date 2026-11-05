@@ -127,6 +127,9 @@ export class UserManager {
 
 		app.use((req, res, next) => {
 			res.locals.user = req.user;
+			// the menu goes by these: a page may pass its own `user` (the system user, with sign-in off)
+			res.locals.account = req.user;
+			res.locals.signInOff = process.env.REQUIRE_AUTHENTICATION === 'false';
 			// views show the model actions (new, import, open, rename, delete) to designers
 			res.locals.canDesign = canDesign(req.user);
 			res.locals.canSignup = !signupDisabled();

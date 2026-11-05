@@ -42,6 +42,14 @@ and here
   agree (the diagram counted its items, which differed once seqs had gaps); the replay finds each element's
   number by its seq. Decision entries in the logs keep their lines.
 
+### Fixed
+- The menu with sign-in off (`REQUIRE_AUTHENTICATION=false`): every page has the same places, and none offers Sign in,
+  Create account or a Sign out. It depended on the page: the dashboards, the docs and the model list showed Sign in
+  and no places, the home and instance pages a "system" user. The menu goes by who is signed in (`account`,
+  `signInOff`), not by the `user` a page passes.
+- The editors' logo comes from the application; it was loaded from another site, and broken without it.
+- `/model/list` has a title of its own, not "bpmn-server Workbench Demo WF2".
+
 ## Release 3.5.2 (2026-11-04)
 ### Added
 - **One menu on every page** (`views/includes/menu.pug`): Workbench first, then Dashboard: My work for end users;
