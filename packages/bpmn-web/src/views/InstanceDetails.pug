@@ -77,7 +77,7 @@ block content
           i.fa.fa-arrow-left(aria-hidden="true")
           | Back to instances
         h1 #{title}
-        p.instance-subtitle #{instance.name}
+        p.instance-subtitle #{instance.label && instance.label !== instance.name ? instance.label + ' · ' + instance.name : instance.name}
       span.instance-id(title=instance.id) ID: #{instance.id}
 
     .instance-summary-grid
@@ -193,6 +193,9 @@ block content
                 td #{item.seq != null ? item.seq : seq}
                 td.instance-nowrap #{item.elementId}
                 td #{item.name} #{key}
+                  //- the element's label (camunda:label, camunda:endLabel), when it has one
+                  if item.label
+                    div.item-label #{item.label}
                 td.instance-nowrap #{prettyDate(item.startedAt)}
                 td.instance-nowrap #{prettyDate(item.endedAt)}
                 td

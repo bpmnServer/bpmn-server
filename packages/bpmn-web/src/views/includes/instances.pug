@@ -7,14 +7,11 @@ if user && user.isAdmin()
 			form(action='/resetData', method='post')
 				input(type='hidden', name='_csrf', value=_csrf)
 				button(type='submit') Delete All Instances Data
-//- the application's extra columns (INSTANCE_COLUMNS, runtime/listColumns.ts)
-- var extraColumns = (typeof listColumns !== 'undefined' && listColumns.instances) || [];
 table
 	tr
 		td Name
+		td Case
 		td Case Id
-		each column in extraColumns
-			td #{column.label}
 		td Started
 		td Ended
 		td Examine Log
@@ -25,9 +22,9 @@ table
 		if user && user.isAdmin()
 		tr
 			td #{instance.name}
+			//- its label, from its model (engine/Labels.ts)
+			td #{instance.label || ''}
 			td #{instance.data ? instance.data.caseId : ''}
-			each column in extraColumns
-				td #{columnValue(instance.data, column.field)}
 			td #{instance.fromNow}
 			td #{instance.endFromNow} 
 			td

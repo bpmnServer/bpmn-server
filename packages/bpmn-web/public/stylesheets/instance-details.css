@@ -74,3 +74,9 @@
 .instance-page .rationale-table .rationale-decision { font-weight: 600; color: #1f6f43; }
 .instance-page .rationale-table .rationale-decision.rationale-not { color: #6b7280; }
 .instance-page .rationale-table td > .rationale-decision:not(:first-child) { margin-top: 4px; }
+
+/* an item's label under its name (camunda:label, camunda:endLabel) */
+.item-label {
+  color: var(--muted, #667085);
+  font-size: 0.85em;
+}

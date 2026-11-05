@@ -13,6 +13,7 @@ areas:
   engine: Engine — running instances
   decisions: Decisions (DMN)
   scripting: Scripting — expressions, listeners, where scripts run
+  application: The application — what its cases and tasks are called
   connectors: Connectors — REST APIs
   data: Data and storage
   api: APIs and the client
@@ -382,6 +383,14 @@ features:
     code: [packages/bpmn-server/src/engine/ScriptHandler.ts]
     status: not-supported
     note: "A prototype: it writes test values into the item's data, and has no tests. Do not use it in models."
+# ------------------------------------------------------------------------------------------------------- application
+  - id: labels
+    area: application
+    name: "Labels of cases and tasks"
+    what: "camunda:label (and camunda:endLabel) templates in the model, their values named (Client: ${Client = data.clientId}); filled in when shown, from the case's own model; the lists, My work, the instance page; the editor's Label group."
+    docs: [docs/docs/labels.md, docs/design/labels.md]
+    code: [packages/bpmn-server/src/engine/Labels.ts, packages/bpmn-server/src/engine/LabelTemplate.ts, packages/bpmn-web/modeler/src/properties/LabelGroup.jsx]
+    tests: [packages/bpmn-server/test/labels.test.mjs, testSampleApp/test/web/labels.test.mjs, testSampleApp/test/ui/labels.test.mjs]
 # -------------------------------------------------------------------------------------------------------- connectors
   - id: connectors
     area: connectors

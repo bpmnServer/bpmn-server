@@ -6,6 +6,9 @@ mixin taskRow(item)
 	tr
 		td
 			a(href=`/invokeItem?id=${item.id}&processName=${item.processName}&elementId=${item.elementId}`)= item.name || item.elementId
+			//- what it is for: its own label, and its case's (engine/Labels.ts)
+			if item.caseLabel
+				.task-label= item.ownLabel ? item.ownLabel + ' — ' + item.caseLabel : item.caseLabel
 		td= item.processName
 		td= item.fromNow
 		td= item.dueDate ? new Date(item.dueDate).toLocaleDateString() : ''
@@ -57,7 +60,10 @@ block dash
 						th Completed
 					each item in completed
 						tr
-							td= item.name || item.elementId
+							td
+								= item.name || item.elementId
+								if item.caseLabel
+									.task-label= item.ownLabel ? item.ownLabel + ' — ' + item.caseLabel : item.caseLabel
 							td
 								a(href=`/instanceDetails?id=${item.instanceId}`)= item.processName
 							td= item.fromNow

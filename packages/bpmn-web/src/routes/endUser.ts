@@ -2,7 +2,7 @@ import express from 'express';
 import FS from 'node:fs';
 import path from 'node:path';
 
-import { BPMNServer, dateDiff, Behaviour_names, SystemUser   } from '../index.js';
+import { BPMNServer, dateDiff, Behaviour_names, SystemUser, labelInstances } from '../index.js';
 import { BPMNAPI , SecureUser } from '../index.js';
 import { engineGroups } from '../userAccess/roles.js';
 import { Common } from './common.js';
@@ -456,7 +456,7 @@ async function instanceDetails(request,response,instanceId) {
     if (visibleItems.length === 0) return response.status(403).send('Instance access denied');
 
     let instance = await bpmnServer.dataStore.findInstance({ id: instanceId }, 'Full');
-
+    await labelInstances(bpmnServer, [instance]);
 
     let logs = instance.logs;
     let svg = null;

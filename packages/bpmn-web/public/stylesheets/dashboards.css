@@ -50,3 +50,6 @@
 .catalog-import { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
 .catalog-import input { flex: 1 1 160px; min-width: 0; padding: 4px 8px; }
 @media (max-width: 600px) { .dash-catalog { grid-template-columns: 1fr; } }
+
+/* what a task is for: its label and its case's (engine/Labels.ts) */
+.task-label { color: #667085; font-size: 0.85em; }

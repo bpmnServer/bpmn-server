@@ -1,5 +1,4 @@
 import type { BPMNServer, IConfiguration, ILogger } from 'bpmn-server';
-import type { IListColumns } from './listColumns.js';
 
 /**
  * Application-owned dependencies consumed by the reusable workflow web host.
@@ -25,11 +24,6 @@ export interface WorkflowApplication {
 	 * to extend the REST API; a path bpmn-web also serves answers from the application first.
 	 */
 	routes?: (app, webApp) => void;
-	/**
-	 * Extra columns in the pages' instance list and pending-task table: fields of the instance data, after
-	 * Case Id. For a table it names, it replaces INSTANCE_COLUMNS / TASK_COLUMNS (runtime/listColumns.ts).
-	 */
-	listColumns?: IListColumns;
 }
 
 export function defineWorkflowApplication(application: WorkflowApplication): WorkflowApplication {

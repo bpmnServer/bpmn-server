@@ -175,6 +175,12 @@ interface IAppDelegate {
      * @param model  the model's name, its XML and the loaded Definition
      */
     verifyModel?(model: { name: string; source: string; definition: any }): IAppModelIssue[] | Promise<IAppModelIssue[]>;
+
+    /**
+     * Optional. A case's label, for a model that has no camunda:label of its own (engine/Labels.ts): computed in
+     * code when it is shown. Undefined: the default, `<model> #<caseId>`.
+     */
+    instanceLabel?(instance: any): string | undefined | Promise<string | undefined>;
 }
 
 /** An issue an application's verifyModel reports (verifyModel's IModelIssue). */

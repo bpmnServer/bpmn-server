@@ -2,7 +2,7 @@ import express from 'express';
 import FS from 'node:fs';
 import path from 'node:path';
 
-import { BPMNServer, dateDiff, Behaviour_names   } from '../index.js';
+import { BPMNServer, dateDiff, Behaviour_names, labelInstances, labelItems } from '../index.js';
 import { BPMNAPI , SecureUser } from '../index.js';
 import { engineGroups } from '../userAccess/roles.js';
 import { Common } from './common.js';
@@ -447,7 +447,10 @@ async function display(req,res, title, output, logs = [], items = []) {
     let user = getSecureUser(req);
     
     var instances = await bpmnAPI.data.findInstances({}, user,{sort:{saved:-1}});
-    let waiting = await bpmnAPI.data.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask' }, getSecureUser(req)); 
+    let waiting = await bpmnAPI.data.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask' }, getSecureUser(req));
+    // labels, filled in from each case's model (engine/Labels.ts)
+    await labelInstances(bpmnServer, instances);
+    await labelItems(bpmnServer, waiting);
 
     waiting.forEach(item => {
         item['fromNow'] = dateDiff(item.startedAt);
@@ -519,6 +522,7 @@ async function instanceDetails(request,response,instanceId,version) {
     if (visibleItems.length === 0) return response.status(403).send('Instance access denied');
 
     let instance = await bpmnServer.dataStore.findInstance({ id: instanceId }, 'Full');
+    await labelInstances(bpmnServer, [instance]);
 
     let logs = instance.logs;
     if (!logs)

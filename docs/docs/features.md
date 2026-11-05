@@ -72,6 +72,12 @@ Made from [docs/features.yaml](https://github.com/bpmnServer/bpmn-server/blob/ma
 | **Scripts by name, for the debugger** | Each script compiled under its element's name, so the Test tab's debugger shows and stops in it (not in the sandbox). | [testing](testing.md) | [script-names](https://github.com/bpmnServer/bpmn-server/blob/main/packages/bpmn-server/test/script-names.test.mjs) | [ScriptHandler](https://github.com/bpmnServer/bpmn-server/blob/main/packages/bpmn-server/src/engine/ScriptHandler.ts) |
 | **Python scripts ($py)** **(not supported)** | A script starting with $py runs in Python (PYTHON_CMD). *A prototype: it writes test values into the item's data, and has no tests. Do not use it in models.* | [scripting](scripting.md#python) |  | [ScriptHandler](https://github.com/bpmnServer/bpmn-server/blob/main/packages/bpmn-server/src/engine/ScriptHandler.ts) |
 
+## The application — what its cases and tasks are called
+
+| Feature | What it does | Docs | Tests | Code |
+|---|---|---|---|---|
+| **Labels of cases and tasks** | camunda:label (and camunda:endLabel) templates in the model, their values named (Client: ${Client = data.clientId}); filled in when shown, from the case's own model; the lists, My work, the instance page; the editor's Label group. | [labels](labels.md), [labels](https://github.com/bpmnServer/bpmn-server/blob/main/docs/design/labels.md) | [labels](https://github.com/bpmnServer/bpmn-server/blob/main/packages/bpmn-server/test/labels.test.mjs), [labels](https://github.com/bpmnServer/bpmn-server/blob/main/testSampleApp/test/web/labels.test.mjs), [labels](https://github.com/bpmnServer/bpmn-server/blob/main/testSampleApp/test/ui/labels.test.mjs) | [Labels](https://github.com/bpmnServer/bpmn-server/blob/main/packages/bpmn-server/src/engine/Labels.ts), [LabelTemplate](https://github.com/bpmnServer/bpmn-server/blob/main/packages/bpmn-server/src/engine/LabelTemplate.ts), [LabelGroup.jsx](https://github.com/bpmnServer/bpmn-server/blob/main/packages/bpmn-web/modeler/src/properties/LabelGroup.jsx) |
+
 ## Connectors — REST APIs
 
 | Feature | What it does | Docs | Tests | Code |

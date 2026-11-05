@@ -7,3 +7,4 @@ export * from './Model.js';
 export * from './ScriptHandler.js';
 export * from './SandboxScriptHandler.js';
 export * from './DataHandler.js';
+export * from './Labels.js';

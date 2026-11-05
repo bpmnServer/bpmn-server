@@ -34,12 +34,14 @@ and here
   it as the newest version, and no version is removed. Delete removes one version (`DELETE
   /model/history/<model>/<version>`); the others keep their numbers.
 - **History tab:** a comparison's marked diagram opens in the main area, over the editor, instead of in the tab.
-- **Extra columns in the Instances list and the Pending Tasks table:** `INSTANCE_COLUMNS` and `TASK_COLUMNS`
-  (`Label:field` pairs, comma-separated; `field` is a path in the instance data, e.g. `customer.name`), or
-  `start({ listColumns: { instances, tasks } })`, which wins for a table it names. They follow Case Id; a task's
-  values come from its instance's data. A missing field is empty, a list or object is shown as text, values are
-  escaped, and an entry that is not `Label:field` is left out with a `[config]` warning. Without them the tables
-  are as before (`runtime/listColumns.ts`; the types `IListColumn` and `IListColumns` are exported).
+- **Labels in the pages** (docs/docs/labels.md): the Instances list's Case column, the Pending Tasks table's Label
+  column, My work (under each task's name), and the instance page (the case's label; each element's under its
+  name), filled in from each case's model when shown.
+- **The model editor's Label group:** *Case label* on the process, *Label* and *Label once done* on any element of
+  the diagram; a template checked as it is typed (`camunda:label`, `camunda:endLabel` declared in the editor's
+  descriptor).
+- PR #281 (extra columns from `INSTANCE_COLUMNS` / `TASK_COLUMNS`) is superseded by labels: its safe reading and
+  display of values is kept in `engine/LabelTemplate.ts`; columns from labels' named values come next.
 
 ### Changed
 - The model and decision editors have the pages' menu: Workbench, Dashboard (My work, Design, Administration),

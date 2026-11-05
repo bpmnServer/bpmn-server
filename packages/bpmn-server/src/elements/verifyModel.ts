@@ -5,6 +5,7 @@ import { ServiceTask, BusinessRuleTask, CallActivity } from './Tasks.js';
 import { ScriptHandler } from '../engine/ScriptHandler.js';
 import { expressionScript, scriptOf, templateParts, isEvaluated, freeNames } from '../engine/Expressions.js';
 import { Cron } from '../server/Cron.js';
+import { templateProblems } from '../engine/Labels.js';
 import type { IBPMNServer } from '../interfaces/server.js';
 import { DMNEngine } from '../dmn/DMNEngine.js';
 import { DMNParser } from '../dmn/DMNParser.js';
@@ -66,6 +67,16 @@ class ModelVerifier {
     get decisionsFolder(): string {
         return this.options.decisionsFolder
             || (this.server && this.server.configuration && this.server.configuration.definitionsPath) || null;
+    }
+
+    /** Label templates (camunda:label, camunda:endLabel): data paths, names once (engine/Labels.ts). */
+    checkLabel(def) {
+        for (const attr of ['camunda:label', 'camunda:endLabel']) {
+            const template = def?.$attrs?.[attr];
+            if (template == null) continue;
+            for (const problem of templateProblems(template))
+                this.add('error', 'label-template', `Label '${template}': ${problem}.`, def);
+        }
     }
 
     add(severity: ModelIssueSeverity, code: string, message: string, element?) {
@@ -396,12 +407,14 @@ class ModelVerifier {
 
         definition.processes.forEach(proc => {
             this.processId = proc.id;
+            this.checkLabel(proc.def || proc);
             if (checkScripts) proc.scripts.forEach((scripts, event) => scripts.forEach(s => this.checkScript(s, `process '${event}' script`, proc.def || proc)));
         });
 
         for (const node of definition.nodes.values()) {
             this.processId = node.processId;
             const def = node.def || {};
+            this.checkLabel(def);
             if (checkScripts) {
                 node.scripts.forEach((scripts, event) => scripts.forEach(s => this.checkScript(s, `'${event}' script`, def)));
                 if (node.type == 'bpmn:ScriptTask' && def.script)

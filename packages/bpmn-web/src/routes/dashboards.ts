@@ -10,7 +10,7 @@ import FS from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 
-import { SecureUser, BPMNAPI, verifyModel, dateDiff, canEncrypt } from '../index.js';
+import { SecureUser, BPMNAPI, verifyModel, dateDiff, canEncrypt, labelItems } from '../index.js';
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
@@ -124,6 +124,8 @@ export class Dashboards extends Common {
                 .sort((a, b) => new Date(b.endedAt).getTime() - new Date(a.endedAt).getTime())
                 .slice(0, 10);
             completed.forEach(i => i.fromNow = dateDiff(i.endedAt));
+            // what each task is for: its label and its case's (engine/Labels.ts)
+            await labelItems(server, [...mine, ...available, ...completed]);
 
             render(req, res, 'user', { title: 'My work', mine, available, completed, starts: await this.startEvents() });
         }));
