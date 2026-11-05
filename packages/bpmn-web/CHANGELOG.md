@@ -14,6 +14,8 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- `GET /api/definitions/load/<model>`: a model's BPMN XML with the runtime key, and with administration off. **Anyone
+  with `API_KEY` can now read your models' logic, including their scripts;** changing models stays under `/admin/api`.
 - **The start page** (`/dashboard/start/<model>`): Run on a model with several start events a user can start, or
   a start form, asks first: each start event with its form, as My work shows them. It started at once, with no
   data, at whichever start event was drawn first.

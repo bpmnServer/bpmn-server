@@ -71,7 +71,10 @@ declare class ClientDefinitions {
     list(): Promise<string[]>;
     delete(name: any): Promise<IDefinitionData>;
     rename(name: any, newName: any): Promise<IDefinitionData>;
-    /** The model's BPMN XML source (the legacy API returns the source, /api2 the parsed definition). */
+    /**
+     * The model's BPMN XML source (the legacy API returns the source, /api2 the parsed definition), with the
+     * runtime key; a server older than this route, which answers without saying why, only has it under /admin/api.
+     */
     load(name: any): Promise<string>;
     checkErrors(res: any): void;
 }

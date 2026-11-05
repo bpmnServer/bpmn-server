@@ -1,0 +1,19 @@
+{
+  "name": "bpmn-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "BPMN Server's MCP: the running server's API over stdio, for AI clients",
+  "bin": { "bpmn-mcp": "./src/index.mjs" },
+  "scripts": {
+    "start": "node src/index.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "bpmn-client": "3.5.2",
+    "bpmn-server": "3.5.2",
+    "dotenv": "^17.4.2",
+    "zod": "^3.25.0"
+  },
+  "engines": { "node": ">=20" }
+}
