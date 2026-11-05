@@ -119,11 +119,14 @@ test('each save is listed with who saved it; two versions compared by their repo
 
 test('View shows one version alone: its diagram in the main area, its report in the tab, without comparing', async () => {
     await page.click('.history-view[data-version="1"]');
+    // the View's own diagram, not the previous comparison's still on the stage
+    await page.locator('#js-canvas .history-stage:not([hidden]) h4', { hasText: /^Version 1/ }).waitFor();
     await page.waitForSelector('#js-canvas .history-stage:not([hidden]) .history-diagram .djs-shape');
-    assert.match(await page.innerText('.history-stage h4'), /^Version 1/);
     assert.equal(await page.locator('.history-tick:checked').count(), 0, 'nothing ticked');
     assert.equal(await page.locator('.history-stage .history-badge').count(), 0, 'nothing marked: not a comparison');
     assert.match(await page.innerText('.history-view-of[data-version="1"] .history-report'), /process/i, 'its report');
+    // shown, not only there: the History tab hides the Report tab's own .dock-report
+    await page.locator('.history-view-of[data-version="1"] .history-report').waitFor({ state: 'visible', timeout: 5000 });
     await page.click('.history-stage .history-close');
     assert.equal(await page.locator('.history-stage:not([hidden])').count(), 0, 'closed: the editor again');
     assert.equal(await page.locator('.history-view-of').count(), 0);
