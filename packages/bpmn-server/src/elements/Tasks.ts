@@ -356,13 +356,25 @@ class SubProcess extends Node {
         await this.childProcess.start(token.execution,newToken);
 
         await this.startBoundaryEvents(item, newToken);
-        await newToken.execute(null);
+        // while it starts, a child that ends does not signal this item (Token.end): this start goes on, once.
+        // (It did both: the parent went on twice, and a gateway after it failed on its second pass.)
+        item['starting'] = true;
+        try {
+            await newToken.execute(null);
+        }
+        finally {
+            delete item['starting'];
+        }
 
         // An interrupting boundary event fired during the synchronous child execution
         // has terminated the child token; the subprocess must not take its outgoing
         // sequence flow.
         if (newToken.status === TOKEN_STATUS.terminated)
             return NODE_ACTION.end;
+        if (newToken.status === TOKEN_STATUS.end) {     // done within its start: on
+            item.status = ITEM_STATUS.start;
+            return NODE_ACTION.continue;
+        }
         if (item.status == ITEM_STATUS.wait)
             return NODE_ACTION.wait;
         else

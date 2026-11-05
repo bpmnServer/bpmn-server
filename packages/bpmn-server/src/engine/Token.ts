@@ -667,7 +667,8 @@ class Token implements IToken {
             this.currentItem.status= ITEM_STATUS.end;
             this.log('..subprocess token has ended');
 
-            if (cancel==false)
+            // ended within its sub-process's start: that start goes on (SubProcess.start), not a signal as well
+            if (cancel==false && !this.parentToken.currentItem?.['starting'])
                 await this.parentToken.signal(null);
 
         }
