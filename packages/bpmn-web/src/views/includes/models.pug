@@ -46,10 +46,9 @@ h3 Models (BPMN Definitions)
 				{
 				var ext=selectedProcess+"/?userId="+userId;
 
-				$('#selectLink').attr("href","/wf/select/"+ext);
-				$('#execLink').attr("href","/wf/execute/"+ext);
-				$('#execButton').attr("value","/wf/execute/"+ext);
-				$('#execInputLink').attr("href","/wf/executeInput/"+ext);
+				$('#execLink').attr("href","/execute/"+ext);
+				$('#execButton').attr("value","/execute/"+ext);
+				$('#execInputLink').attr("href","/executeInput/"+ext);
 				}
 		}
 
@@ -88,9 +87,6 @@ div(id="actions")
 				td
 					table(class="buttonsTable")
 						tr
-							td  
-								a(id='selectLink',href="javascript:alert('please select a Process');") 
-									div Select
 							td  
 								a(id='execLink',href="javascript:alert('please select a Process');") 
 									div Execute

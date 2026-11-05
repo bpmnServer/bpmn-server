@@ -5,7 +5,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 
 import { BPMNServer   } from '../index.js';
-import { Common } from './common.js';
+import { answerMessage, Common } from './common.js';
 
 /* GET users listing. */
 
@@ -145,7 +145,7 @@ function processFile(fileName,response) {
 }
 function renderFile(fileName, response) {
     if (!FS.existsSync(fileName)) {
-        response.status(404).send('Documentation not found; set DOCS_PATH to a bpmn-server docs folder.');
+        answerMessage(response.req, response, 404, 'Documentation not found; set DOCS_PATH to a bpmn-server docs folder.');
         return;
     }
     let file = FS.readFileSync(fileName);

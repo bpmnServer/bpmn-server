@@ -1,5 +1,15 @@
 import { adminDisabled, designDisabled, isAdminGroups, isDesignerGroups } from '../userAccess/roles.js';
 
+/**
+ * An answer that is only a message (refused, not found): a page with the menu when a browser opens it, the plain text
+ * for anything else, as the pages' scripts read it.
+ */
+export function answerMessage(req, res, status: number, message: string) {
+    if (req.method === 'GET' && req.headers?.accept?.includes('text/html'))
+        return res.status(status).render('message', { title: message, message });
+    return res.status(status).send(message);
+}
+
 export class Common {
     webApp;
     constructor(webApp) {
@@ -25,20 +35,20 @@ export class Common {
 
     /** Administration turned off (DISABLE_ADMIN=true): answers as if the page did not exist. */
     adminEnabled(req, res, next) {
-        if (adminDisabled()) return res.status(404).send('Administration is turned off on this server');
+        if (adminDisabled()) return answerMessage(req, res, 404, 'Administration is turned off on this server');
         return next();
     }
 
     isAdmin(req, res, next) {
-        if (adminDisabled()) return res.status(404).send('Administration is turned off on this server');
+        if (adminDisabled()) return answerMessage(req, res, 404, 'Administration is turned off on this server');
         if (process.env.REQUIRE_AUTHENTICATION === 'false' || req.isAdmin === true) return next();
-        return res.status(403).send('Administrator permission required');
+        return answerMessage(req, res, 403, 'Administrator permission required');
     }
 
     /** Model design (the model routes): designers and administrators. */
     isDesigner(req, res, next) {
-        if (designDisabled()) return res.status(404).send('Model design is turned off on this server');
+        if (designDisabled()) return answerMessage(req, res, 404, 'Model design is turned off on this server');
         if (process.env.REQUIRE_AUTHENTICATION === 'false' || req.isDesigner === true) return next();
-        return res.status(403).send('Designer permission required');
+        return answerMessage(req, res, 403, 'Designer permission required');
     }
 }

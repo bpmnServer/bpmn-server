@@ -455,8 +455,16 @@ export class UserController {
         createRandomToken
             .then(setRandomToken)
             .then(sendVerifyEmail)
-            .then(() => res.redirect('/account'))
-            .catch(next);
+            .then(() => {
+                req.flash('info', { msg: `An e-mail has been sent to ${req.user.email} with further instructions.` });
+                res.redirect('/account');
+            })
+            .catch((error) => {
+                // the usual reason: this server has no mail settings (SMTP_USER, SMTP_PASSWORD)
+                console.error('Could not send the verification email:', error.message);
+                req.flash('errors', { msg: 'Could not send the verification email: is mail set up on this server?' });
+                res.redirect('/account');
+            });
     }
     /**
      * POST /reset/:token

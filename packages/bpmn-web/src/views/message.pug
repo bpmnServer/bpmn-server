@@ -1,0 +1,7 @@
+extends layout
+
+//- A page that only says something: refused, not found (routes/common.ts answerMessage)
+block content
+  .container
+    h3= message
+    p: a(href='/') Back to the Workbench

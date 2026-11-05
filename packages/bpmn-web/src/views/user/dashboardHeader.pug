@@ -1,11 +1,9 @@
 form(name='searchTasks',action="/setUser",method="get")
 
 	if process.env.REQUIRE_AUTHENTICATION === 'false'
-		- var forUserName=request.user.userName;
-		- var forUserGroups=request.user.userGroups;
-		if request.session.forUser
-			- forUserName=request.session.forUser.userName;
-			- forUserGroups=request.session.forUser.userGroups;
+		- var selectedUser = request.session.forUser || request.user || user;
+		- var forUserName = selectedUser ? selectedUser.userName : '';
+		- var forUserGroups = selectedUser && selectedUser.userGroups ? selectedUser.userGroups.join(',') : '';
 		tr
 			td  Show Data for User:
 			td

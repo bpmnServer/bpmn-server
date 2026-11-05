@@ -81,8 +81,16 @@ export function errorDetailsHandler(err, req, res, next): void {
     }
     const rows = Object.entries(details)
         .map(([k, v]) => `<tr><th>${escapeHtml(k)}</th><td>${escapeHtml(String(v))}</td></tr>`).join('');
-    res.type('html').send(`<!doctype html><html><head><meta charset="utf-8"><title>Error ${details.status}</title>` +
+    const plain = `<!doctype html><html><head><meta charset="utf-8"><title>Error ${details.status}</title>` +
         `<style>body{font-family:sans-serif;margin:2rem}th{text-align:left;padding-right:1rem;vertical-align:top}td{font-family:monospace;white-space:pre-wrap}</style>` +
         `</head><body><h1>Error ${details.status}: ${escapeHtml(details.error)}</h1><table>${rows}</table>` +
-        `<p>Quote the reference when reporting this problem; full details are in the server log.</p></body></html>`);
+        `<p>Quote the reference when reporting this problem; full details are in the server log.</p></body></html>`;
+    // with the menu; the plain page if the failure is in the page's layout itself
+    if (typeof res.render !== 'function') {
+        res.type('html').send(plain);
+        return;
+    }
+    res.render('errorDetails', { title: `Error ${details.status}`, details }, (renderError, html) => {
+        res.type('html').send(renderError ? plain : html);
+    });
 }

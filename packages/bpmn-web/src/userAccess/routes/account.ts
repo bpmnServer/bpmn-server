@@ -1,4 +1,4 @@
-import { Common} from "../../routes/common.js";
+import { answerMessage, Common} from "../../routes/common.js";
 
 import express from 'express';
 
@@ -11,7 +11,7 @@ import { signupDisabled } from '../roles.js';
 
 /** DISABLE_SIGNUP=true: the sign-up pages answer as if they did not exist. */
 export function signupEnabled(req, res, next) {
-	if (signupDisabled()) return res.status(404).send('Sign-up is turned off on this server: ask an administrator for an account');
+	if (signupDisabled()) return answerMessage(req, res, 404, 'Sign-up is turned off on this server: ask an administrator for an account');
 	return next();
 }
 
@@ -24,6 +24,13 @@ export class Account extends Common{
 	config() {
 		var router = express.Router();
 		const passport = this.passport;
+
+		// with sign-in off nobody is signed in: there is no account to show or change
+		router.use('/account', (req: any, res, next) => {
+			if (process.env.REQUIRE_AUTHENTICATION === 'false' && !req.user)
+				return answerMessage(req, res, 404, 'Sign-in is off on this server, so there is no account.');
+			return next();
+		});
 
 		/**
 		 * Primary app routes.

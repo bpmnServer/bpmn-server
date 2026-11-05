@@ -28,6 +28,7 @@ import { Model } from './routes/model.js';
 import { Dashboards } from './routes/dashboards.js';
 import { API } from './routes/api.js';
 import { API2 } from './routes/api2.js';
+import { answerMessage } from './routes/common.js';
 import { errorDetailsHandler } from './routes/middleware/errorDetails.js';
 import { processRunErrorHandler } from './routes/runErrors.js';
 import { gracefulShutdown } from './runtime/shutdown.js';
@@ -266,7 +267,8 @@ export class WebApp {
 		this.app.use('/user', (new EndUser(this)).config());
 		this.app.use('/docs', (new Docs(this)).config());
 		this.app.use('/model', (new Model(this)).config());
-
+		// no such page: with the menu, as any other
+		this.app.use((req, res) => answerMessage(req, res, 404, `There is no page ${req.path}`));
 
 	}
 
