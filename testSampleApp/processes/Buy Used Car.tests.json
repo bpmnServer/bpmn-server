@@ -208,7 +208,14 @@
           "checks": []
         }
       ],
-      "checks": []
+      "checks": [
+        {
+          "kind": "data",
+          "path": "needsRepairs",
+          "op": "=",
+          "value": "Yes"
+        }
+      ]
     },
     {
       "name": "Scenario 4",
