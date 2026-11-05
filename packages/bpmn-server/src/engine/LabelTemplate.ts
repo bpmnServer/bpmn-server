@@ -66,6 +66,11 @@ export function parseTemplate(template: string): LabelPart[] {
     return parts;
 }
 
+/** A template's named values: their names and the paths they read, in order. */
+export function namedValues(template: string): { name: string; path: string }[] {
+    return parseTemplate(template ?? '').filter((p): p is { name: string; path: string } => !('text' in p) && p.name !== undefined && !pathProblem(p.path));
+}
+
 /** A template's problems: each placeholder a path, each name a name, no name twice. */
 export function templateProblems(template: unknown): string[] {
     if (typeof template !== 'string') return [`'${template}' is not text`];

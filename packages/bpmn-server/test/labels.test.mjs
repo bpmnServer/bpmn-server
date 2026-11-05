@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { parseTemplate, fillTemplate, templateProblems, modelLabels, labelInstances, labelItems, verifyModel } from '../dist/index.js';
+import { parseTemplate, fillTemplate, templateProblems, modelLabels, labelInstances, labelItems, labelFields, labelQuery, verifyModel } from '../dist/index.js';
 import { makeServer, definitionsFolder } from './helpers.mjs';
 
 const EXPENSE = (caseLabel = 'Client: ${Client = data.clientId} · Order: ${Order = data.orderNo}') => `<?xml version="1.0" encoding="UTF-8"?>
@@ -127,6 +127,28 @@ test("the defaults: the application's hook, else the model and case id, else the
   ({ server: srv } = await server());
   [instance] = await labelInstances(srv, [await load(srv, (await srv.engine.start('Expense', { caseId: 9, levels: [] })).id)]);
   assert.equal(instance.label, 'Expense #9');
+  await srv.shutdown();
+});
+
+test('filters: the named values the models offer, as queries on their data paths', async () => {
+  const { server: srv } = await server();
+  const fields = await labelFields(srv, ['Expense']);
+  assert.deepEqual(fields, [{ name: 'Client', model: 'Expense', path: 'data.clientId' }, { name: 'Order', model: 'Expense', path: 'data.orderNo' }]);
+  for (const [clientId, orderNo] of [['acme', 1234], ['Acme West', 1240], ['zeta', 77]])
+    await srv.engine.start('Expense', { clientId, orderNo, amount: 1, levels: [] }, null, 'ann');
+  const found = async filter => (await srv.dataStore.findInstances(labelQuery(fields, filter) ?? {}, 'summary')).map(i => i.data.clientId).sort();
+
+  assert.deepEqual(await found({ field: 'Client', op: 'contains', value: 'ACME' }), ['Acme West', 'acme'], 'contains, any case');
+  assert.deepEqual(await found({ field: 'Client', op: 'is', value: 'acme' }), ['acme'], 'is');
+  assert.deepEqual(await found({ field: 'Order', op: 'is', value: '1240' }), ['Acme West'], 'a number, as a number');
+  assert.deepEqual(await found({ search: '77' }), ['zeta'], 'search everything');
+  assert.deepEqual(await found({ search: 'a.m' }), [], 'the value is text, not a pattern');
+  assert.deepEqual(await found({ model: 'Other' }), [], 'another model');
+  assert.equal(labelQuery(fields, {}), undefined, 'nothing to filter');
+
+  // tasks, by their cases' named values
+  const items = await srv.dataStore.findItems({ 'items.status': 'wait', ...labelQuery(fields, { field: 'Client', value: 'zeta' }) });
+  assert.deepEqual([...new Set(items.map(i => i.instanceData.clientId))], ['zeta']);
   await srv.shutdown();
 });
 

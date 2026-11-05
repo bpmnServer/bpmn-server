@@ -10,6 +10,7 @@ import { ViewHelper } from './ViewHelper.js';
 import { rationaleSteps } from '../testing/rationale.js';
 import { notATest } from '../testing/scenarios.js';
 import { runProcess } from './runErrors.js';
+import { labelFilterOf } from './labelFilter.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 import { guardModelParams } from './middleware/modelName.js';
 import { afterWork } from '../userAccess/roles.js';
@@ -454,8 +455,10 @@ async function display(req,res, title, output, logs = [], items = []) {
 
     let user = getSecureUser(req);
     
-    var instances = await apiOf(req).data.findInstances({ ...notATest }, user,{sort:{saved:-1}});
-    let waiting = await apiOf(req).data.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask', ...notATest }, getSecureUser(req));
+    // filtered by the labels' named values, as the URL says (routes/labelFilter.ts)
+    const labelFilter = await labelFilterOf(serverOf(req), req, '/');
+    var instances = await apiOf(req).data.findInstances({ ...notATest, ...(labelFilter.query ?? {}) }, user,{sort:{saved:-1}});
+    let waiting = await apiOf(req).data.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask', ...notATest, ...(labelFilter.query ?? {}) }, getSecureUser(req));
     // labels, filled in from each case's model (engine/Labels.ts)
     await labelInstances(serverOf(req), instances);
     await labelItems(serverOf(req), waiting);
@@ -488,6 +491,7 @@ async function display(req,res, title, output, logs = [], items = []) {
             debugMsgs: [], // Logger.get(),
             waiting: waiting,
             instances,
+            labelFilter: labelFilter.view,
             request: req,
             logs, items,
             forUserGroups: req.session.forUserGroups, forUserName: req.session.forUserName

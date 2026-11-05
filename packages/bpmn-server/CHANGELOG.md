@@ -21,6 +21,9 @@ and here
   `fillTemplate`, `templateProblems` (`engine/LabelTemplate.ts`, no dependencies). A missing value takes its name
   along. Defaults: the delegate's optional `instanceLabel(instance)`, else `<model> #<caseId>`. `verifyModel`
   reports a label that is not a template of data paths (`label-template`).
+- **Filters by label:** `labelFields(server)` (the named values the models' case labels offer, with their data
+  paths) and `labelQuery(fields, { model, field, op, value, search })`: a query on those paths, for `findInstances`
+  and `findItems` (contains in any case, or is; a number as a number too; search everything).
 - **`bpmn-server setup [folder]`**: an application's `.env` settings step by step, from bpmn-web's settings schema:
   the database (checked), the first administrator, the site, sign-in and design, email, the API keys, AI access, the
   environment and API trace. A profile (production, development) suggests the values; nothing is written until the

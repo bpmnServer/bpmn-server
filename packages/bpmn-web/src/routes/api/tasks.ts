@@ -83,12 +83,13 @@ export class TaskOperations {
     }
 
     /** The waiting tasks this user has a part in, oldest first, a page at a time: { tasks, next } (next: the bookmark, or null). */
-    async list(user: SecureUser, { limit = DEFAULT_LIMIT, after }: { limit?: number, after?: string } = {}) {
+    /** `query`: more conditions on the items' instances (a label filter: routes/labelFilter.ts), in the store's query. */
+    async list(user: SecureUser, { limit = DEFAULT_LIMIT, after, query = {} }: { limit?: number, after?: string, query?: object } = {}) {
         if (!Number.isInteger(limit) || limit < 1 || limit > MAX_LIMIT)
             throw new TaskError(400, `limit is from 1 to ${MAX_LIMIT}`, 'BAD_LIMIT');
         if (after !== undefined && !/^\d+_./.test(String(after)))
             throw new TaskError(400, 'after is a list\'s next', 'BAD_AFTER');
-        const waiting = (await this.api.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask', ...notATest }, user))
+        const waiting = (await this.api.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask', ...notATest, ...query }, user))
             .filter(item => item.status === 'wait' && item.type === 'bpmn:UserTask' && hasPart(item, user) && (after === undefined || isAfter(item, String(after))))
             .sort((a, b) => new Date(a.startedAt ?? 0).getTime() - new Date(b.startedAt ?? 0).getTime() || (a.id < b.id ? -1 : 1));
         const page = waiting.slice(0, limit);
@@ -96,10 +97,10 @@ export class TaskOperations {
     }
 
     /** The tasks this user completed, newest first: the latest `limit`. */
-    async completed(user: SecureUser, { limit = 10 }: { limit?: number } = {}) {
+    async completed(user: SecureUser, { limit = 10, query = {} }: { limit?: number, query?: object } = {}) {
         if (!Number.isInteger(limit) || limit < 1 || limit > MAX_LIMIT)
             throw new TaskError(400, `limit is from 1 to ${MAX_LIMIT}`, 'BAD_LIMIT');
-        const ended = await this.api.data.findItems({ 'items.status': 'end', 'items.type': 'bpmn:UserTask', 'items.userName': user.userName, ...notATest }, user);
+        const ended = await this.api.data.findItems({ 'items.status': 'end', 'items.type': 'bpmn:UserTask', 'items.userName': user.userName, ...notATest, ...query }, user);
         return ended
             .filter(item => item.userName === user.userName && item.status === 'end' && item.type === 'bpmn:UserTask')
             .sort((a, b) => new Date(b.endedAt ?? 0).getTime() - new Date(a.endedAt ?? 0).getTime())

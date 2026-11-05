@@ -54,10 +54,10 @@ export async function pageApi(req, server) {
     const tasks = new TaskOperations(server);
     return {
         user,
-        /** The waiting tasks they have a part in (GET /tasks). */
-        waiting: (limit: number) => asApi(async () => (await tasks.list(user, { limit })).tasks),
+        /** The waiting tasks they have a part in (GET /tasks); `query`, a label filter's conditions. */
+        waiting: (limit: number, query?: object) => asApi(async () => (await tasks.list(user, { limit, query })).tasks),
         /** The ones they completed, newest first (GET /tasks?status=completed). */
-        completed: (limit: number) => asApi(() => tasks.completed(user, { limit })),
+        completed: (limit: number, query?: object) => asApi(() => tasks.completed(user, { limit, query })),
         /** The processes they may start, with each start form (GET /processes/startable). */
         startable: () => asApi(() => tasks.startable(user)),
         /** A process started as them (POST /processes/{name}/start). */
