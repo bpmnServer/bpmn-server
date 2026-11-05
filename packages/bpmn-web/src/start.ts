@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import { Configuration, Logger, ModelsDatastore, DataStore, ScriptHandler, SandboxScriptHandler, NoCacheManager } from 'bpmn-server';
 import type { IAppDelegate, BPMNServer } from 'bpmn-server';
 import type { WorkflowApplication } from './runtime/WorkflowApplication.js';
+import type { IListColumns } from './runtime/listColumns.js';
 import { WebAppDelegate } from './runtime/WebAppDelegate.js';
 import { guestAccess, checkGuestSettings, guestConfiguration } from './guests/guests.js';
 import { GuestModelsDatastore } from './guests/GuestModelsDatastore.js';
@@ -29,6 +30,8 @@ export interface StartOptions {
 	console?: boolean;
 	/** The application's own routes, mounted before bpmn-web's (WorkflowApplication.routes). */
 	routes?: WorkflowApplication['routes'];
+	/** Extra columns in the instance list and the pending-task table (else INSTANCE_COLUMNS / TASK_COLUMNS). */
+	listColumns?: IListColumns;
 }
 
 function isTrue(param) {
@@ -157,6 +160,7 @@ export async function start(options: StartOptions = {}) {
 		ui: options.ui ?? true,
 		elementTemplatesPath: fs.existsSync(templates) ? templates : undefined,
 		routes: options.routes,
+		listColumns: options.listColumns,
 		serverOptions: options.setupOnly || options.console ? { cron: false } : {},
 	};
 	const { WebApp } = await import('./app.js');

@@ -31,6 +31,7 @@ import { API2 } from './routes/api2.js';
 import { errorDetailsHandler } from './routes/middleware/errorDetails.js';
 import { processRunErrorHandler } from './routes/runErrors.js';
 import { gracefulShutdown } from './runtime/shutdown.js';
+import { resolveListColumns, columnValue } from './runtime/listColumns.js';
 
 const __dirname = import.meta.dirname;
 console.log('app.ts from ', import.meta.filename);
@@ -61,6 +62,7 @@ export class WebApp {
 	
 
 		this.initExpress();
+		this.setupListColumns(application);
 
 		this.userManager = new UserManager(this.app);
 
@@ -77,6 +79,13 @@ export class WebApp {
 
 		this.setupExpress();
 	
+	}
+	/** The instance list's and the task table's extra columns, for the views (INSTANCE_COLUMNS, TASK_COLUMNS). */
+	setupListColumns(application: WorkflowApplication, env: Record<string, string | undefined> = process.env) {
+		const columns = resolveListColumns(application.listColumns, env);
+		columns.invalid.forEach(message => console.warn('[config] ' + message));
+		this.app.locals.listColumns = { instances: columns.instances, tasks: columns.tasks };
+		this.app.locals.columnValue = columnValue;
 	}
 		/**
 	 * Create Express server.
