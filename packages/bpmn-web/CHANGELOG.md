@@ -36,6 +36,15 @@ and here
 - **History tab:** a comparison's marked diagram opens in the main area, over the editor, instead of in the tab.
 
 ### Changed
+- **A setting for each thing `DEMO_MODE` did**: `SCRIPT_SANDBOX`, `SCRIPT_SANDBOX_SERVICES`, `TIMERS` and `SERVICE_TASKS`.
+  `DEMO_MODE=true` only gives those not set their demo values, as before. `SCRIPT_SANDBOX=true` alone: scripts in a sandbox,
+  their calls to `appServices` and `appUtils` run, and timers and service tasks as always. Guest access checks the settings
+  themselves. The Test tab's Evaluate runs in the sandbox whenever scripts do.
+- **`GUEST_SAVE=false`**: a guest saves nothing; the server refuses it, and what it edits stays in its browser until it signs up.
+  **Download** in the editor, for everyone: the model being edited, as a `.bpmn` file.
+- **`SIGNUP_VERIFY_EMAIL`, `SIGNUP_GROUPS`, `SITE_URL`**: signing up can send a verification email and give groups once verified. An
+  account that signs up on a server with guests has models and instances of its own. Sign-up no longer answers twice when
+  a user name is taken, and links in emails no longer always say `http://`.
 - **The Docker image** is built from the npm release, as users install it (`npx bpmn-server init`), not from a git
   clone: one version per image, no `.env` inside, production mode. `up.cmd` and `up.sh` also make a random `ADMIN_PASSWORD`
   and print it; `PORT` in `.env` picks the host's port. The database volume is now `database`: see `docker/README.md`

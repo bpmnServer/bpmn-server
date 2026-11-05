@@ -38,7 +38,7 @@ class Cron  extends ServerComponent implements ICron {
 
 	async start() {
 		await this.startTimers();
-		if (this.configuration.demo)
+		if (this.configuration.runTimers === false)
 			return;
 		const interval = this.configuration.timers?.pollInterval ?? 60_000;
 		if (interval > 0 && !this.poller && !this.stopped) {
@@ -72,8 +72,8 @@ class Cron  extends ServerComponent implements ICron {
 			// A model that does not load is reported; the timers of the others still start.
 			this.report(exc);
 		}
-		// a demo runs no timers: no process starts on a timer, no waiting timer is fired
-		if (this.configuration.demo)
+		// no timers: no process starts on a timer, no waiting timer is fired
+		if (this.configuration.runTimers === false)
 			return;
 		const events = await this.definitions.findEvents({ "events.subType": "Timer" });
 		for (const entry of events) {

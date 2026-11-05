@@ -9,6 +9,10 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- `runTimers` and `runServiceTasks` in the configuration, a setting each (`demo` is deprecated: both false). A run's decisions
+  now say "on this server" rather than "in this demo".
+- `new SandboxScriptHandler({ callServices: true })`: a sandboxed script's calls to `appServices` and `appUtils` run, in the
+  server, with JSON copies; only methods are reached, through plain objects. Without it they run nothing, as before.
 - `engine.start(..., options.instanceId)`: the caller may name the instance (an application whose record of it shares its id).
 
 ### Changed

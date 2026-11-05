@@ -40,9 +40,13 @@ interface IConfiguration
     /** How long `shutdown()` waits for running executions, in milliseconds (10000). */
     shutdownTimeout?: number,
     /**
-     * A public demo: timers are never scheduled (a timer event waits until it is invoked) and service tasks call
-     * nothing (they end with no output). Each says so in the run's decisions. Pair it with SandboxScriptHandler.
+     * false: timers are never scheduled: a timer event waits until it is invoked, and no process starts on a timer. It
+     * says so in the run's decisions. Default true.
      */
+    runTimers?: boolean,
+    /** false: service tasks call nothing: they end with no output, and say so in the run's decisions. Default true. */
+    runServiceTasks?: boolean,
+    /** @deprecated Both of the above false. Set them instead. */
     demo?: boolean,
     /** Each save of a model keeps a version in `.history/<name>/` beside it, for the editor's History tab (default true). */
     modelHistory?: boolean,

@@ -52,6 +52,8 @@ export class Configuration implements IConfiguration {
 	locks?: { retryDelay?: number; maxTries?: number; staleAfter?: number; };
 	shutdownTimeout?: number;
 	demo?: boolean;
+	runTimers?: boolean;
+	runServiceTasks?: boolean;
 	connectors?: IConnectorsConfiguration;
 	modelHistory?: boolean;
 
@@ -62,6 +64,7 @@ export class Configuration implements IConfiguration {
 		definitions = undefined,
 		appDelegate = undefined,
 		dataStore = undefined, cacheManager = undefined, scriptHandler = undefined,
+		runTimers = undefined, runServiceTasks = undefined,
 		documentStore = undefined, locker = undefined, serverId = undefined, locks = undefined, shutdownTimeout = undefined, demo = undefined, connectors = undefined, modelHistory = undefined }: any) {
 		this.definitionsPath = definitionsPath;
 		this.templatesPath = templatesPath;
@@ -80,6 +83,8 @@ export class Configuration implements IConfiguration {
 		this.locks = locks;
 		this.shutdownTimeout = shutdownTimeout;
 		this.demo = demo;
+		this.runTimers = runTimers ?? !demo;
+		this.runServiceTasks = runServiceTasks ?? !demo;
 		this.connectors = connectors;
 		this.modelHistory = modelHistory;
 	

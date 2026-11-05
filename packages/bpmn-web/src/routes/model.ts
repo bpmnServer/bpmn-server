@@ -12,10 +12,11 @@ import { layoutProcess } from 'bpmn-auto-layout';
 import { bpmnToSvg } from './bpmnToSvg.js';
 
 import { BPMNServer, BPMNAdminAPI, verifyModel, Definition } from '../index.js';
-import { Common } from './common.js';
+import { Common, answerMessage } from './common.js';
 import { modelNameGuard, isSafeModelName } from './middleware/modelName.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
 import { currentGuest } from '../guests/guests.js';
+import { GUEST_CANNOT_SAVE, guestReadOnly } from '../userAccess/roles.js';
 import { zip } from './zip.js';
 import { loadDecisionTests, saveDecisionTests, checkDecisionTests, runDecisionTests } from '../testing/decisionTests.js';
 import { loadScenarios, saveScenarios, checkScenarios, runScenario, startTest, completeTest, findTest, summarize, expectChecks, checksAt, setTestData, restartTest } from '../testing/scenarios.js';
@@ -45,6 +46,10 @@ export class Model extends Common {
 
         // Deny-by-default: model designer routes require a session, as a designer (or administrator).
         router.use(this.isAuthenticated, this.isDesigner, modelNameGuard);
+        // GUEST_SAVE=false: a guest changes nothing here. What it may do: open a new model in the editor, check it, run tests
+        router.use((req, res, next) => guestReadOnly(req.user) && !['GET', 'HEAD'].includes(req.method)
+            && !/^\/(new|verify)$|^\/test\/|^\/decision\/[^/]+\/tests\/run$/.test(req.path)
+            ? answerMessage(req, res, 403, GUEST_CANNOT_SAVE) : next());
 
         router.get('/list', awaitHandlerFactory(async (request, response) => {
 

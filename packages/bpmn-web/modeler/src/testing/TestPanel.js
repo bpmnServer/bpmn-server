@@ -123,6 +123,8 @@ export default class TestPanel {
     async _save(options) {
         clearTimeout(this._saveTimer);
         this._saveTimer = null;
+        // a guest that saves nothing: its scenarios last until it leaves the page
+        if (this._config.readOnly) return;
         try {
             await this._request('PUT', `/model/scenarios/${encodeURIComponent(this._config.processName)}`, { scenarios: this._scenarios }, options);
         } catch (err) {

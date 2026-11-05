@@ -157,11 +157,11 @@ class TimerBehaviour extends Behaviour {
 
         let timerModifier = null;
         const config = item.context.configuration;
-        if (config.demo) {
+        if (config.runTimers === false) {
             const definition = this.duration ? `duration ${this.duration}` : this.timeCycle ? `cycle ${this.timeCycle}` : this.timeDate ? `date ${this.timeDate}` : 'no time';
             item.token.decision({
                 seq: item.seq, element: `timer ${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}`, action: 'waits until invoked',
-                why: [definition, 'in this demo, timers are disabled so they do not keep the server busy'],
+                why: [definition, 'timers do not run on this server'],
             });
             return;
         }
