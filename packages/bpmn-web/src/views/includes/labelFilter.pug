@@ -1,0 +1,25 @@
+//- The lists' filter (docs/design/labels.md): a model; a named value of the cases' labels that contains, or is, a
+//- value; or any named value. A GET form: the filter is in the URL, to bookmark and share (routes/labelFilter.ts).
+mixin labelFilter(f)
+	link(rel="stylesheet", href="/stylesheets/label-filter.css")
+	form.label-filter(method="get", action=f.action, role="search", aria-label="Filter by label")
+		label
+			span Model
+			select(name="model")
+				option(value="") All
+				each m in f.models
+					option(value=m, selected=f.filter.model === m)= m
+		label
+			span Field
+			select(name="field")
+				option(value="") Any
+				each g in f.groups
+					option(value=g.name, selected=f.filter.field === g.name, title=g.where)= g.name
+		select(name="op", aria-label="How it matches")
+			option(value="contains", selected=f.filter.op !== 'is') contains
+			option(value="is", selected=f.filter.op === 'is') is
+		input(type="text", name="value", value=f.filter.value || '', placeholder="value", aria-label="Value")
+		input(type="search", name="search", value=f.filter.search || '', placeholder="Search everything", aria-label="Search everything")
+		button(type="submit") Filter
+		if f.active
+			a.label-filter-clear(href=f.action) × Clear

@@ -9,6 +9,7 @@ import { Common } from './common.js';
 import { packageReadme } from './docs.js';
 import { ViewHelper } from './ViewHelper.js';
 import { runProcess } from './runErrors.js';
+import { labelFilterOf } from './labelFilter.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 
 
@@ -446,8 +447,10 @@ async function display(req,res, title, output, logs = [], items = []) {
 
     let user = getSecureUser(req);
     
-    var instances = await bpmnAPI.data.findInstances({}, user,{sort:{saved:-1}});
-    let waiting = await bpmnAPI.data.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask' }, getSecureUser(req));
+    // filtered by the labels' named values, as the URL says (routes/labelFilter.ts)
+    const labelFilter = await labelFilterOf(bpmnServer, req, '/');
+    var instances = await bpmnAPI.data.findInstances({ ...(labelFilter.query ?? {}) }, user,{sort:{saved:-1}});
+    let waiting = await bpmnAPI.data.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask', ...(labelFilter.query ?? {}) }, getSecureUser(req));
     // labels, filled in from each case's model (engine/Labels.ts)
     await labelInstances(bpmnServer, instances);
     await labelItems(bpmnServer, waiting);
@@ -480,6 +483,7 @@ async function display(req,res, title, output, logs = [], items = []) {
             debugMsgs: [], // Logger.get(),
             waiting: waiting,
             instances,
+            labelFilter: labelFilter.view,
             request: req,
             logs, items,
             forUserGroups: req.session.forUserGroups, forUserName: req.session.forUserName

@@ -16,6 +16,7 @@ import { runProcess } from './runErrors.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
 import { listScenarioSets, listDecisionTestSets, loadScenarios, runScenario } from '../testing/scenarios.js';
 import { loadDecisionTests, runDecisionTests } from '../testing/decisionTests.js';
+import { labelFilterOf } from './labelFilter.js';
 import { adminDisabled, canDesign, engineGroups, isAdminGroups } from '../userAccess/roles.js';
 import { UserService } from '../userAccess/UserService.js';
 import { loadCatalog, findCatalogEntry, readCatalogFile, catalogLocation } from './catalog.js';
@@ -104,7 +105,10 @@ export class Dashboards extends Common {
             const me = req.user?.userName;
             const myGroups = toList(req.user?.userGroups);
 
-            const waiting: any[] = await api.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask' }, user);
+            // filtered by the labels' named values, as the URL says (routes/labelFilter.ts)
+            const labelFilter = await labelFilterOf(server, req, '/dashboard');
+            const filtered = labelFilter.query ?? {};
+            const waiting: any[] = await api.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask', ...filtered }, user);
             const mine = [], available = [];
             for (const item of waiting) {
                 item.fromNow = dateDiff(item.startedAt);
@@ -118,7 +122,7 @@ export class Dashboards extends Common {
                     available.push(item);
             }
 
-            const ended: any[] = await api.data.findItems({ 'items.status': 'end', 'items.type': 'bpmn:UserTask', 'items.userName': me }, user);
+            const ended: any[] = await api.data.findItems({ 'items.status': 'end', 'items.type': 'bpmn:UserTask', 'items.userName': me, ...filtered }, user);
             const completed = ended
                 .filter(i => i.userName === me && i.status === 'end' && i.type === 'bpmn:UserTask')
                 .sort((a, b) => new Date(b.endedAt).getTime() - new Date(a.endedAt).getTime())
@@ -127,7 +131,7 @@ export class Dashboards extends Common {
             // what each task is for: its label and its case's (engine/Labels.ts)
             await labelItems(server, [...mine, ...available, ...completed]);
 
-            render(req, res, 'user', { title: 'My work', mine, available, completed, starts: await this.startEvents() });
+            render(req, res, 'user', { labelFilter: labelFilter.view, title: 'My work', mine, available, completed, starts: await this.startEvents() });
         }));
 
         // the start page of a model: its start events a user can start, each with its start form

@@ -16,6 +16,10 @@ and here
   `fillTemplate`, `templateProblems` (`engine/LabelTemplate.ts`, no dependencies). A missing value takes its name
   along. Defaults: the delegate's optional `instanceLabel(instance)`, else `<model> #<caseId>`. `verifyModel`
   reports a label that is not a template of data paths (`label-template`).
+- **Filters by label:** `labelFields(server)` (the named values the models' case labels offer, with their data
+  paths) and `labelQuery(fields, { model, field, op, value, search })`: a query on those paths, for `findInstances`
+  and `findItems` (contains in any case, or is; a number as a number too; search everything).
+- The in-memory and SQLite stores' queries take `$regex` (with `$options`), as MongoDB does: strings only.
 
 ### Changed
 -->

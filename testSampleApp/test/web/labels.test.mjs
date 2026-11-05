@@ -1,6 +1,6 @@
 // @features: labels
 // Labels in the pages (docs/design/labels.md): each case's and task's label, filled in from its model when the page
-// is shown: the Instances and Pending Tasks lists, My work, and the instance page.
+// is shown: the Instances and Pending Tasks lists, My work, and the instance page; and the lists' filter by label.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -29,6 +29,7 @@ test.before(async () => {
     fs.writeFileSync(path.join(web.definitionsPath, MODEL + '.bpmn'), SOURCE);
     [manager, admin] = await Promise.all([web.login('manager'), web.login('admin')]);
     instanceId = (await web.bpmnServer.engine.start(MODEL, { clientId: 'abc', orderNo: 1234, amount: 240 }, null, 'staff')).id;
+    await web.bpmnServer.engine.start(MODEL, { clientId: 'zeta', orderNo: 77, amount: 10 }, null, 'staff');
 });
 test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0)); });
 
@@ -40,9 +41,24 @@ test("the lists: each case's label, and each task's with its case's", async () =
     assert.match(home, /<td>Amount: 240 — Client: abc · Order: 1234<\/td>/, "the task's own label, then its case's");
 });
 
-test("My work: what each task is for, under its name", async () => {
+test("My work: a task's own label under its name, its case's in the Case column", async () => {
     const mine = (await manager.get('/dashboard')).text;
-    assert.match(mine, /Approve<\/a>\s*<div class="task-label">Amount: 240 — Client: abc · Order: 1234<\/div>/);
+    assert.match(mine, /<th>Task<\/th>\s*<th>Case<\/th>\s*<th>Process<\/th>/);
+    assert.match(mine, /Approve<\/a>\s*<div class="task-label">Amount: 240<\/div><\/td>\s*<td>Client: abc · Order: 1234<\/td>\s*<td>Claim<\/td>/);
+});
+
+test('the filter by label: the bar offers the named values; the lists and My work show what it finds', async () => {
+    const home = (await admin.get('/')).text;
+    assert.match(home, /<form class="label-filter"/);
+    assert.match(home, /<option value="Client" title="Claim: data.clientId">Client<\/option>/);
+    const filtered = (await admin.get('/?field=Client&op=contains&value=ZET')).text;
+    assert.match(filtered, /Client: zeta · Order: 77/);
+    assert.doesNotMatch(filtered, /Client: abc · Order: 1234/, 'the other case, and its task, left out');
+    assert.match(filtered, /× Clear/);
+    assert.match((await admin.get('/?search=1234')).text, /Client: abc · Order: 1234/, 'search everything, a number');
+    const mine = (await manager.get('/dashboard?field=Order&op=is&value=77')).text;
+    assert.match(mine, /Client: zeta · Order: 77/);
+    assert.doesNotMatch(mine, /Client: abc · Order: 1234/);
 });
 
 test("the instance page: the case's label, and an ended task's end label under its name", async () => {

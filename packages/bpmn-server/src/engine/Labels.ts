@@ -14,7 +14,7 @@
 import { Definition } from '../elements/Definition.js';
 import { moddleOptions as defaultModdleOptions } from '../elements/js-bpmn-moddle.js';
 import { DataHandler } from './DataHandler.js';
-import { fillTemplate } from './LabelTemplate.js';
+import { fillTemplate, namedValues } from './LabelTemplate.js';
 import type { ILabel, ILabelValue } from './LabelTemplate.js';
 export * from './LabelTemplate.js';
 
@@ -168,4 +168,64 @@ export async function labelItems(server, items: any[]): Promise<any[]> {
         item.labelValues = own?.values ?? [];
     }
     return items;
+}
+
+// ---- filters: on the data paths the labels' named values read (docs/design/labels.md, Mixed lists and filters)
+
+/** A named value a model's case label offers: its name, the model, and the data path it reads. */
+export interface ILabelField {
+    name: string;
+    model: string;
+    path: string;
+}
+
+/** A filter of cases by their labels: a model; a named value that contains, or is, a value; or any named value. */
+export interface ILabelFilter {
+    model?: string;
+    field?: string;
+    op?: 'contains' | 'is';
+    value?: string;
+    search?: string;
+}
+
+/** The named values of the models' case labels (their current versions), for the lists' filters. */
+export async function labelFields(server, models?: string[]): Promise<ILabelField[]> {
+    const moddleOptions = server?.appDelegate?.moddleOptions ?? defaultModdleOptions;
+    const names = models ?? (await server.definitions.getList()).map(m => m?.name ?? m);
+    const fields: ILabelField[] = [];
+    for (const model of [...new Set<string>(names)]) {
+        const source = await sourceOf(server, model);
+        const labels = source ? await modelLabels(source, moddleOptions) : undefined;
+        for (const { name, path } of namedValues(labels?.process ?? ''))
+            fields.push({ name, model, path });
+    }
+    return fields;
+}
+
+const escapeRegex = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** A value's condition: contains (any case), or is; a number also matches as a number. */
+function condition(op: string, value: string) {
+    const asNumber = value.trim() !== '' && !Number.isNaN(Number(value)) ? Number(value) : undefined;
+    const text = op === 'is' ? { $in: [value] } : { $regex: escapeRegex(value), $options: 'i' };
+    return (path: string) => asNumber === undefined ? { [path]: text } : { $or: [{ [path]: text }, { [path]: asNumber }] };
+}
+
+/**
+ * A filter as a query on the cases (findInstances, and findItems for their tasks): the model, then the named value
+ * on each model's own path, then the search on every named value. Undefined when there is nothing to filter.
+ */
+export function labelQuery(fields: ILabelField[], filter: ILabelFilter = {}): Record<string, any> | undefined {
+    const and: any[] = [];
+    const scope = filter.model ? fields.filter(f => f.model === filter.model) : fields;
+    if (filter.model) and.push({ name: filter.model });
+    const byPath = (list: ILabelField[], make: (path: string) => any) =>
+        list.map(f => ({ name: f.model, ...make(f.path) }));
+    if (filter.field && filter.value?.trim()) {
+        const named = scope.filter(f => f.name === filter.field);
+        and.push(named.length ? { $or: byPath(named, condition(filter.op ?? 'contains', filter.value.trim())) } : { id: { $in: [] } });
+    }
+    if (filter.search?.trim())
+        and.push(scope.length ? { $or: byPath(scope, condition('contains', filter.search.trim())) } : { id: { $in: [] } });
+    return and.length ? { $and: and } : undefined;
 }
