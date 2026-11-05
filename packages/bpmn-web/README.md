@@ -96,8 +96,8 @@ waits next, until nothing waits. The data chooses the branches, and which
 step you run first chooses between elements that wait together (events of an event-based gateway, a boundary
 timer, parallel tasks). The steps you run are saved as the scenario's, so **Run** and **Run all** repeat them on a
 new instance without stopping, and check what the scenario expects at the end (status, data values, elements passed and not
-passed). Each scenario keeps its runs (the latest 20) with their instances, so its last
-run is shown when it is opened, and any earlier run can be opened again. **Simulate** plays a run on the diagram:
+passed). Each scenario keeps its last run with its instance, so that
+run is shown when it is opened; the next run replaces it. **Simulate** plays a run on the diagram:
 an element turns blue when it starts and green when it ends (a joining gateway waits for its last branch), orange
 if it still waits; numbered in the order they started; **Pause**, **Continue** and **Step** while it plays.
 Test runs are ordinary instances whose ids start with `test-`.

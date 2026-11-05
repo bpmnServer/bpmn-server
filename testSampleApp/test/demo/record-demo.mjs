@@ -1,5 +1,5 @@
 // Records a demo video of the model editor on Buy Used Car: properties, a condition broken and fixed (Problems),
-// the Report, a Test scenario run step by step, and Simulate. Played by Playwright with a visible cursor and
+// the Report, a Test scenario recorded step by step, a check from the run, and Simulate. Played by Playwright with a visible cursor and
 // captions, against the test web app (a temporary models folder with processes/Buy Used Car.bpmn, the test
 // database), so no real data is touched. Converted to MP4 when ffmpeg is on the path; otherwise the .webm is kept.
 //   npm run demo:video                      writes test/demo/out/buy-used-car-demo.mp4
@@ -193,17 +193,18 @@ for (let i = 0; i < 6; i++) { await report.evaluate(r => r.scrollBy({ top: 140, 
 await caption('Conditions, forms and scripts, in flow order', 2500);
 
 // ---- 5. a test scenario, step by step
-await caption('Test: run the process in the editor, step by step');
+await caption('Test: record a run of the process in the editor, step by step');
 await click(page.locator('#js-tab-test'));
 await page.waitForSelector('#js-test .test-panel');
+await click(page.locator('.test-new-menu summary'));
 await click(page.locator('.test-new'));
 await click(page.locator('.test-name'));
 await page.locator('.test-name').fill('');
 await page.keyboard.type('Repair and clean', { delay: 70 });
-await page.selectOption('.test-expect-status', 'end');
 await click(page.locator('.test-run'));
+await click(page.locator('.test-start-go'));
 await page.waitForSelector('.test-step.pending');
-await caption('Start: Buy waits, with its form', 2500);
+await caption('Record: Buy waits, with its form', 2500);
 
 const step = id => page.locator(`.test-step.pending[data-element-id="${id}"]`);
 await click(step('task_Buy').locator('[data-field="needsRepairs"]'));
@@ -224,17 +225,19 @@ await click(step('task_repair').locator('.test-step-run'));
 await step('task_Drive').waitFor();
 await caption('Both done: Drive waits', 2000);
 await click(step('task_Drive').locator('.test-step-run'));
-await page.waitForSelector('.test-result.ok');
-await caption('Finished, and the checks pass; the steps are saved as the scenario', 3500);
-await page.click('.test-stop');
-await wait(800);
+await page.waitForSelector('.test-summary.ok');
+await caption('It closes by itself: Passed; the steps are saved as the scenario', 3500);
+await caption('Add as a check: what the run shows becomes a check');
+await click(page.locator('.test-items tbody tr[data-element-id="task_Drive"] .test-add-check'));
+await caption('It reads as a sentence, with Edit', 2500);
 
 // ---- 6. simulate
 await caption('Simulate replays the run on the diagram');
 await click(page.locator('.test-simulate'));
-await wait(1200);
+await wait(600);
+await click(page.locator('.test-sim-play'));
 await caption('Blue: started  ·  Green: done  ·  Orange: waiting');
-await page.waitForFunction(() => document.querySelector('.test-simulate')?.textContent === 'Simulate', null, { timeout: 60000 });
+await page.locator('.test-sim-text', { hasText: 'Done (' }).waitFor({ timeout: 60000 });
 await wait(1500);
 await caption('', 0);
 

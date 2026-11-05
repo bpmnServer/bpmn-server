@@ -38,13 +38,20 @@ and here
 ### Changed
 - **The Test tab is one screen**: the Design and Runs sections are gone. A scenario has **Run** and **Record** (it was
   Start, then Start the process, Execute); its result in one line; its steps with their results; one list of checks.
-  A recording closes by itself at the end. The runs are in a tree, under their scenario. Simulate, Debug and Delete are
+  A recording closes by itself at the end. Simulate, Debug and Delete are
   by the result, Simulate and Debug each with a panel of its own; Inspect this run has the data, items, decisions and
   log. New has *The whole process* and *The task selected* (was Test this task); Clear all is **Delete all runs**, Duplicate
   and Delete are under **⋯**. The scenario files are unchanged.
 - **Add as a check**, in the Test tab, on each item and each value of the run shown: a check that it is as it is there, under its step,
   where the run waits (after the last step done, or at the start), else at the end. A check can be **at the start**
   (`"at": "start"`): once the process has started, before any step.
+- **Which check failed**, in the Test tab: after a run, each check's shield under its step is green or red, and a failed check
+  says what was found. A scenario result's checks also carry `check`, and a node check's `actual` is always how many times it ran.
+- The Test tab's **Rationale**: the same table as the instance page, from the same code (was a plain list of the engine's decisions).
+  The steps are closer together.
+- A scenario in the Test tab keeps **only its last run**, and each new run deletes the instance of the one before (was the latest
+  20, whose older instances were never deleted). The scenarios are a plain list, without runs under them.
+- The Test tab's instances (`test-...`) are no longer in the lists of instances and tasks, or in My work; they open by their id.
 - **Full window** in the editor's panel: the Problems, Report, Test and History tabs over the whole page; Esc comes back.
 - **The Docker image** is built from the npm release, as users install it (`npx bpmn-server init`), not from a git
   clone: one version per image, no `.env` inside, production mode. `up.cmd` and `up.sh` also make a random `ADMIN_PASSWORD`

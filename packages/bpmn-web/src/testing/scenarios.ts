@@ -18,6 +18,7 @@ import { randomUUID } from 'node:crypto';
 import vm from 'node:vm';
 import { runSandboxed } from 'bpmn-server';
 import { asGuest, currentGuest, guestContext } from '../guests/guests.js';
+import { rationaleEvents } from './rationale.js';
 
 export interface ScenarioStep {
     /** the waiting element to complete */
@@ -236,6 +237,7 @@ export function summarize(instance) {
         logs: (instance.logs ?? []).slice(-300).map(l => typeof l === 'string' ? l : `${' '.repeat(Math.max(0, l.level ?? 0))}${l.message}`),
         // why the engine took its path: the log's decision entries, in order
         decisions: (instance.logs ?? []).filter(l => l?.type === 'decision').map(l => l.message),
+        rationale: rationaleEvents(instance.logs, instance.items, instance.startedAt),
     };
 }
 
@@ -251,6 +253,9 @@ export function isStep(item): boolean {
 
 const clone = value => JSON.parse(JSON.stringify(value ?? {}));
 const message = err => String(err?.message ?? err);
+
+/** For the lists of work and instances: not the Test tab's instances (they open by their id, as any other). */
+export const notATest = { id: { $not: { $regex: '^test-' } } };
 
 /**
  * Start an instance of the model for a test (the Test tab's recording, and runScenario): its flags keep save points
@@ -346,18 +351,18 @@ export function describeCheck(check: Check): string {
 
 const hasCount = (check: Check) => check.count !== undefined && check.count !== null && check.count !== ('' as any);
 
-/** A check on an instance: { what, ok, actual }. */
+/** A check on an instance: { what, ok, actual, check }. A node's actual is how many times it ran, in that status. */
 export function evaluateCheck(check: Check, instance) {
     const what = describeCheck(check);
     if (check.kind === 'status')
-        return { what, ok: instance?.status === check.status, actual: instance?.status };
+        return { what, ok: instance?.status === check.status, actual: instance?.status, check };
     if (check.kind === 'node') {
         const runs = (instance?.items ?? []).filter(i => (i.elementId === check.node || i.name === check.node) && (!check.status || i.status === check.status));
         const ok = hasCount(check) ? runs.length === Number(check.count) : runs.length > 0;
-        return { what, ok, actual: hasCount(check) && Number(check.count) > 0 ? runs.length : undefined };
+        return { what, ok, actual: runs.length, check };
     }
     const actual = valueAt(instance?.data, check.path);
-    return { what, ok: compare(actual, check.op, check.value), actual };
+    return { what, ok: compare(actual, check.op, check.value), actual, check };
 }
 
 /** The checks due at the start, at the end, or after a step on an element (by id or name). */

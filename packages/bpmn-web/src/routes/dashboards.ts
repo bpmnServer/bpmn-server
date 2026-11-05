@@ -14,7 +14,7 @@ import { SecureUser, BPMNAPI, verifyModel, dateDiff, canEncrypt } from '../index
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
-import { listScenarioSets, listDecisionTestSets, loadScenarios, runScenario } from '../testing/scenarios.js';
+import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, runScenario } from '../testing/scenarios.js';
 import { loadDecisionTests, runDecisionTests } from '../testing/decisionTests.js';
 import { adminDisabled, canDesign, engineGroups, isAdminGroups } from '../userAccess/roles.js';
 import { UserService } from '../userAccess/UserService.js';
@@ -104,7 +104,7 @@ export class Dashboards extends Common {
             const me = req.user?.userName;
             const myGroups = toList(req.user?.userGroups);
 
-            const waiting: any[] = await api.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask' }, user);
+            const waiting: any[] = await api.data.findItems({ 'items.status': 'wait', 'items.type': 'bpmn:UserTask', ...notATest }, user);
             const mine = [], available = [];
             for (const item of waiting) {
                 item.fromNow = dateDiff(item.startedAt);
@@ -118,7 +118,7 @@ export class Dashboards extends Common {
                     available.push(item);
             }
 
-            const ended: any[] = await api.data.findItems({ 'items.status': 'end', 'items.type': 'bpmn:UserTask', 'items.userName': me }, user);
+            const ended: any[] = await api.data.findItems({ 'items.status': 'end', 'items.type': 'bpmn:UserTask', 'items.userName': me, ...notATest }, user);
             const completed = ended
                 .filter(i => i.userName === me && i.status === 'end' && i.type === 'bpmn:UserTask')
                 .sort((a, b) => new Date(b.endedAt).getTime() - new Date(a.endedAt).getTime())

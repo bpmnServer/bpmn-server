@@ -1,7 +1,7 @@
 // @features: forms, run-one-element, test-tab
 // The editor's Test tab: a scenario is recorded from its start form, step by step (what waits shows as the next
 // steps) and closes by itself at the end; its steps are kept, Run / Run all repeat them, its checks run after a step or
-// at the end; its runs are in the tree under it; the path is marked on the diagram and simulated one change at a time
+// at the end; it keeps its last run; the path is marked on the diagram and simulated one change at a time
 // (its panel); Debug changes the variables and restarts a step (its panel); the panel can take the full window.
 //   npm run test:ui
 import test from 'node:test';
@@ -70,7 +70,6 @@ const checkResults = page => page.evaluate(() => {
     return panel._results.get(panel._current).checks.map(c => `${c.ok ? '✓' : '✗'} ${c.what}${!c.ok && c.actual !== undefined ? ` (is ${JSON.stringify(c.actual)})` : ''}`);
 });
 const savedNames = page => page.locator('.test-step.saved .test-step-name').allInnerTexts();
-const runsOf = (page, name) => page.locator('.test-tree-scenario', { hasText: name }).locator('.test-tree-run');
 
 /** Add a check: the last row's When, What and fields. */
 async function addCheck(page, { at = 'end', kind, node, count, status, path, op, value }) {
@@ -169,7 +168,7 @@ test('Run shows what waits; running a step shows what waits next, until the end'
 
     // the steps run are the scenario's
     assert.deepEqual(await savedNames(page), ['✓ Submit request (Submit)', '✓ Approve request (Approve)']);
-    assert.match(await runsOf(page, 'Long leave').first().innerText(), /✓.*Recorded/s);
+    assert.match(await page.locator('.test-summary-title').getAttribute('title'), /^Recorded, /);
     assert.deepEqual(errors, []);
     await close();
 });
@@ -289,7 +288,7 @@ test('a joining gateway waits by itself: it is shown, but is not a step to run',
     await close();
 });
 
-test('a scenario keeps its runs: after a reload its last run is shown and simulated without running again', async () => {
+test('a scenario keeps its last run: after a reload it is shown and simulated without running again; the next run replaces it, and its instance', async () => {
     let { page, close } = await openTestTab();
     await pick(page, 'Long leave');
     await page.click('.test-replay');
@@ -298,33 +297,23 @@ test('a scenario keeps its runs: after a reload its last run is shown and simula
     await close();
 
     ({ page, close } = await openTestTab());
-    // the tree shows each scenario's last kept result before anything runs, and the selected one's runs
+    // the list shows each scenario's last kept result before anything runs
     assert.ok((await listed(page)).includes('✓ Long leave'), (await listed(page)).join(' | '));
     await pick(page, 'Long leave');
-    await page.waitForSelector(`.test-tree-run.shown[data-instance-id="${instanceId}"]`);
-    assert.match(await page.locator('.test-tree-run.shown').innerText(), /✓.*Run/s);
     await page.waitForSelector('.test-summary.ok');
+    assert.match(await page.locator('.test-summary-title').getAttribute('title'), /^Run, /);
+    assert.match(await page.locator('.test-instance-link').getAttribute('href'), new RegExp(instanceId));
     assert.ok((await page.locator('.test-items tbody tr').count()) > 5, 'its items');
     assert.equal(await page.locator('.test-simulate').isDisabled(), false, 'Simulate without running');
     await simulateAll(page);
     assert.ok(await page.locator('.test-seq').count() > 3);
 
-    // an earlier run opens too
-    const runs = await runsOf(page, 'Long leave').count();
-    assert.ok(runs >= 2, `runs kept: ${runs}`);
-    await runsOf(page, 'Long leave').nth(1).click();
-    await page.waitForFunction(id => { const shown = document.querySelector('.test-tree-run.shown'); return shown && shown.dataset.instanceId !== id; }, instanceId);
-
-    // the arrow hides a scenario's runs and shows them again
-    await page.locator('.test-tree-scenario', { hasText: 'Long leave' }).locator('.test-tree-toggle').click();
-    assert.equal(await runsOf(page, 'Long leave').count(), 0);
-    await page.locator('.test-tree-scenario', { hasText: 'Long leave' }).locator('.test-tree-toggle').click();
-    assert.equal(await runsOf(page, 'Long leave').count(), runs);
-
-    // a run of another scenario, clicked: that scenario with that run
-    await pick(page, 'Short leave');
-    await page.locator('.test-tree-scenario', { hasText: 'Long leave' }).locator('.test-tree-run').first().click();
-    await page.waitForFunction(() => document.querySelector('.test-name').value === 'Long leave' && document.querySelector('.test-tree-run.shown'));
+    // Run again: this run replaces it, and its instance is deleted
+    await page.click('.test-replay');
+    await page.waitForFunction(id => { const panel = window.bpmnModeler.get('testPanel'); const shown = panel._results.get(panel._current)?.instance?.id; return shown && shown !== id; }, instanceId);
+    assert.equal(await page.evaluate(() => window.bpmnModeler.get('testPanel')._current.runs.length), 1);
+    await page.waitForTimeout(500);
+    assert.equal(await web.bpmnServer.dataStore.findInstance({ id: instanceId }, 'summary').catch(() => null), null, 'the instance before it is deleted');
     await close();
 });
 
@@ -352,7 +341,7 @@ test('debug: a check after a step; the variables changed; a step restarted and r
 
     await runStep(page, 'Submit', { days: 10 });
     const done = page.locator('.test-step.done[data-element-id="Submit"]');
-    assert.deepEqual(await done.locator('.test-step-checks li').allInnerTexts(), ['✓ after Submit: data.days > 5']);
+    assert.equal(await done.locator('.test-check-icon.ok').count(), 1, 'its shield is green as soon as the step is done');
     assert.deepEqual(await pendingNames(page), ['Approve request (Approve)'], 'a long leave: the manager');
 
     // the variables now, one added, applied
@@ -379,9 +368,52 @@ test('debug: a check after a step; the variables changed; a step restarted and r
     assert.equal(await page.locator('.test-debug-panel').count(), 0, 'closed with the recording');
 
     // why: the gateway's condition with the value it read
-    const why = await page.locator('.test-decisions').innerText();
-    assert.match(why, /action: not taken\s+why:[^]*condition[^]*days[^]*result: false \(days=2\)/);
+    const why = await page.locator('.test-rationale').innerText();
+    assert.deepEqual(await page.locator('.test-rationale th').allInnerTexts(), ['Seq #', 'At', 'Element ID', 'Name', 'Type', 'What happened'], 'as on the instance page, the why under its row');
+    assert.match(await page.locator('.test-rationale-decision.not').first().innerText(), /not taken/);
+    assert.match(why, /condition[^]*days[^]*result: false \(days=2\)/);
     assert.match(why, /takes its default flow/);
+    assert.deepEqual(errors, []);
+    await close();
+});
+
+test('which check failed: its shield is red, with what was found; kept with the run; a check changed since is not marked', async () => {
+    const { page, errors, close } = await openTestTab();
+    const atEnd = page.locator('.test-checks-editor .test-check-row');
+    await newScenario(page);
+    await page.fill('.test-name', 'Which check');
+    await addCheck(page, { kind: 'node', node: 'Submit' });
+    await addCheck(page, { kind: 'node', node: 'Submit', count: 0 });
+    await addCheck(page, { kind: 'status', status: 'wait' });
+    await addCheck(page, { kind: 'data', path: 'days', op: '=', value: 999 });
+    await addCheck(page, { kind: 'data', path: 'missing', op: '=', value: 1 });
+    while (await page.locator('.test-check-done').count()) await page.locator('.test-check-done').first().click();
+    assert.equal(await atEnd.locator('.test-check-icon.ok, .test-check-icon.failed').count(), 0, 'not run yet: not marked');
+
+    await startRun(page);
+    await runStep(page, 'Submit', { days: 2 });
+    await page.waitForSelector('.test-summary.failed');
+    const results = async () => atEnd.evaluateAll(rows => rows.map(r => [
+        r.querySelector('.test-check-icon').classList.contains('ok') ? 'ok' : r.querySelector('.test-check-icon').classList.contains('failed') ? 'failed' : 'none',
+        r.querySelector('.test-check-found')?.textContent ?? '']));
+    const expected = [['ok', ''], ['failed', 'Found: 1 time'], ['failed', 'Found: the instance has ended'], ['failed', 'Found: 2'], ['failed', 'Found: no value']];
+    assert.deepEqual(await results(), expected);
+    assert.equal(await page.locator('.test-summary-title').innerText(), '✗ Failed', 'the top stays Passed or Failed');
+
+    // kept with the run: after a reload too
+    await page.waitForTimeout(1000);
+    await page.reload();
+    await page.waitForSelector('#js-canvas .djs-shape');
+    await page.click('#js-tab-test');
+    await pick(page, 'Which check');
+    await page.waitForSelector('.test-summary.failed');
+    assert.deepEqual(await results(), expected);
+
+    // changed since the run: what the run found is not about this check
+    await atEnd.nth(3).locator('.test-check-edit').click();
+    await atEnd.nth(3).locator('.test-check-value').fill('2');
+    await atEnd.nth(3).locator('.test-check-done').click();
+    assert.deepEqual((await results())[3], ['none', '']);
     assert.deepEqual(errors, []);
     await close();
 });
@@ -392,6 +424,7 @@ test('the runs: a kept run debugged again and restarted at a step; a run deleted
     await page.click('.test-replay');
     await page.waitForSelector('.test-status:text("Long leave: passed")');
     assert.equal(await page.locator('.test-summary .test-instance-link').getAttribute('target'), '_blank');
+    const shownInstance = () => page.evaluate(() => { const panel = window.bpmnModeler.get('testPanel'); return panel._results.get(panel._current).instance.id; });
 
     // Debug on a kept run: its steps done, from its items; Restart here goes back to one
     await page.click('.test-debug');
@@ -410,12 +443,11 @@ test('the runs: a kept run debugged again and restarted at a step; a run deleted
     await page.waitForFunction(() => !document.querySelector('.test-debug-panel'));
     assert.equal(await page.locator('.test-run').count(), 1);
 
-    // a run deleted: gone from the tree, its instance too
-    const before = await runsOf(page, 'Long leave').count();
-    const deleted = await page.locator('.test-tree-run.shown').getAttribute('data-instance-id');
+    // the run deleted: not run any more, its instance gone
+    const deleted = await shownInstance();
     await page.click('.test-summary .test-run-delete');
     await page.waitForSelector('.test-status:text("Run deleted")');
-    assert.equal(await runsOf(page, 'Long leave').count(), before - 1);
+    assert.equal(await page.locator('.test-summary-title').innerText(), 'Not run yet');
     assert.equal(await web.bpmnServer.dataStore.findInstance({ id: deleted }, 'summary').catch(() => null), null, 'its instance is deleted');
 
     // Delete all runs: every run of every scenario; the scenarios stay
@@ -423,7 +455,6 @@ test('the runs: a kept run debugged again and restarted at a step; a run deleted
     await page.click('.test-list-menu summary');
     await page.click('.test-clear-all');
     await page.waitForSelector('.test-status:text("runs cleared")');
-    assert.equal(await page.locator('.test-tree-run').count(), 0);
     assert.equal(await page.locator('.test-tree-row').count(), scenarios);
     assert.equal(await page.locator('.test-clear-all').isDisabled(), true);
     assert.deepEqual(errors, []);
@@ -479,6 +510,7 @@ test('Add as a check: an item or a value of the run, as it is there, under its s
     // just started, no step done: at the start, under the Start row, in words, times filled in
     await addItem('Submit');
     assert.deepEqual(await prose(atStart), ['Submit request (Submit) was reached 1 time, and is waiting']);
+    await atStart.locator('.test-check-icon.ok').waitFor();     // found as it is added
     assert.equal(await atEnd.count(), 0, 'not in the list at the end');
 
     // Edit opens its fields; Done back to words

@@ -8,6 +8,8 @@ import { engineGroups } from '../userAccess/roles.js';
 import { answerMessage, Common } from './common.js';
 import { packageReadme } from './docs.js';
 import { ViewHelper } from './ViewHelper.js';
+import { rationaleEvents } from '../testing/rationale.js';
+import { notATest } from '../testing/scenarios.js';
 import { runProcess } from './runErrors.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 
@@ -328,7 +330,7 @@ export class Workflow extends Common {
     async tasks(request, response) {
 
 
-        let items = await bpmnAPI.data.findItems({ "items.type": "bpmn:UserTask", "items.status": "wait" }, getSecureUser(request));
+        let items = await bpmnAPI.data.findItems({ "items.type": "bpmn:UserTask", "items.status": "wait", ...notATest }, getSecureUser(request));
 
         items.forEach(item => {
             item['fromNow'] = dateDiff(item.startedAt);
@@ -446,8 +448,8 @@ async function display(req,res, title, output, logs = [], items = []) {
 
     let user = getSecureUser(req);
     
-    var instances = await bpmnAPI.data.findInstances({}, user,{sort:{saved:-1}});
-    let waiting = await bpmnAPI.data.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask' }, getSecureUser(req)); 
+    var instances = await bpmnAPI.data.findInstances({ ...notATest }, user,{sort:{saved:-1}});
+    let waiting = await bpmnAPI.data.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask', ...notATest }, getSecureUser(req)); 
 
     waiting.forEach(item => {
         item['fromNow'] = dateDiff(item.startedAt);
@@ -564,6 +566,7 @@ async function instanceDetails(request,response,instanceId,version) {
             title: 'Instance Details',
             logs,items:items, svg,
             decorations, definition: defJson, lastItem,
+            rationale: rationaleEvents(logs, items, instance.startedAt),
             // the model as the Report shows it (report/view.js): the instance's own source, else the model's
             modelJson: JSON.stringify(instance.source || await definitions.getSource(instance.name)).replace(/</g, '\\u003c'),
         });
