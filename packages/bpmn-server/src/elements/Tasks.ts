@@ -488,18 +488,36 @@ class CallActivity extends Node {
     get requiresWait() { return true; }
     get canBeInvoked() { return false; }
 
+    /** Its output parameters (camunda:outputParameter): what of the called process's data comes back. */
+    get outputParameters() {
+        const io = this.getBehaviour(Behaviour_names.CamundaIO) as any;
+        return (io?.parameters ?? []).filter(p => p.isOutput());
+    }
+
     /**
-     * A called process has ended: its caller's call activity continues. When it ended within its own
-     * start, the call activity is still running (`start` below sees the end, and continues); otherwise
-     * the caller waits, and is invoked, before the called process's own call returns.
+     * A called process has ended: its caller's call activity continues, with the called process's data. When it
+     * ended within its own start, the call activity is still running (`start` below takes the data, and
+     * continues); otherwise the caller waits, and is invoked, as the user who ended the called process.
      */
     static async executionEnded(execution: IExecution) {
-        if (execution.operation === 'start') return;
+        // ended within the call that started it (the call activity is still running, not saved): `start` takes it
+        if (execution.operation === 'start' || execution.options?.['calledBy'] === execution.instance.parentItemId) return;
         const itemId = execution.instance.parentItemId;
         const engine = execution.server.engine;
-        await engine.invoke({ "items.id": itemId }, execution.instance.data);
+        await engine.invoke({ "items.id": itemId }, execution.instance.data, execution.userName);
 
     }
+
+    /**
+     * The called process's data, as the call's result. With output parameters, only what they say comes back
+     * (`output` in them is the called process's data: `$output.decision`); without, all of it, as before.
+     */
+    async setInput(item: Item, input) {
+        if (!this.outputParameters.length)
+            return super.setInput(item, input);
+        item.output = input ?? {};
+    }
+
     async start(item): Promise<NODE_ACTION> {
 
         const token = item.token;
@@ -508,16 +526,23 @@ class CallActivity extends Node {
 
         const context = item.context;
         const modelName = this.calledElement;
-        //const data = await item.node.getOutput(item);
+        const instance = token.execution.instance;
+        // the called process runs as the user whose action reached here (else who started the caller: its first
+        // item's user), in the caller's tenant: it has a user, and its instance is isolated as the caller's is
+        const userName = token.execution.userName ?? token.execution.getItems()[0]?.userName ?? null;
 
-        const response = await context.engine.start(modelName, item.input,null,null,{parentItemId: item.id});
+        const response = await context.engine.start(modelName, item.input, null, userName,
+            { parentItemId: item.id, calledBy: item.id, ...(instance.tenantId != null ? { tenantId: instance.tenantId } : {}) });
 
         token.log('..end of executing a call activity for item:' + item.id + " calling " + this.calledElement);
 
         token.log('..response :' + response.execution.status);
 
-        if (response.execution.status == EXECUTION_STATUS.end)
+        if (response.execution.status == EXECUTION_STATUS.end) {
+            // ended within its start: its data comes back here (it was lost)
+            await this.setInput(item, response.instance.data);
             return NODE_ACTION.continue;
+        }
         else
             return NODE_ACTION.wait;
     }
