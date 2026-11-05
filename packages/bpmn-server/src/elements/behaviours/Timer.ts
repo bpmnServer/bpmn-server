@@ -102,28 +102,27 @@ class TimerBehaviour extends Behaviour {
 
         let seconds;
         let timeDue;
+        // filled in for this item: an expression ($js, ${js}) or a text with ${...} parts (PT${data.days}D). The
+        // definition keeps its text (it was overwritten with the first item's value, which later items then got).
+        const duration = this.duration ? await evaluateText(item.context.scriptHandler, item, this.duration) : undefined;
+        const cycle = this.timeCycle ? await evaluateText(item.context.scriptHandler, item, this.timeCycle) : undefined;
+        // a cycle's repeats count, forced delay or not (with one, it stayed 1: a cycle fired once)
+        if (cycle) {
+            this.repeat = this.getRepeat(cycle);
+            item['timerRepeat'] = this.repeat;
+        }
         if (timerModifier) {
             seconds = timerModifier/1000;
             timeDue = dayjs(new Date()).add(seconds,'s').toDate();
         }
         else {
-            if (this.duration) {
-
-                // an expression ($js, ${js}) or a text with ${...} parts (PT${data.days}D)
-                this.duration= await evaluateText(item.context.scriptHandler, item, this.duration);
-
-                //seconds = toSeconds((parse(this.duration)));
-                seconds= Cron.timeDue(this.duration, null);
+            if (duration) {
+                seconds= Cron.timeDue(duration, null);
                 timeDue = new Date();
                 timeDue = dayjs(timeDue).add(seconds,'s').toDate();
             }
-            else if (this.timeCycle) {
-
-                this.timeCycle= await evaluateText(item.context.scriptHandler, item, this.timeCycle);
-
-                //seconds = toSeconds((parse(this.timeCycle)));
-                seconds = Cron.timeDue(this.timeCycle, null);
-                this.repeat = this.getRepeat(this.timeCycle);
+            else if (cycle) {
+                seconds = Cron.timeDue(cycle, null);
                 timeDue = new Date();
                 timeDue = dayjs(timeDue).add(seconds,'s').toDate();
             }
@@ -219,7 +218,7 @@ class TimerBehaviour extends Behaviour {
 //console.log('repeating ',item.timerCount);
 
             // this item is fire number timerCount + 1 (the first has 0): R3 fires three times
-            if (Number(timer.repeat) > item.timerCount + 1) {
+            if (Number(item['timerRepeat'] ?? timer.repeat) > item.timerCount + 1) {
 
                 let resp=await exec.server.engine.startRepeatTimerEvent(instanceId, item,{});
                 //let newToken=await Token.startNewToken(TOKEN_TYPE.BoundaryEvent, item.token.execution, item.node, null, item.token, item, null);
