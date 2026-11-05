@@ -1,6 +1,13 @@
+include labelFilter.pug
 h3 Instances
+//- this list's filter (routes/labelFilter.ts): the other sections are not filtered
+if labelFilter
+	+labelFilter(labelFilter)
 if !instances.length
-	p.empty-state No instances to show yet. Run a process from Models to create one.
+	if labelFilter && labelFilter.active
+		p.empty-state No instances match this filter.
+	else
+		p.empty-state No instances to show yet. Run a process from Models to create one.
 if user && user.isAdmin()
 	table
 		tr

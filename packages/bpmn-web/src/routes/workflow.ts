@@ -447,10 +447,10 @@ async function display(req,res, title, output, logs = [], items = []) {
 
     let user = getSecureUser(req);
     
-    // filtered by the labels' named values, as the URL says (routes/labelFilter.ts)
-    const labelFilter = await labelFilterOf(bpmnServer, req, '/');
+    // the Instances section's filter by the labels' named values, as the URL says (routes/labelFilter.ts)
+    const labelFilter = await labelFilterOf(bpmnServer, req, '/#instances');
     var instances = await bpmnAPI.data.findInstances({ ...(labelFilter.query ?? {}) }, user,{sort:{saved:-1}});
-    let waiting = await bpmnAPI.data.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask', ...(labelFilter.query ?? {}) }, getSecureUser(req));
+    let waiting = await bpmnAPI.data.findItems({ "items.status": 'wait', "items.type": 'bpmn:UserTask' }, getSecureUser(req));
     // labels, filled in from each case's model (engine/Labels.ts)
     await labelInstances(bpmnServer, instances);
     await labelItems(bpmnServer, waiting);

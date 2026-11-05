@@ -116,7 +116,7 @@ each case gets `label` and `labelValues` (its named values), each task `label`, 
 
 ## Filters
 
-The home page (Instances and Pending Tasks) and My work have a filter bar:
+The Workbench's Instances section and My work have a filter bar. On the Workbench it filters that section only:
 
 ![The filter bar: Car contains porsche](images/labels/filter-bar.png)
 
@@ -127,7 +127,7 @@ The home page (Instances and Pending Tasks) and My work have a filter bar:
 
 The filter is a database query on the data paths the named values read: *Car contains porsche* is `data.carModel`
 contains "porsche" (any case) for Buy Used Car's cases, and on each model's own path when several models name a
-*Car*. A number matches as a number too (*Order is 1234*). It's in the URL (`/?field=Car&op=contains&value=porsche`),
+*Car*. A number matches as a number too (*Order is 1234*). It's in the URL (`/?field=Car&op=contains&value=porsche#instances`),
 so a filtered list can be bookmarked and shared.
 
 ![Instances, filtered: Car contains porsche](images/labels/instances-filtered.png)
