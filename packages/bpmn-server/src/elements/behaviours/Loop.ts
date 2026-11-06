@@ -29,6 +29,15 @@ class LoopBehaviour extends Behaviour {
     isStandard() {
         return (this.node.def.loopCharacteristics['$type'] =='bpmn:StandardLoopCharacteristics');
     }
+    /** The name each round's element takes in its data (camunda:elementVariable); none: rounds get nothing. */
+    get elementVariable(): string | undefined {
+        const lc = this.node.def.loopCharacteristics;
+        return lc.elementVariable ?? lc.$attrs?.['camunda:elementVariable'] ?? undefined;
+    }
+    /** The multi-instance loop's completion condition: checked after each round; true, no more rounds. */
+    get completionCondition(): string | undefined {
+        return this.node.def.loopCharacteristics.completionCondition?.body || undefined;
+    }
 
     isSequential() {
         if (this.node.def.loopCharacteristics.isSequential)

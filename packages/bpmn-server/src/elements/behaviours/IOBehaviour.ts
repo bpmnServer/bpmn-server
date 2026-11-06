@@ -181,7 +181,8 @@ class IOBehaviour extends Behaviour {
                 item.log('...set at enter data input : input.' + param.name + ' = ' + val);
             }
         }
-        if (hasInput == false) {
+        // a call activity's output parameters are its result, read when the called process ends (Tasks.ts)
+        if (hasInput == false && item.node.type !== 'bpmn:CallActivity') {
             /**
              * scenario for throw
              * */
