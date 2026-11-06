@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="Process_1" isExecutable="false">
+    <bpmn2:startEvent id="StartEvent_1">
+      <bpmn2:outgoing>Flow_0yqircx</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:serviceTask id="Activity_12p1jw6" name="Read the employee">
+      <bpmn2:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="id">${data.employeeId}</camunda:inputParameter>
+            <camunda:outputParameter name="fullName">${output.fullName}</camunda:outputParameter>
+            <camunda:outputParameter name="jobTitle">${output.jobTitle}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>hr/employee.read</camunda:connectorId>
+        </camunda:connector>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0yqircx</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_16xbe4u</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:serviceTask id="Activity_0jszojg" name="Add the assignment">
+      <bpmn2:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="body.workItem">${data.workItemId}</camunda:inputParameter>
+            <camunda:inputParameter name="body.assignee">${({ kind: 'record', entity: 'Employee', id: data.employeeId })}</camunda:inputParameter>
+            <camunda:inputParameter name="body.type">Candidate</camunda:inputParameter>
+            <camunda:outputParameter name="assignmentId">${output.id}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>hr/assignment.assign</camunda:connectorId>
+        </camunda:connector>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_16xbe4u</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1q8afym</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:endEvent id="Event_00g0x90" name="Done">
+      <bpmn2:incoming>Flow_1q8afym</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:endEvent id="Event_04c9r5o" name="Not found">
+      <bpmn2:incoming>Flow_04fjail</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:endEvent id="Event_04irrk0" name="Refused">
+      <bpmn2:incoming>Flow_1hkzayn</bpmn2:incoming>
+      <bpmn2:incoming>Flow_1j4iyej</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:boundaryEvent id="Event_1pbsnoc" attachedToRef="Activity_12p1jw6">
+      <bpmn2:outgoing>Flow_04fjail</bpmn2:outgoing>
+      <bpmn2:errorEventDefinition id="ErrorEventDefinition_104vfkd" errorRef="Error_0d11fle" />
+    </bpmn2:boundaryEvent>
+    <bpmn2:boundaryEvent id="Event_0yhg2oj" attachedToRef="Activity_0jszojg">
+      <bpmn2:outgoing>Flow_1hkzayn</bpmn2:outgoing>
+      <bpmn2:errorEventDefinition id="ErrorEventDefinition_0ufevz3" errorRef="Error_0hm2j0r" />
+    </bpmn2:boundaryEvent>
+    <bpmn2:boundaryEvent id="Event_146ukdb" attachedToRef="Activity_0jszojg">
+      <bpmn2:outgoing>Flow_1j4iyej</bpmn2:outgoing>
+      <bpmn2:errorEventDefinition id="ErrorEventDefinition_0ohf0tf" errorRef="Error_1lvpxi7" />
+    </bpmn2:boundaryEvent>
+    <bpmn2:sequenceFlow id="Flow_0yqircx" sourceRef="StartEvent_1" targetRef="Activity_12p1jw6" />
+    <bpmn2:sequenceFlow id="Flow_16xbe4u" sourceRef="Activity_12p1jw6" targetRef="Activity_0jszojg" />
+    <bpmn2:sequenceFlow id="Flow_1q8afym" sourceRef="Activity_0jszojg" targetRef="Event_00g0x90" />
+    <bpmn2:sequenceFlow id="Flow_04fjail" sourceRef="Event_1pbsnoc" targetRef="Event_04c9r5o" />
+    <bpmn2:sequenceFlow id="Flow_1hkzayn" sourceRef="Event_0yhg2oj" targetRef="Event_04irrk0" />
+    <bpmn2:sequenceFlow id="Flow_1j4iyej" sourceRef="Event_146ukdb" targetRef="Event_04irrk0" />
+  </bpmn2:process>
+  <bpmn2:error id="Error_0d11fle" name="Not found" errorCode="HTTP_404" />
+  <bpmn2:error id="Error_0hm2j0r" name="No work item" errorCode="HTTP_404" />
+  <bpmn2:error id="Error_1lvpxi7" name="Invalid" errorCode="HTTP_400" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="412" y="240" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_12p1jw6_di" bpmnElement="Activity_12p1jw6">
+        <dc:Bounds x="270" y="218" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jszojg_di" bpmnElement="Activity_0jszojg">
+        <dc:Bounds x="470" y="218" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_00g0x90_di" bpmnElement="Event_00g0x90">
+        <dc:Bounds x="682" y="240" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="687" y="283" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_04c9r5o_di" bpmnElement="Event_04c9r5o">
+        <dc:Bounds x="682" y="370" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="676" y="413" width="48" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_04irrk0_di" bpmnElement="Event_04irrk0">
+        <dc:Bounds x="682" y="460" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="680" y="503" width="41" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1pbsnoc_di" bpmnElement="Event_1pbsnoc">
+        <dc:Bounds x="302" y="280" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0yhg2oj_di" bpmnElement="Event_0yhg2oj">
+        <dc:Bounds x="482" y="280" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_146ukdb_di" bpmnElement="Event_146ukdb">
+        <dc:Bounds x="522" y="280" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0yqircx_di" bpmnElement="Flow_0yqircx">
+        <di:waypoint x="412" y="258" />
+        <di:waypoint x="370" y="258" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16xbe4u_di" bpmnElement="Flow_16xbe4u">
+        <di:waypoint x="370" y="258" />
+        <di:waypoint x="470" y="258" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1q8afym_di" bpmnElement="Flow_1q8afym">
+        <di:waypoint x="570" y="258" />
+        <di:waypoint x="682" y="258" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04fjail_di" bpmnElement="Flow_04fjail">
+        <di:waypoint x="320" y="316" />
+        <di:waypoint x="320" y="388" />
+        <di:waypoint x="682" y="388" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hkzayn_di" bpmnElement="Flow_1hkzayn">
+        <di:waypoint x="500" y="316" />
+        <di:waypoint x="500" y="478" />
+        <di:waypoint x="682" y="478" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1j4iyej_di" bpmnElement="Flow_1j4iyej">
+        <di:waypoint x="540" y="316" />
+        <di:waypoint x="540" y="478" />
+        <di:waypoint x="682" y="478" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

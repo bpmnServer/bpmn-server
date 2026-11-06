@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="hr-employee-definitions" targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:error id="NotFoundError" name="Not found" errorCode="HTTP_404" />
+  <bpmn:error id="InvalidError" name="Invalid" errorCode="HTTP_400" />
+  <bpmn:process id="HrEmployee" name="HR employee" isExecutable="true">
+    <bpmn:startEvent id="Asked">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="employeeId" label="Employee ID" type="string" defaultValue="51a5b24a-85d3-8c43-daab-3a5cf7b0be8b" />
+          <camunda:formField id="workItemId" label="Work item ID" type="string" defaultValue="e2feb200-d329-9d94-6a3a-c9ebab0bf93b" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>toGet</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="GetEmployee" name="Read the employee">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="id">${data.employeeId}</camunda:inputParameter>
+            <camunda:outputParameter name="fullName">${output.fullName}</camunda:outputParameter>
+            <camunda:outputParameter name="jobTitle">${output.jobTitle}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>hr/employee.read</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>toGet</bpmn:incoming>
+      <bpmn:outgoing>toAdd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="AddAssignment" name="Add the assignment">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="body.workItem">${data.workItemId}</camunda:inputParameter>
+            <camunda:inputParameter name="body.type">Candidate</camunda:inputParameter>
+            <camunda:inputParameter name="body.assignee">${({ kind: 'record', entity: 'Employee', id: data.employeeId })}</camunda:inputParameter>
+            <camunda:outputParameter name="assignmentId">${output.id}</camunda:outputParameter>
+            <camunda:outputParameter name="assignedTo">${output.assignee.label}</camunda:outputParameter>
+            <camunda:outputParameter name="assignedWorkItem">${output.workItem.label}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>hr/assignment.assign</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>toAdd</bpmn:incoming>
+      <bpmn:outgoing>toDone</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Done">
+      <bpmn:incoming>toDone</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="InvalidAssignment" name="Invalid" attachedToRef="AddAssignment">
+      <bpmn:outgoing>toRefused1</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="InvalidError" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="NoWorkItem" name="No such work item" attachedToRef="AddAssignment">
+      <bpmn:outgoing>toRefused2</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="NotFoundError" />
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="Refused" name="Refused">
+      <bpmn:incoming>toRefused1</bpmn:incoming>
+      <bpmn:incoming>toRefused2</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="NoSuchEmployee" name="No such employee" attachedToRef="GetEmployee">
+      <bpmn:outgoing>toNotFound</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="NotFoundError" />
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="NotFound" name="Not found">
+      <bpmn:incoming>toNotFound</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="toGet" sourceRef="Asked" targetRef="GetEmployee" />
+    <bpmn:sequenceFlow id="toAdd" sourceRef="GetEmployee" targetRef="AddAssignment" />
+    <bpmn:sequenceFlow id="toDone" sourceRef="AddAssignment" targetRef="Done" />
+    <bpmn:sequenceFlow id="toRefused1" sourceRef="InvalidAssignment" targetRef="Refused" />
+    <bpmn:sequenceFlow id="toRefused2" sourceRef="NoWorkItem" targetRef="Refused" />
+    <bpmn:sequenceFlow id="toNotFound" sourceRef="NoSuchEmployee" targetRef="NotFound" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_HrEmployee">
+    <bpmndi:BPMNPlane id="BPMNPlane_HrEmployee" bpmnElement="HrEmployee">
+      <bpmndi:BPMNShape id="Asked_di" bpmnElement="Asked">
+        <dc:Bounds x="57" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GetEmployee_di" bpmnElement="GetEmployee">
+        <dc:Bounds x="175" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="AddAssignment_di" bpmnElement="AddAssignment">
+        <dc:Bounds x="345" y="30" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Done_di" bpmnElement="Done">
+        <dc:Bounds x="522" y="52" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Refused_di" bpmnElement="Refused">
+        <dc:Bounds x="522" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="520" y="198" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="InvalidAssignment_di" bpmnElement="InvalidAssignment">
+        <dc:Bounds x="357" y="92" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="358" y="128" width="34" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NoWorkItem_di" bpmnElement="NoWorkItem">
+        <dc:Bounds x="407" y="92" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="440" y="128" width="50" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NotFound_di" bpmnElement="NotFound">
+        <dc:Bounds x="372" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="366" y="198" width="48" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NoSuchEmployee_di" bpmnElement="NoSuchEmployee">
+        <dc:Bounds x="207" y="92" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="170" y="128" width="49" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="toGet_di" bpmnElement="toGet">
+        <di:waypoint x="93" y="70" />
+        <di:waypoint x="175" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toAdd_di" bpmnElement="toAdd">
+        <di:waypoint x="275" y="70" />
+        <di:waypoint x="345" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toDone_di" bpmnElement="toDone">
+        <di:waypoint x="445" y="70" />
+        <di:waypoint x="522" y="70" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toRefused1_di" bpmnElement="toRefused1">
+        <di:waypoint x="375" y="128" />
+        <di:waypoint x="375" y="180" />
+        <di:waypoint x="522" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toRefused2_di" bpmnElement="toRefused2">
+        <di:waypoint x="425" y="128" />
+        <di:waypoint x="425" y="180" />
+        <di:waypoint x="522" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="toNotFound_di" bpmnElement="toNotFound">
+        <di:waypoint x="225" y="128" />
+        <di:waypoint x="225" y="180" />
+        <di:waypoint x="372" y="180" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
