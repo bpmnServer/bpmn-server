@@ -1,4 +1,4 @@
-// @features: expressions, test-tab
+// @features: expressions
 // A condition in FEEL in the editor: its field and language follow it, and the Problems tab has no complaint; the Test tab runs it.
 import test from 'node:test';
 import assert from 'node:assert/strict';

@@ -9,6 +9,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 
@@ -37,7 +38,8 @@ function testDatabaseUrl() {
         base = parsed.MONGO_DB_URL || 'mongodb://localhost:27017/bpmn';
     }
     const url = new URL(base);
-    url.pathname = '/bpmn_web_test_' + process.pid;
+    // not by the process's id alone: an id comes round again, and a database left behind then has this one's users
+    url.pathname = `/bpmn_web_test_${process.pid}_${randomUUID().slice(0, 8)}`;
     return url.toString();
 }
 

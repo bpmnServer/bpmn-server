@@ -17,6 +17,6 @@
   "exit": true,
   "parallel": false,
   "node-option": [
-    "import=tsx"
+    "import=tsx/esm"
   ]
 }

@@ -1,4 +1,4 @@
-// @features: mcp, rest-api
+// @features: mcp
 // The MCP (packages/bpmn-mcp), as an AI client uses it: its own process over stdio, against a real server.
 import test from 'node:test';
 import assert from 'node:assert/strict';

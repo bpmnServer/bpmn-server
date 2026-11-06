@@ -24,6 +24,7 @@
     "test:custom": "node --import tsx --test \"test/custom/*.test.ts\"",
     "test:examples": "node --import tsx --test \"examples/*.test.ts\"",
     "test:issues": "node --import tsx --test \"test/issues/*.test.ts\"",
+    "test:scenario-coverage": "node --import tsx test/coverage/scenario-coverage.mjs",
     "pretest:ui": "npm run build:modeler -w bpmn-web",
     "test:ui": "node --import tsx --test --test-concurrency=1 \"test/ui/*.test.mjs\"",
     "demo:video": "npm run build:modeler -w bpmn-web && node --import tsx test/demo/record-demo.mjs"

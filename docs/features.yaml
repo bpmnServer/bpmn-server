@@ -97,7 +97,7 @@ features:
     what: "A transaction sub-process; compensation handlers; a cancel end event and boundary."
     docs: [docs/docs/examples/transactions.md]
     code: [packages/bpmn-server/src/elements/Transaction.ts, packages/bpmn-server/src/elements/behaviours/TransEvents.ts]
-    tests: [testSampleApp/test/scenarios/feature/trans.js]
+    tests: [testSampleApp/test/scenarios/feature/trans.js, packages/bpmn-server/test/transactions.test.mjs]
   - id: ad-hoc-sub-process
     area: modeling
     name: "Ad hoc sub-process"
@@ -242,7 +242,7 @@ features:
     what: "A task's inputs from the data, and its outputs back into it (camunda:inputOutput)."
     docs: [docs/docs/data.md]
     code: [packages/bpmn-server/src/elements/behaviours/IOBehaviour.ts]
-    tests: [testSampleApp/test/scenarios/feature/serviceInput.js]
+    tests: [testSampleApp/test/scenarios/feature/serviceInput.js, packages/bpmn-server/test/element-paths.test.mjs]
   - id: listeners
     area: modeling
     name: "Scripts on events (listeners)"
@@ -260,10 +260,10 @@ features:
   - id: expressions
     area: modeling
     name: "Expressions and conditions"
-    what: "JavaScript expressions in conditions and attributes ($(...), data.x, item, services); FEEL conditions (language=\"FEEL\")."
+    what: "JavaScript expressions in conditions and attributes ($(...), data.x, item, services); FEEL conditions (language=\"FEEL\"); next(error, value) in JavaScript conditions; variables the application adds to scripts' scope."
     docs: [docs/docs/scripting.md, docs/docs/data.md]
     code: [packages/bpmn-server/src/engine/Expressions.ts, packages/bpmn-server/src/engine/ScriptHandler.ts]
-    tests: [packages/bpmn-server/test/expressions.test.mjs, packages/bpmn-server/test/feel-conditions.test.mjs, testSampleApp/test/ui/feel-conditions.test.mjs]
+    tests: [packages/bpmn-server/test/expressions.test.mjs, packages/bpmn-server/test/feel-conditions.test.mjs, packages/bpmn-server/test/script-context.test.mjs, testSampleApp/test/ui/feel-conditions.test.mjs]
   - id: verify-model
     area: modeling
     name: "Model verification"
@@ -402,7 +402,7 @@ features:
     what: "Queries on instances and items (status, element, data, assignee, dates), paged and sorted."
     docs: [docs/docs/data_find.md, docs/docs/data.md]
     code: [packages/bpmn-server/src/datastore/QueryTranslator.ts, packages/bpmn-server/src/datastore/DocumentQuery.ts]
-    tests: [packages/bpmn-server/test/datastore.test.mjs, packages/bpmn-server/test/runtime-api.test.mjs]
+    tests: [packages/bpmn-server/test/datastore.test.mjs, packages/bpmn-server/test/runtime-api.test.mjs, testSampleApp/test/web/instance-paging.test.mjs]
   - id: models-files
     area: data
     name: "Models, tests and history as files"
@@ -424,7 +424,7 @@ features:
     what: "api.engine (start, invoke, assign, throwMessage, throwSignal, restart, retry) and api.data / api.model, as a user."
     docs: [docs/docs/api-summary.md, docs/docs/invokation.md]
     code: [packages/bpmn-server/src/API/API.ts]
-    tests: [packages/bpmn-server/test/runtime-api.test.mjs, packages/bpmn-server/test/api-boundary.test.mjs]
+    tests: [packages/bpmn-server/test/runtime-api.test.mjs, packages/bpmn-server/test/api-boundary.test.mjs, packages/bpmn-server/test/secure-user.test.mjs, packages/bpmn-server/test/element-kinds.test.mjs]
   - id: mcp
     area: api
     name: "MCP for AI clients"
@@ -488,7 +488,7 @@ features:
     name: "The Test tab"
     what: "Scenarios recorded step by step and run again, checks, runs in a tree, Simulate, Debug and Restart here, a task by itself, full window."
     docs: [docs/docs/modeler.md, docs/docs/testing.md]
-    code: [packages/bpmn-web/modeler/src/testing/TestPanel.js, packages/bpmn-web/modeler/src/testing/coverage.js, packages/bpmn-web/modeler/src/testing/paths.js, packages/bpmn-web/src/testing/scenarios.ts]
+    code: [packages/bpmn-web/modeler/src/testing/TestPanel.js, packages/bpmn-web/src/testing/coverage.js, packages/bpmn-web/src/testing/modelCoverage.ts, packages/bpmn-web/modeler/src/testing/paths.js, packages/bpmn-web/src/testing/scenarios.ts]
     tests: [testSampleApp/test/ui/testing.test.mjs, testSampleApp/test/ui/coverage.test.mjs, testSampleApp/test/ui/test-paths.test.mjs, testSampleApp/test/web/scenarios.test.mjs]
   - id: history
     area: web
@@ -576,7 +576,7 @@ features:
     what: "The engine's log (to the console, a file, the instance); decisions; log levels."
     docs: [docs/docs/execution.md]
     code: [packages/bpmn-server/src/common/Logger.ts]
-    tests: [packages/bpmn-server/test/engine.test.mjs]
+    tests: [packages/bpmn-server/test/engine.test.mjs, packages/bpmn-server/test/logger.test.mjs]
   - id: health-operations
     area: monitoring
     name: "Health and operations"

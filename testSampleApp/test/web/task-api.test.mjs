@@ -1,4 +1,4 @@
-// @features: task-api, rest-api
+// @features: task-api
 // Application integration, phase 1 (docs/docs/application-integration-design.md): the task API an application builds
 // its inbox on. Two parts:
 //   - "today": what the server does now, which the design has to work with. These pass.

@@ -231,3 +231,62 @@ test('verifyModel: a parameter written like an expression but without its $ is t
   const issues = result.issues.filter(i => i.code === 'parameter-is-text');
   assert.deepEqual(issues.map(i => i.message), ["Parameter 'score' is the text 'data.creditScore', not its value: write $data.creditScore to read it."]);
 });
+
+const simple = (hitPolicy, rules, extra = {}) => table({ id: 'd', hitPolicy, inputs: [['A', 'a', 'integer']], outputs: [['r', 'integer']], rules, ...extra });
+
+test('no rule matches: null from the hit policies that give one answer, an empty list from those that give many', async () => {
+  const rules = [[['1'], ['10']]];
+  for (const policy of ['UNIQUE', 'FIRST', 'ANY', 'PRIORITY'])
+    assert.equal((await engine(dmn(simple(policy, rules)))).evaluate({ a: 2 }), null, policy);
+  for (const policy of ['OUTPUT ORDER', 'RULE ORDER', 'COLLECT'])
+    assert.deepEqual((await engine(dmn(simple(policy, rules)))).evaluate({ a: 2 }), [], policy);
+});
+
+test('COLLECT aggregates', async () => {
+  const rules = [[['-'], ['3']], [['-'], ['5']], [['-'], ['5']]];
+  const of = async (aggregation) => (await engine(dmn(simple('COLLECT', rules, { aggregation })))).evaluate({ a: 1 });
+  assert.deepEqual(await of('SUM'), { r: 13 });
+  assert.deepEqual(await of('MIN'), { r: 3 });
+  assert.deepEqual(await of('MAX'), { r: 5 });
+  assert.deepEqual(await of('COUNT'), { r: 2 }, 'how many different values');
+  const none = (aggregation) => engine(dmn(simple('COLLECT', [[['1'], ['3']]], { aggregation })));
+  assert.deepEqual((await none('MIN')).evaluate({ a: 2 }), { r: null }, 'nothing to take the least of');
+  assert.deepEqual((await none('MAX')).evaluate({ a: 2 }), { r: null });
+});
+
+test('what can not be evaluated says which decision and why', async () => {
+  const unique = await engine(dmn(simple('UNIQUE', [[['-'], ['1']], [['-'], ['2']]])));
+  assert.throws(() => unique.evaluate({ a: 1 }), /\(UNIQUE\): rules 1, 2 all match/);
+  const any = await engine(dmn(simple('ANY', [[['-'], ['1']], [['-'], ['2']]])));
+  assert.throws(() => any.evaluate({ a: 1 }), /\(ANY\): rules 1, 2 match with different outputs/);
+  assert.deepEqual((await engine(dmn(simple('ANY', [[['-'], ['1']], [['-'], ['1']]])))).evaluate({ a: 1 }), { r: 1 }, 'the same outputs are one answer');
+  assert.throws(() => new DMNEngine().evaluate({}), /Must load a decision first/);
+});
+
+test('decisions that require others: a cycle or one missing is refused', async () => {
+  const one = (id, requires) => table({ id, hitPolicy: 'FIRST', requires, inputs: [['A', 'a', 'integer']], outputs: [[`${id}_out`, 'integer']], rules: [[['-'], ['1']]] });
+  const cycle = await engine(dmn(one('x', ['y']) + one('y', ['x'])));
+  assert.throws(() => cycle.evaluate({ a: 1 }), /requires itself: /);
+  const missing = await engine(dmn(one('x', ['nope'])));
+  assert.throws(() => missing.evaluate({ a: 1 }), /requires 'nope', which is not in the file/);
+});
+
+test('a decision found in a folder: by file or id, the file that does not parse is skipped, a folder that can not be read is said', async () => {
+  const folder = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-dmn-find-'));
+  fs.writeFileSync(path.join(folder, 'broken.dmn.xml'), 'this is not xml');
+  fs.writeFileSync(path.join(folder, 'rates.dmn.xml'), dmn(simple('FIRST', [[['-'], ['7']]])));
+  assert.equal((await DMNEngine.find(folder, 'd')).decision.id, 'd', 'by its id, past the file that does not parse');
+  assert.equal((await DMNEngine.find(folder, 'RATES')).decision.id, 'd', 'a file name in another case');
+  assert.equal((await DMNEngine.find(folder, 'D')).decision.id, 'd', 'an id in another case');
+  await assert.rejects(DMNEngine.find(folder, 'nope'), /no nope\.dmn\.xml and no decision with that id/);
+  await assert.rejects(DMNEngine.find(path.join(folder, 'missing'), 'd'), /the folder .* can not be read/);
+  const definitions = { decisions: [{ id: 'a', requires: ['b'] }, { id: 'b', requires: ['a'] }] };
+  assert.equal(DMNEngine.topDecision(definitions).id, 'a', 'each required by the other: the first');
+});
+
+test('columns read form text as their type: true and false as booleans', async () => {
+  const d = await engine(dmn(table({ id: 'b', hitPolicy: 'FIRST', inputs: [['Ok', 'ok', 'boolean']], outputs: [['r', 'string']], rules: [[['true'], ['"yes"']], [['false'], ['"no"']]] })));
+  assert.deepEqual(d.evaluate({ ok: 'TRUE' }), { r: 'yes' });
+  assert.deepEqual(d.evaluate({ ok: 'false' }), { r: 'no' });
+  assert.deepEqual(d.evaluate({ ok: true }), { r: 'yes' });
+});

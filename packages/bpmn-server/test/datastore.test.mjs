@@ -4,7 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { DocumentQuery, MemoryDocumentStore, DuplicateKeyError } from '../dist/index.js';
+import { DocumentQuery, DocumentPager, MemoryDocumentStore, DuplicateKeyError } from '../dist/index.js';
 import { makeServer, coverage } from './helpers.mjs';
 
 const doc = { id: 'i1', name: 'claim', status: 'wait', data: { amount: 5 }, items: [{ id: 'a', status: 'end', tags: ['x'] }, { id: 'b', status: 'wait', timeDue: '2026-10-21T10:00:00.000Z' }] };
@@ -139,4 +139,98 @@ test('a data store whose db is replaced after it was made locks in the replaceme
   assert.equal((await replacement.find('bpmn_test', 'wf_locks', { id: 'i-1' })).length, 1);
   await server.dataStore.locker.release('i-1');
   await server.shutdown();
+});
+
+test('queries: the rest of the operators', () => {
+  const m = (q) => DocumentQuery.matches(doc, q);
+  assert.equal(DocumentQuery.matches(doc, null), true, 'no query matches all');
+  assert.equal(m({ $and: [{ name: 'claim' }, { status: 'wait' }] }), true);
+  assert.equal(m({ $and: [{ name: 'claim' }, { status: 'end' }] }), false);
+  assert.throws(() => m({ $or: { name: 'claim' } }), /\$or takes an array of queries/);
+  assert.equal(m({ 'data.amount': { $eq: 5 } }), true);
+  assert.equal(m({ 'data.amount': { $gt: 4 } }), true);
+  assert.equal(m({ 'data.amount': { $gt: 5 } }), false);
+  assert.equal(m({ 'data.amount': { $lte: 5 } }), true);
+  assert.equal(m({ 'data.missing': { $gt: 1 } }), false, 'nothing there: not greater than anything');
+  assert.equal(m({ 'data.amount': { $not: { $gt: 9 } } }), true);
+  assert.equal(m({ 'data.amount': { $not: { $gt: 1 } } }), false);
+  assert.equal(DocumentQuery.matches({ n: [1, 5] }, { n: { $elemMatch: { $gt: 4 } } }), true, '$elemMatch on plain values');
+  assert.equal(DocumentQuery.equal({ a: 1 }, { a: 1 }), true, 'objects by their contents');
+  assert.equal(DocumentQuery.equal({ a: 1 }, { a: 2 }), false);
+});
+
+test('updates: dotted paths, $unset, $inc, $push; a document replaces, keeping its _id; an unknown operator is refused', () => {
+  const start = { _id: 1, a: 1, list: [1] };
+  assert.deepEqual(DocumentQuery.apply(start, { $set: { 'b.c.d': 2 } }).b, { c: { d: 2 } });
+  assert.equal(DocumentQuery.apply(start, { $unset: { a: '' } }).a, undefined);
+  assert.equal(DocumentQuery.apply(start, { $inc: { a: 2, n: 3 } }).a, 3);
+  assert.equal(DocumentQuery.apply(start, { $inc: { n: 3 } }).n, 3, 'from nothing');
+  assert.deepEqual(DocumentQuery.apply(start, { $push: { list: 2, fresh: 1 } }).list, [1, 2]);
+  assert.deepEqual(DocumentQuery.apply(start, { $push: { fresh: 1 } }).fresh, [1], 'a list is made');
+  assert.deepEqual(DocumentQuery.apply(start, { x: 1 }), { _id: 1, x: 1 });
+  assert.deepEqual(DocumentQuery.apply({ a: 1 }, { x: 1 }), { x: 1 }, 'no _id to keep');
+  assert.throws(() => DocumentQuery.apply(start, { $rename: { a: 'b' } }), /Unsupported update operator \$rename/);
+  assert.deepEqual(start, { _id: 1, a: 1, list: [1] }, 'the document given is not changed');
+});
+
+test('projections, seeds and index keys', () => {
+  assert.deepEqual(DocumentQuery.project({ _id: 1, a: 1, b: 2 }, { a: 0 }), { _id: 1, b: 2 }, 'leaving out');
+  assert.deepEqual(DocumentQuery.project({ _id: 1, a: 1, b: 2 }, { a: 1, _id: 0 }), { a: 1 });
+  assert.deepEqual(DocumentQuery.seed({ a: 1, 'b.c': 2, $or: [], d: { $gt: 1 } }), { a: 1 }, 'only plain equalities');
+  assert.deepEqual(DocumentQuery.seed(null), {});
+  assert.equal(DocumentQuery.indexKey({ a: 1 }, ['x', 'y']), null, 'none of its fields');
+  assert.equal(DocumentQuery.indexKey({ a: 1 }, ['a', 'y']), '[1,null]');
+  assert.deepEqual(DocumentQuery.sort([{ a: 1 }, { a: 1 }], { a: 1 }), [{ a: 1 }, { a: 1 }], 'ties keep their places');
+});
+
+test('the memory store: remove, count and what it refuses', async () => {
+  const store = new MemoryDocumentStore();
+  await store.insert('d', 'c', [{ id: 1 }, { id: 2 }]);
+  assert.equal((await store.find('d', 'c', { id: 1 })).length, 1);
+  assert.equal(await store.count('d', 'c', {}), 2);
+  assert.equal((await store.remove('d', 'c', { id: 1 })).deletedCount, 1);
+  assert.equal((await store.remove('d', 'c', { id: 9 })).deletedCount, 0);
+  assert.equal((await store.find('d', 'nothing', {})).length, 0, 'a collection not made yet is empty');
+  assert.equal((await store.remove('d', 'nothing', {})).deletedCount, 0);
+  assert.equal(await store.update('d', 'c', { id: 9 }, { $set: { a: 1 } }), 0, 'nothing to update');
+  await store.update('d', 'c', { id: 9 }, { $set: { a: 1 } }, { upsert: true });
+  assert.equal((await store.find('d', 'c', { id: 9 }))[0].a, 1, 'an upsert starts from the query');
+  await store.createIndex('d', 'c', { id: 1 }, { unique: true });
+  await assert.rejects(store.insert('d', 'c', [{ id: 9 }]), DuplicateKeyError.is ? (e) => DuplicateKeyError.is(e) : /duplicate/i);
+});
+
+test('the paged search: by items, a sort of dates and numbers, a cursor, and an error given as an answer', async () => {
+  const store = new MemoryDocumentStore();
+  const at = (day) => new Date(`2026-01-0${day}T00:00:00Z`);
+  await store.insert('d', 'c', [
+    { _id: 'a', name: 'm', n: 1, startedAt: at(1), items: [{ seq: 1, status: 'end', endedAt: at(2) }, { seq: 2, status: 'wait' }] },
+    { _id: 'b', name: 'm', n: 2, startedAt: at(3), items: [{ seq: 1, status: 'end', endedAt: at(4) }] },
+    { _id: 'c', name: 'o', n: 3, startedAt: at(5) },
+  ]);
+  const find = (params) => DocumentPager.find(store, 'd', 'c', params);
+
+  assert.deepEqual((await find({ filter: { 'items.status': 'wait' } })).data.map(r => [r._id, r.items.seq]), [['a', 2]], 'one row per item');
+  const last = await find({ lastItem: { status: 'end' }, filter: { 'items.seq': 2 } });
+  assert.deepEqual(last.data.map(r => r._id), ['a'], 'with an item filter');
+  const latest = await find({ latestItem: { status: 'end' }, sort: { n: 1 }, projection: { n: 1 } });
+  assert.deepEqual(latest.data.map(r => [r._id, r.latestItem.seq]), [['a', 1], ['b', 1]]);
+  assert.equal(latest.data[0].items, undefined, 'projected, with the item chosen');
+
+  const first = await find({ sort: { startedAt: 1 }, limit: 2, getTotalCount: true });
+  assert.deepEqual(first.data.map(r => r._id), ['a', 'b']);
+  assert.equal(first.totalCount, 3);
+  assert.match(first.nextCursor, /^d:\d+\|b$/);
+  assert.deepEqual((await find({ sort: { startedAt: 1 }, after: first.nextCursor })).data.map(r => r._id), ['c'], 'after a date');
+
+  const byNumber = await find({ sort: { n: -1 }, limit: 1 });
+  assert.equal(byNumber.nextCursor, '3|c');
+  assert.deepEqual((await find({ sort: { n: -1 }, after: byNumber.nextCursor })).data.map(r => r._id), ['b', 'a'], 'after a number');
+  assert.deepEqual((await find({ sort: { name: 1 }, after: 'm|a' })).data.map(r => r._id), ['b', 'c'], 'after text');
+  assert.deepEqual((await find({ sort: { 'data.x': 1 }, after: '1|a', limit: 1 })).data.length, 1, 'a cursor on a dotted path');
+  assert.deepEqual((await find({ after: 'b' })).data.map(r => r._id), ['a'], 'after an _id');
+
+  const none = await find({ filter: { name: 'nothing' } });
+  assert.deepEqual([none.data, none.nextCursor, none.totalCount], [[], null, 0]);
+  const failing = await DocumentPager.find({ find: async () => { throw new Error('the store is down'); } }, 'd', 'c', {});
+  assert.deepEqual(failing, { error: 'the store is down' });
 });

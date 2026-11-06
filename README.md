@@ -391,6 +391,7 @@ open test file under the debugger (on the builds: `npm run build` first).
 | `npm test` (root) | bpmn-server, bpmn-client and testSampleApp |
 | `npm test` (testSampleApp) | bpmn-web's unit, client, engine and web tests, the models' tests (`test/custom`) and the engine's scenarios |
 | `npm run test:ui` (testSampleApp) | the browser tests (Playwright) |
+| `npm run test:coverage` (root) | all of these with code coverage, and each model's saved scenarios with what they reach: the browsable report in `coverage/`, the summaries kept in `reports/coverage/`; fails if a suite fails or `bpmn-server` is under 90% of lines, functions or branches. The browser code is not measured |
 | `npm run test:scenarios` (testSampleApp) | the engine's feature scenarios alone |
 
 The tests use databases of their own on a local MongoDB (`mongodb://localhost:27017`; `TEST_MONGO_URL` and
