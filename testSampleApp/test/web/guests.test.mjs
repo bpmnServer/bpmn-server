@@ -103,7 +103,7 @@ test('guest access does not start without the demo settings', async () => {
   const saved = process.env.DEMO_MODE;
   process.env.DEMO_MODE = 'false';
   try {
-    assert.throws(() => checkGuestSettings(), /GUEST_ACCESS=true needs DEMO_MODE=true/);
+    assert.throws(() => checkGuestSettings(), /GUEST_ACCESS=true needs SCRIPT_SANDBOX=true, SCRIPT_SANDBOX_SERVICES=false, TIMERS=false, SERVICE_TASKS=false/);
   } finally {
     process.env.DEMO_MODE = saved;
   }

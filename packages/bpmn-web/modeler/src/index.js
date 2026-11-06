@@ -33,6 +33,7 @@ const { processName } = page.dataset;
 const canvasElement = document.getElementById('js-canvas');
 const status = document.getElementById('js-save-status');
 
+const readOnly = document.getElementById('modeler-page').dataset.readOnly === 'true';
 const modeler = new BpmnModeler({
     container: canvasElement,
     propertiesPanel: { parent: '#js-properties-panel' },
@@ -62,7 +63,7 @@ const modeler = new BpmnModeler({
     connectors: { url: '/model/connectors' },
     lint: { url: '/model/lint-rules', button: '#js-lint-rules-open' },
     // tests run the saved model: save the editor's changes first
-    test: { container: '#js-test', processName, save: () => saveIfChanged(), showDiagram: () => setDockFull(false) },
+    test: { container: '#js-test', processName, readOnly, save: () => saveIfChanged(), showDiagram: () => setDockFull(false) },
     problems: { list: '#js-problems', counts: '#js-problems-counts', status: '#js-problems-status', url: '/model/verify', processName },
     moddleExtensions: { camunda: camundaModdle }
 });
@@ -73,9 +74,39 @@ window.BPMNModeler = modeler;     // the classic modeler's name for it, used by 
 setupNavigation(modeler, { processName, header: document.querySelector('.modeler-header'), panel: '#js-properties-panel' });
 
 
+// GUEST_SAVE=false: nothing is saved on the server. What is edited stays in this browser, as a draft, until signed up.
+const DRAFT = 'bpmn-web.modeler.draft';
+function readDraft() {
+    try {
+        const draft = JSON.parse(localStorage.getItem(DRAFT));
+        return draft?.name === processName ? draft : null;
+    } catch {
+        return null;
+    }
+}
+let draftTimer;
+async function writeDraft() {
+    clearTimeout(draftTimer);
+    const { xml } = await modeler.saveXML({ format: true });
+    try {
+        localStorage.setItem(DRAFT, JSON.stringify({ name: processName, xml }));
+    } catch { /* no room, or no storage: the model stays in the editor, to download */ }
+}
+function keepDraft() {
+    if (!readOnly) return;
+    clearTimeout(draftTimer);
+    draftTimer = setTimeout(writeDraft, 300);
+}
+function dropDraft() {
+    try {
+        if (readDraft()) localStorage.removeItem(DRAFT);
+    } catch { /* no storage */ }
+}
+
 let changed = false;
 modeler.on('commandStack.changed', () => {
     changed = true;
+    keepDraft();
     if (status.textContent === 'Saved')
         showStatus('Unsaved changes');
 });
@@ -85,7 +116,8 @@ modeler.on('model.restored', ({ version }) => {
     showStatus(`Version ${version} restored: unsaved`);
 });
 window.addEventListener('beforeunload', event => {
-    if (changed) {
+    // a guest's changes are kept as a draft
+    if (changed && !readOnly) {
         event.preventDefault();
         event.returnValue = '';
     }
@@ -300,7 +332,13 @@ async function open() {
     applyPanelState();
     applyDockState();
     try {
-        const { warnings } = await modeler.importXML(xml);
+        // a draft of this model, from before signing up (or a reload): what was being edited
+        const draft = readDraft();
+        const { warnings } = await modeler.importXML(draft?.xml ?? xml);
+        if (draft) {
+            changed = true;
+            showStatus(readOnly ? 'Your changes, kept in this browser: sign up to save them' : 'Your changes from before you signed up: Save to keep them');
+        }
         if (warnings.length)
             console.warn('import warnings', warnings);
         fitDiagram();
@@ -311,6 +349,8 @@ async function open() {
 }
 
 async function saveDiagram(option) {
+    if (readOnly)
+        return showStatus('Not saved: sign up to save, or Download a copy', true);
     try {
         showStatus('Saving…');
         const { xml } = await modeler.saveXML({ format: true });
@@ -323,6 +363,7 @@ async function saveDiagram(option) {
         if (!response.ok)
             throw new Error(`${response.status} ${response.statusText}`);
         changed = false;
+        dropDraft();
         showStatus('Saved');
         modeler.get('eventBus').fire('model.saved', { processName });
         if (option === 'run')
@@ -338,12 +379,28 @@ window.saveDiagramFunct = saveDiagram;
 async function saveIfChanged() {
     if (!changed)
         return;
+    if (readOnly)
+        throw new Error('Your changes are not saved, so they do not run yet: sign up to save and run them');
     await saveDiagram();
     if (changed)
         throw new Error('Save the model first: saving failed');
 }
-document.getElementById('js-save').addEventListener('click', () => saveDiagram());
-document.getElementById('js-save-run').addEventListener('click', () => saveDiagram('run'));
+document.getElementById('js-save')?.addEventListener('click', () => saveDiagram());
+document.getElementById('js-save-run')?.addEventListener('click', () => saveDiagram('run'));
+// the draft as it is now: signing up may come right after the last change
+document.getElementById('js-signup')?.addEventListener('click', async event => {
+    event.preventDefault();
+    if (changed) await writeDraft();
+    window.location.href = event.currentTarget?.href ?? document.getElementById('js-signup').href;
+});
+document.getElementById('js-download').addEventListener('click', async () => {
+    const { xml } = await modeler.saveXML({ format: true });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(new Blob([xml], { type: 'application/xml' }));
+    link.download = `${processName}.bpmn`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+});
 
 document.addEventListener('keydown', event => {
     if ((event.ctrlKey || event.metaKey) && event.key === 's') {

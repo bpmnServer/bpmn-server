@@ -7,7 +7,10 @@
  * `configuration.definitionsPath` is then the guest's folder, so the models, decisions, lint rules and downloads
  * every route reads and writes are the guest's. Its instances carry its tenant, so it sees only its own.
  *
- * Guest access requires the demo's other settings (checkGuestSettings): scripts in a sandbox, no timers, no
+ * GUEST_SAVE=false: a guest saves nothing (routes/model.ts refuses it). An account that signs up here has a folder and
+ * a tenant of its own, `user-<random>`, the same way: once it can design, its requests run in that context.
+ *
+ * Guest access requires these settings (checkGuestSettings): scripts in a sandbox, no timers, no
  * service tasks (DEMO_MODE), no administration (DISABLE_ADMIN), sign-in on (REQUIRE_AUTHENTICATION,
  * ENFORCE_SECURITY).
  */
@@ -18,7 +21,8 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import { rateLimit } from 'express-rate-limit';
 
 import User from '../userAccess/models/User.js';
-import { isGuest } from '../userAccess/roles.js';
+import { isDesignerGroups, isGuest, workspaceUser } from '../userAccess/roles.js';
+import { DEMO_MODE_SETTINGS, runSetting, type RunSetting } from '../runtime/runSettings.js';
 
 export interface GuestContext {
     /** the guest's user name and tenant: guest-<random> */
@@ -40,7 +44,7 @@ export const guestsRoot = () => path.resolve(process.env.GUESTS_PATH || 'guests'
 /** How many models a guest may have (GUEST_MAX_MODELS, default 50). */
 export const maxGuestModels = () => Number(process.env.GUEST_MAX_MODELS) || 50;
 
-const GUEST_ID = /^guest-[0-9a-f]{12}$/;
+const GUEST_ID = /^(guest|user)-[0-9a-f]{12}$/;
 
 export function guestContext(id: string): GuestContext {
     if (!GUEST_ID.test(id))
@@ -52,10 +56,13 @@ export function guestContext(id: string): GuestContext {
 export function checkGuestSettings() {
     if (!guestAccess())
         return;
-    const required = { DEMO_MODE: 'true', DISABLE_ADMIN: 'true', REQUIRE_AUTHENTICATION: 'true', ENFORCE_SECURITY: 'true' };
-    const missing = Object.entries(required).filter(([key, value]) => process.env[key] !== value).map(([key, value]) => `${key}=${value}`);
+    const required = { DISABLE_ADMIN: 'true', REQUIRE_AUTHENTICATION: 'true', ENFORCE_SECURITY: 'true' };
+    const missing = [
+        ...Object.entries(DEMO_MODE_SETTINGS).filter(([key, value]) => runSetting(key as RunSetting) !== value),
+        ...Object.entries(required).filter(([key, value]) => process.env[key] !== value),
+    ].map(([key, value]) => `${key}=${value}`);
     if (missing.length)
-        throw new Error(`GUEST_ACCESS=true needs ${missing.join(', ')}: guests run their own models, safely only in a demo`);
+        throw new Error(`GUEST_ACCESS=true needs ${missing.join(', ')}: guests run their own models, safely only so (DEMO_MODE=true sets the first ones)`);
 }
 
 /**
@@ -97,13 +104,13 @@ async function newGuest(req, base: string) {
         tenantId: id,
         profile: { name: 'Guest' },
     });
-    await new Promise<void>((resolve, reject) => req.logIn(user, error => error ? reject(error) : resolve()));
+    await new Promise<void>((resolve, reject) => req.logIn(user, { keepSessionInfo: true }, error => error ? reject(error) : resolve()));
     // the guest comes back to its models for a year
     req.session.cookie.maxAge = 365 * 24 * 60 * 60 * 1000;
 }
 
 /** Pages a visitor may see without becoming a guest: sign-in, sign-up, files, the APIs. */
-const NO_GUEST = /^\/(login|signup|logout|forgot|reset|healthz|api|api2|admin)(\/|$)|\.[a-z0-9]+$/i;
+const NO_GUEST = /^\/(login|signup|logout|forgot|reset|account|healthz|api|api2|admin)(\/|$)|\.[a-z0-9]+$/i;
 
 /**
  * The guest middleware, after the session and passport: a visitor's first page makes it a guest; every request
@@ -126,9 +133,11 @@ export function guestMiddleware(configuration) {
             newGuests(req, res, () => newGuest(req, base()).then(() => next(), next));
         },
         (req, res, next) => {
-            if (!isGuest(req.user))
+            const id = isGuest(req.user) ? req.user.userName
+                : workspaceUser(req.user) && isDesignerGroups(req.user.userGroups) ? req.user.tenantId : null;
+            if (!id)
                 return next();
-            const guest = guestContext(req.user.userName);
+            const guest = guestContext(id);
             if (!fs.existsSync(guest.folder))
                 seedFolder(guest, base());     // a guest whose folder was cleaned up starts again from the samples
             storage.run(guest, () => next());

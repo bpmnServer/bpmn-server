@@ -210,7 +210,7 @@ test('without CONNECTORS_KEY no key can be set; in demo mode connectors do not r
   const demo = await server.engine.start('customer-lookup', { customerId: 'C-1' });
   assert.equal(demo.instance.status, 'end');
   assert.equal(demo.instance.data.tier, undefined, 'not called');
-  assert.match(JSON.stringify(demo.instance.decisions ?? demo.instance.logs), /in this demo, connectors do not run/);
+  assert.match(JSON.stringify(demo.instance.decisions ?? demo.instance.logs), /connectors do not run on this server/);
 
   const key = process.env.CONNECTORS_KEY;
   delete process.env.CONNECTORS_KEY;

@@ -16,7 +16,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import vm from 'node:vm';
-import { runSandboxed } from 'bpmn-server';
+import { runSandboxed, SandboxScriptHandler } from 'bpmn-server';
 import { asGuest, currentGuest, guestContext } from '../guests/guests.js';
 import { rationaleEvents } from './rationale.js';
 
@@ -396,7 +396,7 @@ function shown(value) {
  * The debugger's Evaluate: a JavaScript expression run against a copy of a test instance, to look at its values:
  * `data` (its data), `items` (its items), `instance` (its summary). With `return`, statements (a function's body).
  * It gets copies, so it changes nothing, and stops after a second. node:vm is not a security boundary: this is for
- * designers (the /model routes), as the scripts in their models are; with configuration.demo it runs in QuickJS.
+ * designers (the /model routes), as the scripts in their models are; with scripts in a sandbox it runs in QuickJS.
  */
 export async function evaluateOnTest(server, instanceId: string, expression: string) {
     if (typeof expression !== 'string' || !expression.trim())
@@ -407,8 +407,8 @@ export async function evaluateOnTest(server, instanceId: string, expression: str
     const sandbox = { data: clone(instance.data), items: clone(summary.items), instance: clone({ ...summary, logs: undefined }) };
     const body = expression.trim().replace(/;\s*$/, '');
     const code = /\breturn\b/.test(body) ? `(() => { ${body} })()` : `(${body})`;
-    if (server.configuration.demo) {
-        // a public demo: in QuickJS, like the models' scripts (node:vm is not a security boundary)
+    if (server.scriptHandler instanceof SandboxScriptHandler) {
+        // in QuickJS, like the models' scripts (node:vm is not a security boundary)
         const { result } = await runSandboxed(sandbox, /return/.test(body) ? body : `return (${body});`, { name: 'evaluate', timeLimit: 1000 });
         return shown(result);
     }

@@ -27,6 +27,10 @@ and here
   the same seq once seqs had a gap.
 
 ### Added
+- `runTimers` and `runServiceTasks` in the configuration, a setting each (`demo` is deprecated: both false). A run's decisions
+  now say "on this server" rather than "in this demo".
+- `new SandboxScriptHandler({ callServices: true })`: a sandboxed script's calls to `appServices` and `appUtils` run, in the
+  server, with JSON copies; only methods are reached, through plain objects. Without it they run nothing, as before.
 - **FEEL conditions**: a sequence flow's condition with `language="FEEL"` is FEEL, over the data's values by name. JavaScript stays the
   default, and `${...}` is a wrapper whatever the language.
 - `engine.start(..., options.instanceId)`: the caller may name the instance (an application whose record of it shares its id).

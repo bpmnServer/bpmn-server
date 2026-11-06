@@ -239,7 +239,8 @@ DISABLE_ADMIN=true
 - Do not give visitors the `DESIGNER` group, and do not run a demo with `REQUIRE_AUTHENTICATION=false`.
   Without authentication, every visitor is a designer. Models contain scripts, and scripts run inside the
   server process with its permissions: whoever can save a model can run code on the server.
-- To let visitors write and run their own models, also set `DEMO_MODE=true`:
+- To let visitors write and run their own models, also set `DEMO_MODE=true`, which sets these
+  ([each can be set by itself](#what-runs)):
     - Scripts and expressions run in a sandbox (QuickJS, a JavaScript engine compiled to WebAssembly). They
       have no access to Node.js, files, the network or the server's objects, and each one stops after 200 ms.
       Calling `appServices` from a script returns `undefined`.
@@ -248,7 +249,8 @@ DISABLE_ADMIN=true
     - Service tasks do not run: they end with no output.
     - Each of these says so in the run's decisions (the Test tab's "Why").
 - To let visitors try it without signing in, also set `GUEST_ACCESS=true`. The server refuses to start with
-  it unless `DEMO_MODE`, `DISABLE_ADMIN`, `REQUIRE_AUTHENTICATION` and `ENFORCE_SECURITY` are all `true`.
+  it unless scripts are in the sandbox without services, timers and service tasks are off, and `DISABLE_ADMIN`,
+  `REQUIRE_AUTHENTICATION` and `ENFORCE_SECURITY` are all `true`.
     - A visitor's first page makes them a guest: a user of their own (`guest-<random>`) with a session cookie
       that lasts a year. A guest can design models.
     - Each guest has their own models folder (under `GUESTS_PATH`, default `./guests`), started as a copy of
@@ -265,6 +267,27 @@ DISABLE_ADMIN=true
   (no SMTP account, no API keys of other systems), and reset its database on a schedule.
 - Set `API_KEY` and `ADMIN_API_KEY` to long random values, or leave `SERVE=ui` so that only the web pages
   are served.
+
+#### What runs
+
+Each of these is a setting of its own, and says what it changes. `DEMO_MODE=true` only gives them other values when they
+are not set; one that is set wins.
+
+| Variable | Default | With `DEMO_MODE=true` | What it does |
+|---|---|---|---|
+| `SCRIPT_SANDBOX` | `false` | `true` | `true`: scripts and expressions run in a sandbox ([Where scripts run](scripting.md#where-scripts-run-in-the-server-or-in-a-sandbox)). |
+| `SCRIPT_SANDBOX_SERVICES` | `true` | `false` | With the sandbox, `true`: a script's calls to `appServices` and `appUtils` run, so those must be safe for whoever writes a model to call. `false`: they run nothing and return `undefined`. |
+| `TIMERS` | `true` | `false` | `false`: a timer event waits until it is invoked, and no process starts on a timer. |
+| `SERVICE_TASKS` | `true` | `false` | `false`: service tasks and connectors call nothing and end with no output. |
+
+Guests and signing up have settings of their own:
+
+| Variable | Default | What it does |
+|---|---|---|
+| `GUEST_SAVE` | `true` | `false`: a guest saves nothing: it runs the models as they are, and downloads what it edits. |
+| `SIGNUP_VERIFY_EMAIL` | `false` | `true`: signing up sends a verification email (`SMTP_USER`, `SMTP_PASSWORD`), and `SIGNUP_GROUPS` come once it is verified. |
+| `SIGNUP_GROUPS` | none | The user groups of an account that signs up, separated by commas. `DESIGNER`: it can design. |
+| `SITE_URL` | the request's | The address links in emails use. Set it on a public server. |
 
 ## Handling Access Control
 

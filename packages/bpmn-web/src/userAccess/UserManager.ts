@@ -9,7 +9,7 @@ import MongoStore from 'connect-mongo';
 import User from './models/User.js';
 import * as passportConfig from './config/passport.js';
 import { Account } from './routes/account.js';
-import { adminDisabled, canDesign, isAdminGroups, isGuest, signupDisabled } from './roles.js';
+import { adminDisabled, canDesign, guestReadOnly, isAdminGroups, isGuest, signupDisabled } from './roles.js';
 import { guestAccess, guestMiddleware } from '../guests/guests.js';
 
 
@@ -119,7 +119,7 @@ export class UserManager {
 			legacyHeaders: false,
 			message: { error: 'Too many attempts, please try again later.' },
 		});
-		app.use(['/login', '/signup', '/forgot', '/reset'], authLimiter);
+		app.use(['/login', '/signup', '/forgot', '/reset', '/account/verify'], authLimiter);
 
 		// GUEST_ACCESS=true: a visitor's first page makes it a guest; a guest's requests run in its context
 		if (guestAccess() && configuration)
@@ -134,6 +134,7 @@ export class UserManager {
 			res.locals.canDesign = canDesign(req.user);
 			res.locals.canSignup = !signupDisabled();
 			res.locals.isGuest = isGuest(req.user);
+			res.locals.guestReadOnly = guestReadOnly(req.user);
 			// the menu (views/includes/menu.pug): Administration for administrators; the page it is on
 			res.locals.canAdminister = !adminDisabled()
 				&& (process.env.REQUIRE_AUTHENTICATION === 'false' || isAdminGroups(req.user?.userGroups));

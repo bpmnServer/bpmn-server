@@ -7,6 +7,7 @@ import { WebAppDelegate } from './runtime/WebAppDelegate.js';
 import { guestAccess, checkGuestSettings, guestConfiguration } from './guests/guests.js';
 import { GuestModelsDatastore } from './guests/GuestModelsDatastore.js';
 import { engineSettingsFromEnv } from './runtime/engineEnv.js';
+import { runSetting } from './runtime/runSettings.js';
 import { checkBootConfig, reportBootConfig } from './runtime/bootConfig.js';
 
 const PACKAGE_ROOT = path.join(import.meta.dirname, '..');
@@ -72,9 +73,10 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 			ds.saveSource = guests || isTrue('SAVE_SOURCE');
 			return ds;
 		},
-		// DEMO_MODE=true: a public demo. Scripts run in a sandbox, timers and service tasks do not run.
-		scriptHandler: () => isTrue('DEMO_MODE') ? new SandboxScriptHandler() : new ScriptHandler(),
-		demo: isTrue('DEMO_MODE'),
+		// each by its own setting; DEMO_MODE only says what they are when not set (runtime/runSettings.ts)
+		scriptHandler: () => runSetting('SCRIPT_SANDBOX') ? new SandboxScriptHandler({ callServices: runSetting('SCRIPT_SANDBOX_SERVICES') }) : new ScriptHandler(),
+		runTimers: runSetting('TIMERS'),
+		runServiceTasks: runSetting('SERVICE_TASKS'),
 		// MODEL_HISTORY=false: saves keep no versions, and the editor has no History tab
 		modelHistory: process.env.MODEL_HISTORY?.toLowerCase() !== 'false',
 		cacheManager: server => new NoCacheManager(server),

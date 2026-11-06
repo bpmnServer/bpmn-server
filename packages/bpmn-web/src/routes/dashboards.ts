@@ -16,7 +16,7 @@ import { runProcess } from './runErrors.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
 import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, runScenario } from '../testing/scenarios.js';
 import { loadDecisionTests, runDecisionTests } from '../testing/decisionTests.js';
-import { adminDisabled, canDesign, engineGroups, isAdminGroups } from '../userAccess/roles.js';
+import { adminDisabled, canDesign, engineGroups, GUEST_CANNOT_SAVE, guestReadOnly, isAdminGroups } from '../userAccess/roles.js';
 import { UserService } from '../userAccess/UserService.js';
 import { loadCatalog, findCatalogEntry, readCatalogFile, catalogLocation } from './catalog.js';
 import { loadConnectorCatalog, connectorCatalogLocation } from './connectorCatalog.js';
@@ -445,6 +445,8 @@ export class Dashboards extends Common {
         // import a catalog model into the models folder, under its name or one given
         router.post('/catalog/import', this.isDesigner, handler(async (req, res) => {
             const again = (message: string) => res.redirect('/dashboard/catalog?message=' + encodeURIComponent(message));
+            if (guestReadOnly(req.user))
+                return again(GUEST_CANNOT_SAVE);
             let entry;
             try {
                 entry = await findCatalogEntry(req.body.id);

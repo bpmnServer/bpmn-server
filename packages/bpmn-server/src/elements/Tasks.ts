@@ -67,10 +67,10 @@ class ServiceTask extends Node {
      */
     async runConnector(item: Item, connector: ConnectorBehaviour): Promise<NODE_ACTION> {
         const what = `${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}`;
-        if (item.context.configuration?.demo) {
+        if (item.context.configuration?.runServiceTasks === false) {
             item.token.decision({
                 seq: item.seq, element: `service task ${what}`, action: 'ends with no output',
-                why: [`a real server calls the connector ${connector.connectorId} here`, 'in this demo, connectors do not run'],
+                why: [`a real server calls the connector ${connector.connectorId} here`, 'connectors do not run on this server'],
             });
             item.output = {};
             return NODE_ACTION.end;
@@ -110,10 +110,10 @@ class ServiceTask extends Node {
 
         let ret;
 
-        if (item.context.configuration?.demo) {
+        if (item.context.configuration?.runServiceTasks === false) {
             item.token.decision({
                 seq: item.seq, element: `service task ${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}`, action: 'ends with no output',
-                why: [`a real server calls ${this.serviceName ? `the service ${this.serviceName}` : 'its service'} here`, 'in this demo, service tasks do not run'],
+                why: [`a real server calls ${this.serviceName ? `the service ${this.serviceName}` : 'its service'} here`, 'service tasks do not run on this server'],
             });
             item.output = {};
             return NODE_ACTION.end;
