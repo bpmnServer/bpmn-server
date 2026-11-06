@@ -209,10 +209,10 @@ export class API extends Common {
             try {
 
                 var list = [];
-                this.bpmnServer.engine.live().forEach(exec => {   // this server's live executions
+                (await this.bpmnServer.engine.live()).forEach(exec => {   // this server's live executions
                     list.push({ instance: exec.instance, currentItem: exec.currentItem,currentElement: exec.currentElementlementId, status: exec.instance.status });
                 });
-                response.json({cache:list,engine: this.bpmnServer.engine.status()});
+                response.json({cache:list,engine: await this.bpmnServer.engine.status()});
             }
             catch (exc) {
                 response.json({ errors: exc.toString() });

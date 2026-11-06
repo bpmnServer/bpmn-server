@@ -6,8 +6,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { CacheManager } from '../dist/index.js';
-import { makeLaunched, makeServer, coverage } from './helpers.mjs';
+import { CacheManager, verifyModel } from '../dist/index.js';
+import { makeLaunched, makeServer, coverage, TestDelegate, PROCESSES } from './helpers.mjs';
 
 const anyFunction = (value, seen = new Set()) => {
   if (typeof value === 'function') return true;
@@ -73,10 +73,19 @@ test('launched, there is no way to the running engine; a service inside the engi
   await server.shutdown();
 });
 
+test('the application\'s own checks and model extensions are the engine\'s to answer', async () => {
+  const asked = [];
+  const server = await makeLaunched({ extra: { appDelegate: s => Object.assign(new TestDelegate(s), { verifyModel: async ({ name, definition }) => { asked.push(name, typeof definition.getNodeById); return [{ code: 'mine', message: 'Mine', severity: 'warning' }]; } }) } });
+  const result = await verifyModel(fs.readFileSync(PROCESSES + 'reminder.bpmn', 'utf8'), server, 'reminder');
+  assert.deepEqual(asked, ['reminder', 'function']);
+  assert.ok(result.issues.some(i => i.code === 'mine'), JSON.stringify(result.issues));
+  await server.shutdown();
+});
+
 test('what is running now is data too', async () => {
   const server = await makeLaunched({ services: coverage(true), extra: { cacheManager: s => new CacheManager(s) } });
   const { id } = await server.engine.start('property-claim', { claimId: 'R-5' });
-  const live = server.engine.live();
+  const live = await server.engine.live();
   assert.deepEqual(live.map(one => one.id), [id]);
   assert.equal(anyFunction(live), false);
   assert.equal(live[0].execution.data.claimId, 'R-5');
@@ -90,7 +99,8 @@ test('with no engine: models read and save, and what would run says so', async (
   assert.match(await server.definitions.getSource('property-claim'), /PropertyClaim/);
   for (const run of [() => server.engine.start('property-claim', {}), () => server.engine.invoke({}, {}), () => server.engine.throwMessage('m', {}, {})])
     await assert.rejects(run, e => e.code === 'ENGINE_NOT_RUNNING' && /needs an engine/.test(e.message));
-  assert.deepEqual(server.engine.live(), []);
+  assert.deepEqual(await server.engine.live(), []);
+  assert.deepEqual((await server.appDelegate.verifyModel({ name: 'm', source: '' })).map(i => i.code), ['application-checks-skipped']);
   assert.equal(called.length, 0);
   await server.shutdown();
 });
@@ -104,9 +114,12 @@ test('the application is known by the names its scan left in a file, not by its 
   assert.equal(typeof provider.billing.charge, 'function');
   assert.equal(typeof provider.madeAsItRuns, 'function');
   assert.equal(provider.other, undefined);
-  const missing = await makeLaunched({ extra: { servicesFile: file + '.none' } });
-  assert.equal(await missing.appDelegate.getServicesProvider(), null, 'no file: no names, so nothing is checked');
+  const asksEngine = await makeLaunched({ services: { fromTheEngine: async () => { } }, extra: { servicesFile: file + '.none' } });
+  assert.equal(typeof (await asksEngine.appDelegate.getServicesProvider()).fromTheEngine, 'function', 'no file: the engine knows');
+  const missing = await makeLaunched({ engine: 'none', extra: { servicesFile: file + '.none' } });
+  assert.equal(await missing.appDelegate.getServicesProvider(), null, 'no file and no engine: no names, so nothing is checked');
   await server.shutdown();
+  await asksEngine.shutdown();
   await missing.shutdown();
 });
 

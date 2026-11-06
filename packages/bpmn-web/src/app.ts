@@ -70,8 +70,8 @@ export class WebApp {
 		this.bpmnServer = BPMNServer.launch(
 			application.configuration,
 			wflogger,
-			// ENGINE_AT=none: everything but running and testing models
-			{ ...application.serverOptions, ...(process.env.ENGINE_AT === 'none' ? { engine: 'none' } : {}) },
+			// where the engine is: ENGINE_AT=http://... (with ENGINE_KEY), or none: everything but running and testing models
+			{ ...application.serverOptions, ...(process.env.ENGINE_AT && process.env.ENGINE_AT !== 'local' ? { engine: process.env.ENGINE_AT, engineKey: process.env.ENGINE_KEY } : {}) },
 		);
 		application.initialize?.(this.bpmnServer);
 		// the Test tabs' tests are files beside the models (a guest's folder in a guest's request)

@@ -421,7 +421,7 @@ async function display(req,res, title, logs = [], items = []) {
         item['fromNow'] = dateDiff(item.startedAt);
     });
 
-    let engines = bpmnServer.engine.live();
+    let engines = await bpmnServer.engine.live();
 
     engines.forEach(engine => {
         engine.fromNow = dateDiff(engine.startedAt); 

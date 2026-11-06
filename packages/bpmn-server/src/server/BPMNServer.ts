@@ -75,11 +75,12 @@ class BPMNServer implements IBPMNServer {
 	/**
 	 * Launches a server, instead of embedding one as `new BPMNServer` does: what you get is outside its engine, and answers
 	 * data, not running executions. The delegate and services are inside the engine, and keep them.
-	 * `engine: 'none'`: no engine at all: models can be edited and saved, and what would run answers EngineNotRunningError.
+	 * `engine` says where the engine is: left out, in this process; `'http://...'`, there (startEngineService, with `engineKey`);
+	 * `'none'`, nowhere: models can be edited and saved, and what would run answers EngineNotRunningError.
 	 */
-	static launch(configuration: IConfiguration, logger?: ILogger, options: { engine?: 'none', cron?: boolean } = {}): LaunchedServer {
-		if (options.engine === 'none') {
-			// the application's code is not started, and no timer fires
+	static launch(configuration: IConfiguration, logger?: ILogger, options: { engine?: string, engineKey?: string, cron?: boolean } = {}): LaunchedServer {
+		if (options.engine) {
+			// the application's code is the engine's, and so are the timers
 			const withoutApplication = Object.create(configuration, { appDelegate: { value: server => new DefaultAppDelegate(server) } });
 			return new LaunchedServer(new BPMNServer(withoutApplication, logger, { ...options, cron: false }), options);
 		}

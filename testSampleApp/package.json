@@ -7,6 +7,7 @@
   "scripts": {
     "prestart": "npm run build:modeler -w bpmn-web",
     "start": "node --import tsx index.ts",
+    "engine": "node --import tsx engine.ts",
     "debug": "node --inspect --import tsx index.ts",
     "predev": "npm run build:modeler -w bpmn-web",
     "dev": "node --watch --conditions=bpmn-source --import tsx index.ts",

@@ -9,6 +9,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
@@ -50,7 +51,21 @@ function definitionsFolder() {
     return dir + path.sep;
 }
 
-export async function startWebApp({ env = {} } = {}) {
+/** The engine in a process of its own, on the same database and models; what ENGINE_AT then points to. */
+function startEngineProcess() {
+    return new Promise((resolve, reject) => {
+        const child = spawn(process.execPath, ['--import', 'tsx', 'engine.ts'], { cwd: ROOT, env: { ...process.env, ENGINE_PORT: '0' }, stdio: ['ignore', 'pipe', 'inherit'] });
+        let output = '';
+        child.stdout.on('data', chunk => {
+            output += chunk;
+            const ready = /ENGINE_READY ([\d.]+):(\d+)/.exec(output);
+            if (ready) resolve({ child, at: `http://${ready[1]}:${ready[2]}` });
+        });
+        child.once('exit', code => reject(new Error(`the engine stopped, code ${code}: ${output.slice(-500)}`)));
+    });
+}
+
+export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_REMOTE_ENGINE && !env.ENGINE_AT } = {}) {
     const dbUrl = testDatabaseUrl();
     const definitionsPath = definitionsFolder();
     // the app reads its settings from the environment; dotenv never overrides these
@@ -71,6 +86,14 @@ export async function startWebApp({ env = {} } = {}) {
         AUTH_RATE_LIMIT: '1000',
         SAVE_LOGS: 'true',
     }, env);
+
+    let engineProcess;
+    if (remoteEngine) {
+        process.env.ENGINE_KEY = `test-${randomUUID()}`;
+        delete process.env.ENGINE_AT;
+        engineProcess = await startEngineProcess();
+        process.env.ENGINE_AT = engineProcess.at;
+    }
 
     const quiet = !process.env.TEST_VERBOSE;
     const restoreConsole = quiet ? silenceConsole() : () => { };
@@ -110,6 +133,13 @@ export async function startWebApp({ env = {} } = {}) {
 
     const web = {
         base, webApp, bpmnServer, definitionsPath, dbUrl, embedded,
+        engineAt: engineProcess?.at, enginePid: engineProcess?.child.pid,
+        async stopEngine() {
+            // killed: on Windows it never gets an exit code
+            if (!engineProcess || engineProcess.child.killed || engineProcess.child.exitCode !== null) return;
+            engineProcess.child.removeAllListeners('exit');
+            await new Promise(resolve => { engineProcess.child.once('exit', resolve); engineProcess.child.kill(); });
+        },
         client: () => new WebClient(base),
         /** A client logged in as one of USERS. */
         async login(userName) {
@@ -130,6 +160,7 @@ export async function startWebApp({ env = {} } = {}) {
             webApp.server.closeAllConnections?.();
             await new Promise(resolve => webApp.server.close(() => resolve()));
             await bpmnServer.shutdown?.();
+            await web.stopEngine();
             try {
                 await mongoose.connection.db?.dropDatabase();
             } catch { /* best effort */ }
