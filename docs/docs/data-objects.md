@@ -3,6 +3,8 @@
 A data object in the diagram stands for data the process works on: a client, an order, a policy. bpmn-server
 asks the application for it when an element connected to it runs, and keeps it in the instance data.
 
+[Try loading a client in a workflow](examples/load-client-data.md).
+
 ## In the model
 
 Draw a data object, name it (`client`), and connect it to the element that needs it with a data association,

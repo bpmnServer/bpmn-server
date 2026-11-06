@@ -21,6 +21,6 @@
 ## Using simple script expressions
 
 
-![TS Code](../images/condition-2.PNG){align=left}
+![TS Code](../images/condition-2.png){align=left}
 
-![TS Code](../images/condition-3.PNG)
+![TS Code](../images/condition-3.png)

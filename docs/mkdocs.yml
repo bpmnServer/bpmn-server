@@ -103,6 +103,15 @@ nav:
   - Site Map: map.md
 
 - Examples/Features:
+  - 'Overview': examples.md
+  - 'Call a REST API': examples/github-connector.md
+  - 'Evaluate and test a DMN decision': examples/Business Rules.md
+  - 'Load a BPMN data object': examples/load-client-data.md
+  - 'Use model expressions': examples/model-expressions.md
+  - 'Review Report and History': examples/report-and-history.md
+  - 'Retry a failed task': examples/retry-task.md
+  - 'Keep a waiting instance in SQLite': examples/sqlite-resume.md
+  - 'Revise a model with running instances': examples/revise-running-model.md
   - 'Service Task': examples/serviceTask.md
   - 'Script Task': examples/scriptTask.md
   - 'Conditional Flow': examples/conditionalFlow.md

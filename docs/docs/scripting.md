@@ -41,6 +41,8 @@ Expressions are JavaScript, and they see `data`, `item`, `instance`, `input`, `o
 `${data.amount > 1000 && data.approved}` rather than `${amount gt 1000 and approved}`: the model check
 (`bpmn-server verify`, the editor's Problems) reports JUEL operators and names an expression does not have.
 
+[Try a gateway, assignment, and input parameters with `${...}`](examples/model-expressions.md).
+
 #### conditional flow examples:
 
 
