@@ -9,13 +9,13 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
-- **The task API**, `/api2/tasks`: an application lists, claims and completes tasks for its users, whom it authenticates itself. Off
-  unless `API_ACTING_USER_KEY` is set; that key opens no other route. Existing routes are unchanged.
 
 ### Changed
 -->
 ## [Unreleased]
 ### Added
+- **The task API**, `/api2/tasks`: an application lists, claims and completes tasks for its users, whom it authenticates itself. Off
+  unless `API_ACTING_USER_KEY` is set; that key opens no other route. Existing routes are unchanged.
 - **Coverage**, in the Test tab: how many of the model's nodes and flows the scenarios' last runs have reached; on the diagram, and what is left.
 - **Test all paths**, in the Test tab: tries the model's paths on real runs, with each form's choices and the values in its conditions, and saves a scenario for each that reaches something new, marked as generated until reviewed. **Fill**, on an element not reached: records a new scenario with that element as its goal.
 - The Test tab can complete a **receive task**: a run stopped there, as *Also waiting, not a step here*, and could not go on.
