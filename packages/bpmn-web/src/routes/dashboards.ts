@@ -20,7 +20,7 @@ import { adminDisabled, canDesign, engineGroups, isAdminGroups } from '../userAc
 import { UserService } from '../userAccess/UserService.js';
 import { loadCatalog, findCatalogEntry, readCatalogFile, catalogLocation } from './catalog.js';
 import { loadConnectorCatalog, connectorCatalogLocation } from './connectorCatalog.js';
-import { isSafeModelName } from './middleware/modelName.js';
+import { isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 import crypto from 'node:crypto';
 
@@ -83,6 +83,7 @@ export class Dashboards extends Common {
 
     config() {
         const router = express.Router();
+        guardModelParams(router);
         const server = this.webApp.bpmnServer;
         const api = new BPMNAPI(server);
         const folder = () => server.configuration.definitionsPath;

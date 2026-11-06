@@ -22,7 +22,7 @@ import { BPMNServer, dateDiff, Behaviour_names   } from '../index.js';
 }
 
 import { apiKeyAuth as loggedIn } from './middleware/apiKeyAuth.js';
-import { modelNameGuard, isSafeModelName } from './middleware/modelName.js';
+import { modelNameGuard, isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { Common } from './common.js';
 import { invokeDecision } from './decisions.js';
 import { ViewHelper } from './ViewHelper.js';
@@ -33,6 +33,8 @@ export class API extends Common {
     config() {
 
         var router = express.Router();
+
+        guardModelParams(router);
         var bpmnServer = this.bpmnServer;
 
         router.use(['/definitions', '/model'], modelNameGuard);
@@ -524,6 +526,7 @@ export class API extends Common {
     /** Definition administration is mounted separately under /admin/api. */
     adminConfig() {
         const router = express.Router();
+        guardModelParams(router);
         const bpmnServer = this.bpmnServer;
         const fsx = FS;
 

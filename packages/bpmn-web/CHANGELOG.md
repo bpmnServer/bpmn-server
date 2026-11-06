@@ -73,6 +73,7 @@ and here
   number by its seq. Decision entries in the logs keep their lines.
 
 ### Fixed
+- **Security:** a model's name in a URL could climb out of the models folder (`/model/edit/..%2Fx`, `/execute/..%2Fx`, `POST /api/engine/start/..%2Fx`), so a user could read or start a `.bpmn` file outside it. Every such route now answers 400.
 - The menu with sign-in off (`REQUIRE_AUTHENTICATION=false`): every page has the same places, and none offers Sign in,
   Create account or a Sign out. It depended on the page: the dashboards, the docs and the model list showed Sign in
   and no places, the home and instance pages a "system" user. The menu goes by who is signed in (`account`,
