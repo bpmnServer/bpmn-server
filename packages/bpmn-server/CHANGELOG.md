@@ -9,14 +9,13 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
-- **FEEL conditions**: a sequence flow's condition with `language="FEEL"` is FEEL, over the data's values by name. JavaScript stays the
-  default, and `${...}` is a wrapper whatever the language.
-- `engine.start(..., options.instanceId)`: the caller may name the instance (an application whose record of it shares its id).
 
 ### Changed
 -->
+
 ## [Unreleased]
 ### Fixed
+- An error end event outside any sub-process no longer crashes the engine and leaves the instance running: the error goes to what catches it, or the instance ends there.
 - A model with several start events, started with none named, begins at one a user can start; it began at the
   first drawn, a message, signal or timer start included.
 - A joining gateway is one item. Each branch that arrived added one (a join of 3 branches showed 3 gateway
@@ -28,6 +27,9 @@ and here
   the same seq once seqs had a gap.
 
 ### Added
+- **FEEL conditions**: a sequence flow's condition with `language="FEEL"` is FEEL, over the data's values by name. JavaScript stays the
+  default, and `${...}` is a wrapper whatever the language.
+- `engine.start(..., options.instanceId)`: the caller may name the instance (an application whose record of it shares its id).
 - `flags.only` (engine.start's `options.flags`): the instance runs one element, the one it starts at
   (`startNodeId`), and ends once that element is done; a user task waits first. To test a task by itself.
 - `ModelsDatastore.deleteVersion(name, version)` (`ModelHistory.remove`): one saved version of a model removed; the
