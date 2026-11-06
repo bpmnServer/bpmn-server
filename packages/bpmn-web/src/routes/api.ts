@@ -22,7 +22,7 @@ import { BPMNServer, dateDiff, Behaviour_names   } from '../index.js';
 }
 
 import { apiKeyAuth as loggedIn } from './middleware/apiKeyAuth.js';
-import { modelNameGuard } from './middleware/modelName.js';
+import { modelNameGuard, isSafeModelName } from './middleware/modelName.js';
 import { Common } from './common.js';
 import { invokeDecision } from './decisions.js';
 import { ViewHelper } from './ViewHelper.js';
@@ -46,6 +46,11 @@ export class API extends Common {
         // a model's BPMN XML, read-only: who may run a process may read what it does
         router.get('/definitions/load/:name', loggedIn, async function (request, response) {
             const name = (request.params as any).name;
+            // modelNameGuard, on the router, does not see a route's own parameters
+            if (!isSafeModelName(name)) {
+                response.status(400).json({ errors: 'Invalid model name' });
+                return;
+            }
             let source;
             try {
                 source = await bpmnServer.definitions.getSource(name);
@@ -632,6 +637,10 @@ export class API extends Common {
 
                 //console.log(request.params);
                 let name = (request.params as any).name;
+                if (!isSafeModelName(name)) {
+                    response.status(400).send('Invalid model name');
+                    return;
+                }
 
                 try {
                     let definition = await bpmnServer.definitions.getSource(name);

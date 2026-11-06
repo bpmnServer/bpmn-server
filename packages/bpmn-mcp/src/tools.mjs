@@ -8,9 +8,16 @@ import { z } from 'zod';
 
 const name = z.string().describe('The model\'s name, as list_models gives it');
 const data = z.record(z.any()).optional().describe('Values for the process\'s data');
-const query = z.record(z.any()).describe('A filter on stored fields, such as {"id":"<instance id>"}, {"name":"<model name>"}, '
+
+/** Query operators that run code in the database: what a model's or a process's text might ask an AI to send. */
+const RUNS_CODE = new Set(['$where', '$function', '$accumulator']);
+const runsNoCode = value => !value || typeof value !== 'object'
+  || Object.entries(value).every(([key, v]) => !RUNS_CODE.has(key) && runsNoCode(v));
+const filter = () => z.record(z.any()).refine(runsNoCode, { message: `A query can not use ${[...RUNS_CODE].join(', ')}` });
+
+const query = filter().describe('A filter on stored fields, such as {"id":"<instance id>"}, {"name":"<model name>"}, '
   + '{"data.days":3} or {"items.status":"wait"}');
-const itemQuery = z.record(z.any()).describe('Which waiting task: its instance and its element, such as '
+const itemQuery = filter().describe('Which waiting task: its instance and its element, such as '
   + '{"id":"<instance id>","items.elementId":"Submit"}, or {"items.id":"<item id>"}');
 
 /** A model's name: no path, no extension. */
@@ -37,11 +44,56 @@ async function saveModel({ v1 }, { name: model, xml }) {
 }
 
 const limit = z.number().int().positive().optional().describe('How many to return, newest first (default 20)');
+/** What one answer may hold, in characters: a server can hold more than an AI can read. */
+const MAX_ANSWER = 100_000;
 
-/** The newest rows, and how many there are: a server can hold more than an AI can read. */
+/** The newest rows, and how many there are, as many as fit. A row too large alone says so, without its data. */
 function newest(rows, max = 20) {
   const sorted = rows.sort((a, b) => String(b.startedAt ?? '').localeCompare(String(a.startedAt ?? '')));
-  return { total: rows.length, returned: Math.min(rows.length, max), results: sorted.slice(0, max) };
+  const results = sorted.slice(0, max);
+  let cut = false;
+  while (results.length > 1 && JSON.stringify(results).length > MAX_ANSWER) {
+    results.pop();
+    cut = true;
+  }
+  if (results.length && JSON.stringify(results).length > MAX_ANSWER) {
+    results[0] = { ...results[0], data: undefined, dataOmitted: 'too large to return' };
+    cut = true;
+  }
+  return { total: rows.length, returned: results.length, ...(cut ? { truncated: 'cut to fit: ask for fewer, or a narrower query' } : {}), results };
+}
+
+/** An item as it is given: an item carries its instance's data as well as its own, which says it twice. */
+const asItem = ({ instanceData, ...item }) => item;
+
+/** The models' names. */
+const modelNames = async v1 => (await v1.definitions.list()).map(model => model?.name ?? model);
+/** A model that does not exist is an error: the server answers as if it had done it. */
+async function assertModel(v1, model) {
+  if (!(await modelNames(v1)).includes(model))
+    throw new Error(`No model named ${model}`);
+}
+
+async function renameModel({ v1 }, { name: model, newName }) {
+  const [from, to] = [cleanName(model), cleanName(newName)];
+  await assertModel(v1, from);
+  if ((await modelNames(v1)).includes(to))
+    throw new Error(`There is already a model named ${to}`);
+  return v1.definitions.rename(from, to);
+}
+
+async function deleteModel({ v1 }, { name: model }) {
+  const clean = cleanName(model);
+  await assertModel(v1, clean);
+  await v1.definitions.delete(clean);
+  return { deleted: clean };
+}
+
+/** An empty query matches every instance: only when that is what is meant. */
+function deleteInstances({ v1 }, { query: matching, all }) {
+  if (!Object.keys(matching).length && all !== true)
+    throw new Error('An empty query deletes every instance: set all=true if the user asked for that');
+  return v1.datastore.deleteInstances(matching);
 }
 
 const read = { readOnlyHint: true };
@@ -64,9 +116,9 @@ export const tools = [
     + 'of that name. Nothing is saved if it is invalid. Needs ADMIN_API_KEY.',
     input: { name, xml: z.string() }, run: saveModel },
   { name: 'rename_model', annotations: write, description: 'Rename a model. Needs ADMIN_API_KEY.',
-    input: { name, newName: z.string() }, run: ({ v1 }, a) => v1.definitions.rename(cleanName(a.name), cleanName(a.newName)) },
+    input: { name, newName: z.string() }, run: renameModel },
   { name: 'delete_model', annotations: destroy, description: 'Delete a model. Needs ADMIN_API_KEY.',
-    input: { name }, run: ({ v1 }, a) => v1.definitions.delete(cleanName(a.name)) },
+    input: { name }, run: deleteModel },
 
   // ---- running processes
   { name: 'start_process', annotations: write, description: 'Start a new instance of a process model. Set keepSavePoints if it may need '
@@ -91,7 +143,7 @@ export const tools = [
     run: ({ v1 }, a) => v1.engine.startEvent(a.instanceId, a.startNodeId, a.data ?? {}) },
   { name: 'restart_instance', annotations: destroy, description: 'Take an instance back to one of its items, which waits again; what came '
     + 'after that item is dropped. A running instance also needs rewind=true. The instance must have kept save points.',
-    input: { query: z.record(z.any()).describe('Which item, such as {"items.id":"<item id>"}'), data, rewind: z.boolean().optional() },
+    input: { query: filter().describe('Which item, such as {"items.id":"<item id>"}'), data, rewind: z.boolean().optional() },
     run: ({ v1 }, a) => v1.engine.restart(a.query, a.data ?? {}, '', a.rewind ? { rewind: true } : {}) },
 
   // ---- what has run
@@ -102,10 +154,10 @@ export const tools = [
       { projection: a.steps ? { source: 0, logs: 0 } : { source: 0, logs: 0, items: 0, tokens: 0 } }), a.limit) },
   { name: 'find_items', annotations: read, description: 'Find the steps of processes: the newest, and the total that match. '
     + '{"items.status":"wait"} gives the tasks waiting for someone.',
-    input: { query: query.optional(), limit }, run: async ({ v1 }, a) => newest(await v1.datastore.findItems(a.query ?? {}), a.limit) },
+    input: { query: query.optional(), limit }, run: async ({ v1 }, a) => newest((await v1.datastore.findItems(a.query ?? {})).map(asItem), a.limit) },
   { name: 'delete_instances', annotations: destroy, description: 'Permanently delete the instances the query matches. '
-    + 'Confirm with the user first, and never run this with an empty query unless they asked to delete everything.',
-    input: { query }, run: ({ v1 }, a) => v1.datastore.deleteInstances(a.query) },
+    + 'Confirm with the user first. An empty query is refused unless all=true, which is only for when they asked to delete everything.',
+    input: { query, all: z.boolean().optional().describe('With an empty query: delete every instance') }, run: deleteInstances },
   { name: 'engine_status', annotations: read, description: 'The engine\'s status: what is running now.',
     input: {}, run: ({ v1 }) => v1.engine.status() },
 ];

@@ -44,6 +44,14 @@ Not offered, because the server's API does not have them: connectors, users, and
 
 **This gives an AI what the keys allow, including deleting instances and replacing models.** Tools carry MCP's read-only and destructive hints, and clients use them to decide what to ask you about; whether they ask is the client's choice. Give it keys for a server you are willing to let it change. Stdout is the MCP protocol, so what the client libraries print goes to stderr. Do not expose this stdio server publicly.
 
+The MCP also refuses, whatever the keys:
+
+- `delete_instances` with an empty query, unless `all` is set.
+- Query operators that run code in the database (`$where`, `$function`, `$accumulator`). This is the MCP's own check: the API takes them from whoever holds its key.
+- Answers over 100,000 characters: a listing is cut to fit, and says so.
+
+**The keys travel unencrypted unless `PORT` is 443**, which is what makes the client use HTTPS. For a server on another machine, put it behind TLS on 443, or an encrypted tunnel.
+
 ## Tests
 
 In `testSampleApp`, both against a test server and a database of their own:

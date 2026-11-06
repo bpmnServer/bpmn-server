@@ -9,7 +9,7 @@
     "start": "node src/index.mjs"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.32.0",
     "bpmn-client": "3.5.2",
     "bpmn-server": "3.5.2",
     "dotenv": "^17.4.2",

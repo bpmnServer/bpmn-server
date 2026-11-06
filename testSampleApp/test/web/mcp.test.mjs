@@ -1,4 +1,4 @@
-// @features: rest-api
+// @features: mcp, rest-api
 // The MCP (packages/bpmn-mcp), as an AI client uses it: its own process over stdio, against a real server.
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -268,4 +268,82 @@ test('.env decides what it may do: no admin key, no model administration; a wron
 
 test('without API_KEY it does not start', async () => {
   await assert.rejects(connect({}));
+});
+
+test('reading a model stays in the models folder, with either key', async () => {
+  const outside = path.join(web.definitionsPath, '..', 'outside-the-models.bpmn');
+  fs.writeFileSync(outside, '<secret />');
+  try {
+    for (const name of ['..%2Foutside-the-models', '..%5Coutside-the-models']) {
+      const runtime = await web.api('GET', `/api/definitions/load/${name}`);
+      assert.equal(runtime.status, 400, name);
+      assert.doesNotMatch(runtime.text ?? '', /secret/);
+      const admin = await web.api('GET', `/admin/api/definitions/load/${name}`, undefined, ADMIN_API_KEY);
+      assert.equal(admin.status, 400, name);
+      assert.doesNotMatch(admin.text ?? '', /secret/);
+    }
+    assert.equal((await web.api('GET', '/api/definitions/load/leave-request')).status, 200);
+  } finally {
+    fs.rmSync(outside, { force: true });
+  }
+  assert.equal((await call('get_model', { name: '../outside-the-models' })).error, true);
+});
+
+test('delete_instances with an empty query deletes nothing, unless all says so', async () => {
+  await ok('start_process', { name: 'leave-request', data: { marker: 'kept-by-refusal' } });
+  const count = async () => (await ok('list_instances', {})).total;
+  const before = await count();
+  const refused = await call('delete_instances', { query: {} });
+  assert.equal(refused.error, true);
+  assert.match(refused.text, /all=true/);
+  assert.equal(await count(), before);
+  await ok('delete_instances', { query: {}, all: true });
+  assert.equal(await count(), 0);
+});
+
+test('a model that does not exist is an error, and a rename does not replace another', async () => {
+  assert.match((await call('delete_model', { name: 'no-such-model' })).text, /No model named no-such-model/);
+  assert.equal((await call('delete_model', { name: 'no-such-model' })).error, true);
+  assert.equal((await call('rename_model', { name: 'no-such-model', newName: 'x' })).error, true);
+
+  const xml = fs.readFileSync(path.join(FIXTURES, 'simple.bpmn'), 'utf8');
+  await ok('save_model', { name: 'mcp-rename-a', xml });
+  await ok('save_model', { name: 'mcp-rename-b', xml });
+  const refused = await call('rename_model', { name: 'mcp-rename-a', newName: 'mcp-rename-b' });
+  assert.equal(refused.error, true);
+  assert.match(refused.text, /already a model/);
+  assert.deepEqual((await ok('delete_model', { name: 'mcp-rename-a' })), { deleted: 'mcp-rename-a' });
+  await ok('delete_model', { name: 'mcp-rename-b' });
+});
+
+test('a query can not run code in the database, however deep', async () => {
+  for (const q of [{ $where: 'function () { return true; }' }, { $or: [{ $where: 'true' }] }, { data: { $function: { body: 'x' } } }]) {
+    for (const tool of ['list_instances', 'find_items', 'delete_instances', 'invoke_task']) {
+      const res = await call(tool, { query: q });
+      assert.equal(res.error, true, `${tool} ${JSON.stringify(q)}`);
+      assert.match(res.text, /can not use/, `${tool}: ${res.text.slice(0, 120)}`);
+    }
+  }
+  assert.equal((await call('list_instances', { query: { 'data.days': { $gt: 1 } } })).error, false, 'other operators are fine');
+});
+
+test('a large answer is cut to fit, and says so; an item does not say its data twice', async () => {
+  const blob = 'x'.repeat(70_000);
+  for (let i = 0; i < 2; i++) await ok('start_process', { name: 'leave-request', data: { blob } });
+  const items = await ok('find_items', { query: { 'data.blob': blob, 'items.status': 'wait' } });
+  assert.equal(items.total, 2);
+  assert.equal(items.returned, 1);
+  assert.match(items.truncated, /cut to fit/);
+  assert.equal(items.results[0].instanceData, undefined);
+
+  const huge = await ok('start_process', { name: 'leave-request', data: { huge: 'y'.repeat(150_000) } });
+  const id = huge.id ?? huge.instance?.id;
+  const one = await call('list_instances', { query: { id } });
+  assert.ok(one.text.length < 100_500, String(one.text.length));
+  const row = JSON.parse(one.text);
+  assert.equal(row.results[0].id, id);
+  assert.equal(row.results[0].data, undefined);
+  assert.equal(row.results[0].dataOmitted, 'too large to return');
+  await ok('delete_instances', { query: { 'data.blob': blob } });
+  await ok('delete_instances', { query: { id } });
 });
