@@ -22,7 +22,7 @@ import { BPMNServer, dateDiff, Behaviour_names   } from '../index.js';
 }
 
 import { apiKeyAuth as loggedIn } from './middleware/apiKeyAuth.js';
-import { modelNameGuard } from './middleware/modelName.js';
+import { modelNameGuard, isSafeModelName } from './middleware/modelName.js';
 import { Common } from './common.js';
 import { invokeDecision } from './decisions.js';
 import { ViewHelper } from './ViewHelper.js';
@@ -41,6 +41,24 @@ export class API extends Common {
         // off (DISABLE_ADMIN); changing models stays under /admin/api
         router.get('/definitions/list', loggedIn, async function (req, response) {
             response.json(await bpmnServer.definitions.getList());
+        });
+
+        // a model's BPMN XML, read-only: who may run a process may read what it does
+        router.get('/definitions/load/:name', loggedIn, async function (request, response) {
+            const name = (request.params as any).name;
+            // modelNameGuard, on the router, does not see a route's own parameters
+            if (!isSafeModelName(name)) {
+                response.status(400).json({ errors: 'Invalid model name' });
+                return;
+            }
+            let source;
+            try {
+                source = await bpmnServer.definitions.getSource(name);
+            } catch {
+                response.status(404).json({ errors: `No process definition named ${name}` });
+                return;
+            }
+            response.type('application/xml').send(source);
         });
 
         router.get('/status', loggedIn, awaitAppDelegateFactory(async (request, response) => {
@@ -619,6 +637,10 @@ export class API extends Common {
 
                 //console.log(request.params);
                 let name = (request.params as any).name;
+                if (!isSafeModelName(name)) {
+                    response.status(400).send('Invalid model name');
+                    return;
+                }
 
                 try {
                     let definition = await bpmnServer.definitions.getSource(name);

@@ -46,6 +46,13 @@ test('the models are still listed through the APIs, with the runtime key', async
   }
 });
 
+test('a model is still read through the API, with the runtime key', async () => {
+  const res = await web.api('GET', '/api/definitions/load/leave-request');
+  assert.equal(res.status, 200, why(res));
+  assert.match(res.text ?? JSON.stringify(res.body), /id="Submit"/);
+  assert.equal((await web.api('GET', '/api/definitions/load/no-such-model')).status, 404);
+});
+
 test('the rest of the app still works', async () => {
   assert.equal((await admin.get('/dashboard')).status, 200);
   assert.equal((await designer.get('/dashboard/design')).status, 200);

@@ -425,6 +425,13 @@ features:
     docs: [docs/docs/api-summary.md, docs/docs/invokation.md]
     code: [packages/bpmn-server/src/API/API.ts]
     tests: [packages/bpmn-server/test/runtime-api.test.mjs, packages/bpmn-server/test/api-boundary.test.mjs]
+  - id: mcp
+    area: api
+    name: "MCP for AI clients"
+    what: "packages/bpmn-mcp: a running server's API as MCP tools over stdio, with what its keys allow."
+    docs: [packages/bpmn-mcp/README.md]
+    code: [packages/bpmn-mcp/src/tools.mjs, packages/bpmn-mcp/src/index.mjs]
+    tests: [testSampleApp/test/web/mcp.test.mjs]
   - id: rest-api
     area: api
     name: "The REST API"

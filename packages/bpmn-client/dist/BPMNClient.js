@@ -255,9 +255,22 @@ class ClientDefinitions {
         }
         return res;
     }
-    /** The model's BPMN XML source (the legacy API returns the source, /api2 the parsed definition). */
+    /**
+     * The model's BPMN XML source (the legacy API returns the source, /api2 the parsed definition), with the
+     * runtime key; a server older than this route, which answers without saying why, only has it under /admin/api.
+     */
     async load(name) {
-        const res = await this.client.admin(encodeURI('definitions/load/' + name), 'GET', { name });
+        const url = encodeURI('definitions/load/' + name);
+        var res;
+        try {
+            res = await this.client.get(url, {});
+        }
+        catch (error) {
+            if ((error.status === 404 && !error.body?.errors) || error.isWebPage)
+                res = await this.client.admin(url, 'GET', { name });
+            else
+                throw error;
+        }
         if (res['errors']) {
             console.log(res['errors']);
             throw new Error(res['errors']);

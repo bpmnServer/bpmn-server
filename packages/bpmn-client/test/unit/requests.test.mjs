@@ -125,6 +125,7 @@ test('BPMNClient (legacy) calls: method, path, key', async () => {
     [() => c.datastore.deleteInstances({ id: 'i1' }), 'DELETE', '/admin/api/datastore/deleteInstances', ADMIN_KEY],
     // listing models is a runtime call: no administration needed (bpmn-web >= 3.5 serves it on /api)
     [() => c.definitions.list(), 'GET', '/api/definitions/list', API_KEY],
+    [() => c.definitions.load('a'), 'GET', '/api/definitions/load/a', API_KEY],
     [() => c.definitions.rename('a', 'b'), 'POST', '/admin/api/definitions/rename', ADMIN_KEY],
     [() => c.definitions.delete('a'), 'POST', '/admin/api/definitions/delete', ADMIN_KEY],
   ];
@@ -140,6 +141,17 @@ test('BPMNClient (legacy) lists models on an older server: /api has no list, so 
   assert.deepEqual(names, ['a', 'b']);
   assert.deepEqual(requests.map(r => [r.method, r.path, r.key]),
     [['GET', '/api/definitions/list', API_KEY], ['GET', '/admin/api/definitions/list', ADMIN_KEY]]);
+});
+
+test('BPMNClient (legacy) reads a model on an older server through /admin/api; a model that does not exist is just that', async () => {
+  reply = r => r.path.startsWith('/api/') ? { status: 404, body: { error: 'not found' } } : { body: '<xml/>', type: 'application/xml' };
+  assert.equal(await client1().definitions.load('a'), '<xml/>');
+  assert.deepEqual(requests.map(r => [r.path, r.key]), [['/api/definitions/load/a', API_KEY], ['/admin/api/definitions/load/a', ADMIN_KEY]]);
+
+  requests = [];
+  reply = () => ({ status: 404, body: { errors: 'No process definition named a' } });
+  await assert.rejects(() => client1().definitions.load('a'), /No process definition named a/);
+  assert.equal(requests.length, 1);
 });
 
 test('the admin key defaults to the API key', async () => {
