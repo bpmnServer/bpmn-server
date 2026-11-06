@@ -77,9 +77,9 @@ const totals = page => page.evaluate(() => {
 const gaps = page => page.locator('.test-gap').evaluateAll(rows => rows.map(r => r.dataset.elementId));
 const marker = (page, id, name) => page.evaluate(([id, name]) => window.bpmnModeler.get('canvas').hasMarker(id, name), [id, name]);
 
-test('no scenarios: nothing to say; each scenario adds what its run reached, and the gaps go', async () => {
+test('no scenarios: nothing reached; each scenario adds what its run reached, and the gaps go', async () => {
     const { page, errors, close } = await openTestTab();
-    assert.equal(await page.locator('.test-coverage').count(), 0);
+    assert.equal((await counts(page)).nodes[0], 0);
 
     await record(page, 'Short', SHORT);
     const total = await totals(page);
