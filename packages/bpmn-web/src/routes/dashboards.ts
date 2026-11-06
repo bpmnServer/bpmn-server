@@ -14,7 +14,9 @@ import { SecureUser, BPMNAPI, verifyModel, dateDiff, canEncrypt } from '../index
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
-import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, runScenario } from '../testing/scenarios.js';
+import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, saveScenarios, runScenario } from '../testing/scenarios.js';
+import { modelDescription, modelElements, savedCoverage } from '../testing/modelCoverage.js';
+import { reachedIn } from '../testing/coverage.js';
 import { loadDecisionTests, runDecisionTests } from '../testing/decisionTests.js';
 import { adminDisabled, canDesign, engineGroups, GUEST_CANNOT_SAVE, guestReadOnly, isAdminGroups } from '../userAccess/roles.js';
 import { UserService } from '../userAccess/UserService.js';
@@ -79,7 +81,7 @@ function databaseName(): string {
 
 export class Dashboards extends Common {
     /** verifyModel's counts per model, kept while the file is unchanged */
-    verified = new Map<string, { mtime: number; errors: number; warnings: number }>();
+    verified = new Map<string, { mtime: number; errors: number; warnings: number; description?: string }>();
 
     config() {
         const router = express.Router();
@@ -160,8 +162,9 @@ export class Dashboards extends Common {
                 let checked = this.verified.get(name);
                 if (!checked || checked.mtime !== mtime) {
                     try {
-                        const result = await verifyModel(FS.readFileSync(path.join(dir, file), 'utf8'), server, name);
-                        checked = { mtime, errors: result.errors, warnings: result.warnings };
+                        const source = FS.readFileSync(path.join(dir, file), 'utf8');
+                        const result = await verifyModel(source, server, name);
+                        checked = { mtime, errors: result.errors, warnings: result.warnings, description: await modelDescription(source).catch(() => '') };
                     }
                     catch {
                         checked = { mtime, errors: 1, warnings: 0 };
@@ -171,7 +174,12 @@ export class Dashboards extends Common {
                 models.push({ name, saved: new Date(mtime), fromNow: dateDiff(new Date(mtime)), ...checked });
             }
             const tests = new Map((await listScenarioSets()).map(s => [s.model, s]));
-            models.forEach(m => m.tests = tests.get(m.name)?.count ?? 0);
+            for (const m of models) {
+                m.tests = tests.get(m.name)?.count ?? 0;
+                m.versions = (await server.definitions.history(m.name).catch(() => [])).length;
+                if (m.tests)
+                    m.coverage = await savedCoverage(server, FS.readFileSync(path.join(dir, m.name + '.bpmn'), 'utf8'), await loadScenarios(m.name), m.saved).catch(() => null);
+            }
             const decisionTests = new Map((await listDecisionTestSets()).map(s => [s.decision, s.count]));
             models.sort((a, b) => (b.errors - a.errors) || (b.warnings - a.warnings) || a.name.localeCompare(b.name));
             const recent = [...models].sort((a, b) => b.saved - a.saved).slice(0, 5);
@@ -189,7 +197,7 @@ export class Dashboards extends Common {
         }));
 
         // run the tests of a model (model), of a decision (decision), or every test (neither); the results are
-        // kept in the session, by model and decision, and shown on the dashboard
+        // kept in the session, by model and decision, and shown on the dashboard; a model's are its scenarios' last runs too
         router.post('/design/tests', this.isDesigner, handler(async (req, res) => {
             const { model, decision } = req.body ?? {};
             const dir = folder();
@@ -209,9 +217,21 @@ export class Dashboards extends Common {
                 for (const name of names) {
                     if (!files.includes(name + '.bpmn'))
                         continue;
-                    const results = [];
-                    for (const scenario of await loadScenarios(name))      // one after another: they may share state
-                        results.push(await runScenario(server, name, scenario, req.user?.userName));
+                    const results = [], scenarios = await loadScenarios(name);
+                    const { listeners } = await modelElements(FS.readFileSync(path.join(dir, name + '.bpmn'), 'utf8'));
+                    for (const scenario of scenarios) {      // one after another: they may share state
+                        const result = await runScenario(server, name, scenario, req.user?.userName);
+                        results.push(result);
+                        // this is the scenario's last run now, as in the Test tab: its instance replaces the one before
+                        for (const old of (scenario as any).runs ?? [])
+                            if (String(old.instanceId).startsWith('test-'))
+                                await server.dataStore.deleteInstances({ id: old.instanceId }).catch(() => { });
+                        (scenario as any).runs = result.instance ? [{
+                            instanceId: result.instance.id, at, how: 'dashboard', ok: result.ok, error: result.error, checks: result.checks, steps: result.steps,
+                            reached: [...reachedIn(result.instance.items, listeners)],
+                        }] : [];
+                    }
+                    await saveScenarios(name, scenarios, req.user?.userName);
                     note(runs.models, name, results);
                 }
             }

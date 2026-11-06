@@ -20,6 +20,7 @@ import { GUEST_CANNOT_SAVE, guestReadOnly } from '../userAccess/roles.js';
 import { zip } from './zip.js';
 import { loadDecisionTests, saveDecisionTests, checkDecisionTests, runDecisionTests } from '../testing/decisionTests.js';
 import { loadScenarios, saveScenarios, checkScenarios, runScenario, startTest, completeTest, findTest, summarize, expectChecks, checksAt, setTestData, restartTest } from '../testing/scenarios.js';
+import { withReached } from '../testing/modelCoverage.js';
 
 
 const awaitHandlerFactory = (middleware) => {
@@ -628,7 +629,7 @@ export class Model extends Common {
                 response.status(400).json({ error: problems.join('; ') });
                 return;
             }
-            await saveScenarios(request.params.process, scenarios, request.user?.userName);
+            await saveScenarios(request.params.process, await withReached(bpmnServer, request.params.process, scenarios), request.user?.userName);
             response.json({ saved: scenarios.length });
         }));
         // a guest (GUEST_ACCESS) reaches only its own test instances

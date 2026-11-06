@@ -14,6 +14,9 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **The Design dashboard's models** show each model's description, its saved versions and its **coverage** by its scenarios; the coverage is saved with the runs (`.runs/`), so it outlasts their instances, and says when the model has changed since. **Run** on the dashboard now keeps each scenario's run, as the Test tab does.
+- **Restore as copy**, in the History tab: a saved version becomes a new model, opened in its own tab; the model and its unsaved changes stay.
+- The Properties panel shows a **conditional event's condition**, saying that bpmn-server does not run the event, and a condition can be added to a flow out of an **event-based gateway**, as the engine evaluates it.
 - **The task API**, `/api2/tasks`: an application lists, claims and completes tasks for its users, whom it authenticates itself. Off
   unless `API_ACTING_USER_KEY` is set; that key opens no other route. Existing routes are unchanged.
 - **Coverage**, in the Test tab: how many of the model's nodes and flows the scenarios' last runs have reached; on the diagram, and what is left.

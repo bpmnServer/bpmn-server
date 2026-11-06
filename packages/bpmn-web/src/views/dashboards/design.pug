@@ -17,6 +17,16 @@ mixin run(r)
 		else
 			span.dash-badge.is-ok #{r.passed} passed
 
+//- what of a model its scenarios' last runs reached
+mixin coverage(m)
+	if m.coverage
+		- const c = m.coverage
+		span(title=`${c.nodes.tested} of ${c.nodes.total} nodes, ${c.flows.tested} of ${c.flows.total} flows`)= c.percent + '%'
+		if c.notRun
+			span.dash-muted  #{c.notRun} not run
+		if c.outOfDate
+			span.dash-muted(title='The model was saved after its last runs: run its tests again')  out of date
+
 //- a button that runs the tests of one model or decision
 mixin runButton(field, name)
 	form.inline(method='post', action='/dashboard/design/tests')
@@ -127,18 +137,25 @@ block dash
 						th Model
 						th Checks
 						th Tests
+						th Coverage
 						th Last run
 						th
+						th Versions
 						th Changed
 					each m in models
 						tr
-							td: a(href=`/model/edit/${encodeURIComponent(m.name)}`)= m.name
+							td
+								a(href=`/model/edit/${encodeURIComponent(m.name)}`)= m.name
+								if m.description
+									.dash-muted.model-description(title=m.description)= m.description
 							td: +checks(m)
 							td= m.tests ? m.tests + ' scenario' + (m.tests === 1 ? '' : 's') : ''
+							td: +coverage(m)
 							td: +run(runs.models[m.name])
 							td
 								if m.tests
 									+runButton('model', m.name)
+							td= m.versions || ''
 							td= m.fromNow
 			else
 				p.dash-empty No models in the models folder.

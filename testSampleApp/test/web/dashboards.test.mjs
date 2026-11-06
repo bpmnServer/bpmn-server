@@ -2,6 +2,8 @@
 // The dashboards: my work for every user, design for designers, administration for administrators.
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
 import { startWebApp, why } from '../support/webApp.mjs';
 
 let web, admin, designer, staff, manager;
@@ -65,6 +67,59 @@ test('design: every model with its checks and the decisions', async () => {
   const page = (await designer.get('/dashboard/design')).text;
   assert.match(card(page, 'models'), new RegExp(`/model/edit/${MODEL}`));
   assert.match(card(page, 'models'), /dash-badge/);
+});
+
+test('design: a model\'s description, its saved versions, and what its scenarios cover, saved with the runs', async () => {
+  const row = html => { const models = card(html, 'models'); const at = models.indexOf(`/model/edit/${MODEL}`); return models.slice(at, models.indexOf('</tr>', at)); };
+  const before = row((await designer.get('/dashboard/design')).text);
+  assert.match(before, /Test fixture for bpmn-web/, 'the description');
+  assert.doesNotMatch(before, /\d+%/, 'no scenarios, no coverage');
+
+  const scenario = name => ({ name, start: { data: { days: 2 } }, steps: [{ element: 'Submit', data: { days: 2, reason: 'rest' } }] });
+  const saved = await designer.request('PUT', `/model/scenarios/${MODEL}`, { json: { scenarios: [scenario('short')] } });
+  assert.equal(saved.status, 200, why(saved));
+  assert.match(row((await designer.get('/dashboard/design')).text), /1 not run/);
+
+  const run = await designer.post('/dashboard/design/tests', { model: MODEL });
+  assert.equal(run.status, 302, why(run));
+  const after = row((await designer.get('/dashboard/design')).text);
+  const percent = Number(/(\d+)%/.exec(after)?.[1]);
+  assert.ok(percent > 0 && percent < 100, `some of it: ${after}`);
+  assert.match(after, /title="\d+ of \d+ nodes, \d+ of \d+ flows"/);
+  assert.doesNotMatch(after, /not run|out of date/);
+
+  const { scenarios: [kept] } = JSON.parse((await designer.get(`/model/scenarios/${MODEL}`)).text);
+  assert.equal(kept.runs.length, 1);
+  assert.ok(kept.runs[0].reached.includes('Submit'), 'what it reached is kept with the run');
+  const first = kept.runs[0].instanceId;
+  await designer.post('/dashboard/design/tests', { model: MODEL });
+  const { scenarios: [again] } = JSON.parse((await designer.get(`/model/scenarios/${MODEL}`)).text);
+  assert.notEqual(again.runs[0].instanceId, first);
+  assert.equal(await web.bpmnServer.dataStore.findInstances({ id: first }, 'summary').then(list => list.length), 0, 'the run before is replaced, its instance deleted');
+
+  await web.bpmnServer.dataStore.deleteInstances({ id: again.runs[0].instanceId });
+  assert.match(row((await designer.get('/dashboard/design')).text), new RegExp(`${percent}%`), 'the coverage outlasts its instance');
+
+  const file = path.join(web.definitionsPath, `${MODEL}.bpmn`);
+  const source = fs.readFileSync(file, 'utf8');
+  await web.bpmnServer.definitions.save(MODEL, source.replace('name="Submit request"', 'name="Submit it"'), null, null, 'designer');
+  const edited = row((await designer.get('/dashboard/design')).text);
+  assert.match(edited, /out of date/, 'the model changed since its runs');
+  assert.match(edited, /<td>[1-9]\d*<\/td>/, 'its saved versions');
+  await designer.request('PUT', `/model/scenarios/${MODEL}`, { json: { scenarios: [] } });
+  await web.bpmnServer.definitions.save(MODEL, source, null, null, 'designer');
+});
+
+test('design: coverage counts as the Test tab does: an event sub-process is not an element, what is inside it is', async () => {
+  const { modelElements, modelDescription } = await import(new URL('../../../packages/bpmn-web/dist/testing/modelCoverage.js', import.meta.url).href);
+  const pools = `<?xml version="1.0"?><bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="d" targetNamespace="urn:t">
+    <bpmn:collaboration id="c"><bpmn:documentation>What it is for</bpmn:documentation><bpmn:participant id="pa" processRef="p" /></bpmn:collaboration>
+    <bpmn:process id="p"><bpmn:documentation>Older: one \\n two</bpmn:documentation></bpmn:process></bpmn:definitions>`;
+  assert.equal(await modelDescription(pools), 'What it is for', 'what the editor shows with nothing selected comes first');
+  assert.equal(await modelDescription(pools.replace('<bpmn:documentation>What it is for</bpmn:documentation>', '')), 'Older: one two', 'else the process\'s, its \\n read as a break');
+  const { elements, listeners } = await modelElements(fs.readFileSync(new URL('../../processes/Error events.bpmn', import.meta.url), 'utf8'));
+  assert.deepEqual([elements.nodes.length, elements.flows.length], [28, 22]);
+  assert.ok(listeners.size > 0);
 });
 
 test('administration: server, users, add a user, locks, backup', async () => {

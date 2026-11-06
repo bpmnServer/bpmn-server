@@ -26,5 +26,6 @@ src/tmp/
 # the model editor's source is JavaScript; its build output is generated (npm run build:modeler)
 !/modeler/**/*.js
 !/modeler/**/*.mjs
+!/src/testing/coverage.js
 /public/modeler/
 

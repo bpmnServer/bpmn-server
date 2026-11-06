@@ -406,6 +406,9 @@ export default class Report {
                 el('h1', {}, this._config.processName || 'Model'),
                 el('p', { class: 'report-summary' }, summary(issues))) : null,
             issueList(modelIssues),
+            // a model with pools: what the editor shows with nothing selected
+            (definitions?.get('rootElements') || []).filter(root => is(root, 'bpmn:Collaboration') && documentationOf(root))
+                .map(root => el('p', { class: 'report-documentation' }, documentationOf(root))),
             this.globalsSection(definitions),
             this.poolsSection(definitions),
             this.otherSection(definitions),

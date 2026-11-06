@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
-import { reachedIn } from '../../../packages/bpmn-web/modeler/src/testing/coverage.js';
+import { reachedIn } from '../../../packages/bpmn-web/src/testing/coverage.js';
 import { conditionValues, modelGraph } from '../../../packages/bpmn-web/modeler/src/testing/paths.js';
 import { startWebApp, PASSWORD } from '../support/webApp.mjs';
 

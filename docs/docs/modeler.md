@@ -135,7 +135,11 @@ Test runs are ordinary instances whose ids start with `test-`: run tests on a de
 out of the lists of instances and tasks; **Open instance** opens one.
 
 The **Design dashboard** (`/dashboard/design`) shows each model's and decision's tests with the last run's result
-(and why it failed), runs one model's or decision's tests, or **Run all tests**.
+(and why it failed), runs one model's or decision's tests, or **Run all tests**. Each model also shows its description
+(its process's documentation), its saved versions, and its **coverage**: what its scenarios' last runs reached, by the
+Test tab's rules. What a run reached is saved with it, so the coverage stays after its instance is deleted; it says how
+many scenarios have not run, and *out of date* when the model was saved after them. A **Run** here keeps each scenario's
+run, as the Test tab does.
 
 The scenarios are saved in the models folder, beside the model: `<model>.tests.json` (see below).
 
@@ -157,6 +161,8 @@ adds no version; the first save of a model saved before there was a history keep
 - **Restore** loads a saved version into the editor in place of its model, unsaved: the status says so, and the
   editor's unsaved changes are replaced (you are asked first). **Save** keeps it as the newest version; nothing in
   the history is removed, so a restore is undone by restoring the version before it.
+- **Copy** (**Restore as copy** when viewing a version) makes a saved version a new model, under a name you give, and opens it in its own tab. This
+  model, its history and the editor's unsaved changes stay as they are; a name already in use is refused.
 - **Delete** removes one saved version (you are asked first). The other versions keep their numbers, and the model
   stays as it is.
 - **Purge history** deletes every saved version of the model. The model itself stays.

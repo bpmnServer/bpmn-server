@@ -27,7 +27,7 @@
 // that reaches something new. Those are marked as generated until reviewed: they show a path runs, not that it is right.
 import { is } from 'bpmn-js/lib/util/ModelUtil';
 import { el, json, parse, parseValue, showValue, request, CHECK_OPS } from './common.js';
-import { coverageOf, reachedIn } from './coverage.js';
+import { coverageOf, reachedIn } from '../../../src/testing/coverage.js';
 import { conditionValues, explore, modelGraph, withValue } from './paths.js';
 
 const STATUSES = ['', 'end', 'wait', 'running', 'terminated'];
