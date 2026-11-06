@@ -198,6 +198,45 @@ test('Fill a gap: a value not in any form goes in the start data; a run that goe
     await close();
 });
 
+test('a receive task is a step: recorded, repeated by Run, and Test all paths goes past it', async () => {
+    const shape = (id, element, x, w = 36, h = 36) => `<bpmndi:BPMNShape id="${id}" bpmnElement="${element}"><dc:Bounds x="${x}" y="100" width="${w}" height="${h}" /></bpmndi:BPMNShape>`;
+    const edge = (id, flow, a, b) => `<bpmndi:BPMNEdge id="${id}" bpmnElement="${flow}"><di:waypoint x="${a}" y="118" /><di:waypoint x="${b}" y="118" /></bpmndi:BPMNEdge>`;
+    for (const name of ['receives', 'receives-2'])
+        fs.writeFileSync(path.join(web.definitionsPath, `${name}.bpmn`), `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="d" targetNamespace="urn:test">
+<bpmn:process id="Receives" isExecutable="true">
+  <bpmn:startEvent id="start" /><bpmn:receiveTask id="payment" name="Got Payment" /><bpmn:endEvent id="end" />
+  <bpmn:sequenceFlow id="f0" sourceRef="start" targetRef="payment" /><bpmn:sequenceFlow id="f1" sourceRef="payment" targetRef="end" />
+</bpmn:process>
+<bpmndi:BPMNDiagram id="dia"><bpmndi:BPMNPlane id="plane" bpmnElement="Receives">
+  ${shape('s1', 'start', 100)}${shape('s2', 'payment', 200, 100, 36)}${shape('s3', 'end', 350)}${edge('e0', 'f0', 136, 200)}${edge('e1', 'f1', 300, 350)}
+</bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>`);
+    await web.bpmnServer.definitions.rebuild();
+
+    const { page, errors, close } = await openTestTab('receives');
+    await page.click('.test-new-menu summary');
+    await page.click('.test-new');
+    await page.click('.test-run');
+    await page.click('.test-start-go');
+    const step = page.locator('.test-step.pending[data-element-id="payment"]');
+    await step.waitFor();
+    assert.equal(await page.locator('.test-inside').count(), 0, 'not "also waiting"');
+    assert.equal(await step.locator('.test-step-run').innerText(), 'Receive');
+    await step.locator('.test-step-run').click();
+    await page.waitForSelector('.test-summary.ok');
+    await page.click('.test-replay');
+    await page.waitForFunction(() => /passed/.test(document.querySelector('.test-status').textContent));
+    assert.match(await page.locator('.test-status').innerText(), /passed/);
+    assert.deepEqual(await gaps(page), []);
+    assert.deepEqual(errors, []);
+    await close();
+
+    const other = await openTestTab('receives-2');
+    assert.match(await testAllPaths(other.page), /Nothing is left unreached/);
+    assert.deepEqual(other.errors, []);
+    await other.close();
+});
+
 test('Test all paths on Error events: its conditions and form reach all of it, the error outside a sub-process too', async () => {
     const { page, errors, close } = await openTestTab('Error events');
     // the three event sub-processes have no item of their own, so they are not counted: what is inside them is

@@ -638,7 +638,7 @@ test('the scenario list resizes: dragged, within limits, by the keyboard; drawn 
     const { page, errors, close } = await openTestTab();
     const width = () => page.evaluate(() => Math.round(document.querySelector('.test-list').getBoundingClientRect().width));
     const drag = async by => {
-        const box = await page.locator('.test-list-resizer').boundingBox();
+        const box = await page.evaluate(() => { const { x, y } = document.querySelector('.test-list-resizer').getBoundingClientRect(); return { x, y }; });
         await page.mouse.move(box.x + 2, box.y + 50);
         await page.mouse.down();
         await page.mouse.move(box.x + 2 + by, box.y + 50, { steps: 4 });

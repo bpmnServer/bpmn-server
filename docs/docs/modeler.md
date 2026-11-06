@@ -102,7 +102,7 @@ Two commands close what is left:
   in, and the recording says which step is next, when the goal is reached, and when the run can no longer get there.
 
 1. **New** adds a scenario, and **Record** starts the process with its start data and shows what waits as the next
-   steps: user tasks (**Complete step**) and events (**Trigger event**), each with its data.
+   steps: user tasks (**Complete step**), receive tasks (**Receive**) and events (**Trigger event**), each with its data.
 2. Completing a step shows what waits next, until nothing waits: the recording then closes by itself and shows its
    result. The data chooses the branches; which step you complete first chooses between elements that wait together
    (the events after an event-based gateway, a boundary timer, parallel tasks). **Stop** ends it part way.

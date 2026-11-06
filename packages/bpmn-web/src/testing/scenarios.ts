@@ -242,13 +242,13 @@ export function summarize(instance) {
 }
 
 /**
- * The waiting items a scenario completes, as the instance page offers them: a user task (Execute) and an event
- * (Force: a message, signal or timer arriving). Other items wait on the process itself (a joining gateway for
+ * The waiting items a scenario completes: a user task, a receive task (its message arriving) and an event (a message,
+ * signal or timer arriving). Other items wait on the process itself (a joining gateway for
  * its other branches, a sub-process or call activity for what runs inside) and complete by themselves;
  * completing one by hand would force the process past where it waits.
  */
 export function isStep(item): boolean {
-    return item?.status === 'wait' && (item.type === 'bpmn:UserTask' || String(item.type).includes('Event'));
+    return item?.status === 'wait' && (item.type === 'bpmn:UserTask' || item.type === 'bpmn:ReceiveTask' || String(item.type).includes('Event'));
 }
 
 const clone = value => JSON.parse(JSON.stringify(value ?? {}));

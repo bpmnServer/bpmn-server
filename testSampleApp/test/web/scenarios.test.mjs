@@ -231,7 +231,7 @@ test('a joining gateway is not a step: it completes when its branches arrive', a
     assert.match(result.steps[1].error, /Join is not waiting; waiting: B/);
 });
 
-test('steps are user tasks and events, as the instance page offers them: a timer is forced', async () => {
+test('steps are user tasks, receive tasks and events: a timer is forced, a receive task gets its message', async () => {
     const fs = await import('node:fs'), path = await import('node:path');
     fs.writeFileSync(path.join(web.definitionsPath, 'timer.bpmn'), `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="d" targetNamespace="urn:test">
@@ -248,8 +248,8 @@ test('steps are user tasks and events, as the instance page offers them: a timer
     await web.bpmnServer.definitions.rebuild();
     const [result] = JSON.parse((await run({ processName: 'timer', scenario: { name: 'timer', steps: [{ element: 'Wait' }, { element: 'Receive' }] } })).text).results;
     assert.equal(result.steps[0].ok, true, 'the timer is forced');
-    assert.equal(result.steps[1].ok, false, 'a receive task is not a step');
-    assert.match(result.steps[1].error, /Receive is not waiting; the instance is/);
+    assert.equal(result.steps[1].ok, true, 'a receive task is a step');
+    assert.equal(result.instance.status, 'end');
 });
 
 test('testing is for designers', async () => {

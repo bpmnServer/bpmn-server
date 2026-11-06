@@ -90,8 +90,8 @@ writes to the model file and what bpmn-server does with it when the process runs
 #### Testing models
 
 The editor's **Test** tab keeps test scenarios for the model and runs them step by step. **Start** starts the
-process with the scenario's start data and shows the user tasks and events that wait as the next steps, each with
-its data and the instance page's button (**Execute** a user task, **Force** an event); running a step shows what
+process with the scenario's start data and shows the user tasks, receive tasks and events that wait as the next steps, each with
+its data and a button (**Complete step**, **Receive**, **Trigger event**); running a step shows what
 waits next, until nothing waits. The data chooses the branches, and which
 step you run first chooses between elements that wait together (events of an event-based gateway, a boundary
 timer, parallel tasks). The steps you run are saved as the scenario's, so **Run** and **Run all** repeat them on a
@@ -101,6 +101,11 @@ run is shown when it is opened; the next run replaces it. **Simulate** plays a r
 an element turns blue when it starts and green when it ends (a joining gateway waits for its last branch), orange
 if it still waits; numbered in the order they started; **Pause**, **Continue** and **Step** while it plays.
 Test runs are ordinary instances whose ids start with `test-`.
+
+**Coverage** says how many of the model's nodes and flows the scenarios' last runs have reached, on the diagram and as a
+list of what is left. **Test all paths** tries the paths by itself on real runs and saves a scenario for each one that
+reaches something new, marked as generated until reviewed; service and send tasks run for real, and it lists them first.
+**Fill**, on an element not reached, records a new scenario with that element as its goal.
 
 #### Element templates
 

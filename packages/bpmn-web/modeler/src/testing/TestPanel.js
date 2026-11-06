@@ -2,8 +2,8 @@
 //
 // One screen for a scenario: Run, Record, its result, its steps with their checks.
 //
-// Record opens the start form (the start event, its form fields or start data); starting it shows the user tasks
-// and events that wait as the next steps, each with its data (prefilled from the scenario, else from the element's
+// Record opens the start form (the start event, its form fields or start data); starting it shows the user tasks,
+// receive tasks and events that wait as the next steps, each with its data (prefilled from the scenario, else from the element's
 // form fields). Completing a step shows what waits after it, and so on until nothing waits: the recording then closes
 // by itself, and its result shows. The data chooses the
 // branches; which step is completed first chooses between elements that wait together. The steps completed are the
@@ -31,10 +31,10 @@ import { coverageOf, reachedIn } from './coverage.js';
 import { conditionValues, explore, modelGraph, withValue } from './paths.js';
 
 const STATUSES = ['', 'end', 'wait', 'running', 'terminated'];
-/** The steps, as the instance page offers them (src/testing/scenarios.ts isStep): user tasks and events. */
-const isStep = item => item.status === 'wait' && (item.type === 'bpmn:UserTask' || String(item.type).includes('Event'));
+/** The steps (src/testing/scenarios.ts isStep): user tasks, receive tasks and events. */
+const isStep = item => item.status === 'wait' && (item.type === 'bpmn:UserTask' || item.type === 'bpmn:ReceiveTask' || String(item.type).includes('Event'));
 /** The button that completes one. */
-const stepAction = item => item.type === 'bpmn:UserTask' ? 'Complete step' : 'Trigger event';
+const stepAction = item => item.type === 'bpmn:UserTask' ? 'Complete step' : item.type === 'bpmn:ReceiveTask' ? 'Receive' : 'Trigger event';
 const MARKERS = ['test-started', 'test-passed', 'test-waiting', 'test-failed', 'test-reached', 'test-untested', 'test-generated', 'test-goal-element'];
 const SIMULATION_STEP = 450;    // ms between the elements a simulation shows
 const HOW = { start: 'Recorded', run: 'Run', all: 'Run all', explore: 'Test all paths' };
@@ -337,7 +337,7 @@ export default class TestPanel {
         const instance = result?.instance;
         if (!instance?.id) return;
         const done = [...(instance.items || [])]
-            .filter(i => i.status === 'end' && (i.type === 'bpmn:UserTask' || (String(i.type).includes('Event') && i.type !== 'bpmn:StartEvent' && i.type !== 'bpmn:EndEvent')))
+            .filter(i => i.status === 'end' && (i.type === 'bpmn:UserTask' || i.type === 'bpmn:ReceiveTask' || (String(i.type).includes('Event') && i.type !== 'bpmn:StartEvent' && i.type !== 'bpmn:EndEvent')))
             .sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0))
             .map(i => ({ element: i.elementId, itemId: i.id, data: null, after: null, checks: [] }));
         const run = (scenario.runs || []).find(r => r.instanceId === instance.id) ?? { instanceId: instance.id, at: new Date().toISOString(), how: 'start', ok: result.ok };
