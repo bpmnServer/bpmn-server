@@ -13,7 +13,7 @@ import { bpmnToSvg } from './bpmnToSvg.js';
 
 import { BPMNServer, BPMNAdminAPI, verifyModel, Definition } from '../index.js';
 import { Common } from './common.js';
-import { modelNameGuard, isSafeModelName } from './middleware/modelName.js';
+import { modelNameGuard, isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
 import { currentGuest } from '../guests/guests.js';
 import { zip } from './zip.js';
@@ -42,6 +42,9 @@ export class Model extends Common {
 
 
         var router = express.Router();
+
+
+        guardModelParams(router);
 
         // Deny-by-default: model designer routes require a session, as a designer (or administrator).
         router.use(this.isAuthenticated, this.isDesigner, modelNameGuard);

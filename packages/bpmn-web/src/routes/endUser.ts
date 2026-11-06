@@ -11,6 +11,7 @@ import { ViewHelper } from './ViewHelper.js';
 import { rationaleEvents } from '../testing/rationale.js';
 import { notATest } from '../testing/scenarios.js';
 import { runProcess } from './runErrors.js';
+import { guardModelParams } from './middleware/modelName.js';
 
 
 var caseId = Math.floor(Math.random() * 10000);
@@ -43,6 +44,7 @@ var bpmnAPI;
 export class EndUser extends Common {
     config() {
         var router = express.Router();
+        guardModelParams(router);
 
         bpmnServer = this.webApp.bpmnServer;
         bpmnAPI = new BPMNAPI(bpmnServer);
