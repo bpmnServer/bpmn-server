@@ -432,6 +432,13 @@ features:
     docs: [packages/bpmn-mcp/README.md]
     code: [packages/bpmn-mcp/src/tools.mjs, packages/bpmn-mcp/src/index.mjs]
     tests: [testSampleApp/test/web/mcp.test.mjs]
+  - id: task-api
+    area: api
+    name: "The task API"
+    what: "/api2/tasks: an application lists, claims and completes tasks for its users, with a key of its own, off by default."
+    docs: [docs/docs/client-api.md, docs/docs/application-integration-design.md]
+    code: [packages/bpmn-web/src/routes/taskApi.ts]
+    tests: [testSampleApp/test/web/task-api.test.mjs]
   - id: rest-api
     area: api
     name: "The REST API"
