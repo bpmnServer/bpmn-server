@@ -352,7 +352,7 @@ test('debug: a check after a step; the variables changed; a step restarted and r
 
     await runStep(page, 'Submit', { days: 10 });
     const done = page.locator('.test-step.done[data-element-id="Submit"]');
-    assert.deepEqual(await done.locator('.test-step-checks li').allInnerTexts(), ['✓ after Submit: data.days > 5']);
+    assert.equal(await done.locator('.test-check-icon.ok').count(), 1, 'its shield is green as soon as the step is done');
     assert.deepEqual(await pendingNames(page), ['Approve request (Approve)'], 'a long leave: the manager');
 
     // the variables now, one added, applied
@@ -379,9 +379,52 @@ test('debug: a check after a step; the variables changed; a step restarted and r
     assert.equal(await page.locator('.test-debug-panel').count(), 0, 'closed with the recording');
 
     // why: the gateway's condition with the value it read
-    const why = await page.locator('.test-decisions').innerText();
-    assert.match(why, /action: not taken\s+why:[^]*condition[^]*days[^]*result: false \(days=2\)/);
+    const why = await page.locator('.test-rationale').innerText();
+    assert.deepEqual(await page.locator('.test-rationale th').allInnerTexts(), ['Seq #', 'At', 'Element ID', 'Name', 'Type', 'What happened'], 'as on the instance page, the why under its row');
+    assert.match(await page.locator('.test-rationale-decision.not').first().innerText(), /not taken/);
+    assert.match(why, /condition[^]*days[^]*result: false \(days=2\)/);
     assert.match(why, /takes its default flow/);
+    assert.deepEqual(errors, []);
+    await close();
+});
+
+test('which check failed: its shield is red, with what was found; kept with the run; a check changed since is not marked', async () => {
+    const { page, errors, close } = await openTestTab();
+    const atEnd = page.locator('.test-checks-editor .test-check-row');
+    await newScenario(page);
+    await page.fill('.test-name', 'Which check');
+    await addCheck(page, { kind: 'node', node: 'Submit' });
+    await addCheck(page, { kind: 'node', node: 'Submit', count: 0 });
+    await addCheck(page, { kind: 'status', status: 'wait' });
+    await addCheck(page, { kind: 'data', path: 'days', op: '=', value: 999 });
+    await addCheck(page, { kind: 'data', path: 'missing', op: '=', value: 1 });
+    while (await page.locator('.test-check-done').count()) await page.locator('.test-check-done').first().click();
+    assert.equal(await atEnd.locator('.test-check-icon.ok, .test-check-icon.failed').count(), 0, 'not run yet: not marked');
+
+    await startRun(page);
+    await runStep(page, 'Submit', { days: 2 });
+    await page.waitForSelector('.test-summary.failed');
+    const results = async () => atEnd.evaluateAll(rows => rows.map(r => [
+        r.querySelector('.test-check-icon').classList.contains('ok') ? 'ok' : r.querySelector('.test-check-icon').classList.contains('failed') ? 'failed' : 'none',
+        r.querySelector('.test-check-found')?.textContent ?? '']));
+    const expected = [['ok', ''], ['failed', 'Found: 1 time'], ['failed', 'Found: the instance has ended'], ['failed', 'Found: 2'], ['failed', 'Found: no value']];
+    assert.deepEqual(await results(), expected);
+    assert.equal(await page.locator('.test-summary-title').innerText(), '✗ Failed', 'the top stays Passed or Failed');
+
+    // kept with the run: after a reload too
+    await page.waitForTimeout(1000);
+    await page.reload();
+    await page.waitForSelector('#js-canvas .djs-shape');
+    await page.click('#js-tab-test');
+    await pick(page, 'Which check');
+    await page.waitForSelector('.test-summary.failed');
+    assert.deepEqual(await results(), expected);
+
+    // changed since the run: what the run found is not about this check
+    await atEnd.nth(3).locator('.test-check-edit').click();
+    await atEnd.nth(3).locator('.test-check-value').fill('2');
+    await atEnd.nth(3).locator('.test-check-done').click();
+    assert.deepEqual((await results())[3], ['none', '']);
     assert.deepEqual(errors, []);
     await close();
 });
@@ -479,6 +522,7 @@ test('Add as a check: an item or a value of the run, as it is there, under its s
     // just started, no step done: at the start, under the Start row, in words, times filled in
     await addItem('Submit');
     assert.deepEqual(await prose(atStart), ['Submit request (Submit) was reached 1 time, and is waiting']);
+    await atStart.locator('.test-check-icon.ok').waitFor();     // found as it is added
     assert.equal(await atEnd.count(), 0, 'not in the list at the end');
 
     // Edit opens its fields; Done back to words

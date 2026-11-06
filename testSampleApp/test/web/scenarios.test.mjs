@@ -136,7 +136,7 @@ test('a failed expectation and a step that can not be done are reported', async 
     assert.equal(result.ok, false);
     assert.deepEqual(result.checks.map(c => [c.what, c.ok, c.actual]), [
         ['data.approvedBy is "manager"', false, 'system'],
-        ['passes Approve', false, undefined]
+        ['passes Approve', false, 0]
     ]);
 
     [result] = JSON.parse((await run({ scenario: { name: 'wrong order', steps: [{ element: 'Approve' }] } })).text).results;

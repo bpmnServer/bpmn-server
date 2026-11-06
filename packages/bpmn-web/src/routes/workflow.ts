@@ -8,6 +8,7 @@ import { engineGroups } from '../userAccess/roles.js';
 import { answerMessage, Common } from './common.js';
 import { packageReadme } from './docs.js';
 import { ViewHelper } from './ViewHelper.js';
+import { rationaleEvents } from '../testing/rationale.js';
 import { runProcess } from './runErrors.js';
 import { labelFilterOf } from './labelFilter.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
@@ -574,6 +575,7 @@ async function instanceDetails(request,response,instanceId,version) {
             title: 'Instance Details',
             logs,items:items, svg,
             decorations, definition: defJson, lastItem,
+            rationale: rationaleEvents(logs, items, instance.startedAt),
             // the model as the Report shows it (report/view.js): the instance's own source, else the model's
             modelJson: JSON.stringify(instance.source || await definitions.getSource(instance.name)).replace(/</g, '\\u003c'),
         });

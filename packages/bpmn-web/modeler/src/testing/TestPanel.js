@@ -11,7 +11,8 @@
 // each time. Checks run after a step or at the end: a node (how often, in what status), a data value, the instance's
 // status. Add as a check, on an item or a value of the run shown, checks it is as it is there: where the run waits
 // (after the last step done, or at the start), else at the end. A check shows under its step, in words; Edit opens its
-// fields.
+// fields. Its shield says what the run shown found: green, or red with what was there; a check changed since is not
+// marked.
 // Each scenario keeps its runs (the latest RUNS_KEPT): when, how, the result and the instance, which stays in the
 // database; they are listed under the scenario, in the tree, and clicking one shows it.
 // The run shown has its commands by its result, each with a panel of its own under them. Simulate shows it on the
@@ -38,6 +39,8 @@ const CHECK_KINDS = [['node', 'Node'], ['data', 'Data'], ['status', 'Instance st
 const ITEM_STATUSES = ['', 'end', 'wait', 'start', 'terminated'];
 const STATE_WORDS = { end: 'has ended', wait: 'is waiting', start: 'has started', running: 'is running', terminated: 'was terminated' };
 const OP_WORDS = { '=': 'is', '<>': 'is not' };
+/** What makes a check that check: the same, whatever object holds it (a scenario's, or a result's). */
+const checkKey = c => JSON.stringify([c.at ?? 'end', c.step ?? '', c.kind, c.node ?? '', c.status ?? '', c.count ?? '', c.path ?? '', c.op ?? '=', c.value]);
 /** A step's icon, by its element's type (bpmn-font), the most particular first. */
 const ELEMENT_ICONS = [
     ['bpmn:UserTask', 'user-task'], ['bpmn:ServiceTask', 'service-task'], ['bpmn:ScriptTask', 'script-task'], ['bpmn:SendTask', 'send-task'],
@@ -73,7 +76,7 @@ export default class TestPanel {
         this._starting = null;          // the scenario whose start form is open
         this._debug = false;            // Debug: the variables shown and changed, steps restarted
         this._restarting = null;        // the done step whose Restart here is open: its index
-        this._opened = new Set(['inspect', 'data', 'items', 'decisions']);   // the parts shown open
+        this._opened = new Set(['inspect', 'data', 'items', 'rationale']);   // the parts shown open
         this._expanded = new Set();     // the scenarios whose runs the tree shows
         this._editing = new Set();      // the checks whose fields are open
         this._marked = [];
@@ -225,6 +228,7 @@ export default class TestPanel {
     /** Complete a waiting item: `input` is its data, or the JSON text of it. */
     async runStep(item, input) {
         const live = this._live;
+        await this._checking;   // a check just added is about the run as it is before this step
         const { value, error } = typeof input === 'string' ? parse(input) : { value: input };
         if (error) {
             this._status(`The data is not valid JSON: ${error}`, true);
@@ -883,7 +887,6 @@ export default class TestPanel {
             el('div', { class: 'test-step test-step-start' },
                 el('span', { class: 'test-step-name' }, this._elementIcon(startId ?? firstStart?.id), scenario.start?.only ? `This task alone: ${startName}` : `Start: ${startName}`),
                 el('code', { class: 'test-step-data' }, JSON.stringify(scenario.start?.data ?? {})),
-                live ? this._checkResults(live.startChecks) : null,
                 this._checkRows(scenario, c => c.at === 'start')),
             steps.map((step, i) => {
                 // a Run's result for this step; a stopped run has none for the steps after
@@ -897,7 +900,6 @@ export default class TestPanel {
                     live ? null : el('button', { type: 'button', class: 'test-step-remove', title: 'Remove this step and the ones after it',
                         onclick: () => { scenario.steps.splice(i); this._scheduleSave(); this.render(); } }, '✕'),
                     outcome?.error ? el('span', { class: 'test-error test-step-error' }, outcome.error) : null,
-                    live ? this._checkResults(step.checks) : null,
                     live && this._debug ? this._renderDoneDebug(live, step, i) : null,
                     first ? this._checkRows(scenario, c => c.at === 'after' && c.step === step.element) : null);
             }),
@@ -957,8 +959,7 @@ export default class TestPanel {
 
     /** Add as a check: this check, at that position; once it is there, says so. */
     _addCheckButton(scenario, check) {
-        const key = c => JSON.stringify([c.at ?? 'end', c.step ?? '', c.kind, c.node ?? '', c.status ?? '', c.count ?? '', c.path ?? '', c.op ?? '=', c.value]);
-        if ((scenario.checks ?? []).some(c => key(c) === key(check)))
+        if ((scenario.checks ?? []).some(c => checkKey(c) === checkKey(check)))
             return el('button', { type: 'button', class: 'test-add-check added', disabled: true, title: 'This check is in the scenario\'s checks' }, '✓ In checks');
         const where = check.at === 'after' ? `after ${this._label(check.step)}` : check.at === 'start' ? 'at the start' : 'at the end';
         return el('button', { type: 'button', class: 'test-add-check', title: `Check this is so ${where}`, onclick: e => {
@@ -966,8 +967,23 @@ export default class TestPanel {
             (scenario.checks ??= []).push(check);
             this._scheduleSave();
             this._status(`Check added, ${where}`);
+            this._checkNow(scenario, check);
             this.render();
         } }, 'Add as a check');
+    }
+
+    /** A check added while recording, under a step already done: what it finds now is that step's result. */
+    _checkNow(scenario, check) {
+        const live = this._live?.scenario === scenario && !this._live.checks ? this._live : null;
+        if (!live) return;
+        this._checking = (this._checking ?? Promise.resolve()).then(async () => {
+            const { checks } = await this._request('POST', '/model/test/check', { instanceId: live.instance.id, checks: [check],
+                ...(check.at === 'after' ? { after: { element: check.step } } : { at: check.at }) });
+            live.stepChecks.push(...checks);
+            if (check.at === 'after') (live.done.at(-1).checks ??= []).push(...checks);
+            else (live.startChecks ??= []).push(...checks);
+            this.render();
+        }).catch(err => this._status(err.message, true));
     }
 
     /** The run's data, a value a row: an object's values under their paths (a.b), each to Add as a check. */
@@ -998,8 +1014,7 @@ export default class TestPanel {
         return this._part('inspect', 'Inspect this run', [
             this._part('data', 'Data', this._renderData(scenario, instance, live), { class: 'test-data-part' }),
             this._renderItems(scenario, instance, live),
-            instance.decisions?.length ? this._part('decisions', `Why: the engine's decisions (${instance.decisions.length})`,
-                el('ol', {}, instance.decisions.map(d => el('li', {}, d))), { class: 'test-decisions' }) : null,
+            instance.rationale?.length ? this._part('rationale', 'Rationale', this._renderRationale(instance.rationale), { class: 'test-rationale' }) : null,
             this._part('log', `Log (${instance.logs?.length ?? 0} lines)`, el('pre', { class: 'test-log' }, (instance.logs || []).join('\n')))
         ], { class: 'test-inspect' });
     }
@@ -1163,13 +1178,17 @@ export default class TestPanel {
      * compared, the instance's status.
      */
     _checkRow(scenario, check, inPlace = false) {
+        const outcome = this._checkOutcome(scenario, check);
+        const icon = () => el('span', { class: `test-check-icon${outcome ? (outcome.ok ? ' ok' : ' failed') : ''}`,
+            title: outcome ? (outcome.ok ? 'Passed in this run' : 'Failed in this run') : 'A check', 'aria-hidden': 'true' });
         const remove = el('button', { type: 'button', class: 'test-check-remove', title: 'Remove this check',
             onclick: () => { scenario.checks.splice(scenario.checks.indexOf(check), 1); this._editing.delete(check); this._scheduleSave(); this.render(); } }, '✕');
         if (!this._editing.has(check)) {
             const where = inPlace ? '' : check.at === 'after' ? `After ${this._label(check.step)}: ` : check.at === 'start' ? 'At the start: ' : 'At the end: ';
             return el('div', { class: 'test-check-row test-check-read' },
-                el('span', { class: 'test-check-icon', title: 'A check', 'aria-hidden': 'true' }),
-                el('span', { class: 'test-check-prose' }, where, this._checkInWords(check)),
+                icon(),
+                el('span', { class: 'test-check-prose' }, where, this._checkInWords(check),
+                    outcome && !outcome.ok ? el('span', { class: 'test-check-found' }, this._foundInWords(check, outcome.actual)) : null),
                 el('button', { type: 'button', class: 'test-check-edit', onclick: () => { this._editing.add(check); this.render(); } }, 'Edit'),
                 remove);
         }
@@ -1201,7 +1220,7 @@ export default class TestPanel {
                 STATUSES.map(s => option(s, s || '(choose)', check.status ?? '')))
         ];
         return el('div', { class: 'test-check-row' },
-            el('span', { class: 'test-check-icon', title: 'A check', 'aria-hidden': 'true' }),
+            icon(),
             el('select', { class: 'test-check-at', 'aria-label': 'When', onchange: e => {
                 const value = e.target.value;
                 // it moves to where it now belongs
@@ -1234,6 +1253,42 @@ export default class TestPanel {
         return `${who} was reached${times}${check.status ? `, and ${STATE_WORDS[check.status] ?? `is ${check.status}`}` : ''}`;
     }
 
+    /** The Rationale, as the instance page shows it: what happened, in order; in a panel's width, the why under its row. */
+    _renderRationale(events) {
+        const what = e => {
+            const badge = e.raw === 'Waiting' ? 'wait' : e.raw === 'Aborted' || e.raw === 'Cancelled' ? 'error' : '';
+            return [e.word && badge ? el('span', { class: `test-rationale-badge ${badge}` }, e.word) : e.word,
+                ...e.decisions.filter(d => d.action).map(d => el('div', { class: `test-rationale-decision${d.not ? ' not' : ''}` }, d.action))];
+        };
+        const whys = e => e.decisions.filter(d => d.why);
+        return el('div', { class: 'test-rationale-scroll' }, el('table', {},
+            el('thead', {}, el('tr', {}, ['Seq #', 'At', 'Element ID', 'Name', 'Type', 'What happened'].map(h => el('th', { scope: 'col' }, h)))),
+            el('tbody', {}, events.flatMap(e => [
+                el('tr', { class: e.decisions.length ? 'chose' : '' },
+                    el('td', {}, e.seq ?? ''),
+                    el('td', {}, e.at),
+                    el('td', {}, e.id ?? ''),
+                    el('td', {}, e.name ?? ''),
+                    el('td', {}, (e.type ?? '').replace('bpmn:', '')),
+                    el('td', {}, what(e))),
+                whys(e).length ? el('tr', { class: 'chose' }, el('td', { colspan: 6, class: 'test-rationale-why' }, whys(e).map(d => el('div', {}, d.why)))) : null]))));
+    }
+
+    /** What the run shown found for a check, if it got there; a step repeated (a loop): a time it failed, if any. */
+    _checkOutcome(scenario, check) {
+        const live = this._live?.scenario === scenario ? this._live : null;
+        const results = (live ? live.checks ?? live.stepChecks : this._results.get(scenario)?.checks) ?? [];
+        const mine = results.filter(r => r.check && checkKey(r.check) === checkKey(check));
+        return mine.find(r => !r.ok) ?? mine[0] ?? null;
+    }
+
+    /** What a failed check found, in words. */
+    _foundInWords(check, actual) {
+        if (check.kind === 'status') return `Found: the instance ${STATE_WORDS[actual] ?? `is ${actual}`}`;
+        if (check.kind === 'data') return `Found: ${actual === undefined ? 'no value' : JSON.stringify(actual)}`;
+        return `Found: ${actual} time${actual === 1 ? '' : 's'}${check.status ? `, ${STATE_WORDS[check.status] ?? `is ${check.status}`}` : ''}`;
+    }
+
     /** The checks that belong at a place in the timeline. */
     _checkRows(scenario, belongs) {
         const checks = scenario.checks.filter(belongs);
@@ -1264,12 +1319,6 @@ export default class TestPanel {
         const details = el('details', { ...attrs, open: this._opened.has(key) }, el('summary', {}, summary), content);
         details.addEventListener('toggle', () => { if (details.open) this._opened.add(key); else this._opened.delete(key); });
         return details;
-    }
-
-    /** What checks found: a step's, in a run in progress. */
-    _checkResults(checks) {
-        return checks?.length ? el('ul', { class: 'test-checks test-step-checks' }, checks.map(c =>
-            el('li', { class: c.ok ? 'ok' : 'failed' }, `${c.ok ? '✓' : '✗'} ${c.what}`, !c.ok && c.actual !== undefined ? ` (is ${JSON.stringify(c.actual)})` : ''))) : null;
     }
 
     /** A run in progress: what waits now, each with its data and the button that completes it. */

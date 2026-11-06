@@ -57,6 +57,10 @@ and here
 - **Add as a check**, in the Test tab, on each item and each value of the run shown: a check that it is as it is there, under its step,
   where the run waits (after the last step done, or at the start), else at the end. A check can be **at the start**
   (`"at": "start"`): once the process has started, before any step.
+- **Which check failed**, in the Test tab: after a run, each check's shield under its step is green or red, and a failed check
+  says what was found. A scenario result's checks also carry `check`, and a node check's `actual` is always how many times it ran.
+- The Test tab's **Rationale**: the same table as the instance page, from the same code (was a plain list of the engine's decisions).
+  The steps are closer together.
 - **Full window** in the editor's panel: the Problems, Report, Test and History tabs over the whole page; Esc comes back.
 - **The Docker image** is built from the npm release, as users install it (`npx bpmn-server init`), not from a git
   clone: one version per image, no `.env` inside, production mode. `up.cmd` and `up.sh` also make a random `ADMIN_PASSWORD`
