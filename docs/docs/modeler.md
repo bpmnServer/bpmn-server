@@ -81,8 +81,28 @@ left out (they are not in the model file).
 The **Test** tab keeps test scenarios for the model and runs them. The scenarios are on the left, each with the result
 of its last run; the selected one is on the right: its result, its steps and its checks.
 
+The scenario list on the left can be made wider or narrower: drag the handle beside it, or focus the handle and use the left and right
+arrow keys. The editor remembers the width.
+
+**Coverage**, over the list, says how many of the model's nodes and flows the scenarios' last runs have reached. A scenario counts once
+it has an instance: only the engine knows what comes next, so steps written down prove nothing until they run. An element is
+*tested* when a run that passed reached it, and *reached* when only runs that failed or did not finish did. A boundary event or an event
+sub-process's start that never fired has not been reached. An event sub-process has no count of its own: what is inside it does.
+**Show on diagram** marks them, and **Not reached** lists what is left. Reaching an element does not say it was checked, and every
+element reached does not mean every path through them was.
+
+Two commands close what is left:
+
+- **Test all paths** tries the paths by itself on the saved model, up to 200 runs. At each waiting step it tries the form's choices
+  and the values the model's conditions compare with, and it saves a scenario for each path that reaches something new; the other
+  runs are deleted. Service and send tasks run for real on every try, and it lists them before you start. A saved scenario is marked
+  *auto*: it shows the path runs, not that it does the right thing, so what only those reach is counted apart until you add checks
+  and **Mark as reviewed**. A condition that calls something, or a value only a service sets, can't be read off the model.
+- **Fill**, on an element not reached, records a new scenario with that element as its goal. The data the way there asks is filled
+  in, and the recording says which step is next, when the goal is reached, and when the run can no longer get there.
+
 1. **New** adds a scenario, and **Record** starts the process with its start data and shows what waits as the next
-   steps: user tasks (**Complete step**) and events (**Trigger event**), each with its data.
+   steps: user tasks (**Complete step**), receive tasks (**Receive**) and events (**Trigger event**), each with its data.
 2. Completing a step shows what waits next, until nothing waits: the recording then closes by itself and shows its
    result. The data chooses the branches; which step you complete first chooses between elements that wait together
    (the events after an event-based gateway, a boundary timer, parallel tasks). **Stop** ends it part way.

@@ -633,3 +633,46 @@ test('Full window: the panel over the whole page, on any tab; Esc or Simulate co
     assert.deepEqual(errors, []);
     await close();
 });
+
+test('the scenario list resizes: dragged, within limits, by the keyboard; drawn again and after a reload it stays', async () => {
+    const { page, errors, close } = await openTestTab();
+    const width = () => page.evaluate(() => Math.round(document.querySelector('.test-list').getBoundingClientRect().width));
+    const drag = async by => {
+        const box = await page.evaluate(() => { const { x, y } = document.querySelector('.test-list-resizer').getBoundingClientRect(); return { x, y }; });
+        await page.mouse.move(box.x + 2, box.y + 50);
+        await page.mouse.down();
+        await page.mouse.move(box.x + 2 + by, box.y + 50, { steps: 4 });
+        await page.mouse.up();
+    };
+    assert.equal(await width(), 220);
+    await drag(120);
+    assert.equal(await width(), 340);
+
+    // drawn again: a new scenario redraws the panel
+    await newScenario(page);
+    assert.equal(await width(), 340);
+
+    // the limits: the list stays usable, and so does what is beside it
+    await drag(-1000);
+    assert.equal(await width(), 160);
+    await drag(5000);
+    const room = await page.locator('.test-main').evaluate(e => e.getBoundingClientRect().width);
+    assert.ok(room >= 235, `the scenario keeps its room: ${room}`);
+
+    await drag(-5000);
+    await page.locator('.test-list-resizer').focus();
+    await page.keyboard.press('ArrowRight');
+    assert.equal(await width(), 180);
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    assert.equal(await width(), 200);
+
+    await page.reload();
+    await page.waitForSelector('#js-canvas .djs-shape');
+    await page.click('#js-tab-test');
+    await page.waitForSelector('#js-test .test-panel');
+    assert.equal(await width(), 200);
+    assert.deepEqual(errors, []);
+    await close();
+});

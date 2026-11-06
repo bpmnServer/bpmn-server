@@ -9,12 +9,16 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
-- The editor's **Condition** follows its **Language**, which now offers FEEL: a FEEL condition is no longer marked as not compiling.
 
 ### Changed
 -->
 ## [Unreleased]
 ### Added
+- **Coverage**, in the Test tab: how many of the model's nodes and flows the scenarios' last runs have reached; on the diagram, and what is left.
+- **Test all paths**, in the Test tab: tries the model's paths on real runs, with each form's choices and the values in its conditions, and saves a scenario for each that reaches something new, marked as generated until reviewed. **Fill**, on an element not reached: records a new scenario with that element as its goal.
+- The Test tab can complete a **receive task**: a run stopped there, as *Also waiting, not a step here*, and could not go on.
+- The Test tab's scenario list can be resized: drag the handle beside it, or use the arrow keys. The width is remembered.
+- The editor's **Condition** follows its **Language**, which now offers FEEL: a FEEL condition is no longer marked as not compiling.
 - **The start page** (`/dashboard/start/<model>`): Run on a model with several start events a user can start, or
   a start form, asks first: each start event with its form, as My work shows them. It started at once, with no
   data, at whichever start event was drawn first.

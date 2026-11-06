@@ -2,8 +2,8 @@
 //
 // One screen for a scenario: Run, Record, its result, its steps with their checks.
 //
-// Record opens the start form (the start event, its form fields or start data); starting it shows the user tasks
-// and events that wait as the next steps, each with its data (prefilled from the scenario, else from the element's
+// Record opens the start form (the start event, its form fields or start data); starting it shows the user tasks,
+// receive tasks and events that wait as the next steps, each with its data (prefilled from the scenario, else from the element's
 // form fields). Completing a step shows what waits after it, and so on until nothing waits: the recording then closes
 // by itself, and its result shows. The data chooses the
 // branches; which step is completed first chooses between elements that wait together. The steps completed are the
@@ -20,17 +20,27 @@
 // step, or go back to a step done (Restart here: the engine's restart, from the save point the test instance keeps)
 // with the variables as they are to be there, and run it again. Inspect this run: its data, items, the engine's
 // decisions and log.
+//
+// Coverage has two ways to close what is not reached. Fill a gap, on an element not reached, records a new scenario with
+// that element as its goal: the data its conditions ask is filled in, and the run says which step leads there and whether
+// it can still get there. Test all paths tries the model's paths by itself (paths.js) and saves a scenario for each one
+// that reaches something new. Those are marked as generated until reviewed: they show a path runs, not that it is right.
 import { is } from 'bpmn-js/lib/util/ModelUtil';
 import { el, json, parse, parseValue, showValue, request, CHECK_OPS } from './common.js';
+import { coverageOf, reachedIn } from './coverage.js';
+import { conditionValues, explore, modelGraph, withValue } from './paths.js';
 
 const STATUSES = ['', 'end', 'wait', 'running', 'terminated'];
-/** The steps, as the instance page offers them (src/testing/scenarios.ts isStep): user tasks and events. */
-const isStep = item => item.status === 'wait' && (item.type === 'bpmn:UserTask' || String(item.type).includes('Event'));
+/** The steps (src/testing/scenarios.ts isStep): user tasks, receive tasks and events. */
+const isStep = item => item.status === 'wait' && (item.type === 'bpmn:UserTask' || item.type === 'bpmn:ReceiveTask' || String(item.type).includes('Event'));
 /** The button that completes one. */
-const stepAction = item => item.type === 'bpmn:UserTask' ? 'Complete step' : 'Trigger event';
-const MARKERS = ['test-started', 'test-passed', 'test-waiting', 'test-failed'];
+const stepAction = item => item.type === 'bpmn:UserTask' ? 'Complete step' : item.type === 'bpmn:ReceiveTask' ? 'Receive' : 'Trigger event';
+const MARKERS = ['test-started', 'test-passed', 'test-waiting', 'test-failed', 'test-reached', 'test-untested', 'test-generated', 'test-goal-element'];
 const SIMULATION_STEP = 450;    // ms between the elements a simulation shows
-const HOW = { start: 'Recorded', run: 'Run', all: 'Run all' };
+const HOW = { start: 'Recorded', run: 'Run', all: 'Run all', explore: 'Test all paths' };
+const MAX_TRIES = 200;          // Test all paths: the runs it may start
+const LIST_WIDTH_KEY = 'bpmn-web.modeler.test-list-width';
+const MIN_LIST_WIDTH = 160, MIN_MAIN_WIDTH = 240;
 
 const sameSteps = (a, b) => a.length <= b.length && a.every((step, i) => step.element === b[i].element);
 const clone = value => JSON.parse(JSON.stringify(value ?? {}));
@@ -76,14 +86,27 @@ export default class TestPanel {
         this._starting = null;          // the scenario whose start form is open
         this._debug = false;            // Debug: the variables shown and changed, steps restarted
         this._restarting = null;        // the done step whose Restart here is open: its index
-        this._opened = new Set(['inspect', 'data', 'items', 'rationale']);   // the parts shown open
+        this._opened = new Set(['inspect', 'data', 'items', 'rationale', 'gaps']);   // the parts shown open
         this._editing = new Set();      // the checks whose fields are open
         this._marked = [];
+        this._coverageOn = false;       // the diagram shows coverage, not the run shown
+        this._coverageItems = new Map();    // a kept run's instance id -> its items, null when it is gone
+        this._modelEdited = false;      // since the runs: coverage may be out of date
+        this._goal = null;              // Fill a gap: { scenario, id }, what its recording is to reach
+        this._exploring = null;         // Test all paths: { asked }, { tries, stop } while it runs, { report } after
         this._visible = false;
         this._loaded = false;
         if (!this._root)
             return;
-        eventBus.on('import.done', () => { if (this._visible) this.render(); });
+        eventBus.on('import.done', () => { this._modelEdited = false; if (this._visible) this.render(); });
+        eventBus.on('commandStack.changed', () => {
+            this._modelEdited = true;
+            if (this._visible) this._refreshCoverage();
+        });
+        try {
+            const width = Number(localStorage.getItem(LIST_WIDTH_KEY));
+            if (width) this._setListWidth(width);
+        } catch { /* no storage: the default width */ }
         // an edit not saved yet goes with the page
         window.addEventListener('pagehide', () => { if (this._saveTimer) this._save({ keepalive: true }); });
     }
@@ -197,6 +220,7 @@ export default class TestPanel {
 
     /** Start the process: what waits shows as the next steps. */
     async start(scenario = this._current) {
+        this._coverageOn = false;
         if (!scenario) return;
         this._starting = null;
         this._restarting = null;
@@ -313,7 +337,7 @@ export default class TestPanel {
         const instance = result?.instance;
         if (!instance?.id) return;
         const done = [...(instance.items || [])]
-            .filter(i => i.status === 'end' && (i.type === 'bpmn:UserTask' || (String(i.type).includes('Event') && i.type !== 'bpmn:StartEvent' && i.type !== 'bpmn:EndEvent')))
+            .filter(i => i.status === 'end' && (i.type === 'bpmn:UserTask' || i.type === 'bpmn:ReceiveTask' || (String(i.type).includes('Event') && i.type !== 'bpmn:StartEvent' && i.type !== 'bpmn:EndEvent')))
             .sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0))
             .map(i => ({ element: i.elementId, itemId: i.id, data: null, after: null, checks: [] }));
         const run = (scenario.runs || []).find(r => r.instanceId === instance.id) ?? { instanceId: instance.id, at: new Date().toISOString(), how: 'start', ok: result.ok };
@@ -416,6 +440,7 @@ export default class TestPanel {
     // ---- running the saved steps without stopping: a new instance
 
     async replay(scenario = this._current) {
+        this._coverageOn = false;
         if (!scenario) return;
         this._live = null;
         this._status(`Running ${scenario.name}…`);
@@ -456,6 +481,7 @@ export default class TestPanel {
                 this._keepResult(this._scenarios[i], result, 'all');
             });
             await this._save();
+            this._modelEdited = false;
             const failed = results.filter(r => !r.ok).length;
             this._status(failed ? `${failed} of ${results.length} failed` : `All ${results.length} passed`, failed > 0);
         } catch (err) {
@@ -548,7 +574,7 @@ export default class TestPanel {
             const next = saved.slice(live.done.length).find(s => s.element === item.elementId);
             if (next) return next.data ?? {};
         }
-        return this._formTemplate(item.elementId);
+        return { ...this._formTemplate(item.elementId), ...this._goalFormData(item.elementId) };
     }
 
     /** An element's icon, by its type. */
@@ -581,6 +607,7 @@ export default class TestPanel {
         if (sim) return sim.paused ? this._playSimulation() : this._pauseSimulation();
         const instance = this._lastRun();
         if (!instance) return;
+        this._coverageOn = false;
         this._config.showDiagram?.();       // it shows on the diagram
         this._unmark();
         this._simulation = { frames: this._simulationFrames(instance), index: 0, timer: null, paused: true };
@@ -742,6 +769,8 @@ export default class TestPanel {
     // ---- the diagram: the path taken
 
     _markCurrent() {
+        if (this._coverageOn)
+            return this._markCoverage();
         if (this._live?.scenario === this._current)
             this._mark(this._live.instance, this._live.failed ? [this._live.failed] : []);
         else {
@@ -756,6 +785,11 @@ export default class TestPanel {
         const failed = new Set(failedElements);
         for (const item of instance.items || [])
             this._markItem(item, failed.has(item.elementId));
+        const goal = this._goal?.scenario === this._current && this._elementRegistry.get(this._goal.id);
+        if (goal && !this._marked.includes(goal)) {
+            this._canvas.addMarker(goal, 'test-goal-element');
+            this._marked.push(goal);
+        }
     }
 
     /** Mark an item's element by how it ran; with a number, label it (a simulation). */
@@ -796,12 +830,53 @@ export default class TestPanel {
         const scrolled = this._root.querySelector('.test-main')?.scrollTop ?? 0;
         this._root.replaceChildren(el('div', { class: 'test-panel' },
             this._renderList(),
+            this._renderListResizer(),
             el('div', { class: 'test-main' },
                 el('div', { class: `test-status${keep[1] ? ' error' : ''}`, role: 'status' }, keep[0]),
                 this._current ? this._renderScenario(this._current) :
                     el('p', { class: 'test-hint' }, 'A scenario tests the process: add one with New, then Record it by doing its steps.'))));
         const main = this._root.querySelector('.test-main');
         if (main) main.scrollTop = scrolled;
+    }
+
+    /** The list's width, on the tab's root: it stays when the panel is drawn again. */
+    _setListWidth(width) {
+        const room = this._root.clientWidth ? this._root.clientWidth - MIN_MAIN_WIDTH : Infinity;
+        this._listWidth = Math.round(Math.max(MIN_LIST_WIDTH, Math.min(width, room)));
+        this._root.style.setProperty('--test-list-width', `${this._listWidth}px`);
+    }
+
+    _saveListWidth() {
+        try {
+            localStorage.setItem(LIST_WIDTH_KEY, String(this._listWidth));
+        } catch { /* no storage: this page only */ }
+    }
+
+    /** The handle between the list and the scenario: drag it, or use the arrow keys. */
+    _renderListResizer() {
+        const current = () => this._root.querySelector('.test-list').getBoundingClientRect().width;
+        return el('div', { class: 'test-list-resizer', role: 'separator', 'aria-orientation': 'vertical', 'aria-label': 'Resize the scenario list', tabindex: '0',
+            onpointerdown: down => {
+                down.preventDefault();
+                const startX = down.clientX, startWidth = current();
+                this._root.classList.add('test-resizing');
+                const move = event => this._setListWidth(startWidth + event.clientX - startX);
+                const up = () => {
+                    window.removeEventListener('pointermove', move);
+                    window.removeEventListener('pointerup', up);
+                    this._root.classList.remove('test-resizing');
+                    this._saveListWidth();
+                };
+                window.addEventListener('pointermove', move);
+                window.addEventListener('pointerup', up);
+            },
+            onkeydown: event => {
+                const by = { ArrowLeft: -20, ArrowRight: 20 }[event.key];
+                if (!by) return;
+                event.preventDefault();
+                this._setListWidth(current() + by);
+                this._saveListWidth();
+            } });
     }
 
     /** A drop-down of commands: [label, class, what it does, title, disabled]. It closes on a choice, or when left. */
@@ -848,6 +923,8 @@ export default class TestPanel {
                         if (this._live?.scenario === scenario) this._live = null;
                         changed(); this._select(this._scenarios[0] ?? null);
                     }, 'Delete this scenario and forget its runs']])),
+            scenario.generated ? this._renderGenerated(scenario) : null,
+            this._goal?.scenario === scenario ? this._renderGoal(scenario, live) : null,
             this._starting === scenario ? this._renderStart(scenario, starts) : null,
             this._renderSummary(scenario, live),
             this._renderSimulation(),
@@ -1023,6 +1100,8 @@ export default class TestPanel {
 
     _select(scenario) {
         this._stopSimulation();
+        this._coverageOn = false;
+        if (this._goal?.scenario !== scenario) this._goal = null;
         this._current = scenario;
         this.render();
         this._markCurrent();
@@ -1062,8 +1141,368 @@ export default class TestPanel {
                     title: 'Run every scenario\'s saved steps' }, 'Run all'),
                 this._menu('⋯', 'test-list-menu', [
                     ['Delete all runs', 'test-clear-all', () => this.clearAll(), 'Delete every run of these scenarios, and their instances (the scenarios stay)',
-                        !this._scenarios.some(s => s.runs?.length)]])),
+                        !this._scenarios.some(s => s.runs?.length)],
+                    ['Delete generated scenarios', 'test-delete-generated', () => this.deleteGenerated(), 'Delete the scenarios Test all paths saved that have not been reviewed, and their runs',
+                        !this._scenarios.some(s => s.generated)]])),
+            this._renderCoverage(),
             el('ul', { class: 'test-tree' }, this._scenarios.map(scenario => this._renderScenarioRow(scenario))));
+    }
+
+    // ---- coverage: how much of the model the scenarios' last runs have reached
+
+    /** The last run of each scenario that has an instance, and how many have none, or one still to fetch. */
+    _coverageRuns() {
+        const runs = [], toFetch = [];
+        let notRun = 0;
+        for (const scenario of this._scenarios) {
+            const live = this._live?.scenario === scenario ? this._live : null;
+            const result = this._results.get(scenario);
+            const kept = scenario.runs?.[0];
+            const generated = !!scenario.generated;
+            if (live) runs.push({ ok: live.checks ? live.checks.every(c => c.ok) : null, items: live.instance?.items, generated });
+            else if (result?.instance?.items) runs.push({ ok: result.ok, items: result.instance.items, generated });
+            else if (!kept) notRun++;
+            else if (!this._coverageItems.has(kept.instanceId)) toFetch.push(kept.instanceId);
+            else if (this._coverageItems.get(kept.instanceId)) runs.push({ ok: kept.ok, items: this._coverageItems.get(kept.instanceId), generated });
+            else notRun++;      // its instance is gone
+        }
+        return { runs, notRun, toFetch };
+    }
+
+    /** The kept runs' instances this session has not seen; then what they add. */
+    _fetchCoverage(ids) {
+        for (const id of ids) {
+            this._coverageItems.set(id, null);
+            this._request('GET', `/model/test/instance/${encodeURIComponent(id)}`)
+                .then(({ instance }) => this._coverageItems.set(id, instance?.items ?? null))
+                .catch(() => this._coverageItems.set(id, null))
+                .finally(() => {
+                    this._coverageLoading.delete(id);
+                    this._refreshCoverage();
+                });
+            (this._coverageLoading ??= new Set()).add(id);
+        }
+    }
+
+    _coverage() {
+        const { runs, notRun, toFetch } = this._coverageRuns();
+        if (toFetch.length) this._fetchCoverage(toFetch);
+        const ids = types => this._elements(types).filter(e => !e.get('triggeredByEvent')).map(e => e.id);  // an event sub-process has no item: what is inside counts
+        return { ...coverageOf({ nodes: ids(['bpmn:FlowNode']), flows: ids(['bpmn:SequenceFlow']) }, runs, this._listeners()), notRun };
+    }
+
+    _refreshCoverage() {
+        const block = this._root?.querySelector('.test-coverage');
+        const fresh = this._renderCoverage();
+        if (block && fresh) block.replaceWith(fresh);
+        if (this._coverageOn && this._visible) this._markCoverage();
+    }
+
+    /** An element of a gap, in words: a flow by where it goes. */
+    _gapLabel(id) {
+        const bo = this._elements().find(e => e.id === id);
+        if (!bo?.sourceRef) return this._label(id);
+        const name = bo.get('name');
+        return `${name ? `'${name}': ` : 'Flow: '}${bo.sourceRef.get('name') || bo.sourceRef.id} → ${bo.targetRef.get('name') || bo.targetRef.id}`;
+    }
+
+    _renderCoverage() {
+        if (!this._elements().length) return null;
+        const { nodes, flows, notRun } = this._coverage();
+        const line = (which, label, of) => el('div', { class: `test-coverage-line test-coverage-${which}` },
+            el('span', {}, label), el('strong', {}, `${of.tested} of ${of.total}`));
+        const notPassed = nodes.reached + flows.reached;
+        const gaps = [...nodes.elements, ...flows.elements].filter(e => e.state === 'untested');
+        const generated = nodes.generated + flows.generated;
+        return el('div', { class: `test-coverage${this._coverageLoading?.size ? ' test-coverage-loading' : ''}` },
+            el('h5', {}, 'Coverage'),
+            line('nodes', 'Nodes', nodes),
+            line('flows', 'Flows', flows),
+            generated ? el('p', { class: 'test-coverage-note test-coverage-generated' }, `${generated} of these only by generated scenarios, not reviewed`) : null,
+            notPassed ? el('p', { class: 'test-coverage-note test-coverage-reached' }, `${notPassed} reached, but not in a run that passed`) : null,
+            notRun ? el('p', { class: 'test-coverage-note' }, `${notRun} scenario${notRun === 1 ? ' has' : 's have'} not run`) : null,
+            this._modelEdited ? el('p', { class: 'test-coverage-note test-coverage-stale' }, 'The model changed: Run all to bring this up to date') : null,
+            el('button', { type: 'button', class: `test-coverage-show${this._coverageOn ? ' on' : ''}`, 'aria-pressed': String(this._coverageOn),
+                title: 'Green: tested. Light green: only by generated scenarios, not reviewed. Orange: reached, but not in a run that passed. Purple, dashed: not reached by any scenario',
+                onclick: () => this._toggleCoverage() }, this._coverageOn ? 'Hide on diagram' : 'Show on diagram'),
+            this._renderExplore(gaps),
+            gaps.length ? this._part('gaps', `Not reached (${gaps.length})`, el('ul', { class: 'test-gaps' }, gaps.map(({ id }) =>
+                el('li', { class: 'test-gap', 'data-element-id': id },
+                    el('span', { class: 'test-gap-name', title: 'Show it on the diagram', onclick: () => this._showGap(id) }, this._gapLabel(id)),
+                    el('button', { type: 'button', class: 'test-gap-fill', disabled: Boolean(this._live) || Boolean(this._exploring?.stop), title: 'Record a new scenario that reaches this',
+                        onclick: () => this.fillGap(id) }, 'Fill')))), { class: 'test-coverage-gaps' }) : null);
+    }
+
+    _toggleCoverage() {
+        this._coverageOn = !this._coverageOn;
+        if (this._coverageOn) {
+            this._stopSimulation();
+            this._config.showDiagram?.();
+        }
+        this._markCurrent();
+        this._refreshCoverage();
+    }
+
+    _showGap(id) {
+        const element = this._elementRegistry.get(id);
+        if (!element) return;
+        this._config.showDiagram?.();
+        this._selection.select(element);
+        this._canvas.scrollToElement?.(element);
+    }
+
+    _markCoverage() {
+        this._unmark();
+        if (!this._visible) return;
+        const { nodes, flows } = this._coverage();
+        const MARK = { tested: 'test-passed', generated: 'test-generated', reached: 'test-reached', untested: 'test-untested' };
+        for (const { id, state } of [...nodes.elements, ...flows.elements]) {
+            const element = this._elementRegistry.get(id);
+            if (!element) continue;
+            this._canvas.addMarker(element, MARK[state]);
+            this._marked.push(element);
+        }
+    }
+
+    // ---- the model as Fill a gap and Test all paths read it
+
+    /** What paths.js needs of the model's elements. */
+    _modelElements() {
+        const THROW = ['bpmn:EndEvent', 'bpmn:IntermediateThrowEvent'];
+        const signals = bo => (bo.get('eventDefinitions') ?? []).map(def => {
+            const kind = def.$type.replace('bpmn:', '').replace('EventDefinition', '').toLowerCase();
+            return `${kind}:${def.errorRef?.id ?? def.escalationRef?.id ?? def.signalRef?.id ?? (kind === 'link' ? def.name ?? '' : '')}`;
+        });
+        return this._elements().map(bo => {
+            const isEvent = is(bo, 'bpmn:Event');
+            return {
+                id: bo.id, source: bo.sourceRef?.id, target: bo.targetRef?.id, condition: bo.conditionExpression?.body,
+                parent: is(bo.$parent, 'bpmn:SubProcess') ? bo.$parent.id : undefined, attachedTo: bo.attachedToRef?.id,
+                isStart: is(bo, 'bpmn:StartEvent'), triggered: is(bo, 'bpmn:SubProcess') && !!bo.get('triggeredByEvent'),
+                throws: isEvent && THROW.some(t => is(bo, t)) ? signals(bo) : [],
+                catches: isEvent && !THROW.some(t => is(bo, t)) ? signals(bo) : [],
+            };
+        });
+    }
+
+    /** What listens from the start, and fires or not: boundary events, event sub-processes' starts. Each with its flows out. */
+    _listeners() {
+        const flows = this._elements(['bpmn:SequenceFlow']);
+        return new Map(this._elements(['bpmn:BoundaryEvent', 'bpmn:StartEvent'])
+            .filter(e => is(e, 'bpmn:BoundaryEvent') || e.$parent.get('triggeredByEvent'))
+            .map(e => [e.id, flows.filter(f => f.sourceRef === e).map(f => f.id)]));
+    }
+
+    /** The process's own start events. */
+    _starts() {
+        return this._elements(['bpmn:StartEvent']).filter(e => is(e.$parent, 'bpmn:Process'));
+    }
+
+    /** The form fields of every element. */
+    _allFieldIds() {
+        return new Set(this._elements().flatMap(e => this._formFields(e.id).map(f => f.id)));
+    }
+
+    // ---- Fill a gap: a recording with a goal
+
+    /** A new scenario to reach an element: the start form opens, with the data the way there asks. */
+    fillGap(id) {
+        const graph = modelGraph(this._modelElements());
+        const start = this._starts().find(s => graph.way([s.id], id)) ?? this._starts()[0];
+        const fields = this._allFieldIds();
+        const asked = Object.entries(graph.valuesOn(graph.way([start?.id], id))).filter(([path]) => !fields.has(path));
+        const scenario = {
+            name: `Reach ${this._gapLabel(id)}`,
+            start: { ...(this._starts().length > 1 ? { startNodeId: start.id } : {}), data: asked.reduce((data, [path, value]) => withValue(data, path, value), {}) },
+            steps: [], checks: []
+        };
+        this._scenarios.push(scenario);
+        this._scheduleSave();
+        this._live = null;
+        this._goal = { scenario, id };
+        this._select(scenario);
+        this.openStart(scenario);
+        this._showGap(id);
+    }
+
+    /** The form values the way to the goal asks of this element. */
+    _goalFormData(elementId) {
+        if (!this._goal) return {};
+        const graph = modelGraph(this._modelElements());
+        const fields = new Set(this._formFields(elementId).map(f => f.id));
+        return Object.fromEntries(Object.entries(graph.valuesOn(graph.way([elementId], this._goal.id))).filter(([path]) => fields.has(path)));
+    }
+
+    /** Of the steps that wait, the one closest to the goal. */
+    _towardsGoal(live) {
+        const graph = modelGraph(this._modelElements());
+        const ways = this._waiting(live.instance).map(item => ({ item, way: graph.way([item.elementId], this._goal.id) })).filter(w => w.way);
+        return ways.sort((a, b) => a.way.length - b.way.length)[0]?.item ?? null;
+    }
+
+    /** Where the recording stands with its goal, and what to do next. */
+    _renderGoal(scenario, live) {
+        const { id } = this._goal;
+        const name = this._gapLabel(id);
+        const graph = modelGraph(this._modelElements());
+        const instance = live?.instance ?? this._results.get(scenario)?.instance;
+        const reached = reachedIn(instance?.items, this._listeners()).has(id);
+        const waits = (instance?.items ?? []).filter(i => i.status === 'wait').map(i => i.elementId);
+        const known = this._starts().some(s => graph.canReach([s.id], id));
+        const again = el('button', { type: 'button', class: 'test-goal-again', onclick: () => this.openStart(scenario) }, 'Try again');
+        let state = 'open', text;
+        if (!instance) text = `Goal: reach ${name}. The start data below is what the way there asks; change it if you need to.`;
+        else if (reached) {
+            state = 'reached';
+            text = waits.length ? `✓ Reached ${name}. Finish the run to save it as this scenario's steps.` : `✓ Reached ${name}.`;
+        }
+        else if (!waits.length) { state = 'lost'; text = `This run ended without reaching ${name}.`; }
+        else if (known && !graph.canReach(waits, id)) { state = 'lost'; text = `${name} can no longer be reached from where this run is.`; }
+        else {
+            const next = this._towardsGoal(live ?? { instance });
+            text = next ? `Goal: reach ${name}. Next: ${this._label(next.elementId, next.name)}.` : `Goal: reach ${name}.`;
+        }
+        return el('div', { class: `test-goal ${state}`, role: 'status' }, el('span', { class: 'test-goal-text' }, text), state === 'lost' ? again : null);
+    }
+
+    // ---- Test all paths
+
+    /** The values to try for an element's data: its form as it starts, then each field's choices and what the conditions ask. */
+    _pathOptions(elementId, asked) {
+        const base = this._formTemplate(elementId);
+        const options = [base];
+        for (const field of this._formFields(elementId)) {
+            if (field.type === 'enum') field.values.forEach(v => options.push({ ...base, [field.id]: v.id }));
+            if (field.type === 'boolean') options.push({ ...base, [field.id]: true });
+            (asked.get(field.id) ?? []).forEach(value => options.push({ ...base, [field.id]: value }));
+        }
+        const seen = new Set();
+        return options.filter(option => {
+            const key = JSON.stringify(option);
+            return seen.has(key) ? false : (seen.add(key), true);
+        });
+    }
+
+    /** Test all paths' plan, from the model: the starts to try and the values to try at each step. */
+    _explorePlan() {
+        const asked = new Map();
+        for (const bo of this._elements(['bpmn:SequenceFlow']))
+            for (const { path, when, otherwise } of conditionValues(bo.conditionExpression?.body))
+                asked.set(path, [...(asked.get(path) ?? []), when, otherwise]);
+        const fields = this._allFieldIds();
+        const notInForms = [...asked].filter(([path]) => !fields.has(path));
+        const starts = this._starts().flatMap(s => {
+            const start = this._starts().length > 1 ? { startNodeId: s.id } : {};
+            const base = this._pathOptions(s.id, asked);
+            const set = notInForms.flatMap(([path, values]) => [...new Set(values)].map(value => withValue(base[0], path, value)));
+            return [...base, ...set].map(data => ({ ...start, data }));
+        });
+        return { asked, starts, variables: new Set([...asked.keys()].map(path => path.split('.').at(-1))) };
+    }
+
+    /** Test all paths' part of Coverage: the command, what it will run before it does, how far it is, and what it did. */
+    _renderExplore(gaps) {
+        const state = this._exploring;
+        if (state?.stop)
+            return el('div', { class: 'test-explore running', role: 'status' }, el('span', {}, `Trying paths: ${state.tries} of up to ${MAX_TRIES} runs`),
+                el('button', { type: 'button', class: 'test-explore-stop', onclick: () => { state.stop.asked = true; } }, 'Stop'));
+        if (state?.asked) {
+            const real = this._elements(['bpmn:ServiceTask', 'bpmn:SendTask']).map(bo => bo.get('name') || bo.id);
+            return el('div', { class: 'test-explore' },
+                el('p', {}, `Runs up to ${MAX_TRIES} instances of the saved model, trying each form's choices and the values in its conditions. A scenario is saved for each path that reaches something new; the other runs are deleted.`),
+                real.length ? el('p', { class: 'test-explore-real' }, `These run for real on every try: ${real.join(', ')}.`) : null,
+                el('div', { class: 'test-explore-actions' },
+                    el('button', { type: 'button', class: 'test-explore-go primary', onclick: () => this.testAllPaths(gaps.map(g => g.id)) }, 'Start'),
+                    el('button', { type: 'button', class: 'test-explore-cancel', onclick: () => { this._exploring = null; this._refreshCoverage(); } }, 'Cancel')));
+        }
+        return [
+            state?.report ? el('p', { class: 'test-explore-report', role: 'status' }, state.report) : null,
+            gaps.length ? el('button', { type: 'button', class: 'test-explore-open', disabled: Boolean(this._live), title: 'Try the model\'s paths by itself, and save a scenario for each one that reaches something new',
+                onclick: () => { this._exploring = { asked: true }; this._refreshCoverage(); } }, 'Test all paths') : null];
+    }
+
+    /** Try the paths; a scenario for each that reaches something of `goal`, with its run. */
+    async testAllPaths(goal) {
+        const state = this._exploring = { tries: 0, stop: { asked: false } };
+        this._refreshCoverage();
+        const processName = this._config.processName;
+        let report;
+        try {
+            await this._modelSaved();
+            await this._save();
+            const { asked, starts, variables } = this._explorePlan();
+            const run = async path => {
+                const { results } = await this._request('POST', '/model/test/run', { processName, scenario: { name: 'Test all paths', start: path.start, steps: path.steps } });
+                if (results[0].instance?.id) await this._request('DELETE', `/model/test/instance/${encodeURIComponent(results[0].instance.id)}`).catch(() => { });
+                return results[0];
+            };
+            const found = await explore({
+                starts, goal, variables, run, maxTries: MAX_TRIES, isStep,
+                reachedBy: items => reachedIn(items, this._listeners()),
+                options: element => this._pathOptions(element, asked),
+                stopped: () => state.stop.asked,
+                progress: ({ tries }) => { state.tries = tries; this._refreshCoverage(); }
+            });
+            for (const one of found.paths) {
+                const scenario = { name: this._generatedName(one), generated: true, start: one.path.start, steps: one.path.steps, checks: [] };
+                const { results } = await this._request('POST', '/model/test/run', { processName, scenario });
+                this._scenarios.push(scenario);
+                this._results.set(scenario, results[0]);
+                this._keepResult(scenario, results[0], 'explore');
+            }
+            await this._save();
+            this._modelEdited = false;
+            this._current ??= this._scenarios[0] ?? null;
+            const [first] = found.failures;
+            const why = first ? ` ${found.failures.length} of the runs failed. The first, with start data ${JSON.stringify(first.path.start.data)}${first.path.steps.length ? ` after ${first.path.steps.length} steps` : ''}: ${first.error}` : '';
+            const ended = found.ended === 'stopped' ? 'Stopped. ' : found.ended === 'limit' ? `It stopped at the limit of ${MAX_TRIES} runs. ` : '';
+            const left = found.left.length ? `${found.left.length} still not reached: use Fill on those.` : 'Nothing is left unreached.';
+            report = `${ended}${found.paths.length} scenario${found.paths.length === 1 ? '' : 's'} added, from ${found.tries} runs. ${left}${why}`;
+        } catch (err) {
+            report = `Test all paths stopped: ${err.message}`;
+        }
+        this._exploring = { report };
+        this.render();
+        this._markCurrent();
+    }
+
+    /** A generated scenario's name: what it was kept for. */
+    _generatedName(one) {
+        const named = one.adds.map(id => this._elements().find(e => e.id === id)).filter(bo => bo && !bo.sourceRef && bo.get('name'));
+        const what = named.at(-1)?.get('name') ?? this._gapLabel(one.adds.at(-1));
+        const taken = name => this._scenarios.some(s => s.name === name);
+        let name = `Path to ${what}`;
+        for (let n = 2; taken(name); n++) name = `Path to ${what} (${n})`;
+        return name;
+    }
+
+    /** A generated scenario's note: what it shows, and Mark as reviewed. */
+    _renderGenerated(scenario) {
+        return el('div', { class: 'test-generated-note' },
+            el('span', {}, 'Generated by Test all paths: it shows this path runs, not that it does the right thing. Add checks, then mark it as reviewed.'),
+            el('button', { type: 'button', class: 'test-generated-review', onclick: () => {
+                delete scenario.generated;
+                this._scheduleSave();
+                this.render();
+                this._markCurrent();
+            } }, 'Mark as reviewed'));
+    }
+
+    /** The generated scenarios not reviewed: deleted, with their runs. */
+    async deleteGenerated() {
+        const generated = this._scenarios.filter(s => s.generated);
+        if (!confirm(`Delete the ${generated.length} generated scenario${generated.length === 1 ? '' : 's'} not reviewed, and their runs?`)) return;
+        for (const scenario of generated) {
+            for (const run of scenario.runs ?? [])
+                await this._request('DELETE', `/model/test/instance/${encodeURIComponent(run.instanceId)}`).catch(() => { });
+            this._results.delete(scenario);
+        }
+        this._scenarios = this._scenarios.filter(s => !s.generated);
+        if (!this._scenarios.includes(this._current)) this._current = this._scenarios[0] ?? null;
+        await this._save();
+        this._status(`${generated.length} generated scenario${generated.length === 1 ? '' : 's'} deleted`);
+        this.render();
+        this._markCurrent();
     }
 
     /** A scenario in the list: its result and name. */
@@ -1074,7 +1513,8 @@ export default class TestPanel {
             el('div', { class: `test-tree-row${scenario === this._current ? ' selected' : ''}`, onclick: () => this._select(scenario) },
                 el('span', { class: `test-badge ${ok === true ? 'ok' : ok === false ? 'failed' : ''}`, title: ok === true ? 'passed' : ok === false ? 'failed' : 'not run' },
                     ok === true ? '✓' : ok === false ? '✗' : '·'),
-                el('span', { class: 'test-tree-name' }, scenario.name)));
+                el('span', { class: 'test-tree-name' }, scenario.name),
+                scenario.generated ? el('span', { class: 'test-tree-generated', title: 'Generated by Test all paths, not reviewed' }, 'auto') : null));
     }
 
     _jsonField(label, value, onValid, attrs = {}) {
@@ -1307,8 +1747,10 @@ export default class TestPanel {
                     input = this._jsonField('Data', data, () => { }, { rows: 2 });
                     read = () => input.querySelector('textarea').value;
                 }
+                const towards = this._goal?.scenario === live.scenario && pending.length > 1 && this._towardsGoal(live) === item;
                 return el('div', { class: `test-step pending${live.failed === item.elementId ? ' failed' : ''}`, 'data-element-id': item.elementId },
                     el('span', { class: 'test-step-name' }, this._elementIcon(item.elementId), this._label(item.elementId, item.name)),
+                    towards ? el('span', { class: 'test-goal-next' }, 'Towards the goal') : null,
                     input,
                     el('button', { type: 'button', class: 'test-step-run primary', onclick: () => {
                         const value = read();
