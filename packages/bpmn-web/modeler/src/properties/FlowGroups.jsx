@@ -13,17 +13,50 @@ import { addExtensionElement } from './extensions.js';
 import { formatEntry } from './FormatEntry.jsx';
 import { codeEntry } from './code/CodeEntry.jsx';
 
-const CONDITIONAL_SOURCES = ['bpmn:Activity', 'bpmn:ExclusiveGateway', 'bpmn:InclusiveGateway', 'bpmn:ComplexGateway'];
+// an event-based gateway too: the engine evaluates the conditions on its flows
+const CONDITIONAL_SOURCES = ['bpmn:Activity', 'bpmn:ExclusiveGateway', 'bpmn:InclusiveGateway', 'bpmn:ComplexGateway', 'bpmn:EventBasedGateway'];
 
+
+/** A conditional event's condition, so it can be read and changed; bpmn-server does not run the event. */
+function EventConditionGroup(element, definition, translate) {
+    const setCondition = (value, { commandStack, bpmnFactory }) => {
+        const condition = definition.get('condition');
+        if (value && condition)
+            return commandStack.execute('element.updateModdleProperties', { element, moddleElement: condition, properties: { body: value } });
+        let created;
+        if (value) {
+            created = bpmnFactory.create('bpmn:FormalExpression', { body: value });
+            created.$parent = definition;
+        }
+        commandStack.execute('element.updateModdleProperties', { element, moddleElement: definition, properties: { condition: created } });
+    };
+    return {
+        id: 'BpmnServer__Condition',
+        label: translate('Condition'),
+        component: Group,
+        shouldOpen: Boolean(definition.get('condition')),
+        entries: [codeEntry(element, {
+            id: 'eventCondition', label: 'Condition', mode: 'expression', rows: 2,
+            description: 'bpmn-server does not support conditional events: this event never triggers, whatever its condition',
+            getValue: () => definition.get('condition')?.get('body') || '',
+            setValue: setCondition
+        })]
+    };
+}
 
 export function ConditionGroup(element, translate) {
+    const bo = getBusinessObject(element);
+    const conditional = (bo.get('eventDefinitions') || []).find(definition => is(definition, 'bpmn:ConditionalEventDefinition'));
+    if (conditional)
+        return EventConditionGroup(element, conditional, translate);
     if (!is(element, 'bpmn:SequenceFlow'))
         return null;
-    const bo = getBusinessObject(element);
     // a flow that has a condition shows it, wherever it starts: the engine evaluates it
     const condition = bo.get('conditionExpression');
-    // the field follows the condition's language: FEEL is not JavaScript
-    const feel = /feel/i.test(String(condition?.get('language') ?? ''));
+    // the field follows the condition's language: FEEL is not JavaScript, and next(...) may be statements
+    const language = String(condition?.get('language') ?? '');
+    const feel = /feel/i.test(language);
+    const statements = /javascript|^js$/i.test(language) && /(^|[^.\w$])next\s*\(/.test(condition?.get('body') ?? '');
     if (!condition) {
         if (!isAny(element.source, CONDITIONAL_SOURCES))
             return null;
@@ -34,9 +67,10 @@ export function ConditionGroup(element, translate) {
         id: 'BpmnServer__Condition',
         label: translate('Condition'),
         component: Group,
+        shouldOpen: Boolean(condition),     // what decides whether the flow is taken is not left folded away
         entries: [
             codeEntry(element, {
-                id: 'conditionExpression', label: 'Condition', mode: feel ? 'feel' : 'expression', rows: 2,
+                id: 'conditionExpression', label: 'Condition', mode: feel ? 'feel' : statements ? 'script' : 'expression', rows: 2,
                 description: feel
                     ? 'A FEEL expression, e.g. days > 5 (the data\'s values by name); the flow is taken when it is true'
                     : 'A JavaScript expression, e.g. data.days > 5; the flow is taken when it is true',

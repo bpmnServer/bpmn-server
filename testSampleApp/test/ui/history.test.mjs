@@ -18,7 +18,7 @@ test.before(async () => {
     page = await context.newPage();
     page.setDefaultTimeout(15000);
     page.on('pageerror', e => errors.push(e.message));
-    page.on('dialog', dialog => dialog.accept());
+    page.on('dialog', dialog => dialog.accept(dialog.defaultValue()));
     await page.goto(web.base + '/login');
     await page.fill('#userName', 'designer');
     await page.fill('#password', PASSWORD);
@@ -161,6 +161,23 @@ test('Delete removes one version; the others keep their numbers', async () => {
     await page.click('.history-delete[data-version="2"]');
     await page.waitForFunction(n => document.querySelectorAll('.history-versions tbody tr').length === n, before.length - 1);
     assert.deepEqual((await rows()).map(r => r[0]), before.filter(v => v !== '2'));
+});
+
+test('Restore as copy makes a version a new model in its own tab; this model stays, and a name in use is refused', async () => {
+    const source = () => page.evaluate(async () => (await window.bpmnModeler.saveXML()).xml);
+    const before = await source();
+    const [copy] = await Promise.all([page.context().waitForEvent('page'), page.click('.history-copy[data-version="1"]')]);
+    await copy.waitForSelector('#js-canvas .djs-shape');
+    assert.match(new URL(copy.url()).pathname, /\/model\/edit\/leave-request%20v1$/);
+    const version = await web.bpmnServer.definitions.historySource('leave-request', 1);
+    assert.equal(await web.bpmnServer.definitions.getSource('leave-request v1'), version, 'the version, as it was saved');
+    await copy.close();
+    assert.equal(await source(), before, 'the editor keeps its model');
+
+    await page.click('.history-copy[data-version="1"]');       // the same name again: the dialogs are accepted
+    await page.waitForTimeout(500);
+    assert.equal(page.context().pages().length, 1, 'no second copy opened');
+    assert.deepEqual(errors, []);
 });
 
 test('a save that changes nothing adds no version; Purge history empties the list', async () => {

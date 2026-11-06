@@ -145,6 +145,8 @@ function CodeField(props) {
     return <div class={`bio-properties-panel-entry bpmn-server-code${diagnostic ? ` has-${diagnostic.severity}` : ''}`} data-entry-id={id}>
         <label class="bio-properties-panel-label" for={`bio-properties-panel-${id}`}>{translate(label)}</label>
         <div class="bpmn-server-code-editor" ref={host} />
+        {/* what a group looks for to mark itself as having a value: see isCodeEdited */}
+        <span class="bio-properties-panel-input" hidden />
         {diagnostic && <div class="bio-properties-panel-error">{diagnostic.message}</div>}
         {description && <div class="bio-properties-panel-description">{translate(description)}</div>}
     </div>;
@@ -152,7 +154,7 @@ function CodeField(props) {
 
 /** Whether the field has a value (the panel's "edited" dot on the group). */
 function isCodeEdited(node) {
-    return Boolean(node?.querySelector('.cm-content')?.textContent);
+    return Boolean(node?.parentNode?.querySelector('.cm-content')?.textContent);
 }
 
 /**

@@ -228,6 +228,28 @@ export default class HistoryPanel {
         this.render();
     }
 
+    /** A saved version as a new model beside this one, opened in its own tab: this model and its unsaved changes stay. */
+    async restoreAsCopy(version) {
+        const name = window.prompt(`Name of the new model, a copy of version ${version}:`, `${this._config.processName} v${version}`)?.trim();
+        if (!name)
+            return;
+        try {
+            const { names } = await (await fetch('/model/names')).json();
+            if (names.some(other => String(other).toLowerCase() === name.toLowerCase()))
+                throw new Error(`a model named '${name}' exists`);
+            const response = await fetch(`/model/add/${encodeURIComponent(name)}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ processId: name, bpmn: await this.source(version) })
+            });
+            if (!response.ok)
+                throw new Error(`${response.status} ${response.statusText}`);
+            window.open(`/model/edit/${encodeURIComponent(name)}`, '_blank')?.focus();
+        } catch (err) {
+            window.alert(`The copy could not be made: ${err.message}`);
+        }
+    }
+
     /** One saved version removed; the others keep their numbers, and the model in the editor stays. */
     async deleteVersion(version) {
         if (!window.confirm(`Delete version ${version} of '${this._config.processName}'? The other versions and the model stay.`))
@@ -296,6 +318,8 @@ export default class HistoryPanel {
                                 title: `Show version ${v.version}`, onclick: () => this.view(v.version) }, 'View'),
                             el('button', { type: 'button', class: 'history-restore', 'data-version': String(v.version),
                                 title: `Load version ${v.version} into the editor`, onclick: () => this.restore(v.version) }, 'Restore'),
+                            el('button', { type: 'button', class: 'history-copy', 'data-version': String(v.version),
+                                title: `Make version ${v.version} a new model, leaving this one as it is`, onclick: () => this.restoreAsCopy(v.version) }, 'Copy'),
                             el('button', { type: 'button', class: 'history-delete', 'data-version': String(v.version),
                                 title: `Delete version ${v.version}`, onclick: () => this.deleteVersion(v.version) }, 'Delete'))])))),
             this._versions.length ? null : el('p', { class: 'history-note' }, 'No saved versions yet: each save keeps one.'),
@@ -328,6 +352,8 @@ export default class HistoryPanel {
             el('span', { class: 'history-stage-actions' },
                 c.view !== undefined && c.view !== CURRENT
                     ? el('button', { type: 'button', class: 'history-restore', onclick: () => this.restore(c.view) }, 'Restore this version') : null,
+                c.view !== undefined && c.view !== CURRENT
+                    ? el('button', { type: 'button', class: 'history-copy', onclick: () => this.restoreAsCopy(c.view) }, 'Restore as copy') : null,
                 el('button', { type: 'button', class: 'history-close', onclick: () => this.close() }, 'Close')));
         stage.replaceChildren(bar, this._diagramHost);
         stage.hidden = false;

@@ -10,6 +10,21 @@ import { chromium } from 'playwright';
 import { startWebApp, PASSWORD, FIXTURES } from '../support/webApp.mjs';
 
 const SAMPLES = path.join(FIXTURES, '..', '..', 'processes');
+const CONDITIONS = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="d" targetNamespace="urn:t">
+<bpmn:process id="p" isExecutable="true">
+<bpmn:startEvent id="s"><bpmn:outgoing>f0</bpmn:outgoing></bpmn:startEvent>
+<bpmn:eventBasedGateway id="g"><bpmn:incoming>f0</bpmn:incoming><bpmn:outgoing>f1</bpmn:outgoing></bpmn:eventBasedGateway>
+<bpmn:intermediateCatchEvent id="ce"><bpmn:incoming>f1</bpmn:incoming><bpmn:conditionalEventDefinition id="cd"><bpmn:condition xsi:type="bpmn:tFormalExpression">data.go == true</bpmn:condition></bpmn:conditionalEventDefinition></bpmn:intermediateCatchEvent>
+<bpmn:sequenceFlow id="f0" sourceRef="s" targetRef="g" /><bpmn:sequenceFlow id="f1" sourceRef="g" targetRef="ce" />
+</bpmn:process>
+<bpmndi:BPMNDiagram id="di"><bpmndi:BPMNPlane id="pl" bpmnElement="p">
+<bpmndi:BPMNShape id="s_di" bpmnElement="s"><dc:Bounds x="100" y="100" width="36" height="36" /></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="g_di" bpmnElement="g"><dc:Bounds x="200" y="93" width="50" height="50" /></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="ce_di" bpmnElement="ce"><dc:Bounds x="320" y="100" width="36" height="36" /></bpmndi:BPMNShape>
+<bpmndi:BPMNEdge id="f0_di" bpmnElement="f0"><di:waypoint x="136" y="118" /><di:waypoint x="200" y="118" /></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="f1_di" bpmnElement="f1"><di:waypoint x="250" y="118" /><di:waypoint x="320" y="118" /></bpmndi:BPMNEdge>
+</bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>`;
 
 let web, browser;
 test.before(async () => {
@@ -179,6 +194,44 @@ test('Camunda settings bpmn-server does not run are listed and lead to their ele
     await warnings.filter({ hasText: 'Asynchronous before' }).click();
     assert.deepEqual(await page.evaluate(() => window.bpmnModeler.get('selection').get().map(e => e.id)), ['Approve']);
     assert.equal(await page.locator('.djs-element.problem-warning[data-element-id="Approve"]').count(), 1);
+    assert.deepEqual(errors, []);
+    await close();
+});
+
+test('conditions: a conditional event shows its own, saying it does not run; a flow out of an event-based gateway can have one', async () => {
+    await addModel('Conditions', { xml: CONDITIONS });
+    const { page, errors, close } = await openEditor('Conditions');
+    const select = id => page.evaluate(id => { const m = window.bpmnModeler; m.get('selection').select(m.get('elementRegistry').get(id)); }, id);
+    const group = page.locator('.bio-properties-panel-group-header-title', { hasText: /^Condition$/ });
+
+    await select('ce');
+    await group.waitFor();
+    const header = page.locator('.bio-properties-panel-group-header', { has: group });
+    await page.waitForFunction(() => document.querySelector('[data-group-id="group-BpmnServer__Condition"] .bio-properties-panel-group-header:not(.empty)'));
+    assert.match(await header.getAttribute('class'), /\bopen\b/, 'a condition is shown open, and marked');
+    await page.locator('[data-entry-id="eventCondition"]').hover();
+    assert.match(await page.locator('[data-entry-id="eventCondition"]').innerText(), /does not support conditional events/);
+    assert.match(await page.locator('[data-entry-id="eventCondition"]').innerText(), /data\.go == true/);
+
+    await select('f1');
+    await group.waitFor();
+    await page.waitForFunction(() => document.querySelector('[data-group-id="group-BpmnServer__Condition"] .bio-properties-panel-group-header.empty'));
+    await page.evaluate(() => {
+        const m = window.bpmnModeler, flow = m.get('elementRegistry').get('f1');
+        m.get('modeling').updateProperties(flow, { conditionExpression: m.get('bpmnFactory').create('bpmn:FormalExpression', { body: 'data.a == 1' }) });
+    });
+    const { xml } = await page.evaluate(() => window.bpmnModeler.saveXML());
+    assert.match(xml, /data\.a == 1/);
+
+    await page.evaluate(() => {
+        const m = window.bpmnModeler, flow = m.get('elementRegistry').get('f1');
+        m.get('modeling').updateProperties(flow, { conditionExpression: m.get('bpmnFactory').create('bpmn:FormalExpression', { language: 'JavaScript', body: 'if (data.a) next(null, true); else next(null, false);' }) });
+    });
+    await select('s');
+    await select('f1');
+    await page.locator('[data-entry-id="conditionExpression"] .cm-content').waitFor();
+    await page.waitForTimeout(800);
+    assert.equal(await page.locator('[data-entry-id="conditionExpression"].has-error').count(), 0, 'statements with next(...) are not marked as wrong');
     assert.deepEqual(errors, []);
     await close();
 });
