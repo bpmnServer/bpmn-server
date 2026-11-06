@@ -81,6 +81,12 @@ left out (they are not in the model file).
 The **Test** tab keeps test scenarios for the model and runs them. The scenarios are on the left, each with the result
 of its last run; the selected one is on the right: its result, its steps and its checks.
 
+**Coverage**, over the list, says how many of the model's nodes and flows the scenarios' last runs have reached. A scenario counts once
+it has an instance: only the engine knows what comes next, so steps written down prove nothing until they run. An element is
+*tested* when a run that passed reached it, and *reached* when only runs that failed or did not finish did. A boundary event that never
+fired has not been reached. **Show on diagram** marks them, and **Not reached** lists what is left. Reaching an element does not
+say it was checked, and every element reached does not mean every path through them was.
+
 1. **New** adds a scenario, and **Record** starts the process with its start data and shows what waits as the next
    steps: user tasks (**Complete step**) and events (**Trigger event**), each with its data.
 2. Completing a step shows what waits next, until nothing waits: the recording then closes by itself and shows its

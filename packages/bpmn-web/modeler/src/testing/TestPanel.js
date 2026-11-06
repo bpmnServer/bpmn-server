@@ -22,13 +22,14 @@
 // decisions and log.
 import { is } from 'bpmn-js/lib/util/ModelUtil';
 import { el, json, parse, parseValue, showValue, request, CHECK_OPS } from './common.js';
+import { coverageOf } from './coverage.js';
 
 const STATUSES = ['', 'end', 'wait', 'running', 'terminated'];
 /** The steps, as the instance page offers them (src/testing/scenarios.ts isStep): user tasks and events. */
 const isStep = item => item.status === 'wait' && (item.type === 'bpmn:UserTask' || String(item.type).includes('Event'));
 /** The button that completes one. */
 const stepAction = item => item.type === 'bpmn:UserTask' ? 'Complete step' : 'Trigger event';
-const MARKERS = ['test-started', 'test-passed', 'test-waiting', 'test-failed'];
+const MARKERS = ['test-started', 'test-passed', 'test-waiting', 'test-failed', 'test-reached', 'test-untested'];
 const SIMULATION_STEP = 450;    // ms between the elements a simulation shows
 const HOW = { start: 'Recorded', run: 'Run', all: 'Run all' };
 
@@ -76,14 +77,21 @@ export default class TestPanel {
         this._starting = null;          // the scenario whose start form is open
         this._debug = false;            // Debug: the variables shown and changed, steps restarted
         this._restarting = null;        // the done step whose Restart here is open: its index
-        this._opened = new Set(['inspect', 'data', 'items', 'rationale']);   // the parts shown open
+        this._opened = new Set(['inspect', 'data', 'items', 'rationale', 'gaps']);   // the parts shown open
         this._editing = new Set();      // the checks whose fields are open
         this._marked = [];
+        this._coverageOn = false;       // the diagram shows coverage, not the run shown
+        this._coverageItems = new Map();    // a kept run's instance id -> its items, null when it is gone
+        this._modelEdited = false;      // since the runs: coverage may be out of date
         this._visible = false;
         this._loaded = false;
         if (!this._root)
             return;
-        eventBus.on('import.done', () => { if (this._visible) this.render(); });
+        eventBus.on('import.done', () => { this._modelEdited = false; if (this._visible) this.render(); });
+        eventBus.on('commandStack.changed', () => {
+            this._modelEdited = true;
+            if (this._visible) this._refreshCoverage();
+        });
         // an edit not saved yet goes with the page
         window.addEventListener('pagehide', () => { if (this._saveTimer) this._save({ keepalive: true }); });
     }
@@ -197,6 +205,7 @@ export default class TestPanel {
 
     /** Start the process: what waits shows as the next steps. */
     async start(scenario = this._current) {
+        this._coverageOn = false;
         if (!scenario) return;
         this._starting = null;
         this._restarting = null;
@@ -416,6 +425,7 @@ export default class TestPanel {
     // ---- running the saved steps without stopping: a new instance
 
     async replay(scenario = this._current) {
+        this._coverageOn = false;
         if (!scenario) return;
         this._live = null;
         this._status(`Running ${scenario.name}…`);
@@ -456,6 +466,7 @@ export default class TestPanel {
                 this._keepResult(this._scenarios[i], result, 'all');
             });
             await this._save();
+            this._modelEdited = false;
             const failed = results.filter(r => !r.ok).length;
             this._status(failed ? `${failed} of ${results.length} failed` : `All ${results.length} passed`, failed > 0);
         } catch (err) {
@@ -581,6 +592,7 @@ export default class TestPanel {
         if (sim) return sim.paused ? this._playSimulation() : this._pauseSimulation();
         const instance = this._lastRun();
         if (!instance) return;
+        this._coverageOn = false;
         this._config.showDiagram?.();       // it shows on the diagram
         this._unmark();
         this._simulation = { frames: this._simulationFrames(instance), index: 0, timer: null, paused: true };
@@ -742,6 +754,8 @@ export default class TestPanel {
     // ---- the diagram: the path taken
 
     _markCurrent() {
+        if (this._coverageOn)
+            return this._markCoverage();
         if (this._live?.scenario === this._current)
             this._mark(this._live.instance, this._live.failed ? [this._live.failed] : []);
         else {
@@ -1023,6 +1037,7 @@ export default class TestPanel {
 
     _select(scenario) {
         this._stopSimulation();
+        this._coverageOn = false;
         this._current = scenario;
         this.render();
         this._markCurrent();
@@ -1063,7 +1078,117 @@ export default class TestPanel {
                 this._menu('⋯', 'test-list-menu', [
                     ['Delete all runs', 'test-clear-all', () => this.clearAll(), 'Delete every run of these scenarios, and their instances (the scenarios stay)',
                         !this._scenarios.some(s => s.runs?.length)]])),
+            this._renderCoverage(),
             el('ul', { class: 'test-tree' }, this._scenarios.map(scenario => this._renderScenarioRow(scenario))));
+    }
+
+    // ---- coverage: how much of the model the scenarios' last runs have reached
+
+    /** The last run of each scenario that has an instance, and how many have none, or one still to fetch. */
+    _coverageRuns() {
+        const runs = [], toFetch = [];
+        let notRun = 0;
+        for (const scenario of this._scenarios) {
+            const live = this._live?.scenario === scenario ? this._live : null;
+            const result = this._results.get(scenario);
+            const kept = scenario.runs?.[0];
+            if (live) runs.push({ ok: live.checks ? live.checks.every(c => c.ok) : null, items: live.instance?.items });
+            else if (result?.instance?.items) runs.push({ ok: result.ok, items: result.instance.items });
+            else if (!kept) notRun++;
+            else if (!this._coverageItems.has(kept.instanceId)) toFetch.push(kept.instanceId);
+            else if (this._coverageItems.get(kept.instanceId)) runs.push({ ok: kept.ok, items: this._coverageItems.get(kept.instanceId) });
+            else notRun++;      // its instance is gone
+        }
+        return { runs, notRun, toFetch };
+    }
+
+    /** The kept runs' instances this session has not seen; then what they add. */
+    _fetchCoverage(ids) {
+        for (const id of ids) {
+            this._coverageItems.set(id, null);
+            this._request('GET', `/model/test/instance/${encodeURIComponent(id)}`)
+                .then(({ instance }) => this._coverageItems.set(id, instance?.items ?? null))
+                .catch(() => this._coverageItems.set(id, null))
+                .finally(() => {
+                    this._coverageLoading.delete(id);
+                    this._refreshCoverage();
+                });
+            (this._coverageLoading ??= new Set()).add(id);
+        }
+    }
+
+    _coverage() {
+        const { runs, notRun, toFetch } = this._coverageRuns();
+        if (toFetch.length) this._fetchCoverage(toFetch);
+        const ids = types => this._elements(types).map(e => e.id);
+        return { ...coverageOf({ nodes: ids(['bpmn:FlowNode']), flows: ids(['bpmn:SequenceFlow']) }, runs), notRun };
+    }
+
+    _refreshCoverage() {
+        const block = this._root?.querySelector('.test-coverage');
+        const fresh = this._renderCoverage();
+        if (block && fresh) block.replaceWith(fresh);
+        if (this._coverageOn && this._visible) this._markCoverage();
+    }
+
+    /** An element of a gap, in words: a flow by where it goes. */
+    _gapLabel(id) {
+        const bo = this._elements().find(e => e.id === id);
+        if (!bo?.sourceRef) return this._label(id);
+        const name = bo.get('name');
+        return `${name ? `'${name}': ` : 'Flow: '}${bo.sourceRef.get('name') || bo.sourceRef.id} → ${bo.targetRef.get('name') || bo.targetRef.id}`;
+    }
+
+    _renderCoverage() {
+        if (!this._scenarios.length) return null;
+        const { nodes, flows, notRun } = this._coverage();
+        const line = (which, label, of) => el('div', { class: `test-coverage-line test-coverage-${which}` },
+            el('span', {}, label), el('strong', {}, `${of.tested} of ${of.total}`));
+        const notPassed = nodes.reached + flows.reached;
+        const gaps = [...nodes.elements, ...flows.elements].filter(e => e.state === 'untested');
+        return el('div', { class: `test-coverage${this._coverageLoading?.size ? ' test-coverage-loading' : ''}` },
+            el('h5', {}, 'Coverage'),
+            line('nodes', 'Nodes', nodes),
+            line('flows', 'Flows', flows),
+            notPassed ? el('p', { class: 'test-coverage-note test-coverage-reached' }, `${notPassed} reached, but not in a run that passed`) : null,
+            notRun ? el('p', { class: 'test-coverage-note' }, `${notRun} scenario${notRun === 1 ? ' has' : 's have'} not run`) : null,
+            this._modelEdited ? el('p', { class: 'test-coverage-note test-coverage-stale' }, 'The model changed: Run all to bring this up to date') : null,
+            el('button', { type: 'button', class: `test-coverage-show${this._coverageOn ? ' on' : ''}`, 'aria-pressed': String(this._coverageOn),
+                title: 'Green: tested. Orange: reached, but not in a run that passed. Purple, dashed: not reached by any scenario',
+                onclick: () => this._toggleCoverage() }, this._coverageOn ? 'Hide on diagram' : 'Show on diagram'),
+            gaps.length ? this._part('gaps', `Not reached (${gaps.length})`, el('ul', { class: 'test-gaps' }, gaps.map(({ id }) =>
+                el('li', { class: 'test-gap', 'data-element-id': id, title: 'Show it on the diagram', onclick: () => this._showGap(id) }, this._gapLabel(id)))), { class: 'test-coverage-gaps' }) : null);
+    }
+
+    _toggleCoverage() {
+        this._coverageOn = !this._coverageOn;
+        if (this._coverageOn) {
+            this._stopSimulation();
+            this._config.showDiagram?.();
+        }
+        this._markCurrent();
+        this._refreshCoverage();
+    }
+
+    _showGap(id) {
+        const element = this._elementRegistry.get(id);
+        if (!element) return;
+        this._config.showDiagram?.();
+        this._selection.select(element);
+        this._canvas.scrollToElement?.(element);
+    }
+
+    _markCoverage() {
+        this._unmark();
+        if (!this._visible) return;
+        const { nodes, flows } = this._coverage();
+        const MARK = { tested: 'test-passed', reached: 'test-reached', untested: 'test-untested' };
+        for (const { id, state } of [...nodes.elements, ...flows.elements]) {
+            const element = this._elementRegistry.get(id);
+            if (!element) continue;
+            this._canvas.addMarker(element, MARK[state]);
+            this._marked.push(element);
+        }
     }
 
     /** A scenario in the list: its result and name. */

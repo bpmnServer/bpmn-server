@@ -9,6 +9,7 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- **Coverage**, in the Test tab: how many of the model's nodes and flows the scenarios' last runs have reached; on the diagram, and what is left.
 - The editor's **Condition** follows its **Language**, which now offers FEEL: a FEEL condition is no longer marked as not compiling.
 
 ### Changed
