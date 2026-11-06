@@ -82,8 +82,13 @@ export async function startWebApp({ env = {} } = {}) {
     const { AppDelegate } = await import(fileUrl(ROOT, 'delegates/appDelegate.ts'));
     const mongoose = (await import('mongoose')).default;
 
+    // what a test needs from inside the engine, as an application's delegate has it
+    let embedded;
+    class TestDelegate extends AppDelegate {
+        constructor(server) { super(server); embedded = server; }
+    }
     const webApp = new WebApp({
-        configuration: webConfiguration(config(), AppDelegate),
+        configuration: webConfiguration(config(), TestDelegate),
         elementTemplatesPath: connectorsPath,
         serverOptions: { cron: false },
     });
@@ -104,7 +109,7 @@ export async function startWebApp({ env = {} } = {}) {
     const base = `http://127.0.0.1:${webApp.server.address().port}`;
 
     const web = {
-        base, webApp, bpmnServer, definitionsPath, dbUrl,
+        base, webApp, bpmnServer, definitionsPath, dbUrl, embedded,
         client: () => new WebClient(base),
         /** A client logged in as one of USERS. */
         async login(userName) {

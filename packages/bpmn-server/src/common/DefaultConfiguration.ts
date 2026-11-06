@@ -28,6 +28,8 @@ export class Configuration implements IConfiguration {
 	};
 	logger: ILogger;
 	apiKey: string;
+	moddleOptions?: any;
+	servicesFile?: string;
 	sendGridAPIKey: string;
 	definitions(server)/* :IModelsDatastore */{
 		return new ModelsDatastore(server); 
@@ -59,7 +61,7 @@ export class Configuration implements IConfiguration {
 
 	/** Each factory given replaces the default one; one left out keeps it. */
 	constructor({
-		definitionsPath = undefined, templatesPath = undefined, timers = { forceTimersDelay: 1000, precision: 3000 }, database = undefined, apiKey = undefined,
+		definitionsPath = undefined, templatesPath = undefined, timers = { forceTimersDelay: 1000, precision: 3000 }, database = undefined, apiKey = undefined, moddleOptions = undefined, servicesFile = undefined,
 		logger = undefined,
 		definitions = undefined,
 		appDelegate = undefined,
@@ -71,6 +73,8 @@ export class Configuration implements IConfiguration {
 		this.timers = timers;
 		this.database = database;
 		this.apiKey = apiKey;
+		this.moddleOptions = moddleOptions;
+		this.servicesFile = servicesFile;
 		this.logger = logger;
 		if (definitions) this.definitions = definitions;
 		if (appDelegate) this.appDelegate = appDelegate;

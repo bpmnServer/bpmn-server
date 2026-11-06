@@ -270,7 +270,7 @@ features:
     what: "Checks a model without running it (structure, gateways, scripts, services, connectors, decisions)."
     docs: [docs/docs/verify.md]
     code: [packages/bpmn-server/src/elements/verifyModel.ts]
-    tests: [packages/bpmn-server/test/verify-model.test.mjs, packages/bpmn-server/test/verify-application.test.mjs]
+    tests: [packages/bpmn-server/test/verify-model.test.mjs, packages/bpmn-server/test/verify-application.test.mjs, testSampleApp/test/web/no-engine.test.mjs]
 # ------------------------------------------------------------------------------------------------------------ engine
   - id: start-invoke
     area: engine
@@ -424,7 +424,7 @@ features:
     what: "api.engine (start, invoke, assign, throwMessage, throwSignal, restart, retry) and api.data / api.model, as a user."
     docs: [docs/docs/api-summary.md, docs/docs/invokation.md]
     code: [packages/bpmn-server/src/API/API.ts]
-    tests: [packages/bpmn-server/test/runtime-api.test.mjs, packages/bpmn-server/test/api-boundary.test.mjs, packages/bpmn-server/test/secure-user.test.mjs, packages/bpmn-server/test/element-kinds.test.mjs]
+    tests: [packages/bpmn-server/test/runtime-api.test.mjs, packages/bpmn-server/test/api-boundary.test.mjs, packages/bpmn-server/test/secure-user.test.mjs, packages/bpmn-server/test/element-kinds.test.mjs, packages/bpmn-server/test/engine-results.test.mjs]
   - id: mcp
     area: api
     name: "MCP for AI clients"

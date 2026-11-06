@@ -68,7 +68,7 @@ async function waitingForApproval() {
 test('today: a lifecycle subscriber hears of a waiting task before it is saved', async () => {
     const started = await engine().start(MODEL, {});
     let duringEvent = 'not called';
-    const unsubscribe = web.bpmnServer.listener.subscribe({
+    const unsubscribe = web.embedded.listener.subscribe({
         async onEvent({ type, context }) {
             if (type === 'wait' && context.item?.elementId === 'Approve')
                 duringEvent = await savedItem(context.instance.id, 'Approve') ?? null;
@@ -85,7 +85,7 @@ test('today: a lifecycle subscriber hears of a waiting task before it is saved',
 
 test("today: a subscriber's failure does not reach the execution", async () => {
     const started = await engine().start(MODEL, {});
-    const unsubscribe = web.bpmnServer.listener.subscribe({ onEvent() { throw new Error('delivery failed'); } });
+    const unsubscribe = web.embedded.listener.subscribe({ onEvent() { throw new Error('delivery failed'); } });
     try {
         await engine().invoke({ id: started.id, 'items.elementId': 'Submit' }, { days: 6 });
     } finally {

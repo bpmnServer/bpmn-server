@@ -209,8 +209,8 @@ export class API extends Common {
             try {
 
                 var list = [];
-                (this.bpmnServer.cache.list() || []).forEach(exec => {   // this server's live executions
-                    list.push({ instance: exec.instance, currentItem: exec.item.id,currentElement: exec.item.elementId, status: exec.instance.status });
+                this.bpmnServer.engine.live().forEach(exec => {   // this server's live executions
+                    list.push({ instance: exec.instance, currentItem: exec.currentItem,currentElement: exec.currentElementlementId, status: exec.instance.status });
                 });
                 response.json({cache:list,engine: this.bpmnServer.engine.status()});
             }

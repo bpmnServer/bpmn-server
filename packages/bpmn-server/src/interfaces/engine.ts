@@ -83,6 +83,20 @@ interface IToken {
     error(msg: any): void;
 }
 
+/** What an engine call answers: a JSON copy of where the instance stands, not the running execution. */
+interface IExecutionResult {
+    id: any;
+    name: any;
+    status: any;
+    userName?: any;
+    operation?: string;
+    errors?: any;
+    action?: any;
+    instance: IInstanceData;
+    /** as a running execution's own `.execution` read: its id, name and status */
+    execution: { id: any; name: any; status: any };
+}
+
 interface IExecution extends IServerComponent {
     instance: IInstanceData;
     /** What the call running it does: `start`, `signal`, `assign`, `cancel`, … */
@@ -166,4 +180,4 @@ interface IItem extends IItemData {
 }
 
 
-export { IItem, IToken, IExecution , IScriptHandler}
+export { IItem, IToken, IExecution, IExecutionResult , IScriptHandler}

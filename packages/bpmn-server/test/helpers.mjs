@@ -43,7 +43,7 @@ export function definitionsFolder() {
  * A server on `store` (a new one when absent: see newStore), its definitions in `dir`.
  * `cron: false` unless asked; locks retry quickly.
  */
-export async function makeServer({ store = newStore(), dir = definitionsFolder(), services = {}, serverId, cron = false, locks = {}, timers = {}, logger = quiet(), extra = {} } = {}) {
+export async function makeServer({ store = newStore(), dir = definitionsFolder(), services = {}, serverId, cron = false, locks = {}, timers = {}, logger = quiet(), extra = {}, launched = false, engine } = {}) {
   const configuration = new Configuration({
     definitionsPath: dir,
     timers: { precision: 1000, pollInterval: 0, ...timers },
@@ -59,12 +59,15 @@ export async function makeServer({ store = newStore(), dir = definitionsFolder()
     cacheManager: (s) => new NoCacheManager(s),
     ...extra,
   });
-  const server = new BPMNServer(configuration, logger, { cron });
+  const server = launched ? BPMNServer.launch(configuration, logger, { cron, engine }) : new BPMNServer(configuration, logger, { cron });
   await server.ready;
   await server.dataStore.install();
   if (!cron) await server.definitions.rebuild();   // the cron's start does it otherwise
   return { server, store, dir };
 }
+
+/** The same, launched: seen from outside its engine. */
+export const makeLaunched = async (options = {}) => (await makeServer({ ...options, launched: true })).server;
 
 /** Waits until `check()` is truthy, or fails after `ms`. */
 export async function until(check, ms = 5000, what = 'the condition') {

@@ -394,7 +394,8 @@ export class Model extends Common {
                     descriptions[id] = [...(descriptions[id] || []), ...clean];
             };
             try {
-                const definition = new Definition(name, source, bpmnServer);
+                // only read: what a definition asks of a server, none of it the engine
+                const definition = new Definition(name, source, { logger: bpmnServer.logger, appDelegate: bpmnServer.appDelegate, listener: { emit: async () => { } } } as any);
                 await definition.load();
                 definition.processes.forEach(proc => add(proc.id, proc.describe()));
                 definition.nodes.forEach(node => {

@@ -17,6 +17,10 @@ interface IConfiguration
     },
     database: IMongoDBDatabaseConfiguration | ISQLiteDatabaseConfiguration,
     apiKey: string,
+    /** Extensions to the BPMN model's types (bpmn-moddle's); reading a model needs them, in and out of the engine. */
+    moddleOptions?: any;
+    /** The names of the application's services (scanServices in bpmn-web), for what checks models outside the engine. Default: services.json in the current folder. */
+    servicesFile?: string;
     logger: ILogger,
     definitions(server): IModelsDatastore,
     appDelegate(server): IAppDelegate,

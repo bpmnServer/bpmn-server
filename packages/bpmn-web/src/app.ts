@@ -67,10 +67,11 @@ export class WebApp {
 
 		this.userManager.init();
 		const wflogger = application.logger ?? new Logger({ toConsole: true });
-		this.bpmnServer = new BPMNServer(
+		this.bpmnServer = BPMNServer.launch(
 			application.configuration,
 			wflogger,
-			application.serverOptions ?? {},
+			// ENGINE_AT=none: everything but running and testing models
+			{ ...application.serverOptions, ...(process.env.ENGINE_AT === 'none' ? { engine: 'none' } : {}) },
 		);
 		application.initialize?.(this.bpmnServer);
 		// the Test tabs' tests are files beside the models (a guest's folder in a guest's request)

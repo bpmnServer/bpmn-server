@@ -38,6 +38,7 @@
     "test": "npm --prefix ../../testSampleApp test"
   },
   "dependencies": {
+    "acorn": "^8.19.0",
     "axios": "^1.18.1",
     "bcrypt": "^6.0.0",
     "body-parser": "^2.3.0",

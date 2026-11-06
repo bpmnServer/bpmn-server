@@ -9,6 +9,8 @@ import type { IDataStore, IModelsDatastore } from '../interfaces/datastore.js';
 import type { IScriptHandler } from '../interfaces/engine.js';
 import type { IBPMNServer, ICacheManager } from '../interfaces/server.js';
 import type { IDocumentStore, ILockManager } from '../interfaces/storage.js';
+import { LaunchedServer } from './LaunchedServer.js';
+import { DefaultAppDelegate } from '../engine/DefaultAppDelegate.js';
 import { Engine } from './Engine.js';
 import { Cron } from './Cron.js';
 import { Listener } from './Listener.js';
@@ -70,6 +72,20 @@ class BPMNServer implements IBPMNServer {
 	/**
 	 * Builds a server and waits until it is ready.
 	 */
+	/**
+	 * Launches a server, instead of embedding one as `new BPMNServer` does: what you get is outside its engine, and answers
+	 * data, not running executions. The delegate and services are inside the engine, and keep them.
+	 * `engine: 'none'`: no engine at all: models can be edited and saved, and what would run answers EngineNotRunningError.
+	 */
+	static launch(configuration: IConfiguration, logger?: ILogger, options: { engine?: 'none', cron?: boolean } = {}): LaunchedServer {
+		if (options.engine === 'none') {
+			// the application's code is not started, and no timer fires
+			const withoutApplication = Object.create(configuration, { appDelegate: { value: server => new DefaultAppDelegate(server) } });
+			return new LaunchedServer(new BPMNServer(withoutApplication, logger, { ...options, cron: false }), options);
+		}
+		return new LaunchedServer(new BPMNServer(configuration, logger, options), options);
+	}
+
 	static async create(configuration: IConfiguration, logger?: ILogger, options = {}): Promise<BPMNServer> {
 		const server = new BPMNServer(configuration, logger, options);
 		await server.ready;
