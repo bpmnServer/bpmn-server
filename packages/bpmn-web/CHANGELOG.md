@@ -9,6 +9,8 @@ your comment goes here
 and here
 ## [Unreleased]
 ### Added
+- **The task API**, `/api2/tasks`: an application lists, claims and completes tasks for its users, whom it authenticates itself. Off
+  unless `API_ACTING_USER_KEY` is set; that key opens no other route. Existing routes are unchanged.
 - The editor's **Condition** follows its **Language**, which now offers FEEL: a FEEL condition is no longer marked as not compiling.
 
 ### Changed

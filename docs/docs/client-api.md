@@ -58,3 +58,29 @@ Perform calls to DataStore , accessing processes data
 | **findItems**| [itemQuery](data.md#item-query)|	[Item[]](api/interfaces/IItemData.md) | |
 | **deleteInstances**| [instance](data.md#instance-query)|	[Item[]](api/interfaces/IItemData.md) | |
 
+## The task API: an application acting for its users
+
+`/api2/tasks` is for an application with its own inbox and forms, which authenticates its own users. It is off unless
+`API_ACTING_USER_KEY` is set, and that key opens these routes and no other; `API_KEY` does not open them.
+
+| Header | Meaning |
+| --- | --- |
+| `x-api-key` | `API_ACTING_USER_KEY` |
+| `x-acting-user` | The user the application has authenticated. Required. |
+| `x-acting-groups` | That user's groups, comma separated. `SYSTEM`, `ADMIN` and `DESIGNER` are refused. |
+
+The tenant is the service account's (`API_SERVICE_TENANT_ID`), never taken from a header.
+
+| Route | Does | Answers |
+| --- | --- | --- |
+| `GET /api2/tasks?limit=&after=` | The waiting user tasks this user can work on, oldest first; `after` is a list's `next`. `limit`: 1 to 200, default 50. | 200 `{ tasks, next }`, 400 |
+| `GET /api2/tasks/:id` | One task, with its instance's data. | 200, 404 |
+| `POST /api2/tasks/:id/claim` | Assigns the task to this user. | 200 `{ task }`, 404, 409, 503 |
+| `POST /api2/tasks/:id/complete` | Body `{ data }`. Completes the task, recording this user. | 200 `{ task, instance }`, 400, 403, 404, 409, 503 |
+
+- A user **has a part** in a task when they are its assignee, a candidate user, in a candidate group, or the task has no assignment.
+- With no part, or no such task, or something that is not a user task: 404, the same each way, so an id cannot be probed.
+- A task assigned to someone else: 403 to complete, 409 to claim. A task that has ended: 409, with the code `ITEM_NOT_WAITING`.
+- Errors are `{ errors, code }`, with a real status. An instance still busy after the lock's retries is a 503: try again.
+
+Anyone holding the key can act as any user, so it belongs on the application's server, never in a browser. The Test tab's instances are not listed.
