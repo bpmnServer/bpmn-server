@@ -2,13 +2,36 @@ import { Execution } from './Execution.js';
 import { Item } from './Item.js';
 import { Token } from './Token.js';
 import type { IScriptHandler } from '../interfaces/engine.js';
-import { expressionScript, scriptOf, templateParts, evaluateTemplate, isFeel } from './Expressions.js';
+import { expressionScript, scriptOf, templateParts, evaluateTemplate, isFeel, conditionScript } from './Expressions.js';
 import { evaluate as feelEvaluate } from 'feelin';
 import { spawn } from 'child_process';
 import vm from 'node:vm';
 
     
+/** What scripts see already: a context can not replace these. */
+const RESERVED = new Set(['data', 'item', 'instance', 'input', 'output', 'appDelegate', 'appServices', 'appUtils', 'this']);
+
+/** A variable scripts see besides their own: its value, from a copy of the data (so it can not change the process's). */
+export type ScriptContext = Record<string, (scope: { data: any }) => any>;
+
 class ScriptHandler implements IScriptHandler{
+    /** Variables scripts and expressions see besides their own, by name. The application sets it; models can not. */
+    context: ScriptContext = {};
+
+    constructor(options: { context?: ScriptContext } = {}) {
+        for (const name of Object.keys(options.context ?? {}))
+            if (RESERVED.has(name) || !/^[A-Za-z_$][\w$]*$/.test(name))
+                throw new Error(`The script context can not have a variable named '${name}'`);
+        this.context = options.context ?? {};
+    }
+
+    /** The context's values for a scope. */
+    contextValues(scope): Record<string, any> {
+        const names = Object.keys(this.context);
+        if (!names.length) return {};
+        const data = scope?.data ?? scope?.instance?.data ?? {};
+        return Object.fromEntries(names.map(name => [name, this.context[name]({ data: structuredClone(data) })]));
+    }
 
     /**
      * A sequence flow's condition, in the language it says: FEEL when it says so, any other is JavaScript. A ${...}
@@ -17,13 +40,13 @@ class ScriptHandler implements IScriptHandler{
     async evaluateCondition(scope: Item|Token, expression, language?: string, label = 'condition') {
         if (isFeel(language))
             return this.evaluateFeel(scope, expression);
-        return this.evaluateExpression(scope, expression, label);
+        return this.evaluateExpression(scope, conditionScript(expression, language), label);
     }
 
     /** A FEEL expression over the data: its values by name, and `data` itself. */
     async evaluateFeel(scope, expression) {
         const data = scope?.data ?? {};
-        const { value } = feelEvaluate(scriptOf(String(expression).trim()), { ...data, data });
+        const { value } = feelEvaluate(scriptOf(String(expression).trim()), { ...data, data, ...this.contextValues(scope) });
         return value === undefined ? null : value;
     }
 
@@ -89,7 +112,7 @@ class ScriptHandler implements IScriptHandler{
         try {
             var js = `return (${script});`;
 
-            result = await ScriptHandler.compile(scope, js, label).call(scope);
+            result = await this.compiled(scope, js, label);
 			
 			
 			if (result instanceof Promise)
@@ -138,7 +161,7 @@ class ScriptHandler implements IScriptHandler{
            script = script.replace('#','')    //remove symbol '#'
 	    //require return
             var js = `${script};`;
-            result = await ScriptHandler.compile(scope, js, label).call(scope);
+            result = await this.compiled(scope, js, label);
 			
 			if (result instanceof Promise)
 			{
@@ -161,12 +184,17 @@ class ScriptHandler implements IScriptHandler{
      * (bpmn:///<model>/<element>/<label>.js) and numbered from its own first line: a debugger lists it by that
      * name and stops at its breakpoints and at `debugger;`, and an error's stack says where it is.
      */
-    static compile(scope, body: string, label: string): Function {
+    static compile(scope, body: string, label: string, names: string[] = []): Function {
         const prelude = ScriptHandler.getJSvars(scope) + '\n';
-        return vm.compileFunction(prelude + body, [], {
+        return vm.compileFunction(prelude + body, names, {
             filename: ScriptHandler.scriptName(scope, label),
             lineOffset: -(prelude.split('\n').length - 1),
         });
+    }
+    /** Runs a script, with the context's variables as its parameters. */
+    private compiled(scope, body: string, label: string) {
+        const context = this.contextValues(scope);
+        return ScriptHandler.compile(scope, body, label, Object.keys(context)).call(scope, ...Object.values(context));
     }
     /** bpmn:///<model>/<element>/<label>.js: the element is the item's; a process's own scripts are under 'process'. */
     static scriptName(scope, label: string): string {

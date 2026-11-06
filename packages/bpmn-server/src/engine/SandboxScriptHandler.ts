@@ -1,4 +1,4 @@
-import { ScriptHandler } from './ScriptHandler.js';
+import { ScriptHandler, type ScriptContext } from './ScriptHandler.js';
 import { scriptOf } from './Expressions.js';
 import type { Item } from './Item.js';
 import type { Token } from './Token.js';
@@ -30,8 +30,8 @@ export class SandboxScriptHandler extends ScriptHandler {
     /** Calling a method of appServices or appUtils runs it (else it runs nothing, and the run's decisions say so). */
     callServices = false;
 
-    constructor(options: { timeLimit?: number; memoryLimit?: number; callServices?: boolean } = {}) {
-        super();
+    constructor(options: { timeLimit?: number; memoryLimit?: number; callServices?: boolean; context?: ScriptContext } = {}) {
+        super(options);
         Object.assign(this, options);
     }
 
@@ -51,7 +51,7 @@ export class SandboxScriptHandler extends ScriptHandler {
     async run(scope, body: string, label: string) {
         const name = ScriptHandler.scriptName(scope, label);
         const view = scopeView(scope);
-        const { result, back, calls } = await runSandboxed(view.values, body, {
+        const { result, back, calls } = await runSandboxed({ ...view.values, ...this.contextValues(scope) }, body, {
             name, timeLimit: this.timeLimit, memoryLimit: this.memoryLimit, log: text => scope.log?.(text),
             services: this.callServices ? view.services : undefined,
             self: 'item ?? instance',

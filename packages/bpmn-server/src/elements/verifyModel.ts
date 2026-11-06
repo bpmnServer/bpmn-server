@@ -3,7 +3,7 @@ import { Definition } from './Definition.js';
 import { Behaviour_names } from './behaviours/BehaviourLoader.js';
 import { ServiceTask, BusinessRuleTask, CallActivity } from './Tasks.js';
 import { ScriptHandler } from '../engine/ScriptHandler.js';
-import { expressionScript, scriptOf, templateParts, isEvaluated, freeNames, isFeel } from '../engine/Expressions.js';
+import { expressionScript, scriptOf, templateParts, isEvaluated, freeNames, isFeel, conditionScript } from '../engine/Expressions.js';
 import { feelParses } from '../dmn/DMNParser.js';
 import { Cron } from '../server/Cron.js';
 import type { IBPMNServer } from '../interfaces/server.js';
@@ -458,9 +458,10 @@ class ModelVerifier {
                 const def = flow.def;
                 const body = def && def.conditionExpression && def.conditionExpression.body;
                 this.processId = flow.from && flow.from.processId;
+                const language = def && def.conditionExpression && def.conditionExpression.language;
                 if (body && String(body).trim()) {
-                    if (!isFeel(def.conditionExpression.language))
-                        this.checkExpression(String(body), 'condition', def);
+                    if (!isFeel(language))
+                        this.checkExpression(conditionScript(String(body), language), 'condition', def);
                     else if (!feelParses(scriptOf(String(body).trim()), false))
                         this.add('error', 'expression-syntax', 'The condition expression is not valid FEEL.', def);
                 }
@@ -539,7 +540,9 @@ class ModelVerifier {
     checkExpression(expression: string, what: string, element) {
         const script = scriptOf(expression);
         this.checkServiceReferences(script, what, element);
-        const names = freeNames(script).filter(name => !EXPRESSION_SCOPE.has(name) && !(name in globalThis));
+        // the handler's context is in scope too
+        const context = this.server?.scriptHandler?.context ?? {};
+        const names = freeNames(script).filter(name => !EXPRESSION_SCOPE.has(name) && !(name in globalThis) && !(name in context));
         // Camunda's JUEL (${amount gt 100 and approved}): its operators are not JavaScript
         const juel = names.filter(name => JUEL_OPERATORS[name]);
         if (juel.length) {
@@ -548,7 +551,7 @@ class ModelVerifier {
             return;
         }
         try {
-            Function(ScriptHandler.getJSvars({}) + `return (${script});`);
+            Function(...Object.keys(context), ScriptHandler.getJSvars({}) + `return (${script});`);
         }
         catch (exc) {
             this.add('error', 'expression-syntax', `The ${what} expression does not compile: ${exc.message}`, element);

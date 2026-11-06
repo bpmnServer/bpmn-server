@@ -14,7 +14,12 @@ and here
 -->
 
 ## [Unreleased]
+### Added
+- **`new ScriptHandler({ context })`** (and `SandboxScriptHandler`): variables of the application's that scripts and expressions see, each computed from a copy of the data.
+- A `language="JavaScript"` condition may give its value by **`next(error, value)`**, as an expression or in statements.
+
 ### Fixed
+- Filtering items with several comparisons on one field (`{ $gte: 5, $lt: 10 }`) checked only the last of them; every one must now hold.
 - An error end event outside any sub-process no longer crashes the engine and leaves the instance running: the error goes to what catches it, or the instance ends there.
 - A model with several start events, started with none named, begins at one a user can start; it began at the
   first drawn, a message, signal or timer start included.

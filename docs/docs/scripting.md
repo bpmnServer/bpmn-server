@@ -15,6 +15,8 @@
   - [Application Listener](#application-listener)
 
 - [Conditions in FEEL](#conditions-in-feel)
+- [Conditions that give their value by next](#conditions-that-give-their-value-by-next)
+- [Variables of your own in scripts](#variables-of-your-own-in-scripts)
 
 <!-- tocstop -->
 
@@ -249,6 +251,31 @@ only when the value is `true`.
 ```
 
 In the editor, a flow's **Language** offers FEEL. The Condition field follows it; the Problems tab checks a FEEL condition.
+
+# Conditions that give their value by next
+
+With a language of `JavaScript`, a condition may call `next(error, value)` instead of being an expression: on its own, or in statements. An
+error fails the call, and if `next` is never called the flow is not taken. It must be called before the condition's code ends.
+
+```xml
+<bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">
+  if (data.amount > 1000) next(null, true); else next(null, false);
+</bpmn:conditionExpression>
+```
+
+# Variables of your own in scripts
+
+The application can add variables to what scripts and expressions see. Each is computed from a copy of the data each time, so changing it
+does not change the process's. They can not replace `data`, `item`, `instance`, `input`, `output`, `appServices`, `appUtils` or
+`appDelegate`, and models can not add them. It works the same in `SandboxScriptHandler`, and in FEEL conditions.
+
+```ts
+import { ScriptHandler } from 'bpmn-server';
+
+const configuration = webConfiguration({
+    scriptHandler: () => new ScriptHandler({ context: { environment: ({ data }) => ({ variables: data }) } }),
+});
+```
 
 # Where scripts run: in the server or in a sandbox
 

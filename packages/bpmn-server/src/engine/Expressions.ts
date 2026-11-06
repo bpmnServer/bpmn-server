@@ -67,6 +67,17 @@ export function scriptOf(expression: string): string {
 /** A condition's language attribute says FEEL (FEEL, or the spec's URI for it). No language, or any other, is JavaScript. */
 export const isFeel = (language: any): boolean => /feel/i.test(String(language ?? ''));
 
+/**
+ * A condition's script. With language="javascript" it may give its value by calling next(error, value), as an expression
+ * or in statements. Anything else stays as it is.
+ */
+export function conditionScript(expression: string, language: any): string {
+    const script = scriptOf(String(expression).trim());
+    if (!/javascript|^js$/i.test(String(language ?? '')) || !/(^|[^.\w$])next\s*\(/.test(script))
+        return String(expression).trim();
+    return `(async () => { let __value; const next = (error, value) => { if (error) throw error; __value = value; }; ${script}; return __value; })()`;
+}
+
 /** A value that is evaluated when the process runs: an expression, or a text with ${...} parts. */
 export function isEvaluated(value: any): boolean {
     return expressionScript(value) !== null || templateParts(value) !== null;
