@@ -25,7 +25,7 @@ npm run dev               # from the packages' sources, restarting on changes (d
 | `index.ts` | Starts bpmn-web with the above. |
 | `test/` | bpmn-web's tests, run against this app (`npm test`, `npm run test:ui`). |
 | `processes/*.feature` | The models' tests, in Gherkin, beside them; `*.engine.feature` are the engine's own, on this app's delegate (`npm run test:scenarios`). |
-| `test/custom/` | Tests of this app's models (`npm run test:custom`), in memory on its delegate and services: TypeScript (`*.test.ts`, with `test/support/testApp.ts`) and scenario files (`*.json`, the model editor's Test tab format). |
+| `test/custom/` | Tests of this app's models (`npm run test:custom`), in memory on its delegate and services, in TypeScript (`*.test.ts`, with `test/support/testApp.ts`). |
 
 ## Connectors
 
@@ -53,10 +53,9 @@ assert.equal(run.item('task_Drive').status, 'wait');
 // also: run.waiting(), run.items(id), run.data, run.status, run.message(name), run.signal(name), run.log()
 ```
 
-Or as a scenario file, `test/custom/<name>.json`: `{ "model": "...", "scenarios": [ { "name", "start", "steps",
-"checks" } ] }` (see `buy-used-car.json`).
+Or in Gherkin, beside the model: `processes/<model>.engine.feature` (see `Buy Used Car.engine.feature`), run by `npm run test:scenarios`.
 
-To debug, in VS Code: **Test: current file** (a `.test.ts`) or **Scenarios: current file** (a `.json`); breakpoints
+To debug, in VS Code: **Test: current file** (a `.test.ts`); breakpoints
 work in the test, in `connectors/` and `delegates/`, and in the packages' `src`. A model's scripts are listed under
 Loaded Scripts as `bpmn:///<model>/<element>/<label>.js`, and `debugger;` in a script stops there; an error in one
 names that location in its stack.

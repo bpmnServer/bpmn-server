@@ -119,6 +119,8 @@ A stubbed service runs even with `SERVICE_TASKS=false`. A stubbed timer needs ti
 
 The [Test tab](modeler.md#testing-a-model) reads and writes `<model>.feature`. A scenario made of a start, steps and checks opens in its form. Anything else, such as a `@stub` or an expression, stays as written: you can run it and change it with **Edit as text**.
 
+Each run is a real instance, its id starting with `test-`, which can be opened on the instance page. An older `<model>.tests.json` in the models folder is converted to a `.feature` file when the server starts.
+
 ## Tests in TypeScript
 
 `testApp()` starts your application in memory: your settings, your app delegate and services, bpmn-web's
@@ -188,63 +190,16 @@ app = await testApp({
 });
 ```
 
-## Scenario files
-
-For tests in memory, a scenario can also be written as data, in `test/custom/<name>.json`. A file holds one scenario
-with its model, or a model's list of them:
-
-```json
-{
-  "model": "Buy Used Car",
-  "scenarios": [
-    {
-      "name": "buy, no repairs",
-      "start": { "data": { "caseId": 1 } },
-      "steps": [
-        { "element": "task_Buy", "data": { "needsCleaning": "No", "needsRepairs": "No" } },
-        { "element": "task_Drive" }
-      ],
-      "checks": [
-        { "at": "end", "kind": "status", "status": "end" },
-        { "at": "after", "step": "task_Buy", "kind": "data", "path": "needsRepairs", "op": "=", "value": "No" },
-        { "kind": "node", "node": "task_repair", "count": 0 }
-      ]
-    }
-  ]
-}
-```
-
-| | |
-|---|---|
-| `start` | `data` the instance starts with; `startNodeId` picks one of several start events, or a task, with `"only": true`, to run by itself (the run ends once it is done). |
-| `steps` | In order, each a waiting `element` (by id) to complete, with its `data`. The data decides the branches a gateway takes; the order decides which of several waiting elements happens first (an event-based gateway's events, a boundary timer, parallel tasks). |
-| `checks` | Each at the end (`"at": "end"`, the default), at the start (`"at": "start"`, once the process has started) or after a step (`"at": "after"`, `"step"`: its element). `status`: the instance's status. `node`: an element ran (`count` times, optionally in a `status`). `data`: a value at `path` (`a.b.c`) compared with `op` (`=`, `<>`, `>`, `<`, `>=`, `<=`) to `value`. |
-
-`testSampleApp/test/custom/scenarios.test.ts` runs every `*.json` file of its folder as tests, on `testApp()`,
-with bpmn-web's `runScenario` (exported by bpmn-web from the release after 3.1). A failure says what went wrong:
-
-```text
-✖ broken.json: wrong on purpose
-  A step could not be done
-  step 2 (task_repair): task_repair is not waiting; waiting: task_Drive
-  check failed: data.needsRepairs is "Yes" (actual "No")
-```
-
-The Test tab's scenarios are `.feature` files instead, and they run on the running server: each run is a real instance,
-its id starting with `test-`, which can be opened on the instance page. An older `<model>.tests.json` in the models
-folder is converted to a `.feature` file when the server starts.
-
 ## Debugging
 
 ### In VS Code
 
-The repository's `.vscode/launch.json` has three configurations:
+The repository's `.vscode/launch.json` has two configurations:
 
 | | |
 |---|---|
 | **testSampleApp: dev (debug)** | The application, from the TypeScript sources of bpmn-server and bpmn-web (`npm run dev`); it restarts when one of them changes, and the debugger attaches again. |
 | **Test: current file** | The open test file (`*.test.ts`, `*.test.mjs`). It runs on the packages' builds: run `npm run build` first; their source maps put breakpoints set in `packages/*/src` in place. |
-| **Scenarios: current file** | The open scenario file (`*.json`). |
 
 Breakpoints work in the test, in your services and delegate, and in bpmn-server and bpmn-web.
 

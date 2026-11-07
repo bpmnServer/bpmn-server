@@ -1,13 +1,13 @@
-# What's new in the next release
+# What's new in 3.6
 
-This release separates the host from the engine, adds tenants, removes guest access and moves every test to Gherkin.
+bpmn-server 3.6 separates the host from the engine, adds tenants, removes guest access and moves every test to Gherkin.
 
 ## Before you upgrade
 
 - **Guest users:** on a server that had `GUEST_ACCESS` on, delete the users in the group `GUEST` first. A session they kept would otherwise sign them in as a designer of the shared models. `GUEST_ACCESS`, `GUEST_SAVE`, `GUESTS_PATH`, `GUEST_MAX_MODELS` and `GUEST_RATE_LIMIT` are gone.
 - **Test files change on start-up:** each `<model>.tests.json` and `<decision>.dmn.tests.json` in the models folder becomes a `.feature` file, and the JSON is deleted. A file that wouldn't read back as the same tests stays as it is, keeps working, and is reported in the log. Keep the folder in Git or back it up first.
 - **Earlier test runs aren't carried over:** every scenario shows as not run and coverage starts empty, until you run the scenarios again. The old `.runs` folder is no longer read and can be deleted.
-- **Mocha is gone from the sample application:** the engine's scenarios are now `processes/<model>.engine.feature`, and `npm run test:scenarios` still runs them.
+- **Mocha and scenario files are gone from the sample application:** the engine's scenarios, and `test/custom/*.json`, are now `processes/<model>.engine.feature`, and `npm run test:scenarios` runs them. If you copied `test/custom/scenarios.test.ts` into your application, it keeps working on your own JSON files, but it is no longer maintained.
 
 ## The host and the engine
 

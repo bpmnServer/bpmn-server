@@ -455,11 +455,11 @@ features:
     tests: [testSampleApp/test/client/processEditor.test.mjs]
   - id: scenario-files
     area: api
-    name: "Tests in code and scenario files"
-    what: "testApp() — the application in memory for tests; scenario files run with runScenario."
+    name: "Tests in code"
+    what: "testApp() — the application in memory for tests."
     docs: [docs/docs/testing.md]
     code: [testSampleApp/test/support/testApp.ts, packages/bpmn-web/src/testing/scenarios.ts]
-    tests: [testSampleApp/test/custom/scenarios.test.ts, testSampleApp/test/custom/buy-used-car.test.ts]
+    tests: [testSampleApp/test/custom/buy-used-car.test.ts]
     examples: [testSampleApp/examples/invoice.test.ts]
 # --------------------------------------------------------------------------------------------------------------- web
   - id: modeler

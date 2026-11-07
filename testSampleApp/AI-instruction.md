@@ -132,8 +132,8 @@ Build the packages once if `../packages/bpmn-web/dist` is missing: `npm run buil
    `log()`; `app.message(name, data)` starts a model by its message. A timer or boundary event is completed like a
    task (`run.complete('timer-event')`), without waiting for real time.
 
-   Or a scenario file, `test/custom/<name>.json` (see `test/custom/buy-used-car.json`):
-   `{ "model": "...", "scenarios": [ { "name", "start": { "data" }, "steps": [ { "element", "data" } ], "checks": [...] } ] }`.
+   Or in Gherkin, beside the model: `processes/<model>.engine.feature` (see `processes/Buy Used Car.engine.feature`),
+   run by `npm run test:scenarios`. The syntax is in `docs/docs/testing.md`.
 
    Run them: `npm run test:custom` (one file: `node --import tsx --test test/custom/<name>.test.ts`).
 
