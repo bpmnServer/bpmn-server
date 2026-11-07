@@ -98,7 +98,7 @@ class ModelsDatastore extends ModelsDatastoreDB implements IModelsDatastore {
         return this.getFile(name, 'svg');
     }
 
-    /** Every save of a model, kept beside it (`.history/<name>/`), in the models folder of the moment (a guest's, with guests). */
+    /** Every save of a model, kept beside it (`.history/<name>/`), in the models folder. */
     get modelHistory() { return new ModelHistory(this.definitionsPath); }
 
     /** The model's file and its time before a save: kept first when the model has no history yet. */

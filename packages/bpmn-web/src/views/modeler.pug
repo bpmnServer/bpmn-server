@@ -12,7 +12,7 @@ html(lang="en")
     script(src="/javascripts/csrf.js")
     link(rel="stylesheet" href=asset("/modeler/modeler.css"))
   body
-    #modeler-page(data-process-name=processName data-read-only=guestReadOnly ? 'true' : undefined)
+    #modeler-page(data-process-name=processName)
       header.modeler-header
         a.brand(href="/" title="Home")
           img(src="/images/omniworkflow_icon.png" alt="Home")
@@ -23,11 +23,8 @@ html(lang="en")
         nav.modeler-actions
           a(href=`/execute/${processName}` target="execute") Run
           button#js-download(type="button" title="Download this model as a .bpmn file") Download
-          if guestReadOnly
-            a#js-signup.primary(href=`/signup?next=${encodeURIComponent(currentPath)}` title="Your changes stay in this browser until you sign up") Sign up to save
-          else
-            button#js-save-run(type="button") Save &amp; Run
-            button#js-save.primary(type="button" title="Ctrl+S") Save
+          button#js-save-run(type="button") Save &amp; Run
+          button#js-save.primary(type="button" title="Ctrl+S") Save
         +editorUser
       .modeler-body
         .modeler-main

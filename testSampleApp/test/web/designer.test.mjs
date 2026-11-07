@@ -184,3 +184,11 @@ test('models are exported for download', async () => {
   assert.equal(file.status, 200, why(file));
   assert.match(file.text, /<bpmn:definitions/);
 });
+
+test('all the models download as a .zip', async () => {
+  const res = await designer.get('/model/download-all');
+  assert.equal(res.status, 200, why(res));
+  assert.match(res.headers.get('content-type'), /zip/);
+  assert.ok(res.text.startsWith('PK'));
+  assert.ok(res.text.includes('leave-request.bpmn'));
+});

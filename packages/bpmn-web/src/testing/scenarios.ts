@@ -17,7 +17,6 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import vm from 'node:vm';
 import { runSandboxed, SandboxScriptHandler } from 'bpmn-server';
-import { asGuest, currentGuest, guestContext } from '../guests/guests.js';
 import { rationaleEvents } from './rationale.js';
 import { readFeature, sourceFeature, writeFeature } from './featureFiles.js';
 
@@ -56,7 +55,7 @@ export interface Scenario {
 
 // ---- the test sets: a model's scenarios, a decision's tests
 //
-// Files in the models folder (a guest's, with guests), beside what they test:
+// Files in the models folder, beside what they test:
 //   <model>.feature         a model's scenarios
 //   <decision>.dmn.feature  a decision's tests
 // (featureFiles.ts). A <model>.tests.json, the JSON they were kept in before, is read until it is converted (convertTestFiles).
@@ -66,7 +65,7 @@ export interface Scenario {
 const DECISION = 'decision:';
 let modelsFolder: () => string = () => process.env.DEFINITIONS_PATH || path.resolve('processes');
 
-/** Where the test sets are: the server's models folder (WebApp sets it; a guest's folder in a guest's request). */
+/** Where the test sets are: the server's models folder (WebApp sets it). */
 export function useTestsFolder(folder: () => string) {
     modelsFolder = folder;
 }
@@ -251,7 +250,7 @@ export const decisionTestKey = (decision: string) => DECISION + decision;
 
 /**
  * Test sets were kept in MongoDB (wf_test_scenarios) before 3.5: each one there whose file is not made yet is
- * written to its models folder (a guest's to the guest's folder, when it is still there). The collection is
+ * written to the models folder; a guest's, from when there were guests, is not. The collection is
  * left as it was. Returns how many were written.
  */
 export async function migrateScenarioSets(): Promise<number> {
@@ -259,19 +258,11 @@ export async function migrateScenarioSets(): Promise<number> {
         new mongoose.Schema({ model: String, scenarios: Array }), 'wf_test_scenarios');
     let written = 0;
     for (const doc of await ScenarioSet.find({}).lean()) {
-        const guest = /^(guest-[0-9a-f]{12})\/(.*)$/.exec(doc.model);
-        const key = guest ? guest[2] : doc.model;
-        const write = async () => {
-            if (fs.existsSync(path.join(modelsFolder(), fileName(key))) || !(doc.scenarios ?? []).length)
-                return;
-            await saveTestSet(key, doc.scenarios);
-            written++;
-        };
+        if (/^guest-[0-9a-f]{12}\//.test(doc.model) || fs.existsSync(path.join(modelsFolder(), fileName(doc.model))) || !(doc.scenarios ?? []).length)
+            continue;
         try {
-            if (!guest)
-                await write();
-            else if (fs.existsSync(guestContext(guest[1]).folder))
-                await asGuest(guestContext(guest[1]), write);
+            await saveTestSet(doc.model, doc.scenarios);
+            written++;
         }
         catch (error) {
             console.error(`test set '${doc.model}' not moved to a file: ${error.message}`);
@@ -347,7 +338,7 @@ export async function startTest(server, model: string, startNodeId: string | und
         throw new Error('A task by itself: which task (startNodeId)?');
     const flags = { savePoints: true, saveLogs: true, ...(only ? { only: startNodeId } : {}) };
     const execution = await server.engine.start(model, clone(data), startNodeId || null, userName ?? null,
-        { instanceId: `test-${randomUUID()}`, flags, tenantId: currentGuest()?.id });
+        { instanceId: `test-${randomUUID()}`, flags });
     return execution.instance;
 }
 
@@ -362,10 +353,8 @@ export async function completeTest(server, instanceId: string, itemId: string, d
 }
 
 export async function findTest(server, instanceId: string) {
-    // a guest's: only its own (its tenant)
-    const guest = currentGuest();
     // null when there is none (findInstance throws)
-    const [instance] = await server.dataStore.findInstances(guest ? { id: instanceId, tenantId: guest.id } : { id: instanceId }, 'full');
+    const [instance] = await server.dataStore.findInstances({ id: instanceId }, 'full');
     return instance ?? null;
 }
 

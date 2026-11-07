@@ -18,7 +18,7 @@ import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, saveSc
 import { modelDescription, modelElements, savedCoverage } from '../testing/modelCoverage.js';
 import { reachedIn } from '../testing/coverage.js';
 import { loadDecisionTests, runDecisionTestsInEngine } from '../testing/decisionTests.js';
-import { adminDisabled, canDesign, engineGroups, GUEST_CANNOT_SAVE, guestReadOnly, isAdminGroups } from '../userAccess/roles.js';
+import { adminDisabled, canDesign, isAdminGroups } from '../userAccess/roles.js';
 import { UserService } from '../userAccess/UserService.js';
 import { loadCatalog, findCatalogEntry, readCatalogFile, catalogLocation } from './catalog.js';
 import { loadConnectorCatalog, connectorCatalogLocation } from './connectorCatalog.js';
@@ -94,7 +94,7 @@ export class Dashboards extends Common {
 
         const secureUser = (req) => process.env.REQUIRE_AUTHENTICATION === 'false'
             ? SecureUser.SystemUser()
-            : new SecureUser({ userName: req.user.userName, userGroups: engineGroups(req.user), tenantId: req.user.tenantId });
+            : new SecureUser({ userName: req.user.userName, userGroups: req.user.userGroups, tenantId: req.user.tenantId });
         const roles = (req) => ({
             isAdmin: !adminDisabled() && (process.env.REQUIRE_AUTHENTICATION === 'false' || isAdminGroups(req.user?.userGroups)),
             isDesigner: canDesign(req.user),
@@ -465,8 +465,6 @@ export class Dashboards extends Common {
         // import a catalog model into the models folder, under its name or one given
         router.post('/catalog/import', this.isDesigner, handler(async (req, res) => {
             const again = (message: string) => res.redirect('/dashboard/catalog?message=' + encodeURIComponent(message));
-            if (guestReadOnly(req.user))
-                return again(GUEST_CANNOT_SAVE);
             let entry;
             try {
                 entry = await findCatalogEntry(req.body.id);

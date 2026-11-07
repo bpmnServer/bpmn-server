@@ -9,8 +9,7 @@ import MongoStore from 'connect-mongo';
 import User from './models/User.js';
 import * as passportConfig from './config/passport.js';
 import { Account } from './routes/account.js';
-import { adminDisabled, canDesign, guestReadOnly, isAdminGroups, isGuest, signupDisabled } from './roles.js';
-import { guestAccess, guestMiddleware } from '../guests/guests.js';
+import { adminDisabled, canDesign, isAdminGroups, signupDisabled } from './roles.js';
 
 
 export class UserManager {
@@ -88,8 +87,7 @@ export class UserManager {
 		this.app.use((req, res, next) => apiPath.test(req.path) ? next() : csrf(req, res, next));
 
 	} 
-	/** configuration: the engine's; with guests, their requests read and write its definitionsPath */
-	setup(configuration?) {
+	setup() {
 
 		const app = this.app;
 
@@ -121,10 +119,6 @@ export class UserManager {
 		});
 		app.use(['/login', '/signup', '/forgot', '/reset', '/account/verify'], authLimiter);
 
-		// GUEST_ACCESS=true: a visitor's first page makes it a guest; a guest's requests run in its context
-		if (guestAccess() && configuration)
-			app.use(guestMiddleware(configuration));
-
 		app.use((req, res, next) => {
 			res.locals.user = req.user;
 			// the menu goes by these: a page may pass its own `user` (the system user, with sign-in off)
@@ -133,8 +127,6 @@ export class UserManager {
 			// views show the model actions (new, import, open, rename, delete) to designers
 			res.locals.canDesign = canDesign(req.user);
 			res.locals.canSignup = !signupDisabled();
-			res.locals.isGuest = isGuest(req.user);
-			res.locals.guestReadOnly = guestReadOnly(req.user);
 			// the menu (views/includes/menu.pug): Administration for administrators; the page it is on
 			res.locals.canAdminister = !adminDisabled()
 				&& (process.env.REQUIRE_AUTHENTICATION === 'false' || isAdminGroups(req.user?.userGroups));

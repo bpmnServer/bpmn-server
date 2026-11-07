@@ -13,6 +13,11 @@ and here
 ### Changed
 -->
 ## [Unreleased]
+### Removed
+- **Guest access**: `GUEST_ACCESS`, `GUEST_SAVE`, `GUESTS_PATH`, `GUEST_MAX_MODELS` and `GUEST_RATE_LIMIT` are gone, and only signed-in
+  users use a server. **An account made on a server with guests no longer has models of its own.** Before upgrading such a server,
+  delete its guest users (group `GUEST`): a kept session would otherwise sign one in as a designer of the shared models.
+
 ### Added
 - **Gherkin tests**: a model's tests as a `.feature` file, run whole in the engine (`POST /model/test/feature`), with `@login`, `@start`,
   `@find`, `@invoke`, `@check`, `@wait`, `@stub` and `@script`. A stub replaces a service or a timer for its own scenario's instances.

@@ -6,8 +6,7 @@ import passport from 'passport';
 import validator from 'validator';
 import User from '../models/User.js';
 import * as Mailer from '../config/mail.js';
-import { isGuest, signupGroups, signupVerifiesEmail } from '../roles.js';
-import { guestAccess } from '../../guests/guests.js';
+import { signupGroups, signupVerifiesEmail } from '../roles.js';
 
 const _ = lodash;
 const randomBytesAsync = promisify(crypto.randomBytes);
@@ -121,7 +120,7 @@ export class UserController {
      * Login page.
      */
     static getLogin(req, res) {
-        if (req.user && !isGuest(req.user)) {
+        if (req.user) {
             return res.redirect('/');
         }
         res.render(viewPath + 'login', {
@@ -183,7 +182,7 @@ export class UserController {
      * Signup page.
      */
     static getSignup(req, res) {
-        if (req.user && !isGuest(req.user)) {
+        if (req.user) {
             return res.redirect('/');
         }
         res.render(viewPath + 'signup', {
@@ -217,8 +216,6 @@ export class UserController {
             password: req.body.password,
             // verifying gives them (getVerifyEmailToken)
             userGroups: verifies ? [] : signupGroups(),
-            // with guests: models and instances of its own
-            ...(guestAccess() ? { tenantId: 'user-' + crypto.randomBytes(6).toString('hex') } : {}),
         });
         const taken = async () => {
             if (await User.findOne({ userName: req.body.userName }))
