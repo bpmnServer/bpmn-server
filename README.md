@@ -359,7 +359,7 @@ npm update bpmn-server bpmn-web
 | `packages/bpmn-server` | The workflow engine (npm `bpmn-server`), and `npx bpmn-server init`. |
 | `packages/bpmn-client` | The REST client (npm `bpmn-client`). |
 | `packages/bpmn-web` | The web host: tasks, instances, the model editor, administration, the REST APIs, `start()` (npm `bpmn-web`). |
-| `packages/bpmn-mcp` | Connects AI clients to a running server over MCP, Codex and Claude Code among them. |
+| `packages/bpmn-mcp` | Connects AI clients to a running server over MCP, Codex and Claude Code among them (npm `bpmn-mcp`); `npx bpmn-server init` installs it. |
 | `sampleApp` | The sample application (processes, connectors, delegates) on bpmn-web: what `npx bpmn-server init` creates. |
 | `testSampleApp` | The working application: the models tests run on, beside their `.feature` files, the app to start and debug from, and the tests of bpmn-web, the engine and the models. |
 | `docs` | The documentation site. |
@@ -409,8 +409,8 @@ The tests use databases of their own on a local MongoDB (`mongodb://localhost:27
 `BPMN_TEST_MONGO_URL` change it): bpmn-web's tests one per run, dropped when they end; the scenarios
 `bpmn_scenarios`, emptied before each run.
 
-Publishing: `npm publish -w bpmn-server`, then `-w bpmn-web` (it depends on the bpmn-server of the same
-version); packing bpmn-server copies `sampleApp` into it as `init`'s template.
+Publishing: `npm publish -w bpmn-server`, then `-w bpmn-client`, `-w bpmn-web` and `-w bpmn-mcp`, all with the same version (they
+depend on each other's, and `init` installs them together); packing bpmn-server copies `sampleApp` into it as `init`'s template.
 
 ## License
 

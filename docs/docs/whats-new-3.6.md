@@ -15,6 +15,10 @@ The engine can run in a process of its own, with your delegate and services insi
 
 Nothing changes unless you ask for it: without `ENGINE_AT`, the engine runs in the host's process as before.
 
+## AI clients (MCP)
+
+`bpmn-mcp` is now on npm, released with the other packages, and `npx bpmn-server init` installs it and writes `.mcp.json`, so an AI client can use the server. An application made before can add it with `npm install bpmn-mcp`. See [AI clients](setup.md#ai-clients-mcp).
+
 ## Tests in Gherkin
 
 Tests are now `.feature` files beside their models, and they run whole in the engine. They can stub a service or a timer, wait for something that happens later, find a particular item, and say which feature they cover. See [Testing and debugging models](testing.md#tests-in-gherkin).

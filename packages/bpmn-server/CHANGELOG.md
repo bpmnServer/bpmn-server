@@ -15,25 +15,15 @@ and here
 
 ## [Unreleased]
 ### Added
+- **`startEngineService(server, { port, host, key, calls })`**: the engine on a port of its own, for its host's `BPMNServer.launch(configuration, logger, { engine, engineKey })`. `calls` adds to what the engine can be asked.
+- `server.testStubs`: stubs of a service or a timer for a test's own instances, which no engine call or start option can set.
+- **`camunda:elementVariable`** gives each round of a multi-instance its element and `loopCounter`; **`bpmn:completionCondition`**, with `nrOfInstances`, `nrOfCompletedInstances`, `nrOfActiveInstances` and `rounds`, ends a loop early, cancelling the parallel rounds still running.
+- Output parameters on a call activity say what comes back; without them, all of the called process's data, as before.
 - `dataStore.tagInstance(instanceId, tag)` marks a saved instance with a tag of the caller's, indexed by `tag.process`. The engine's saves leave it as it is.
 - **`BPMNServer.launch(configuration)`**: a server seen from outside its engine. Its engine calls answer a JSON copy (`id`, `status`, `instance`), never a running execution; the delegate and services stay inside and keep theirs. `new BPMNServer(...)` embeds the engine, as before. `{ engine: 'none' }`: no engine; models can be read and saved, and what would run answers `EngineNotRunningError`. The settings `moddleOptions` and `servicesFile` say what it needs of the application without its code.
 - **`new ScriptHandler({ context })`** (and `SandboxScriptHandler`): variables of the application's that scripts and expressions see, each computed from a copy of the data.
 - A `language="JavaScript"` condition may give its value by **`next(error, value)`**, as an expression or in statements.
 
-### Fixed
-- Filtering items with several comparisons on one field (`{ $gte: 5, $lt: 10 }`) checked only the last of them; every one must now hold.
-- An error end event outside any sub-process no longer crashes the engine and leaves the instance running: the error goes to what catches it, or the instance ends there.
-- A model with several start events, started with none named, begins at one a user can start; it began at the
-  first drawn, a message, signal or timer start included.
-- A joining gateway is one item. Each branch that arrived added one (a join of 3 branches showed 3 gateway
-  items, since the first release); now the item that goes on keeps the first arrival's seq and start, and the
-  waiting branches' items are dropped. Its log tells it as one item: Started, Waiting, `Arrived` (a later
-  branch), Ended.
-- An item's end is logged once (a join's item logged `Ended` twice).
-- A restored instance numbers its new items after its highest seq; it counted its items, which gave two items
-  the same seq once seqs had a gap.
-
-### Added
 - `runTimers` and `runServiceTasks` in the configuration, a setting each (`demo` is deprecated: both false). A run's decisions
   now say "on this server" rather than "in this demo".
 - `new SandboxScriptHandler({ callServices: true })`: a sandboxed script's calls to `appServices` and `appUtils` run, in the
@@ -45,6 +35,24 @@ and here
   (`startNodeId`), and ends once that element is done; a user task waits first. To test a task by itself.
 - `ModelsDatastore.deleteVersion(name, version)` (`ModelHistory.remove`): one saved version of a model removed; the
   others keep their numbers. It takes its turn with the saves.
+
+### Fixed
+- A timer's text (`PT${data.hours}H`) was written back into its definition when first filled in, so later rounds of a loop got the first value; each item now fills in its own.
+- With `timers.forceTimersDelay`, a cycle's repeats were not read, so `R3` fired once.
+- A sub-process that finished within its own start could go on twice, and failed with `this.currentNode.getOutbounds is not a function` after an exclusive gateway with a default.
+- A call activity's called process runs as the user whose action reached it, in the caller's tenant; it ran with no user and no tenant.
+- A called process that ended within the call lost its data, and the call failed with "query produced no items".
+- Filtering items with several comparisons on one field (`{ $gte: 5, $lt: 10 }`) checked only the last of them; every one must now hold.
+- An error end event outside any sub-process no longer crashes the engine and leaves the instance running: the error goes to what catches it, or the instance ends there.
+- A model with several start events, started with none named, begins at one a user can start; it began at the
+  first drawn, a message, signal or timer start included.
+- A joining gateway is one item. Each branch that arrived added one (a join of 3 branches showed 3 gateway
+  items, since the first release); now the item that goes on keeps the first arrival's seq and start, and the
+  waiting branches' items are dropped. Its log tells it as one item: Started, Waiting, `Arrived` (a later
+  branch), Ended.
+- An item's end is logged once (a join's item logged `Ended` twice).
+- A restored instance numbers its new items after its highest seq; it counted its items, which gave two items
+  the same seq once seqs had a gap.
 
 ### Changed
 - Items are numbered from 1 (`item.seq`; it was from 0), as bpmn-web shows them. Instances already started

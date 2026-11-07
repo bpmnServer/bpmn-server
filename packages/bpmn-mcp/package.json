@@ -1,10 +1,20 @@
 {
   "name": "bpmn-mcp",
-  "version": "0.1.0",
-  "private": true,
+  "version": "3.5.2",
+  "license": "MIT",
   "type": "module",
   "description": "BPMN Server's MCP: the running server's API over stdio, for AI clients",
+  "author": {
+    "name": "ralphhanna"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bpmnServer/bpmn-server.git",
+    "directory": "packages/bpmn-mcp"
+  },
+  "keywords": ["BPMN", "BPMN 2.0", "Workflow", "MCP", "Model Context Protocol"],
   "bin": { "bpmn-mcp": "./src/index.mjs" },
+  "files": ["src", "README.md", "CHANGELOG.md"],
   "scripts": {
     "start": "node src/index.mjs"
   },

@@ -39,6 +39,17 @@ const client = new BPMNClient('localhost', 3000, process.env.API_KEY);
 const { instance } = await client.engine.start('Hello', { name: 'Ada' });
 ```
 
+## AI clients (MCP)
+
+`bpmn-mcp` lets an AI client use this server: list models, start processes, complete tasks. `.mcp.json` registers it for
+clients that read one, such as Claude Code, which asks you to approve it the first time. It reads `.env`, and the server has
+to be running.
+
+**It gets what the keys in `.env` allow, including deleting instances and replacing models.** Take `ADMIN_API_KEY` out of what
+it reads, by pointing `BPMN_ENV_FILE` at a file of its own, to stop it changing models.
+
+For other clients, see the [bpmn-mcp README](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-mcp).
+
 ## Upgrading
 
-`npm update bpmn-server bpmn-web` brings a new engine and web application; your files stay as they are.
+`npm update bpmn-server bpmn-web bpmn-mcp` brings a new engine and web application; your files stay as they are.

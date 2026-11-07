@@ -22,7 +22,9 @@ and here
 - **Gherkin tests**: a model's tests as a `.feature` file, run whole in the engine (`POST /model/test/feature`), with `@login`, `@start`,
   `@find`, `@invoke`, `@check`, `@wait`, `@stub` and `@script`. A stub replaces a service or a timer for its own scenario's instances.
   The Test tab and the decision editor read and write them, and `*.tests.json` files are converted when the server starts. The Mocha scenarios are now `<model>.engine.feature`. See `docs/docs/testing.md`.
-- **The engine in its own process**: `ENGINE_AT`, `ENGINE_KEY`, with the delegate, services, timers and tests in the engine. See `docs/docs/architecture.md`.
+- **The engine in its own process**: `npm run engine`, then `ENGINE_AT` and `ENGINE_KEY` on the host, with the delegate, services, timers and tests in the engine. See `docs/docs/architecture.md`.
+- **bpmn-mcp with every application**: `npx bpmn-server init` installs it and writes `.mcp.json`. See `packages/bpmn-mcp/CHANGELOG.md`.
+- **An HR application in the sample application**, embedded and called through a connector, to show application integration.
 - **Edit as text**, in the Test tab: a model's whole `.feature` file, comments and all. What does not read as Gherkin is not saved, and it says which line; a file changed since it was opened is not overwritten. A run no longer rewrites the file.
 - **A scenario's last run is its test instance**, tagged `{ process, scenario, run }` in the database: there is no `.runs/` folder any more, and an old one can be deleted; earlier runs show as not run. A decision's test has no instance: its runs stay with the page that ran them.
 - The Test tab's coverage is under the scenarios. "No problems found" and Rules show with the Problems tab only.
@@ -50,7 +52,7 @@ and here
   and the logs (the lines that name it). At first: the user tasks.
 
 - **A task by itself in the Test tab:** Test this task (the task selected on the diagram), or Start at → A task
-  by itself: the scenario runs that task alone with the data given as its input (`start.only` in scenario files);
+  by itself: the scenario runs that task alone with the data given as its input;
   its run, Debug and checks as any other.
 - **Connectors list:** each connector's key with a link to set or change it (its page's key form), and Delete,
   whose confirmation names the models that use it.
@@ -66,7 +68,7 @@ and here
   A recording closes by itself at the end. Simulate, Debug and Delete are
   by the result, Simulate and Debug each with a panel of its own; Inspect this run has the data, items, decisions and
   log. New has *The whole process* and *The task selected* (was Test this task); Clear all is **Delete all runs**, Duplicate
-  and Delete are under **⋯**. The scenario files are unchanged.
+  and Delete are under **⋯**.
 - **Add as a check**, in the Test tab, on each item and each value of the run shown: a check that it is as it is there, under its step,
   where the run waits (after the last step done, or at the start), else at the end. A check can be **at the start**
   (`"at": "start"`): once the process has started, before any step.
@@ -80,12 +82,10 @@ and here
 - **Full window** in the editor's panel: the Problems, Report, Test and History tabs over the whole page; Esc comes back.
 - **A setting for each thing `DEMO_MODE` did**: `SCRIPT_SANDBOX`, `SCRIPT_SANDBOX_SERVICES`, `TIMERS` and `SERVICE_TASKS`.
   `DEMO_MODE=true` only gives those not set their demo values, as before. `SCRIPT_SANDBOX=true` alone: scripts in a sandbox,
-  their calls to `appServices` and `appUtils` run, and timers and service tasks as always. Guest access checks the settings
-  themselves. The Test tab's Evaluate runs in the sandbox whenever scripts do.
-- **`GUEST_SAVE=false`**: a guest saves nothing; the server refuses it, and what it edits stays in its browser until it signs up.
-  **Download** in the editor, for everyone: the model being edited, as a `.bpmn` file.
-- **`SIGNUP_VERIFY_EMAIL`, `SIGNUP_GROUPS`, `SITE_URL`**: signing up can send a verification email and give groups once verified. An
-  account that signs up on a server with guests has models and instances of its own. Sign-up no longer answers twice when
+  their calls to `appServices` and `appUtils` run, and timers and service tasks as always.
+  The Test tab's Evaluate runs in the sandbox whenever scripts do.
+- **Download** in the editor: the model being edited, as a `.bpmn` file.
+- **`SIGNUP_VERIFY_EMAIL`, `SIGNUP_GROUPS`, `SITE_URL`**: signing up can send a verification email and give groups once verified. Sign-up no longer answers twice when
   a user name is taken, and links in emails no longer always say `http://`.
 - **The Docker image** is built from the npm release, as users install it (`npx bpmn-server init`), not from a git
   clone: one version per image, no `.env` inside, production mode. `up.cmd` and `up.sh` also make a random `ADMIN_PASSWORD`

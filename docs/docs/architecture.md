@@ -75,4 +75,4 @@ Tests are Gherkin `.feature` files beside their models. A scenario's last run is
 | `bpmn-server` | The engine and core |
 | `bpmn-web` | The host |
 | `bpmn-client` | A REST client, for another Node.js application |
-| `bpmn-mcp` | Connects AI clients to a running server over MCP. Not on npm yet: it runs from the repository |
+| `bpmn-mcp` | Connects AI clients to a running server over MCP. `npx bpmn-server init` installs it |

@@ -428,7 +428,7 @@ features:
   - id: mcp
     area: api
     name: "MCP for AI clients"
-    what: "packages/bpmn-mcp: a running server's API as MCP tools over stdio, with what its keys allow."
+    what: "bpmn-mcp: a running server's API as MCP tools over stdio, with what its keys allow; npx bpmn-server init installs and registers it."
     docs: [packages/bpmn-mcp/README.md]
     code: [packages/bpmn-mcp/src/tools.mjs, packages/bpmn-mcp/src/index.mjs]
     tests: [testSampleApp/test/web/mcp.test.mjs]

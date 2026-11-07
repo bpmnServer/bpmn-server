@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 // BPMN Server's MCP: the running server's API over stdio. .env says which server and with which keys.
+import fs from 'node:fs';
 import dotenv from 'dotenv';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
@@ -18,7 +19,8 @@ const clients = {
   v2: new BPMNClient2(HOST, Number(PORT), API_KEY, { adminApiKey: ADMIN_API_KEY }),
 };
 
-const server = new McpServer({ name: 'bpmn-server', version: '0.1.0' });
+const { version } = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+const server = new McpServer({ name: 'bpmn-server', version });
 for (const tool of tools) {
   server.registerTool(tool.name, { description: tool.description, inputSchema: tool.input, annotations: tool.annotations }, async args => {
     try {

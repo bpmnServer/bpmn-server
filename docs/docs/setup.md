@@ -19,7 +19,7 @@ models. (`init` ships with bpmn-server 3.5.)
 ### To Update
 
 ```sh
-npm update bpmn-server bpmn-web
+npm update bpmn-server bpmn-web bpmn-mcp
 ```
 
 ### On a server, in one line
@@ -33,6 +33,15 @@ curl -fsSL https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/deploy/
 
 It also works as a cloud server's launch script (AWS Lightsail's "Add launch script"). See
 [deploy/](https://github.com/bpmnServer/bpmn-server/tree/main/deploy).
+
+## AI clients (MCP)
+
+Every application `init` creates with the REST APIs includes `bpmn-mcp`, which lets an AI client use the server: list models, start processes, complete tasks. `.mcp.json` registers it for clients that read one, such as Claude Code. It reads the application's `.env`, and the server has to be running.
+
+!!! warning
+    It gets what the keys in `.env` allow, including deleting instances and replacing models. To stop it changing models, point `BPMN_ENV_FILE` at a file of its own without `ADMIN_API_KEY`.
+
+For Codex, Claude Desktop and other clients, or to add it to an existing application, see the [bpmn-mcp README](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-mcp).
 
 ## Ways to run it
 
@@ -289,4 +298,4 @@ This option can be used for minimal installation by having models at a remote lo
 | [bpmn-server](https://github.com/bpmnServer/bpmn-server) | the engine: execution, persistence (MongoDB or your own storage), the API, `verifyModel` and the `bpmn-server` command line |
 | [bpmn-web](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-web) | a web application on bpmn-server: model editor, task lists, administration, and REST APIs |
 | [bpmn-client](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-client) | calls a bpmn-web server's REST API from Node.js |
-| [bpmn-mcp](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-mcp) | connects AI clients to a running server over MCP; not on npm yet, it runs from the repository |
+| [bpmn-mcp](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-mcp) | connects AI clients to a running server over MCP; `npx bpmn-server init` installs it |

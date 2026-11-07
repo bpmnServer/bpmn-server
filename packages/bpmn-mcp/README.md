@@ -15,21 +15,25 @@ ADMIN_API_KEY=your-admin-key
 
 There are no modes: `.env` says which server to use, and its keys decide what the MCP may do. Without `ADMIN_API_KEY`, saving, renaming or deleting models and deleting instances are refused. Everything else, including reading a model's XML, needs only `API_KEY`.
 
-This package has not been published to npm, so it runs from this repository.
-
 ## Install
 
-1. In the repository's root, run `npm install`.
-2. Start the server the MCP will talk to, such as `npm run dev` on port 3000. It has to be running while you use the MCP.
-3. Put the `.env` above in `packages/bpmn-mcp/`, with the keys the server uses. Keep it out of git: it holds your keys.
+`npx bpmn-server init` already installs it, in any application with the REST APIs, and writes `.mcp.json`, which registers it for clients that read one, such as Claude Code. There is nothing more to do there: start the server, and approve it when the client asks.
+
+To add it to an application made before, or another server:
+
+1. Run `npm install bpmn-mcp`.
+2. Put the `.env` above in the folder you start the client from, with the keys the server uses. Keep it out of git: it holds your keys.
+3. Start the server the MCP will talk to. It has to be running while you use the MCP.
 4. Register the MCP with your AI client, below, and restart the client.
 
-`BPMN_ENV_FILE` is needed because a client may launch the MCP from any directory. Use the full paths of your own copy; these are examples.
+`BPMN_ENV_FILE` is needed because a client may launch the MCP from any directory. Use the full paths of your own application; these are examples.
+
+To run it from a copy of this repository, use `packages/bpmn-mcp/src/index.mjs` in place of `node_modules/bpmn-mcp/src/index.mjs`, with its `.env` in `packages/bpmn-mcp/`.
 
 ### Claude Code
 
 ```shell
-claude mcp add bpmn --env BPMN_ENV_FILE=/path/to/bpmnServer4/packages/bpmn-mcp/.env -- node /path/to/bpmnServer4/packages/bpmn-mcp/src/index.mjs
+claude mcp add bpmn --env BPMN_ENV_FILE=/path/to/my-app/.env -- node /path/to/my-app/node_modules/bpmn-mcp/src/index.mjs
 ```
 
 `/mcp` in Claude Code shows whether it connected.
@@ -37,7 +41,7 @@ claude mcp add bpmn --env BPMN_ENV_FILE=/path/to/bpmnServer4/packages/bpmn-mcp/.
 ### Codex
 
 ```shell
-codex mcp add bpmn --env BPMN_ENV_FILE=/path/to/bpmnServer4/packages/bpmn-mcp/.env -- node /path/to/bpmnServer4/packages/bpmn-mcp/src/index.mjs
+codex mcp add bpmn --env BPMN_ENV_FILE=/path/to/my-app/.env -- node /path/to/my-app/node_modules/bpmn-mcp/src/index.mjs
 ```
 
 Or in `~/.codex/config.toml`:
@@ -45,8 +49,8 @@ Or in `~/.codex/config.toml`:
 ```toml
 [mcp_servers.bpmn]
 command = "node"
-args = ["/path/to/bpmnServer4/packages/bpmn-mcp/src/index.mjs"]
-env = { BPMN_ENV_FILE = "/path/to/bpmnServer4/packages/bpmn-mcp/.env" }
+args = ["/path/to/my-app/node_modules/bpmn-mcp/src/index.mjs"]
+env = { BPMN_ENV_FILE = "/path/to/my-app/.env" }
 ```
 
 ### Claude Desktop, and clients with a JSON configuration
@@ -56,14 +60,14 @@ env = { BPMN_ENV_FILE = "/path/to/bpmnServer4/packages/bpmn-mcp/.env" }
   "mcpServers": {
     "bpmn": {
       "command": "node",
-      "args": ["/path/to/bpmnServer4/packages/bpmn-mcp/src/index.mjs"],
-      "env": { "BPMN_ENV_FILE": "/path/to/bpmnServer4/packages/bpmn-mcp/.env" }
+      "args": ["/path/to/my-app/node_modules/bpmn-mcp/src/index.mjs"],
+      "env": { "BPMN_ENV_FILE": "/path/to/my-app/.env" }
     }
   }
 }
 ```
 
-On Windows, write the paths in JSON and TOML with forward slashes, such as `C:/bp/github/bpmnServer4/...`.
+On Windows, write the paths in JSON and TOML with forward slashes, such as `C:/apps/my-app/...`.
 
 ## Use
 

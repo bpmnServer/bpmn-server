@@ -5,8 +5,8 @@
  *                        [--no-auth] [--no-install] [--yes]
  *
  * The application is the sample application (bpmnServer4's sampleApp: models, services and connectors, the app
- * delegate, settings), or with --minimal a Hello application; .env is written with new keys. bpmn-server and
- * bpmn-web are its dependencies, so `npm update` upgrades them.
+ * delegate, settings), or with --minimal a Hello application; .env is written with new keys. bpmn-server,
+ * bpmn-web and, with the APIs, bpmn-mcp are its dependencies, so `npm update` upgrades them.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -15,7 +15,7 @@ import readline from 'node:readline/promises';
 import { spawnSync } from 'node:child_process';
 
 const PACKAGE_ROOT = path.join(import.meta.dirname, '..');
-/** bpmn-web, as published with this bpmn-server: the two are released together, with the same version. */
+/** bpmn-web and bpmn-mcp, as published with this bpmn-server: they are released together, with the same version. */
 const bpmnWebVersion = () => `^${ownVersion()}`;
 
 /**
@@ -34,7 +34,8 @@ const NOT_COPIED = new Set(['node_modules', 'package.json', 'package-lock.json',
 export const INIT_USAGE = `usage: bpmn-server init [folder] [options]
 
   Creates a workflow application: sample models, the services they call, an app
-  delegate, settings and .env, with bpmn-server and bpmn-web as its dependencies.
+  delegate, settings and .env, with bpmn-server, bpmn-web and bpmn-mcp as its
+  dependencies. .mcp.json registers bpmn-mcp for AI clients.
 
   --minimal        a Hello application instead: one model, one service
   --mongo <url>    the MongoDB database (default mongodb://localhost:27017/<folder>)
@@ -42,7 +43,7 @@ export const INIT_USAGE = `usage: bpmn-server init [folder] [options]
                    database server (mongodb-memory-server; data is lost when it stops)
   --port <n>       the web server's port (default 3000)
   --api-only       the REST APIs without the web pages
-  --ui-only        the web pages without the REST APIs
+  --ui-only        the web pages without the REST APIs, and so without bpmn-mcp
   --no-auth        no sign-in and no security rules (development only); the APIs
                    still need their keys
   --no-install     do not run npm install
@@ -146,21 +147,26 @@ function writeApplication(options: InitOptions) {
             dev: 'tsx watch src/index.ts',
             setup: 'tsx src/index.ts --setup',
             cli: 'tsx src/index.ts --cli',
+            mcp: 'bpmn-mcp',
             verify: 'bpmn-server verify processes',
         },
         dependencies: { 'tsx': '^4.20.0' },
         devDependencies: { '@types/node': '^22.0.0' },
     };
+    // bpmn-mcp talks to the REST APIs: without them it has nothing to do
+    const { mcp, ...scripts } = from.scripts;
+    const { 'bpmn-mcp': _, ...dependencies } = from.dependencies;
     const pkg = {
         name: name.toLowerCase().replace(/[^a-z0-9._-]/g, '-'),
         version: '1.0.0',
         private: true,
         type: 'module',
-        scripts: from.scripts,
+        scripts: options.api ? { ...scripts, mcp: mcp ?? 'bpmn-mcp' } : scripts,
         dependencies: {
-            ...from.dependencies,
+            ...dependencies,
             'bpmn-server': `^${ownVersion()}`,
             'bpmn-web': bpmnWebVersion(),
+            ...(options.api ? { 'bpmn-mcp': bpmnWebVersion() } : {}),
             ...(options.memory ? { 'mongodb-memory-server': MEMORY_SERVER_VERSION } : {}),
         },
         devDependencies: from.devDependencies ?? {},
@@ -169,7 +175,14 @@ function writeApplication(options: InitOptions) {
     if (!fs.existsSync(path.join(dir, 'tsconfig.json')))
         writeTsconfig(dir);
     fs.writeFileSync(path.join(dir, '.env'), envFile(name, options));
+    if (options.api)
+        fs.writeFileSync(path.join(dir, '.mcp.json'), mcpConfig());
     return dir;
+}
+
+/** Registers bpmn-mcp with AI clients that read .mcp.json. They start it in this folder, where it reads .env; no keys here. */
+function mcpConfig(): string {
+    return JSON.stringify({ mcpServers: { bpmn: { command: 'node', args: ['node_modules/bpmn-mcp/src/index.mjs'] } } }, null, 2) + '\n';
 }
 
 function writeTsconfig(dir: string) {
@@ -259,7 +272,7 @@ export async function init(argv: string[]): Promise<number> {
 Next:
   cd ${cd}${options.install ? '' : '\n  npm install'}
 ${runSteps(options).map(s => '  ' + s).join('\n')}
-`);
+${options.api ? '\nAI clients: .mcp.json registers bpmn-mcp, with what the keys in .env allow. See README.md.\n' : ''}`);
     return 0;
 }
 
