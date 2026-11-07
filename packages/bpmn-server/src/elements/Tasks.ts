@@ -113,6 +113,16 @@ class ServiceTask extends Node {
         // a test's stub stands for the service: it calls nothing, so it runs wherever service tasks do not
         const stub = (await item.token.execution.server.testStubs?.of(item.token.execution))?.services?.[this.serviceName];
 
+        // stubbed by a test that has ended, or by an engine since restarted: its instance goes on, and does not reach the real service
+        if (!stub && item.token.execution.instance.flags?.stubbed?.includes(this.serviceName)) {
+            item.token.decision({
+                seq: item.seq, element: `service task ${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}`, action: 'ends with no output',
+                why: [`a test stubbed the service ${this.serviceName} for this instance`, 'that test has ended, and the real service is not called'],
+            });
+            item.output = {};
+            return NODE_ACTION.end;
+        }
+
         if (!stub && item.context.configuration?.runServiceTasks === false) {
             item.token.decision({
                 seq: item.seq, element: `service task ${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}`, action: 'ends with no output',
@@ -549,7 +559,7 @@ class CallActivity extends Node {
         const userName = token.execution.userName ?? token.execution.getItems()[0]?.userName ?? null;
 
         const response = await context.engine.start(modelName, item.input, null, userName,
-            { parentItemId: item.id, calledBy: item.id, ...(instance.tenantId != null ? { tenantId: instance.tenantId } : {}) });
+            { parentItemId: item.id, calledBy: item.id, ...(instance.tenantId != null ? { tenantId: instance.tenantId } : {}), ...(instance.flags?.stubbed ? { flags: { stubbed: instance.flags.stubbed } } : {}) });
 
         token.log('..end of executing a call activity for item:' + item.id + " calling " + this.calledElement);
 

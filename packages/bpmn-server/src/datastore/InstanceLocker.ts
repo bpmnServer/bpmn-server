@@ -40,6 +40,8 @@ class InstanceLocker implements ILockManager {
     private readonly maxTries: number;
     private readonly staleAfter: number;
     private readonly logger;
+    /** The locks held here, each renewed until released: only a dead holder's goes stale. */
+    private readonly renewing = new Map<string, ReturnType<typeof setInterval>>();
 
     constructor(store: IDocumentStore | (() => IDocumentStore) | { db: IDocumentStore; dbConfiguration: { db: string; Locks_collection?: string }; logger? }, options?: Partial<InstanceLockerOptions>) {
         const legacy = !options && typeof store === 'object' && 'db' in store && 'dbConfiguration' in store;
@@ -66,23 +68,41 @@ class InstanceLocker implements ILockManager {
 
     private indexed: Promise<void> | null = null;
     /**
-     * Makes sure of the unique index before the first lock or claim, once per locker: without it two servers
-     * could both "acquire" an instance. A database that `install()` (npm run setup) never ran on — a new one,
-     * or the one locks moved to when the database is named (databaseName) — is protected all the same.
-     * Creating an index that exists does nothing; when it cannot be made (no privilege), it is reported and
-     * locking goes on, relying on the index being there.
+     * Makes sure of the unique index before the first lock or claim, once per locker: without it two servers could both
+     * "acquire" an instance. A database that `install()` (npm run setup) never ran on is protected all the same. When the index
+     * can not be made (no privilege), it may be there already, so that is tried: two inserts of one id. If both succeed nothing
+     * excludes anyone, and locking refuses rather than pretends.
      */
     private ensureIndex(): Promise<void> {
-        this.indexed ??= this.install().catch(error => {
-            this.logger?.warn?.(`the unique index on ${this.database}.${this.collection} could not be made (${error?.message ?? error}); `
-                + 'locks exclude only if it exists: run the setup (dataStore.install) as a user that may create indexes');
+        this.indexed ??= this.install().catch(async error => {
+            const probe = `probe:${randomUUID()}`;
+            const row = () => [{ id: probe, kind: 'probe', server: this.owner, time: new Date() }];
+            let exclusive = false;
+            try {
+                await this.store.insert(this.database, this.collection, row());
+                await this.store.insert(this.database, this.collection, row());
+            }
+            catch (duplicate) {
+                if (!DuplicateKeyError.is(duplicate)) throw duplicate;
+                exclusive = true;
+            }
+            finally {
+                await this.store.remove(this.database, this.collection, { id: probe });
+            }
+            if (!exclusive)
+                throw new Error(`Locks can not exclude anyone: no unique index on ${this.database}.${this.collection}, and it could not be made (${error?.message ?? error}). `
+                    + 'Run the setup (dataStore.install) as a user that may create indexes');
+            this.logger?.warn?.(`the unique index on ${this.database}.${this.collection} could not be made (${error?.message ?? error}); it is there, and locks exclude`);
         });
         return this.indexed;
     }
 
     async lock(id: string): Promise<boolean> {
         for (let tries = 1; tries <= this.maxTries; tries++) {
-            if (await this.try(id)) return true;
+            if (await this.try(id)) {
+                this.keepRenewing(id);
+                return true;
+            }
             if (await this.removeStale(id)) continue;
             if (tries < this.maxTries) await this.delay(this.retryDelay);
         }
@@ -103,7 +123,29 @@ class InstanceLocker implements ILockManager {
         }
     }
 
+    /**
+     * A running execution can outlast `staleAfter` (a long service task): its lock's time is kept fresh while it runs, or
+     * another server would take over and both would change the instance. A holder that dies stops renewing, and its lock goes stale.
+     */
+    private keepRenewing(id: string) {
+        const timer = setInterval(() => {
+            Promise.resolve(this.store.update(this.database, this.collection, { id, server: this.owner }, { $set: { time: new Date() } }))
+                .catch(error => this.logger?.warn?.(`lock ${id} could not be renewed: ${error?.message ?? error}`));
+        }, Math.max(this.staleAfter / 3, 50));
+        timer.unref?.();
+        this.renewing.get(id) && clearInterval(this.renewing.get(id));
+        this.renewing.set(id, timer);
+    }
+
+    /** No more renewals: what a holder's death is, for a test; and at shutdown. */
+    stopRenewing() {
+        for (const timer of this.renewing.values()) clearInterval(timer);
+        this.renewing.clear();
+    }
+
     async release(id: string): Promise<void> {
+        clearInterval(this.renewing.get(id));
+        this.renewing.delete(id);
         const { deletedCount } = await this.store.remove(this.database, this.collection, { id, server: this.owner });
         if (deletedCount === 0) this.logger?.log?.(`lock ${id} was not held by ${this.owner}: nothing released`);
     }

@@ -75,10 +75,6 @@ class Cron  extends ServerComponent implements ICron {
 		// no timers: no process starts on a timer, no waiting timer is fired
 		if (this.configuration.runTimers === false)
 			return;
-		const events = await this.definitions.findEvents({ "events.subType": "Timer" });
-		for (const entry of events) {
-			if (entry.timeDue) this.scheduleProcess(entry);
-		}
 		await this.checkTimers();
 	}
 	/** Schedules every waiting timer item in the store that this server has not scheduled yet: recovery at start, and the periodic re-read. */
@@ -87,6 +83,11 @@ class Cron  extends ServerComponent implements ICron {
 		const items = await this.dataStore.findItems({ "items.timeDue": { $exists: true }, "items.status": "wait" });
 		for (const item of items) {
 			if (item.timeDue) this.scheduleItem(item);
+		}
+		// a process timer this server lost the claim on is taken up again from the store: if the winner dies, the next occurrence is still started
+		const events = await this.definitions.findEvents({ "events.subType": "Timer" });
+		for (const entry of events) {
+			if (entry.timeDue) this.scheduleProcess(entry);
 		}
 		const locker: any = this.lockManager;
 		if (typeof locker.purgeClaims === 'function') await locker.purgeClaims();
@@ -113,12 +114,15 @@ class Cron  extends ServerComponent implements ICron {
 		const current = (await this.dataStore.findItems({ 'items.id': entry.id }))[0];
 		if (!current || current.status !== 'wait') { this.counters.skipped++; return; }
 		await this.engine.invoke({ 'items.id': entry.id }, null);
+		// recovered after a restart: the Timer behaviour that would start its next repetition went with the old server
+		if (Number(current.timerRepeat) > Number(current.timerCount ?? 0) + 1)
+			await (this.engine as any).startRepeatTimerEvent(current.instanceId, current, {});
 	}
 	private async processTimerExpired(event: any) {
 		await this.definitions.updateTimer(event.modelName);
 		event.referenceDateTime = new Date().getTime();
 		this.scheduleProcess(event);
-		await this.engine.start(event.modelName, null, null, event.elementId);
+		await this.engine.start(event.modelName, {}, event.elementId);
 	}
 	private scheduleProcess(entry) {
 		const delay = Cron.timeDue(entry.expression, entry.referenceDateTime);
@@ -127,7 +131,9 @@ class Cron  extends ServerComponent implements ICron {
 		const due = Date.now() + ms;
 		this.logger.log('scheduling process ' + entry.modelName + ' at ' + new Date(due));
 		const key = 'process:' + entry.modelName + ':' + entry.elementId;
-		this.schedule(key, ms, undefined, () => this.fireClaimed(`timer:${key}:${Math.round(due / 1000)}`, () => this.processTimerExpired(entry)));
+		// the occurrence, as stored and the same for every server: a due time worked out here would differ between them when overdue
+		const occurrence = entry.referenceDateTime ?? Math.round(due / 1000);
+		this.schedule(key, ms, undefined, () => this.fireClaimed(`timer:${key}:${occurrence}`, () => this.processTimerExpired(entry)));
 	}
 	/** One timer, owned by this server, once per key; a delay longer than `setTimeout` takes is waited out in steps. */
 	private schedule(key: string, delayMs: number, instanceId: string | undefined, fire: () => Promise<void>) {

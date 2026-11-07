@@ -93,6 +93,11 @@ interface IEngine {
 
 	startRepeatTimerEvent(instanceId, prevItem: IItem, data: {},options?:{}) : Promise<IExecution>;
 
+    /** Removes the instances a query matches, each under its lock and with its timers. */
+    deleteInstances(query: any): Promise<{ deletedCount: number }>;
+    /** Marks a saved instance with a tag of the caller's. */
+    tagInstance(instanceId: string, tag: any): Promise<void>;
+
     /**
      *
      * Invoking an event (usually start event of a secondary process) against an existing instance

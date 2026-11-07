@@ -1,6 +1,9 @@
 import { ITEM_STATUS, } from './Enums.js';
 
 interface IItemData {
+    /** a repeating timer: which firing this is, from 0, and how many there are to be */
+    timerCount?: number;
+    timerRepeat?: number | string;
     id: string;            // System generated unique Id
     itemKey: string;        // application assigned key to call the item by
     elementId: string;   // bpmn element
@@ -51,6 +54,8 @@ interface IInstanceData {
 
 /** An instance's own settings, given to engine.start (options.flags) and saved with it; unset, the data store's apply. */
 interface IInstanceFlags {
+    /** Services a test stubbed for this instance: they stay uncalled if it outlives the test. */
+    stubbed?: string[];
     /** a save point at each save, so engine.restart can go back to any of its items (dataStore.enableSavePoints) */
     savePoints?: boolean;
     /** its log lines kept and saved (dataStore.saveLogs) */

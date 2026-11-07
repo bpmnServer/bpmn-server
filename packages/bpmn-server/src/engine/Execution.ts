@@ -496,12 +496,14 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
         await this.doExecutionEvent(this.process,EXECUTION_EVENT.process_invoke);
 
 
-        let newToken=await Token.startNewToken(TOKEN_TYPE.BoundaryEvent, this, 
-				prevItem.node, null, prevItem.token, prevItem, null);
+        // from the store, when recovered after a restart: this execution's own item has its node and token
+        const previous = prevItem.node ? prevItem : this.getItems().find(item => item.id === prevItem.id);
+        let newToken=await Token.startNewToken(TOKEN_TYPE.BoundaryEvent, this,
+				previous.node, null, previous.token, previous, null);
            
 		let newItem = newToken.currentItem;
 
-         newItem.timerCount = prevItem.timerCount+1;     // it increments at start
+         newItem.timerCount = Number(previous.timerCount ?? 0)+1;     // it increments at start
 
         this.log('Execution('+this.name+').signal: returning .. waiting for promises status:' + this.instance.status + " id: " + executionId);
         await this.checkEnd();

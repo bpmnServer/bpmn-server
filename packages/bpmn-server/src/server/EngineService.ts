@@ -68,6 +68,8 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
         upgrade: async (...args) => engine.upgrade(...args),
         upgradeRunning: async (...args) => engine.upgradeRunning(...args),
         status: async () => engine.status(),
+        deleteInstances: async (query) => engine.deleteInstances(query),
+        tagInstance: async (instanceId: string, tag) => engine.tagInstance(instanceId, tag),
         /** A decision of the models folder evaluated, as a business rule task does: `ref` is a file's name or a decision's id. */
         invokeDecision: async (ref: string, data = {}) => {
             const found = await DMNEngine.find(server.configuration.definitionsPath, ref);
@@ -128,10 +130,12 @@ export function startEngineService(server: BPMNServer, { port = 3001, host = '12
         let size = 0;
         request.on('data', chunk => {
             size += chunk.length;
-            if (size > MAX_BODY) { send(response, 413, { error: { message: 'Too large' } }); request.destroy(); return; }
-            chunks.push(chunk);
+            // read to its end, kept nowhere: cut off, the caller would get a broken connection and not this answer
+            if (size <= MAX_BODY) chunks.push(chunk);
+            else chunks.length = 0;
         });
         request.on('end', async () => {
+            if (size > MAX_BODY) return send(response, 413, { error: { message: 'Too large' } });
             let method, args;
             try {
                 ({ method, args = [] } = JSON.parse(Buffer.concat(chunks).toString('utf8')));

@@ -322,7 +322,8 @@ class APIData extends APIComponent {
     public async deleteInstances(query, user?: ISecureUser) {
         user=this.getUser(user);
         query = user.qualifyDeleteInstances(query);
-        return await this.server.dataStore.deleteInstances(query)
+        // the engine's to do, under each instance's lock and with its timers, wherever it runs
+        return await this.server.engine.deleteInstances(query)
     }
 }
 /**

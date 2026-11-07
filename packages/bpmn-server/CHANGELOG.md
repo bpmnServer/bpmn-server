@@ -15,6 +15,7 @@ and here
 
 ## [Unreleased]
 ### Added
+- **`engine.deleteInstances(query)` and `engine.tagInstance(id, tag)`**: what changes an instance is the engine's. A delete takes each instance's lock, so a call running it finishes first, and cancels its timers. `api.data.deleteInstances` and bpmn-web's deletes go through it, wherever the engine runs; reads stay with the data store.
 - **`startEngineService(server, { port, host, key, calls })`**: the engine on a port of its own, for its host's `BPMNServer.launch(configuration, logger, { engine, engineKey })`. `calls` adds to what the engine can be asked.
 - `server.testStubs`: stubs of a service or a timer for a test's own instances, which no engine call or start option can set.
 - **`camunda:elementVariable`** gives each round of a multi-instance its element and `loopCounter`; **`bpmn:completionCondition`**, with `nrOfInstances`, `nrOfCompletedInstances`, `nrOfActiveInstances` and `rounds`, ends a loop early, cancelling the parallel rounds still running.
@@ -37,6 +38,15 @@ and here
   others keep their numbers. It takes its turn with the saves.
 
 ### Fixed
+- **A cancelled transaction ended its instance.** Every item had ended, but the token that waited on the transaction stayed waiting, so the instance stayed `running`.
+- **A transaction inside a sub-process is undone when cancelled.** Its cancel found the sub-process, not the transaction, so nothing was compensated. And an instance whose compensation had run could not be loaded again: the association it went along was not found by its id.
+- **A process timer's claim goes by its stored occurrence**, the same on every server; it went by a due time worked out on each, which could differ when overdue. A server that lost a claim takes the timer up again from the store (`timers.pollInterval`), so a repeating one goes on if the winner dies.
+- **A repeating timer stopped at a restart.** `R3/...` recovered by a server fired once and no more: how far it had got was not saved, and only the server that started it would go on. Its remaining repetitions now run.
+- **Locks refuse to run with nothing to exclude anyone.** When the unique index can not be made, it is tried; if two inserts of one id both succeed, locking fails rather than giving no protection.
+- **A process's timer start event started at the wrong place.** Its element id was passed as the user: with several start events the process began at one a user can start, and not at the timer's.
+- **A lock lasts as long as its holder lives.** A running execution renews it, so one longer than `locks.staleAfter` (5 minutes) is no longer taken over by another server while it runs. Only a dead holder's goes stale.
+- The engine's service answers an oversized request with 413, not a broken connection.
+- `engineTimeout` (`ENGINE_TIMEOUT_MS` in bpmn-web): a host stops waiting for its engine, with an error, `ENGINE_TIMEOUT`, that says the engine may still be running what it was asked. Nothing is tried again.
 - A timer's text (`PT${data.hours}H`) was written back into its definition when first filled in, so later rounds of a loop got the first value; each item now fills in its own.
 - With `timers.forceTimersDelay`, a cycle's repeats were not read, so `R3` fired once.
 - A sub-process that finished within its own start could go on twice, and failed with `this.currentNode.getOutbounds is not a function` after an exclusive gateway with a default.

@@ -16,19 +16,31 @@ export class EngineNotRunningError extends Error {
 type EngineCall = (method: string, args: any[]) => Promise<any>;
 
 /** The engine's calls over the network: the private link from a host to its engine. */
-function remoteCall(at: string, key: string): EngineCall {
+const timedOut = (at: string, ms: number) => Object.assign(
+    new Error(`The engine at ${at} did not answer within ${ms} ms. It may still be running what it was asked: check before asking again`),
+    { name: 'EngineTimeoutError', code: 'ENGINE_TIMEOUT' });
+
+/** How long a host waits for its engine, unless told (`engineTimeout`): what fetch itself allows an answer to take. */
+const ENGINE_TIMEOUT = 5 * 60_000;
+
+function remoteCall(at: string, key: string, timeout = ENGINE_TIMEOUT): EngineCall {
     const url = `${at.replace(/\/+$/, '')}/engine/call`;
     return async (method, args) => {
         // an argument left out stays out, for the engine's default
         while (args.length && args[args.length - 1] === undefined) args = args.slice(0, -1);
         let response;
         try {
-            response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-engine-key': key ?? '' }, body: JSON.stringify({ method, args }) });
+            response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-engine-key': key ?? '' }, body: JSON.stringify({ method, args }), signal: AbortSignal.timeout(timeout) });
         }
-        catch {
+        catch (error) {
+            if (error?.name === 'TimeoutError') throw timedOut(at, timeout);
             throw new EngineNotRunningError(`the one at ${at} can not be reached`);
         }
-        const answer = await response.json().catch(() => ({ error: { message: `The engine answered ${response.status}` } }));
+        // nothing here tries again: a call that may have run is not to run twice
+        const answer = await response.json().catch(error => {
+            if (error?.name === 'TimeoutError') throw timedOut(at, timeout);
+            return { error: { message: `The engine answered ${response.status}` } };
+        });
         if (answer.error) throw Object.assign(new Error(answer.error.message), answer.error);
         return answer.result;
     };
@@ -58,6 +70,8 @@ export class LaunchedEngine {
     startEvent(...args: any[]) { return this.#ask('startEvent', args); }
     throwMessage(...args: any[]) { return this.#ask('throwMessage', args); }
     throwSignal(...args: any[]) { return this.#ask('throwSignal', args); }
+    deleteInstances(query) { return this.#ask('deleteInstances', [query]); }
+    tagInstance(instanceId: string, tag) { return this.#ask('tagInstance', [instanceId, tag]); }
     upgrade(...args: any[]) { return this.#ask('upgrade', args); }
     upgradeRunning(...args: any[]) { return this.#ask('upgradeRunning', args); }
     invokeDecision(...args: any[]) { return this.#ask('invokeDecision', args); }
@@ -138,11 +152,11 @@ export class LaunchedServer {
     readonly engine: LaunchedEngine;
     readonly appDelegate: ApplicationFacts;
 
-    constructor(server: BPMNServer, options: { engine?: string; engineKey?: string; calls?: (server: BPMNServer) => Record<string, (...args: any[]) => Promise<any>> } = {}) {
+    constructor(server: BPMNServer, options: { engine?: string; engineKey?: string; engineTimeout?: number; calls?: (server: BPMNServer) => Record<string, (...args: any[]) => Promise<any>> } = {}) {
         this.#server = server;
         const at = options.engine;
         const calls = at ? null : { ...engineCalls(server), ...options.calls?.(server) };
-        this.engine = new LaunchedEngine(at === 'none' ? null : at ? remoteCall(at, options.engineKey) : (method, args) => calls[method](...args));
+        this.engine = new LaunchedEngine(at === 'none' ? null : at ? remoteCall(at, options.engineKey, options.engineTimeout) : (method, args) => calls[method](...args));
         this.appDelegate = new ApplicationFacts(server.configuration, this.engine);
         if (!at) this.appDelegate.moddleFromEngine = server.appDelegate.moddleOptions;
         // an engine elsewhere may not have started yet: what is not known of it then falls back on the settings
