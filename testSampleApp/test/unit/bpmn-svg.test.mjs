@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import { layoutProcess } from 'bpmn-auto-layout';
 import { bpmnToSvg } from '../../../packages/bpmn-web/dist/routes/bpmnToSvg.js';
 
-const simple = fs.readFileSync('test/processes/test-exclusive-gateway.bpmn', 'utf8');
+const simple = fs.readFileSync('processes/test-exclusive-gateway.bpmn', 'utf8');
 
 test('renders an SVG preview from diagram information', async () => {
   const svg = await bpmnToSvg(simple);

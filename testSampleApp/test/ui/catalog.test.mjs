@@ -2,11 +2,10 @@
 // The model catalog in a browser: filter it, see a model's problems, import it into the editor.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
-import { startWebApp, PASSWORD } from '../support/webApp.mjs';
+import { startWebApp, testCatalog, PASSWORD } from '../support/webApp.mjs';
 
-const CATALOG = fileURLToPath(new URL('../fixtures/catalog/', import.meta.url));
+const CATALOG = testCatalog();
 let web, browser;
 test.before(async () => {
   web = await startWebApp({ env: { CATALOG_URL: CATALOG } });

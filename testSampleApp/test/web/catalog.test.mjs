@@ -4,10 +4,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { startWebApp, why } from '../support/webApp.mjs';
+import { startWebApp, testCatalog, why } from '../support/webApp.mjs';
 
-const CATALOG = fileURLToPath(new URL('../fixtures/catalog/', import.meta.url));
+const CATALOG = testCatalog();
 let web, designer, staff;
 
 test.before(async () => {

@@ -1,5 +1,5 @@
 // Starts testSampleApp (its settings, delegate and connectors on bpmn-web) in-process for the HTTP and UI
-// tests: its own MongoDB database (dropped on stop), its own definitions folder (a copy of test/processes),
+// tests: its own MongoDB database (dropped on stop), its own definitions folder (a copy of FIXTURE_MODELS),
 // no timers, authentication on, and three users.
 //
 //   const web = await startWebApp();
@@ -17,7 +17,9 @@ import dotenv from 'dotenv';
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 /** bpmn-web's package: the tests reach its built modules (dist/) as well as its public API. */
 const WEB = path.join(ROOT, '..', 'packages', 'bpmn-web');
-export const FIXTURES = path.join(ROOT, 'test', 'processes');
+export const FIXTURES = path.join(ROOT, 'processes');
+/** The models a test server starts with: these few, whatever else the folder holds. */
+const FIXTURE_MODELS = ['leave-request.bpmn', 'simple.bpmn', 'test-exclusive-gateway.bpmn'];
 export const PASSWORD = 'Test-password-1';
 export const API_KEY = 'test-api-key';
 export const ADMIN_API_KEY = 'test-admin-api-key';
@@ -44,9 +46,18 @@ function testDatabaseUrl() {
     return url.toString();
 }
 
+/** A catalog folder for a test: a good entry and a tampered one, which the real catalog can not have. */
+export function testCatalog() {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-catalog-'));
+    fs.mkdirSync(path.join(dir, 'models'));
+    fs.copyFileSync(path.join(ROOT, 'test', 'support', 'test-catalog.json'), path.join(dir, 'catalog.json'));
+    fs.copyFileSync(path.join(FIXTURES, 'hello.bpmn'), path.join(dir, 'models', 'hello.bpmn'));
+    return dir + path.sep;
+}
+
 function definitionsFolder() {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-web-defs-'));
-    for (const file of fs.readdirSync(FIXTURES))
+    for (const file of FIXTURE_MODELS)
         fs.copyFileSync(path.join(FIXTURES, file), path.join(dir, file));
     return dir + path.sep;
 }

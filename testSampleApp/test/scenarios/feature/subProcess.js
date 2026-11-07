@@ -11,7 +11,7 @@ const logger = new Logger({ toConsole: false });
 
 const server = new BPMNServer(configuration, logger);
 
-let name = 'SubProcess';
+let name = 'SubProcess-engine-test';
 
 let process;
 let response;

@@ -9,7 +9,7 @@ import path from 'node:path';
 import { chromium } from 'playwright';
 import { startWebApp, PASSWORD, FIXTURES } from '../support/webApp.mjs';
 
-const SAMPLES = path.join(FIXTURES, '..', '..', 'processes');
+const SAMPLES = FIXTURES;
 const CONDITIONS = `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="d" targetNamespace="urn:t">
 <bpmn:process id="p" isExecutable="true">
@@ -83,7 +83,7 @@ async function save(page, model) {
 }
 
 test('a flow condition is one JavaScript expression', async () => {
-    const model = await addModel('panel-condition', { xml: fs.readFileSync(path.join(FIXTURES, '..', 'fixtures', 'buy-used-car.bpmn'), 'utf8') });     // the tests' copy of the sample
+    const model = await addModel('panel-condition', { xml: fs.readFileSync(path.join(FIXTURES, 'buy-used-car.bpmn'), 'utf8') });     // the tests' copy of the sample
     const { page, errors, close } = await openEditor(model);
     await select(page, 'flow_gw1_clean');
     await openGroup(page, 'Condition');

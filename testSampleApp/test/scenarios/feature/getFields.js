@@ -8,7 +8,7 @@ const logger = new Logger({ toConsole: false });
 
 //=-=-=-==============================
 
-let name = 'Buy Used Car';
+let name = 'Buy Used Car-engine-test';
 let server;
 let process;
 let needsRepairs = true;

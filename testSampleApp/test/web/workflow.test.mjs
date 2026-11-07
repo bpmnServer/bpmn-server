@@ -1,6 +1,6 @@
 // @features: tasks-forms-web
 // Process scenarios through the UI routes: start, task lists, task forms, assignment, approval paths,
-// candidate-group authorization and instance administration. Uses test/processes/leave-request.bpmn:
+// candidate-group authorization and instance administration. Uses processes/leave-request.bpmn:
 //   Submit request (staff, form: days, reason) -> More than 5 days?
 //     yes -> Approve request (manager) -> Approved
 //     no  -> Approve automatically (script: approvedBy = 'system') -> Approved automatically

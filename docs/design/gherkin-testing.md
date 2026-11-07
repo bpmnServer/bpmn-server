@@ -196,6 +196,10 @@ The engine uses the standard Gherkin parser (`@cucumber/gherkin`) with its own s
 
 Run history moves out because a `.feature` file should change only when the test does. Coverage reads the runs file.
 
+**A test lives beside its model**, wherever that model lives. The Test tab reads and writes it there, it moves with the model, and each tenant's tests stay in that tenant's folder. Only a test spanning several models or the application goes elsewhere, in that application's `test/features/`. In this repository, `testSampleApp/processes` holds the models used for testing, and `sampleApp` is what users see.
+
+**Production has no testing, so a deploy leaves out `*.feature` and `*.runs.json`.**
+
 A one-time conversion turns existing `*.tests.json` into `.feature` files and removes the originals only after each converted file has run. The Test tab reads and writes `.feature` files, including what it records.
 
 Decisions need one more command, `@evaluate decision:<name> as :result`, whose table is the decision's input.

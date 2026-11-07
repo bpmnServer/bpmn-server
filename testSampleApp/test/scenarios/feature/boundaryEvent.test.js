@@ -22,7 +22,7 @@ const logger = new Logger({ toConsole: false });
 const server = new BPMNServer(configuration, logger);
 var caseId = Math.floor(Math.random() * 10000);
 
-let name = 'boundary-event';
+let name = 'boundary-event-engine-test';
 let response;
 let instanceId;
 

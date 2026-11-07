@@ -13,7 +13,7 @@ const logger = new Logger({ toConsole: false});
 const server = new BPMNServer(configuration, logger);
 var caseId = Math.floor(Math.random() * 10000);
 
-let name = 'Buy Used Car';
+let name = 'Buy Used Car-engine-test';
 let process;
 let response;
 let instanceId;

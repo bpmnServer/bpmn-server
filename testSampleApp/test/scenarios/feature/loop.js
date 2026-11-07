@@ -14,7 +14,7 @@ const server = new BPMNServer(configuration, logger);
 
 //=-=-=-==============================
 
-let name = 'loop';
+let name = 'loop-engine-test';
 
 let response;
 let needsRepairs = true;

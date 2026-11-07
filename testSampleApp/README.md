@@ -61,5 +61,5 @@ work in the test, in `connectors/` and `delegates/`, and in the packages' `src`.
 Loaded Scripts as `bpmn:///<model>/<element>/<label>.js`, and `debugger;` in a script stops there; an error in one
 names that location in its stack.
 
-The tests use their own database and a copy of `test/processes`; they reach bpmn-web's built modules in
+The tests use their own database and a copy of a few models of `processes/`; they reach bpmn-web's built modules in
 `../packages/bpmn-web/dist`, so build bpmn-web first (`npm run build` at the root).

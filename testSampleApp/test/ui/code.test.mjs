@@ -94,7 +94,7 @@ test('code that does not compile is marked as it is typed, as bpmn-server compil
 });
 
 test('a condition is checked as an expression: return (...), a leading $ allowed', async () => {
-    fs.copyFileSync(path.join(FIXTURES, '..', 'fixtures', 'buy-used-car.bpmn'), path.join(web.definitionsPath, 'code-car.bpmn'));
+    fs.copyFileSync(path.join(FIXTURES, 'buy-used-car.bpmn'), path.join(web.definitionsPath, 'code-car.bpmn'));
     await web.bpmnServer.definitions.rebuild();
     await openEditor('code-car');
     await select('flow_gw1_clean');
