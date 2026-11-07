@@ -131,13 +131,11 @@ function readSet(folder: string, key: string): any[] {
     return set?.scenarios ?? set?.tests ?? [];
 }
 
-/** The JSON of a set, moved out of the way once its .feature holds it: kept, for nothing has to be lost. */
+/** The JSON of a set, once its .feature holds it. */
 function setAsideJson(folder: string, key: string) {
     const file = path.join(folder, fileName(key));
     if (!fs.existsSync(file)) return;
-    const kept = path.join(folder, '.runs', 'converted');
-    fs.mkdirSync(kept, { recursive: true });
-    fs.renameSync(file, path.join(kept, fileName(key)));
+    fs.rmSync(file);
 }
 
 /** A list as what its file has to hold: the fields of a test, not what a run of it left on it. */
@@ -168,7 +166,7 @@ const sorted = value => Array.isArray(value) ? value.map(sorted)
 const sameJson = (a, b) => JSON.stringify(sorted(a)) === JSON.stringify(sorted(b));
 
 /**
- * Every set still in JSON becomes a .feature, when it reads back as the same tests; the JSON goes to .runs/converted.
+ * Every set still in JSON becomes a .feature, when it reads back as the same tests; the JSON is removed.
  * Those that would not are left as they are, and are read as before. Returns what was done.
  */
 export async function convertTestFiles(): Promise<{ converted: string[]; left: { file: string; why: string }[] }> {
@@ -227,7 +225,7 @@ export async function saveScenarios(model: string, scenarios: Scenario[], userNa
 /** Every test set of the models folder: its key, how many tests, when last saved. */
 async function ownSets() {
     const folder = modelsFolder();
-    const files = fs.existsSync(folder) ? fs.readdirSync(folder).filter(f => /\.(feature|tests\.json)$/.test(f)) : [];
+    const files = fs.existsSync(folder) ? fs.readdirSync(folder).filter(f => /\.(feature|tests\.json)$/.test(f) && !f.endsWith('.engine.feature')) : [];
     const keys = new Map<string, string>();
     for (const file of files) {
         const base = file.replace(/\.(feature|tests\.json)$/, '');

@@ -196,11 +196,13 @@ The engine uses the standard Gherkin parser (`@cucumber/gherkin`) with its own s
 
 Run history stays apart, so a `.feature` file changes only when the test does.
 
+Engine tests are `<model>.engine.feature`, beside the model: `npm run test:scenarios` runs them, and the Test tab doesn't show them. `@skip` keeps a scenario without running it.
+
 **A test lives beside its model**, wherever that model lives. The Test tab reads and writes it there, it moves with the model, and each tenant's tests stay in that tenant's folder. Only a test spanning several models or the application goes elsewhere, in that application's `test/features/`. In this repository, `testSampleApp/processes` holds the models used for testing, and `sampleApp` is what users see.
 
 **Production has no testing, so a deploy leaves out `*.feature` and `*.runs.json`.**
 
-At start-up, each `*.tests.json` becomes a `.feature` if it reads back as the same tests, and the JSON moves to `.runs/converted/`; one that doesn't stays as it is, is read as before, and is reported. The Test tab reads and writes `.feature` files through the server. It runs what it can show by its own form, and shows a scenario it has no form for (a `@stub`, a `@find`, an expression, an outline) read-only, as written. Comments and a feature's description in a file the Test tab saves are not kept, but those in a scenario kept as written are.
+At start-up, each `*.tests.json` becomes a `.feature` if it reads back as the same tests, and the JSON is removed; one that doesn't stays as it is, is read as before, and is reported. The Test tab reads and writes `.feature` files through the server. It runs what it can show by its own form, and shows a scenario it has no form for (a `@stub`, a `@find`, an expression, an outline) read-only, as written. Comments and a feature's description in a file the Test tab saves are not kept, but those in a scenario kept as written are.
 
 Decisions use `@evaluate decision:<name> as :result`, whose table is the decision's input, then `@check :result output.<name> is ...` and `@check :result rules is <how many matched>`.
 

@@ -113,7 +113,7 @@ export async function setup(server: BPMNServer) {
 		const { convertTestFiles } = await import('./testing/scenarios.js');
 		const { converted, left } = await convertTestFiles();
 		if (converted.length)
-			console.log(`${converted.length} test file(s) converted to .feature; the JSON is kept in .runs/converted`);
+			console.log(`${converted.length} test file(s) converted to .feature`);
 		for (const { file, why } of left)
 			console.error(`${file} stays as it is: ${why}`);
 	}

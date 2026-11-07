@@ -16,7 +16,7 @@ TypeScript directly; check every change with the commands below before you repor
 | `delegates/ApprovalManager.ts`, `ApprovalRules.ts`, `appUtils.ts` | Logic the services and scripts use. |
 | `settings/config.ts` | bpmn-server settings that replace bpmn-web's defaults (the models folder). |
 | `index.ts` | Starts bpmn-web with the above (`npm start`). |
-| `test/` | Tests of bpmn-web and of the engine. All the models are in `processes/`. The tests run on them, so a change to a model there can fail a test: a web test server starts with a few of them (`FIXTURE_MODELS` in `test/support/webApp.mjs`), the engine scenarios use them directly, and a model named `*-engine-test` is theirs alone. |
+| `test/` | Tests of bpmn-web and of the engine. All the models are in `processes/`. The tests run on them, so a change to a model there can fail a test: a web test server starts with a few of them (`FIXTURE_MODELS` in `test/support/webApp.mjs`), the engine scenarios (`<model>.engine.feature`) use them directly, and a model named `*-engine-test` is theirs alone. |
 | `.env` | Database URL and keys. **Never read, print or change it.** |
 
 The packages themselves are `../packages/bpmn-server` and `../packages/bpmn-web`. Change them only when the

@@ -126,7 +126,18 @@ test('a scenario kept as written runs from the Test tab, and a save leaves it as
   fs.rmSync(file);
 });
 
-test('a test file in JSON is read until it is converted; the conversion keeps it, and leaves what would not read back', async () => {
+test('@skip keeps a scenario without running it; an engine file is not the Test tab\'s', async () => {
+  const res = await designer.request('POST', '/model/test/feature', { json: { source: 'Feature: F\n\n  @skip\n  Scenario: S\n    Then @check ${1 === 2}\n' } });
+  const [element] = JSON.parse(res.text).results[0].elements;
+  assert.equal(element.steps[0].result.status, 'skipped');
+  const file = path.join(web.definitionsPath, 'only-engine.engine.feature');
+  fs.writeFileSync(file, 'Feature: F\n\n  Scenario: S\n    Then @check ${1 === 1}\n');
+  const { listScenarioSets } = await import(dist('scenarios.js'));
+  assert.ok(!(await listScenarioSets()).some(set => set.model.includes('only-engine')));
+  fs.rmSync(file);
+});
+
+test('a test file in JSON is read until it is converted; the conversion leaves what would not read back', async () => {
   const folder = web.definitionsPath;
   const json = path.join(folder, `${MODEL}.tests.json`);
   const scenario = { name: 'Old', start: { data: {} }, steps: [], expect: { status: 'running', passes: ['Submit'] } };
@@ -144,7 +155,6 @@ test('a test file in JSON is read until it is converted; the conversion keeps it
   assert.match(left[0].why, /names no step/);
   assert.ok(fs.existsSync(bad), 'one that would not read back stays');
   assert.ok(!fs.existsSync(json));
-  assert.ok(fs.existsSync(path.join(folder, '.runs', 'converted', `${MODEL}.tests.json`)), 'the JSON is kept');
   const { scenarios } = JSON.parse((await designer.get(`/model/scenarios/${MODEL}`)).text);
   assert.deepEqual(scenarios[0].checks, [{ kind: 'status', status: 'running' }, { kind: 'node', node: 'Submit' }], 'the older expect, as checks');
   fs.rmSync(bad);

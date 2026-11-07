@@ -31,7 +31,9 @@ async function runCode(server, values: Record<string, any>, body: string, name: 
 class Scenario {
     names: Record<string, { instanceId?: string; itemId?: string; model?: string; result?: any; evaluated?: boolean }> = {};
     context = {};
-    user: { userName: string; secure: any } | null = null;
+    /** who the steps act as; with a role, the engine's rules for that user apply too */
+    user: { userName: string; secure?: any } | null = null;
+    qualified(query) { return this.user?.secure ? this.user.secure.qualifyItems(query) : query; }
     stubs: StubSet = { services: {}, timers: {} };
     /** a stub's fail(): the scenario failed, whatever the model did with it */
     stubFailure: string | null = null;
@@ -85,18 +87,22 @@ class Scenario {
         return answer;
     }
 
-    /** The one item a query finds, as this scenario's user can see it; none, or several, is the step's failure. */
-    async findItem(element: string, name: string, fields: Record<string, any>) {
-        const { held } = await this.instanceOf(name);
-        const query: any = { id: held.instanceId, 'items.elementId': element };
-        for (const [field, value] of Object.entries(fields)) {
-            if (!field.startsWith('item.')) throw new Error(`'${field}': a field of the query starts with item.`);
-            query['items.' + field.slice('item.'.length)] = value;
-        }
-        const found = await this.server.dataStore.findItems(this.user ? this.user.secure.qualifyItems(query) : query);
-        if (found.length === 1) return found[0];
+    /**
+     * The one item a query finds, as this scenario's user can see it; none, or several, is the step's failure. `item.x` in
+     * the fields is the item's x; the others are the instance's, as the engine's queries name them. With `first`, the first
+     * of several is meant.
+     */
+    async findItem(element: string | null, name: string | null, fields: Record<string, any>, first = false) {
+        const query: any = {};
+        if (name) query.id = (await this.instanceOf(name)).held.instanceId;
+        if (element) query['items.elementId'] = element;
+        for (const [field, value] of Object.entries(fields))
+            query[field.startsWith('item.') ? 'items.' + field.slice('item.'.length) : field] = value;
+        const found = await this.server.dataStore.findItems(this.qualified(query));
+        if (found.length === 1 || (first && found.length)) return found[0];
         const seen = found.map(i => `${i.elementId} ${i.status}${i.itemKey ? ` key ${i.itemKey}` : ''}`).join(', ');
-        throw new Error(`${element} in :${name}: found ${found.length} items, not one${seen ? `: ${seen}` : ''}${this.user ? ` (as ${this.user.userName})` : ''}`);
+        const what = `${element ?? 'item'}${name ? ` in :${name}` : ''}`;
+        throw new Error(`${what}: found ${found.length} items, not one${seen ? `: ${seen}` : ''}${this.user ? ` (as ${this.user.userName})` : ''}`);
     }
 
     /** A stub that names nothing in the model, or in what the model calls, would leave the real one running. */
@@ -118,7 +124,33 @@ class Scenario {
     }
 
     /** Whether a statement of @check or @wait holds, and what it read. */
-    async holds(statement: string): Promise<{ ok: boolean; said: string }> {
+    async holds(statement: string, rows?): Promise<{ ok: boolean; said: string }> {
+        const counted = /^(instances|items) (\d+)$/.exec(statement);
+        if (counted) {
+            const query = await this.table(rows);
+            const found = await (counted[1] === 'items' ? this.server.dataStore.findItems(query) : this.server.dataStore.findInstances(query, 'summary'));
+            return { ok: found.length === Number(counted[2]), said: `found ${found.length}` };
+        }
+        const has = new RegExp(`^:(\\w+) has (\\d+) items(?: of element:${NAME})?(?: with status (".*"))?$`).exec(statement);
+        if (has) {
+            const { instance } = await this.instanceOf(has[1]);
+            const element = has[3] && unquoted(has[3]);
+            const status = has[4] && JSON.parse(has[4]);
+            const count = instance.items.filter(i => (!element || i.elementId === element) && (!status || i.status === status)).length;
+            return { ok: count === Number(has[2]), said: `it has ${count}` };
+        }
+        // an element's item: its first, or its latest
+        const ofElement = new RegExp(`^:(\\w+) (last )?element:${NAME} ([\\w.]+) (is not|is|<>|>=|<=|=|>|<) (.+)$`).exec(statement);
+        if (ofElement) {
+            const { instance } = await this.instanceOf(ofElement[1]);
+            const element = unquoted(ofElement[3]);
+            const items = instance.items.filter(i => i.elementId === element).sort((a, b) => a.seq - b.seq);
+            const item = ofElement[2] ? items[items.length - 1] : items[0];
+            if (!item) return { ok: false, said: `${element} has not run` };
+            const actual = valueAt(item, ofElement[4]);
+            const op = { is: '=', 'is not': '<>' }[ofElement[5]] ?? ofElement[5];
+            return { ok: compare(actual, op, await this.value(ofElement[6])), said: `${element} ${ofElement[4]} is ${JSON.stringify(actual)}` };
+        }
         const expression = /^\$\{([\s\S]*)\}$/.exec(statement);
         if (expression) {
             const value = await this.expression(expression[1]);
@@ -153,8 +185,8 @@ const COMMANDS: Record<string, (server, scenario: Scenario, step: Step) => Promi
     async login(_server, scenario, { subject, rest }) {
         const who = /^user:(\S+)$/.exec(subject);
         const roles = /^with role of "([^"]*)"$/.exec(rest);
-        if (!who || !roles) throw new Error('@login: user:<name> @login with role of "<role>"');
-        scenario.user = { userName: who[1], secure: new SecureUser({ userName: who[1], userGroups: [roles[1]], tenantId: null }, { enforceSecurity: true }) };
+        if (!who || (rest && !roles)) throw new Error('@login: user:<name> @login, or with role of "<role>"');
+        scenario.user = { userName: who[1], ...(roles ? { secure: new SecureUser({ userName: who[1], userGroups: [roles[1]], tenantId: null }, { enforceSecurity: true }) } : {}) };
     },
 
     async start(server, scenario, { rest, rows }) {
@@ -180,10 +212,10 @@ const COMMANDS: Record<string, (server, scenario: Scenario, step: Step) => Promi
     },
 
     async find(_server, scenario, { rest, rows }) {
-        const match = new RegExp(`^element:${NAME} in :(\\w+) as :(\\w+)$`).exec(rest);
+        const match = new RegExp(`^(?:element:${NAME}|item)(?: in :(\\w+))? as :(\\w+)$`).exec(rest);
         if (!match) throw new Error('@find: @find element:<id> in :<instance> as :<name>');
-        const item = await scenario.findItem(unquoted(match[1]), match[2], await scenario.table(rows));
-        scenario.names[match[3]] = { instanceId: scenario.names[match[2]].instanceId, itemId: item.id };
+        const item = await scenario.findItem(match[1] ? unquoted(match[1]) : null, match[2] ?? null, await scenario.table(rows));
+        scenario.names[match[3]] = { instanceId: item.instanceId ?? scenario.names[match[2]]?.instanceId, itemId: item.id };
         scenario.current.item = match[3];
     },
 
@@ -191,38 +223,61 @@ const COMMANDS: Record<string, (server, scenario: Scenario, step: Step) => Promi
     async invoke(server, scenario, { rest, rows }) {
         const data = await scenario.table(rows);
         const named = /^:(\w+)$/.exec(rest);
-        const short = new RegExp(`^element:${NAME} in :(\\w+)(?: as :(\\w+))?$`).exec(rest);
-        let target;
+        const short = new RegExp(`^(first )?element:${NAME}(?: key "([^"]*)")? in :(\\w+)(?: as :(\\w+))?( no wait)?$`).exec(rest);
+        let target, options;
         if (named) {
             const held = scenario.names[named[1]];
             if (!held?.itemId) throw new Error(`:${named[1]} is not an item`);
             target = held;
         }
         else if (short) {
-            const item = await scenario.findItem(unquoted(short[1]), short[2], { 'item.status': 'wait' });
-            target = { instanceId: scenario.names[short[2]].instanceId, itemId: item.id };
-            if (short[3]) {
-                scenario.names[short[3]] = target;
-                scenario.current.item = short[3];
+            const item = await scenario.findItem(unquoted(short[2]), short[4], { 'item.status': 'wait', ...(short[3] !== undefined ? { 'item.itemKey': short[3] } : {}) }, !!short[1]);
+            target = { instanceId: scenario.names[short[4]].instanceId, itemId: item.id };
+            if (short[5]) {
+                scenario.names[short[5]] = target;
+                scenario.current.item = short[5];
             }
+            if (short[6]) options = { noWait: true };
         }
         else throw new Error('@invoke: @invoke :<item>, or @invoke element:<id> in :<instance> as :<name>');
         const query: any = { id: target.instanceId, 'items.id': target.itemId };
-        await server.engine.invoke(scenario.user ? scenario.user.secure.qualifyItems(query) : query, data, scenario.user?.userName ?? null);
+        await server.engine.invoke(scenario.qualified(query), data, scenario.user?.userName ?? null, options);
     },
 
-    async check(_server, scenario, { rest }) {
-        const { ok, said } = await scenario.holds(rest);
+    /** Who an item is for: the table is the assignment. */
+    async assign(server, scenario, { rest, rows }) {
+        const held = scenario.names[/^:(\w+)$/.exec(rest)?.[1]];
+        if (!held?.itemId) throw new Error('@assign: @assign :<item>');
+        await server.engine.assign(scenario.qualified({ id: held.instanceId, 'items.id': held.itemId }), null, await scenario.table(rows), scenario.user?.userName ?? null);
+    },
+
+    /** The instance back at an item. */
+    async restart(server, scenario, { rest, rows }) {
+        const held = scenario.names[/^:(\w+)$/.exec(rest)?.[1]];
+        if (!held?.itemId) throw new Error('@restart: @restart :<item>');
+        await server.engine.restart(scenario.qualified({ id: held.instanceId, 'items.id': held.itemId }), await scenario.table(rows), scenario.user?.userName ?? null);
+    },
+
+    /** A start event of an instance; `restart` for one that has ended. */
+    async startEvent(server, scenario, { rest, rows }) {
+        const match = new RegExp(`^element:${NAME} in :(\\w+)( restart)?$`).exec(rest);
+        if (!match) throw new Error('@startEvent: @startEvent element:<id> in :<instance>');
+        const { held } = await scenario.instanceOf(match[2]);
+        await server.engine.startEvent(held.instanceId, unquoted(match[1]), await scenario.table(rows), scenario.user?.userName ?? null, match[3] ? { restart: true } : {});
+    },
+
+    async check(_server, scenario, { rest, rows }) {
+        const { ok, said } = await scenario.holds(rest, rows);
         if (!ok) throw new Error(`${rest}: ${said}`);
     },
 
-    async wait(_server, scenario, { rest }) {
+    async wait(_server, scenario, { rest, rows }) {
         const within = /^(.*) within (\d+) (second|minute|hour)s?$/.exec(rest);
         const statement = within ? within[1] : rest;
         const limit = within ? Number(within[2]) * SECONDS[within[3]] * 1000 : WAIT.within;
         const deadline = Date.now() + limit;
         for (;;) {
-            const { ok, said } = await scenario.holds(statement);
+            const { ok, said } = await scenario.holds(statement, rows);
             if (ok) return;
             if (Date.now() > deadline) throw new Error(`${statement}: still ${said} after ${limit / 1000} seconds`);
             await sleep(WAIT.every);
@@ -292,7 +347,8 @@ export async function runFeature(server, source: string, uri = 'feature') {
     for (const pickle of pickles) {
         const scenario = new Scenario(server);
         const steps = [];
-        let failed = false;
+        // @skip: it is kept, and does not run
+        let failed = pickle.tags.some(tag => tag.name === '@skip');
         try {
             for (const pickleStep of pickle.steps) {
                 const report: any = { keyword: keywords.get(pickleStep.astNodeIds[0]) ?? '', name: pickleStep.text, result: { status: 'skipped', duration: 0 } };

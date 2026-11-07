@@ -39,7 +39,7 @@ features:
     what: "Calls a service of the application (delegateExpression, implementation) with inputs and outputs, or a connector."
     docs: [docs/docs/customization.md, docs/docs/examples/serviceTask.md, docs/docs/connectors.md]
     code: [packages/bpmn-server/src/elements/Tasks.ts, packages/bpmn-server/src/elements/behaviours/IOBehaviour.ts]
-    tests: [packages/bpmn-server/test/engine-basics.test.mjs, testSampleApp/test/custom/services.test.ts, testSampleApp/test/scenarios/feature/serviceTask.js]
+    tests: [packages/bpmn-server/test/engine-basics.test.mjs, testSampleApp/test/custom/services.test.ts, testSampleApp/processes/serviceTask.engine.feature]
   - id: script-task
     area: modeling
     name: "Script task"
@@ -53,7 +53,7 @@ features:
     what: "A send task throws a message; a receive task waits for one."
     docs: [docs/docs/examples/msg-throw-catch.md]
     code: [packages/bpmn-server/src/elements/Tasks.ts, packages/bpmn-server/src/elements/behaviours/MessageSignal.ts]
-    tests: [testSampleApp/test/scenarios/feature/messageFlow.js, testSampleApp/test/custom/messages-and-signals.test.ts]
+    tests: [testSampleApp/processes/messageFlow.engine.feature, testSampleApp/test/custom/messages-and-signals.test.ts]
     examples: [testSampleApp/examples/invoice.test.ts]
   - id: business-rule-task
     area: modeling
@@ -68,7 +68,7 @@ features:
     what: "Starts another model as a child instance and waits for it."
     docs: [docs/docs/examples/callProcess.md]
     code: [packages/bpmn-server/src/elements/Tasks.ts]
-    tests: [testSampleApp/test/scenarios/feature/callTask.js]
+    tests: [testSampleApp/processes/CallTask.engine.feature]
   - id: manual-task
     area: modeling
     name: "Manual task, plain task"
@@ -82,7 +82,7 @@ features:
     what: "A part of the process with its own data scope (data.<id>)."
     docs: [docs/docs/examples/subProcess.md, docs/docs/data.md]
     code: [packages/bpmn-server/src/elements/Tasks.ts]
-    tests: [testSampleApp/test/custom/subprocess.test.ts, testSampleApp/test/scenarios/feature/subProcess.js]
+    tests: [testSampleApp/test/custom/subprocess.test.ts, testSampleApp/processes/SubProcess-engine-test.engine.feature]
     examples: [testSampleApp/examples/cancel-application.test.ts]
   - id: event-sub-process
     area: modeling
@@ -90,14 +90,14 @@ features:
     what: "Starts on an event (error, message, timer, escalation) while its process runs."
     docs: [docs/docs/examples/error_events.md]
     code: [packages/bpmn-server/src/elements/Process.ts]
-    tests: [testSampleApp/test/scenarios/feature/error.js]
+    tests: [testSampleApp/processes/Error events.engine.feature]
   - id: transaction
     area: modeling
     name: "Transaction, compensation and cancel"
     what: "A transaction sub-process; compensation handlers; a cancel end event and boundary."
     docs: [docs/docs/examples/transactions.md]
     code: [packages/bpmn-server/src/elements/Transaction.ts, packages/bpmn-server/src/elements/behaviours/TransEvents.ts]
-    tests: [testSampleApp/test/scenarios/feature/trans.js, packages/bpmn-server/test/transactions.test.mjs]
+    tests: [testSampleApp/processes/Trans.engine.feature, packages/bpmn-server/test/transactions.test.mjs]
   - id: ad-hoc-sub-process
     area: modeling
     name: "Ad hoc sub-process"
@@ -111,28 +111,28 @@ features:
     what: "Takes one flow, the first whose condition holds, else the default flow."
     docs: [docs/docs/examples/gateways.md, docs/docs/examples/conditionalFlow.md, docs/docs/execution.md]
     code: [packages/bpmn-server/src/elements/Gateway.ts, packages/bpmn-server/src/elements/Flow.ts]
-    tests: [testSampleApp/test/scenarios/feature/gateway.js, testSampleApp/test/scenarios/feature/gateway1.js]
+    tests: [testSampleApp/processes/Event Based Gateway.engine.feature, testSampleApp/processes/test_gateway1.engine.feature]
   - id: parallel-gateway
     area: modeling
     name: "Parallel gateway"
     what: "Splits into all its flows; a join waits for every branch, as one item."
     docs: [docs/docs/examples/gateways.md]
     code: [packages/bpmn-server/src/elements/Gateway.ts]
-    tests: [packages/bpmn-server/test/engine.test.mjs, testSampleApp/test/scenarios/feature/gateway2.js, testSampleApp/test/web/scenarios.test.mjs]
+    tests: [packages/bpmn-server/test/engine.test.mjs, testSampleApp/processes/test_gateway2.engine.feature, testSampleApp/test/web/scenarios.test.mjs]
   - id: inclusive-gateway
     area: modeling
     name: "Inclusive gateway"
     what: "Takes every flow whose condition holds; its join waits for the branches taken."
     docs: [docs/docs/examples/gateways.md]
     code: [packages/bpmn-server/src/elements/Gateway.ts]
-    tests: [testSampleApp/test/custom/buy-used-car.test.ts, testSampleApp/test/scenarios/feature/gateway3.js]
+    tests: [testSampleApp/test/custom/buy-used-car.test.ts, testSampleApp/processes/test_gateway3.engine.feature]
   - id: event-based-gateway
     area: modeling
     name: "Event-based gateway"
     what: "Waits for the first of its events; the others are cancelled."
     docs: [docs/docs/examples/ebg.md]
     code: [packages/bpmn-server/src/elements/Gateway.ts]
-    tests: [testSampleApp/test/scenarios/feature/eventBasedGateway.js]
+    tests: [testSampleApp/processes/Event Based Gateway.engine.feature]
     examples: [testSampleApp/examples/invoice.test.ts]
   - id: complex-gateway
     area: modeling
@@ -154,7 +154,7 @@ features:
     what: "A path ends; a terminate end event ends the whole instance."
     docs: [docs/docs/executionStructure.md]
     code: [packages/bpmn-server/src/elements/Events.ts, packages/bpmn-server/src/elements/behaviours/Terminate.ts]
-    tests: [testSampleApp/test/scenarios/feature/ebg.js]
+    tests: [testSampleApp/processes/Event Based Gateway.engine.feature]
     examples: [testSampleApp/examples/invoice.test.ts]
   - id: boundary-events
     area: modeling
@@ -162,28 +162,28 @@ features:
     what: "Timer, message, signal, error and escalation events on a task; a non-interrupting one leaves the task running."
     docs: [docs/docs/examples/boundary-events.md]
     code: [packages/bpmn-server/src/elements/Events.ts]
-    tests: [testSampleApp/test/scenarios/feature/boundaryEvent.test.js, testSampleApp/test/scenarios/feature/boundaryEvent2.js, testSampleApp/test/custom/leave-application.test.ts]
+    tests: [testSampleApp/processes/boundary-event-engine-test.engine.feature, testSampleApp/processes/test-boundary-timer.engine.feature, testSampleApp/test/custom/leave-application.test.ts]
   - id: timers
     area: modeling
     name: "Timers — duration, cycle, date"
     what: "ISO 8601 durations, repeating cycles (R3/PT1H) and dates; long timers waited out in steps."
     docs: [docs/docs/timers.md]
     code: [packages/bpmn-server/src/elements/behaviours/Timer.ts, packages/bpmn-server/src/server/Cron.ts]
-    tests: [packages/bpmn-server/test/timers-long.test.mjs, testSampleApp/test/scenarios/feature/timerSample.js]
+    tests: [packages/bpmn-server/test/timers-long.test.mjs, testSampleApp/processes/timer-sample.engine.feature]
   - id: messages-signals
     area: modeling
     name: "Messages and signals"
     what: "Thrown and caught by events and tasks; a message starts a model or reaches the instance waiting for it."
     docs: [docs/docs/examples/msg-throw-catch.md, docs/docs/examples/signal-throw-catch.md]
     code: [packages/bpmn-server/src/elements/behaviours/MessageSignal.ts]
-    tests: [testSampleApp/test/custom/messages-and-signals.test.ts, testSampleApp/test/scenarios/feature/signals.js, testSampleApp/test/scenarios/feature/throw-catch.js]
+    tests: [testSampleApp/test/custom/messages-and-signals.test.ts, testSampleApp/processes/t-throw-signals.engine.feature, testSampleApp/processes/test-throw.engine.feature]
   - id: errors-escalations
     area: modeling
     name: "Errors and escalations"
     what: "A BPMN error caught by its error event; an escalation, interrupting or not."
     docs: [docs/docs/execution.md, docs/docs/examples/error_events.md]
     code: [packages/bpmn-server/src/elements/behaviours/Error.ts, packages/bpmn-server/src/elements/behaviours/Escalation.ts]
-    tests: [testSampleApp/test/scenarios/feature/error.js, testSampleApp/test/issues/github-issues.test.ts]
+    tests: [testSampleApp/processes/Error events.engine.feature, testSampleApp/test/issues/github-issues.test.ts]
     examples: [testSampleApp/examples/escalation.test.ts]
   - id: conditional-event
     area: modeling
@@ -205,7 +205,7 @@ features:
     what: "A task or sub-process once per item of a collection, all at once or one after another."
     docs: [docs/docs/examples/loop.md]
     code: [packages/bpmn-server/src/engine/Loop.ts, packages/bpmn-server/src/elements/behaviours/Loop.ts]
-    tests: [testSampleApp/test/scenarios/feature/loop.js, testSampleApp/test/scenarios/feature/loop2.js, testSampleApp/test/issues/github-issues.test.ts]
+    tests: [testSampleApp/processes/loop-engine-test.engine.feature, testSampleApp/processes/Issue197.engine.feature, testSampleApp/test/issues/github-issues.test.ts]
     examples: [testSampleApp/examples/multi-instance-vote.test.ts]
   - id: standard-loop
     area: modeling
@@ -221,7 +221,7 @@ features:
     what: "Several processes in a collaboration; lanes; message flows between pools."
     docs: [docs/docs/modeler.md]
     code: [packages/bpmn-server/src/elements/Definition.ts]
-    tests: [testSampleApp/test/scenarios/feature/messageFlow.js]
+    tests: [testSampleApp/processes/messageFlow.engine.feature]
   - id: data-objects
     area: modeling
     name: "Data objects and data stores"
@@ -242,7 +242,7 @@ features:
     what: "A task's inputs from the data, and its outputs back into it (camunda:inputOutput)."
     docs: [docs/docs/data.md]
     code: [packages/bpmn-server/src/elements/behaviours/IOBehaviour.ts]
-    tests: [testSampleApp/test/scenarios/feature/serviceInput.js, packages/bpmn-server/test/element-paths.test.mjs]
+    tests: [testSampleApp/processes/test-service-input.engine.feature, packages/bpmn-server/test/element-paths.test.mjs]
   - id: listeners
     area: modeling
     name: "Scripts on events (listeners)"
@@ -285,7 +285,7 @@ features:
     what: "Restart an ended instance at an item, or take a running one back to an earlier item (save points)."
     docs: [docs/docs/whats-new-3.5.md]
     code: [packages/bpmn-server/src/engine/Execution.ts]
-    tests: [testSampleApp/test/scenarios/feature/restart1.js, testSampleApp/test/scenarios/feature/restart2.js]
+    tests: [testSampleApp/processes/Buy Used Car-engine-test.engine.feature, testSampleApp/processes/Restart.engine.feature]
     examples: [testSampleApp/examples/restart.test.ts]
   - id: failed-retry
     area: engine
