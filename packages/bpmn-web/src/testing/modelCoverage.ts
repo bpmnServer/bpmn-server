@@ -1,6 +1,6 @@
 /*
  * What of a model its scenarios have reached, on the server: the Design dashboard's column, and the report of `npm run test:coverage`.
- * The rules are the Test tab's (coverage.js). Each run keeps what it reached (.runs/<model>.runs.json), so its coverage outlasts its
+ * The rules are the Test tab's (coverage.js). Each run keeps what it reached (the tag on its test instance), so its coverage outlasts its
  * instance; a run from before that is read from its instance while there is one.
  */
 import { Definition } from 'bpmn-server';
@@ -67,7 +67,7 @@ export async function withReached(server, model: string, scenarios: any[]) {
 /** The coverage the scenarios' saved runs give: nodes and flows, what no run has reached, how many have not run, and whether the model changed since. */
 export async function savedCoverage(server, source: string, scenarios: any[], modelSaved?: Date) {
     const { elements, listeners } = await modelElements(source);
-    const lastRuns = scenarios.filter(s => s.runs?.length).map(s => ({ scenario: s, run: s.runs[s.runs.length - 1] }));
+    const lastRuns = scenarios.filter(s => s.runs?.length).map(s => ({ scenario: s, run: s.runs[0] }));
     const runs = [];
     for (const { scenario, run } of lastRuns) {
         const reached = run.reached ?? await reachedBy(server, run, listeners);

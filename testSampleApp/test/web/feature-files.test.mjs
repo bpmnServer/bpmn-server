@@ -126,6 +126,37 @@ test('a scenario kept as written runs from the Test tab, and a save leaves it as
   fs.rmSync(file);
 });
 
+test('Edit as text: the file as it is; saved when it reads as tests and has not changed; a run leaves it as typed', async () => {
+  const file = path.join(web.definitionsPath, `${MODEL}.feature`);
+  const url = `/model/scenarios/${MODEL}/feature`;
+  const put = json => designer.request('PUT', url, { json });
+  fs.rmSync(file, { force: true });
+  const base = JSON.parse((await designer.get(url)).text).text;
+  assert.match(base, new RegExp(`Feature: ${MODEL}`), 'with no file yet, an empty one to start from');
+
+  const typed = `# a comment at the top\nFeature: ${MODEL}\n\n  Scenario: typed\n    # a comment in it\n    When @start process:leave-request as :instance\n    Then @check :instance status is "wait"\n`;
+  const bad = await put({ text: `Feature: x\n\n  Scenario: a\n    When @check\n    Nonsense here\n`, base });
+  assert.equal(bad.status, 400);
+  assert.match(JSON.parse(bad.text).error, /\(5:/, 'says which line');
+  assert.equal((await put({ text: 'no feature', base })).status, 400);
+  assert.ok(!fs.existsSync(file), 'what does not read is not saved');
+
+  assert.equal((await put({ text: typed, base })).status, 200);
+  assert.equal(fs.readFileSync(file, 'utf8'), typed);
+  assert.equal(JSON.parse((await designer.get(url)).text).text, typed);
+
+  const changed = await put({ text: `Feature: ${MODEL}\n`, base });
+  assert.equal(changed.status, 409, 'the file is no longer what the text came from');
+  assert.equal(fs.readFileSync(file, 'utf8'), typed);
+
+  const { scenarios } = JSON.parse((await designer.get(`/model/scenarios/${MODEL}`)).text);
+  assert.equal(scenarios[0].name, 'typed');
+  scenarios[0].runs = [{ instanceId: 'test-kept', ok: true }];
+  assert.equal((await designer.request('PUT', `/model/scenarios/${MODEL}`, { json: { scenarios } })).status, 200);
+  assert.equal(fs.readFileSync(file, 'utf8'), typed, 'only its runs changed: the file stays as typed');
+  fs.rmSync(file);
+});
+
 test('@skip keeps a scenario without running it; an engine file is not the Test tab\'s', async () => {
   const res = await designer.request('POST', '/model/test/feature', { json: { source: 'Feature: F\n\n  @skip\n  Scenario: S\n    Then @check ${1 === 2}\n' } });
   const [element] = JSON.parse(res.text).results[0].elements;

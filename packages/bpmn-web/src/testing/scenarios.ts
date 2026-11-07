@@ -59,8 +59,8 @@ export interface Scenario {
 //   <model>.feature         a model's scenarios
 //   <decision>.dmn.feature  a decision's tests
 // (featureFiles.ts). A <model>.tests.json, the JSON they were kept in before, is read until it is converted (convertTestFiles).
-// The runs the editors keep of each test are not in them (they point at instances of one server): they are in
-// .runs/<model>.runs.json (.runs/<decision>.dmn.runs.json), by the test's name, and put back on load.
+// A scenario's last run is not in them: it is its test instance, tagged in the database with { process, scenario, run }.
+// A decision's test runs no instance: its runs stay with the page that ran them.
 
 const DECISION = 'decision:';
 let modelsFolder: () => string = () => process.env.DEFINITIONS_PATH || path.resolve('processes');
@@ -83,15 +83,6 @@ const fileName = (key: string) => `${baseName(key)}.tests.json`;
 const featureName = (key: string) => `${baseName(key)}.feature`;
 const setName = (key: string) => key.startsWith(DECISION) ? key.slice(DECISION.length) : key;
 
-/** The file of a set's runs: .runs/<model>.runs.json; one named as its set (before 3.5's release) is moved to it. */
-function runsFile(folder: string, key: string) {
-    const file = path.join(folder, '.runs', `${baseName(key)}.runs.json`);
-    const older = path.join(folder, '.runs', fileName(key));
-    if (!fs.existsSync(file) && fs.existsSync(older))
-        fs.renameSync(older, file);
-    return file;
-}
-
 function readJson(file: string) {
     try {
         return JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -113,7 +104,6 @@ function writeText(file: string, text: string | undefined) {
     fs.writeFileSync(temporary, text);
     fs.renameSync(temporary, file);
 }
-const writeJson = (file: string, value: any) => writeText(file, value === undefined ? undefined : JSON.stringify(value, null, 2) + '\n');
 
 /** A set's list as its file has it: its .feature, or else its JSON from before. */
 function readSet(folder: string, key: string): any[] {
@@ -194,23 +184,86 @@ export async function convertTestFiles(): Promise<{ converted: string[]; left: {
     return { converted, left };
 }
 
-/** The list saved under a key (a model's scenarios, a decision's tests), each with its runs. */
+/** The list saved under a key (a model's scenarios, a decision's tests). */
 export async function loadTestSet<T = Scenario>(key: string): Promise<T[]> {
-    const folder = modelsFolder();
-    const list = readSet(folder, key);
-    const runs = readJson(runsFile(folder, key)) ?? {};
-    return list.map(item => runs[item.name]?.length ? { ...item, runs: runs[item.name] } : item);
+    return readSet(modelsFolder(), key);
 }
 
 export async function saveTestSet(key: string, list: any[], userName?: string): Promise<void> {
     const folder = modelsFolder();
-    const runs = {};
-    for (const { name, runs: kept } of list)
-        if (kept?.length) runs[String(name).trim()] = kept;
     const items = definitions(key, list);
-    writeText(path.join(folder, featureName(key)), items.length ? writeFeature(setName(key), items, { decision: key.startsWith(DECISION) }) : undefined);
+    // the same tests, as after a run: the file stays as it is, with what was typed in it
+    if (!sameAsFile(folder, key, items))
+        writeText(path.join(folder, featureName(key)), items.length ? writeFeature(setName(key), items, { decision: key.startsWith(DECISION) }) : undefined);
     setAsideJson(folder, key);
-    writeJson(runsFile(folder, key), Object.keys(runs).length ? runs : undefined);
+}
+
+/** The model's tagged test instances: each scenario's runs, newest first. */
+export async function withRuns(server, model: string, scenarios: any[]) {
+    const tagged = await server.dataStore.findInstances({ 'tag.process': model }, { projection: { id: 1, tag: 1 } });
+    const newestFirst = tagged.map(({ id, tag }) => ({ scenario: tag.scenario, run: { instanceId: id, ...tag.run } }))
+        .sort((a, b) => String(b.run.at).localeCompare(String(a.run.at)));
+    return scenarios.map(scenario => {
+        const runs = newestFirst.filter(one => one.scenario === String(scenario.name).trim()).map(one => one.run);
+        return runs.length ? { ...scenario, runs } : scenario;
+    });
+}
+
+/** The scenarios' runs as tags on their test instances. The instances of a scenario no longer there go with it. */
+export async function saveRuns(server, model: string, scenarios: any[]) {
+    const names = new Set(scenarios.map(scenario => String(scenario.name).trim()));
+    for (const scenario of scenarios)
+        for (const { instanceId, ...run } of scenario.runs ?? [])
+            if (String(instanceId).startsWith('test-'))
+                await server.dataStore.tagInstance(instanceId, { process: model, scenario: String(scenario.name).trim(), run });
+    const tagged = await server.dataStore.findInstances({ 'tag.process': model }, { projection: { id: 1, tag: 1 } });
+    for (const { id, tag } of tagged)
+        if (!names.has(tag.scenario) && String(id).startsWith('test-'))
+            await server.dataStore.deleteInstances({ id });
+}
+
+/** Whether the set's .feature already holds these tests. */
+function sameAsFile(folder: string, key: string, items: any[]) {
+    if (!fs.existsSync(path.join(folder, featureName(key)))) return false;
+    try {
+        return sameJson(definitions(key, readSet(folder, key)), items);
+    }
+    catch {
+        return false;
+    }
+}
+
+const unixLines = (text: string) => text.replace(/\r\n/g, '\n');
+
+/** A model's tests as text, for Edit as text: its .feature as it is, comments and all. It is not parsed: a file that does not parse can be corrected. */
+export async function loadFeatureText(model: string): Promise<string> {
+    const folder = modelsFolder();
+    const file = path.join(folder, featureName(model));
+    return fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : writeFeature(setName(model), definitions(model, readSet(folder, model)));
+}
+
+/**
+ * Saves a model's .feature as typed, if it reads as tests and the file is still the one the text came from (base).
+ * Returns what stopped it.
+ */
+export async function saveFeatureText(model: string, text: string, base: string): Promise<{ status: number; error: string } | undefined> {
+    let list;
+    try {
+        list = readFeature(text, { name: setName(model) });
+    }
+    catch (error) {
+        return { status: 400, error: error.message };
+    }
+    if (!/^\s*Feature:/m.test(text))
+        return { status: 400, error: 'A test file starts with Feature: and a name' };
+    const problems = checkScenarios(list);
+    if (problems.length)
+        return { status: 400, error: problems.join('; ') };
+    if (unixLines(await loadFeatureText(model)) !== unixLines(base))
+        return { status: 409, error: 'The file changed since it was opened: Cancel, open it again and redo the change' };
+    const folder = modelsFolder();
+    writeText(path.join(folder, featureName(model)), text);
+    setAsideJson(folder, model);
 }
 
 export async function loadScenarios(model: string): Promise<Scenario[]> {

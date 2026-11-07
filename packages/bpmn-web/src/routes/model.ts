@@ -17,7 +17,7 @@ import { modelNameGuard, isSafeModelName, guardModelParams } from './middleware/
 import { loadTemplateCatalog } from './elementTemplates.js';
 import { zip } from './zip.js';
 import { loadDecisionTests, saveDecisionTests, checkDecisionTests, runDecisionTestsInEngine } from '../testing/decisionTests.js';
-import { loadScenarios, saveScenarios, checkScenarios, runScenarioInEngine, startTest, completeTest, findTest, summarize, expectChecks, checksAt, restartTest } from '../testing/scenarios.js';
+import { loadScenarios, saveScenarios, withRuns, saveRuns, loadFeatureText, saveFeatureText, checkScenarios, runScenarioInEngine, startTest, completeTest, findTest, summarize, expectChecks, checksAt, restartTest } from '../testing/scenarios.js';
 import { withReached } from '../testing/modelCoverage.js';
 
 
@@ -615,7 +615,7 @@ export class Model extends Common {
         // ---- the editor's Test tab: scenarios per model, run on the saved model
 
         router.get('/scenarios/:process', awaitHandlerFactory(async (request, response) => {
-            response.json({ scenarios: await loadScenarios(request.params.process) });
+            response.json({ scenarios: await withRuns(bpmnServer, request.params.process, await loadScenarios(request.params.process)) });
         }));
         router.put('/scenarios/:process', awaitHandlerFactory(async (request, response) => {
             const scenarios = request.body?.scenarios;
@@ -624,8 +624,25 @@ export class Model extends Common {
                 response.status(400).json({ error: problems.join('; ') });
                 return;
             }
-            await saveScenarios(request.params.process, await withReached(bpmnServer, request.params.process, scenarios), request.user?.userName);
+            await withReached(bpmnServer, request.params.process, scenarios);
+            await saveScenarios(request.params.process, scenarios, request.user?.userName);
+            await saveRuns(bpmnServer, request.params.process, scenarios);
             response.json({ saved: scenarios.length });
+        }));
+        /** The model's .feature as text: Edit as text. */
+        router.get('/scenarios/:process/feature', awaitHandlerFactory(async (request, response) => {
+            if (!isSafeModelName(request.params.process))
+                return response.status(400).json({ error: 'Invalid model name' });
+            response.json({ text: await loadFeatureText(request.params.process) });
+        }));
+        router.put('/scenarios/:process/feature', awaitHandlerFactory(async (request, response) => {
+            const { text, base } = request.body ?? {};
+            if (!isSafeModelName(request.params.process) || typeof text !== 'string' || typeof base !== 'string')
+                return response.status(400).json({ error: 'A model name, text and base are required' });
+            const stopped = await saveFeatureText(request.params.process, text, base);
+            if (stopped)
+                return response.status(stopped.status).json({ error: stopped.error });
+            response.json({ saved: true });
         }));
         /** Run a scenario given in the body, or every saved scenario of the model (all: true). */
         router.post('/test/run', awaitHandlerFactory(async (request, response) => {

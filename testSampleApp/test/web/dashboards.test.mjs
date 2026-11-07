@@ -97,8 +97,7 @@ test('design: a model\'s description, its saved versions, and what its scenarios
   assert.notEqual(again.runs[0].instanceId, first);
   assert.equal(await web.bpmnServer.dataStore.findInstances({ id: first }, 'summary').then(list => list.length), 0, 'the run before is replaced, its instance deleted');
 
-  await web.bpmnServer.dataStore.deleteInstances({ id: again.runs[0].instanceId });
-  assert.match(row((await designer.get('/dashboard/design')).text), new RegExp(`${percent}%`), 'the coverage outlasts its instance');
+  assert.match(row((await designer.get('/dashboard/design')).text), new RegExp(`${percent}%`), 'the coverage from the tag');
 
   const file = path.join(web.definitionsPath, `${MODEL}.bpmn`);
   const source = fs.readFileSync(file, 'utf8');

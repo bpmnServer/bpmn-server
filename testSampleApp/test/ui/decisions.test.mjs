@@ -171,12 +171,10 @@ test('the decision editor\'s Test tab, as the model editor\'s: a test designed, 
     assert.equal(await editor.innerText('#js-test .test-status'), 'Passed');
     assert.equal(await editor.locator('.test-runs tr').count(), 2);
 
-    // kept: the test and its runs
+    // kept: the test; its runs stay with the page, a decision has no instance to keep them on
     await editor.reload();
     await editor.waitForSelector('#js-test .test-list li');
-    assert.match(await editor.innerText('.test-list li'), /✓\s*Test 1/);
-    await editor.click('.test-tab-runs');
-    assert.equal(await editor.locator('.test-runs tr').count(), 2);
+    assert.match(await editor.innerText('.test-list li'), /Test 1/);
     assert.deepEqual(editorErrors, []);
     await editor.close();
 });

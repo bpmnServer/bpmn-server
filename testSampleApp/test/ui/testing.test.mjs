@@ -676,3 +676,64 @@ test('the scenario list resizes: dragged, within limits, by the keyboard; drawn 
     assert.deepEqual(errors, []);
     await close();
 });
+
+test('Edit as text: the whole .feature in the Test tab; what does not read is not saved; a run leaves it as typed; coverage under the scenarios', async () => {
+    const { page, errors } = await openTestTab();
+    const order = await page.evaluate(() => [...document.querySelector('.test-list').children].map(c => c.className));
+    assert.ok(order.findIndex(c => c.includes('test-tree')) < order.findIndex(c => c.includes('test-coverage')), order.join());
+
+    await page.click('.test-list-menu summary');
+    await page.click('.test-edit-text');
+    await page.waitForSelector('.test-text-input');
+    assert.equal(await page.locator('.test-list').count(), 0, 'the text has the panel to itself');
+
+    const wrong = 'Feature: x\n\n  Scenario: a\n    When @check\n    Nonsense here\n';
+    await page.fill('.test-text-input', wrong);
+    await page.click('.test-text-save');
+    await page.waitForSelector('.test-status.error');
+    assert.match(await page.locator('.test-status').innerText(), /Not saved.*\(5:/s);
+    assert.equal(await page.inputValue('.test-text-input'), wrong, 'the text stays to be corrected');
+
+    const typed = [
+        'Feature: leave-request',
+        '',
+        '  # a comment that stays',
+        '  Scenario: typed, with an expression',
+        '    When @start process:leave-request as :instance',
+        '    Then @check ${instance.status === "running"}',
+        '',
+    ].join('\n');
+    await page.fill('.test-text-input', typed);
+    await page.click('.test-text-save');
+    await page.waitForSelector('.test-list');
+    const file = path.join(web.definitionsPath, 'leave-request.feature');
+    assert.equal(fs.readFileSync(file, 'utf8'), typed);
+
+    await page.click('.test-tree li:has-text("typed, with an expression")');
+    await page.waitForSelector('.test-written-edit');
+    await page.click('.test-replay');
+    await page.waitForSelector('.test-status:text("typed, with an expression: passed")');
+    await page.waitForTimeout(1000);
+    assert.equal(fs.readFileSync(file, 'utf8'), typed, 'a run leaves the file as typed');
+
+    await page.click('.test-written-edit');
+    await page.waitForSelector('.test-text-input');
+    assert.equal(await page.inputValue('.test-text-input'), typed);
+    page.once('dialog', dialog => dialog.accept());
+    await page.fill('.test-text-input', `${typed}  # more\n`);
+    await page.click('.test-text-cancel');
+    await page.waitForSelector('.test-list');
+    assert.equal(fs.readFileSync(file, 'utf8'), typed, 'Cancel saves nothing');
+    fs.rmSync(file);
+    assert.deepEqual(errors, []);
+});
+
+test('"No problems found" and Rules show with the Problems tab only', async () => {
+    const { page } = await openTestTab();
+    assert.equal(await page.locator('#js-lint-rules-open').isVisible(), false);
+    assert.equal(await page.locator('#js-problems-status').isVisible(), false);
+    await page.click('#js-tab-problems');
+    assert.equal(await page.locator('#js-lint-rules-open').isVisible(), true);
+    await page.click('#js-tab-report');
+    assert.equal(await page.locator('#js-lint-rules-open').isVisible(), false);
+});

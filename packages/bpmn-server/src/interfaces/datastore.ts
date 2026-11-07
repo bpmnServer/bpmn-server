@@ -33,6 +33,8 @@ interface IDataStore {
     saveInstance(instance:any,options?:any): Promise<void>;
     /** Replaces a saved instance's definition source (upgrading it to a newer model); the caller holds the instance's lock. */
     updateInstanceSource(instanceId: string, source: string): Promise<void>;
+    /** Marks a saved instance with a tag of the caller's, which the engine's saves leave as it is. */
+    tagInstance(instanceId: string, tag: any): Promise<void>;
     /** Releases the store's connections. */
     close?(): Promise<void>;
     loadInstance(instanceId: any,options:any): Promise<{

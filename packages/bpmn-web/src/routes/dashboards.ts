@@ -14,7 +14,7 @@ import { SecureUser, BPMNAPI, verifyModel, dateDiff, canEncrypt } from '../index
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
-import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, saveScenarios, runScenarioInEngine } from '../testing/scenarios.js';
+import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, saveScenarios, withRuns, saveRuns, runScenarioInEngine } from '../testing/scenarios.js';
 import { modelDescription, modelElements, savedCoverage } from '../testing/modelCoverage.js';
 import { reachedIn } from '../testing/coverage.js';
 import { loadDecisionTests, runDecisionTestsInEngine } from '../testing/decisionTests.js';
@@ -178,7 +178,7 @@ export class Dashboards extends Common {
                 m.tests = tests.get(m.name)?.count ?? 0;
                 m.versions = (await server.definitions.history(m.name).catch(() => [])).length;
                 if (m.tests)
-                    m.coverage = await savedCoverage(server, FS.readFileSync(path.join(dir, m.name + '.bpmn'), 'utf8'), await loadScenarios(m.name), m.saved).catch(() => null);
+                    m.coverage = await savedCoverage(server, FS.readFileSync(path.join(dir, m.name + '.bpmn'), 'utf8'), await withRuns(server, m.name, await loadScenarios(m.name)), m.saved).catch(() => null);
             }
             const decisionTests = new Map((await listDecisionTestSets()).map(s => [s.decision, s.count]));
             models.sort((a, b) => (b.errors - a.errors) || (b.warnings - a.warnings) || a.name.localeCompare(b.name));
@@ -217,7 +217,7 @@ export class Dashboards extends Common {
                 for (const name of names) {
                     if (!files.includes(name + '.bpmn'))
                         continue;
-                    const results = [], scenarios = await loadScenarios(name);
+                    const results = [], scenarios = await withRuns(server, name, await loadScenarios(name));
                     const { listeners } = await modelElements(FS.readFileSync(path.join(dir, name + '.bpmn'), 'utf8'));
                     for (const scenario of scenarios) {      // one after another: they may share state
                         const result = await runScenarioInEngine(server, name, scenario, req.user?.userName);
@@ -232,6 +232,7 @@ export class Dashboards extends Common {
                         }] : [];
                     }
                     await saveScenarios(name, scenarios, req.user?.userName);
+                    await saveRuns(server, name, scenarios);
                     note(runs.models, name, results);
                 }
             }

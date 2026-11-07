@@ -8,4 +8,3 @@ node_modules/
 # demo videos (npm run demo:video)
 /test/demo/out
 # the Test tabs' runs: they point at instances of one server (the tests themselves, *.tests.json, are kept)
-**/.runs/

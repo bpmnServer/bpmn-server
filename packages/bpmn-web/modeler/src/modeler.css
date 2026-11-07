@@ -1358,3 +1358,42 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
     padding: 8px;
     font-size: 12px;
 }
+
+/* the status of the problems and their rules: with the Problems tab only */
+.dock:not([data-tab="problems"]) #js-problems-status,
+.dock:not([data-tab="problems"]) #js-lint-rules-open {
+    display: none;
+}
+
+.test-text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+    min-height: 260px;
+}
+
+.test-text-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.test-text-actions strong {
+    margin-right: auto;
+    overflow-wrap: anywhere;
+}
+
+.test-panel .test-text-input {
+    flex: 1;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+    border: 1px solid #dcdfe4;
+    border-radius: 3px;
+    resize: none;
+    overflow: auto;
+    font-family: Consolas, Menlo, monospace;
+    font-size: 12px;
+    line-height: 1.45;
+}

@@ -94,6 +94,7 @@ export default class TestPanel {
         this._modelEdited = false;      // since the runs: coverage may be out of date
         this._goal = null;              // Fill a gap: { scenario, id }, what its recording is to reach
         this._exploring = null;         // Test all paths: { asked }, { tries, stop } while it runs, { report } after
+        this._text = null;              // Edit as text: { text, base }, the .feature being edited and what it was
         this._visible = false;
         this._loaded = false;
         if (!this._root)
@@ -168,6 +169,60 @@ export default class TestPanel {
         } catch (err) {
             this._status(`Scenarios not saved: ${err.message}`, true);
         }
+    }
+
+    // ---- Edit as text: the model's .feature, all of it
+
+    async openText() {
+        try {
+            if (this._saveTimer) await this._save();
+            const { text } = await this._request('GET', `/model/scenarios/${encodeURIComponent(this._config.processName)}/feature`);
+            this._stopSimulation();
+            this._text = { text, base: text };
+            this._status('');
+            this.render();
+            this._root.querySelector('.test-text-input')?.focus();
+        } catch (err) {
+            this._status(`Could not open the file: ${err.message}`, true);
+        }
+    }
+
+    closeText() {
+        const { text, base } = this._text;
+        if (text !== base.replace(/\r\n/g, '\n') && !confirm('Discard what you changed in the file?')) return;
+        this._text = null;
+        this._status('');
+        this.render();
+    }
+
+    /** Saved only if it reads as tests; what is wrong stays on the screen, with the text. Then the tab reads it back. */
+    async saveText() {
+        const { text, base } = this._text;
+        const name = this._current?.name;
+        try {
+            await this._request('PUT', `/model/scenarios/${encodeURIComponent(this._config.processName)}/feature`, { text, base });
+        } catch (err) {
+            this._status(`Not saved: ${err.message}`, true);
+            return;
+        }
+        this._text = null;
+        this._results = new Map();
+        await this._load();
+        this._current = this._scenarios.find(scenario => scenario.name === name) ?? this._current;
+        this._status('Saved.');
+        this.render();
+        this._markCurrent();
+        this._showLastRun(this._current);
+    }
+
+    _renderText() {
+        return el('div', { class: 'test-text' },
+            el('div', { class: 'test-text-actions' },
+                el('strong', {}, `${this._config.processName}.feature`),
+                el('button', { type: 'button', class: 'test-text-save primary', onclick: () => this.saveText() }, 'Save'),
+                el('button', { type: 'button', class: 'test-text-cancel', onclick: () => this.closeText() }, 'Cancel')),
+            el('textarea', { class: 'test-text-input', 'aria-label': `The tests of ${this._config.processName}, in Gherkin`, spellcheck: 'false', wrap: 'off', value: this._text.text,
+                oninput: e => { this._text.text = e.target.value; } }));
     }
 
     /** The saved model is what runs: save the editor's changes first. */
@@ -829,11 +884,11 @@ export default class TestPanel {
         const keep = status ? [status.textContent, status.classList.contains('error')] : ['', false];
         const scrolled = this._root.querySelector('.test-main')?.scrollTop ?? 0;
         this._root.replaceChildren(el('div', { class: 'test-panel' },
-            this._renderList(),
-            this._renderListResizer(),
+            this._text ? null : this._renderList(),
+            this._text ? null : this._renderListResizer(),
             el('div', { class: 'test-main' },
                 el('div', { class: `test-status${keep[1] ? ' error' : ''}`, role: 'status' }, keep[0]),
-                this._current ? this._renderScenario(this._current) :
+                this._text ? this._renderText() : this._current ? this._renderScenario(this._current) :
                     el('p', { class: 'test-hint' }, 'A scenario tests the process: add one with New, then Record it by doing its steps.'))));
         const main = this._root.querySelector('.test-main');
         if (main) main.scrollTop = scrolled;
@@ -931,7 +986,8 @@ export default class TestPanel {
             live && this._debug ? this._renderDebug(scenario, live) : null,
             // written by hand in its .feature, with what this tab has no form for: it runs, and stays as written
             scenario.source !== undefined ? el('div', { class: 'test-written' },
-                el('p', {}, 'Written in the model\'s .feature file. Run it here; edit it in the file.'),
+                el('p', {}, 'Written in Gherkin, with what this tab has no form for. Run it here; to change it, ',
+                    el('button', { type: 'button', class: 'test-written-edit', onclick: () => this.openText(), disabled: !!this._live }, 'Edit as text'), '.'),
                 el('pre', {}, scenario.source)) : this._renderTimeline(scenario, live),
             scenario.source !== undefined ? null : this._renderChecks(scenario, live),
             this._renderInspect(scenario, live));
@@ -1143,12 +1199,13 @@ export default class TestPanel {
                 el('button', { type: 'button', class: 'test-run-all', onclick: () => this.runAll(), disabled: !this._scenarios.length,
                     title: 'Run every scenario\'s saved steps' }, 'Run all'),
                 this._menu('⋯', 'test-list-menu', [
+                    ['Edit as text', 'test-edit-text', () => this.openText(), 'The tests of this model as Gherkin, all of the .feature file', !!this._live],
                     ['Delete all runs', 'test-clear-all', () => this.clearAll(), 'Delete every run of these scenarios, and their instances (the scenarios stay)',
                         !this._scenarios.some(s => s.runs?.length)],
                     ['Delete generated scenarios', 'test-delete-generated', () => this.deleteGenerated(), 'Delete the scenarios Test all paths saved that have not been reviewed, and their runs',
                         !this._scenarios.some(s => s.generated)]])),
-            this._renderCoverage(),
-            el('ul', { class: 'test-tree' }, this._scenarios.map(scenario => this._renderScenarioRow(scenario))));
+            el('ul', { class: 'test-tree' }, this._scenarios.map(scenario => this._renderScenarioRow(scenario))),
+            this._renderCoverage());
     }
 
     // ---- coverage: how much of the model the scenarios' last runs have reached
