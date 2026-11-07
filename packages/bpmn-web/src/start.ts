@@ -108,6 +108,18 @@ export async function setup(server: BPMNServer) {
 	catch (error) {
 		console.error('the test sets in the database were not moved to files:', error.message);
 	}
+	// a model's tests in JSON become its .feature, as they read back the same
+	try {
+		const { convertTestFiles } = await import('./testing/scenarios.js');
+		const { converted, left } = await convertTestFiles();
+		if (converted.length)
+			console.log(`${converted.length} test file(s) converted to .feature; the JSON is kept in .runs/converted`);
+		for (const { file, why } of left)
+			console.error(`${file} stays as it is: ${why}`);
+	}
+	catch (error) {
+		console.error('the test files were not converted:', error.message);
+	}
 	if (guestAccess())
 		return;
 	const { UserService } = await import('./userAccess/UserService.js');

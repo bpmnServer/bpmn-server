@@ -904,21 +904,21 @@ export default class TestPanel {
         const starts = this._elements(['bpmn:StartEvent']).filter(e => is(e.$parent, 'bpmn:Process'));
         return el('div', { class: 'test-editor' },
             el('div', { class: 'test-editor-actions' },
-                el('input', { class: 'test-name', 'aria-label': 'Scenario name', value: scenario.name, oninput: e => { scenario.name = e.target.value; changed(); } }),
-                el('button', { type: 'button', class: 'test-replay primary', onclick: () => this.replay(scenario), disabled: !scenario.steps.length,
-                    title: scenario.steps.length ? 'Repeat the steps on a new instance without stopping, and check what is expected' : 'Record the steps first' }, '▶ Run'),
-                live && !live.debugOnly ? el('button', { type: 'button', class: 'test-stop-recording', onclick: () => this.stop(),
+                el('input', { class: 'test-name', 'aria-label': 'Scenario name', value: scenario.name, disabled: scenario.source !== undefined, oninput: e => { scenario.name = e.target.value; changed(); } }),
+                el('button', { type: 'button', class: 'test-replay primary', onclick: () => this.replay(scenario), disabled: !scenario.steps.length && scenario.source === undefined,
+                    title: scenario.steps.length || scenario.source !== undefined ? 'Repeat the steps on a new instance without stopping, and check what is expected' : 'Record the steps first' }, '▶ Run'),
+                scenario.source !== undefined ? null : live && !live.debugOnly ? el('button', { type: 'button', class: 'test-stop-recording', onclick: () => this.stop(),
                     title: 'End this: the steps done so far stay the scenario\'s' }, '■ Stop')
                     : el('button', { type: 'button', class: `test-run${this._starting === scenario ? ' active' : ''}`, onclick: () => this.openStart(scenario),
                         title: 'Do the steps yourself, one at a time: they become the scenario\'s steps' }, '● Record'),
                 this._menu('⋯', 'test-scenario-menu', [
-                    ['Duplicate', 'test-duplicate', () => {
+                    ...(scenario.source !== undefined ? [] : [['Duplicate', 'test-duplicate', () => {
                         const copy = JSON.parse(JSON.stringify(scenario));
                         copy.name = `${scenario.name} (copy)`;
                         delete copy.runs;       // the runs are the original's
                         this._scenarios.splice(this._scenarios.indexOf(scenario) + 1, 0, copy);
                         changed(); this._select(copy);
-                    }, 'A copy of this scenario'],
+                    }, 'A copy of this scenario']]),
                     ['Delete scenario', 'test-delete', () => {
                         if (!confirm(`Delete the scenario '${scenario.name}'?`)) return;
                         this._scenarios.splice(this._scenarios.indexOf(scenario), 1);
@@ -931,8 +931,11 @@ export default class TestPanel {
             this._renderSummary(scenario, live),
             this._renderSimulation(),
             live && this._debug ? this._renderDebug(scenario, live) : null,
-            this._renderTimeline(scenario, live),
-            this._renderChecks(scenario, live),
+            // written by hand in its .feature, with what this tab has no form for: it runs, and stays as written
+            scenario.source !== undefined ? el('div', { class: 'test-written' },
+                el('p', {}, 'Written in the model\'s .feature file. Run it here; edit it in the file.'),
+                el('pre', {}, scenario.source)) : this._renderTimeline(scenario, live),
+            scenario.source !== undefined ? null : this._renderChecks(scenario, live),
             this._renderInspect(scenario, live));
     }
 

@@ -528,7 +528,7 @@ export class Dashboards extends Common {
     /**
      * A backup to download: the models folder's files and, by collection, what each store keeps (the engine's
      * instances, archive, locks, models and events; the connectors, keys encrypted; the users), as one JSON document. The models'
-     * tests are files of the models folder (*.tests.json).
+     * tests are files of the models folder (*.feature).
      * The stores give their own documents, whatever database they are on; the sessions are never in it.
      */
     async backup(res) {

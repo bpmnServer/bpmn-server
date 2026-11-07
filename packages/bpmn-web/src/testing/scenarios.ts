@@ -19,6 +19,7 @@ import vm from 'node:vm';
 import { runSandboxed, SandboxScriptHandler } from 'bpmn-server';
 import { asGuest, currentGuest, guestContext } from '../guests/guests.js';
 import { rationaleEvents } from './rationale.js';
+import { readFeature, sourceFeature, writeFeature } from './featureFiles.js';
 
 export interface ScenarioStep {
     /** the waiting element to complete */
@@ -56,8 +57,9 @@ export interface Scenario {
 // ---- the test sets: a model's scenarios, a decision's tests
 //
 // Files in the models folder (a guest's, with guests), beside what they test:
-//   <model>.tests.json         { "model": "<model>", "scenarios": [ ... ] }   (the format of a scenario file)
-//   <decision>.dmn.tests.json  { "decision": "<decision>", "tests": [ ... ] }
+//   <model>.feature         a model's scenarios
+//   <decision>.dmn.feature  a decision's tests
+// (featureFiles.ts). A <model>.tests.json, the JSON they were kept in before, is read until it is converted (convertTestFiles).
 // The runs the editors keep of each test are not in them (they point at instances of one server): they are in
 // .runs/<model>.runs.json (.runs/<decision>.dmn.runs.json), by the test's name, and put back on load.
 
@@ -69,19 +71,23 @@ export function useTestsFolder(folder: () => string) {
     modelsFolder = folder;
 }
 
-/** A set's file name: `<model>.tests.json`, or `<decision>.dmn.tests.json` for decision:<decision>. */
-function fileName(key: string) {
+/** A set's name in its files: `<model>`, or `<decision>.dmn` for decision:<decision>. */
+function baseName(key: string) {
     const decision = key.startsWith(DECISION);
     const name = decision ? key.slice(DECISION.length) : key;
     if (!name || name.startsWith('.') || /[\\/]/.test(name))
         throw new Error(`not a model or decision name: ${name}`);
-    return name + (decision ? '.dmn.tests.json' : '.tests.json');
+    return decision ? `${name}.dmn` : name;
 }
+/** The file of a set before it was a .feature. */
+const fileName = (key: string) => `${baseName(key)}.tests.json`;
+const featureName = (key: string) => `${baseName(key)}.feature`;
+const setName = (key: string) => key.startsWith(DECISION) ? key.slice(DECISION.length) : key;
 
 /** The file of a set's runs: .runs/<model>.runs.json; one named as its set (before 3.5's release) is moved to it. */
-function runsFile(folder: string, name: string) {
-    const file = path.join(folder, '.runs', name.replace(/\.tests\.json$/, '.runs.json'));
-    const older = path.join(folder, '.runs', name);
+function runsFile(folder: string, key: string) {
+    const file = path.join(folder, '.runs', `${baseName(key)}.runs.json`);
+    const older = path.join(folder, '.runs', fileName(key));
     if (!fs.existsSync(file) && fs.existsSync(older))
         fs.renameSync(older, file);
     return file;
@@ -98,38 +104,116 @@ function readJson(file: string) {
 }
 
 /** Written whole or not at all; removed when there is nothing to keep. */
-function writeJson(file: string, value: any) {
-    if (value === undefined) {
+function writeText(file: string, text: string | undefined) {
+    if (text === undefined) {
         fs.rmSync(file, { force: true });
         return;
     }
     fs.mkdirSync(path.dirname(file), { recursive: true });
     const temporary = `${file}.${process.pid}.tmp`;
-    fs.writeFileSync(temporary, JSON.stringify(value, null, 2) + '\n');
+    fs.writeFileSync(temporary, text);
     fs.renameSync(temporary, file);
+}
+const writeJson = (file: string, value: any) => writeText(file, value === undefined ? undefined : JSON.stringify(value, null, 2) + '\n');
+
+/** A set's list as its file has it: its .feature, or else its JSON from before. */
+function readSet(folder: string, key: string): any[] {
+    const file = path.join(folder, featureName(key));
+    if (fs.existsSync(file)) {
+        try {
+            return readFeature(fs.readFileSync(file, 'utf8'), { decision: key.startsWith(DECISION), name: setName(key) });
+        }
+        catch (error) {
+            throw new Error(`${file}: ${error.message}`);
+        }
+    }
+    const set = readJson(path.join(folder, fileName(key)));
+    return set?.scenarios ?? set?.tests ?? [];
+}
+
+/** The JSON of a set, moved out of the way once its .feature holds it: kept, for nothing has to be lost. */
+function setAsideJson(folder: string, key: string) {
+    const file = path.join(folder, fileName(key));
+    if (!fs.existsSync(file)) return;
+    const kept = path.join(folder, '.runs', 'converted');
+    fs.mkdirSync(kept, { recursive: true });
+    fs.renameSync(file, path.join(kept, fileName(key)));
+}
+
+/** A list as what its file has to hold: the fields of a test, not what a run of it left on it. */
+function definitions(key: string, all: any[]) {
+    // a name as Gherkin reads it
+    const list = all.map(item => ({ ...item, name: String(item.name).trim() }));
+    if (key.startsWith(DECISION))
+        return list.map(({ name, decision, data, checks, source, featureTags, background, tags }) => source !== undefined
+            ? { name, source, featureTags, background, tags }
+            : { name, ...(decision && decision !== setName(key) ? { decision } : {}), data: data ?? {}, checks: (checks ?? []).map(({ what, ok, actual, ...check }) => check), featureTags, tags });
+    return list.map(({ name, start, steps, checks, expect, generated, source, featureTags, background, tags }) => source !== undefined
+        ? { name, source, featureTags, background, tags }
+        : {
+            name,
+            start: { data: start?.data ?? {}, ...(start?.startNodeId ? { startNodeId: start.startNodeId } : {}), ...(start?.only ? { only: true } : {}) },
+            steps: (steps ?? []).map(({ element, data }) => ({ element, data: data ?? {} })),
+            checks: [...expectChecks(expect), ...(checks ?? [])].map(({ what, ok, actual, ...check }: any) => {
+                if (check.at === 'end') delete check.at;
+                return check;
+            }),
+            ...(generated ? { generated: true } : {}), featureTags, tags,
+        });
+}
+
+const sorted = value => Array.isArray(value) ? value.map(sorted)
+    : value && typeof value === 'object' ? Object.fromEntries(Object.keys(value).filter(k => value[k] !== undefined).sort().map(k => [k, sorted(value[k])]))
+        : value;
+const sameJson = (a, b) => JSON.stringify(sorted(a)) === JSON.stringify(sorted(b));
+
+/**
+ * Every set still in JSON becomes a .feature, when it reads back as the same tests; the JSON goes to .runs/converted.
+ * Those that would not are left as they are, and are read as before. Returns what was done.
+ */
+export async function convertTestFiles(): Promise<{ converted: string[]; left: { file: string; why: string }[] }> {
+    const folder = modelsFolder();
+    const converted = [], left = [];
+    for (const file of fs.existsSync(folder) ? fs.readdirSync(folder).filter(f => f.endsWith('.tests.json')) : []) {
+        const decision = file.endsWith('.dmn.tests.json');
+        const name = file.slice(0, -(decision ? '.dmn.tests.json' : '.tests.json').length);
+        const key = decision ? DECISION + name : name;
+        if (fs.existsSync(path.join(folder, featureName(key)))) continue;
+        try {
+            const set = readJson(path.join(folder, file));
+            const list = definitions(key, set?.scenarios ?? set?.tests ?? []);
+            const text = writeFeature(name, list, { decision });
+            const back = definitions(key, readFeature(text, { decision, name }));
+            if (back.some(item => item.source !== undefined)) throw new Error('a test did not read back in its form');
+            if (!sameJson(back, list)) throw new Error('it did not read back the same');
+            writeText(path.join(folder, featureName(key)), text);
+            setAsideJson(folder, key);
+            converted.push(file);
+        }
+        catch (error) {
+            left.push({ file, why: error.message });
+        }
+    }
+    return { converted, left };
 }
 
 /** The list saved under a key (a model's scenarios, a decision's tests), each with its runs. */
 export async function loadTestSet<T = Scenario>(key: string): Promise<T[]> {
-    const folder = modelsFolder(), name = fileName(key);
-    const set = readJson(path.join(folder, name));
-    const list = set?.scenarios ?? set?.tests ?? [];
-    const runs = readJson(runsFile(folder, name)) ?? {};
+    const folder = modelsFolder();
+    const list = readSet(folder, key);
+    const runs = readJson(runsFile(folder, key)) ?? {};
     return list.map(item => runs[item.name]?.length ? { ...item, runs: runs[item.name] } : item);
 }
 
 export async function saveTestSet(key: string, list: any[], userName?: string): Promise<void> {
-    const folder = modelsFolder(), name = fileName(key);
-    const decision = key.startsWith(DECISION);
+    const folder = modelsFolder();
     const runs = {};
-    const items = list.map(({ runs: kept, ...item }) => {
-        if (kept?.length) runs[item.name] = kept;
-        return item;
-    });
-    writeJson(path.join(folder, name), items.length
-        ? decision ? { decision: key.slice(DECISION.length), tests: items } : { model: key, scenarios: items }
-        : undefined);
-    writeJson(runsFile(folder, name), Object.keys(runs).length ? runs : undefined);
+    for (const { name, runs: kept } of list)
+        if (kept?.length) runs[String(name).trim()] = kept;
+    const items = definitions(key, list);
+    writeText(path.join(folder, featureName(key)), items.length ? writeFeature(setName(key), items, { decision: key.startsWith(DECISION) }) : undefined);
+    setAsideJson(folder, key);
+    writeJson(runsFile(folder, key), Object.keys(runs).length ? runs : undefined);
 }
 
 export async function loadScenarios(model: string): Promise<Scenario[]> {
@@ -143,16 +227,15 @@ export async function saveScenarios(model: string, scenarios: Scenario[], userNa
 /** Every test set of the models folder: its key, how many tests, when last saved. */
 async function ownSets() {
     const folder = modelsFolder();
-    const files = fs.existsSync(folder) ? fs.readdirSync(folder).filter(f => f.endsWith('.tests.json')) : [];
-    return files.map(file => {
-        const decision = file.endsWith('.dmn.tests.json');
-        const set = readJson(path.join(folder, file));
-        return {
-            key: decision ? DECISION + file.slice(0, -'.dmn.tests.json'.length) : file.slice(0, -'.tests.json'.length),
-            count: (set?.scenarios ?? set?.tests ?? []).length,
-            updatedAt: fs.statSync(path.join(folder, file)).mtime,
-        };
-    });
+    const files = fs.existsSync(folder) ? fs.readdirSync(folder).filter(f => /\.(feature|tests\.json)$/.test(f)) : [];
+    const keys = new Map<string, string>();
+    for (const file of files) {
+        const base = file.replace(/\.(feature|tests\.json)$/, '');
+        const key = base.endsWith('.dmn') ? DECISION + base.slice(0, -'.dmn'.length) : base;
+        // a .feature, where there are both
+        if (file.endsWith('.feature') || !keys.has(key)) keys.set(key, file);
+    }
+    return [...keys].map(([key, file]) => ({ key, count: readSet(folder, key).length, updatedAt: fs.statSync(path.join(folder, file)).mtime }));
 }
 
 /** Each model's scenarios in summary: how many, when last saved. */
@@ -456,8 +539,27 @@ export async function runScenarioInEngine(server, model: string, scenario: Scena
     }
 }
 
+/** A scenario kept as it was written: as a feature, the result in the form of the others'. */
+async function runWritten(server, scenario) {
+    const { runFeature } = await import('./gherkin.js');
+    let elements;
+    try {
+        [{ elements }] = await runFeature(server, sourceFeature(scenario), scenario.name);
+    }
+    catch (err) {
+        return { name: scenario.name, ok: false, error: message(err), steps: [], checks: [], instance: null };
+    }
+    const failed = elements.flatMap(element => element.steps).find(step => step.result.status === 'failed');
+    const [instanceId] = elements.flatMap(element => element.instances);
+    return {
+        name: scenario.name, ok: !failed, error: failed ? `${failed.name}: ${failed.result.error_message}` : null, steps: [], checks: [],
+        instance: instanceId ? summarize(await findTest(server, instanceId)) : null,
+    };
+}
+
 /** Run a scenario: start, complete each step's element (with its checks after it), check the end. */
 export async function runScenario(server, model: string, scenario: Scenario, userName?: string) {
+    if ((scenario as any).source !== undefined) return runWritten(server, scenario);
     const steps = [];
     const all = scenarioChecks(scenario);
     const checks = [];

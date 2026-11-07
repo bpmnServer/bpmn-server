@@ -41,15 +41,15 @@ test('scenarios are kept per model', async () => {
 });
 
 test('scenarios are files beside the model, their runs apart; none left: no file', async () => {
-    const file = path.join(web.definitionsPath, 'leave-request.tests.json');
+    const file = path.join(web.definitionsPath, 'leave-request.feature');
     const runsFile = path.join(web.definitionsPath, '.runs', 'leave-request.runs.json');
     const RUN = { instanceId: 'test-1', at: '2026-11-03T10:00:00.000Z', how: 'run', ok: true };
     let res = await designer.request('PUT', '/model/scenarios/leave-request', { json: { scenarios: [{ ...SHORT, runs: [RUN] }, LONG] } });
     assert.equal(res.status, 200, why(res));
-    const saved = JSON.parse(fs.readFileSync(file, 'utf8'));
-    assert.equal(saved.model, 'leave-request', 'the format of a scenario file');
-    assert.deepEqual(saved.scenarios.map(s => s.name), [SHORT.name, LONG.name]);
-    assert.ok(saved.scenarios.every(s => !('runs' in s)), 'no runs in the tests file');
+    const saved = fs.readFileSync(file, 'utf8');
+    assert.match(saved, /^Feature: leave-request/, 'the format of a scenario file');
+    assert.ok(saved.includes(`Scenario: ${SHORT.name}`) && saved.includes(`Scenario: ${LONG.name}`));
+    assert.doesNotMatch(saved, /test-1/, 'no runs in the tests file');
     assert.deepEqual(JSON.parse(fs.readFileSync(runsFile, 'utf8')), { [SHORT.name]: [RUN] });
     const loaded = JSON.parse((await designer.get('/model/scenarios/leave-request')).text).scenarios;
     assert.deepEqual(loaded[0].runs, [RUN], 'the runs put back');

@@ -1352,3 +1352,9 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
 .test-list ul.test-gaps { list-style: none; margin: 3px 0 0; padding: 0; max-height: 160px; overflow-y: auto; }
 .test-list li.test-gap { display: flex; align-items: flex-start; gap: 4px; padding: 2px 4px; border: none; border-radius: 3px; background: none; cursor: pointer; line-height: 1.3; overflow-wrap: anywhere; }
 .test-list li.test-gap:hover { background: #f0f4fb; }
+
+.test-written pre {
+    overflow: auto;
+    padding: 8px;
+    font-size: 12px;
+}

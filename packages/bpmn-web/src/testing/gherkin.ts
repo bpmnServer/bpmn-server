@@ -10,6 +10,7 @@ import { randomUUID } from 'node:crypto';
 import { AstBuilder, compile, GherkinClassicTokenMatcher, Parser } from '@cucumber/gherkin';
 import { IdGenerator } from '@cucumber/messages';
 import { runSandboxed, SandboxScriptHandler, SecureUser, type StubSet } from 'bpmn-server';
+import { matched, outputAt } from './decisionTests.js';
 import { compare, valueAt } from './scenarios.js';
 
 const NAME = '("[^"]+"|\\S+)';
@@ -28,7 +29,7 @@ async function runCode(server, values: Record<string, any>, body: string, name: 
 }
 
 class Scenario {
-    names: Record<string, { instanceId: string; itemId?: string; model?: string }> = {};
+    names: Record<string, { instanceId?: string; itemId?: string; model?: string; result?: any; evaluated?: boolean }> = {};
     context = {};
     user: { userName: string; secure: any } | null = null;
     stubs: StubSet = { services: {}, timers: {} };
@@ -71,9 +72,8 @@ class Scenario {
         const value = text.trim();
         const expression = /^\$\{([\s\S]*)\}$/.exec(value);
         if (expression) return this.expression(expression[1]);
-        if (/^".*"$/.test(value)) return value.slice(1, -1);
         try { return JSON.parse(value); }
-        catch { return value; }
+        catch { return /^".*"$/.test(value) ? value.slice(1, -1) : value; }
     }
 
     async table(rows): Promise<Record<string, any>> {
@@ -124,17 +124,23 @@ class Scenario {
             const value = await this.expression(expression[1]);
             return { ok: !!value, said: `${expression[1]} is ${JSON.stringify(value)}` };
         }
-        const passed = new RegExp(`^:(\\w+) passed element:${NAME}(?: (\\d+) times?)?$`).exec(statement);
+        const passed = new RegExp(`^:(\\w+) passed element:${NAME}(?: (\\d+) times?)?(?: with status (".*"))?$`).exec(statement);
         if (passed) {
             const { instance } = await this.instanceOf(passed[1]);
-            const runs = instance.items.filter(i => i.elementId === unquoted(passed[2])).length;
-            return { ok: passed[3] ? runs === Number(passed[3]) : runs > 0, said: `${unquoted(passed[2])} ran ${runs} times` };
+            const element = unquoted(passed[2]);
+            const status = passed[4] && JSON.parse(passed[4]);
+            const runs = instance.items.filter(i => (i.elementId === element || i.name === element) && (!status || i.status === status)).length;
+            return { ok: passed[3] !== undefined ? runs === Number(passed[3]) : runs > 0, said: `${element} ran ${runs} times` };
         }
-        const compared = /^:(\w+) ([\w.]+) (is not|is|<>|>=|<=|=|>|<) (.+)$/.exec(statement);
+        const compared = /^:(\w+) ((?:[\w.]|"[^"]*")+) (is not|is|<>|>=|<=|=|>|<) (.+)$/.exec(statement);
         if (!compared) throw new Error(`can not read '${statement}'`);
-        const [, name, path, words, text] = compared;
+        const [, name, written, words, text] = compared;
+        const path = written.replace(/"/g, '');
         const op = { is: '=', 'is not': '<>' }[words] ?? words;
-        const actual = valueAt(await this.read(name), path);
+        const held = this.names[name];
+        const actual = held?.evaluated
+            ? path === 'rules' ? matched(held.result) : outputAt(held.result, path.replace(/^output\./, ''))
+            : valueAt(await this.read(name), path);
         return { ok: compare(actual, op, await this.value(text)), said: `${path} is ${JSON.stringify(actual)}` };
     }
 }
@@ -152,16 +158,25 @@ const COMMANDS: Record<string, (server, scenario: Scenario, step: Step) => Promi
     },
 
     async start(server, scenario, { rest, rows }) {
-        const match = new RegExp(`^process:${NAME}(?: as :(\\w+))?$`).exec(rest);
+        const match = new RegExp(`^process:${NAME}(?: at element:${NAME})?( only)?(?: as :(\\w+))?$`).exec(rest);
         if (!match) throw new Error('@start: @start process:<name> as :<name>');
         const model = unquoted(match[1]);
+        const at = match[2] ? unquoted(match[2]) : null;
         await scenario.checkStubs(model);
         const instanceId = `test-${randomUUID()}`;
         server.testStubs.add(instanceId, scenario.stubs);
-        await server.engine.start(model, await scenario.table(rows), null, scenario.user?.userName ?? null, { instanceId, flags: { savePoints: true, saveLogs: true } });
-        const name = match[2] ?? `start-${instanceId}`;
+        await server.engine.start(model, await scenario.table(rows), at, scenario.user?.userName ?? null, { instanceId, flags: { savePoints: true, saveLogs: true, ...(match[3] ? { only: at } : {}) } });
+        const name = match[4] ?? `start-${instanceId}`;
         scenario.names[name] = { instanceId, model };
         scenario.current.instance = name;
+    },
+
+    /** A decision evaluated with the table as its input; what it answered is kept by name, for @check. */
+    async evaluate(server, scenario, { rest, rows }) {
+        const match = new RegExp(`^decision:${NAME} as :(\\w+)$`).exec(rest);
+        if (!match) throw new Error('@evaluate: @evaluate decision:<name> as :<name>');
+        const { result } = await server.engine.invokeDecision(unquoted(match[1]), await scenario.table(rows));
+        scenario.names[match[2]] = { result, evaluated: true };
     },
 
     async find(_server, scenario, { rest, rows }) {
@@ -305,7 +320,7 @@ export async function runFeature(server, source: string, uri = 'feature') {
         }
         elements.push({
             keyword: 'Scenario', type: 'scenario', name: pickle.name, tags: pickle.tags.map(tag => ({ name: tag.name })),
-            instances: Object.values(scenario.names).filter(held => !held.itemId).map(held => held.instanceId), steps,
+            instances: Object.values(scenario.names).filter(held => held.instanceId && !held.itemId).map(held => held.instanceId), steps,
         });
     }
     return [{ keyword: feature?.keyword ?? 'Feature', name: feature?.name ?? '', uri, tags: (feature?.tags ?? []).map(tag => ({ name: tag.name })), elements }];
