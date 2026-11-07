@@ -11,56 +11,18 @@ Without any installation, let us go to bpmnServer [Demo Website](https://bpmn.om
 
 # Installation
 
-<!--include "index.md/#local-install" -->
 ### Local Install
-This package requires Node.js and an access to MongoDB ()
-if you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas) or can be [installed locally](https://www.mongodb.com/docs/manual/installation/)
 
--1 git clone
-```sh
- git clone https://github.com/bpmnServer/bpmn-web.git
- cd bpmn-web
-```
--2 install packages
-```sh
- npm install
-```
--3 setup the app
-```sh
- npm run setup
-```
- 
--4 Edit .env file to have MongoDB point to your server or free cloud account
+This needs Node.js 20 or later. `--memory` tries it without a database, and its data is lost when the server stops:
 
 ```sh
-# MongoDB Settings
-MONGO_DB_URL=mongodb://0.0.0.0:27017/bpmn
-#
-```
--5 Run Setup again to create db objects
-
-```sh
-npm run setup
+npx bpmn-server init my-app --memory
+cd my-app
+npm start
 ```
 
-Your installation is now complete.
+Open http://localhost:3000 and sign in as `admin`, password `admin`. To keep your data, see [Installation](../setup.md).
 
-- Start server
-
-```sh
- npm run start
-```
-
-Console will display:
-
-```{ .text .no-copy }
-bpmn-server WebApp.ts version 1.4.0
-MongoDB URL mongodb://0.0.0.0:27017/bpmn
-db connection open
-
-App is running at http://localhost:3000 in development mode
-  Press CTRL-C to stop
-```
 
 Use your browser to view the bpmn-server running
 

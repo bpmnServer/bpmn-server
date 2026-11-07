@@ -12,12 +12,11 @@ connectors and delegates, and bpmn-web's tests are in `testSampleApp/` at the re
 
 ### Requirements
 
-* Node.js >= 10.x
-* NPM >= 6.x
-* MongoDB >= 4.x
+* Node.js 20 or later
+* MongoDB, or `--memory` to try it without one
 
 ### Installation
-Setup .env with your mongodb connection string like so:
+An application's `.env` holds its MongoDB connection string and keys, like so:
 
 ```bash
 # PORT # for express application
@@ -45,13 +44,11 @@ MONGO_DB_URL=mongodb://0.0.0.0:27017/bpmn
 to the permissions the integration needs. The legacy `/api` routes remain a
 privileged API-key interface.
 
-Install dependencies
+Create an application, with bpmn-web as its dependency:
 ```bash
-git clone https://github.com/bpmnServer/bpmn-web.git
-
-npm install
-
-npm run setup
+npx bpmn-server init my-app      # asks for the database; --memory to try it without MongoDB
+cd my-app
+npm start                        # http://localhost:3000, sign in as admin / admin
 ```
 
 ## Usage

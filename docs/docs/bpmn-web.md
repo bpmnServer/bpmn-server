@@ -20,7 +20,7 @@ are in the page, not in the menu, and pages that only say something (not found, 
 
 # Installation
 
-This package requires Node.js and an access to MongoDB ()
+This package requires Node.js 20 or later and MongoDB (or `--memory`, to try it without one).
 if you don't have MongoDB already installed you can [create a free cloud account here](http://bit.ly/cyd-atlas)
 
 bpmn-web is a package an application starts with its own settings, delegate and models. Create one:
@@ -102,5 +102,5 @@ Enter Command, q to quit, or ? to list commands
 ## to update to latest release
 
 ```sh
-npm update bpmn-server
+npm update bpmn-server bpmn-web
 ```

@@ -337,6 +337,6 @@ This option can be used for minimal installation by having models at a remote lo
 | Package | |
 |---|---|
 | [bpmn-server](https://github.com/bpmnServer/bpmn-server) | the engine: execution, persistence (MongoDB or your own storage), the API, `verifyModel` and the `bpmn-server` command line |
-| [bpmn-web](https://github.com/bpmnServer/bpmn-web) | a web application on bpmn-server: model editor, task lists, administration, and REST APIs |
-| [bpmn-client](https://github.com/bpmnServer/bpmn-client) | calls a bpmn-web server's REST API from Node.js |
+| [bpmn-web](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-web) | a web application on bpmn-server: model editor, task lists, administration, and REST APIs |
+| [bpmn-client](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-client) | calls a bpmn-web server's REST API from Node.js |
 | [bpmn-mcp](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-mcp) | connects AI clients to a running server over MCP; not on npm yet, it runs from the repository |
