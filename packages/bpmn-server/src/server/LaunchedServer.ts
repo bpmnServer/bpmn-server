@@ -16,14 +16,14 @@ export class EngineNotRunningError extends Error {
 type EngineCall = (method: string, args: any[]) => Promise<any>;
 
 /** The engine's calls over the network: the private link from a host to its engine. */
-function remoteCall(at: string, key: string, caller?: () => string | undefined): EngineCall {
+function remoteCall(at: string, key: string): EngineCall {
     const url = `${at.replace(/\/+$/, '')}/engine/call`;
     return async (method, args) => {
         // an argument left out stays out, for the engine's default
         while (args.length && args[args.length - 1] === undefined) args = args.slice(0, -1);
         let response;
         try {
-            response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-engine-key': key ?? '' }, body: JSON.stringify({ method, args, caller: caller?.() }) });
+            response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-engine-key': key ?? '' }, body: JSON.stringify({ method, args }) });
         }
         catch {
             throw new EngineNotRunningError(`the one at ${at} can not be reached`);
@@ -138,11 +138,11 @@ export class LaunchedServer {
     readonly engine: LaunchedEngine;
     readonly appDelegate: ApplicationFacts;
 
-    constructor(server: BPMNServer, options: { engine?: string; engineKey?: string; caller?: () => string | undefined; calls?: (server: BPMNServer) => Record<string, (...args: any[]) => Promise<any>> } = {}) {
+    constructor(server: BPMNServer, options: { engine?: string; engineKey?: string; calls?: (server: BPMNServer) => Record<string, (...args: any[]) => Promise<any>> } = {}) {
         this.#server = server;
         const at = options.engine;
         const calls = at ? null : { ...engineCalls(server), ...options.calls?.(server) };
-        this.engine = new LaunchedEngine(at === 'none' ? null : at ? remoteCall(at, options.engineKey, options.caller) : (method, args) => calls[method](...args));
+        this.engine = new LaunchedEngine(at === 'none' ? null : at ? remoteCall(at, options.engineKey) : (method, args) => calls[method](...args));
         this.appDelegate = new ApplicationFacts(server.configuration, this.engine);
         if (!at) this.appDelegate.moddleFromEngine = server.appDelegate.moddleOptions;
         // an engine elsewhere may not have started yet: what is not known of it then falls back on the settings
