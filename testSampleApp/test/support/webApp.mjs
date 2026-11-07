@@ -63,9 +63,9 @@ function definitionsFolder() {
 }
 
 /** The engine in a process of its own, on the same database and models; what ENGINE_AT then points to. */
-function startEngineProcess() {
+function startEngineProcess(port = '0') {
     return new Promise((resolve, reject) => {
-        const child = spawn(process.execPath, ['--import', 'tsx', 'engine.ts'], { cwd: ROOT, env: { ...process.env, ENGINE_PORT: '0' }, stdio: ['ignore', 'pipe', 'inherit'] });
+        const child = spawn(process.execPath, ['--import', 'tsx', 'engine.ts'], { cwd: ROOT, env: { ...process.env, ENGINE_PORT: port }, stdio: ['ignore', 'pipe', 'inherit'] });
         let output = '';
         child.stdout.on('data', chunk => {
             output += chunk;
@@ -145,6 +145,16 @@ export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_
     const web = {
         base, webApp, bpmnServer, definitionsPath, dbUrl, embedded,
         engineAt: engineProcess?.at, enginePid: engineProcess?.child.pid,
+        /** Killed, not asked to stop: what a crash leaves behind. */
+        async killEngine() {
+            engineProcess.child.removeAllListeners('exit');
+            await new Promise(resolve => { engineProcess.child.once('exit', resolve); engineProcess.child.kill('SIGKILL'); });
+        },
+        /** Back on its port, where ENGINE_AT says it is. */
+        async startEngineAgain() {
+            engineProcess = await startEngineProcess(new URL(engineProcess.at).port);
+            web.enginePid = engineProcess.child.pid;
+        },
         async stopEngine() {
             // killed: on Windows it never gets an exit code
             if (!engineProcess || engineProcess.child.killed || engineProcess.child.exitCode !== null) return;

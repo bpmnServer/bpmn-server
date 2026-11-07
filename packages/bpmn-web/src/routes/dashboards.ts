@@ -225,7 +225,7 @@ export class Dashboards extends Common {
                         // this is the scenario's last run now, as in the Test tab: its instance replaces the one before
                         for (const old of (scenario as any).runs ?? [])
                             if (String(old.instanceId).startsWith('test-'))
-                                await server.dataStore.deleteInstances({ id: old.instanceId }).catch(() => { });
+                                await server.engine.deleteInstances({ id: old.instanceId }).catch(() => { });
                         (scenario as any).runs = result.instance ? [{
                             instanceId: result.instance.id, at, how: 'dashboard', ok: result.ok, error: result.error, checks: result.checks, steps: result.steps,
                             reached: [...reachedIn(result.instance.items, listeners)],

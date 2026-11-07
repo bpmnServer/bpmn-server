@@ -235,3 +235,19 @@ test('conditions: a conditional event shows its own, saying it does not run; a f
     assert.deepEqual(errors, []);
     await close();
 });
+
+test('every flow has its condition field, open: the default flow says a condition there is not used', async () => {
+    const model = await addModel('panel-any-flow', { xml: fs.readFileSync(path.join(FIXTURES, 'buy-used-car.bpmn'), 'utf8') });
+    const { page, errors, close } = await openEditor(model);
+    const shown = async id => {
+        await select(page, id);
+        await page.locator('[data-entry-id="conditionExpression"] .cm-content').waitFor();
+        await page.locator('[data-entry-id="conditionExpression"]').hover();      // its description shows then
+        return page.locator('[data-entry-id="conditionExpression"]').innerText();
+    };
+    for (const id of ['flow_start_buy', 'flow_gw2_drive'])
+        assert.match(await shown(id), /A JavaScript expression/, id);
+    assert.match(await shown('flow_gw1_gw2'), /default flow/);
+    assert.deepEqual(errors, []);
+    await close();
+});

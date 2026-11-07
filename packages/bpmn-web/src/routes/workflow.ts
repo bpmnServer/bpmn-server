@@ -154,7 +154,7 @@ export class Workflow extends Common {
         });
 
         router.post('/resetData', this.isAdmin, awaitAppDelegateFactory(async (request, response) => {
-            await bpmnServer.dataStore.deleteInstances({});
+            await bpmnServer.engine.deleteInstances({});
             let output = ['Data Reset'];
             output = show(output);
             return display(request,response, 'Show', output);
@@ -375,7 +375,7 @@ async function deleteInstance(req, res) {
 
     let instanceId = req.body.id;
 
-    await bpmnServer.dataStore.deleteInstances({ id: instanceId });
+    await bpmnServer.engine.deleteInstances({ id: instanceId });
 
     let output = ['Complete ' + instanceId];
     return display(req,res, 'Show', output);

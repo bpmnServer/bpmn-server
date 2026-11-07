@@ -716,7 +716,7 @@ export class API extends Common {
                 let errors;
                 let result;
                 try {
-                    result = await this.bpmnServer.dataStore.deleteInstances(query);
+                    result = await this.bpmnServer.engine.deleteInstances(query);
                 }
                 catch (exc) {
                     errors = exc.toString();

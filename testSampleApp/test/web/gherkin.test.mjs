@@ -18,6 +18,8 @@ const MODELS = {
   'credit-order': model('credit-order', `<bpmn:startEvent id="s" /><bpmn:serviceTask id="check" implementation="credit-check" /><bpmn:intermediateCatchEvent id="wait-3-days"><bpmn:timerEventDefinition><bpmn:timeDuration>P3D</bpmn:timeDuration></bpmn:timerEventDefinition></bpmn:intermediateCatchEvent><bpmn:scriptTask id="decide" scriptFormat="JavaScript"><bpmn:script>data.decision = 'approved';</bpmn:script></bpmn:scriptTask><bpmn:endEvent id="e" />${flows('s', 'check', 'wait-3-days', 'decide', 'e')}`),
   'calls-credit': model('calls-credit', `<bpmn:startEvent id="s" /><bpmn:callActivity id="call" calledElement="credit-only" /><bpmn:endEvent id="e" />${flows('s', 'call', 'e')}`),
   'credit-only': model('credit-only', `<bpmn:startEvent id="s" /><bpmn:serviceTask id="check" implementation="credit-check" /><bpmn:endEvent id="e" />${flows('s', 'check', 'e')}`),
+  'waits-then-credit': model('waits-then-credit', `<bpmn:startEvent id="s" /><bpmn:userTask id="u" /><bpmn:serviceTask id="check" implementation="credit-check" /><bpmn:endEvent id="e" />${flows('s', 'u', 'check', 'e')}`),
+  'calls-waiting-credit': model('calls-waiting-credit', `<bpmn:startEvent id="s" /><bpmn:callActivity id="call" calledElement="waits-then-credit" /><bpmn:endEvent id="e" />${flows('s', 'call', 'e')}`),
   'mapped-input': model('mapped-input', `<bpmn:startEvent id="s" /><bpmn:serviceTask id="check" implementation="credit-check"><bpmn:extensionElements><camunda:inputOutput><camunda:inputParameter name="orderId">$(data.orderId)</camunda:inputParameter></camunda:inputOutput></bpmn:extensionElements></bpmn:serviceTask><bpmn:endEvent id="e" />${flows('s', 'check', 'e')}`),
   'catches-errors': model('catches-errors', `<bpmn:startEvent id="s" /><bpmn:serviceTask id="check" implementation="credit-check" camunda:exceptionsAsErrors="true" /><bpmn:boundaryEvent id="caught" attachedToRef="check"><bpmn:errorEventDefinition /></bpmn:boundaryEvent><bpmn:endEvent id="e" /><bpmn:endEvent id="handled" />${flows('s', 'check', 'e')}<bpmn:sequenceFlow id="f9" sourceRef="caught" targetRef="handled" />`),
 };
@@ -160,6 +162,68 @@ test('a stub reaches what its instance calls, and no other instance', async () =
   const instance = await web.bpmnServer.engine.start('credit-only', {});
   assert.notEqual(instance.instance.items.find(i => i.elementId === 'check').output?.from, 'the stub');
   assert.ok(before);
+});
+
+test('an instance that outlives its test does not reach the real service it stubbed, nor does what it calls', async () => {
+  const ranReal = async id => {
+    const [instance] = await web.bpmnServer.dataStore.findInstances({ id }, 'full');
+    assert.deepEqual(instance.items.filter(i => i.elementId === 'check').map(i => i.status), ['end']);
+    return JSON.stringify(instance.logs).includes('invoking service:credit-check');
+  };
+  const [own] = await run(steps(...STUB(['return { from: "the stub" }']), 'When @start process:waits-then-credit as :i', 'Then @check :i status is "running"'));
+  assert.equal(failure(own), undefined);
+  await web.bpmnServer.engine.invoke({ id: own.instances[0], 'items.elementId': 'u' }, {});
+  assert.equal(await ranReal(own.instances[0]), false);
+
+  const [parent] = await run(steps(...STUB(['return { from: "the stub" }']), 'When @start process:calls-waiting-credit as :i', 'Then @check :i status is "running"'));
+  assert.equal(failure(parent), undefined);
+  const [child] = await web.bpmnServer.dataStore.findInstances({ name: 'waits-then-credit', 'flags.stubbed': 'credit-check', status: 'running' }, 'summary');
+  assert.ok(child, 'what it called carries the mark');
+  await web.bpmnServer.engine.invoke({ id: child.id, 'items.elementId': 'u' }, {});
+  assert.equal(await ranReal(child.id), false);
+
+  // the control: with no test at all, the same model does reach it
+  const { id } = await web.bpmnServer.engine.start('waits-then-credit', {}, null, null, { flags: { saveLogs: true } });
+  await web.bpmnServer.engine.invoke({ id, 'items.elementId': 'u' }, {}).catch(() => { });
+  const [plain] = await web.bpmnServer.dataStore.findInstances({ id }, 'full');
+  assert.ok(JSON.stringify(plain.logs).includes('invoking service:credit-check'));
+});
+
+test('two scenarios at once, each with its own stub: each instance gets its own', async () => {
+  const one = (name) => run(steps(...STUB([`return { from: "${name}" }`]), 'When @start process:credit-only as :i', `Then @check :i status is "end"`));
+  const results = await Promise.all(['a', 'b', 'c', 'd'].map(one));
+  const froms = [];
+  for (const [element] of results) {
+    assert.equal(failure(element), undefined);
+    const [instance] = await web.bpmnServer.dataStore.findInstances({ id: element.instances[0] }, 'full');
+    froms.push(instance.items.find(i => i.elementId === 'check').output?.from);
+  }
+  assert.deepEqual(froms, ['a', 'b', 'c', 'd']);
+});
+
+test('a scenario that fails with its instance still going leaves nothing behind that reaches the real service', async () => {
+  const [element] = await run(steps(...STUB(['return { from: "the stub" }']), 'When @start process:waits-then-credit as :i', 'Then @check ${1 === 2}'));
+  assert.ok(failure(element));
+  const id = element.instances[0];
+  await web.bpmnServer.engine.invoke({ id, 'items.elementId': 'u' }, {});
+  const [instance] = await web.bpmnServer.dataStore.findInstances({ id }, 'full');
+  assert.ok(!JSON.stringify(instance.logs).includes('invoking service:credit-check'));
+  assert.equal(instance.status, 'end');
+});
+
+test('a script that never finishes fails its step, and does not hold the engine', async () => {
+  const started = Date.now();
+  const [element] = await run(steps('Given @script', '  """', '  await new Promise(() => {});', '  """'));
+  assert.match(failure(element), /did not finish within 1000 ms/);
+  assert.ok(Date.now() - started < 5000);
+});
+
+test('with design off the engine has no test calls: a key to it runs no @script', async () => {
+  const { engineTests } = await import(new URL('../../../packages/bpmn-web/dist/testing/engineTests.js', import.meta.url).href);
+  assert.ok(Object.keys(engineTests(web.embedded ?? web.bpmnServer)).includes('runFeature'));
+  process.env.DISABLE_DESIGN = 'true';
+  try { assert.deepEqual(engineTests(web.embedded ?? web.bpmnServer), {}); }
+  finally { delete process.env.DISABLE_DESIGN; }
 });
 
 test('a stub that names nothing in the model fails, so the real one can not stay on unseen', async () => {

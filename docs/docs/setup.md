@@ -45,7 +45,7 @@ For Codex, Claude Desktop and other clients, or to add it to an existing applica
 
 ## Ways to run it
 
-An application runs in one of these ways. [Architecture](architecture.md) explains the parts.
+Every setting is listed in [Settings](settings.md). An application runs in one of these ways. [Architecture](architecture.md) explains the parts.
 
 | Setup | Engine | Settings |
 |---|---|---|
@@ -84,7 +84,7 @@ ENGINE_AT=http://127.0.0.1:3001 ENGINE_KEY=your-secret npm start
 
 - **Give both processes the same database and models folder.** They read and write the same instances and models.
 - **Keep the engine private.** Only the host should be able to reach it. Change `ENGINE_LISTEN` only if the host is on another machine, and then only on a private network.
-- **Turn design off.** `DISABLE_DESIGN=true` removes the model editor, the Design dashboard and test runs from the pages. Models then arrive through the admin REST APIs, and the admin APIs stay on.
+- **Turn design off, on both.** `DISABLE_DESIGN=true` removes the model editor, the Design dashboard and test runs from the host's pages, and the test calls from the engine. Without it, anyone with `ENGINE_KEY` can run a test's scripts on the engine. Models then arrive through the admin REST APIs, and the admin APIs stay on.
 - **Leave tests out of a deployment.** A production server doesn't run them, so don't deploy `*.feature` files.
 - **Check the settings the server refuses to start without.** See [Security](security.md).
 

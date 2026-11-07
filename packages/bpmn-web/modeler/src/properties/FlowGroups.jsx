@@ -7,14 +7,13 @@
 import { Group, ListGroup, SelectEntry, TextAreaEntry, TextFieldEntry, isSelectEntryEdited, isTextAreaEntryEdited, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 import { useService } from 'bpmn-js-properties-panel';
-import { is, isAny, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
+import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { attributeEntry } from './AttributeEntry.jsx';
 import { addExtensionElement } from './extensions.js';
 import { formatEntry } from './FormatEntry.jsx';
 import { codeEntry } from './code/CodeEntry.jsx';
 
 // an event-based gateway too: the engine evaluates the conditions on its flows
-const CONDITIONAL_SOURCES = ['bpmn:Activity', 'bpmn:ExclusiveGateway', 'bpmn:InclusiveGateway', 'bpmn:ComplexGateway', 'bpmn:EventBasedGateway'];
 
 
 /** A conditional event's condition, so it can be read and changed; bpmn-server does not run the event. */
@@ -51,27 +50,25 @@ export function ConditionGroup(element, translate) {
         return EventConditionGroup(element, conditional, translate);
     if (!is(element, 'bpmn:SequenceFlow'))
         return null;
-    // a flow that has a condition shows it, wherever it starts: the engine evaluates it
+    // every flow has the field: the engine evaluates a condition wherever the flow starts
     const condition = bo.get('conditionExpression');
     // the field follows the condition's language: FEEL is not JavaScript, and next(...) may be statements
     const language = String(condition?.get('language') ?? '');
     const feel = /feel/i.test(language);
     const statements = /javascript|^js$/i.test(language) && /(^|[^.\w$])next\s*\(/.test(condition?.get('body') ?? '');
-    if (!condition) {
-        if (!isAny(element.source, CONDITIONAL_SOURCES))
-            return null;
-        if (getBusinessObject(element.source).get('default') === bo)
-            return null;    // the default flow is taken when no other condition is true
-    }
+    // the default flow is taken when no other condition holds, whatever it says
+    const isDefault = element.source && getBusinessObject(element.source).default === bo;
     return {
         id: 'BpmnServer__Condition',
         label: translate('Condition'),
         component: Group,
-        shouldOpen: Boolean(condition),     // what decides whether the flow is taken is not left folded away
+        shouldOpen: true,     // what decides whether the flow is taken is not left folded away
         entries: [
             codeEntry(element, {
                 id: 'conditionExpression', label: 'Condition', mode: feel ? 'feel' : statements ? 'script' : 'expression', rows: 2,
-                description: feel
+                description: isDefault
+                    ? 'This is the default flow: it is taken when no other flow\'s condition holds, so a condition here is not used'
+                    : feel
                     ? 'A FEEL expression, e.g. days > 5 (the data\'s values by name); the flow is taken when it is true'
                     : 'A JavaScript expression, e.g. data.days > 5; the flow is taken when it is true',
                 getValue: () => bo.get('conditionExpression')?.get('body') || '',

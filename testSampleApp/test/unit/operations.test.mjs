@@ -19,7 +19,8 @@ const VALID = `<?xml version="1.0" encoding="UTF-8"?><bpmn:definitions ${NS} id=
 <bpmn:sequenceFlow id="f1" sourceRef="s" targetRef="t"/><bpmn:sequenceFlow id="f2" sourceRef="t" targetRef="e"/></bpmn:process></bpmn:definitions>`;
 const BROKEN = '<bpmn:definitions';
 
-const SAFE = { SESSION_SECRET: 's', API_KEY: 'k', API_SERVICE_USER_NAME: 'svc', API_SERVICE_USER_GROUPS: 'SYSTEM' };
+const SAFE = {
+  DISABLE_DESIGN: 'true', SESSION_SECRET: 's', API_KEY: 'k', API_SERVICE_USER_NAME: 'svc', API_SERVICE_USER_GROUPS: 'SYSTEM' };
 
 // ---- boot checks
 

@@ -8,6 +8,7 @@
  *                                   allowed in production only with ALLOW_INSECURE_NO_AUTH=true
  *
  * DEMO_MODE needs sessions too, so SESSION_SECRET applies to it as well.
+ * With design on in production and no sandbox, designers' scripts and tests run in the server's own process: a warning.
  */
 export interface BootConfigReport {
 	errors: string[];
@@ -47,6 +48,9 @@ export function checkBootConfig(env: Env = process.env, parts: BootParts = {}): 
 		else
 			warnings.push('REQUIRE_AUTHENTICATION=false: UI authentication is DISABLED (dev only).');
 	}
+	if (production && ui && env.DISABLE_DESIGN !== 'true' && !isTrue(env.SCRIPT_SANDBOX) && !isTrue(env.DEMO_MODE))
+		warnings.push('Model design is on with no SCRIPT_SANDBOX: what designers write in models and tests runs with this server\'s rights. '
+			+ 'Set DISABLE_DESIGN=true on a production server, or SCRIPT_SANDBOX=true if people you do not trust can design.');
 	return { errors, warnings };
 }
 

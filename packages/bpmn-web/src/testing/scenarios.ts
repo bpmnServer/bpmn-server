@@ -215,11 +215,11 @@ export async function saveRuns(server, model: string, scenarios: any[]) {
     for (const scenario of scenarios)
         for (const { instanceId, ...run } of scenario.runs ?? [])
             if (String(instanceId).startsWith('test-'))
-                await server.dataStore.tagInstance(instanceId, { process: model, scenario: String(scenario.name).trim(), run });
+                await server.engine.tagInstance(instanceId, { process: model, scenario: String(scenario.name).trim(), run });
     const tagged = await server.dataStore.findInstances({ 'tag.process': model }, { projection: { id: 1, tag: 1 } });
     for (const { id, tag } of tagged)
         if (!names.has(tag.scenario) && String(id).startsWith('test-'))
-            await server.dataStore.deleteInstances({ id });
+            await server.engine.deleteInstances({ id });
 }
 
 /** Whether the set's .feature already holds these tests. */

@@ -25,7 +25,10 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 async function runCode(server, values: Record<string, any>, body: string, name: string) {
     if (server.scriptHandler instanceof SandboxScriptHandler)
         return (await runSandboxed(values, body, { name, timeLimit: 1000 })).result;
-    return vm.runInNewContext(`(async () => {\n${body}\n})()`, clone(values), { timeout: 1000, filename: name });
+    // vm's timeout stops a loop, not a promise that never settles
+    let timer;
+    const limit = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(`${name} did not finish within 1000 ms`)), 1000); });
+    return Promise.race([vm.runInNewContext(`(async () => {\n${body}\n})()`, clone(values), { timeout: 1000, filename: name }), limit]).finally(() => clearTimeout(timer));
 }
 
 class Scenario {
@@ -197,7 +200,9 @@ const COMMANDS: Record<string, (server, scenario: Scenario, step: Step) => Promi
         await scenario.checkStubs(model);
         const instanceId = `test-${randomUUID()}`;
         server.testStubs.add(instanceId, scenario.stubs);
-        await server.engine.start(model, await scenario.table(rows), at, scenario.user?.userName ?? null, { instanceId, flags: { savePoints: true, saveLogs: true, ...(match[3] ? { only: at } : {}) } });
+        // kept with the instance: what is stubbed stays uncalled if it outlives this test, or this engine
+        const stubbed = Object.keys(scenario.stubs.services);
+        await server.engine.start(model, await scenario.table(rows), at, scenario.user?.userName ?? null, { instanceId, flags: { ...(stubbed.length ? { stubbed } : {}), savePoints: true, saveLogs: true, ...(match[3] ? { only: at } : {}) } });
         const name = match[4] ?? `start-${instanceId}`;
         scenario.names[name] = { instanceId, model };
         scenario.current.instance = name;

@@ -72,7 +72,7 @@ export class WebApp {
 			application.configuration,
 			wflogger,
 			// where the engine is: ENGINE_AT=http://... (with ENGINE_KEY), or none: everything but running and testing models
-			{ ...application.serverOptions, calls: engineTests, ...(process.env.ENGINE_AT && process.env.ENGINE_AT !== 'local' ? { engine: process.env.ENGINE_AT, engineKey: process.env.ENGINE_KEY } : {}) },
+			{ ...application.serverOptions, calls: engineTests, ...(process.env.ENGINE_AT && process.env.ENGINE_AT !== 'local' ? { engine: process.env.ENGINE_AT, engineKey: process.env.ENGINE_KEY, ...(Number(process.env.ENGINE_TIMEOUT_MS) > 0 ? { engineTimeout: Number(process.env.ENGINE_TIMEOUT_MS) } : {}) } : {}) },
 		);
 		application.initialize?.(this.bpmnServer);
 		// the Test tabs' tests are files beside the models

@@ -715,7 +715,7 @@ export class Model extends Common {
                 response.status(400).json({ error: 'only test instances are deleted here' });
                 return;
             }
-            await bpmnServer.dataStore.deleteInstances({ id });
+            await bpmnServer.engine.deleteInstances({ id });
             response.json({ deleted: id });
         }));
 

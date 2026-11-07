@@ -79,6 +79,7 @@ nav:
   - Architecture: architecture.md
   - Your First Workflow: first-workflow.md
   - Installation and Quick Start: setup.md
+  - "Settings: .env and configuration": settings.md
   - Application Integration: customization.md
   - Model editor: modeler.md
   - "What's new in 3.6": whats-new-3.6.md

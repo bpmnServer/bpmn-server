@@ -115,6 +115,16 @@ test('the engine is private: this machine only, its host\'s key, and only what i
   assert.equal((await call({ method: 'constructor' })).status, 404);
   assert.equal((await call({}, undefined, 'GET')).status, 404);
   assert.equal((await call({}, undefined, 'GET', '/')).status, 404);
+  const tooLarge = await fetch(web.engineAt + '/engine/call', { method: 'POST', headers: { 'x-engine-key': process.env.ENGINE_KEY }, body: Buffer.alloc(51 * 1024 * 1024) });
+  assert.equal(tooLarge.status, 413, 'said, not a broken connection');
+  assert.equal((await call({ method: 'status' })).status, 200, 'and it goes on');
+});
+
+test('deleting through the host is the engine\'s, wherever it runs', async () => {
+  const { instance } = JSON.parse((await designer.request('POST', '/model/test/start', { json: { processName: MODEL } })).text);
+  const res = await designer.request('DELETE', `/model/test/instance/${instance.id}`);
+  assert.equal(res.status, 200, why(res));
+  assert.equal((await web.bpmnServer.dataStore.findInstances({ id: instance.id }, 'summary')).length, 0);
 });
 
 test('with the engine gone the designer goes on; what would run says so', async () => {

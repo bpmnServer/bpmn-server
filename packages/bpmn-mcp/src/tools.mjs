@@ -7,13 +7,13 @@ import { verifyModel } from 'bpmn-server';
 import { z } from 'zod';
 
 const name = z.string().describe('The model\'s name, as list_models gives it');
-const data = z.record(z.any()).optional().describe('Values for the process\'s data');
+const data = z.record(z.string(), z.any()).optional().describe('Values for the process\'s data');
 
 /** Query operators that run code in the database: what a model's or a process's text might ask an AI to send. */
 const RUNS_CODE = new Set(['$where', '$function', '$accumulator']);
 const runsNoCode = value => !value || typeof value !== 'object'
   || Object.entries(value).every(([key, v]) => !RUNS_CODE.has(key) && runsNoCode(v));
-const filter = () => z.record(z.any()).refine(runsNoCode, { message: `A query can not use ${[...RUNS_CODE].join(', ')}` });
+const filter = () => z.record(z.string(), z.any()).refine(runsNoCode, { message: `A query can not use ${[...RUNS_CODE].join(', ')}` });
 
 const query = filter().describe('A filter on stored fields, such as {"id":"<instance id>"}, {"name":"<model name>"}, '
   + '{"data.days":3} or {"items.status":"wait"}');
@@ -132,11 +132,11 @@ export const tools = [
       assignment: z.object({ assignee: z.string().optional(), candidateUsers: z.array(z.string()).optional(), candidateGroups: z.array(z.string()).optional() }) },
     run: ({ v1 }, a) => v1.engine.assign(a.query, a.data ?? {}, null, a.assignment) },
   { name: 'throw_signal', annotations: write, description: 'Throw a signal: every process waiting for it continues.',
-    input: { signalId: z.string(), data, matchingKey: z.record(z.any()).optional() },
+    input: { signalId: z.string(), data, matchingKey: z.record(z.string(), z.any()).optional() },
     run: ({ v1 }, a) => v1.engine.throwSignal(a.signalId, a.data ?? {}, a.matchingKey ?? {}) },
   { name: 'throw_message', annotations: write, description: 'Send a message to the process waiting for it. '
     + 'If none waits and a model starts with this message, that starts a new instance.',
-    input: { messageId: z.string(), data, matchingKey: z.record(z.any()).optional() },
+    input: { messageId: z.string(), data, matchingKey: z.record(z.string(), z.any()).optional() },
     run: ({ v1 }, a) => v1.engine.throwMessage(a.messageId, a.data ?? {}, a.matchingKey ?? {}) },
   { name: 'start_event', annotations: write, description: 'Start a secondary start event of a running instance.',
     input: { instanceId: z.string(), startNodeId: z.string(), data },

@@ -23,6 +23,11 @@ and here
   `@find`, `@invoke`, `@check`, `@wait`, `@stub` and `@script`. A stub replaces a service or a timer for its own scenario's instances.
   The Test tab and the decision editor read and write them, and `*.tests.json` files are converted when the server starts. The Mocha scenarios are now `<model>.engine.feature`. See `docs/docs/testing.md`.
 - **The engine in its own process**: `npm run engine`, then `ENGINE_AT` and `ENGINE_KEY` on the host, with the delegate, services, timers and tests in the engine. See `docs/docs/architecture.md`.
+- **Every flow has its Condition field**, open, in the editor; a default flow's says a condition there is not used.
+- **`DISABLE_DESIGN` also removes the test calls from the engine**, so `ENGINE_KEY` can't run a test's scripts on a production engine. Set it on the engine too.
+- A service a test stubbed stays uncalled if its instance outlives the test or the engine, and in what it calls: the instance keeps `flags.stubbed`.
+- **Settings**, a page in the docs: what goes in `.env`, what in `settings/config.ts`, and every setting.
+- A Gherkin script that never finishes fails its step after a second, with or without the sandbox. With design on in production and no sandbox, the server warns at start.
 - **bpmn-mcp with every application**: `npx bpmn-server init` installs it and writes `.mcp.json`. See `packages/bpmn-mcp/CHANGELOG.md`.
 - **An HR application in the sample application**, embedded and called through a connector, to show application integration.
 - **Edit as text**, in the Test tab: a model's whole `.feature` file, comments and all. What does not read as Gherkin is not saved, and it says which line; a file changed since it was opened is not overwritten. A run no longer rewrites the file.

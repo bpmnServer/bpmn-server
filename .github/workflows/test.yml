@@ -1,0 +1,101 @@
+# The tests of every package, on each pull request and each push to main. The slower ones, browser and load, are jobs of their own.
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  BPMN_TEST_MONGO_URL: mongodb://localhost:27017
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7
+        ports: ['27017:27017']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: node scripts/features.mjs --check
+      - name: The engine, on memory and MongoDB
+        run: npm test -w bpmn-server
+      - name: The engine, on SQLite
+        run: npm run test:sqlite -w bpmn-server
+      - run: npm test -w bpmn-client
+      - name: bpmn-web and the models
+        run: |
+          npm run test:unit -w test-sample-app
+          npm run test:client -w test-sample-app
+          npm run test:engine -w test-sample-app
+          npm run test:custom -w test-sample-app
+          npm run test:issues -w test-sample-app
+          npm run test:examples -w test-sample-app
+          npm run test:scenarios -w test-sample-app
+          npm run test:web -w test-sample-app
+      - name: bpmn-web, with the engine in a process of its own
+        run: npm run test:web -w test-sample-app
+        env:
+          TEST_REMOTE_ENGINE: '1'
+
+  browser:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7
+        ports: ['27017:27017']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:ui -w test-sample-app
+
+  coverage:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7
+        ports: ['27017:27017']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test:coverage
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: reports/coverage
+
+  load:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test:load -w bpmn-server

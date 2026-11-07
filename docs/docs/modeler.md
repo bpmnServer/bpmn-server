@@ -16,6 +16,7 @@ Each field is one bpmn-server reads, with what it means when the process runs:
 - **Service and send tasks:** **Calls** a service the application provides (listed from its services), with
   inputs and outputs; or a **connector**, a REST API the administrator added, set up in the connector wizard:
   the operation found by a search, its inputs, and the parts of the answer to keep. See [Connectors](connectors.md).
+- **Conditions:** every sequence flow has a **Condition** field, which suggests the model's data fields as you type (`data.`). A default flow's condition isn't used, and the field says so. **Language** appears once there is a condition.
 - **Script tasks, scripts on events, conditions, loop collections:** code fields that mark code that does not
   compile as you type, checked the way bpmn-server compiles it, and complete the names a script can use: the
   model's data fields, `item`, `instance`, and the application's services.

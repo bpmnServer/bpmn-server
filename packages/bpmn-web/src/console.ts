@@ -504,9 +504,9 @@ async function startEvent()
 async function delInstances() {
 	const name = await question('Please provide process name to delete instances for process: ');
 
-	let response = await server.dataStore.deleteInstances({ name: name });
+	const { deletedCount } = await server.engine.deleteInstances({ name: name });
 
-	console.log("Instances Deleted:", response['result']['deletedCount']);
+	console.log("Instances Deleted:", deletedCount);
 }
 
 async function checkLocks() {

@@ -65,7 +65,8 @@ async function waitingForApproval() {
 
 // ---- today
 
-test('today: a lifecycle subscriber hears of a waiting task before it is saved', async () => {
+test('today: a lifecycle subscriber hears of a waiting task before it is saved', async t => {
+    if (!web.embedded) return t.skip('a subscriber is in the engine: this one is in another process');
     const started = await engine().start(MODEL, {});
     let duringEvent = 'not called';
     const unsubscribe = web.embedded.listener.subscribe({
@@ -83,7 +84,8 @@ test('today: a lifecycle subscriber hears of a waiting task before it is saved',
     assert.equal((await savedItem(started.id, 'Approve')).status, 'wait', 'saved by the end of the call');
 });
 
-test("today: a subscriber's failure does not reach the execution", async () => {
+test("today: a subscriber's failure does not reach the execution", async t => {
+    if (!web.embedded) return t.skip('a subscriber is in the engine: this one is in another process');
     const started = await engine().start(MODEL, {});
     const unsubscribe = web.embedded.listener.subscribe({ onEvent() { throw new Error('delivery failed'); } });
     try {
