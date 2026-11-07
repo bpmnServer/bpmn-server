@@ -4,8 +4,6 @@ import { Configuration, Logger, ModelsDatastore, DataStore, ScriptHandler, Sandb
 import type { IAppDelegate, BPMNServer } from 'bpmn-server';
 import type { WorkflowApplication } from './runtime/WorkflowApplication.js';
 import { WebAppDelegate } from './runtime/WebAppDelegate.js';
-import { guestAccess, checkGuestSettings, guestConfiguration } from './guests/guests.js';
-import { GuestModelsDatastore } from './guests/GuestModelsDatastore.js';
 import { engineSettingsFromEnv } from './runtime/engineEnv.js';
 import { runSetting } from './runtime/runSettings.js';
 import { checkBootConfig, reportBootConfig } from './runtime/bootConfig.js';
@@ -43,8 +41,6 @@ function isTrue(param) {
  */
 export function webConfiguration(settings: Record<string, any> = {}, appDelegate?: StartOptions['appDelegate']) {
 	const Delegate = appDelegate ?? WebAppDelegate;
-	const guests = guestAccess();
-	checkGuestSettings();
 	// LOCK_*, ENGINE_SHUTDOWN_TIMEOUT_MS, MONGO_DB_NAME (runtime/engineEnv.ts)
 	const { invalid, db, ...engineEnv } = engineSettingsFromEnv();
 	invalid.forEach(message => console.warn('[config] ' + message));
@@ -69,8 +65,7 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 			const ds = new DataStore(server);
 			ds.enableSavePoints = isTrue('SAVE_POINTS');
 			ds.saveLogs = isTrue('SAVE_LOGS');
-			// with guests, an instance keeps its model's source: it never depends on a guest's folder
-			ds.saveSource = guests || isTrue('SAVE_SOURCE');
+			ds.saveSource = isTrue('SAVE_SOURCE');
 			return ds;
 		},
 		// each by its own setting; DEMO_MODE only says what they are when not set (runtime/runSettings.ts)
@@ -82,17 +77,13 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 		cacheManager: server => new NoCacheManager(server),
 		...engineEnv,
 		...settings,
-		// GUEST_ACCESS=true: each guest's models in a folder of its own, never cached across guests
-		...(guests ? { definitions: server => new GuestModelsDatastore(server), cacheManager: server => new NoCacheManager(server) } : {}),
 	} as any);
-	return guests ? guestConfiguration(configuration) : configuration;
+	return configuration;
 }
 
 /**
  * The database's indexes, and the first user (admin, password ADMIN_PASSWORD, else admin) when there are no users at
- * all. Not with guests
- * (GUEST_ACCESS): a public demo has no account with a known password, which would design the models every new
- * guest starts with.
+ * all.
  */
 export async function setup(server: BPMNServer) {
 	await server.dataStore.install();
@@ -108,8 +99,6 @@ export async function setup(server: BPMNServer) {
 	catch (error) {
 		console.error('the test sets in the database were not moved to files:', error.message);
 	}
-	if (guestAccess())
-		return;
 	const { UserService } = await import('./userAccess/UserService.js');
 	return await new UserService().install();
 }
@@ -166,13 +155,11 @@ export async function start(options: StartOptions = {}) {
 	await webApp.bpmnServer.ready;
 	const madeAdmin = await setup(webApp.bpmnServer);
 	if (options.setupOnly) {
-		console.log(guestAccess()
-			? 'setup done: the database is ready; visitors are guests (GUEST_ACCESS), no admin user is made'
-			: !madeAdmin
-				? 'setup done: the database is ready; it already has users, none was added'
-				: process.env.ADMIN_PASSWORD
-					? 'setup done: the database is ready; sign in as admin with the password ADMIN_PASSWORD gave'
-					: 'setup done: the database is ready; sign in as admin (password admin) and change the password');
+		console.log(!madeAdmin
+			? 'setup done: the database is ready; it already has users, none was added'
+			: process.env.ADMIN_PASSWORD
+				? 'setup done: the database is ready; sign in as admin with the password ADMIN_PASSWORD gave'
+				: 'setup done: the database is ready; sign in as admin (password admin) and change the password');
 		await webApp.bpmnServer.shutdown();
 		process.exit(0);
 	}

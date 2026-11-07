@@ -13,6 +13,11 @@ and here
 ### Changed
 -->
 ## [Unreleased]
+### Removed
+- **Guest access**: `GUEST_ACCESS`, `GUEST_SAVE`, `GUESTS_PATH`, `GUEST_MAX_MODELS` and `GUEST_RATE_LIMIT` are gone, and only signed-in
+  users use a server. **An account made on a server with guests no longer has models of its own.** Before upgrading such a server,
+  delete its guest users (group `GUEST`): a kept session would otherwise sign one in as a designer of the shared models.
+
 ### Added
 - The web app launches its server (`BPMNServer.launch`), so it handles data, not running executions. **`ENGINE_AT=none`** runs it with no engine: everything but running and testing a model works, and those say an engine is needed. **`npm run services`** scans the application's source, running none of it, and keeps its services' names in `services.json`, for the editor and the model checks.
 - **The Design dashboard's models** show each model's description, its saved versions and its **coverage** by its scenarios; the coverage is saved with the runs (`.runs/`), so it outlasts their instances, and says when the model has changed since. **Run** on the dashboard now keeps each scenario's run, as the Test tab does.

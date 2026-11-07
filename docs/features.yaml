@@ -546,14 +546,7 @@ features:
     what: "Sign up, sign in, accounts, groups (ADMIN, DESIGNER, ...); the first administrator."
     docs: [docs/docs/security.md, docs/docs/bpmn-web.md]
     code: [packages/bpmn-web/src/userAccess/UserService.ts, packages/bpmn-web/src/userAccess/UserManager.ts]
-    tests: [testSampleApp/test/web/users.test.mjs, testSampleApp/test/web/auth.test.mjs]
-  - id: guests
-    area: pages
-    name: "Guests (the demo)"
-    what: "A guest gets models and instances of their own; demo limits."
-    docs: [docs/docs/bpmn-web.md]
-    code: [packages/bpmn-web/src/guests/guests.ts]
-    tests: [testSampleApp/test/web/guests.test.mjs]
+    tests: [testSampleApp/test/web/users.test.mjs, testSampleApp/test/web/auth.test.mjs, testSampleApp/test/web/signup.test.mjs]
 # ---------------------------------------------------------------------------------------------------------- security
   - id: web-security
     area: security

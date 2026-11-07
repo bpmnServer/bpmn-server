@@ -7,8 +7,7 @@
  *   REQUIRE_AUTHENTICATION=false    anyone can use the web pages as an administrator;
  *                                   allowed in production only with ALLOW_INSECURE_NO_AUTH=true
  *
- * The public demo modes (GUEST_ACCESS, DEMO_MODE) check their own settings (guests/guests.ts);
- * they need sessions too, so SESSION_SECRET applies to them as well.
+ * DEMO_MODE needs sessions too, so SESSION_SECRET applies to it as well.
  */
 export interface BootConfigReport {
 	errors: string[];

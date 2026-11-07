@@ -75,7 +75,7 @@ export class WebApp {
 			{ ...application.serverOptions, calls: engineTests, ...(process.env.ENGINE_AT && process.env.ENGINE_AT !== 'local' ? { engine: process.env.ENGINE_AT, engineKey: process.env.ENGINE_KEY } : {}) },
 		);
 		application.initialize?.(this.bpmnServer);
-		// the Test tabs' tests are files beside the models (a guest's folder in a guest's request)
+		// the Test tabs' tests are files beside the models
 		useTestsFolder(() => this.bpmnServer.configuration.definitionsPath);
 
 		this.setupExpress();
@@ -140,7 +140,7 @@ export class WebApp {
 	setupExpress() {
 		const app = this.app;
 
-		this.userManager.setup(this.bpmnServer.configuration);
+		this.userManager.setup();
 
 		this.setupRoutes();
 

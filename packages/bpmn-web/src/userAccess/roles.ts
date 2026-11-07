@@ -36,17 +36,3 @@ export const signupVerifiesEmail = () => process.env.SIGNUP_VERIFY_EMAIL === 'tr
 /** SIGNUP_GROUPS: the user groups of an account that signs up (DESIGNER: it can design). Default none. */
 export const signupGroups = () => (process.env.SIGNUP_GROUPS ?? '').split(',').map(group => group.trim()).filter(Boolean);
 
-/** A guest of a public demo (GUEST_ACCESS=true): a visitor who did not sign in. */
-export const isGuest = (user) => inGroups(user?.userGroups, ['GUEST']);
-/** GUEST_SAVE=false: a guest saves nothing: it runs the models as they are, and downloads what it edits. */
-export const guestReadOnly = (user) => isGuest(user) && process.env.GUEST_SAVE === 'false';
-export const GUEST_CANNOT_SAVE = 'Sign up to save: you can download what you made, and sign up to keep and run it here.';
-/** Signed up on a server with guests: models and instances of its own, as a guest has. */
-export const workspaceUser = (user) => /^user-[0-9a-f]{12}$/.test(user?.tenantId ?? '');
-
-/**
- * The groups the engine sees for a user. A guest's and a workspace user's include ADMIN, so it sees every task of its own instances
- * whatever group they are for: its tenant holds only its own instances. (The web app's administration is off
- * wherever there are guests: DISABLE_ADMIN.)
- */
-export const engineGroups = (user) => isGuest(user) || workspaceUser(user) ? [...(user.userGroups ?? []), 'ADMIN'] : user?.userGroups;

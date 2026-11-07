@@ -12,11 +12,9 @@ import { layoutProcess } from 'bpmn-auto-layout';
 import { bpmnToSvg } from './bpmnToSvg.js';
 
 import { BPMNServer, BPMNAdminAPI, verifyModel, Definition } from '../index.js';
-import { Common, answerMessage } from './common.js';
+import { Common } from './common.js';
 import { modelNameGuard, isSafeModelName, guardModelParams } from './middleware/modelName.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
-import { currentGuest } from '../guests/guests.js';
-import { GUEST_CANNOT_SAVE, guestReadOnly } from '../userAccess/roles.js';
 import { zip } from './zip.js';
 import { loadDecisionTests, saveDecisionTests, checkDecisionTests, runDecisionTestsInEngine } from '../testing/decisionTests.js';
 import { loadScenarios, saveScenarios, checkScenarios, runScenarioInEngine, startTest, completeTest, findTest, summarize, expectChecks, checksAt, restartTest } from '../testing/scenarios.js';
@@ -50,10 +48,6 @@ export class Model extends Common {
 
         // Deny-by-default: model designer routes require a session, as a designer (or administrator).
         router.use(this.isAuthenticated, this.isDesigner, modelNameGuard);
-        // GUEST_SAVE=false: a guest changes nothing here. What it may do: open a new model in the editor, check it, run tests
-        router.use((req, res, next) => guestReadOnly(req.user) && !['GET', 'HEAD'].includes(req.method)
-            && !/^\/(new|verify)$|^\/test\/|^\/decision\/[^/]+\/tests\/run$/.test(req.path)
-            ? answerMessage(req, res, 403, GUEST_CANNOT_SAVE) : next());
 
         router.get('/list', awaitHandlerFactory(async (request, response) => {
 
@@ -105,7 +99,7 @@ export class Model extends Common {
             response.render('models/export', { procs});
 
         }));
-        /** Every model, diagram and decision of the models folder (a guest's: its own) as one .zip. */
+        /** Every model, diagram and decision of the models folder as one .zip. */
         router.get('/download-all', awaitHandlerFactory(async (request, response) => {
             const dir = bpmnServer.configuration.definitionsPath;
             const files = FS.readdirSync(dir)
@@ -632,15 +626,6 @@ export class Model extends Common {
             }
             await saveScenarios(request.params.process, await withReached(bpmnServer, request.params.process, scenarios), request.user?.userName);
             response.json({ saved: scenarios.length });
-        }));
-        // a guest (GUEST_ACCESS) reaches only its own test instances
-        router.use('/test', awaitHandlerFactory(async (request, response, next) => {
-            const id = request.body?.instanceId ?? /^\/instance\/([^/]+)/.exec(request.path)?.[1];
-            if (currentGuest() && id && !(await findTest(bpmnServer, decodeURIComponent(String(id))))) {
-                response.status(404).json({ error: 'no such test instance' });
-                return;
-            }
-            next();
         }));
         /** Run a scenario given in the body, or every saved scenario of the model (all: true). */
         router.post('/test/run', awaitHandlerFactory(async (request, response) => {

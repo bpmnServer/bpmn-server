@@ -4,7 +4,6 @@ import path from 'node:path';
 
 import { BPMNServer, dateDiff, Behaviour_names, SystemUser   } from '../index.js';
 import { BPMNAPI , SecureUser } from '../index.js';
-import { engineGroups } from '../userAccess/roles.js';
 import { answerMessage, Common } from './common.js';
 import { packageReadme } from './docs.js';
 import { ViewHelper } from './ViewHelper.js';
@@ -371,7 +370,7 @@ function getSecureUser(req) {
     {
         const usr = getUser(req);
         if (usr)
-            user=new SecureUser({ userName: usr.userName, userGroups: engineGroups(usr), tenantId: usr.tenantId });
+            user=new SecureUser({ userName: usr.userName, userGroups: usr.userGroups, tenantId: usr.tenantId });
     }
     else
          user=SecureUser.SystemUser();
