@@ -14,7 +14,11 @@
     </bpmn:startEvent>
     <bpmn:serviceTask id="Task_VerifyCoverage" name="Verify policy coverage" camunda:delegateExpression="verifyClaim">
       <bpmn:documentation>The system evaluates the claim against the policy coverage rules and stores the result in claimCovered.</bpmn:documentation>
-      <bpmn:extensionElements />
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="claimCovered" />
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_Start_Verify</bpmn:incoming>
       <bpmn:outgoing>Flow_Verify_CoverageGateway</bpmn:outgoing>
       <bpmn:property id="Property_0e8jun6" name="__targetRef_placeholder" />
@@ -55,7 +59,7 @@
     <bpmn:sequenceFlow id="Flow_Start_Verify" sourceRef="StartEvent_ClaimReceived" targetRef="Task_VerifyCoverage" />
     <bpmn:sequenceFlow id="Flow_Verify_CoverageGateway" sourceRef="Task_VerifyCoverage" targetRef="Gateway_Coverage" />
     <bpmn:sequenceFlow id="Flow_Covered_Assign" name="Covered" sourceRef="Gateway_Coverage" targetRef="Task_AssessClaim">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(claimCovered == true)</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="JavaScript">$(data.claimCovered == true)</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_NotCovered_Reject" name="Not covered" sourceRef="Gateway_Coverage" targetRef="Task_RejectClaim" />
     <bpmn:sequenceFlow id="Flow_Assess_PaymentWait" sourceRef="Task_AssessClaim" targetRef="Event_PaymentConfirmed" />
