@@ -1,6 +1,6 @@
 # Unified Gherkin testing
 
-Status: agreed design, not built. Branch: `testing`. Replaces the earlier proposed design, whose changes are listed at the end.
+Status: agreed design; the first three steps of the build order are done. Branch: `testing`. Replaces the earlier proposed design, whose changes are listed at the end.
 
 ## Summary
 
@@ -117,7 +117,7 @@ When @wait :orderInstance status is "end"
   And @wait :orderInstance status is "end" within 2 minutes
 ```
 
-It fails if the time runs out, saying what it last read. `within` is optional and has a default. `@check` itself never waits. On a server with `TIMERS=false`, a timer doesn't fire, so a wait on one times out.
+It fails if the time runs out, saying what it last read. `within` is optional, 30 seconds by default, and it reads every 200 ms. `@check` itself never waits. On a server with `TIMERS=false`, a timer doesn't fire, so a wait on one times out.
 
 ### Stubs
 
@@ -126,8 +126,8 @@ A stub replaces a service or a timer, so a test doesn't call a real system or wa
 ```gherkin
 Given @stub service:credit-check with
   """javascript
-  if (input.orderId !== 5001) {
-    throw new Error(`Expected orderId 5001, received ${input.orderId}`)
+  if (data.orderId !== 5001) {
+    throw new Error(`Expected orderId 5001, received ${data.orderId}`)
   }
   return { approved: true }
   """
@@ -141,7 +141,7 @@ And @check :orderInstance data.decision is "approved"
 
 | Reference | Matches | Replaced by |
 |---|---|---|
-| `service:<name>` | Every service task calling that service (`implementation` or `delegateExpression`) | The doc string: `input` is the task's input, and what it returns is the task's output |
+| `service:<name>` | Every service task calling that service (`implementation` or `delegateExpression`) | The doc string: `input` is the task's input (what the model maps to it, so empty without a mapping), `data` is the instance's data, and what it returns is the task's output |
 | `timer:<element>` | The timer event with that element id | The time given |
 
 The `@start` table is the start data. `@wait` is needed here because `@start` returns while the process waits on the timer, and `@check` doesn't wait.
@@ -222,7 +222,6 @@ A scenario, or a whole `Feature:`, names what it covers with a tag:
 ## Open
 
 - A name's meaning across scenarios of one feature: the design says one scenario, which keeps scenarios independent. Shared setup uses Gherkin's `Background`.
-- The default time for `@wait`, and how often it reads.
 
 ## Changes from the earlier proposal
 

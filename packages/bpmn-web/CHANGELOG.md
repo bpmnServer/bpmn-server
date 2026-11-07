@@ -14,6 +14,9 @@ and here
 -->
 ## [Unreleased]
 ### Added
+- **Gherkin tests**: a model's tests as a `.feature` file, run whole in the engine (`POST /model/test/feature`), with `@login`, `@start`,
+  `@find`, `@invoke`, `@check`, `@wait`, `@stub` and `@script`. A stub replaces a service or a timer for its own scenario's instances.
+  See `docs/design/gherkin-testing.md`. The Test tab still uses `*.tests.json`.
 - The web app launches its server (`BPMNServer.launch`), so it handles data, not running executions. **`ENGINE_AT=none`** runs it with no engine: everything but running and testing a model works, and those say an engine is needed. **`npm run services`** scans the application's source, running none of it, and keeps its services' names in `services.json`, for the editor and the model checks.
 - **The Design dashboard's models** show each model's description, its saved versions and its **coverage** by its scenarios; the coverage is saved with the runs (`.runs/`), so it outlasts their instances, and says when the model has changed since. **Run** on the dashboard now keeps each scenario's run, as the Test tab does.
 - **Restore as copy**, in the History tab: a saved version becomes a new model, opened in its own tab; the model and its unsaved changes stay.

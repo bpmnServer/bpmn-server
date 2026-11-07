@@ -38,6 +38,8 @@
     "test": "npm --prefix ../../testSampleApp test"
   },
   "dependencies": {
+    "@cucumber/gherkin": "^42.0.1",
+    "@cucumber/messages": "^34.2.1",
     "acorn": "^8.19.0",
     "axios": "^1.18.1",
     "bcrypt": "^6.0.0",

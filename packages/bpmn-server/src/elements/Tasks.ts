@@ -110,7 +110,10 @@ class ServiceTask extends Node {
 
         let ret;
 
-        if (item.context.configuration?.runServiceTasks === false) {
+        // a test's stub stands for the service: it calls nothing, so it runs wherever service tasks do not
+        const stub = (await item.token.execution.server.testStubs?.of(item.token.execution))?.services?.[this.serviceName];
+
+        if (!stub && item.context.configuration?.runServiceTasks === false) {
             item.token.decision({
                 seq: item.seq, element: `service task ${item.node.name ? `'${item.node.name}' (${item.node.id})` : item.node.id}`, action: 'ends with no output',
                 why: [`a real server calls ${this.serviceName ? `the service ${this.serviceName}` : 'its service'} here`, 'service tasks do not run on this server'],
@@ -121,7 +124,7 @@ class ServiceTask extends Node {
 
         item.log("invoking service:" + this.serviceName + " input:" + JSON.stringify(item.input));
 
-        const servicesProvider= await appDelegate.getServicesProvider(item.token.execution);
+        const servicesProvider= stub ? null : await appDelegate.getServicesProvider(item.token.execution);
 
         let obj = servicesProvider;
 
@@ -141,7 +144,9 @@ class ServiceTask extends Node {
             }
         }
 
-        if (typeof method === 'function') {
+        if (stub) {
+            ret = await stub(item.input, item.data);
+        } else if (typeof method === 'function') {
             ret = await (method as Function).call(owner, item.input, item.context);
         } else {
             ret = await appDelegate['serviceCalled'](item.input, item.context, item);

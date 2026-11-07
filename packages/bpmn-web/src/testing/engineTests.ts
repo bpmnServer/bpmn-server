@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { engineCalls } from 'bpmn-server';
 import { runDecisionTests } from './decisionTests.js';
+import { runFeature } from './gherkin.js';
 import { runScenario, setTestData } from './scenarios.js';
 
 /**
@@ -12,6 +13,7 @@ export function engineTests(server) {
     const inside = Object.create(server, { engine: { value: engineCalls(server) } });
     return {
         runScenario: async (model: string, scenario, userName?: string) => runScenario(inside, model, scenario, userName),
+        runFeature: async (source: string, uri?: string) => runFeature(inside, source, uri),
         setTestData: async (instanceId: string, data) => { await setTestData(inside, instanceId, data); },
         // a file's name, in this engine's own folder of models: where the host keeps its copy is not for here
         runDecisionTests: async (file: string, tests) => runDecisionTests(path.join(server.configuration.definitionsPath, path.basename(file)), tests),

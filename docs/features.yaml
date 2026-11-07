@@ -483,6 +483,15 @@ features:
     docs: [docs/docs/modeler.md]
     code: [packages/bpmn-web/modeler/src/report]
     tests: [testSampleApp/test/ui/report.test.mjs]
+  - id: gherkin-tests
+    area: pages
+    name: "Gherkin tests"
+    status: partial
+    what: "A model's tests as a .feature file, run whole in the engine: @login, @start, @find, @invoke, @check, @wait, @stub, @script; results in Cucumber's JSON."
+    note: "Run by POST /model/test/feature; the Test tab, the conversion of *.tests.json and decisions are not done."
+    code: [packages/bpmn-web/src/testing/gherkin.ts, packages/bpmn-server/src/engine/TestStubs.ts]
+    tests: [testSampleApp/test/web/gherkin.test.mjs, testSampleApp/test/web/gherkin-sandbox.test.mjs]
+# ----------------------------------------------------------------------------------------------
   - id: test-tab
     area: web
     name: "The Test tab"

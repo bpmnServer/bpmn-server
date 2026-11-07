@@ -10,6 +10,7 @@ import type { IScriptHandler } from '../interfaces/engine.js';
 import type { IBPMNServer, ICacheManager } from '../interfaces/server.js';
 import type { IDocumentStore, ILockManager } from '../interfaces/storage.js';
 import { LaunchedServer } from './LaunchedServer.js';
+import { TestStubs } from '../engine/TestStubs.js';
 import { DefaultAppDelegate } from '../engine/DefaultAppDelegate.js';
 import { Engine } from './Engine.js';
 import { Cron } from './Cron.js';
@@ -64,6 +65,8 @@ class BPMNServer implements IBPMNServer {
 	locker: ILockManager;
 	/** The connectors an administrator added: REST APIs service tasks call (docs/docs/connectors.md). */
 	connectors: Connectors;
+	/** What the tests running in here replace: no call of the engine reaches them. */
+	testStubs = new TestStubs(this);
 	error;
 	/** Settles when the server has started: the application delegate's start-up, then (unless `cron: false`) the timers. Rejects with the reason it could not start. */
 	readonly ready: Promise<void>;

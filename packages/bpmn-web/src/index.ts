@@ -14,3 +14,4 @@ export { start, setup, webConfiguration, type StartOptions } from './start.js';
 export { runScenario, checkScenarios, type Scenario, type ScenarioStep, type Check } from './testing/scenarios.js';
 // what an application's engine adds to its calls (startEngineService's `calls`): tests run in there
 export { engineTests } from './testing/engineTests.js';
+export { runFeature } from './testing/gherkin.js';

@@ -24,6 +24,8 @@ interface IBPMNServer {
     scriptHandler?: IScriptHandler;
     /** The connectors an administrator added: REST APIs that service tasks call (camunda:connector). */
     connectors?: Connectors;
+    /** What the tests running in here replace. */
+    testStubs?: any;
 
 }
 

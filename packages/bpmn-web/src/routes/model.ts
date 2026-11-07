@@ -656,6 +656,24 @@ export class Model extends Common {
                 results.push(await runScenarioInEngine(bpmnServer, processName, one, request.user?.userName));
             response.json({ results });
         }));
+        /** A feature, given in the body or the model's <processName>.feature: all of it in the engine; Cucumber's JSON back. */
+        router.post('/test/feature', awaitHandlerFactory(async (request, response) => {
+            const { processName, source } = request.body ?? {};
+            const file = processName && path.join(bpmnServer.configuration.definitionsPath, `${processName}.feature`);
+            if (typeof source !== 'string' && !file) {
+                response.status(400).json({ error: 'source, or processName, is required' });
+                return;
+            }
+            if (typeof source !== 'string' && !FS.existsSync(file)) {
+                response.status(404).json({ error: `no ${processName}.feature` });
+                return;
+            }
+            try {
+                response.json({ results: await bpmnServer.engine.call('runFeature', source ?? FS.readFileSync(file, 'utf8'), processName ? `${processName}.feature` : undefined) });
+            } catch (exc) {
+                response.status(422).json({ error: String(exc?.message ?? exc) });
+            }
+        }));
         /** Recording: start, then complete waiting items one at a time. */
         router.post('/test/start', awaitHandlerFactory(async (request, response) => {
             const { processName, startNodeId, data, only } = request.body ?? {};

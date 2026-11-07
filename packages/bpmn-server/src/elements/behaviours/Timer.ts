@@ -100,6 +100,11 @@ class TimerBehaviour extends Behaviour {
      */
     async timeDue(item,timerModifier=null) {
 
+        // a test's stub of this timer
+        const stubbed = (await item.token.execution.server.testStubs?.of(item.token.execution))?.timers?.[item.node.id];
+        if (stubbed !== undefined)
+            timerModifier = stubbed * 1000;
+
         let seconds;
         let timeDue;
         // filled in for this item: an expression ($js, ${js}) or a text with ${...} parts (PT${data.days}D). The
