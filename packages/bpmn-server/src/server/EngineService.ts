@@ -104,8 +104,10 @@ const MAX_BODY = 50 * 1024 * 1024;
 /**
  * Serves `engineCalls` to the one who launched the server: POST /engine/call { method, args }, with the key in `x-engine-key`.
  * Private: it listens on this machine alone unless told otherwise, and no one but the host is to reach it.
+ * A call may be for someone (`caller`, what the host's `caller` option says): `asCaller` runs it as them. An engine without
+ * `asCaller` refuses such a call: run as no one, it would reach what everyone shares.
  */
-export function startEngineService(server: BPMNServer, { port = 3001, host = '127.0.0.1', key }: { port?: number; host?: string; key: string }): Promise<http.Server> {
+export function startEngineService(server: BPMNServer, { port = 3001, host = '127.0.0.1', key, asCaller }: { port?: number; host?: string; key: string; asCaller?: (caller: string, work: () => Promise<any>) => Promise<any> }): Promise<http.Server> {
     if (!key) throw new Error('The engine needs a key that only its host knows: set ENGINE_KEY');
     const calls = engineCalls(server);
     const send = (response, status: number, body) => {
@@ -123,16 +125,18 @@ export function startEngineService(server: BPMNServer, { port = 3001, host = '12
             chunks.push(chunk);
         });
         request.on('end', async () => {
-            let method, args;
+            let method, args, caller;
             try {
-                ({ method, args = [] } = JSON.parse(Buffer.concat(chunks).toString('utf8')));
+                ({ method, args = [], caller } = JSON.parse(Buffer.concat(chunks).toString('utf8')));
             }
             catch {
                 return send(response, 400, { error: { message: 'Not JSON' } });
             }
             if (!Object.hasOwn(calls, method) || !Array.isArray(args)) return send(response, 404, { error: { message: `No call '${method}'` } });
             try {
-                send(response, 200, { result: await calls[method](...args) });
+                if (caller !== undefined && !asCaller) throw new Error(`This engine can not run a call for '${caller}'`);
+                const work = () => calls[method](...args);
+                send(response, 200, { result: await (caller !== undefined ? asCaller(caller, work) : work()) });
             }
             catch (error) {
                 send(response, 200, { error: { name: error?.name, message: error?.message ?? String(error), code: error?.code, status: error?.status } });

@@ -39,6 +39,21 @@ export const currentGuest = (): GuestContext | undefined => storage.getStore();
 /** Runs fn as the guest (a test, a script). */
 export const asGuest = <T>(guest: GuestContext, fn: () => T): T => storage.run(guest, fn);
 
+/**
+ * For an engine in a process of its own (startEngineService): runs a host's call as the guest it is for, on the same folders.
+ * Refused when this engine has no guests: it would run in the models everyone shares.
+ */
+export function asEngineCaller<T>(id: string, work: () => T): T {
+    if (!guestAccess())
+        throw new Error('This engine has no guests: it needs the GUEST_ACCESS settings of its host');
+    if (typeof id !== 'string')
+        throw new Error('not a guest');
+    const guest = guestContext(id);
+    if (!fs.existsSync(guest.folder))
+        throw new Error(`This engine can not see the folder of ${id}: GUESTS_PATH has to be a folder it shares with its host`);
+    return asGuest(guest, work);
+}
+
 /** Where the guests' folders are: GUESTS_PATH, default ./guests next to the application. */
 export const guestsRoot = () => path.resolve(process.env.GUESTS_PATH || 'guests');
 /** How many models a guest may have (GUEST_MAX_MODELS, default 50). */

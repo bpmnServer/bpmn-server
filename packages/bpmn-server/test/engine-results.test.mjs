@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { CacheManager, verifyModel } from '../dist/index.js';
+import { CacheManager, startEngineService, verifyModel } from '../dist/index.js';
 import { makeLaunched, makeServer, coverage, TestDelegate, PROCESSES } from './helpers.mjs';
 
 const anyFunction = (value, seen = new Set()) => {
@@ -127,6 +127,22 @@ test('a launched server still has a way in: dataStore and definitions are the en
   const server = await makeLaunched();
   await server.shutdown();
   assert.equal(server.dataStore.server, undefined);
+});
+
+test('a call for someone runs as them, and an engine that can not do that refuses it', async () => {
+  const { server } = await makeServer();
+  const ask = (service, body) => fetch(`http://127.0.0.1:${service.address().port}/engine/call`, { method: 'POST', headers: { 'x-engine-key': 'k' }, body: JSON.stringify(body) }).then(r => r.json());
+  const noCallers = await startEngineService(server, { port: 0, key: 'k' });
+  const callers = [];
+  const withCallers = await startEngineService(server, { port: 0, key: 'k', asCaller: (caller, work) => { callers.push(caller); return work(); } });
+  assert.match((await ask(noCallers, { method: 'status', caller: 'someone' })).error.message, /can not run a call for 'someone'/);
+  assert.ok((await ask(noCallers, { method: 'status' })).result, 'a call for no one goes on');
+  assert.ok((await ask(withCallers, { method: 'status', caller: 'someone' })).result);
+  assert.ok((await ask(withCallers, { method: 'status' })).result);
+  assert.deepEqual(callers, ['someone']);
+  noCallers.close();
+  withCallers.close();
+  await server.shutdown();
 });
 
 test('embedding stays as it was: the running execution', async () => {
