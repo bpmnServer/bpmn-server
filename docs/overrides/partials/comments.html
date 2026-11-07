@@ -1,0 +1,38 @@
+{# Comments on every page, from GitHub Discussions (giscus). `comments: false` in a page's front matter leaves them out. #}
+{% if page.meta.comments != false %}
+  <h2 id="__comments">{{ lang.t("meta.comments") }}</h2>
+  <script src="https://giscus.app/client.js"
+          data-repo="bpmnServer/bpmn-server"
+          data-repo-id="MDEwOlJlcG9zaXRvcnkyNjYxODE1Nzg="
+          data-category="Announcements"
+          data-category-id="DIC_kwDOD92bys4CQzQS"
+          data-mapping="pathname"
+          data-strict="1"
+          data-reactions-enabled="1"
+          data-emit-metadata="0"
+          data-input-position="top"
+          data-theme="light"
+          data-lang="en"
+          data-loading="lazy"
+          crossorigin="anonymous"
+          async>
+  </script>
+  <script>
+    // the comments follow the site's light or dark palette
+    var giscus = document.querySelector("script[src*=giscus]");
+    var palette = __md_get("__palette");
+    if (palette && typeof palette.color === "object")
+      giscus.setAttribute("data-theme", palette.color.scheme === "slate" ? "transparent_dark" : "light");
+
+    document.addEventListener("DOMContentLoaded", function () {
+      document.querySelector("[data-md-component=palette]").addEventListener("change", function () {
+        var palette = __md_get("__palette");
+        var frame = document.querySelector(".giscus-frame");
+        if (frame && palette && typeof palette.color === "object")
+          frame.contentWindow.postMessage({
+            giscus: { setConfig: { theme: palette.color.scheme === "slate" ? "transparent_dark" : "light" } }
+          }, "https://giscus.app");
+      });
+    });
+  </script>
+{% endif %}

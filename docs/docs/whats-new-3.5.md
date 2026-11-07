@@ -105,7 +105,7 @@ See [Setup](setup.md).
 - `DEMO_MODE`: scripts run in a sandbox; timers, services and connectors do not run.
 - `DISABLE_ADMIN`: no administration pages or `/admin` APIs; administer with the console.
 - `GUEST_ACCESS`: visitors try the server without signing in, each with models of their own, kept for their
-  browser and downloadable.
+  browser and downloadable. Removed [in the next release](whats-new-next.md): only signed-in users use a server.
 
 See [Security, A public demo](security.md#a-public-demo).
 

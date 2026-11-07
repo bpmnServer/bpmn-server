@@ -24,7 +24,7 @@ npm run dev               # from the packages' sources, restarting on changes (d
 | `scripts/` | `setupDemoUsers.ts` (`npm run setup:users`). |
 | `index.ts` | Starts bpmn-web with the above. |
 | `test/` | bpmn-web's tests, run against this app (`npm test`, `npm run test:ui`). |
-| `test/scenarios/` | the engine's feature scenarios, on this app's delegate (`npm run test:scenarios`). |
+| `processes/*.feature` | The models' tests, in Gherkin, beside them; `*.engine.feature` are the engine's own, on this app's delegate (`npm run test:scenarios`). |
 | `test/custom/` | Tests of this app's models (`npm run test:custom`), in memory on its delegate and services: TypeScript (`*.test.ts`, with `test/support/testApp.ts`) and scenario files (`*.json`, the model editor's Test tab format). |
 
 ## Connectors

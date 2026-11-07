@@ -15,22 +15,20 @@ flowchart TB
     Remote["Another application<br/>(bpmn-client)"]
   end
 
-  subgraph Web["bpmn-web"]
+  subgraph Web["Host: bpmn-web"]
     Modeler["Model editor<br/>(bpmn.io, DMN, tests)"]
     Pages["Dashboards, tasks,<br/>administration"]
     REST["REST APIs<br/>/api2, /admin/api2"]
   end
 
-  subgraph App["Your application"]
-    Delegate["App delegate<br/>and services"]
-  end
-
-  subgraph Core["bpmn-server"]
-    Engine["Engine<br/>executions, tokens, items"]
-    Verify["Model checks<br/>(verifyModel)"]
+  subgraph EngineSide["Engine: in the host's process or its own"]
+    Engine["Engine<br/>executions, tokens, items, timers, tests"]
+    Delegate["Your app delegate<br/>and services"]
     DMN["Decisions<br/>(DMN, FEEL)"]
     Connectors["Connectors<br/>(OpenAPI)"]
   end
+
+  Verify["Model checks<br/>(verifyModel)"]
 
   subgraph Storage["Storage port"]
     Mongo[("MongoDB")]
@@ -51,16 +49,28 @@ flowchart TB
   Engine --> Storage
 ```
 
-- **bpmn-web**: the web application: the model editor (bpmn.io) with its checks and tests, the decision editor,
-  dashboards and task lists, administration (users, connectors, backups), and the REST APIs.
-- **bpmn-server core**: executes BPMN workflows, evaluates DMN decisions, checks models, and keeps each
-  instance's state and variables.
+- **The host, bpmn-web**: the model editor (bpmn.io) with its checks and tests, the decision editor,
+  dashboards and task lists, administration (users, connectors, backups), and the REST APIs. Only signed-in
+  users use it. It doesn't run anything itself: it asks the engine.
+- **The engine, bpmn-server**: executes BPMN workflows and timers, evaluates DMN decisions, and runs tests. It
+  holds your app delegate and services, in the host's process or in one of its own.
 - **Your application**: starts bpmn-web (or embeds the engine), and provides the app delegate and the services
   that service tasks call.
 - **Connectors**: REST APIs described by OpenAPI that an administrator adds with their keys; service tasks call
   them with no code.
 - **Storage**: instances, models and history through one storage port: MongoDB (the default), SQLite, or memory.
 - **bpmn-client**: another Node.js application drives the server through the REST APIs.
+- **bpmn-mcp**: AI clients use a running server over MCP.
+
+### Ways to run it
+
+| Setup | Host | Address | Engine |
+|---|---|---|---|
+| Development and test | 1 | 1 | 1, in the host's process |
+| Production | 1 | 1 | 1, in its own process |
+| Multi-tenant | 1 | 1 site, with a path for each tenant | 1 for each tenant, each in its own process |
+
+See [Architecture](https://bpmnserver.github.io/bpmn-server/architecture) and [Ways to run it](https://bpmnserver.github.io/bpmn-server/setup#ways-to-run-it).
 
 ## Quick Start
 
@@ -327,6 +337,7 @@ npm update bpmn-server bpmn-web
 
 ## Documentation
 
+- [Architecture](https://bpmnserver.github.io/bpmn-server/architecture)
 - [Invoking Workflows](https://bpmnserver.github.io/bpmn-server/invokation)
 - [Execution](https://bpmnserver.github.io/bpmn-server/execution)
 - [Scripting](https://bpmnserver.github.io/bpmn-server/scripting)
@@ -349,8 +360,9 @@ npm update bpmn-server bpmn-web
 | `packages/bpmn-server` | The workflow engine (npm `bpmn-server`), and `npx bpmn-server init`. |
 | `packages/bpmn-client` | The REST client (npm `bpmn-client`). |
 | `packages/bpmn-web` | The web host: tasks, instances, the model editor, administration, the REST APIs, `start()` (npm `bpmn-web`). |
+| `packages/bpmn-mcp` | Connects AI clients to a running server over MCP, Codex and Claude Code among them. |
 | `sampleApp` | The sample application (processes, connectors, delegates) on bpmn-web: what `npx bpmn-server init` creates. |
-| `testSampleApp` | The working application: more models, the app to start and debug from, and the tests of bpmn-web, the engine's scenarios and the models. |
+| `testSampleApp` | The working application: the models tests run on, beside their `.feature` files, the app to start and debug from, and the tests of bpmn-web, the engine and the models. |
 | `docs` | The documentation site. |
 | `docker` | Docker images. |
 | `catalog` | The model catalog bpmn-web browses and imports from. |

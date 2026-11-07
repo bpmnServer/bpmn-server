@@ -15,6 +15,7 @@ and here
 
 ## [Unreleased]
 ### Added
+- `dataStore.tagInstance(instanceId, tag)` marks a saved instance with a tag of the caller's, indexed by `tag.process`. The engine's saves leave it as it is.
 - **`BPMNServer.launch(configuration)`**: a server seen from outside its engine. Its engine calls answer a JSON copy (`id`, `status`, `instance`), never a running execution; the delegate and services stay inside and keep theirs. `new BPMNServer(...)` embeds the engine, as before. `{ engine: 'none' }`: no engine; models can be read and saved, and what would run answers `EngineNotRunningError`. The settings `moddleOptions` and `servicesFile` say what it needs of the application without its code.
 - **`new ScriptHandler({ context })`** (and `SandboxScriptHandler`): variables of the application's that scripts and expressions see, each computed from a copy of the data.
 - A `language="JavaScript"` condition may give its value by **`next(error, value)`**, as an expression or in statements.

@@ -10,6 +10,8 @@ This guide follows the **3.5 monorepo** and its [sample application](https://git
 | --- | --- | --- |
 | Use the starter | You want a complete web application with tasks, modeling, and admin | `npx bpmn-server init my-app` |
 | Embed the engine | You already have a Node.js server/UI and want to control its lifecycle | `BPMNServer.create(...)`, `BPMNAPI` |
+| Run the engine apart | Production: the host serves pages and APIs, and the engine holds your code | [Ways to run it](setup.md#ways-to-run-it) |
+| Serve several tenants | One site, with a database, models and engine for each tenant | [Tenants](setup.md#tenants) |
 | Call a remote host | Another application already runs BPMN Server and exposes its API | `bpmn-client` |
 | Integrate an external HTTP service | A BPMN task must call a REST service described by OpenAPI | [Connectors](connectors.md) |
 

@@ -34,6 +34,105 @@ curl -fsSL https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/deploy/
 It also works as a cloud server's launch script (AWS Lightsail's "Add launch script"). See
 [deploy/](https://github.com/bpmnServer/bpmn-server/tree/main/deploy).
 
+## Ways to run it
+
+An application runs in one of these ways. [Architecture](architecture.md) explains the parts.
+
+| Setup | Engine | Settings |
+|---|---|---|
+| **Development and test** | In the host's process | None: the default |
+| **Production** | In its own process | `ENGINE_AT`, `ENGINE_KEY` |
+| **Multi-tenant** | One for each tenant, each in its own process | `TENANTS_FILE` |
+| **Design only** | None: models can be edited and saved, but nothing runs | `ENGINE_AT=none` |
+
+### Development and test
+
+`npm start` is all it takes: the host and the engine share one process, with your delegate and services in it.
+
+### Production
+
+The engine runs in its own process, with your delegate, services and timers. The host holds none of them, and asks the engine over HTTP.
+
+Start the engine, with a secret of your choosing as its key:
+
+```sh
+ENGINE_KEY=your-secret npm run engine
+```
+
+Then start the host, pointing at it:
+
+```sh
+ENGINE_AT=http://127.0.0.1:3001 ENGINE_KEY=your-secret npm start
+```
+
+`npm run engine` runs the application's `engine.ts`. `testSampleApp/engine.ts` in the repository is the one to copy, because `npx bpmn-server init` doesn't create it yet.
+
+| Setting | On | Means |
+|---|---|---|
+| `ENGINE_AT` | Host | The engine's address. Unset or `local`: in this process. `none`: no engine |
+| `ENGINE_KEY` | Both | The secret the host sends and the engine checks |
+| `ENGINE_PORT` | Engine | Its port. Default `3001` |
+| `ENGINE_LISTEN` | Engine | The address it listens on. Default `127.0.0.1`, this machine only |
+
+- **Give both processes the same database and models folder.** They read and write the same instances and models.
+- **Keep the engine private.** Only the host should be able to reach it. Change `ENGINE_LISTEN` only if the host is on another machine, and then only on a private network.
+- **Turn design off.** `DISABLE_DESIGN=true` removes the model editor, the Design dashboard and test runs from the pages. Models then arrive through the admin REST APIs, and the admin APIs stay on.
+- **Leave tests out of a deployment.** A production server doesn't run them, so don't deploy `*.feature` files.
+- **Check the settings the server refuses to start without.** See [Security](security.md).
+
+### Tenants
+
+`TENANTS_FILE` turns one site into many. The first part of every address says whose it is, as in `site.com/acme/dashboard`, and a request with no tenant is refused. This suits a demo or a hosted service.
+
+Each tenant has its own database with its users and sessions, its own models folder, API keys, and its own engine with its own delegate. The rest of the code is the same for all of them.
+
+`TENANTS_FILE` names a JSON file. It holds secrets, so keep it apart from the code:
+
+```json
+{
+  "acme": {
+    "dbUrl": "mongodb://localhost:27017/acme",
+    "definitionsPath": "./tenants/acme/",
+    "engineAt": "http://127.0.0.1:3101",
+    "engineKey": "a-secret",
+    "apiKey": "a-secret",
+    "adminApiKey": "a-secret",
+    "actingUserKey": "a-secret",
+    "adminPassword": "a-secret",
+    "servicesFile": "./tenants/acme/services.json"
+  }
+}
+```
+
+| Setting | Without it |
+|---|---|
+| `dbUrl`, `definitionsPath` | The server doesn't start: both are required, and no two tenants can share either |
+| `engineAt`, `engineKey` | The tenant can design but not run. `engineAt` needs `engineKey` |
+| `apiKey`, `adminApiKey`, `actingUserKey` | That API refuses everyone |
+| `adminPassword` | No first user is made |
+| `servicesFile` | The tenant uses the application's setting |
+
+A tenant's name is lower-case letters, digits and `-`, starting with a letter. It can't be one of the site's own addresses, such as `api`, `admin`, `model` or `dashboard`.
+
+**Start each tenant's engine yourself.** The host never runs a tenant's engine in its own process, because a delegate is that tenant's code. Each engine is `engine.ts` with the tenant's settings:
+
+```sh
+MONGO_DB_URL=mongodb://localhost:27017/acme DEFINITIONS_PATH=./tenants/acme/ \
+ENGINE_PORT=3101 ENGINE_KEY=a-secret ENGINE_DELEGATE=./tenants/acme/appDelegate.ts npm run engine
+```
+
+`ENGINE_DELEGATE` names the tenant's delegate, in place of the application's.
+
+Tenants still have these limits:
+
+- Links in pages start at the site's root and reach the tenant by a redirect.
+- The console (`npm run cli`) refuses to start with `TENANTS_FILE` set.
+- The Docker files run a single host with its engine, not tenants.
+
+### Design only
+
+`ENGINE_AT=none` starts the host with no engine. Models can be edited and saved, and anything that would run says an engine is needed.
+
 ## The source, with the sample application
 
 bpmn-server, bpmn-client, bpmn-web, the sample application (`sampleApp`) and the working application with the tests (`testSampleApp`) are one repository, [bpmnServer/bpmn-server](https://github.com/bpmnServer/bpmn-server):
@@ -240,3 +339,4 @@ This option can be used for minimal installation by having models at a remote lo
 | [bpmn-server](https://github.com/bpmnServer/bpmn-server) | the engine: execution, persistence (MongoDB or your own storage), the API, `verifyModel` and the `bpmn-server` command line |
 | [bpmn-web](https://github.com/bpmnServer/bpmn-web) | a web application on bpmn-server: model editor, task lists, administration, and REST APIs |
 | [bpmn-client](https://github.com/bpmnServer/bpmn-client) | calls a bpmn-web server's REST API from Node.js |
+| [bpmn-mcp](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-mcp) | connects AI clients to a running server over MCP; not on npm yet, it runs from the repository |

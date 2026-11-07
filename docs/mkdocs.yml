@@ -5,6 +5,7 @@ site_url: https://bpmnserver.github.io/bpmn-server/
 repo_url: https://github.com/bpmnServer/bpmn-server
 theme:
   name: material
+  custom_dir: overrides
   favicon: favicon.ico
   features:
     - content.tooltips
@@ -75,10 +76,12 @@ draft_docs: |
 nav:
 - Getting Started:
   - Overview: index.md
+  - Architecture: architecture.md
   - Your First Workflow: first-workflow.md
   - Installation and Quick Start: setup.md
   - Application Integration: customization.md
   - Model editor: modeler.md
+  - "What's new in the next release": whats-new-next.md
   - "What's new in 3.5": whats-new-3.5.md
   - "Upgrade to 3.x": whats-new-3.md
 

@@ -46,7 +46,7 @@ Clicking a problem selects its element and opens its field. Elements with proble
 
 ### Choosing the rules
 
-A finding's **Turn off** button, or the **Rules** dialog under the diagram, sets a rule's level: off,
+A finding's **Turn off** button, or the **Rules** dialog on the Problems tab, sets a rule's level: off,
 information, warning or error. The levels are the team's: they apply to every designer, and are saved in
 `bpmnlint.json` in the models folder.
 
@@ -84,7 +84,7 @@ of its last run; the selected one is on the right: its result, its steps and its
 The scenario list on the left can be made wider or narrower: drag the handle beside it, or focus the handle and use the left and right
 arrow keys. The editor remembers the width.
 
-**Coverage**, over the list, says how many of the model's nodes and flows the scenarios' last runs have reached. A scenario counts once
+**Coverage**, under the list, says how many of the model's nodes and flows the scenarios' last runs have reached. A scenario counts once
 it has an instance: only the engine knows what comes next, so steps written down prove nothing until they run. An element is
 *tested* when a run that passed reached it, and *reached* when only runs that failed or did not finish did. A boundary event or an event
 sub-process's start that never fired has not been reached. An event sub-process has no count of its own: what is inside it does.
@@ -131,17 +131,23 @@ when none is), else at the end.
 **Full window**, in the bar of the tabs, puts them over the whole page; **Back to the editor** or Esc returns, and so does
 Simulate, which shows on the diagram.
 
-Test runs are ordinary instances whose ids start with `test-`: run tests on a development or test server. They are left
-out of the lists of instances and tasks; **Open instance** opens one.
+Test runs are ordinary instances whose ids start with `test-`, tagged in the database with their process and scenario:
+run tests on a development or test server. They are left out of the lists of instances and tasks; **Open instance** opens one.
 
 The **Design dashboard** (`/dashboard/design`) shows each model's and decision's tests with the last run's result
 (and why it failed), runs one model's or decision's tests, or **Run all tests**. Each model also shows its description
 (its process's documentation), its saved versions, and its **coverage**: what its scenarios' last runs reached, by the
-Test tab's rules. What a run reached is saved with it, so the coverage stays after its instance is deleted; it says how
-many scenarios have not run, and *out of date* when the model was saved after them. A **Run** here keeps each scenario's
+Test tab's rules. What a run reached is saved on its test instance, so deleting the instance removes the run and its
+coverage; it says how many scenarios have not run, and *out of date* when the model was saved after them. A **Run** here keeps each scenario's
 run, as the Test tab does.
 
-The scenarios are saved in the models folder, beside the model: `<model>.tests.json` (see below).
+The scenarios are saved in the models folder, beside the model, as Gherkin: `<model>.feature` (see below).
+
+**Edit as text**, in the list's **⋯** menu, opens the whole `.feature` file in the tab, with its comments. **Save** keeps it only if
+it reads as tests: otherwise the error gives the line and your text stays. If the file changed since you opened it, it isn't
+overwritten. A scenario the form can't show, such as one with a `@stub` or an expression, stays as written and has an **Edit as text**
+button of its own. A run leaves the file as it is, but changing a scenario through the form rewrites the file and drops its comments.
+See [Tests in Gherkin](testing.md#tests-in-gherkin).
 
 ## History
 
@@ -183,16 +189,15 @@ folder:
 processes/
   Leave Application.bpmn          the model
   Leave Application.svg           its diagram
-  Leave Application.tests.json    its Test tab scenarios
+  Leave Application.feature       its Test tab scenarios
   loan.dmn.xml                    a decision
-  loan.dmn.tests.json             its tests
+  loan.dmn.feature                its tests
   bpmnlint.json                   the team's modeling rules
   .history/Leave Application/     every save of the model: 0001.bpmn, 0002.ann.bpmn (ann saved it), ...
-  .runs/Leave Application.runs.json   the Test tab's runs (they point at instances of this server)
 ```
 
-A `*.tests.json` file has the format of a [scenario file](testing.md#scenario-files). `.runs/` is best left out of
-Git. Test sets kept in the database before 3.5 are moved to these files when the server starts.
+A `.feature` file is [Gherkin](testing.md#tests-in-gherkin). A scenario's last run isn't in it: it is the scenario's test
+instance in the database. Test sets kept in the database before 3.5, and older `*.tests.json` files, become these files when the server starts.
 
 ## Decisions
 

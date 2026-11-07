@@ -1,6 +1,6 @@
 # Unified Gherkin testing
 
-Status: agreed design; the first three steps of the build order are done. Branch: `testing`. Replaces the earlier proposed design, whose changes are listed at the end.
+Status: agreed design; steps 1 to 5 of the build order are done, step 6 is not. Replaces the earlier proposed design, whose changes are listed at the end.
 
 ## Summary
 
@@ -192,15 +192,14 @@ The engine uses the standard Gherkin parser (`@cucumber/gherkin`) with its own s
 |---|---|---|
 | `<model>.tests.json` | `<model>.feature` | A model's scenarios |
 | `<decision>.dmn.tests.json` | `<decision>.dmn.feature` | A decision's tests |
-| `.runs/<model>.runs.json` | The same | Last runs and what they reached |
 
-Run history stays apart, so a `.feature` file changes only when the test does.
+A scenario's last run is its test instance in the database, tagged `{ process, scenario, run }`, so a `.feature` file changes only when the test does. A decision's test has no instance: its runs stay with the page.
 
 Engine tests are `<model>.engine.feature`, beside the model: `npm run test:scenarios` runs them, and the Test tab doesn't show them. `@skip` keeps a scenario without running it.
 
 **A test lives beside its model**, wherever that model lives. The Test tab reads and writes it there, it moves with the model, and each tenant's tests stay in that tenant's folder. Only a test spanning several models or the application goes elsewhere, in that application's `test/features/`. In this repository, `testSampleApp/processes` holds the models used for testing, and `sampleApp` is what users see.
 
-**Production has no testing, so a deploy leaves out `*.feature` and `*.runs.json`.**
+**Production has no testing, so a deploy leaves out `*.feature`.**
 
 At start-up, each `*.tests.json` becomes a `.feature` if it reads back as the same tests, and the JSON is removed; one that doesn't stays as it is, is read as before, and is reported. The Test tab reads and writes `.feature` files through the server. It runs what it can show by its own form, and shows a scenario it has no form for (a `@stub`, a `@find`, an expression, an outline) read-only, as written. Comments and a feature's description in a file the Test tab saves are not kept, but those in a scenario kept as written are.
 
@@ -221,7 +220,7 @@ A scenario, or a whole `Feature:`, names what it covers with a tag:
 1. The parser, step runner and engine call, with the first commands.
 2. `@stub`, with its two small hooks in the engine: where a service task finds its service, and where a timer works out its due time.
 3. Feature tags in the catalog check.
-4. The Test tab reading and writing `.feature`, and the runs file.
+4. The Test tab reading and writing `.feature`.
 5. Conversion of existing test files, then removal of the JSON format.
 6. Application commands and reference types.
 

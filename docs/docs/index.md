@@ -51,6 +51,8 @@ flowchart TB
     Engine --> Store[("Workflow storage: MongoDB, SQLite, or memory")]
 ```
 
+The engine can also run in a process of its own, away from the host: see [Architecture](architecture.md).
+
 **BPMN Server is a library, not a stand-alone web server.** A host application creates the engine and supplies its configuration and application delegate. The optional `bpmn-web` package provides a ready-to-use web application, modeler, administration tools, and REST endpoints. The `bpmn-client` package calls a running host over HTTP.
 
 The [monorepo](https://github.com/bpmnServer/bpmn-server) contains the engine (`packages/bpmn-server`), web application (`packages/bpmn-web`), remote client (`packages/bpmn-client`), starter (`sampleApp`), and test host (`testSampleApp`). Read [Application integration](customization.md) to understand responsibilities and extension points.
