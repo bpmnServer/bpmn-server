@@ -23,7 +23,6 @@ and here
   `@find`, `@invoke`, `@check`, `@wait`, `@stub` and `@script`. A stub replaces a service or a timer for its own scenario's instances.
   The Test tab and the decision editor read and write them, and `*.tests.json` files are converted when the server starts. The Mocha scenarios are now `<model>.engine.feature`. See `docs/docs/testing.md`.
 - **The engine in its own process**: `ENGINE_AT`, `ENGINE_KEY`, with the delegate, services, timers and tests in the engine. See `docs/docs/architecture.md`.
-- **Tenants**: `TENANTS_FILE`, one site with a database, users, sessions, models, API keys and engine for each tenant. See `docs/docs/setup.md`.
 - **Edit as text**, in the Test tab: a model's whole `.feature` file, comments and all. What does not read as Gherkin is not saved, and it says which line; a file changed since it was opened is not overwritten. A run no longer rewrites the file.
 - **A scenario's last run is its test instance**, tagged `{ process, scenario, run }` in the database: there is no `.runs/` folder any more, and an old one can be deleted; earlier runs show as not run. A decision's test has no instance: its runs stay with the page that ran them.
 - The Test tab's coverage is under the scenarios. "No problems found" and Rules show with the Problems tab only.

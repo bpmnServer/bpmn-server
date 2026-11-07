@@ -1,6 +1,6 @@
 # What's new in 3.6
 
-bpmn-server 3.6 separates the host from the engine, adds tenants, removes guest access and moves every test to Gherkin.
+bpmn-server 3.6 separates the host from the engine, removes guest access and moves every test to Gherkin.
 
 ## Before you upgrade
 
@@ -14,10 +14,6 @@ bpmn-server 3.6 separates the host from the engine, adds tenants, removes guest 
 The engine can run in a process of its own, with your delegate and services inside it, while the host serves the pages and the APIs. See [Architecture](architecture.md) and [Ways to run it](setup.md#ways-to-run-it).
 
 Nothing changes unless you ask for it: without `ENGINE_AT`, the engine runs in the host's process as before.
-
-## Tenants
-
-`TENANTS_FILE` turns one site into many: `site.com/acme/...`, with a database, users, sessions, models, API keys and engine for each tenant. See [Tenants](setup.md#tenants).
 
 ## Tests in Gherkin
 

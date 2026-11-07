@@ -43,7 +43,6 @@ Calls between the host and the engine carry JSON, in the same process or between
 |---|---|---|---|---|
 | **Development and test** | 1 | 1 | 1, in the host's process | Nothing: this is the default |
 | **Production** | 1 | 1 | 1, in its own process | `ENGINE_AT`, `ENGINE_KEY` |
-| **Multi-tenant** (a demo or hosted service) | 1 | 1 site, with a path for each tenant | 1 for each tenant, each in its own process | `TENANTS_FILE` |
 | **Design only** | 1 | 1 | None | `ENGINE_AT=none` |
 
 [Installation](setup.md#ways-to-run-it) has the settings for each one.
@@ -64,9 +63,9 @@ Tests are Gherkin `.feature` files beside their models. A scenario's last run is
 
 | What | Where |
 |---|---|
-| Models, decisions, their tests and version history | Files in the models folder (`DEFINITIONS_PATH`), one folder per tenant |
+| Models, decisions, their tests and version history | Files in the models folder (`DEFINITIONS_PATH`) |
 | Instances, tasks, locks and test runs | The workflow store |
-| Users and sessions | The application's MongoDB database, one per tenant |
+| Users and sessions | The application's MongoDB database |
 | Your business records | Your own database. A process keeps an identifier and calls your services |
 
 ## Packages

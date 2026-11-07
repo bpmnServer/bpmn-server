@@ -68,7 +68,6 @@ flowchart TB
 |---|---|---|---|
 | Development and test | 1 | 1 | 1, in the host's process |
 | Production | 1 | 1 | 1, in its own process |
-| Multi-tenant | 1 | 1 site, with a path for each tenant | 1 for each tenant, each in its own process |
 
 See [Architecture](https://bpmnserver.github.io/bpmn-server/architecture) and [Ways to run it](https://bpmnserver.github.io/bpmn-server/setup#ways-to-run-it).
 
