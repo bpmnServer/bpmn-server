@@ -1,7 +1,7 @@
 // This application's engine, by itself, with its delegate and services inside: what ENGINE_AT of its host points to.
 //   ENGINE_KEY=... npm run engine        on this machine only, port 3001 (ENGINE_PORT, ENGINE_LISTEN to change them)
 // Private: nothing but the host is to reach it. Timers run here, not in the host.
-import { asEngineCaller, BPMNServer, Logger, startEngineService, webConfiguration } from 'bpmn-web';
+import { asEngineCaller, BPMNServer, engineTests, Logger, startEngineService, webConfiguration } from 'bpmn-web';
 import { config } from './settings/config.js';
 import { AppDelegate } from './delegates/appDelegate.js';
 
@@ -12,6 +12,7 @@ const service = await startEngineService(server, {
     host: process.env.ENGINE_LISTEN ?? '127.0.0.1',
     key: process.env.ENGINE_KEY,
     asCaller: asEngineCaller,
+    calls: engineTests,
 });
 const { address, port } = service.address() as { address: string; port: number };
 console.log(`ENGINE_READY ${address}:${port}`);

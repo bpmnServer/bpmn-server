@@ -18,8 +18,8 @@ import { loadTemplateCatalog } from './elementTemplates.js';
 import { currentGuest } from '../guests/guests.js';
 import { GUEST_CANNOT_SAVE, guestReadOnly } from '../userAccess/roles.js';
 import { zip } from './zip.js';
-import { loadDecisionTests, saveDecisionTests, checkDecisionTests, runDecisionTests } from '../testing/decisionTests.js';
-import { loadScenarios, saveScenarios, checkScenarios, runScenario, startTest, completeTest, findTest, summarize, expectChecks, checksAt, setTestData, restartTest } from '../testing/scenarios.js';
+import { loadDecisionTests, saveDecisionTests, checkDecisionTests, runDecisionTestsInEngine } from '../testing/decisionTests.js';
+import { loadScenarios, saveScenarios, checkScenarios, runScenarioInEngine, startTest, completeTest, findTest, summarize, expectChecks, checksAt, restartTest } from '../testing/scenarios.js';
 import { withReached } from '../testing/modelCoverage.js';
 
 
@@ -556,7 +556,7 @@ export class Model extends Common {
             const problems = checkDecisionTests(tests);
             if (problems.length)
                 return response.status(400).json({ error: problems.join('; ') });
-            response.json({ results: await runDecisionTests(file, tests) });
+            response.json({ results: await runDecisionTestsInEngine(bpmnServer, decisionFile(name), tests) });
         }));
 
         router.get('/services', awaitHandlerFactory(async (request, response) => {
@@ -653,7 +653,7 @@ export class Model extends Common {
             }
             const results = [];
             for (const one of scenarios)      // one after another: they may share application state
-                results.push(await runScenario(bpmnServer, processName, one, request.user?.userName));
+                results.push(await runScenarioInEngine(bpmnServer, processName, one, request.user?.userName));
             response.json({ results });
         }));
         /** Recording: start, then complete waiting items one at a time. */
@@ -722,7 +722,8 @@ export class Model extends Common {
                 return;
             }
             try {
-                response.json({ instance: summarize(await setTestData(bpmnServer, instanceId, data)) });
+                await bpmnServer.engine.call('setTestData', instanceId, data);
+                response.json({ instance: summarize(await findTest(bpmnServer, instanceId)) });
             } catch (exc) {
                 response.status(422).json({ error: String(exc?.message ?? exc) });
             }

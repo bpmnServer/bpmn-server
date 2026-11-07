@@ -60,8 +60,11 @@ export class LaunchedEngine {
     throwSignal(...args: any[]) { return this.#ask('throwSignal', args); }
     upgrade(...args: any[]) { return this.#ask('upgrade', args); }
     upgradeRunning(...args: any[]) { return this.#ask('upgradeRunning', args); }
+    invokeDecision(...args: any[]) { return this.#ask('invokeDecision', args); }
     facts() { return this.#ask('facts', []); }
     checkModel(name: string, source: string) { return this.#ask('checkModel', [name, source]); }
+    /** A call added to the engine's (`calls` of launch, and of startEngineService where the engine is). */
+    call(method: string, ...args: any[]) { return this.#ask(method, args); }
 
     /** What is being run now; nothing when no engine is running. */
     async live(): Promise<any[]> { return this.#call ? this.#call('live', []) : []; }
@@ -126,8 +129,8 @@ class ApplicationFacts {
  * Where its engine is: in this process (by default), at an address (`engine: 'http://...'`, startEngineService there), or
  * nowhere (`engine: 'none'`). All the same from here, but that without one what would run says so.
  *
- * Known gaps: `dataStore` and `definitions` are the engine's own classes, each with a `.server` that leads to a server of
- * this process (holding the engine, when it is the one in this process); and the Test tab's Evaluate runs here.
+ * Known gap: `dataStore` and `definitions` are the engine's own classes, each with a `.server` that leads to a server of
+ * this process (holding the engine, when it is the one in this process).
  */
 export class LaunchedServer {
     #server: BPMNServer;
@@ -135,10 +138,10 @@ export class LaunchedServer {
     readonly engine: LaunchedEngine;
     readonly appDelegate: ApplicationFacts;
 
-    constructor(server: BPMNServer, options: { engine?: string; engineKey?: string; caller?: () => string | undefined } = {}) {
+    constructor(server: BPMNServer, options: { engine?: string; engineKey?: string; caller?: () => string | undefined; calls?: (server: BPMNServer) => Record<string, (...args: any[]) => Promise<any>> } = {}) {
         this.#server = server;
         const at = options.engine;
-        const calls = at ? null : engineCalls(server);
+        const calls = at ? null : { ...engineCalls(server), ...options.calls?.(server) };
         this.engine = new LaunchedEngine(at === 'none' ? null : at ? remoteCall(at, options.engineKey, options.caller) : (method, args) => calls[method](...args));
         this.appDelegate = new ApplicationFacts(server.configuration, this.engine);
         if (!at) this.appDelegate.moddleFromEngine = server.appDelegate.moddleOptions;

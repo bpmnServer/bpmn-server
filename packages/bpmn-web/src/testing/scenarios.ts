@@ -441,9 +441,19 @@ export async function setTestData(server, instanceId: string, data) {
  */
 export async function restartTest(server, instanceId: string, itemId: string, data?, userName?: string) {
     if (data !== undefined)
-        await setTestData(server, instanceId, data);
+        await server.engine.call('setTestData', instanceId, data);
     const execution = await server.engine.restart({ id: instanceId, 'items.id': itemId }, {}, userName ?? null, { rewind: true });
     return execution.instance;
+}
+
+/** Run a scenario from outside the engine: all of it in there. Without an engine it is a run that failed, saying so. */
+export async function runScenarioInEngine(server, model: string, scenario: Scenario, userName?: string) {
+    try {
+        return await server.engine.call('runScenario', model, scenario, userName);
+    }
+    catch (err) {
+        return { name: scenario.name, ok: false, error: `Running failed: ${message(err)}`, steps: [], checks: [], instance: null };
+    }
 }
 
 /** Run a scenario: start, complete each step's element (with its checks after it), check the end. */

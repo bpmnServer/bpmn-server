@@ -14,10 +14,10 @@ import { SecureUser, BPMNAPI, verifyModel, dateDiff, canEncrypt } from '../index
 import { Common } from './common.js';
 import { runProcess } from './runErrors.js';
 import { loadTemplateCatalog } from './elementTemplates.js';
-import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, saveScenarios, runScenario } from '../testing/scenarios.js';
+import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, saveScenarios, runScenarioInEngine } from '../testing/scenarios.js';
 import { modelDescription, modelElements, savedCoverage } from '../testing/modelCoverage.js';
 import { reachedIn } from '../testing/coverage.js';
-import { loadDecisionTests, runDecisionTests } from '../testing/decisionTests.js';
+import { loadDecisionTests, runDecisionTestsInEngine } from '../testing/decisionTests.js';
 import { adminDisabled, canDesign, engineGroups, GUEST_CANNOT_SAVE, guestReadOnly, isAdminGroups } from '../userAccess/roles.js';
 import { UserService } from '../userAccess/UserService.js';
 import { loadCatalog, findCatalogEntry, readCatalogFile, catalogLocation } from './catalog.js';
@@ -220,7 +220,7 @@ export class Dashboards extends Common {
                     const results = [], scenarios = await loadScenarios(name);
                     const { listeners } = await modelElements(FS.readFileSync(path.join(dir, name + '.bpmn'), 'utf8'));
                     for (const scenario of scenarios) {      // one after another: they may share state
-                        const result = await runScenario(server, name, scenario, req.user?.userName);
+                        const result = await runScenarioInEngine(server, name, scenario, req.user?.userName);
                         results.push(result);
                         // this is the scenario's last run now, as in the Test tab: its instance replaces the one before
                         for (const old of (scenario as any).runs ?? [])
@@ -240,7 +240,7 @@ export class Dashboards extends Common {
                 for (const name of names) {
                     const file = files.find(f => DMN_FILE.test(f) && f.replace(DMN_FILE, '') === name);
                     if (file)
-                        note(runs.decisions, name, await runDecisionTests(path.join(dir, file), await loadDecisionTests(name)));
+                        note(runs.decisions, name, await runDecisionTestsInEngine(server, file, await loadDecisionTests(name)));
                 }
             }
             const what = model || decision ? `${model || decision}: ` : 'All tests: ';

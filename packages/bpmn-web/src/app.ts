@@ -19,6 +19,7 @@ import { BPMNServer, Logger } from 'bpmn-server';
 
 import { UserManager } from './userAccess/UserManager.js';
 import { useTestsFolder } from './testing/scenarios.js';
+import { engineTests } from './testing/engineTests.js';
 import { currentGuest } from './guests/guests.js';
 import { adminDisabled } from './userAccess/roles.js';
 import type { WorkflowApplication } from './runtime/WorkflowApplication.js';
@@ -72,7 +73,7 @@ export class WebApp {
 			application.configuration,
 			wflogger,
 			// where the engine is: ENGINE_AT=http://... (with ENGINE_KEY), or none: everything but running and testing models
-			{ ...application.serverOptions, ...(process.env.ENGINE_AT && process.env.ENGINE_AT !== 'local' ? { engine: process.env.ENGINE_AT, engineKey: process.env.ENGINE_KEY, caller: () => currentGuest()?.id } : {}) },
+			{ ...application.serverOptions, calls: engineTests, ...(process.env.ENGINE_AT && process.env.ENGINE_AT !== 'local' ? { engine: process.env.ENGINE_AT, engineKey: process.env.ENGINE_KEY, caller: () => currentGuest()?.id } : {}) },
 		);
 		application.initialize?.(this.bpmnServer);
 		// the Test tabs' tests are files beside the models (a guest's folder in a guest's request)

@@ -100,6 +100,16 @@ export function evaluateDecisionCheck(check: DecisionCheck, result) {
     return { what, ok: compare(actual, check.op, check.value), actual };
 }
 
+/** Runs the tests from outside the engine, on its file of that name: all in there. Without an engine each failed, saying so. */
+export async function runDecisionTestsInEngine(server, file: string, tests: DecisionTest[]): Promise<DecisionTestResult[]> {
+    try {
+        return await server.engine.call('runDecisionTests', file, tests);
+    }
+    catch (err) {
+        return tests.map(test => ({ name: test.name, decision: test.decision, checks: [], log: [], ok: false, error: String(err?.message ?? err) }));
+    }
+}
+
 /** Runs each test on the file `filePath` (as saved): one result per test, in order. */
 export async function runDecisionTests(filePath: string, tests: DecisionTest[]): Promise<DecisionTestResult[]> {
     const DMNEngine = (bpmnServerPackage as any).DMNEngine;

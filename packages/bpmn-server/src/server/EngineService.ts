@@ -1,5 +1,7 @@
 import crypto from 'node:crypto';
 import http from 'node:http';
+import path from 'node:path';
+import { DMNEngine } from '../dmn/DMNEngine.js';
 import { Definition } from '../elements/Definition.js';
 import type { IExecutionResult } from '../interfaces/engine.js';
 import type { BPMNServer } from './BPMNServer.js';
@@ -66,6 +68,12 @@ export function engineCalls(server: BPMNServer): Record<string, (...args: any[])
         upgrade: async (...args) => engine.upgrade(...args),
         upgradeRunning: async (...args) => engine.upgradeRunning(...args),
         status: async () => engine.status(),
+        /** A decision of the models folder evaluated, as a business rule task does: `ref` is a file's name or a decision's id. */
+        invokeDecision: async (ref: string, data = {}) => {
+            const found = await DMNEngine.find(server.configuration.definitionsPath, ref);
+            const decision = await new DMNEngine().load(found.filePath, found.decision.id);
+            return { decision: found.decision.id, file: path.basename(found.filePath), result: decision.evaluate(data) };
+        },
         /** What is being run now. */
         live: async () => (server.cache.list() || []).map(execution => {
             const answer: any = executionResult(execution);
@@ -106,10 +114,11 @@ const MAX_BODY = 50 * 1024 * 1024;
  * Private: it listens on this machine alone unless told otherwise, and no one but the host is to reach it.
  * A call may be for someone (`caller`, what the host's `caller` option says): `asCaller` runs it as them. An engine without
  * `asCaller` refuses such a call: run as no one, it would reach what everyone shares.
+ * `calls` adds to what can be asked (bpmn-web's tests): they run in here, and answer data as the rest do.
  */
-export function startEngineService(server: BPMNServer, { port = 3001, host = '127.0.0.1', key, asCaller }: { port?: number; host?: string; key: string; asCaller?: (caller: string, work: () => Promise<any>) => Promise<any> }): Promise<http.Server> {
+export function startEngineService(server: BPMNServer, { port = 3001, host = '127.0.0.1', key, asCaller, calls: added }: { port?: number; host?: string; key: string; asCaller?: (caller: string, work: () => Promise<any>) => Promise<any>; calls?: (server: BPMNServer) => Record<string, (...args: any[]) => Promise<any>> }): Promise<http.Server> {
     if (!key) throw new Error('The engine needs a key that only its host knows: set ENGINE_KEY');
-    const calls = engineCalls(server);
+    const calls = { ...engineCalls(server), ...added?.(server) };
     const send = (response, status: number, body) => {
         response.writeHead(status, { 'Content-Type': 'application/json' });
         response.end(JSON.stringify(body));
