@@ -15,7 +15,65 @@ ADMIN_API_KEY=your-admin-key
 
 There are no modes: `.env` says which server to use, and its keys decide what the MCP may do. Without `ADMIN_API_KEY`, saving, renaming or deleting models and deleting instances are refused. Everything else, including reading a model's XML, needs only `API_KEY`.
 
-Register `node packages/bpmn-mcp/src/index.mjs` as a stdio server in your AI client. This package has not been published to npm.
+This package has not been published to npm, so it runs from this repository.
+
+## Install
+
+1. In the repository's root, run `npm install`.
+2. Start the server the MCP will talk to, such as `npm run dev` on port 3000. It has to be running while you use the MCP.
+3. Put the `.env` above in `packages/bpmn-mcp/`, with the keys the server uses. Keep it out of git: it holds your keys.
+4. Register the MCP with your AI client, below, and restart the client.
+
+`BPMN_ENV_FILE` is needed because a client may launch the MCP from any directory. Use the full paths of your own copy; these are examples.
+
+### Claude Code
+
+```shell
+claude mcp add bpmn --env BPMN_ENV_FILE=/path/to/bpmnServer4/packages/bpmn-mcp/.env -- node /path/to/bpmnServer4/packages/bpmn-mcp/src/index.mjs
+```
+
+`/mcp` in Claude Code shows whether it connected.
+
+### Codex
+
+```shell
+codex mcp add bpmn --env BPMN_ENV_FILE=/path/to/bpmnServer4/packages/bpmn-mcp/.env -- node /path/to/bpmnServer4/packages/bpmn-mcp/src/index.mjs
+```
+
+Or in `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.bpmn]
+command = "node"
+args = ["/path/to/bpmnServer4/packages/bpmn-mcp/src/index.mjs"]
+env = { BPMN_ENV_FILE = "/path/to/bpmnServer4/packages/bpmn-mcp/.env" }
+```
+
+### Claude Desktop, and clients with a JSON configuration
+
+```json
+{
+  "mcpServers": {
+    "bpmn": {
+      "command": "node",
+      "args": ["/path/to/bpmnServer4/packages/bpmn-mcp/src/index.mjs"],
+      "env": { "BPMN_ENV_FILE": "/path/to/bpmnServer4/packages/bpmn-mcp/.env" }
+    }
+  }
+}
+```
+
+On Windows, write the paths in JSON and TOML with forward slashes, such as `C:/bp/github/bpmnServer4/...`.
+
+## Use
+
+Ask in plain language; the client chooses the tools:
+
+- "List my models."
+- "Start Leave Application with days 5."
+- "What tasks are waiting?"
+- "Complete the approval task with approved true."
+- "Check this BPMN and save it as order-approval."
 
 ## Tools
 
