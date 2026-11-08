@@ -1,6 +1,6 @@
 # Embedding the engine
 
-Journey D: run processes from your own Node.js code, with no web application. Your code holds the engine, its configuration and its lifetime.
+Journey D: run processes from your own Node.js code, with no web application. Your code holds the engine, its configuration and its lifetime: [Embedded](architecture.md#embedded).
 
 ## 1. Install
 

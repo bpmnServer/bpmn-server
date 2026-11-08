@@ -1,6 +1,6 @@
 # Integrate an existing application
 
-Journey C: your application keeps its own UI, users and data, and BPMN Server runs its processes. The walkthrough [Integrate an existing application](tutorial/tutorial-integrate.md) does it with the leave request.
+Journey C: your application keeps its own UI, users and data, and BPMN Server runs its processes, on a private network behind it: [Your application in control](architecture.md#your-application-in-control). The walkthrough [Integrate an existing application](tutorial/tutorial-integrate.md) does it with the leave request.
 
 ## 1. Connect
 

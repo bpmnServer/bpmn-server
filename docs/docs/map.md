@@ -8,7 +8,7 @@ Every page of these docs, as the menu has them. Generated from `mkdocs.yml` by `
 - [Choose Your Journey](journeys.md): BPMN Server can be tried in a browser, run as your own workflow application, connected to an application you already have, or built into your own code.
 - [Online Demo](first-workflow.md): Journey A: the quickest way to understand BPMN Server is to build, test, and run a small process.
 - [Build an Application](build.md): Journey B: your own application on BPMN Server, with your models, users and services.
-- [Integrate an Existing Application](integrate.md): Journey C: your application keeps its own UI, users and data, and BPMN Server runs its processes.
+- [Integrate an Existing Application](integrate.md): Journey C: your application keeps its own UI, users and data, and BPMN Server runs its processes, on a private network behind it: Your application in control.
 - [Installation](setup.md): init creates the sample application: processes/ (Hello, Buy Used Car, Leave Application, employee-onboarding, Business Rules, GitHub repository), connectors/ (the services the…
 - [Settings: .env and configuration](settings.md): An application has two places for settings.
 - [What's new in 3.6](whats-new-3.6.md): bpmn-server 3.6 separates the host from the engine, removes guest access and moves every test to Gherkin.

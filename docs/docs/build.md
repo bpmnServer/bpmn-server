@@ -2,6 +2,11 @@
 
 Journey B: your own application on BPMN Server, with your models, users and services. The [tutorials](tutorial/start.md) take you through it with one example.
 
+What `init` makes is a skeleton: bpmn-web with your models and services, working from the first start. Keep its pages for
+a team that works inside it, or replace its sign-in and pages with your own application's, keeping bpmn-web's APIs and
+Administration behind it, and its model editor as a stand-alone design server: see
+[From the skeleton to your application](architecture.md#from-the-skeleton-to-your-application).
+
 ## 1. Install
 
 Install Node.js 20 or later. To avoid database setup for a first run:

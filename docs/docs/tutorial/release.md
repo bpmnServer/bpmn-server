@@ -18,6 +18,11 @@ Either fails, nothing is released. For a CI service such as GitHub Actions, thes
 
 ## The server
 
+The sample application is a skeleton: its sign-in and its pages (My work, task forms) are bpmn-web's. Released as it is,
+they serve a team that works inside it. For other users, your own application replaces them, and the server below becomes
+bpmn-web on a private network, for your application's API calls and your administrators, with the model editor on a
+design server of its own: [From the skeleton to your application](../architecture.md#from-the-skeleton-to-your-application).
+
 On a new Ubuntu server (22.04 or 24.04), one line installs Node.js, MongoDB, your application as a service, and nginx in
 front of it, and prints the administrator's password:
 
