@@ -434,7 +434,7 @@ class Engine extends ServerComponent implements IEngine{
 	 */
 	async startRepeatTimerEvent(instanceId, prevItem, data = {},options={}) : Promise<Execution> {
 
-		this.assertOpen();
+		// not refused while stopping: a repetition goes on with work already running, which a stopping server lets finish
 		// need to load instance first
 		this.logger.log('startRepeatTimeEvent');
 		let execution;

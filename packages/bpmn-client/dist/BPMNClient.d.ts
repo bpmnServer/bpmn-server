@@ -28,6 +28,7 @@ declare class BPMNClient extends WebService {
 declare class ClientEngine {
     private client;
     constructor(client: any);
+    /** userId: the user it starts for (the server's userName), who becomes the instance's initiator. */
     start(name: any, data?: {}, startNodeId?: any, userId?: any, options?: {}): Promise<IInstanceData>;
     invoke(query: any, data: any, userId?: any, options?: {}): Promise<IInstanceData>;
     assign(query: any, data: any, userId: any, assignment: any): Promise<IInstanceData>;

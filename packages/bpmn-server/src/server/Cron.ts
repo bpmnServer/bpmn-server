@@ -113,10 +113,18 @@ class Cron  extends ServerComponent implements ICron {
 		// The item may have moved on (completed, cancelled, fired by another server) since it was read.
 		const current = (await this.dataStore.findItems({ 'items.id': entry.id }))[0];
 		if (!current || current.status !== 'wait') { this.counters.skipped++; return; }
-		await this.engine.invoke({ 'items.id': entry.id }, null);
-		// recovered after a restart: the Timer behaviour that would start its next repetition went with the old server
-		if (Number(current.timerRepeat) > Number(current.timerCount ?? 0) + 1)
-			await (this.engine as any).startRepeatTimerEvent(current.instanceId, current, {});
+		// the firing and the next repetition as one piece of work, which a stopping server waits for
+		const engine = this.engine as any;
+		engine.runningCounter++;
+		try {
+			await this.engine.invoke({ 'items.id': entry.id }, null);
+			// recovered after a restart: the Timer behaviour that would start its next repetition went with the old server
+			if (Number(current.timerRepeat) > Number(current.timerCount ?? 0) + 1)
+				await engine.startRepeatTimerEvent(current.instanceId, current, {});
+		}
+		finally {
+			engine.runningCounter--;
+		}
 	}
 	private async processTimerExpired(event: any) {
 		await this.definitions.updateTimer(event.modelName);

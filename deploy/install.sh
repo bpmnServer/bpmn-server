@@ -25,6 +25,8 @@ PORT=${PORT:-3000}                      # --port: the application's own port, be
 BPMN_DIR=${BPMN_DIR:-/opt/bpmn}         # --dir: where the application's folder is made (/opt/bpmn/<app>)
 ACCESS_USER=${ACCESS_USER:-}            # --access: who may edit its files besides root (default: the one running
                                         #   sudo, else ubuntu); --access none: nobody
+PACKAGES=${PACKAGES:-}                  # --packages: a folder of packed bpmn-server, bpmn-web, bpmn-client and bpmn-mcp
+                                        #   (npm pack, *.tgz) to install instead of npm's: to test a release before publishing
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -36,6 +38,7 @@ while [ $# -gt 0 ]; do
         --port) PORT=$2; shift 2 ;;
         --dir) BPMN_DIR=$2; shift 2 ;;
         --access) ACCESS_USER=$2; shift 2 ;;
+        --packages) PACKAGES=$2; shift 2 ;;
         -h|--help) sed -n '2,16p' "$0" 2>/dev/null | sed 's/^# \{0,1\}//'; exit 0 ;;
         *) echo "unknown option: $1"; exit 1 ;;
     esac
@@ -135,7 +138,24 @@ mkdir -p "$HOME_DIR" && chown "$APP_USER:$APP_USER" "$HOME_DIR"
 # runuser: on every Linux, unlike sudo
 as_app() { runuser -u "$APP_USER" -- env HOME="$HOME_DIR" bash -c "cd '$1' && $2"; }
 
-if [ ! -f "$APP_DIR/package.json" ]; then
+if [ ! -f "$APP_DIR/package.json" ] && [ -n "$PACKAGES" ]; then
+    # the packed packages, copied where the bpmn user can read them; the application, and bpmn-mcp, use them, not npm's
+    ls "$PACKAGES"/bpmn-server-*.tgz "$PACKAGES"/bpmn-web-*.tgz >/dev/null 2>&1         || { echo "--packages $PACKAGES: no bpmn-server-*.tgz and bpmn-web-*.tgz there"; exit 1; }
+    mkdir -p "$HOME_DIR/packages" && cp "$PACKAGES"/bpmn-*.tgz "$HOME_DIR/packages/" && chown -R "$APP_USER:$APP_USER" "$HOME_DIR/packages"
+    packed() { ls "$HOME_DIR"/packages/"$1"-[0-9]*.tgz 2>/dev/null | head -1; }
+    as_app "$HOME_DIR" "npm exec --yes --package='$(packed bpmn-server)' -- bpmn-server init '$APP_NAME' --yes --mongo 'mongodb://localhost:27017/$APP_NAME' --port $PORT --no-install"
+    pins=""
+    for name in bpmn-server bpmn-web bpmn-mcp; do
+        # a dependency the application has (bpmn-mcp only with the APIs), from its packed file
+        if [ -n "$(packed $name)" ] && as_app "$APP_DIR" "npm pkg get dependencies.$name | grep -q '\"'"; then
+            pins="$pins 'dependencies.$name=file:$(packed $name)'"
+        fi
+    done
+    for name in bpmn-server bpmn-client; do      # what bpmn-web and bpmn-mcp depend on, too
+        [ -n "$(packed $name)" ] && pins="$pins 'overrides.$name=file:$(packed $name)'"
+    done
+    as_app "$APP_DIR" "npm pkg set $pins && npm install --no-audit --no-fund"
+elif [ ! -f "$APP_DIR/package.json" ]; then
     as_app "$HOME_DIR" "npx -y bpmn-server@$BPMN_VERSION init '$APP_NAME' --yes --mongo 'mongodb://localhost:27017/$APP_NAME' --port $PORT"
 fi
 
@@ -147,6 +167,8 @@ find "$APP_DIR" -type d -exec chmod g+s {} +
 find "$APP_DIR" -path "$APP_DIR/node_modules" -prune -o -type d -print0 \
     | xargs -0 -r setfacl -m g:"$APP_USER":rwX -m d:g:"$APP_USER":rwX 2>/dev/null || true
 chmod 750 "$HOME_DIR"
+# its secrets (keys, the session secret, the database): its user and group only, whatever the folders above allow
+chmod o-rwx "$APP_DIR/.env"
 if [ -n "$ACCESS_USER" ]; then
     if id "$ACCESS_USER" >/dev/null 2>&1; then
         usermod -aG "$APP_USER" "$ACCESS_USER"

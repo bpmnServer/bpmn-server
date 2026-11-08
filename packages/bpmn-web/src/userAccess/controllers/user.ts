@@ -7,6 +7,9 @@ import validator from 'validator';
 import User from '../models/User.js';
 import * as Mailer from '../config/mail.js';
 import { signupGroups, signupVerifiesEmail } from '../roles.js';
+import { firstRunPending, isSetupToken, endFirstRun } from '../firstRun.js';
+import { UserService, userNameProblem } from '../UserService.js';
+import { answerMessage } from '../../routes/common.js';
 
 const _ = lodash;
 const randomBytesAsync = promisify(crypto.randomBytes);
@@ -119,6 +122,34 @@ export class UserController {
      * GET /login
      * Login page.
      */
+    /** The first start: the administrator, with the token the server printed; then, if asked, the tutorials' users. */
+    static getSetup(req, res) {
+        if (!firstRunPending()) return res.redirect('/login');
+        res.render(viewPath + 'setup', { title: 'Set up this server', token: req.query.token ?? '', values: {}, message: null, canSignup: false });
+    }
+
+    static async postSetup(req, res) {
+        if (!firstRunPending()) return answerMessage(req, res, 404, 'This server is set up already: sign in.');
+        const { token, userName = '', email = '', password = '', confirmPassword = '', sampleUsers, samplePassword = '' } = req.body ?? {};
+        const again = (status, message) => res.status(status).render(viewPath + 'setup', {
+            title: 'Set up this server', token: '', values: { userName, email, sampleUsers }, message, canSignup: false });
+        if (!isSetupToken(token)) return again(403, 'That is not the setup token the server printed when it started.');
+        const nameProblem = userNameProblem(String(userName).trim());
+        if (nameProblem) return again(400, nameProblem);
+        if (!validator.isEmail(String(email))) return again(400, 'Give the administrator\'s email.');
+        if (String(password).length < 8) return again(400, 'The password needs at least 8 characters.');
+        if (password !== confirmPassword) return again(400, 'The two passwords differ.');
+        if (sampleUsers === 'true' && String(samplePassword).length < 4) return again(400, 'Give the sample users a password, or leave them out.');
+        const users = new UserService();
+        const admin = await users.addUser(String(userName).trim(), String(email), password, ['ADMIN']);
+        if (sampleUsers === 'true') {
+            await users.addUser('user1', 'user1@example.com', samplePassword, ['Employee']);
+            await users.addUser('manager1', 'manager1@example.com', samplePassword, ['Employee', 'Manager']);
+        }
+        endFirstRun();
+        req.logIn(admin, error => error ? answerMessage(req, res, 500, 'The administrator was created: sign in.') : res.redirect('/'));
+    }
+
     static getLogin(req, res) {
         if (req.user) {
             return res.redirect('/');
@@ -196,6 +227,10 @@ export class UserController {
     static postSignup(req, res, next) {
         console.log('postSignup');
         const validationErrors = [];
+        req.body.userName = String(req.body.userName ?? '').trim();
+        const nameProblem = userNameProblem(req.body.userName);
+        if (nameProblem)
+            validationErrors.push({ msg: nameProblem });
         if (!validator.isEmail(req.body.email))
             validationErrors.push({ msg: 'Please enter a valid email address.' });
         else if (signupVerifiesEmail() && !mailChecker.isValid(req.body.email))
@@ -218,7 +253,7 @@ export class UserController {
             userGroups: verifies ? [] : signupGroups(),
         });
         const taken = async () => {
-            if (await User.findOne({ userName: req.body.userName }))
+            if (await new UserService().userNamed(req.body.userName))
                 return 'Account with that userName already exists.';
             if (await User.findOne({ email: req.body.email }))
                 return 'Account with that email address already exists.';

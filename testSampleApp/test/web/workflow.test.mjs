@@ -26,9 +26,11 @@ const groups = (value) => [].concat(value ?? []);
 /** Starts the model through GET /execute as `client`; returns the instance id. */
 async function start(client) {
   const res = await client.get('/execute/' + MODEL);
-  if (res.status === 302) return new URL(res.location, web.base).searchParams.get('id');
-  // non-admins are shown the workbench instead of the instance page
-  assert.equal(res.status, 200, why(res));
+  assert.equal(res.status, 302, why(res));
+  const id = new URL(res.location, web.base).searchParams.get('id');
+  if (id) return id;
+  // others go back to My work, without the instance's id
+  assert.equal(res.location, '/dashboard');
   const latest = await web.bpmnServer.dataStore.findInstances({ name: MODEL }, 'summary');
   return latest.sort((a, b) => new Date(b.startedAt) - new Date(a.startedAt))[0].id;
 }

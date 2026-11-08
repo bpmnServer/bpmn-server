@@ -272,3 +272,22 @@ test('deleting an instance is the engine\'s: its timers go with it, and a call r
     assert.deepEqual(await deleting, { deletedCount: 1 });
   } finally { await server.shutdown(); }
 });
+
+test('a user task in a lane with one candidate group: offered to both, and it starts', async () => {
+  const { server } = await makeServer({});
+  try {
+    fs.writeFileSync(path.join(server.configuration.definitionsPath, 'laned.bpmn'), `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="d5" targetNamespace="urn:test">
+  <bpmn:collaboration id="c"><bpmn:participant id="p" processRef="laned" /></bpmn:collaboration>
+  <bpmn:process id="laned" isExecutable="true">
+    <bpmn:laneSet id="ls"><bpmn:lane id="l" name="Manager"><bpmn:flowNodeRef>s</bpmn:flowNodeRef><bpmn:flowNodeRef>u</bpmn:flowNodeRef></bpmn:lane></bpmn:laneSet>
+    <bpmn:startEvent id="s" /><bpmn:userTask id="u" camunda:candidateGroups="Finance" /><bpmn:sequenceFlow id="f" sourceRef="s" targetRef="u" />
+  </bpmn:process>
+</bpmn:definitions>`);
+    await server.definitions.rebuild();
+    const { instance } = await server.engine.start('laned', {});
+    const task = instance.items.find(i => i.elementId === 'u');
+    assert.equal(task.status, 'wait');
+    assert.deepEqual([...task.candidateGroups].sort(), ['Finance', 'Manager']);
+  } finally { await server.shutdown(); }
+});

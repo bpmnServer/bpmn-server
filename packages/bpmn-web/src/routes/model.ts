@@ -96,14 +96,18 @@ export class Model extends Common {
         router.get('/export', awaitHandlerFactory(async (request, response) => {
             console.log(request.params);
             let procs = await bpmnServer.definitions.getList();
-            response.render('models/export', { procs});
+            // each model's tests, when it has them
+            const dir = bpmnServer.configuration.definitionsPath;
+            const tests = Object.fromEntries(procs.map(proc => [proc.name,
+                ['feature', 'engine.feature'].map(extension => `${proc.name}.${extension}`).filter(file => FS.existsSync(path.join(dir, file)))]));
+            response.render('models/export', { procs, tests });
 
         }));
-        /** Every model, diagram and decision of the models folder as one .zip. */
+        /** Every model, diagram, decision and test file of the models folder as one .zip. */
         router.get('/download-all', awaitHandlerFactory(async (request, response) => {
             const dir = bpmnServer.configuration.definitionsPath;
             const files = FS.readdirSync(dir)
-                .filter(file => /\.(bpmn|svg)$|\.dmn(\.xml)?$/i.test(file) && FS.statSync(path.join(dir, file)).isFile())
+                .filter(file => /\.(bpmn|svg|feature)$|\.dmn(\.xml)?$/i.test(file) && FS.statSync(path.join(dir, file)).isFile())
                 .map(file => ({ name: file, data: FS.readFileSync(path.join(dir, file)) }));
             response.attachment('models.zip').type('application/zip').send(zip(files));
         }));

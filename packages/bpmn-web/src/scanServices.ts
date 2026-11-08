@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*
  * The names of an application's services, read from its source: nothing of it runs. A host keeps them in a file, so the
  * editor can offer and check services with no application code and no engine.

@@ -31,6 +31,14 @@ export const isDesignerGroups = (userGroups) => !designDisabled() && inGroups(us
 export const canDesign = (user) => !designDisabled()
     && (process.env.REQUIRE_AUTHENTICATION === 'false' || isDesignerGroups(user?.userGroups));
 
+/**
+ * Where someone goes after starting a process or completing a task: administrators and designers to the instance, to
+ * see what ran; everyone else back to My work, where their next task is.
+ */
+export const afterWork = (user, instanceId) => isAdminGroups(user?.userGroups) || canDesign(user)
+    ? '/instanceDetails?id=' + encodeURIComponent(instanceId)
+    : '/dashboard';
+
 /** SIGNUP_VERIFY_EMAIL=true: sign-up sends a verification email, and SIGNUP_GROUPS come only once it is verified. */
 export const signupVerifiesEmail = () => process.env.SIGNUP_VERIFY_EMAIL === 'true';
 /** SIGNUP_GROUPS: the user groups of an account that signs up (DESIGNER: it can design). Default none. */

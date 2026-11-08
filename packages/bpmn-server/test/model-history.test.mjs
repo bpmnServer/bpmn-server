@@ -82,6 +82,28 @@ test('renaming moves the history, deleting removes it, purging empties it', asyn
     await server.shutdown?.();
 });
 
+test('a model\'s tests go with it: renamed, and calling it by its new name; deleted with it', async () => {
+    const { server, dir } = await makeServer();
+    const feature = [`Feature: ${NAME}`, '', '  Scenario: one', `    When @start process:${NAME} as :instance`,
+        `    And @start process:"${NAME}" as :again`, '    And @start process:expense-approval-2 as :other', ''].join('\n');
+    fs.writeFileSync(path.join(dir, NAME + '.feature'), feature);
+    fs.writeFileSync(path.join(dir, NAME + '.engine.feature'), feature);
+
+    await server.definitions.renameModel(NAME, 'Expense Claim');
+    for (const file of [NAME + '.feature', NAME + '.engine.feature'])
+        assert.ok(!fs.existsSync(path.join(dir, file)), file);
+    const renamed = fs.readFileSync(path.join(dir, 'Expense Claim.feature'), 'utf8');
+    assert.match(renamed, /^Feature: Expense Claim$/m);
+    assert.equal(renamed.match(/process:"Expense Claim" as/g).length, 2, 'both forms, quoted now: the name has a space');
+    assert.match(renamed, /process:expense-approval-2 as :other/, 'another model whose name begins the same is left alone');
+    assert.equal(fs.readFileSync(path.join(dir, 'Expense Claim.engine.feature'), 'utf8'), renamed);
+
+    await server.definitions.deleteModel('Expense Claim');
+    for (const file of ['Expense Claim.bpmn', 'Expense Claim.feature', 'Expense Claim.engine.feature'])
+        assert.ok(!fs.existsSync(path.join(dir, file)), file);
+    await server.shutdown?.();
+});
+
 test('two saves at once are two versions; a name that leaves the folder is refused', async () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'history-'));
     const history = new ModelHistory(dir);

@@ -10,6 +10,7 @@ import User from './models/User.js';
 import * as passportConfig from './config/passport.js';
 import { Account } from './routes/account.js';
 import { adminDisabled, canDesign, isAdminGroups, signupDisabled } from './roles.js';
+import { firstRunPending } from './firstRun.js';
 
 
 export class UserManager {
@@ -117,7 +118,15 @@ export class UserManager {
 			legacyHeaders: false,
 			message: { error: 'Too many attempts, please try again later.' },
 		});
-		app.use(['/login', '/signup', '/forgot', '/reset', '/account/verify'], authLimiter);
+		app.use(['/login', '/signup', '/forgot', '/reset', '/account/verify', '/setup'], authLimiter);
+
+		// a server with no users yet: its pages ask for the administrator first (firstRun.ts)
+		app.use((req, res, next) => {
+			if (!firstRunPending() || req.path === '/setup' || /\./.test(req.path)
+				|| /^\/(api|api2|admin\/api|admin\/api2|healthz)(\/|$)/.test(req.path))
+				return next();
+			return res.redirect('/setup');
+		});
 
 		app.use((req, res, next) => {
 			res.locals.user = req.user;

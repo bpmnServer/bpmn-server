@@ -39,13 +39,14 @@ async function signIn(userName, width = 1440) {
 test('a user starts a process from the start form and finds its task', async () => {
   const { page, problems, close } = await signIn('staff');
   await page.goto(web.base + '/dashboard');
+  await page.waitForLoadState('networkidle');
+  // signing in lands on the Workbench, whose diagram preview is a designer's route: not My work's
+  problems.length = 0;
   const start = page.locator('#start-events details', { hasText: 'leave-request' }).first();
   await start.locator('summary').click();
-  await Promise.all([page.waitForURL(/\/instanceDetails\?id=/), start.locator('button[type=submit]').click()]);
-  // the instance page's own requests are not the dashboard's (it asks /model for the diagram, a designer route)
+  // staff is neither a designer nor an administrator: back to My work, where the new task is
+  await Promise.all([page.waitForURL(url => url.pathname === '/dashboard'), start.locator('button[type=submit]').click()]);
   await page.waitForLoadState('networkidle');
-  problems.length = 0;
-  await page.goto(web.base + '/dashboard');
   assert.match(await page.locator('#available-tasks').innerText(), /Submit request/);
   await page.screenshot({ path: path.join(SHOTS, 'dashboard-user.png'), fullPage: true });
   assert.deepEqual(problems, []);

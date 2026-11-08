@@ -283,12 +283,13 @@ class UserTask extends Node {
             await this.setAssignVal(item,"followUpDate",true);
             await this.setAssignVal(item,"priority");
             }
+        // a task in a lane is offered to the group of the lane's name too; a single candidate group is text, not a list
         if (this.lane && this.lane !=='')
             {
-            if (item.candidateGroups==null)
-                item.candidateGroups=new Array();
-
-            item.candidateGroups.push(this.lane);
+            const groups = item.candidateGroups == null ? [] : Array.isArray(item.candidateGroups) ? item.candidateGroups : [item.candidateGroups];
+            if (!groups.includes(this.lane))
+                groups.push(this.lane);
+            item.candidateGroups = groups;
             }
 
         return await super.start(item);

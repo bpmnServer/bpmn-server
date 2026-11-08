@@ -10,5 +10,9 @@ block content
 						a(href=`/model/download/${proc.name}.bpmn`) #{proc.name}.bpmn
 					td 
 						a(href=`/model/download/${proc.name}.svg`) #{proc.name}.svg
+					td
+						each file in tests[proc.name] || []
+							a(href=`/model/download/${file}`) #{file}
+							br
 	p
 		a.btn.btn-primary(href='/model/download-all') Download all (.zip)

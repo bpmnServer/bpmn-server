@@ -28,6 +28,7 @@ and here
 - A service a test stubbed stays uncalled if its instance outlives the test or the engine, and in what it calls: the instance keeps `flags.stubbed`.
 - **Settings**, a page in the docs: what goes in `.env`, what in `settings/config.ts`, and every setting.
 - A Gherkin script that never finishes fails its step after a second, with or without the sandbox. With design on in production and no sandbox, the server warns at start.
+- **The first start asks for the administrator**, with a setup token the server prints: there is no admin/admin any more. `/setup` makes the administrator, and the tutorials' sample users if asked. `ADMIN_PASSWORD` still makes admin at setup, as Docker and the install script do.
 - **bpmn-mcp with every application**: `npx bpmn-server init` installs it and writes `.mcp.json`. See `packages/bpmn-mcp/CHANGELOG.md`.
 - **An HR application in the sample application**, embedded and called through a connector, to show application integration.
 - **Edit as text**, in the Test tab: a model's whole `.feature` file, comments and all. What does not read as Gherkin is not saved, and it says which line; a file changed since it was opened is not overwritten. A run no longer rewrites the file.
@@ -103,6 +104,18 @@ and here
   number by its seq. Decision entries in the logs keep their lines.
 
 ### Fixed
+- **After starting a process or completing a task, a user goes back to My work**, where their next task is; only
+  administrators and designers go to the instance's page. Users who are neither were sent to the Workbench (after a
+  task) or to the instance's page (after a start from My work).
+- **A task form's own fields were saved as the task's data**: `_csrf` and `returnTo` are left out now.
+- **A user name has one rule wherever a user is added** (Administration's Add user, signing up, the first start,
+  `UserService.addUser`): 2 to 64 letters, digits or `. _ @ -`, taken without the spaces around it; a name that
+  differs from another only in case is refused (`User1` beside `user1`). Add user also checks the email and the
+  password (4 characters or more) on the server, and keeps no empty group. Users made before keep their names.
+- **`bpmn-web-services`**, a command: the services scan (`services.json`) for an application, which had no way to run it.
+- **Export left a model's tests out**: the export page lists each model's `.feature` files, and Download all (.zip) includes them.
+- **The Test tab's scenarios were not saved while a check was being added** ("Scenarios not saved: 500"): a check with no element,
+  path or status yet could not be written to the `.feature`, and the whole save failed. A check is written once it is filled in.
 - **Security:** a model's name in a URL could climb out of the models folder (`/model/edit/..%2Fx`, `/execute/..%2Fx`, `POST /api/engine/start/..%2Fx`), so a user could read or start a `.bpmn` file outside it. Every such route now answers 400.
 - The menu with sign-in off (`REQUIRE_AUTHENTICATION=false`): every page has the same places, and none offers Sign in,
   Create account or a Sign out. It depended on the page: the dashboards, the docs and the model list showed Sign in

@@ -18,8 +18,9 @@ import { notATest, listScenarioSets, listDecisionTestSets, loadScenarios, saveSc
 import { modelDescription, modelElements, savedCoverage } from '../testing/modelCoverage.js';
 import { reachedIn } from '../testing/coverage.js';
 import { loadDecisionTests, runDecisionTestsInEngine } from '../testing/decisionTests.js';
-import { adminDisabled, canDesign, isAdminGroups } from '../userAccess/roles.js';
-import { UserService } from '../userAccess/UserService.js';
+import { adminDisabled, afterWork, canDesign, isAdminGroups } from '../userAccess/roles.js';
+import { UserService, userNameProblem } from '../userAccess/UserService.js';
+import validator from 'validator';
 import { loadCatalog, findCatalogEntry, readCatalogFile, catalogLocation } from './catalog.js';
 import { loadConnectorCatalog, connectorCatalogLocation } from './connectorCatalog.js';
 import { isSafeModelName, guardModelParams } from './middleware/modelName.js';
@@ -29,7 +30,8 @@ import crypto from 'node:crypto';
 const handler = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
 /** A comma list or an array, as an array. */
-const toList = (v): string[] => Array.isArray(v) ? v : (typeof v === 'string' && v.trim() ? v.split(',').map(s => s.trim()) : []);
+/** A comma list (or a list), trimmed, its empty entries left out. */
+const toList = (v): string[] => (Array.isArray(v) ? v : typeof v === 'string' ? v.split(',') : []).map(s => String(s).trim()).filter(Boolean);
 
 const DMN_FILE = /\.dmn(\.xml)?$/i;
 
@@ -148,7 +150,7 @@ export class Dashboards extends Common {
                 api.engine.start(processName, data, secureUser(req), { startNodeId: startNodeId || undefined }));
             if (context?.errors)
                 return res.status(500).send(String(context.errors));
-            res.redirect('/instanceDetails?id=' + (context.instance?.id ?? context.id));
+            res.redirect(afterWork(req.user, context.instance?.id ?? context.id));
         }));
 
         // ---- design -----------------------------------------------------------------------------------------
@@ -280,13 +282,20 @@ export class Dashboards extends Common {
         const back = (res, message: string) => res.redirect('/dashboard/admin?message=' + encodeURIComponent(message));
 
         router.post('/admin/users', this.isAdmin, handler(async (req, res) => {
-            const { userName, email, password } = req.body;
+            const userName = String(req.body.userName ?? '').trim(), email = String(req.body.email ?? '').trim();
+            const password = String(req.body.password ?? '');
             const groups = toList(req.body.userGroups);
             if (!userName || !email || !password)
                 return back(res, 'A new user needs a user name, an email and a password.');
-            if (await new UserService().findUser({ $or: [{ userName }, { email }] }))
+            const problem = userNameProblem(userName)
+                ?? (validator.isEmail(email) ? null : `'${email}' is not an email address.`)
+                ?? (password.length >= 4 ? null : 'The password needs at least 4 characters.');
+            if (problem)
+                return back(res, problem);
+            const users = new UserService();
+            if (await users.userNamed(userName) || await users.findUser({ email }))
                 return back(res, `A user named '${userName}' or with the email '${email}' already exists.`);
-            await new UserService().addUser(userName, email, password, groups);
+            await users.addUser(userName, email, password, groups);
             back(res, `User '${userName}' added.`);
         }));
 

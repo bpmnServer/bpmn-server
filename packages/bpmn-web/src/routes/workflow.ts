@@ -12,6 +12,8 @@ import { notATest } from '../testing/scenarios.js';
 import { runProcess } from './runErrors.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 import { guardModelParams } from './middleware/modelName.js';
+import { afterWork } from '../userAccess/roles.js';
+const FORM_ONLY = new Set(['itemId', '_csrf', 'returnTo']);     // the form's own fields, not the task's data
 
 
 var caseId = Math.floor(Math.random() * 10000);
@@ -209,12 +211,8 @@ export class Workflow extends Common {
             let returnTo=request.body.returnTo;
             let data = {};
             
-            Object.entries(request.body).forEach(entry => {
-                if (entry[0] == 'itemId') { }
-                else {
-                    data[entry[0]] = entry[1];
-                }
-            });
+            for (const [key, value] of Object.entries(request.body))
+                if (!FORM_ONLY.has(key)) data[key] = value;
 
 
             let result = await runProcess(bpmnServer, { itemId: id }, () => bpmnAPI.engine.invoke({ "items.id": id }, data, getSecureUser(request)));
@@ -503,12 +501,7 @@ async function afterOperation(request,response,result) {
     let returnTo = (request.body && request.body.returnTo) || (request.query && request.query.returnTo);
     if (returnTo=='home')
         return display(request,response,'Show',[]);
-    else if (isAdmin(request))
-        {
-         response.redirect('/instanceDetails?id=' + result.execution.id);
-        }
-    else
-        return display(request,response, 'Show', []);
+    response.redirect(afterWork(request.user, result.execution.id));
 
 //    response.redirect('/instanceDetails?id=' + result.execution.id);
 //    console.log('items#',result.instance.items.length);

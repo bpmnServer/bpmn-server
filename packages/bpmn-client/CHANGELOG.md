@@ -17,6 +17,11 @@ and here
 - `definitions.load()` reads `/api` with `API_KEY`, so reading a model needs no administration; on an older server
   it falls back to `/admin/api`.
 
+### Fixed
+- **The user given to `engine.start`, `invoke`, `assign` and `restart` was ignored**: it was sent as `userId`, which the
+  server does not read. It is sent as `userName`, so a process started for `user1` has `user1` as its initiator.
+- The contract tests ran against no server in this repository, and were skipped: they find testSampleApp's harness now.
+
 ## Release 3.5.2 (2026-11-04)
 No changes to bpmn-client; released with bpmn-server and bpmn-web 3.5.2, which share its version.
 

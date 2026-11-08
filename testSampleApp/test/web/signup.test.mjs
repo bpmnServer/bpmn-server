@@ -80,6 +80,36 @@ test('a user name or email already taken is refused, and no account is made', as
   assert.equal(await User.countDocuments({ email: 'someone-else@gmail.com' }), 0);
 });
 
+test('a user who signed up signs in again with the password chosen; a wrong one does not', async () => {
+  await signedUp('comes-back');
+  const signIn = async password => {
+    const client = web.client();
+    await client.get('/login');
+    const res = await client.post('/login', { userName: 'comes-back', password });
+    assert.equal(res.status, 302, why(res));
+    return { client, to: res.headers.get('location') };
+  };
+  const wrong = await signIn('not-the-password');
+  assert.match(wrong.to, /\/login$/, 'a wrong password: back to sign in');
+  const { client, to } = await signIn(PASSWORD);
+  assert.doesNotMatch(to, /\/login$/, 'signed in');
+  const page = await client.get('/account');
+  assert.equal(page.status, 200, why(page));
+  assert.match(page.text, /comes-back/, 'the account page is theirs');
+});
+
+test('a user name against the rule, or taken in another case, is refused, and no account is made', async () => {
+  await signedUp('Taken-Case');
+  const client = web.client();
+  await client.get('/signup');
+  for (const userName of ['', 'a', 'ann lee', '<b>x</b>', 'x'.repeat(65), 'taken-case', 'TAKEN-CASE']) {
+    const email = `name-${userName.length}-${userName.charCodeAt(0) || 0}@gmail.com`;
+    const res = await client.post('/signup', { userName, email, password: PASSWORD, confirmPassword: PASSWORD });
+    assert.match(res.headers.get('location'), /\/signup$/, `${JSON.stringify(userName)}: ${why(res)}`);
+    assert.equal(await User.countDocuments({ email }), 0, JSON.stringify(userName));
+  }
+});
+
 test('a disposable address is refused', async () => {
   const client = web.client();
   await client.get('/signup');

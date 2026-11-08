@@ -195,45 +195,56 @@ class TimerBehaviour extends Behaviour {
             setLongTimeout(expires, seconds * 1000);
     }
     async expires() {
-        let item = this['item'] as unknown as Item;
-        let timer = this['timer'];
-        let instanceId= this['instanceId'];
+        // its firing and its next repetition are one piece of work: a server stopping waits for both, or the repetitions
+        // would end when it stopped between them
+        const engine = (this['item'] as unknown as Item).token.execution.server.engine as any;
+        engine.runningCounter++;
+        try {
+
+            let item = this['item'] as unknown as Item;
+            let timer = this['timer'];
+            let instanceId= this['instanceId'];
      
-        const exec=item.token.execution;
-        item.token.log("Action:---timer Expired --- lock:"+exec.isLocked+' for '+item.id);
-        if (item.status == ITEM_STATUS.wait)    // just in case it was cancelled
-        {
-            //item.token.signal(null);
+            const exec=item.token.execution;
+            item.token.log("Action:---timer Expired --- lock:"+exec.isLocked+' for '+item.id);
+            if (item.status == ITEM_STATUS.wait)    // just in case it was cancelled
+            {
+                //item.token.signal(null);
 
-            // A call is running on this execution (it holds the lock): signal the timer's token alone; the call
-            // waits for exec.promises, then saves. (signalItem would wait for exec.promises too, itself among them.)
-            if (exec.isLocked===true)
-                exec.promises.push(item.token.signal(null));
-            else {
-                // This execution may be an old copy: fire only while the stored item still waits.
-                const stored = (await exec.server.dataStore.findItems({ "items.id": item.id }))[0];
-                if (stored && stored.status == ITEM_STATUS.wait)
-    			    await exec.server.engine.invoke({ "items.id": item.id }, null);
+                // A call is running on this execution (it holds the lock): signal the timer's token alone; the call
+                // waits for exec.promises, then saves. (signalItem would wait for exec.promises too, itself among them.)
+                if (exec.isLocked===true)
+                    exec.promises.push(item.token.signal(null));
+                else {
+                    // This execution may be an old copy: fire only while the stored item still waits.
+                    const stored = (await exec.server.dataStore.findItems({ "items.id": item.id }))[0];
+                    if (stored && stored.status == ITEM_STATUS.wait)
+        			    await exec.server.engine.invoke({ "items.id": item.id }, null);
+                }
+
             }
+            // check for repeat
+            if (timer.timeCycle) {
 
+    //console.log('repeating ',item.timerCount);
+
+                // this item is fire number timerCount + 1 (the first has 0): R3 fires three times
+                if (Number(item['timerRepeat'] ?? timer.repeat) > item.timerCount + 1) {
+
+                    let resp=await exec.server.engine.startRepeatTimerEvent(instanceId, item,{});
+                    //let newToken=await Token.startNewToken(TOKEN_TYPE.BoundaryEvent, item.token.execution, item.node, null, item.token, item, null);
+                    //let newItem = newToken.currentItem;
+                    //item.token.log('new token for timer repeat ' + item.timerCount + '  '+newItem.elementId);
+
+                    //            item.timerCount++;
+
+                    //await timer.startTimer(new);
+                }
+            }
+    
         }
-        // check for repeat
-        if (timer.timeCycle) {
-
-//console.log('repeating ',item.timerCount);
-
-            // this item is fire number timerCount + 1 (the first has 0): R3 fires three times
-            if (Number(item['timerRepeat'] ?? timer.repeat) > item.timerCount + 1) {
-
-                let resp=await exec.server.engine.startRepeatTimerEvent(instanceId, item,{});
-                //let newToken=await Token.startNewToken(TOKEN_TYPE.BoundaryEvent, item.token.execution, item.node, null, item.token, item, null);
-                //let newItem = newToken.currentItem;
-                //item.token.log('new token for timer repeat ' + item.timerCount + '  '+newItem.elementId);
-
-                //            item.timerCount++;
-
-                //await timer.startTimer(new);
-            }
+        finally {
+            engine.runningCounter--;
         }
     }
 

@@ -1,3 +1,4 @@
+// @features: gherkin-tests
 // A test set as a .feature file: what the Test tab keeps, read back as it was; what it has no form for, kept as written.
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -62,6 +63,11 @@ test('a scenario reads back as it was written, in every form', () => {
   assert.match(text, /@invoke element:"A task" in :instance/);
   assert.match(text, /Then @check :instance status is "end"/);
   assert.equal(text.match(/passed element:Submit 1 times/g).length, 2, 'after each time its step comes');
+});
+
+test('a check still being filled in is not written, and does not stop the rest being saved', () => {
+  const scenario = { ...FULL, checks: [...FULL.checks, { kind: 'node', node: '' }, { kind: 'data', path: '', op: '=' }, { kind: 'status', status: '' }] };
+  assert.deepEqual(readFeature(writeFeature(MODEL, [scenario])), [FULL]);
 });
 
 test('a decision\'s test reads back too', () => {

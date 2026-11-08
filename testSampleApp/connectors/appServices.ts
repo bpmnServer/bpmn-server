@@ -17,6 +17,17 @@ class AppServices {
     constructor(delegate) {
         this.appDelegate = delegate;
     }
+    /** The sample's Leave Application: HR's system records the approved leave (here, the log), or refuses it as RecordFailed. */
+    async recordLeave({ requester, days }, context) {
+        if (!requester || !(days > 0))
+            return { bpmnError: 'RecordFailed' };
+        return { recordId: `LV-${Date.now()}` };
+    }
+    /** The sample's Leave Application: a message to a user or a group (here, the log). */
+    async notify({ to, subject }, context) {
+        console.log(`notify ${to}: ${subject}`);
+        return { sent: new Date().toISOString() };
+    }
     async echo(input, context) {
         console.log('service echo - input', input);
         context.item.data['echo']=input;

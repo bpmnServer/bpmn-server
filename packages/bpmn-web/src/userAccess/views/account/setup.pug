@@ -1,0 +1,51 @@
+extends ../../../views/layout
+
+block content
+  style.
+    .setup { max-width: 560px; margin: 24px auto 48px; }
+    .setup h3 { margin: 0 0 6px; }
+    .setup .lead-text { color: #555; margin-bottom: 20px; }
+    .setup fieldset { border: 1px solid #dcdfe4; border-radius: 6px; padding: 14px 18px 6px; margin: 0 0 16px; }
+    .setup legend { font-size: 15px; font-weight: 600; width: auto; padding: 0 6px; margin: 0; border: 0; }
+    .setup .hint { color: #666; font-size: 13px; margin: 2px 0 10px; }
+    .setup label { display: block; font-weight: 600; margin: 8px 0 4px; }
+    .setup input[type=text], .setup input[type=email], .setup input[type=password] { width: 100%; padding: 7px 9px; border: 1px solid #c5cad3; border-radius: 4px; }
+    .setup .check { display: flex; gap: 8px; align-items: center; font-weight: 600; margin: 4px 0 8px; }
+    .setup .check input { margin: 0; }
+    .setup .error { background: #fdecea; color: #8a1c13; border: 1px solid #f5c2bd; border-radius: 4px; padding: 9px 12px; margin-bottom: 14px; }
+    .setup button { background: #2e7d32; color: #fff; border: 0; border-radius: 4px; padding: 9px 18px; font-size: 15px; }
+    .setup .after { color: #666; font-size: 13px; margin-top: 18px; }
+  .setup
+    h3 Set up this server
+    p.lead-text This server has no users yet. Create its administrator, the account that adds users, connectors and models.
+    if message
+      .error(role='alert')= message
+    form(id='setup-form', method='POST', action='/setup')
+      input(type='hidden', name='_csrf', value=_csrf)
+      fieldset
+        legend 1. Setup token
+        p.hint The server printed it where it runs, in its console or log, when it started.
+        input(type='text', name='token', id='token', value=token, autocomplete='off', aria-label='Setup token', required)
+      fieldset
+        legend 2. Administrator
+        label(for='userName') User name
+        input(type='text', name='userName', id='userName', value=values.userName || 'admin', autocomplete='username', required)
+        label(for='email') Email
+        input(type='email', name='email', id='email', value=values.email || '', autocomplete='email', required)
+        label(for='password') Password
+        input(type='password', name='password', id='password', autocomplete='new-password', minlength='8', required)
+        p.hint At least 8 characters.
+        label(for='confirmPassword') Confirm password
+        input(type='password', name='confirmPassword', id='confirmPassword', autocomplete='new-password', minlength='8', required)
+        p.hint
+      fieldset
+        legend 3. Sample users (optional)
+        p.hint For the tutorials: user1 (group Employee) and manager1 (groups Employee and Manager). Leave this off on a server real people use.
+        label.check
+          input(type='checkbox', name='sampleUsers', value='true', checked=values.sampleUsers === 'true')
+          | Add user1 and manager1
+        label(for='samplePassword') Their password
+        input(type='password', name='samplePassword', id='samplePassword', autocomplete='new-password')
+        p.hint Both get it. Needed only to add them.
+      button(type='submit') Create and sign in
+    p.after Then, from Administration: add users and their groups, and connectors. Email is set in .env. See Installation in the docs.

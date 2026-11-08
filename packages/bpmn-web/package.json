@@ -1,6 +1,6 @@
 {
   "name": "bpmn-web",
-  "version": "3.5.2",
+  "version": "3.5.6",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -120,5 +120,8 @@
     "public",
     "emailTemplates",
     "README.md"
-  ]
+  ],
+  "bin": {
+    "bpmn-web-services": "dist/scanServices.js"
+  }
 }

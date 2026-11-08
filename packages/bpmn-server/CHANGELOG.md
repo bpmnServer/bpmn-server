@@ -38,9 +38,24 @@ and here
   others keep their numbers. It takes its turn with the saves.
 
 ### Fixed
+- **`init`'s Leave Application is ready for production**: dates checked, any manager deciding, reminders while it waits,
+  the approved leave recorded through a service (with HR fixing a refusal), the employee told, every element documented,
+  and its tests beside it (`Leave Application.feature`, every path). The tutorials explain its design.
+- **`npm test` in a new application** runs every model's tests (`processes/*.feature`) in memory, for a release and
+  for CI; it exits 1 when one fails.
+- **`npm run services` in a new application** pointed at a folder that only this repository has: it is
+  `bpmn-web-services` now, a command of bpmn-web.
+- `deploy/install.sh --packages <folder>` installs packed packages (`npm pack`) instead of npm's, to test a release
+  before publishing; the application's `.env` is its user's and group's only.
+- `init`'s sample application has the model **GitHub repository**: a service task calling GitHub's REST API through a
+  connector added from the catalog, and a 404 caught by an error event (tutorial 8).
+- **Renaming or deleting a model left its tests behind**: its `.feature`, `.engine.feature` and `.tests.json` now go with it, and a
+  rename changes the model's name in its tests (the `Feature:` line and each `process:` naming it).
+- **A user task in a lane with one candidate group failed when it started** (`item.candidateGroups.push is not a function`): one group is text, and the lane's was added as to a list. Both are kept, once.
 - **A cancelled transaction ended its instance.** Every item had ended, but the token that waited on the transaction stayed waiting, so the instance stayed `running`.
 - **A transaction inside a sub-process is undone when cancelled.** Its cancel found the sub-process, not the transaction, so nothing was compensated. And an instance whose compensation had run could not be loaded again: the association it went along was not found by its id.
 - **A process timer's claim goes by its stored occurrence**, the same on every server; it went by a due time worked out on each, which could differ when overdue. A server that lost a claim takes the timer up again from the store (`timers.pollInterval`), so a repeating one goes on if the winner dies.
+- **A repeating timer stopped when its server stopped right after it fired**: the stopping engine refused the next repetition. A repetition now goes on while the server finishes its running work, which waits for it.
 - **A repeating timer stopped at a restart.** `R3/...` recovered by a server fired once and no more: how far it had got was not saved, and only the server that started it would go on. Its remaining repetitions now run.
 - **Locks refuse to run with nothing to exclude anyone.** When the unique index can not be made, it is tried; if two inserts of one id both succeed, locking fails rather than giving no protection.
 - **A process's timer start event started at the wrong place.** Its element id was passed as the user: with several start events the process began at one a user can start, and not at the timer's.

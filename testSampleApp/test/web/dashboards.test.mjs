@@ -46,8 +46,9 @@ test('my work: a task for my group, started from the start form, then completed 
 
   const started = await staff.post('/dashboard/start', { processName: MODEL, startNodeId: 'Requested' });
   assert.equal(started.status, 302, why(started));
-  const instanceId = new URL(started.location, web.base).searchParams.get('id');
-  assert.ok(instanceId, started.location);
+  assert.equal(started.location, '/dashboard', 'a user who is not a designer or an administrator: back to My work');
+  const instanceId = (await web.bpmnServer.dataStore.findInstances({ name: MODEL }, 'summary'))
+    .sort((a, b) => new Date(b.startedAt) - new Date(a.startedAt))[0].id;
 
   page = (await staff.get('/dashboard')).text;
   assert.match(card(page, 'available-tasks'), /Submit request/, 'candidate group staff');
@@ -55,12 +56,30 @@ test('my work: a task for my group, started from the start form, then completed 
 
   const instance = await web.bpmnServer.dataStore.findInstance({ id: instanceId }, 'full');
   const submit = instance.items.find(i => i.elementId === 'Submit');
-  const done = await staff.post('/invokeItem', { itemId: submit.id, processName: MODEL, days: '2', reason: 'rest' });
-  assert.ok(done.status < 400, why(done));
+  const done = await staff.post('/invokeItem', { itemId: submit.id, days: '2', reason: 'rest', returnTo: 'undefined' });
+  assert.equal(done.status, 302, why(done));
+  assert.equal(done.location, '/dashboard', 'completed: back to My work');
+  const data = (await web.bpmnServer.dataStore.findInstance({ id: instanceId }, 'full')).data;
+  assert.equal(data.reason, 'rest');
+  for (const formOnly of ['_csrf', 'returnTo', 'itemId'])
+    assert.ok(!(formOnly in data), `the form's ${formOnly} is not the task's data`);
 
   page = (await staff.get('/dashboard')).text;
   assert.match(card(page, 'completed-tasks'), /Submit request/, 'completed by staff');
   assert.doesNotMatch(card((await manager.get('/dashboard')).text, 'completed-tasks'), /Submit request/, 'not completed by manager');
+});
+
+test('designers and administrators go to the instance after starting or completing, to see what ran', async () => {
+  let id;
+  for (const client of [designer, admin]) {
+    const started = await client.post('/dashboard/start', { processName: MODEL, startNodeId: 'Requested' });
+    assert.match(started.location, /^\/instanceDetails\?id=/, client.userName);
+    id = new URL(started.location, web.base).searchParams.get('id');
+  }
+  // Submit is the staff group's: of these two, the administrator may complete it
+  const submit = (await web.bpmnServer.dataStore.findInstance({ id }, 'full')).items.find(i => i.elementId === 'Submit');
+  const done = await admin.post('/invokeItem', { itemId: submit.id, days: '2', reason: 'rest' });
+  assert.equal(done.location, `/instanceDetails?id=${encodeURIComponent(id)}`);
 });
 
 test('design: every model with its checks and the decisions', async () => {

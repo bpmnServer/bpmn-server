@@ -129,7 +129,7 @@ function writeApplication(options: InitOptions) {
         __NAME__: name, __PORT__: options.port, __API__: String(options.api), __UI__: String(options.ui),
         __RUN__: runSteps(options).join('\n'),
         __SIGNIN__: options.auth
-            ? 'Sign in as `admin`, password `admin`, and **change the password**.'
+            ? 'The first page asks for the administrator. It needs the setup token the server prints when it starts.'
             : 'Sign-in is off (`REQUIRE_AUTHENTICATION=false` in `.env`): for development only. Set it and\n`ENFORCE_SECURITY` to `true` before anyone else can reach the server.',
     });
     if (options.memory)
@@ -279,12 +279,12 @@ ${options.api ? '\nAI clients: .mcp.json registers bpmn-mcp, with what the keys 
 /** The commands that run the new application, with what each is for. */
 function runSteps(options: InitOptions): string[] {
     const open = `npm start                # http://localhost:${options.port}`;
-    const signIn = options.auth ? ', then sign in as admin (password admin)' : '';
+    const signIn = options.auth ? ', then create the administrator (the setup token is printed there)' : '';
     if (options.memory)
         return [`${open}${signIn}; a MongoDB in memory, emptied when it stops`];
     return [
         `docker compose up -d     # a MongoDB at ${options.mongo}, if you do not have one`,
-        `npm run setup            # the database's indexes and the first user (admin, password admin)`,
+        `npm run setup            # the database's indexes`,
         `${open}${signIn}`,
     ];
 }

@@ -11,7 +11,8 @@
     "cli": "tsx index.ts --cli",
     "mcp": "bpmn-mcp",
     "verify": "bpmn-server verify processes",
-    "services": "node ../packages/bpmn-web/dist/scanServices.js delegates/appDelegate.ts services.json"
+    "services": "bpmn-web-services delegates/appDelegate.ts services.json",
+    "test": "tsx test/features.ts"
   },
   "dependencies": {
     "axios": "^1.18.1",

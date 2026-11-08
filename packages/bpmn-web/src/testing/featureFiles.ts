@@ -71,11 +71,15 @@ function readCheck(text: string) {
     throw new Error(`not a check of this form: ${text}`);
 }
 
+/** A check being filled in on the Test tab (saved as it is typed) has nothing to check yet: it is not written until it has. */
+const filledIn = check => check.kind === 'node' ? !!check.node : check.kind === 'data' ? !!check.path
+    : check.kind === 'status' ? check.status != null && check.status !== '' : true;
+
 function scenarioLines(model: string, scenario, tags: string[]): string[] {
     const lines = tags.length ? [`  ${tags.join(' ')}`] : [];
     lines.push(`  Scenario: ${scenario.name}`);
     const start = scenario.start ?? {};
-    const checks = scenario.checks ?? [];
+    const checks = (scenario.checks ?? []).filter(filledIn);
     const at = (when) => checks.filter(when);
     for (const check of at(c => c.at === 'after'))
         if (!(scenario.steps ?? []).some(s => s.element === check.step))

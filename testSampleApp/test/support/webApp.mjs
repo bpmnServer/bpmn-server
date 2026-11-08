@@ -76,7 +76,7 @@ function startEngineProcess(port = '0') {
     });
 }
 
-export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_REMOTE_ENGINE && !env.ENGINE_AT } = {}) {
+export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_REMOTE_ENGINE && !env.ENGINE_AT, users = true } = {}) {
     const dbUrl = testDatabaseUrl();
     const definitionsPath = definitionsFolder();
     // the app reads its settings from the environment; dotenv never overrides these
@@ -131,7 +131,8 @@ export async function startWebApp({ env = {}, remoteEngine = !!process.env.TEST_
     await bpmnServer.dataStore.install?.();
     await bpmnServer.definitions.rebuild();
 
-    for (const [userName, userGroups] of Object.entries(USERS))
+    // users: false, a server's first start: no users at all
+    for (const [userName, userGroups] of users ? Object.entries(USERS) : [])
         await User.create({ userName, email: `${userName}@test.local`, password: PASSWORD, userGroups });
 
     webApp.start();

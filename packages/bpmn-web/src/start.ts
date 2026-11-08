@@ -82,8 +82,8 @@ export function webConfiguration(settings: Record<string, any> = {}, appDelegate
 }
 
 /**
- * The database's indexes, and the first user (admin, password ADMIN_PASSWORD, else admin) when there are no users at
- * all.
+ * The database's indexes, and the first user (admin, password ADMIN_PASSWORD) when there are no users at all; without
+ * ADMIN_PASSWORD, the server's first page asks for the administrator.
  */
 export async function setup(server: BPMNServer) {
 	await server.dataStore.install();
@@ -167,11 +167,11 @@ export async function start(options: StartOptions = {}) {
 	await webApp.bpmnServer.ready;
 	const madeAdmin = await setup(webApp.bpmnServer);
 	if (options.setupOnly) {
-		console.log(!madeAdmin
-			? 'setup done: the database is ready; it already has users, none was added'
-			: process.env.ADMIN_PASSWORD
-				? 'setup done: the database is ready; sign in as admin with the password ADMIN_PASSWORD gave'
-				: 'setup done: the database is ready; sign in as admin (password admin) and change the password');
+		console.log(madeAdmin
+			? 'setup done: the database is ready; sign in as admin with the password ADMIN_PASSWORD gave'
+			: await usersNow() > 0
+				? 'setup done: the database is ready; it already has users, none was added'
+				: 'setup done: the database is ready; no users yet: start the server, and its first page asks for the administrator');
 		await webApp.bpmnServer.shutdown();
 		process.exit(0);
 	}
@@ -180,6 +180,16 @@ export async function start(options: StartOptions = {}) {
 		await runConsole(webApp.bpmnServer);
 		return webApp;
 	}
+	// no users, and sign-in on: the pages ask for the administrator, with a token printed here
+	if (process.env.REQUIRE_AUTHENTICATION !== 'false' && await usersNow() === 0) {
+		const { beginFirstRun } = await import('./userAccess/firstRun.js');
+		beginFirstRun();
+	}
 	webApp.start();
 	return webApp;
+}
+
+async function usersNow() {
+	const { UserService } = await import('./userAccess/UserService.js');
+	return new UserService().count();
 }
