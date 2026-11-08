@@ -14,6 +14,7 @@
 
 ### Properties
 
+- [moddles](Definition.md#moddles)
 - [name](Definition.md#name)
 - [processes](Definition.md#processes)
 - [rootElements](Definition.md#rootelements)
@@ -27,6 +28,7 @@
 
 ### Methods
 
+- [moddleFor](Definition.md#moddlefor)
 - [loadProcess](Definition.md#loadprocess)
 - [load](Definition.md#load)
 - [getJson](Definition.md#getjson)
@@ -35,6 +37,7 @@
 - [getStartNodes](Definition.md#getstartnodes)
 - [getStartNode](Definition.md#getstartnode)
 - [getNodeById](Definition.md#getnodebyid)
+- [getNodeInfo](Definition.md#getnodeinfo)
 
 ## Constructors
 
@@ -48,7 +51,7 @@
 | :------ | :------ |
 | `name` | `string` |
 | `source` | `string` |
-| `server` | [`BPMNServer`](BPMNServer.md) |
+| `server` | [`IBPMNServer`](../interfaces/IBPMNServer.md) |
 
 #### Returns
 
@@ -56,9 +59,21 @@
 
 #### Defined in
 
-[elements/Definition.ts:34](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L34)
+[packages/bpmn-server/src/elements/Definition.ts:46](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L46)
 
 ## Properties
+
+### moddles
+
+▪ `Static` `Private` **moddles**: `Map`\<`object`, `BpmnModdle`\>
+
+One BpmnModdle per extension set: building one registers every BPMN type (about 190 KB and the bulk of a load's time), and parsing does not change it.
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/Definition.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L26)
+
+___
 
 ### name
 
@@ -70,7 +85,7 @@
 
 #### Defined in
 
-[elements/Definition.ts:24](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L24)
+[packages/bpmn-server/src/elements/Definition.ts:36](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L36)
 
 ___
 
@@ -84,7 +99,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:25](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L25)
+[packages/bpmn-server/src/elements/Definition.ts:37](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L37)
 
 ___
 
@@ -98,7 +113,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:26](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L26)
+[packages/bpmn-server/src/elements/Definition.ts:38](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L38)
 
 ___
 
@@ -112,7 +127,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:27](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L27)
+[packages/bpmn-server/src/elements/Definition.ts:39](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L39)
 
 ___
 
@@ -126,7 +141,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:28](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L28)
+[packages/bpmn-server/src/elements/Definition.ts:40](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L40)
 
 ___
 
@@ -140,7 +155,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:29](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L29)
+[packages/bpmn-server/src/elements/Definition.ts:41](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L41)
 
 ___
 
@@ -154,7 +169,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:30](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L30)
+[packages/bpmn-server/src/elements/Definition.ts:42](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L42)
 
 ___
 
@@ -164,7 +179,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:31](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L31)
+[packages/bpmn-server/src/elements/Definition.ts:43](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L43)
 
 ___
 
@@ -174,7 +189,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:32](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L32)
+[packages/bpmn-server/src/elements/Definition.ts:44](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L44)
 
 ___
 
@@ -188,9 +203,29 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:33](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L33)
+[packages/bpmn-server/src/elements/Definition.ts:45](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L45)
 
 ## Methods
+
+### moddleFor
+
+▸ **moddleFor**(`moddleOptions`): `BpmnModdle`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `moddleOptions` | `any` |
+
+#### Returns
+
+`BpmnModdle`
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/Definition.ts:27](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L27)
+
+___
 
 ### loadProcess
 
@@ -210,7 +245,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:44](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L44)
+[packages/bpmn-server/src/elements/Definition.ts:56](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L56)
 
 ___
 
@@ -228,7 +263,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:143](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L143)
+[packages/bpmn-server/src/elements/Definition.ts:159](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L159)
 
 ___
 
@@ -246,7 +281,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:285](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L285)
+[packages/bpmn-server/src/elements/Definition.ts:308](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L308)
 
 ___
 
@@ -271,7 +306,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:312](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L312)
+[packages/bpmn-server/src/elements/Definition.ts:336](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L336)
 
 ___
 
@@ -291,7 +326,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:325](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L325)
+[packages/bpmn-server/src/elements/Definition.ts:349](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L349)
 
 ___
 
@@ -311,13 +346,15 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:336](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L336)
+[packages/bpmn-server/src/elements/Definition.ts:360](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L360)
 
 ___
 
 ### getStartNode
 
 ▸ **getStartNode**(): `any`
+
+Where a start with no start event named begins: one a user can start (not a message, signal, timer or error start), else the first.
 
 #### Returns
 
@@ -329,7 +366,7 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:347](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L347)
+[packages/bpmn-server/src/elements/Definition.ts:372](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L372)
 
 ___
 
@@ -353,4 +390,30 @@ ___
 
 #### Defined in
 
-[elements/Definition.ts:350](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Definition.ts#L350)
+[packages/bpmn-server/src/elements/Definition.ts:375](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L375)
+
+___
+
+### getNodeInfo
+
+▸ **getNodeInfo**(`elementId`): `Object`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `elementId` | `any` |
+
+#### Returns
+
+`Object`
+
+| Name | Type |
+| :------ | :------ |
+| `node` | `any` |
+| `fields` | `any` |
+| `formKey` | `any` |
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/Definition.ts:378](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Definition.ts#L378)

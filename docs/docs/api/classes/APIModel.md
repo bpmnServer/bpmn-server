@@ -2,9 +2,11 @@
 
 # Class: APIModel
 
+Changing models: deployment and model-management tooling only (BPMNAdminAPI).
+
 ## Hierarchy
 
-- `APIComponent`
+- [`APIModelReader`](APIModelReader.md)
 
   ↳ **`APIModel`**
 
@@ -26,14 +28,15 @@
 
 - [getUser](APIModel.md#getuser)
 - [get](APIModel.md#get)
-- [save](APIModel.md#save)
 - [list](APIModel.md#list)
 - [findEvents](APIModel.md#findevents)
 - [findStartEvents](APIModel.md#findstartevents)
-- [delete](APIModel.md#delete)
-- [rename](APIModel.md#rename)
 - [getSource](APIModel.md#getsource)
 - [load](APIModel.md#load)
+- [verifyModel](APIModel.md#verifymodel)
+- [save](APIModel.md#save)
+- [delete](APIModel.md#delete)
+- [rename](APIModel.md#rename)
 - [export](APIModel.md#export)
 
 ## Constructors
@@ -54,11 +57,11 @@
 
 #### Inherited from
 
-APIComponent.constructor
+[APIModelReader](APIModelReader.md).[constructor](APIModelReader.md#constructor)
 
 #### Defined in
 
-[API/API.ts:44](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L44)
+[packages/bpmn-server/src/API/API.ts:63](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L63)
 
 ## Properties
 
@@ -68,11 +71,11 @@ APIComponent.constructor
 
 #### Inherited from
 
-APIComponent.api
+[APIModelReader](APIModelReader.md).[api](APIModelReader.md#api)
 
 #### Defined in
 
-[API/API.ts:42](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L42)
+[packages/bpmn-server/src/API/API.ts:61](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L61)
 
 ## Accessors
 
@@ -86,11 +89,11 @@ APIComponent.api
 
 #### Inherited from
 
-APIComponent.server
+APIModelReader.server
 
 #### Defined in
 
-[API/API.ts:47](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L47)
+[packages/bpmn-server/src/API/API.ts:66](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L66)
 
 ## Methods
 
@@ -110,11 +113,11 @@ APIComponent.server
 
 #### Inherited from
 
-APIComponent.getUser
+[APIModelReader](APIModelReader.md).[getUser](APIModelReader.md#getuser)
 
 #### Defined in
 
-[API/API.ts:50](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L50)
+[packages/bpmn-server/src/API/API.ts:69](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L69)
 
 ___
 
@@ -133,9 +136,167 @@ ___
 
 `Promise`\<`object`[]\>
 
+#### Inherited from
+
+[APIModelReader](APIModelReader.md).[get](APIModelReader.md#get)
+
 #### Defined in
 
-[API/API.ts:283](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L283)
+[packages/bpmn-server/src/API/API.ts:335](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L335)
+
+___
+
+### list
+
+▸ **list**(`query`, `user?`): `Promise`\<`string`[]\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
+| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
+
+#### Returns
+
+`Promise`\<`string`[]\>
+
+#### Inherited from
+
+[APIModelReader](APIModelReader.md).[list](APIModelReader.md#list)
+
+#### Defined in
+
+[packages/bpmn-server/src/API/API.ts:342](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L342)
+
+___
+
+### findEvents
+
+▸ **findEvents**(`query`, `user?`): `Promise`\<`any`[]\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
+| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
+
+#### Returns
+
+`Promise`\<`any`[]\>
+
+#### Inherited from
+
+[APIModelReader](APIModelReader.md).[findEvents](APIModelReader.md#findevents)
+
+#### Defined in
+
+[packages/bpmn-server/src/API/API.ts:349](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L349)
+
+___
+
+### findStartEvents
+
+▸ **findStartEvents**(`query`, `user?`): `Promise`\<`any`[]\>
+
+Start events the principal may use: candidate starter users/groups apply.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `query` | `any` |
+| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
+
+#### Returns
+
+`Promise`\<`any`[]\>
+
+#### Inherited from
+
+[APIModelReader](APIModelReader.md).[findStartEvents](APIModelReader.md#findstartevents)
+
+#### Defined in
+
+[packages/bpmn-server/src/API/API.ts:354](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L354)
+
+___
+
+### getSource
+
+▸ **getSource**(`name`, `user?`): `Promise`\<`string`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
+
+#### Returns
+
+`Promise`\<`string`\>
+
+#### Inherited from
+
+[APIModelReader](APIModelReader.md).[getSource](APIModelReader.md#getsource)
+
+#### Defined in
+
+[packages/bpmn-server/src/API/API.ts:361](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L361)
+
+___
+
+### load
+
+▸ **load**(`name`, `user?`): `Promise`\<[`IDefinition`](../interfaces/IDefinition.md)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `name` | `any` |
+| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
+
+#### Returns
+
+`Promise`\<[`IDefinition`](../interfaces/IDefinition.md)\>
+
+#### Inherited from
+
+[APIModelReader](APIModelReader.md).[load](APIModelReader.md#load)
+
+#### Defined in
+
+[packages/bpmn-server/src/API/API.ts:365](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L365)
+
+___
+
+### verifyModel
+
+▸ **verifyModel**(`nameOrSource`, `user?`): `Promise`\<[`IModelVerification`](../interfaces/IModelVerification.md)\>
+
+Checks a model for errors and likely mistakes without running it.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `nameOrSource` | `string` | a saved model's name, or BPMN XML |
+| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) | - |
+
+#### Returns
+
+`Promise`\<[`IModelVerification`](../interfaces/IModelVerification.md)\>
+
+#### Inherited from
+
+[APIModelReader](APIModelReader.md).[verifyModel](APIModelReader.md#verifymodel)
+
+#### Defined in
+
+[packages/bpmn-server/src/API/API.ts:373](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L373)
 
 ___
 
@@ -158,70 +319,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:294](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L294)
-
-___
-
-### list
-
-▸ **list**(`query`, `user?`): `Promise`\<`string`[]\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `query` | `any` |
-| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
-
-#### Returns
-
-`Promise`\<`string`[]\>
-
-#### Defined in
-
-[API/API.ts:302](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L302)
-
-___
-
-### findEvents
-
-▸ **findEvents**(`query`, `user?`): `Promise`\<`any`[]\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `query` | `any` |
-| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
-
-#### Returns
-
-`Promise`\<`any`[]\>
-
-#### Defined in
-
-[API/API.ts:309](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L309)
-
-___
-
-### findStartEvents
-
-▸ **findStartEvents**(`query`, `user?`): `Promise`\<`any`[]\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `query` | `any` |
-| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
-
-#### Returns
-
-`Promise`\<`any`[]\>
-
-#### Defined in
-
-[API/API.ts:314](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L314)
+[packages/bpmn-server/src/API/API.ts:396](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L396)
 
 ___
 
@@ -242,7 +340,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:321](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L321)
+[packages/bpmn-server/src/API/API.ts:403](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L403)
 
 ___
 
@@ -264,49 +362,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:326](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L326)
-
-___
-
-### getSource
-
-▸ **getSource**(`name`, `user?`): `Promise`\<`string`\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `name` | `any` |
-| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
-
-#### Returns
-
-`Promise`\<`string`\>
-
-#### Defined in
-
-[API/API.ts:333](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L333)
-
-___
-
-### load
-
-▸ **load**(`name`, `user?`): `Promise`\<[`IDefinition`](../interfaces/IDefinition.md)\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `name` | `any` |
-| `user?` | [`ISecureUser`](../interfaces/ISecureUser.md) |
-
-#### Returns
-
-`Promise`\<[`IDefinition`](../interfaces/IDefinition.md)\>
-
-#### Defined in
-
-[API/API.ts:336](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L336)
+[packages/bpmn-server/src/API/API.ts:409](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L409)
 
 ___
 
@@ -328,4 +384,4 @@ ___
 
 #### Defined in
 
-[API/API.ts:339](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L339)
+[packages/bpmn-server/src/API/API.ts:415](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L415)

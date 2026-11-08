@@ -41,8 +41,10 @@ super class for various objects that are part of the server
 - [appDelegate](ServerComponent.md#appdelegate)
 - [engine](ServerComponent.md#engine)
 - [dataStore](ServerComponent.md#datastore)
+- [lockManager](ServerComponent.md#lockmanager)
 - [definitions](ServerComponent.md#definitions)
 - [listener](ServerComponent.md#listener)
+- [scriptHandler](ServerComponent.md#scripthandler)
 
 ## Constructors
 
@@ -62,7 +64,7 @@ super class for various objects that are part of the server
 
 #### Defined in
 
-[server/ServerComponent.ts:10](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L10)
+[packages/bpmn-server/src/server/ServerComponent.ts:11](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L11)
 
 ## Properties
 
@@ -72,7 +74,7 @@ super class for various objects that are part of the server
 
 #### Defined in
 
-[server/ServerComponent.ts:9](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L9)
+[packages/bpmn-server/src/server/ServerComponent.ts:10](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L10)
 
 ## Accessors
 
@@ -86,7 +88,7 @@ super class for various objects that are part of the server
 
 #### Defined in
 
-[server/ServerComponent.ts:14](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L14)
+[packages/bpmn-server/src/server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L15)
 
 ___
 
@@ -100,7 +102,7 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:15](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L15)
+[packages/bpmn-server/src/server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L16)
 
 ___
 
@@ -114,21 +116,21 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:16](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L16)
+[packages/bpmn-server/src/server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L17)
 
 ___
 
 ### cache
 
-• `get` **cache**(): [`CacheManager`](CacheManager.md)
+• `get` **cache**(): [`ICacheManager`](../interfaces/ICacheManager.md)
 
 #### Returns
 
-[`CacheManager`](CacheManager.md)
+[`ICacheManager`](../interfaces/ICacheManager.md)
 
 #### Defined in
 
-[server/ServerComponent.ts:17](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L17)
+[packages/bpmn-server/src/server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L18)
 
 ___
 
@@ -142,7 +144,7 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:18](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L18)
+[packages/bpmn-server/src/server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L19)
 
 ___
 
@@ -156,7 +158,7 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:19](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L19)
+[packages/bpmn-server/src/server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L20)
 
 ___
 
@@ -170,7 +172,23 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:20](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L20)
+[packages/bpmn-server/src/server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L21)
+
+___
+
+### lockManager
+
+• `get` **lockManager**(): `any`
+
+The lock port: the configuration's, else the data store's.
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[packages/bpmn-server/src/server/ServerComponent.ts:23](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L23)
 
 ___
 
@@ -184,7 +202,7 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:21](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L21)
+[packages/bpmn-server/src/server/ServerComponent.ts:24](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L24)
 
 ___
 
@@ -198,4 +216,18 @@ ___
 
 #### Defined in
 
-[server/ServerComponent.ts:22](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/ServerComponent.ts#L22)
+[packages/bpmn-server/src/server/ServerComponent.ts:25](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L25)
+
+___
+
+### scriptHandler
+
+• `get` **scriptHandler**(): `any`
+
+#### Returns
+
+`any`
+
+#### Defined in
+
+[packages/bpmn-server/src/server/ServerComponent.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/ServerComponent.ts#L26)

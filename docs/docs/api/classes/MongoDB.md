@@ -2,6 +2,12 @@
 
 # Class: MongoDB
 
+The MongoDB adapter of the storage port: one client, opened on first use, closed by `close()`.
+
+## Implements
+
+- [`IDocumentStore`](../interfaces/IDocumentStore.md)
+
 ## Table of contents
 
 ### Constructors
@@ -11,6 +17,7 @@
 ### Properties
 
 - [client](MongoDB.md#client)
+- [connecting](MongoDB.md#connecting)
 - [dbConfig](MongoDB.md#dbconfig)
 - [logger](MongoDB.md#logger)
 - [operation](MongoDB.md#operation)
@@ -21,12 +28,13 @@
 - [profilerEnd](MongoDB.md#profilerend)
 - [getClient](MongoDB.md#getclient)
 - [find](MongoDB.md#find)
+- [count](MongoDB.md#count)
 - [createIndex](MongoDB.md#createindex)
 - [insert](MongoDB.md#insert)
 - [update](MongoDB.md#update)
-- [update2](MongoDB.md#update2)
 - [remove](MongoDB.md#remove)
 - [removeById](MongoDB.md#removebyid)
+- [close](MongoDB.md#close)
 - [connect](MongoDB.md#connect)
 
 ## Constructors
@@ -48,17 +56,27 @@
 
 #### Defined in
 
-[datastore/MongoDB.ts:23](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/MongoDB.ts#L23)
+[packages/bpmn-server/src/datastore/MongoDB.ts:35](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L35)
 
 ## Properties
 
 ### client
 
-• **client**: `any`
+• **client**: `MongoClient` = `null`
 
 #### Defined in
 
-[datastore/MongoDB.ts:19](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/MongoDB.ts#L19)
+[packages/bpmn-server/src/datastore/MongoDB.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L29)
+
+___
+
+### connecting
+
+• `Private` **connecting**: `Promise`\<`MongoClient`\> = `null`
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/MongoDB.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L30)
 
 ___
 
@@ -68,7 +86,7 @@ ___
 
 #### Defined in
 
-[datastore/MongoDB.ts:20](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/MongoDB.ts#L20)
+[packages/bpmn-server/src/datastore/MongoDB.ts:31](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L31)
 
 ___
 
@@ -78,17 +96,17 @@ ___
 
 #### Defined in
 
-[datastore/MongoDB.ts:21](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/MongoDB.ts#L21)
+[packages/bpmn-server/src/datastore/MongoDB.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L32)
 
 ___
 
 ### operation
 
-• **operation**: `any`
+• **operation**: `string`
 
 #### Defined in
 
-[datastore/MongoDB.ts:22](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/MongoDB.ts#L22)
+[packages/bpmn-server/src/datastore/MongoDB.ts:33](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L33)
 
 ## Methods
 
@@ -100,7 +118,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `operation` | `any` |
+| `operation` | `string` |
 
 #### Returns
 
@@ -108,7 +126,7 @@ ___
 
 #### Defined in
 
-[datastore/MongoDB.ts:28](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/MongoDB.ts#L28)
+[packages/bpmn-server/src/datastore/MongoDB.ts:40](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L40)
 
 ___
 
@@ -122,27 +140,29 @@ ___
 
 #### Defined in
 
-[datastore/MongoDB.ts:33](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/MongoDB.ts#L33)
+[packages/bpmn-server/src/datastore/MongoDB.ts:45](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L45)
 
 ___
 
 ### getClient
 
-▸ **getClient**(): `Promise`\<`any`\>
+▸ **getClient**(): `Promise`\<`MongoClient`\>
 
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<`MongoClient`\>
 
 #### Defined in
 
-[datastore/MongoDB.ts:38](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/MongoDB.ts#L38)
+[packages/bpmn-server/src/datastore/MongoDB.ts:49](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L49)
 
 ___
 
 ### find
 
-▸ **find**(`dbName`, `collName`, `qry`, `projection?`): `Promise`\<`unknown`\>
+▸ **find**(`dbName`, `collName`, `qry`, `projection?`, `sort?`): `Promise`\<`WithId`\<`Document`\>[]\>
+
+Documents of `collection` matching `query`, projected and sorted. `database` names the logical database (MongoDB's db name; ignored by single-database adapters).
 
 #### Parameters
 
@@ -152,20 +172,55 @@ ___
 | `collName` | `any` | `undefined` |
 | `qry` | `any` | `undefined` |
 | `projection` | `any` | `null` |
+| `sort` | `any` | `null` |
 
 #### Returns
 
-`Promise`\<`unknown`\>
+`Promise`\<`WithId`\<`Document`\>[]\>
+
+#### Implementation of
+
+[IDocumentStore](../interfaces/IDocumentStore.md).[find](../interfaces/IDocumentStore.md#find)
 
 #### Defined in
 
-[datastore/MongoDB.ts:45](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/MongoDB.ts#L45)
+[packages/bpmn-server/src/datastore/MongoDB.ts:56](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L56)
+
+___
+
+### count
+
+▸ **count**(`dbName`, `collName`, `qry`): `Promise`\<`number`\>
+
+How many documents of `collection` match `query`. Optional: without it, callers count what [find](../interfaces/IDocumentStore.md#find) returns.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `dbName` | `any` |
+| `collName` | `any` |
+| `qry` | `any` |
+
+#### Returns
+
+`Promise`\<`number`\>
+
+#### Implementation of
+
+[IDocumentStore](../interfaces/IDocumentStore.md).[count](../interfaces/IDocumentStore.md#count)
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/MongoDB.ts:72](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L72)
 
 ___
 
 ### createIndex
 
-▸ **createIndex**(`dbName`, `collName`, `index`, `unique?`): `Promise`\<`unknown`\>
+▸ **createIndex**(`dbName`, `collName`, `index`, `unique?`): `Promise`\<`string`\>
+
+Declares an index; `{ unique: true }` makes [insert](../interfaces/IDocumentStore.md#insert) refuse a second document with the same values. Idempotent.
 
 #### Parameters
 
@@ -174,21 +229,27 @@ ___
 | `dbName` | `any` |
 | `collName` | `any` |
 | `index` | `any` |
-| `unique` | `Object` |
+| `unique` | `any` |
 
 #### Returns
 
-`Promise`\<`unknown`\>
+`Promise`\<`string`\>
+
+#### Implementation of
+
+[IDocumentStore](../interfaces/IDocumentStore.md).[createIndex](../interfaces/IDocumentStore.md#createindex)
 
 #### Defined in
 
-[datastore/MongoDB.ts:74](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/MongoDB.ts#L74)
+[packages/bpmn-server/src/datastore/MongoDB.ts:83](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L83)
 
 ___
 
 ### insert
 
-▸ **insert**(`dbName`, `collName`, `docs`): `Promise`\<`unknown`\>
+▸ **insert**(`dbName`, `collName`, `docs`): `Promise`\<`number`\>
+
+Inserts all of `documents`, or none: a unique-index conflict throws a [DuplicateKeyError](DuplicateKeyError.md); any other failure throws as it is. Returns how many were inserted.
 
 #### Parameters
 
@@ -200,17 +261,23 @@ ___
 
 #### Returns
 
-`Promise`\<`unknown`\>
+`Promise`\<`number`\>
+
+#### Implementation of
+
+[IDocumentStore](../interfaces/IDocumentStore.md).[insert](../interfaces/IDocumentStore.md#insert)
 
 #### Defined in
 
-[datastore/MongoDB.ts:99](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/MongoDB.ts#L99)
+[packages/bpmn-server/src/datastore/MongoDB.ts:101](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L101)
 
 ___
 
 ### update
 
-▸ **update**(`dbName`, `collName`, `query`, `updateObject`, `options?`): `Promise`\<`unknown`\>
+▸ **update**(`dbName`, `collName`, `query`, `updateObject`, `options?`): `Promise`\<`number`\>
+
+Updates the first document matching `query` (`$set` fields, or replaces it); `{ upsert: true }` inserts when none matches. Returns how many were modified.
 
 #### Parameters
 
@@ -220,45 +287,27 @@ ___
 | `collName` | `any` |
 | `query` | `any` |
 | `updateObject` | `any` |
-| `options` | `Object` |
+| `options` | `any` |
 
 #### Returns
 
-`Promise`\<`unknown`\>
+`Promise`\<`number`\>
+
+#### Implementation of
+
+[IDocumentStore](../interfaces/IDocumentStore.md).[update](../interfaces/IDocumentStore.md#update)
 
 #### Defined in
 
-[datastore/MongoDB.ts:126](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/MongoDB.ts#L126)
-
-___
-
-### update2
-
-▸ **update2**(`dbName`, `collName`, `query`, `updateObject`, `options?`): `Promise`\<`unknown`\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `dbName` | `any` |
-| `collName` | `any` |
-| `query` | `any` |
-| `updateObject` | `any` |
-| `options` | `Object` |
-
-#### Returns
-
-`Promise`\<`unknown`\>
-
-#### Defined in
-
-[datastore/MongoDB.ts:151](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/MongoDB.ts#L151)
+[packages/bpmn-server/src/datastore/MongoDB.ts:117](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L117)
 
 ___
 
 ### remove
 
-▸ **remove**(`dbName`, `collName`, `query`): `Promise`\<`unknown`\>
+▸ **remove**(`dbName`, `collName`, `query`): `Promise`\<`DeleteResult`\>
+
+Removes every document matching `query`; returns `{ deletedCount }`.
 
 #### Parameters
 
@@ -270,17 +319,21 @@ ___
 
 #### Returns
 
-`Promise`\<`unknown`\>
+`Promise`\<`DeleteResult`\>
+
+#### Implementation of
+
+[IDocumentStore](../interfaces/IDocumentStore.md).[remove](../interfaces/IDocumentStore.md#remove)
 
 #### Defined in
 
-[datastore/MongoDB.ts:176](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/MongoDB.ts#L176)
+[packages/bpmn-server/src/datastore/MongoDB.ts:131](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L131)
 
 ___
 
 ### removeById
 
-▸ **removeById**(`dbName`, `collName`, `id`): `Promise`\<`unknown`\>
+▸ **removeById**(`dbName`, `collName`, `id`): `Promise`\<`DeleteResult`\>
 
 #### Parameters
 
@@ -292,22 +345,42 @@ ___
 
 #### Returns
 
-`Promise`\<`unknown`\>
+`Promise`\<`DeleteResult`\>
 
 #### Defined in
 
-[datastore/MongoDB.ts:206](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/MongoDB.ts#L206)
+[packages/bpmn-server/src/datastore/MongoDB.ts:149](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L149)
+
+___
+
+### close
+
+▸ **close**(): `Promise`\<`void`\>
+
+Releases connections. Idempotent.
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+[IDocumentStore](../interfaces/IDocumentStore.md).[close](../interfaces/IDocumentStore.md#close)
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/MongoDB.ts:163](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L163)
 
 ___
 
 ### connect
 
-▸ **connect**(): `Promise`\<`unknown`\>
+▸ **connect**(): `Promise`\<`MongoClient`\>
 
 #### Returns
 
-`Promise`\<`unknown`\>
+`Promise`\<`MongoClient`\>
 
 #### Defined in
 
-[datastore/MongoDB.ts:234](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/MongoDB.ts#L234)
+[packages/bpmn-server/src/datastore/MongoDB.ts:170](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/MongoDB.ts#L170)

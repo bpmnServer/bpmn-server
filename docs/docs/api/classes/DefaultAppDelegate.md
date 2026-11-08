@@ -58,7 +58,7 @@ Application Delegate Object to respond to various events and services:
 
 #### Defined in
 
-[engine/DefaultAppDelegate.ts:11](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/DefaultAppDelegate.ts#L11)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:10](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L10)
 
 ## Properties
 
@@ -68,26 +68,17 @@ Application Delegate Object to respond to various events and services:
 
 #### Defined in
 
-[engine/DefaultAppDelegate.ts:8](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/DefaultAppDelegate.ts#L8)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:7](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L7)
 
 ## Accessors
 
 ### moddleOptions
 
-• `get` **moddleOptions**(): `Object`
+• `get` **moddleOptions**(): `any`
 
 #### Returns
 
-`Object`
-
-| Name | Type |
-| :------ | :------ |
-| `name` | `string` |
-| `uri` | `string` |
-| `prefix` | `string` |
-| `xml` | \{ `tagAlias`: `string` = "lowerCase" } |
-| `xml.tagAlias` | `string` |
-| `types` | (\{ `name`: `string` = "Task"; `isAbstract`: `boolean` = true; `extends`: `string`[] ; `properties`: \{ `name`: `string` = "result"; `isAttr`: `boolean` = true; `type`: `string` = "String" }[] ; `superClass?`: `undefined`  } \| \{ `isAbstract?`: `undefined` = true; `extends?`: `undefined` ; `properties?`: `undefined` ; `name`: `string` = "Output"; `superClass`: `string`[]  })[] |
+`any`
 
 #### Implementation of
 
@@ -95,13 +86,15 @@ Application Delegate Object to respond to various events and services:
 
 #### Defined in
 
-[engine/DefaultAppDelegate.ts:29](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/DefaultAppDelegate.ts#L29)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L30)
 
 ## Methods
 
 ### getServicesProvider
 
-▸ **getServicesProvider**(`context`): `Promise`\<[`DefaultAppDelegate`](DefaultAppDelegate.md)\>
+▸ **getServicesProvider**(`context`): `Promise`\<[`IServiceProvider`](../interfaces/IServiceProvider.md)\>
+
+Get the service task handlers, default to `this`, so you can add handlers on this class directly.
 
 #### Parameters
 
@@ -111,7 +104,7 @@ Application Delegate Object to respond to various events and services:
 
 #### Returns
 
-`Promise`\<[`DefaultAppDelegate`](DefaultAppDelegate.md)\>
+`Promise`\<[`IServiceProvider`](../interfaces/IServiceProvider.md)\>
 
 #### Implementation of
 
@@ -119,7 +112,7 @@ Application Delegate Object to respond to various events and services:
 
 #### Defined in
 
-[engine/DefaultAppDelegate.ts:18](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/DefaultAppDelegate.ts#L18)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L18)
 
 ___
 
@@ -143,7 +136,7 @@ ___
 
 #### Defined in
 
-[engine/DefaultAppDelegate.ts:22](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/DefaultAppDelegate.ts#L22)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:22](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L22)
 
 ___
 
@@ -169,7 +162,7 @@ ___
 
 #### Defined in
 
-[engine/DefaultAppDelegate.ts:25](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/DefaultAppDelegate.ts#L25)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L26)
 
 ___
 
@@ -193,7 +186,7 @@ ___
 
 #### Defined in
 
-[engine/DefaultAppDelegate.ts:32](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/DefaultAppDelegate.ts#L32)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:34](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L34)
 
 ___
 
@@ -214,7 +207,7 @@ ___
 
 #### Defined in
 
-[engine/DefaultAppDelegate.ts:35](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/DefaultAppDelegate.ts#L35)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:38](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L38)
 
 ___
 
@@ -243,7 +236,7 @@ is called when a event throws a message
 
 #### Defined in
 
-[engine/DefaultAppDelegate.ts:46](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/DefaultAppDelegate.ts#L46)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:50](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L50)
 
 ___
 
@@ -270,7 +263,7 @@ is called when an event throws a message that can not be answered by another pro
 
 #### Defined in
 
-[engine/DefaultAppDelegate.ts:64](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/DefaultAppDelegate.ts#L64)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:68](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L68)
 
 ___
 
@@ -295,7 +288,7 @@ ___
 
 #### Defined in
 
-[engine/DefaultAppDelegate.ts:67](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/DefaultAppDelegate.ts#L67)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:71](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L71)
 
 ___
 
@@ -322,7 +315,7 @@ ___
 
 #### Defined in
 
-[engine/DefaultAppDelegate.ts:70](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/DefaultAppDelegate.ts#L70)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:74](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L74)
 
 ___
 
@@ -350,4 +343,4 @@ is called only if the serviceTask has no implementation; otherwise the specified
 
 #### Defined in
 
-[engine/DefaultAppDelegate.ts:82](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/engine/DefaultAppDelegate.ts#L82)
+[packages/bpmn-server/src/engine/DefaultAppDelegate.ts:86](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/engine/DefaultAppDelegate.ts#L86)

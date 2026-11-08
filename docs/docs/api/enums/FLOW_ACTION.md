@@ -17,7 +17,7 @@
 
 #### Defined in
 
-[interfaces/Enums.ts:97](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/Enums.ts#L97)
+[packages/bpmn-server/src/interfaces/Enums.ts:99](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/Enums.ts#L99)
 
 ___
 
@@ -27,4 +27,4 @@ ___
 
 #### Defined in
 
-[interfaces/Enums.ts:97](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/interfaces/Enums.ts#L97)
+[packages/bpmn-server/src/interfaces/Enums.ts:99](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/interfaces/Enums.ts#L99)

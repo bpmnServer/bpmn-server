@@ -3,6 +3,7 @@
   "entryPoints": ["./src/"],
   "out": "../../docs/docs/api",
   "sort":"source-order",
+  "skipErrorChecking": true,
   "compilerOptions": {
     "strictNullChecks": false,
     "skipLibCheck": true,

@@ -12,13 +12,20 @@ root object to api
 
  api.engine  to access engine functions (start,invoke..)
  api.data    to access dataStore functions (find.. delete)
- api.model   to access Model functions (list,save,export..)
+ api.model   to read models (list, start events, source, verify)
+
+ Changing models (save, delete, rename) is available only through BPMNAdminAPI.
 
  api cli:
  >api engine start       --name 'Buy Used Car'   --data caseId 1003
  >api engine invoke      --query name 'Buy Used Car' items.status wait name 'Buy'     --data carModel 'Mazda 3'
  >api data   findItems   --query name 'Buy Used Car' items.status wait
- >api model  list
+
+## Hierarchy
+
+- **`BPMNAPI`**
+
+  ↳ [`BPMNAdminAPI`](BPMNAdminAPI.md)
 
 ## Table of contents
 
@@ -32,7 +39,6 @@ root object to api
 - [engine](BPMNAPI.md#engine)
 - [data](BPMNAPI.md#data)
 - [model](BPMNAPI.md#model)
-- [defaultUser](BPMNAPI.md#defaultuser)
 
 ## Constructors
 
@@ -52,7 +58,7 @@ root object to api
 
 #### Defined in
 
-[API/API.ts:34](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L34)
+[packages/bpmn-server/src/API/API.ts:40](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L40)
 
 ## Properties
 
@@ -62,7 +68,7 @@ root object to api
 
 #### Defined in
 
-[API/API.ts:28](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L28)
+[packages/bpmn-server/src/API/API.ts:34](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L34)
 
 ___
 
@@ -72,7 +78,7 @@ ___
 
 #### Defined in
 
-[API/API.ts:29](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L29)
+[packages/bpmn-server/src/API/API.ts:35](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L35)
 
 ___
 
@@ -82,24 +88,16 @@ ___
 
 #### Defined in
 
-[API/API.ts:30](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L30)
+[packages/bpmn-server/src/API/API.ts:36](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L36)
 
 ___
 
 ### model
 
-• **model**: [`APIModel`](APIModel.md)
+• **model**: [`APIModelReader`](APIModelReader.md)
+
+Read-only: changing models needs BPMNAdminAPI.
 
 #### Defined in
 
-[API/API.ts:31](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L31)
-
-___
-
-### defaultUser
-
-• **defaultUser**: [`ISecureUser`](../interfaces/ISecureUser.md)
-
-#### Defined in
-
-[API/API.ts:32](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/API/API.ts#L32)
+[packages/bpmn-server/src/API/API.ts:38](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/API/API.ts#L38)

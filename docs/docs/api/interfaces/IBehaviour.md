@@ -42,7 +42,7 @@ Behaviour
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:24](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L24)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L29)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:25](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L25)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L30)
 
 ## Methods
 
@@ -72,7 +72,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:26](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L26)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:31](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L31)
 
 ___
 
@@ -92,7 +92,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:27](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L27)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:32](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L32)
 
 ___
 
@@ -112,7 +112,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:28](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L28)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:33](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L33)
 
 ___
 
@@ -132,7 +132,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:29](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L29)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:34](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L34)
 
 ___
 
@@ -152,7 +152,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:30](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L30)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:35](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L35)
 
 ___
 
@@ -172,7 +172,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:31](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L31)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:36](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L36)
 
 ___
 
@@ -193,7 +193,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:32](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L32)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:37](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L37)
 
 ___
 
@@ -207,7 +207,7 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:33](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L33)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:38](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L38)
 
 ___
 
@@ -221,4 +221,4 @@ ___
 
 #### Defined in
 
-[elements/behaviours/Behaviour.ts:34](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/behaviours/Behaviour.ts#L34)
+[packages/bpmn-server/src/elements/behaviours/Behaviour.ts:39](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/behaviours/Behaviour.ts#L39)

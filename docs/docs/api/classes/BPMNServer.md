@@ -2,18 +2,7 @@
 
 # Class: BPMNServer
 
-The main class of Server Layer
-	provides the full functionalities:
-	
-		at start of the app:
-			new BPMNServer(configuration,options);
-			
-		after that point:
-		
-			BPMNServer.engine.start(...)
-			BPMNServer.engine.invoke(...)
-			BPMNServer.dataStore.findInstances(...)
-			BPMNServer.dataStore.findItems(...)
+Process-wide error handling belongs to the host.
 
 ## Implements
 
@@ -27,6 +16,7 @@ The main class of Server Layer
 
 ### Properties
 
+- [legacyInstance](BPMNServer.md#legacyinstance)
 - [engine](BPMNServer.md#engine)
 - [listener](BPMNServer.md#listener)
 - [configuration](BPMNServer.md#configuration)
@@ -35,9 +25,15 @@ The main class of Server Layer
 - [appDelegate](BPMNServer.md#appdelegate)
 - [dataStore](BPMNServer.md#datastore)
 - [cache](BPMNServer.md#cache)
+- [scriptHandler](BPMNServer.md#scripthandler)
 - [cron](BPMNServer.md#cron)
+- [documentStore](BPMNServer.md#documentstore)
+- [locker](BPMNServer.md#locker)
+- [connectors](BPMNServer.md#connectors)
+- [testStubs](BPMNServer.md#teststubs)
 - [error](BPMNServer.md#error)
-- [instance](BPMNServer.md#instance)
+- [ready](BPMNServer.md#ready)
+- [shuttingDown](BPMNServer.md#shuttingdown)
 
 ### Accessors
 
@@ -45,9 +41,16 @@ The main class of Server Layer
 
 ### Methods
 
+- [launch](BPMNServer.md#launch)
+- [create](BPMNServer.md#create)
+- [start](BPMNServer.md#start)
+- [onLifecycle](BPMNServer.md#onlifecycle)
+- [shutdown](BPMNServer.md#shutdown)
+- [stop](BPMNServer.md#stop)
+- [report](BPMNServer.md#report)
 - [status](BPMNServer.md#status)
-- [getVersion](BPMNServer.md#getversion)
 - [getInstance](BPMNServer.md#getinstance)
+- [getVersion](BPMNServer.md#getversion)
 
 ## Constructors
 
@@ -55,7 +58,7 @@ The main class of Server Layer
 
 • **new BPMNServer**(`configuration`, `logger?`, `options?`): [`BPMNServer`](BPMNServer.md)
 
-Server Constructor
+Server Constructor: builds the server's components and starts it; `ready` says when it has started.
 
 #### Parameters
 
@@ -71,9 +74,21 @@ Server Constructor
 
 #### Defined in
 
-[server/BPMNServer.ts:64](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/BPMNServer.ts#L64)
+[packages/bpmn-server/src/server/BPMNServer.ts:107](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L107)
 
 ## Properties
+
+### legacyInstance
+
+▪ `Static` `Private` **legacyInstance**: [`BPMNServer`](BPMNServer.md)
+
+Legacy static access retained for existing consumers; new integrations use instances.
+
+#### Defined in
+
+[packages/bpmn-server/src/server/BPMNServer.ts:49](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L49)
+
+___
 
 ### engine
 
@@ -85,13 +100,13 @@ Server Constructor
 
 #### Defined in
 
-[server/BPMNServer.ts:44](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/BPMNServer.ts#L44)
+[packages/bpmn-server/src/server/BPMNServer.ts:52](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L52)
 
 ___
 
 ### listener
 
-• **listener**: `EventEmitter`
+• **listener**: [`Listener`](Listener.md)
 
 #### Implementation of
 
@@ -99,7 +114,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:45](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/BPMNServer.ts#L45)
+[packages/bpmn-server/src/server/BPMNServer.ts:53](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L53)
 
 ___
 
@@ -113,7 +128,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:46](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/BPMNServer.ts#L46)
+[packages/bpmn-server/src/server/BPMNServer.ts:54](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L54)
 
 ___
 
@@ -127,7 +142,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:47](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/BPMNServer.ts#L47)
+[packages/bpmn-server/src/server/BPMNServer.ts:55](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L55)
 
 ___
 
@@ -141,7 +156,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:48](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/BPMNServer.ts#L48)
+[packages/bpmn-server/src/server/BPMNServer.ts:56](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L56)
 
 ___
 
@@ -155,7 +170,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:49](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/BPMNServer.ts#L49)
+[packages/bpmn-server/src/server/BPMNServer.ts:57](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L57)
 
 ___
 
@@ -169,7 +184,7 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:50](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/BPMNServer.ts#L50)
+[packages/bpmn-server/src/server/BPMNServer.ts:58](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L58)
 
 ___
 
@@ -183,7 +198,21 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:51](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/BPMNServer.ts#L51)
+[packages/bpmn-server/src/server/BPMNServer.ts:59](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L59)
+
+___
+
+### scriptHandler
+
+• **scriptHandler**: [`IScriptHandler`](../interfaces/IScriptHandler.md)
+
+#### Implementation of
+
+[IBPMNServer](../interfaces/IBPMNServer.md).[scriptHandler](../interfaces/IBPMNServer.md#scripthandler)
+
+#### Defined in
+
+[packages/bpmn-server/src/server/BPMNServer.ts:60](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L60)
 
 ___
 
@@ -197,7 +226,71 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:52](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/BPMNServer.ts#L52)
+[packages/bpmn-server/src/server/BPMNServer.ts:61](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L61)
+
+___
+
+### documentStore
+
+• `Optional` **documentStore**: [`IDocumentStore`](../interfaces/IDocumentStore.md)
+
+The configuration's storage adapter, shared by the data stores (absent: each opens MongoDB).
+
+#### Implementation of
+
+[IBPMNServer](../interfaces/IBPMNServer.md).[documentStore](../interfaces/IBPMNServer.md#documentstore)
+
+#### Defined in
+
+[packages/bpmn-server/src/server/BPMNServer.ts:63](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L63)
+
+___
+
+### locker
+
+• **locker**: [`ILockManager`](../interfaces/ILockManager.md)
+
+The lock port the engine uses.
+
+#### Implementation of
+
+[IBPMNServer](../interfaces/IBPMNServer.md).[locker](../interfaces/IBPMNServer.md#locker)
+
+#### Defined in
+
+[packages/bpmn-server/src/server/BPMNServer.ts:65](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L65)
+
+___
+
+### connectors
+
+• **connectors**: [`Connectors`](Connectors.md)
+
+The connectors an administrator added: REST APIs service tasks call (docs/docs/connectors.md).
+
+#### Implementation of
+
+[IBPMNServer](../interfaces/IBPMNServer.md).[connectors](../interfaces/IBPMNServer.md#connectors)
+
+#### Defined in
+
+[packages/bpmn-server/src/server/BPMNServer.ts:67](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L67)
+
+___
+
+### testStubs
+
+• **testStubs**: [`TestStubs`](TestStubs.md)
+
+What the tests running in here replace: no call of the engine reaches them.
+
+#### Implementation of
+
+[IBPMNServer](../interfaces/IBPMNServer.md).[testStubs](../interfaces/IBPMNServer.md#teststubs)
+
+#### Defined in
+
+[packages/bpmn-server/src/server/BPMNServer.ts:69](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L69)
 
 ___
 
@@ -207,17 +300,29 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:53](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/BPMNServer.ts#L53)
+[packages/bpmn-server/src/server/BPMNServer.ts:70](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L70)
 
 ___
 
-### instance
+### ready
 
-▪ `Static` `Private` **instance**: [`BPMNServer`](BPMNServer.md)
+• `Readonly` **ready**: `Promise`\<`void`\>
+
+Settles when the server has started: the application delegate's start-up, then (unless `cron: false`) the timers. Rejects with the reason it could not start.
 
 #### Defined in
 
-[server/BPMNServer.ts:55](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/BPMNServer.ts#L55)
+[packages/bpmn-server/src/server/BPMNServer.ts:72](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L72)
+
+___
+
+### shuttingDown
+
+• `Private` **shuttingDown**: `Promise`\<`void`\> = `null`
+
+#### Defined in
+
+[packages/bpmn-server/src/server/BPMNServer.ts:73](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L73)
 
 ## Accessors
 
@@ -229,11 +334,170 @@ ___
 
 [`Engine`](Engine.md)
 
+**`Deprecated`**
+
+Prefer server.engine.
+
 #### Defined in
 
-[server/BPMNServer.ts:117](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/BPMNServer.ts#L117)
+[packages/bpmn-server/src/server/BPMNServer.ts:189](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L189)
 
 ## Methods
+
+### launch
+
+▸ **launch**(`configuration`, `logger?`, `options?`): [`LaunchedServer`](LaunchedServer.md)
+
+Launches a server, instead of embedding one as `new BPMNServer` does: what you get is outside its engine, and answers
+data, not running executions. The delegate and services are inside the engine, and keep them.
+`engine` says where the engine is: left out, in this process; `'http://...'`, there (startEngineService, with `engineKey`);
+`'none'`, nowhere: models can be edited and saved, and what would run answers EngineNotRunningError.
+`calls` adds to what the engine in this process can be asked; an engine elsewhere has its own (startEngineService's `calls`).
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `configuration` | [`IConfiguration`](../interfaces/IConfiguration.md) |
+| `logger?` | [`ILogger`](../interfaces/ILogger.md) |
+| `options` | `Object` |
+| `options.engine?` | `string` |
+| `options.engineKey?` | `string` |
+| `options.engineTimeout?` | `number` |
+| `options.calls?` | (`server`: [`BPMNServer`](BPMNServer.md)) => `Record`\<`string`, (...`args`: `any`[]) => `Promise`\<`any`\>\> |
+| `options.cron?` | `boolean` |
+
+#### Returns
+
+[`LaunchedServer`](LaunchedServer.md)
+
+#### Defined in
+
+[packages/bpmn-server/src/server/BPMNServer.ts:85](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L85)
+
+___
+
+### create
+
+▸ **create**(`configuration`, `logger?`, `options?`): `Promise`\<[`BPMNServer`](BPMNServer.md)\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `configuration` | [`IConfiguration`](../interfaces/IConfiguration.md) |
+| `logger?` | [`ILogger`](../interfaces/ILogger.md) |
+| `options` | `Object` |
+
+#### Returns
+
+`Promise`\<[`BPMNServer`](BPMNServer.md)\>
+
+#### Defined in
+
+[packages/bpmn-server/src/server/BPMNServer.ts:94](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L94)
+
+___
+
+### start
+
+▸ **start**(`options`): `Promise`\<`void`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `any` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/server/BPMNServer.ts:136](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L136)
+
+___
+
+### onLifecycle
+
+▸ **onLifecycle**(`listener`): () => `void`
+
+Subscribe without coupling the engine to application implementations.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `listener` | [`ILifecycleListener`](../interfaces/ILifecycleListener.md) |
+
+#### Returns
+
+`fn`
+
+▸ (): `void`
+
+##### Returns
+
+`void`
+
+#### Defined in
+
+[packages/bpmn-server/src/server/BPMNServer.ts:142](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L142)
+
+___
+
+### shutdown
+
+▸ **shutdown**(): `Promise`\<`void`\>
+
+Stops the server, once however often it is called: new engine calls are refused, its timers
+cancelled, running executions given `shutdownTimeout` ms to finish (then left to the locks'
+stale age), its cache, listeners and subscriptions cleared, and its connections closed.
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/server/BPMNServer.ts:150](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L150)
+
+___
+
+### stop
+
+▸ **stop**(): `Promise`\<`void`\>
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[packages/bpmn-server/src/server/BPMNServer.ts:154](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L154)
+
+___
+
+### report
+
+▸ **report**(`error`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `error` | `any` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[packages/bpmn-server/src/server/BPMNServer.ts:169](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L169)
+
+___
 
 ### status
 
@@ -246,14 +510,38 @@ ___
 | Name | Type |
 | :------ | :------ |
 | `version` | `any` |
-| `cache` | () => `any` |
+| `cache` | `any` |
 | `engineRunning` | `number` |
 | `engineCalls` | `number` |
-| `memoryUsage` | `any` |
+| `timers` | \{ `pending`: `number` ; `scheduled`: `number` = 0; `fired`: `number` = 0; `skipped`: `number` = 0; `failed`: `number` = 0 } |
+| `timers.pending` | `number` |
+| `timers.scheduled` | `number` |
+| `timers.fired` | `number` |
+| `timers.skipped` | `number` |
+| `timers.failed` | `number` |
+| `memoryUsage` | `MemoryUsage` |
 
 #### Defined in
 
-[server/BPMNServer.ts:93](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/BPMNServer.ts#L93)
+[packages/bpmn-server/src/server/BPMNServer.ts:173](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L173)
+
+___
+
+### getInstance
+
+▸ **getInstance**(): [`BPMNServer`](BPMNServer.md)
+
+#### Returns
+
+[`BPMNServer`](BPMNServer.md)
+
+**`Deprecated`**
+
+Prefer the instance returned by the constructor or `create`.
+
+#### Defined in
+
+[packages/bpmn-server/src/server/BPMNServer.ts:184](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L184)
 
 ___
 
@@ -267,18 +555,4 @@ ___
 
 #### Defined in
 
-[server/BPMNServer.ts:102](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/BPMNServer.ts#L102)
-
-___
-
-### getInstance
-
-▸ **getInstance**(): [`BPMNServer`](BPMNServer.md)
-
-#### Returns
-
-[`BPMNServer`](BPMNServer.md)
-
-#### Defined in
-
-[server/BPMNServer.ts:120](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/server/BPMNServer.ts#L120)
+[packages/bpmn-server/src/server/BPMNServer.ts:190](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/server/BPMNServer.ts#L190)

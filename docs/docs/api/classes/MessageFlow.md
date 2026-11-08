@@ -44,6 +44,7 @@
 - [addBehaviour](MessageFlow.md#addbehaviour)
 - [describe](MessageFlow.md#describe)
 - [run](MessageFlow.md#run)
+- [end](MessageFlow.md#end)
 - [evaluateCondition](MessageFlow.md#evaluatecondition)
 - [execute](MessageFlow.md#execute)
 
@@ -73,7 +74,7 @@
 
 #### Defined in
 
-[elements/Flow.ts:16](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Flow.ts#L16)
+[packages/bpmn-server/src/elements/Flow.ts:33](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Flow.ts#L33)
 
 ## Properties
 
@@ -87,7 +88,7 @@
 
 #### Defined in
 
-[elements/Element.ts:13](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L13)
+[packages/bpmn-server/src/elements/Element.ts:13](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L13)
 
 ___
 
@@ -101,7 +102,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:14](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L14)
+[packages/bpmn-server/src/elements/Element.ts:14](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L14)
 
 ___
 
@@ -115,7 +116,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:15](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L15)
+[packages/bpmn-server/src/elements/Element.ts:15](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L15)
 
 ___
 
@@ -129,7 +130,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:16](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L16)
+[packages/bpmn-server/src/elements/Element.ts:16](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L16)
 
 ___
 
@@ -143,7 +144,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:17](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L17)
+[packages/bpmn-server/src/elements/Element.ts:17](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L17)
 
 ___
 
@@ -157,7 +158,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:18](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L18)
+[packages/bpmn-server/src/elements/Element.ts:18](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L18)
 
 ___
 
@@ -171,7 +172,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:19](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L19)
+[packages/bpmn-server/src/elements/Element.ts:19](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L19)
 
 ___
 
@@ -185,7 +186,7 @@ ___
 
 #### Defined in
 
-[elements/Flow.ts:12](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Flow.ts#L12)
+[packages/bpmn-server/src/elements/Flow.ts:29](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Flow.ts#L29)
 
 ___
 
@@ -199,7 +200,7 @@ ___
 
 #### Defined in
 
-[elements/Flow.ts:13](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Flow.ts#L13)
+[packages/bpmn-server/src/elements/Flow.ts:30](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Flow.ts#L30)
 
 ___
 
@@ -213,7 +214,7 @@ ___
 
 #### Defined in
 
-[elements/Flow.ts:14](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Flow.ts#L14)
+[packages/bpmn-server/src/elements/Flow.ts:31](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Flow.ts#L31)
 
 ___
 
@@ -227,7 +228,7 @@ ___
 
 #### Defined in
 
-[elements/Flow.ts:85](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Flow.ts#L85)
+[packages/bpmn-server/src/elements/Flow.ts:119](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Flow.ts#L119)
 
 ## Methods
 
@@ -251,7 +252,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:20](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L20)
+[packages/bpmn-server/src/elements/Element.ts:20](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L20)
 
 ___
 
@@ -275,7 +276,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:24](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L24)
+[packages/bpmn-server/src/elements/Element.ts:24](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L24)
 
 ___
 
@@ -299,7 +300,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:27](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L27)
+[packages/bpmn-server/src/elements/Element.ts:27](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L27)
 
 ___
 
@@ -326,7 +327,7 @@ respond by providing behaviour attributes beyond item and node information
 
 #### Defined in
 
-[elements/Element.ts:34](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L34)
+[packages/bpmn-server/src/elements/Element.ts:34](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L34)
 
 ___
 
@@ -350,7 +351,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:38](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L38)
+[packages/bpmn-server/src/elements/Element.ts:38](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L38)
 
 ___
 
@@ -375,7 +376,7 @@ ___
 
 #### Defined in
 
-[elements/Element.ts:41](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Element.ts#L41)
+[packages/bpmn-server/src/elements/Element.ts:41](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Element.ts#L41)
 
 ___
 
@@ -393,13 +394,13 @@ ___
 
 #### Defined in
 
-[elements/Flow.ts:26](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Flow.ts#L26)
+[packages/bpmn-server/src/elements/Flow.ts:43](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Flow.ts#L43)
 
 ___
 
 ### run
 
-▸ **run**(`item`): [`FLOW_ACTION`](../enums/FLOW_ACTION.md)
+▸ **run**(`item`): `Promise`\<[`FLOW_ACTION`](../enums/FLOW_ACTION.md)\>
 
 ```xml
 <Rule> if flow has a condition, it must be evaluated and if result is true flow will continue
@@ -415,7 +416,7 @@ ___
 
 #### Returns
 
-[`FLOW_ACTION`](../enums/FLOW_ACTION.md)
+`Promise`\<[`FLOW_ACTION`](../enums/FLOW_ACTION.md)\>
 
 #### Inherited from
 
@@ -423,13 +424,13 @@ ___
 
 #### Defined in
 
-[elements/Flow.ts:44](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Flow.ts#L44)
+[packages/bpmn-server/src/elements/Flow.ts:61](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Flow.ts#L61)
 
 ___
 
-### evaluateCondition
+### end
 
-▸ **evaluateCondition**(`item`): `any`
+▸ **end**(`item`): `Promise`\<`void`\>
 
 #### Parameters
 
@@ -439,7 +440,31 @@ ___
 
 #### Returns
 
-`any`
+`Promise`\<`void`\>
+
+#### Inherited from
+
+[Flow](Flow.md).[end](Flow.md#end)
+
+#### Defined in
+
+[packages/bpmn-server/src/elements/Flow.ts:87](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Flow.ts#L87)
+
+___
+
+### evaluateCondition
+
+▸ **evaluateCondition**(`item`): `Promise`\<`any`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `item` | `any` |
+
+#### Returns
+
+`Promise`\<`any`\>
 
 #### Inherited from
 
@@ -447,7 +472,7 @@ ___
 
 #### Defined in
 
-[elements/Flow.ts:59](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Flow.ts#L59)
+[packages/bpmn-server/src/elements/Flow.ts:90](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Flow.ts#L90)
 
 ___
 
@@ -471,4 +496,4 @@ ___
 
 #### Defined in
 
-[elements/Flow.ts:87](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/elements/Flow.ts#L87)
+[packages/bpmn-server/src/elements/Flow.ts:121](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/elements/Flow.ts#L121)

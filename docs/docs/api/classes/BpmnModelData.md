@@ -19,6 +19,7 @@
 - [svg](BpmnModelData.md#svg)
 - [processes](BpmnModelData.md#processes)
 - [events](BpmnModelData.md#events)
+- [historyTimeToLive](BpmnModelData.md#historytimetolive)
 - [saved](BpmnModelData.md#saved)
 
 ### Methods
@@ -47,7 +48,7 @@
 
 #### Defined in
 
-[datastore/ModelsData.ts:18](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/ModelsData.ts#L18)
+[packages/bpmn-server/src/datastore/ModelsData.ts:14](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsData.ts#L14)
 
 ## Properties
 
@@ -61,7 +62,7 @@
 
 #### Defined in
 
-[datastore/ModelsData.ts:12](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/ModelsData.ts#L12)
+[packages/bpmn-server/src/datastore/ModelsData.ts:7](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsData.ts#L7)
 
 ___
 
@@ -75,7 +76,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:13](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/ModelsData.ts#L13)
+[packages/bpmn-server/src/datastore/ModelsData.ts:8](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsData.ts#L8)
 
 ___
 
@@ -89,7 +90,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:14](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/ModelsData.ts#L14)
+[packages/bpmn-server/src/datastore/ModelsData.ts:9](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsData.ts#L9)
 
 ___
 
@@ -103,7 +104,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:15](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/ModelsData.ts#L15)
+[packages/bpmn-server/src/datastore/ModelsData.ts:10](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsData.ts#L10)
 
 ___
 
@@ -117,7 +118,17 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:16](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/ModelsData.ts#L16)
+[packages/bpmn-server/src/datastore/ModelsData.ts:11](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsData.ts#L11)
+
+___
+
+### historyTimeToLive
+
+• **historyTimeToLive**: `any`
+
+#### Defined in
+
+[packages/bpmn-server/src/datastore/ModelsData.ts:12](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsData.ts#L12)
 
 ___
 
@@ -131,7 +142,7 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:17](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/ModelsData.ts#L17)
+[packages/bpmn-server/src/datastore/ModelsData.ts:13](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsData.ts#L13)
 
 ## Methods
 
@@ -151,4 +162,4 @@ ___
 
 #### Defined in
 
-[datastore/ModelsData.ts:30](https://github.com/bpmnServer/bpmn-server/blob/67a073b/src/datastore/ModelsData.ts#L30)
+[packages/bpmn-server/src/datastore/ModelsData.ts:26](https://github.com/bpmnServer/bpmn-server/blob/2add85734d01fc0c247bb25d3082213e3beaeac5/packages/bpmn-server/src/datastore/ModelsData.ts#L26)
