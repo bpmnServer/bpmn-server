@@ -39,7 +39,7 @@ MONGO_DB_URL=mongodb://localhost:27017/my-app
 API_KEY=...                      # generated; callers of the REST APIs send it
 ```
 
-Open http://localhost:3000 and sign in as `admin`, password `admin`, then change the password.
+Open http://localhost:3000. The first page asks for the administrator, with the setup token the server printed when it started.
 
 `init` creates the sample application: a few models, the services they call, the app delegate and settings
 (`--minimal`: a one-model Hello application). The repository,

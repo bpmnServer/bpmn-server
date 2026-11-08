@@ -20,11 +20,11 @@ The following diagram illustrates the core components of `bpmn-server` and how t
 ```sh
 npx bpmn-server init my-app      # asks for the database; --memory to try it without MongoDB
 cd my-app
-npm run setup                    # the database's indexes and the first user (admin / admin)
+npm run setup                    # the database's indexes
 npm start                        # http://localhost:3000
 ```
 
-Open your browser to [http://localhost:3000](http://localhost:3000) and sign in as `admin`, password `admin`.
+Open your browser to [http://localhost:3000](http://localhost:3000). The first page asks for the administrator, with the setup token the server printed when it started.
 
 `init` creates the sample application, with `bpmn-server` and `bpmn-web` as its dependencies;
 `npx bpmn-server init --help` lists its options, and `--minimal` creates a one-model Hello application
@@ -36,7 +36,7 @@ my-app/
   .env              generated keys, the database URL, what is served
   index.ts          starts bpmn-web with the settings, delegate and connectors below
   settings/         config.ts: only the settings you override; bpmn-web supplies the defaults
-  processes/        the models: Hello, Buy Used Car, Leave Application, employee-onboarding, Business Rules
+  processes/        the models: Hello, Buy Used Car, Leave Application, employee-onboarding, Business Rules, GitHub repository
   connectors/       the services service tasks call (appServices.ts), and element templates (*.json)
   delegates/        the app delegate (on bpmn-web's WebAppDelegate): services, data objects, events
 ```

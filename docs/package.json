@@ -5,6 +5,7 @@
   "description": "The bpmn-server documentation site (mkdocs) and the scripts that generate parts of it",
   "license": "MIT",
   "scripts": {
+    "map": "python src/scripts/site-map.py",
     "toc": "node src/scripts/generate-toc docs/examples.md,docs/scripting.md,docs/data.md",
     "build": "mkdocs build",
     "start": "mkdocs serve",

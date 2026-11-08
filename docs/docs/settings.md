@@ -66,9 +66,9 @@ All are optional unless marked.
 | Setting | Means |
 |---|---|
 | `SESSION_SECRET` | **A secret, required in production.** Secures sessions and CSRF tokens |
-| `REQUIRE_AUTHENTICATION`, `ENFORCE_SECURITY` | `false` turns off sign-in and the security rules. For development only |
+| `REQUIRE_AUTHENTICATION`, `ENFORCE_SECURITY` | On unless set to `false` (`init` writes `true`). `false` turns off sign-in and the security rules: for development only |
 | `ALLOW_INSECURE_NO_AUTH` | `true` allows `REQUIRE_AUTHENTICATION=false` in production |
-| `ADMIN_PASSWORD` | **A secret.** The first `admin` user's password. Default `admin` |
+| `ADMIN_PASSWORD` | **A secret.** Set, a server with no users creates the user `admin` with it. Unset (the default), its first page asks for the administrator, with a setup token it prints: [The first start](setup.md#the-first-start). A server that has users already is not changed |
 | `AUTH_RATE_LIMIT` | Sign-in attempts allowed in the rate window. Default `50` |
 | `DISABLE_ADMIN` | `true`: no administration pages or `/admin` APIs |
 | `DISABLE_DESIGN` | `true`: no model editor or test runs, and **no test calls on the engine**. Set it on both for production |

@@ -5,16 +5,28 @@
 ```sh
 npx bpmn-server init my-app      # asks for the database; --memory to try it without MongoDB
 cd my-app
-npm start                        # http://localhost:3000, sign in as admin / admin
+npm start                        # http://localhost:3000: the first page asks for the administrator
 ```
 
 `init` creates the sample application: `processes/` (Hello, Buy Used Car, Leave Application,
-employee-onboarding, Business Rules),
+employee-onboarding, Business Rules, GitHub repository),
 `connectors/` (the services the models call, `appServices.ts`, and element
 templates), `delegates/` (the app delegate, on bpmn-web's `WebAppDelegate`), `settings/config.ts` (the settings
 you change), `index.ts` (starts bpmn-web) and `.env`. `--minimal` creates a one-model Hello application instead.
 `npm run setup` prepares the database and stops, `npm run cli` opens the console, `npm run verify` checks the
 models. (`init` ships with bpmn-server 3.5.)
+
+### The first start
+
+A new server has no users. When it starts, it prints a **setup token**, and its pages ask for the administrator: open it,
+give the token, and choose the administrator's name, email and password. It can also add the tutorials' sample users,
+`user1` and `manager1`. Then you're signed in, and the setup page is gone.
+
+The token is there because whoever reaches a new server first could otherwise make themselves its administrator: only someone
+who can read the server's console or log has it. Its REST APIs and `/healthz` work while it waits.
+
+With `ADMIN_PASSWORD` set, the first start makes `admin` with that password instead, and asks nothing. The Docker files and
+the server install script set it.
 
 ### To Update
 
@@ -216,80 +228,11 @@ its own engine, cache, listeners and timers.
 Things that usually differ between development and production: the timers (`forceTimersDelay`, `precision`) and
 the database.
 
-## Storage
-
-Instances and models are kept in MongoDB by default. The configuration's `documentStore` replaces it, for both
-data stores:
-
-- `SqliteDocumentStore(file)` keeps everything in one SQLite file (Node's built-in `node:sqlite`, Node 22.5 or
-  later): no database server, for small installs, demos and desktop use. Several servers may share the file.
-- `MemoryDocumentStore` keeps everything in memory, for tests and demos.
-- An application can implement `IDocumentStore` to use its own database.
-
-```ts
-import { SqliteDocumentStore } from 'bpmn-server';
-
-const store = new SqliteDocumentStore('./data/bpmn.sqlite');
-const configuration = new Configuration({
-    // ... as above
-    documentStore: () => store,
-});
-```
-
-Or in memory:
-
-```ts
-import { MemoryDocumentStore } from 'bpmn-server';
-
-const store = new MemoryDocumentStore();
-const configuration = new Configuration({
-    // ... as above
-    documentStore: () => store,
-});
-```
-
-Two servers given the same store share it, as two servers on one database do.
-
-## Data store options
-
-```ts
-dataStore: (server) => {
-    const ds = new DataStore(server);
-    ds.enableSavePoints = true;  // keep a save point for each item, so an instance can be restarted from it
-    ds.saveLogs = true;          // save each instance's log with it (the default)
-    ds.saveSource = true;        // save the model with each instance, so it runs to the end on the model it started with
-    return ds;
-},
-```
+Storage, and the options of the data stores: [Custom persistence](persistence.md). The app delegate: [Custom delegates](delegates.md).
 
 ## Processes Folder
 
 This is where the definition files reside, the demo WebApp contains a set of those file for you to start with.
-
-## AppDelegate Class
-
-This class handles application specific calls. Extend `DefaultAppDelegate` and override what you need:
-
-```ts
-startUp(options);                       // the server starts
-getServicesProvider(execution);         // the object whose methods service tasks call (default: the delegate)
-serviceCalled(input, execution, item);  // a service task names no service the provider has
-executionStarted(execution);
-messageThrown(messageId, data, messageMatchingKey, item);
-signalThrown(signalId, data, messageMatchingKey, item);
-issueMessage(messageId, data);          // a message no process is waiting for
-issueSignal(signalId, data);
-sendEmail(to, msg, body);
-moddleOptions;
-```
-
-## ModelDataStore Options
-### MongoDB
-This the preferred and default option, models are saved and loaded in MongoDB 
-Additionally, if you define a definitionsPath in configuration.ts, ModelsDatastore will monitor your path for changes, allowing you to edit bpmn files externally.
-### Remote-Load-Only
-This option can be used for minimal installation by having models at a remote location
-
 
 # Packages
 

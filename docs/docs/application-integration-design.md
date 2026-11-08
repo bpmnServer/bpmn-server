@@ -28,7 +28,7 @@ This proposal builds on the current repository documentation:
 - [Application integration](customization.md) documents embedding, the sample host, delegates/services, API callers, and ownership of business data.
 - [Connectors](connectors.md) documents **implemented** OpenAPI 3.0/3.1-backed REST connectors for service and send tasks, with admin registry, secrets, modeler wizard and execution policies. Connector identifiers currently use `<connector>/<operationId>`.
 - [Scripting](scripting.md) documents JavaScript execution/model listeners, task listeners and application-wide event listeners. Scripts currently expose `appServices`, `appUtils` and `appDelegate`; they do not document calling a connector from a script, though section 4.3 shows that it works.
-- [Managing data](data.md) describes instance, item and workflow-data queries; [Setup](setup.md#storage) describes MongoDB, SQLite, memory and an `IDocumentStore` adapter.
+- [Managing data](data.md) describes instance, item and workflow-data queries; [Custom persistence](persistence.md) describes MongoDB, SQLite, memory and an `IDocumentStore` adapter.
 
 **Identified gaps:** a task API for an application acting for its users; task events that survive a crash; a clear inbound webhook-to-event contract; direct SQL operation configuration; explicit data-sharing/replication choices; comprehensive User Task integration examples; future application scoping. These are proposals, not claims of current implementation.
 

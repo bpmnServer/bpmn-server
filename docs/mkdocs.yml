@@ -76,15 +76,31 @@ draft_docs: |
 nav:
 - Getting Started:
   - Overview: index.md
-  - Architecture: architecture.md
-  - Your First Workflow: first-workflow.md
-  - Installation and Quick Start: setup.md
+  - Choose Your Journey: journeys.md
+  - Online Demo: first-workflow.md
+  - Build an Application: build.md
+  - Integrate an Existing Application: integrate.md
+  - Installation: setup.md
   - "Settings: .env and configuration": settings.md
-  - Application Integration: customization.md
-  - Model editor: modeler.md
   - "What's new in 3.6": whats-new-3.6.md
   - "What's new in 3.5": whats-new-3.5.md
   - "Upgrade to 3.x": whats-new-3.md
+
+- Tutorials:
+  - '1. A Workflow Ready for Production': tutorial/start.md
+  - '2. Roles and Assignment': tutorial/roles.md
+  - '3. Forms and Data': tutorial/forms.md
+  - '4. Decisions and Paths': tutorial/paths.md
+  - '5. Deadlines': tutorial/deadlines.md
+  - '6. Calling Services, and Failing Well': tutorial/services.md
+  - '7. Testing Every Path': tutorial/tutorial-testing.md
+  - '8. Review Before Release': tutorial/review.md
+  - '9. Release': tutorial/release.md
+
+- Walkthroughs:
+  - Execute from Node.js: tutorial/tutorial-script.md
+  - Integrate an Existing Application: tutorial/tutorial-integrate.md
+  - Connect External Services: tutorial/tutorial-connectors.md
 
 - Core Concepts:
   - Invoking Workflows: invokation.md
@@ -94,6 +110,7 @@ nav:
   - Security: security.md
 
 - Modeling and Integration:
+  - Model editor: modeler.md
   - Checking models: verify.md
   - Testing and debugging models: testing.md
   - Connectors (REST APIs): connectors.md
@@ -103,7 +120,7 @@ nav:
 - Reference:
   - Features: features.md
   - Advanced Topics: advanced.md
-  - Frequently Asked Questions: faq.md
+  - Frequently Asked Questions: faq/index.md
   - Site Map: map.md
 
 - Examples/Features:
@@ -128,17 +145,16 @@ nav:
   - 'Ad Hoc SubProcess': examples/adHoc.md
  
 - API:
-  - 'API Summary': api-summary.md
   - 'API Example': examples/BuyCar-Server.md
   - 'API': api/readme.md
 
-- Tutorial:
-  - 'Getting Started': tutorial/start.md
-  - 'Enable Security': tutorial/tutorial-security.md
-  - 'Start a Leave Application': tutorial/tutorial-user1.md
-  - 'Manager to Approve': tutorial/tutorial-manager1.md
-  - 'Let us review': tutorial/tutorial-review.md
-  - 'Execute the exercise from NodeJs': tutorial/tutorial-script.md
+- Advanced Development:
+  - Embedding the Engine: embedding.md
+  - Engine API: api-summary.md
+  - Application Integration: customization.md
+  - Custom Persistence: persistence.md
+  - Custom Delegates: delegates.md
+  - Runtime Architecture: architecture.md
 
 
 - bpmn-web:

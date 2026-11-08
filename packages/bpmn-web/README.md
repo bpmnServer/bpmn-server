@@ -48,7 +48,7 @@ Create an application, with bpmn-web as its dependency:
 ```bash
 npx bpmn-server init my-app      # asks for the database; --memory to try it without MongoDB
 cd my-app
-npm start                        # http://localhost:3000, sign in as admin / admin
+npm start                        # http://localhost:3000: the first page asks for the administrator
 ```
 
 ## Usage

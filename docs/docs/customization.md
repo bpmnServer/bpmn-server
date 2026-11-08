@@ -153,7 +153,7 @@ To load external data into workflow variables, implement `loadDataObject(name, i
 
 ## Persistence and deployment
 
-BPMN Server supports MongoDB by default, `SqliteDocumentStore` for small persistent installs on Node.js 22.5+, and `MemoryDocumentStore` for tests and demos. Custom adapters use the `documentStore` configuration port. Locking, timer scheduling, and shutdown are described in [Setup](setup.md#storage).
+BPMN Server supports MongoDB by default, `SqliteDocumentStore` for small persistent installs on Node.js 22.5+, and `MemoryDocumentStore` for tests and demos. Custom adapters use the `documentStore` configuration port. Locking, timer scheduling, and shutdown are described in [Setup](persistence.md).
 
 Before exposing an instance to real users, configure the host's authentication, task authorization, connector keys, persistence, backups, and process recovery. See [Security](security.md) and [Advanced topics](advanced.md).
 

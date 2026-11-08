@@ -4,6 +4,27 @@
 
 This repository holds the engine (`bpmn-server`), its web application (`bpmn-web`), its REST client (`bpmn-client`), the documentation and the sample application: see [This repository](#this-repository).
 
+## Getting started
+
+Choose how you want to start ([Choose Your Journey](https://bpmnserver.github.io/bpmn-server/journeys)):
+
+| Journey | For | Start with |
+|---|---|---|
+| **A. Online demo** | Trying it with nothing installed | [Online demo](https://bpmnserver.github.io/bpmn-server/first-workflow) |
+| **B. Build an application** | A workflow application of your own, on bpmn-web | [Build an application](https://bpmnserver.github.io/bpmn-server/build) |
+| **C. Integrate an existing application** | An application that keeps its own UI and users, and runs its processes here | [Integrate an existing application](https://bpmnserver.github.io/bpmn-server/integrate) |
+| **D. Embed the engine** | Running processes from your own Node.js code | [Embedding the engine](https://bpmnserver.github.io/bpmn-server/embedding) |
+
+The [tutorials](https://bpmnserver.github.io/bpmn-server/tutorial/start) take one leave request from installing to
+automated testing, in nine steps: security, the employee's and the manager's tasks, the results, Node.js, the REST
+APIs, connectors and Gherkin tests.
+
+### See it in action
+
+[The videos](https://omniworkflow.com/videos/): one for each tutorial, and the features one at a time, such as
+[testing a model](https://omniworkflow.com/videos/#2-testing) (record scenarios, add checks, see what breaks when
+the model changes) and [a connector to GitHub](https://omniworkflow.com/videos/#7-github).
+
 ## Architecture Overview
 
 The following diagram illustrates the core components of `bpmn-server` and how they interact:
@@ -78,15 +99,15 @@ See [Architecture](https://bpmnserver.github.io/bpmn-server/architecture) and [W
 ```sh
 npx bpmn-server init my-app      # asks for the database; --memory to try it without MongoDB
 cd my-app
-npm run setup                    # the database's indexes and the first user (admin / admin)
+npm run setup                    # the database's indexes
 npm start                        # http://localhost:3000
 ```
 
-Open your browser to [http://localhost:3000](http://localhost:3000) and sign in as `admin`, password `admin`.
+Open your browser to [http://localhost:3000](http://localhost:3000). The first page asks for the administrator, with the setup token the server printed when it started.
 
 `init` creates the sample application, with `bpmn-server` and `bpmn-web` as its dependencies;
 `npx bpmn-server init --help` lists its options, and `--minimal` creates a one-model Hello application
-instead. `init` ships with bpmn-server 3.5.
+instead. `init` ships with bpmn-server 3.5 and later.
 
 ```
 my-app/
@@ -94,7 +115,7 @@ my-app/
   .env              generated keys, the database URL, what is served
   index.ts          starts bpmn-web with the settings, delegate and connectors below
   settings/         config.ts: only the settings you override; bpmn-web supplies the defaults
-  processes/        the models: Hello, Buy Used Car, Leave Application, employee-onboarding, Business Rules
+  processes/        the models: Hello, Buy Used Car, Leave Application, employee-onboarding, Business Rules, GitHub repository
   connectors/       the services service tasks call (appServices.ts), and element templates (*.json)
   delegates/        the app delegate (on bpmn-web's WebAppDelegate): services, data objects, events
 ```
@@ -141,7 +162,9 @@ const result = await server.engine.start('invoice', { amount: 1200 });
 console.log('Process started with instance id:', result.instance.id);
 ```
 
-For more advanced examples, see the [API documentation](https://bpmnserver.github.io/bpmn-server/api).
+See [Embedding the engine](https://bpmnserver.github.io/bpmn-server/embedding), the
+[Engine API](https://bpmnserver.github.io/bpmn-server/api-summary) and the
+[API reference](https://bpmnserver.github.io/bpmn-server/api/readme).
 
 ---
 
@@ -176,23 +199,29 @@ Access the execution engine via the [Engine API](https://bpmnserver.github.io/bp
 
 ## Datastore
 
-Execution data, including instances and their elements, are persisted to a datastore (MongoDB by default).
+Execution data, including instances and their items, are persisted to a datastore: MongoDB (the default), SQLite,
+or memory, through one storage port that you can also implement yourself.
 
 You can query this data through the [Data API](https://bpmnserver.github.io/bpmn-server/api/interfaces/IAPIData).
 
-- [Data Management Documentation](https://bpmnserver.github.io/bpmn-server/data)
+- [Data and persistence](https://bpmnserver.github.io/bpmn-server/data)
+- [Custom persistence](https://bpmnserver.github.io/bpmn-server/persistence)
 
-## User Management and Security
+## Users and Security
 
-`bpmn-server` delegates authentication to the front-end application, which must pass user information via the API.
+Every call to the engine says which user it acts for, and the engine applies the model's rules to that user.
 
-1. Model designers can define `assignee`, `candidateUsers`, and `candidateUserGroups` using static strings or JavaScript expressions.
-2. The front-end must provide a `userService` implementation.
-3. `bpmn-server` enforces security rules based on the current user.
+1. Model designers assign tasks with `assignee`, `candidateUsers` and `candidateGroups`, as names or expressions
+   (`$(this.data.requester)`). A task in a lane is also offered to the group with the lane's name.
+2. **bpmn-web** signs users in and keeps their groups. A new server has no users: its first page asks for the
+   administrator, with a setup token it prints where it runs.
+3. **Another application** keeps its own users: it calls the APIs with a key, and names the user and their groups on
+   each call to the task API.
+4. **Embedded**, your code passes the user (`SecureUser`) to each call.
 
-The `bpmn-web` application demonstrates full user management using Passport and MongoDB.
+`REQUIRE_AUTHENTICATION` and `ENFORCE_SECURITY` are on in a new application.
 
-- [Security Documentation](https://bpmnserver.github.io/bpmn-server/security)
+- [Security](https://bpmnserver.github.io/bpmn-server/security)
 
 ## Demo Web Application
 
@@ -231,12 +260,14 @@ If MongoDB is not installed, you can [create a free cloud account](http://bit.ly
 npx bpmn-server init my-app --mongo mongodb://localhost:27017/my-app
 cd my-app
 docker compose up -d             # a MongoDB on this machine, if you do not have one
-npm run setup                    # the database's indexes and the first user
-npm start
+npm run setup                    # the database's indexes
+npm start                        # prints the setup token; the first page asks for the administrator
 ```
 
 The application's settings are in `.env` (the database, the port, the API keys, what is served) and
-`settings/config.ts`.
+`settings/config.ts`: see [Settings](https://bpmnserver.github.io/bpmn-server/settings). MongoDB is the default;
+`init --memory` runs without a database, and SQLite is chosen in the settings
+([Custom persistence](https://bpmnserver.github.io/bpmn-server/persistence)).
 
 ## Docker Installation
 
@@ -336,21 +367,27 @@ npm update bpmn-server bpmn-web
 
 ## Documentation
 
-- [Architecture](https://bpmnserver.github.io/bpmn-server/architecture)
-- [Invoking Workflows](https://bpmnserver.github.io/bpmn-server/invokation)
-- [Execution](https://bpmnserver.github.io/bpmn-server/execution)
-- [Scripting](https://bpmnserver.github.io/bpmn-server/scripting)
-- [Security](https://bpmnserver.github.io/bpmn-server/security)
-- [Data](https://bpmnserver.github.io/bpmn-server/data)
-  - [Input/Output](https://bpmnserver.github.io/bpmn-server/data#input-output-data)
-  - [Data Query](https://bpmnserver.github.io/bpmn-server/data#dataQuery)
-- [Examples](https://bpmnserver.github.io/bpmn-server/examples)
-- [API Summary](https://bpmnserver.github.io/bpmn-server/api-summary)
-- [API Reference](https://bpmnserver.github.io/bpmn-server/api)
-- [Setup](https://bpmnserver.github.io/bpmn-server/setup)
-- [Checking models](https://bpmnserver.github.io/bpmn-server/verify)
-- [Testing and debugging models](https://bpmnserver.github.io/bpmn-server/testing)
-- [Application Integration](https://bpmnserver.github.io/bpmn-server/customization)
+The [documentation site](https://bpmnserver.github.io/bpmn-server/), and its
+[site map](https://bpmnserver.github.io/bpmn-server/map) of every page.
+
+- **Getting started**: [Choose your journey](https://bpmnserver.github.io/bpmn-server/journeys),
+  [Installation](https://bpmnserver.github.io/bpmn-server/setup), [Settings](https://bpmnserver.github.io/bpmn-server/settings),
+  [What's new in 3.6](https://bpmnserver.github.io/bpmn-server/whats-new-3.6)
+- **Tutorials**: [1 to 9](https://bpmnserver.github.io/bpmn-server/tutorial/start), and [the videos](https://omniworkflow.com/videos/)
+- **Concepts**: [Invoking workflows](https://bpmnserver.github.io/bpmn-server/invokation),
+  [Execution](https://bpmnserver.github.io/bpmn-server/execution), [Data](https://bpmnserver.github.io/bpmn-server/data),
+  [Scripting](https://bpmnserver.github.io/bpmn-server/scripting), [Security](https://bpmnserver.github.io/bpmn-server/security)
+- **Modeling**: [Model editor](https://bpmnserver.github.io/bpmn-server/modeler),
+  [Checking models](https://bpmnserver.github.io/bpmn-server/verify),
+  [Testing and debugging models](https://bpmnserver.github.io/bpmn-server/testing),
+  [Connectors](https://bpmnserver.github.io/bpmn-server/connectors), [Decisions (DMN)](https://bpmnserver.github.io/bpmn-server/decisions),
+  [Examples](https://bpmnserver.github.io/bpmn-server/examples)
+- **Development**: [Embedding the engine](https://bpmnserver.github.io/bpmn-server/embedding),
+  [Engine API](https://bpmnserver.github.io/bpmn-server/api-summary), [API reference](https://bpmnserver.github.io/bpmn-server/api/readme),
+  [Application integration](https://bpmnserver.github.io/bpmn-server/customization),
+  [Custom persistence](https://bpmnserver.github.io/bpmn-server/persistence),
+  [Custom delegates](https://bpmnserver.github.io/bpmn-server/delegates),
+  [Architecture](https://bpmnserver.github.io/bpmn-server/architecture)
 
 ## This repository
 
@@ -376,7 +413,7 @@ npm run build                    # bpmn-server, bpmn-client, bpmn-web
 
 cd testSampleApp
 cp .env.example .env             # set MONGO_DB_URL
-npm run setup                    # the database's indexes and the first user (admin / admin)
+npm run setup                    # the database's indexes
 npm start                        # or npm run debug (Node inspector); npm start at the root runs it too
 ```
 

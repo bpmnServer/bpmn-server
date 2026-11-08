@@ -4,6 +4,7 @@ bpmn-server 3.6 separates the host from the engine, removes guest access and mov
 
 ## Before you upgrade
 
+- **No more admin/admin:** a new server's first page asks for the administrator, with a setup token it prints. Servers that already have users don't change. `ADMIN_PASSWORD` still makes `admin` at setup.
 - **Guest users:** on a server that had `GUEST_ACCESS` on, delete the users in the group `GUEST` first. A session they kept would otherwise sign them in as a designer of the shared models. `GUEST_ACCESS`, `GUEST_SAVE`, `GUESTS_PATH`, `GUEST_MAX_MODELS` and `GUEST_RATE_LIMIT` are gone.
 - **Test files change on start-up:** each `<model>.tests.json` and `<decision>.dmn.tests.json` in the models folder becomes a `.feature` file, and the JSON is deleted. A file that wouldn't read back as the same tests stays as it is, keeps working, and is reported in the log. Keep the folder in Git or back it up first.
 - **Earlier test runs aren't carried over:** every scenario shows as not run and coverage starts empty, until you run the scenarios again. The old `.runs` folder is no longer read and can be deleted.

@@ -41,7 +41,7 @@ const store = new SqliteDocumentStore('./bpmn.sqlite');
 const configuration = new Configuration({ /* ... */ documentStore: () => store });
 ```
 
-See [Setup, Storage](setup.md#storage). bpmn-web's dashboards and backup now go through the storage port, so they
+See [Setup, Storage](persistence.md). bpmn-web's dashboards and backup now go through the storage port, so they
 work on MongoDB, SQLite and the in-memory store alike.
 
 ## Decisions (DMN)

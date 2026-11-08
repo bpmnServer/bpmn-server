@@ -119,7 +119,7 @@ It is also on the command line: `npx bpmn-server verify model.bpmn`. See [Checki
 ### Embedding: storage, locks, lifecycle (3.1)
 
 - **Storage port.** Both data stores use one storage adapter: MongoDB by default, `MemoryDocumentStore` for tests
-  and demos, or your own through the configuration's `documentStore`. See [Setup](setup.md#storage).
+  and demos, or your own through the configuration's `documentStore`. See [Setup](persistence.md).
 - **Lock port.** Instances are locked while they run (`locker`), with an owner (`serverId`) and a stale age
   (`locks.staleAfter`) after which another server takes over a lock its owner left.
 - **Several servers per process,** each with its own engine, cache, listeners, timers and connections.

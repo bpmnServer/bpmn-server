@@ -128,11 +128,8 @@ An application can prove a UI to allow users to assign tasks to others, this can
 
 ## Security Rules:
 
-To enable security Rules, you have to edit `.env'
-```
-ENFORCE_SECURITY=true
-
-```
+The security rules are on unless `.env` turns them off: `ENFORCE_SECURITY=false`, or `REQUIRE_AUTHENTICATION=false`.
+A new application's `.env` has both `true`.
 ### When security checks are bypassed
 
 - A user in the `ADMIN` or `SYSTEM` group has privileged access according to the engine's access-control checks.
@@ -196,22 +193,22 @@ If you have selected to enforce Security Rules, the above will by automatically 
 
 ### Demo Application Authentication and Security
 
-Default installation, disables `User Authentication` and `Security Rules`
-To enable them, edit the .env file 
+**A new application** (`npx bpmn-server init`) has sign-in and the security rules on: its `.env` has
 
-```
-# -- Security Setting
-# if true, would direct users to login page, requires registration
-# valid values:	true	flase
-# set to false if you just want to run in DEV environment
-REQUIRE_AUTHENTICATION=false
-ENFORCE_SECURITY=false
-```
-To:
 ```
 REQUIRE_AUTHENTICATION=true
 ENFORCE_SECURITY=true
 ```
+
+Answering **no** to `init`'s "Require sign-in and security rules?" writes both `false`, for development on your own
+machine only. Either setting left out of `.env` counts as on.
+
+**An application made before 3.6** may have both `false` in its `.env`: set them to `true` before anyone else can reach
+it. In production (`NODE_ENV=production`), `REQUIRE_AUTHENTICATION=false` stops the server at start unless
+`ALLOW_INSECURE_NO_AUTH=true`.
+
+**The first administrator**: a server with no users asks for one on its first page, with a setup token it prints
+where it runs; `ADMIN_PASSWORD`, when set, creates `admin` instead. See [The first start](setup.md#the-first-start).
 
 ### A public demo
 

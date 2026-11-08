@@ -1,7 +1,7 @@
 # API Summary
 
 !!! warning "Generated API reference is outdated"
-    The checked-in [TypeDoc listing](api/readme.md) was generated for BPMN Server 2.x and is **not authoritative for 3.5**. This summary describes the current API split; check [What's new in 3.x](whats-new-3.md) and the [current TypeScript source](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-server/src) for version-specific signatures. The [documentation maintainer guide](https://github.com/bpmnServer/bpmn-server/blob/main/docs/README.md) explains how to regenerate the reference.
+    The [TypeDoc listing](api/readme.md) is generated from the current source (`npm run _docs:generate:api` in `docs/`): every class and interface, with its signatures. This summary describes the API's parts and how they fit together; see also [What's new in 3.6](whats-new-3.6.md) and the [TypeScript source](https://github.com/bpmnServer/bpmn-server/tree/main/packages/bpmn-server/src). The [documentation maintainer guide](https://github.com/bpmnServer/bpmn-server/blob/main/docs/README.md) explains how to regenerate the reference.
 
 ## Service Layer API
 

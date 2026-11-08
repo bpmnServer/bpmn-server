@@ -15,7 +15,7 @@ In this example, we will demonstrate how can two seperate processes communicate 
 
 P.S. To define a Signal or a Message in the on-line modeler you need to click '+' to create the Signal first.
 
-![Using Modeler](../../images/signal-model1.png) 
+![Using Modeler](../images/signal-model1.png) 
 
 In this Process we have 3 User Tasks (Task 1,2,3).
 Each of the above Tasks have a **Boundary Event** of type `Signal Catch Event`. Boundary Events start with the parent Task, and wait to be invoked.
@@ -23,7 +23,7 @@ These events are:
 - Intrrupting; meaning then invoked they will cancel the parent Task
 - Have a SignalId **Cancel_All**
 
-![Using Modeler](../../images/signal-model2.png) 
+![Using Modeler](../images/signal-model2.png) 
 
 ## Throw the Signal 
 
