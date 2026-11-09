@@ -7,7 +7,7 @@
 import express from 'express';
 import FS from 'node:fs';
 import path from 'node:path';
-import { layoutProcess } from 'bpmn-auto-layout';
+import { layoutModel } from './layout.js';
 import { bpmnToSvg } from './bpmnToSvg.js';
 import { isSafeModelName } from './middleware/modelName.js';
 import { checkModel } from '../runtime/modelVerification.js';
@@ -84,7 +84,7 @@ export function modelApi(bpmnServer) {
         // as the editor's import: a model without a diagram is laid out (its warning no longer holds); the picture is drawn
         let laidOut = false;
         if (!/<(\w+:)?BPMNDiagram[\s>]/.test(source)) {
-            try { source = await layoutProcess(source); laidOut = true; } catch { /* saved as it is */ }
+            try { source = await layoutModel(source); laidOut = true; } catch { /* saved as it is */ }
         }
         if (laidOut) answer.warnings = answer.warnings.filter(w => w.code !== 'no-diagram');
         let svg = null;

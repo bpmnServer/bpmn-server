@@ -6,7 +6,8 @@ import fs from 'node:fs';
  * the acting user, the status, and the request and response bodies, cut at API_TRACE_MAX characters (default 4000),
  * with the values of any field named like a password, key, token or secret replaced. Off without API_TRACE.
  */
-const SECRET = /pass(word)?|secret|token|api[-_]?key|^key$|authorization/i;
+// a field named as a secret: password, apiKey, x-api-key, accessToken, ... (not "passed", not "tokenId")
+const SECRET = /(^|[-_])?(pass(word)?|passwd|secret|token|api[-_]?key|key|authorization)$/i;
 
 function redact(value, depth = 0) {
     if (depth > 8 || value === null || typeof value !== 'object') return value;

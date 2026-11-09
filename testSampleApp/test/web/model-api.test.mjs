@@ -25,7 +25,8 @@ const FEATURE = check => `Feature: ${MODEL}
 `;
 
 let web;
-test.before(async () => { web = await startWebApp(); });
+// its own environment, whatever this folder's .env says: production's services, no trace
+test.before(async () => { web = await startWebApp({ env: { APP_ENV: 'production', API_TRACE: '' } }); });
 test.after(async () => { await web?.stop(); setImmediate(() => process.exit(0)); });
 const api = (method, url, body) => web.api(method, '/api2' + url, body);
 
@@ -129,6 +130,12 @@ test('the list as /models; a model laid out has no "no diagram" warning; a .feat
   const saved = await api('PUT', `/models/${MODEL}`, { source: XML() });
   assert.equal(saved.status, 200, why(saved));
   assert.equal(saved.body.laidOut, true);
+  // the model as sent, with a diagram added: a shape for each element, an edge for each flow (no <incoming>/<outgoing> given)
+  const stored = (await api('GET', `/models/${MODEL}`)).body.source;
+  const processOf = xml => /<bpmn:process[\s\S]*<\/bpmn:process>/.exec(xml)[0];
+  assert.equal(processOf(stored), processOf(XML()), 'the model itself is not changed');
+  assert.equal((stored.match(/BPMNEdge /g) ?? []).length, 2, 'both flows drawn');
+  assert.equal((stored.match(/BPMNShape /g) ?? []).length, 3);
   assert.ok(!saved.body.warnings.some(w => w.code === 'no-diagram'), JSON.stringify(saved.body.warnings));
   assert.match(saved.body.urlOpensFor, /signed in/);
   const feature = await api('PUT', `/models/${MODEL}/feature`, { source: FEATURE('end') });
