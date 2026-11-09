@@ -81,6 +81,55 @@ ADMIN_PASSWORD=...          # first admin user only
 
 For persistent MongoDB, choose `mongo` during setup (or set `MONGO_DB_URL=mongodb://mongo:27017/bpmn` and use `docker-compose.mongo.yml`). The optional MongoDB service isn't exposed outside the Docker network.
 
+## Docker `bpmn` management command
+
+Docker installs have an analogous `bpmn` wrapper in the Docker directory. It selects the same Compose overlays as your local `.env`, so you don't have to remember multiple `docker compose -f ...` arguments.
+
+For a Git checkout, from `docker/`:
+
+```sh
+sh bpmn status
+sh bpmn logs --tail=100
+sh bpmn restart
+sh bpmn env
+sh bpmn cli
+```
+
+If you installed with downloaded scripts instead of cloning GitHub, fetch the wrapper:
+
+```sh
+curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/bpmn
+curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/install-cli.sh
+```
+
+Optionally register a global command:
+
+```sh
+sudo sh install-cli.sh
+```
+
+The helper installs `bpmn` if that command is unused, or `bpmn-docker` if a native `bpmn` command already exists. It never overwrites the native command.
+
+```text
+$ sh bpmn
+BPMN Server Docker management
+
+  bpmn status              Container state and HTTP endpoint
+  bpmn logs [options]      Follow server logs; --tail=100 for a snapshot
+  bpmn monitor             Live container stats and recent logs
+  bpmn start               Start the configured installation
+  bpmn stop                Stop without deleting volumes
+  bpmn restart             Recreate container to apply .env changes
+  bpmn update              Pull or rebuild image, then recreate
+  bpmn env                 Edit .env and optionally apply
+  bpmn cli [arguments]     Application console in container
+  bpmn password            Display initial admin password from .env
+  bpmn setup               Interactive Docker setup
+  bpmn help                This help
+```
+
+Native-only commands such as `domain`, `https`, and `access` are not offered in the Docker wrapper; configure reverse-proxy TLS and host permissions separately. In memory database mode, recreation erases account and workflow instance data, and a separate CLI process does not share the running in-memory MongoDB.
+
 ## Commands
 
 For a normal published memory installation:
