@@ -26,7 +26,10 @@ keeps each saved version, by who saved it: **Compare** shows what changed betwee
 2. Sign in as `manager1`. **Approve** is under **Available to me**: offered to the Manager group. Approve it, with a
    comment.
 3. As the administrator, open the instance (**Workbench → Instances**). Its page shows the data, the diagram with the
-   path it took (**Show animation** replays it), every item, and the **Rationale**: each decision and why.
+   path it took (**Show animation** replays it), every item, and the **Rationale**, step by step: each step's line (who took it, its data) opens to what followed,
+   each decision and why. The filters open the steps with a row of what they show.
+
+   ![The Rationale, step by step](design/rationale-steps.png)
 
 `user1` never sees Approve: tutorial 2's rules at work. The server's log shows what `notify` and `recordLeave` were
 asked to do.

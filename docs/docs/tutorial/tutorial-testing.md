@@ -73,8 +73,11 @@ Then @wait :leave passed element:Remind
 
 ## Running them
 
-- **In the editor:** **Run all** in the Test tab, or one scenario's **Run**. A run is a real instance: **Open
-  instance** shows it, with its Rationale. **Edit as text** edits the file.
+- **In the editor:** **Run all** in the Test tab, or one scenario's **Run**. A run is a real instance: under each
+  step, **What happened** opens to its part of the Rationale, with **Add as a check** on what the step changed and
+  the step's checks under the rows they check; **Open instance** shows its page. **Edit as text** edits the file.
+
+  ![What happened, under a step](design/what-happened.png)
 - **On the Design dashboard:** every model's tests.
 - **From the command line:** `npm test` runs every model's tests in memory (no database, no server), and exits 1 if
   one fails: what tutorial 9 runs before each release.

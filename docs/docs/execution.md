@@ -199,3 +199,10 @@ why:
 
 The entry also keeps `seq`, `element` and `action`, to filter on. The instance page shows them under **Instance
 logs**; a test reads them with `run.log()`.
+
+Each operation on the instance is logged too, as a JSON entry: `{"type":"execution","label":...}` when it begins
+(`Start Process`, `Invoke Item`, `Timer Fired` for a timer the server fires, `Invoke Event`, `Retry Item`,
+`Restart Item`, with who and the data), and `{"type":"outcome",...}` when it saves: the instance's `status`, the
+items whose status `changed` (each with its new status) and the items `waiting`. The **Rationale** is the log cut at
+each operation: on the instance page each step is a line that opens to its rows, and in the Test tab each step of
+the timeline has **What happened**, its checks offered from the outcome as logged.

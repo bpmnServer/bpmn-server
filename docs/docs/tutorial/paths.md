@@ -29,8 +29,8 @@ start it, which is rarely meant.
 ## Every path ends
 
 Each path ends at an end event: **Done** after the employee is told, **Reminder sent** after a reminder. The
-instance is over when no path is left. The **Rationale** on its instance page tells, for each gateway, which
-condition held and why: what you read when someone asks why a request went the way it did. See
+instance is over when no path is left. The **Rationale** on its instance page tells it step by step: each step,
+who took it and its data, opens to what followed, and for each gateway which condition held and why: what you read when someone asks why a request went the way it did. See
 [Workflow execution](../execution.md).
 
 ## Design choices

@@ -297,7 +297,7 @@ features:
   - id: decision-log
     area: engine
     name: "Why it went this way (decisions in the log)"
-    what: "Each decision logged as a block (seq, element, action, why); shown as the instance page's Rationale."
+    what: "Each decision logged as a block (seq, element, action, why); shown as the instance page's Rationale, step by step, and under each step of the Test tab's timeline."
     docs: [docs/docs/execution.md]
     code: [packages/bpmn-server/src/engine/Execution.ts, packages/bpmn-server/src/elements/Gateway.ts]
     tests: [packages/bpmn-server/test/engine.test.mjs, testSampleApp/test/web/pages.test.mjs]
@@ -494,7 +494,7 @@ features:
   - id: test-tab
     area: web
     name: "The Test tab"
-    what: "Scenarios recorded step by step and run again, checks, runs in a tree, Simulate, Debug and Restart here, a task by itself, full window; the whole .feature file with Edit as text."
+    what: "Scenarios recorded step by step and run again, checks, What happened under each step (its Rationale, Add as a check, its checks under their rows), coverage as one percentage, runs in a tree, Simulate, Debug and Restart here, a task by itself, full window; the whole .feature file with Edit as text."
     docs: [docs/docs/modeler.md, docs/docs/testing.md]
     code: [packages/bpmn-web/modeler/src/testing/TestPanel.js, packages/bpmn-web/src/testing/coverage.js, packages/bpmn-web/src/testing/modelCoverage.ts, packages/bpmn-web/modeler/src/testing/paths.js, packages/bpmn-web/src/testing/scenarios.ts]
     tests: [testSampleApp/test/ui/testing.test.mjs, testSampleApp/test/ui/coverage.test.mjs, testSampleApp/test/ui/test-paths.test.mjs, testSampleApp/test/web/scenarios.test.mjs]
@@ -537,7 +537,7 @@ features:
   - id: instance-page
     area: pages
     name: "The instance page"
-    what: "Data, diagram (tokens, replay), items, the Rationale, the model's report, logs; filters; Retry."
+    what: "Data, diagram (tokens, replay), items, the Rationale by step, the model's report, logs; filters; Retry and Force."
     docs: [docs/docs/bpmn-web.md, docs/docs/execution.md]
     code: [packages/bpmn-web/src/views/InstanceDetails.pug, packages/bpmn-web/public/javascripts/SVGHelper.js]
     tests: [testSampleApp/test/web/pages.test.mjs, testSampleApp/test/ui/instance-filters.test.mjs]

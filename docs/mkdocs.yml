@@ -77,6 +77,7 @@ nav:
 - Getting Started:
   - Overview: index.md
   - Choose Your Journey: journeys.md
+  - Building Workflows with AI: ai/building-workflows.md
   - Online Demo: first-workflow.md
   - Build an Application: build.md
   - Integrate an Existing Application: integrate.md
