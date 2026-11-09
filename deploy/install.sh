@@ -23,10 +23,11 @@ EMAIL=${EMAIL:-}                        # --email: where Let's Encrypt sends its
 ADMIN_PASSWORD=${ADMIN_PASSWORD:-}      # --admin-password: the first user's (admin); empty: one is generated
 PORT=${PORT:-3000}                      # --port: the application's own port, behind nginx
 BPMN_DIR=${BPMN_DIR:-/opt/bpmn}         # --dir: where the application's folder is made (/opt/bpmn/<app>)
-ACCESS_USER=${ACCESS_USER:-}            # --access: who may edit its files besides root (default: the one running
-                                        #   sudo, else ubuntu); --access none: nobody
+ACCESS_USER=${ACCESS_USER:-}            # --access: local editor (defaults to sudo-invoking user, else ubuntu)
+INTERACTIVE=auto                        # prompts on first interactive install; --interactive or --yes override
 
 while [ $# -gt 0 ]; do
+    case "$1" in --interactive) INTERACTIVE=yes; shift; continue;; --yes|--non-interactive) INTERACTIVE=no; shift; continue;; esac
     case "$1" in
         --app) APP_NAME=$2; shift 2 ;;
         --version) BPMN_VERSION=$2; shift 2 ;;
@@ -40,6 +41,46 @@ while [ $# -gt 0 ]; do
         *) echo "unknown option: $1"; exit 1 ;;
     esac
 done
+
+# Prompt only on a first install from a terminal. Lightsail/user-data and piped installs remain unattended.
+# /dev/tty is used because 'curl ... | sudo bash' consumes standard input for the script.
+if [ "$INTERACTIVE" = auto ]; then
+    if [ -r /dev/tty ] && [ -w /dev/tty ] && [ -t 2 ] && [ ! -d "${BPMN_DIR%/}/$APP_NAME" ]; then
+        INTERACTIVE=yes
+    else
+        INTERACTIVE=no
+    fi
+fi
+if [ "$INTERACTIVE" = yes ]; then
+    [ -r /dev/tty ] && [ -w /dev/tty ] || { echo "Interactive mode requires a terminal; use --yes for automation" >&2; exit 2; }
+    prompt() {
+        local __name=$1 __label=$2 __default=$3 __value
+        printf '%s [%s]: ' "$__label" "$__default" > /dev/tty
+        IFS= read -r __value < /dev/tty || __value=
+        printf -v "$__name" '%s' "${__value:-$__default}"
+    }
+    default_access=$ACCESS_USER
+    if [ -z "$default_access" ]; then
+        if [ -n "${SUDO_USER:-}" ] && [ "$SUDO_USER" != root ]; then default_access=$SUDO_USER
+        elif id ubuntu >/dev/null 2>&1; then default_access=ubuntu
+        else default_access=none
+        fi
+    fi
+    printf '\nBPMN Server native installation (not Docker)\nPress Enter to accept each default.\n\n' > /dev/tty
+    prompt APP_NAME "Application name" "$APP_NAME"
+    prompt BPMN_VERSION "BPMN Server npm version" "$BPMN_VERSION"
+    prompt PORT "Application port behind nginx" "$PORT"
+    prompt BPMN_DIR "Application root directory" "$BPMN_DIR"
+    prompt ACCESS_USER "Local user to add to bpmn group (none disables)" "$default_access"
+    prompt DOMAIN "Domain for HTTPS (none to skip)" "${DOMAIN:-none}"
+    prompt EMAIL "Email for Let's Encrypt (none to skip)" "${EMAIL:-none}"
+    [ "$DOMAIN" = none ] && DOMAIN=
+    [ "$EMAIL" = none ] && EMAIL=
+    printf '\nApp: %s/%s | version: %s | port: %s | editor: %s | domain: %s\n' \
+        "${BPMN_DIR%/}" "$APP_NAME" "$BPMN_VERSION" "$PORT" "$ACCESS_USER" "${DOMAIN:-none}" > /dev/tty
+    prompt CONFIRM "Proceed with installation? (yes/no)" yes
+    [ "$CONFIRM" = yes ] || { echo "Installation cancelled"; exit 0; }
+fi
 
 # the log holds the admin password: root's only
 touch /var/log/bpmn-install.log && chmod 600 /var/log/bpmn-install.log
@@ -61,6 +102,10 @@ if [ -z "$ACCESS_USER" ]; then
     elif id ubuntu >/dev/null 2>&1; then ACCESS_USER=ubuntu; fi
 fi
 [ "$ACCESS_USER" = none ] && ACCESS_USER=
+[[ "$PORT" =~ ^[0-9]+$ ]] && ((10#$PORT >= 1 && 10#$PORT <= 65535)) || { echo "PORT must be 1-65535"; exit 1; }
+if [ -n "$ACCESS_USER" ] && ! id "$ACCESS_USER" >/dev/null 2>&1; then
+    echo "Access user '$ACCESS_USER' does not exist. Use --access none to skip."; exit 1
+fi
 case "${ADMIN_PASSWORD:-}" in
     *[\'\"\\\$\`]*) echo "ADMIN_PASSWORD: no quotes, backslashes, \$ or backticks"; exit 1 ;;
 esac
@@ -150,7 +195,7 @@ chmod 750 "$HOME_DIR"
 if [ -n "$ACCESS_USER" ]; then
     if id "$ACCESS_USER" >/dev/null 2>&1; then
         usermod -aG "$APP_USER" "$ACCESS_USER"
-        echo "$ACCESS_USER may edit $APP_DIR (the group $APP_USER; from its next sign-in)"
+        echo "$ACCESS_USER added to group $APP_USER (edit $APP_DIR after next login, or: newgrp $APP_USER)"
     else
         echo "no user $ACCESS_USER: nobody else may edit $APP_DIR (bpmn access <user> adds one)"
     fi
@@ -423,7 +468,7 @@ for _ in $(seq 90); do
         echo
         echo "=== bpmn-server is ready: http://$address/${DOMAIN:+  (https://$DOMAIN/ once $DOMAIN points at $address)}"
         echo "    sign in as admin, $(cat "$CREDENTIALS")   (change it: your profile, top right)"
-        echo "    the application: $APP_DIR${ACCESS_USER:+ (editable by $ACCESS_USER)}"
+        echo "    the application: $APP_DIR${ACCESS_USER:+ (editor $ACCESS_USER in group $APP_USER; re-login or newgrp $APP_USER)}"
         echo "    bpmn status | logs | monitor | restart | update | domain <name> [email]   (bpmn help)"
         date -u +%FT%TZ > "$HOME_DIR/INSTALLED"
         exit 0
