@@ -230,7 +230,16 @@ const COMMANDS: Record<string, (server, scenario: Scenario, step: Step) => Promi
     },
 
     /** An item found before; or the short form, which finds an element's waiting item. */
-    async invoke(server, scenario, { rest, rows }) {
+    async invoke(server, scenario, step) {
+        const { rest, rows } = step;
+        // "... is refused": the step holds when the invoke fails (no item this user may take, the engine refusing)
+        const refused = / is refused$/.exec(rest);
+        if (refused) {
+            const asked = rest.slice(0, refused.index);
+            try { await COMMANDS.invoke(server, scenario, { ...step, rest: asked }); }
+            catch { return; }
+            throw new Error(`${asked}: it was done, not refused${scenario.user ? ` (as ${scenario.user.userName})` : ''}`);
+        }
         const data = await scenario.table(rows);
         const named = /^:(\w+)$/.exec(rest);
         const short = new RegExp(`^(first )?element:${NAME}(?: key "([^"]*)")? in :(\\w+)(?: as :(\\w+))?( no wait)?$`).exec(rest);

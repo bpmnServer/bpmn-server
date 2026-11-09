@@ -77,6 +77,25 @@ test('an agent builds a model and its tests, runs them, reads why one failed', a
   assert.equal(rationale.body.steps[1].outcome.status, 'end');
 });
 
+test('@invoke ... is refused holds when the user may not do it, and fails when they can', async () => {
+  const xml = XML().replace('<bpmn:userTask id="Approve" name="Approve" />', '<bpmn:userTask id="Approve" name="Approve" camunda:candidateGroups="manager" />')
+    .replace('xmlns:bpmn=', 'xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:bpmn=');
+  assert.equal((await api('PUT', '/models/agent-refused', { source: xml })).status, 201);
+  const feature = check => `Feature: agent-refused
+  Scenario: who approves
+    When user:emp1 @login with role of "staff"
+      And @start process:agent-refused as :r
+      And @invoke element:Approve in :r${check}
+`;
+  const refused = await api('POST', '/models/agent-refused/test', { source: feature(' is refused') });
+  assert.equal(refused.body.passed, 1, JSON.stringify(refused.body));
+  const asManager = await api('POST', '/models/agent-refused/test', { source: feature(' is refused').replace('"staff"', '"manager"') });
+  assert.equal(asManager.body.failed, 1);
+  assert.match(asManager.body.scenarios[0].error, /it was done, not refused \(as emp1\)/);
+  const verify = await api('POST', '/models/agent-refused/verify', { source: XML() });
+  assert.ok(verify.body.warnings.some(w => w.code === 'no-diagram' && /laid out/.test(w.message)), JSON.stringify(verify.body.warnings));
+});
+
 test('a feature that does not read as tests is refused, and the file stays', async () => {
   const res = await api('PUT', `/models/${MODEL}/feature`, { text: 'not gherkin' });
   assert.equal(res.status, 400, why(res));

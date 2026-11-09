@@ -26,7 +26,7 @@ read [AGENTS.md](https://github.com/bpmnServer/bpmn-server/blob/main/AGENTS.md) 
 | Decisions (DMN) | [Decisions](../decisions.md) |
 | Checking a model | [Checking models](../verify.md) |
 | Tests: the `.feature` file and its steps (`@start`, `@invoke`, `@check`, `@wait`, `@stub`, ...) | [Testing](../testing.md) |
-| A complete example: model, forms, rules, tests | the sample application's **Leave Application** (`sampleApp/processes/Leave Application.bpmn` and `.feature`), and the [tutorials](../tutorial/start.md), which design it step by step |
+| A complete example: model, forms, rules, tests | the sample application's **Leave Application**: [its model](https://github.com/bpmnServer/bpmn-server/blob/main/sampleApp/processes/Leave%20Application.bpmn) and [its tests](https://github.com/bpmnServer/bpmn-server/blob/main/sampleApp/processes/Leave%20Application.feature), and the [tutorials](../tutorial/start.md), which design it step by step |
 
 Prefer what the server provides (forms, assignment rules, timers, connectors, decisions) to scripts. Never put a key,
 a password or a token in a model: a connector's key is kept by the server, encrypted.
@@ -70,7 +70,9 @@ sample's Leave Application shows more (timers, errors, lanes, services).
 ```
 
 - `camunda:initiator` keeps who started it in `data.requester`; `camunda:assignee` gives them the request.
-- `camunda:candidateGroups` offers Approve to the group `Manager` (use the groups the site lists).
+- `camunda:candidateGroups` offers Approve to the group `Manager`. Group names are matched exactly, case and all: on a
+  site, use the groups its `/llms.txt` lists (`manager`, say). In a test, `@login ... with role of` can name any group:
+  the user is made up for the test, with that one group.
 - A form field's value becomes data (`data.approved`); the flow's condition reads it; `default` is taken otherwise.
 - No diagram is needed: the server lays the model out when it is saved.
 
@@ -104,14 +106,14 @@ Feature: approval
     When user:emp1 @login with role of "Employee"
       And @start process:approval as :request
       And @invoke element:Request in :request
-    Then @check :request has 1 items of element:Approve with status "wait"
-      And @check :request has 0 items of element:Approve with status "wait" for me
+    Then @check :request has 0 items of element:Approve with status "wait" for me
+      And @invoke element:Approve in :request is refused
       And user:mgr1 @login with role of "Manager"
       And @check :request has 1 items of element:Approve with status "wait" for me
 ```
 
-`@login ... with role of` acts as a user of that group: `for me` counts only the items they may take, so the third
-scenario checks that an employee can not approve.
+`@login ... with role of` acts as a user of that group: `for me` counts only the items they may take, and
+`@invoke ... is refused` holds when the user can not do it: the third scenario checks that an employee can not approve.
 
 ## Working locally
 
@@ -137,7 +139,7 @@ no editor:
 
 | Step | Call |
 |---|---|
-| List models | `GET /api2/model/list` |
+| List models | `GET /api2/models` |
 | Read a model: its XML, its `.feature`, its editor URL | `GET /api2/models/<name>` |
 | Check a model, without saving it | `POST /api2/models/<name>/verify`, `{ "source": "<xml>" }` (or no body: the saved model) |
 | Create or change a model | `PUT /api2/models/<name>`, `{ "source": "<xml>" }`: checked first; with errors it is not saved (422, the errors) unless `?force=true`; a model without a diagram is laid out |
@@ -145,6 +147,7 @@ no editor:
 | Run them | `POST /api2/models/<name>/test` (or `{ "source": "..." }`, a `.feature` not saved): each scenario `passed` or `failed`, the failing step, the error, its instances |
 | Why an instance went the way it did | `GET /api2/instances/<id>/rationale`: its status, data and Rationale by step (each operation, its outcome, each decision) |
 | Start a process, complete a task | `POST /api2/engine/start/<name>`, `PUT /api2/engine/invoke` |
+| A user's tasks | `GET /api2/tasks`, with a key of its own (`API_ACTING_USER_KEY`, from the site) and `x-acting-user`: not needed to build and test a model |
 
 A failed scenario names its step and why; its instance's Rationale tells what happened before it. Correct the model or
 the test, save, and run again. Changing models and running tests is design: a server with `DISABLE_DESIGN=true`

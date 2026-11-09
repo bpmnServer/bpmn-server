@@ -24,7 +24,7 @@ and here
   (`AI_GUIDE`, default `settings/ai-guide.md`), then BPMN Server's guide for agents, shipped in the package.
 - **`API_TRACE`**: every API call and its answer, one JSON line each, secrets masked: what a client, an AI agent, did.
 - **`has ... items ... for me`** in a `.feature`: only the items the user of `@login` may take, to check who may do what
-  (an employee can not approve).
+  (an employee can not approve); `@invoke ... is refused` holds when the user can not do it.
 - **Models and their tests over the API**, for a client that builds workflows (an AI agent, a script), with the API
   key: `GET`/`PUT /api2/models/:name` (created or changed from XML, checked first, refused with its errors), `POST
   .../verify`, `GET`/`PUT .../feature`, `POST .../test` (each scenario's result, the failing step and why),

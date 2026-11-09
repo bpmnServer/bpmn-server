@@ -99,7 +99,11 @@ export function modelApi(bpmnServer) {
             if (!(await exists(name))) return res.status(404).json({ error: `No model ${name}` });
             source = await definitions.getSource(name);
         }
-        res.json({ name, ...answerCheck(await checkModel(bpmnServer, name, source, 'warn')) });
+        const answer = answerCheck(await checkModel(bpmnServer, name, source, 'warn'));
+        // saved through this API, a model without a diagram is laid out: say so
+        for (const w of answer.warnings)
+            if (w.code === 'no-diagram') w.message += ' Saved with PUT /models/{name}, it is laid out: nothing to do.';
+        res.json({ name, ...answer });
     }));
 
     router.get('/models/:name/feature', handler(async (req, res) => {

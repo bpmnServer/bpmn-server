@@ -62,7 +62,7 @@ A step is `[subject] @command [arguments] [as :name]`, followed by a table or a 
 | `user:<name> @login [with role of "<role>"]` | Acts as that user |
 | `@start process:<p> [at element:<e>] [only] as :i` | Starts an instance, with the table as its start data. `only` runs that element by itself |
 | `@find element:<e> [in :i] as :x`, `@find item ...` | Finds one item, filtered by the table |
-| `@invoke :x`, `@invoke [first] element:<e> [key "K"] in :i [as :x] [no wait]` | Completes an item with the table as its data |
+| `@invoke :x`, `@invoke [first] element:<e> [key "K"] in :i [as :x] [no wait]` | Completes an item with the table as its data. `... is refused`: holds when it can not be done (the user may not take it) |
 | `@check <statement>` | Checks something now |
 | `@wait <statement> [within N seconds\|minutes\|hours]` | Waits until the statement holds. The default limit is 30 seconds |
 | `@stub service:<s> with`, `@stub timer:<t> with 5 seconds` | Replaces a service or a timer, for this scenario's instances only |
@@ -88,6 +88,8 @@ Then @check ${data.total > 100}
   And @check :result rules is 1
 ```
 
+A table's values are read as JSON too: `true` is a boolean, `5` a number, anything else text.
+
 A path reads into what the scenario holds: `status`, `data.total`, or deeper, `data.notification.to`. A value is
 JSON (`5`, `true`, `"text"`, `{ "a": 1 }`), a word (read as text), or `${...}`, an expression. `is` (or `=`) is equal:
 numbers as numbers (`5` and `"5"`), an object field by field (the fields given), the rest exactly; `is not` (`<>`) is
@@ -100,7 +102,7 @@ not equal; `>`, `<`, `>=`, `<=` compare as numbers when both are numbers, else a
 `Manager` (candidate groups, a lane's group among them). One she may not take is not found (`found 0 items`): a test
 checks the model's assignment this way, as the end-user pages do. To check it outright, `has ... items ... for me`
 counts only the items the current user may take: `has 0 items of element:Approve with status "wait" for me`, as an
-employee, says they can not approve. `user:mary @login` without a role acts as `mary`
+employee, says they can not approve; `@invoke element:Approve in :leave is refused` says it outright. `user:mary @login` without a role acts as `mary`
 with no such limit.
 
 ```gherkin
