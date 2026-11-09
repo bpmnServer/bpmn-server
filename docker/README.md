@@ -55,7 +55,7 @@ For an installation using overlays, pass them to the check in the same order as 
 sh status.sh -f docker-compose.yml -f docker-compose.build.yml
 ```
 
-If it fails, inspect `docker compose ps -a` and `docker compose logs --tail=100 server`. With memory mode, check for missing Linux libraries (such as `libcurl.so.4`) or MongoDB binary download failures. Use `sh up.sh` to apply the saved image/database mode. On Windows, `up.cmd` currently starts Compose without the shell-based readiness check.
+If it fails, inspect `docker compose ps -a` and `docker compose logs --tail=100 server`. With memory mode, check for missing Linux libraries (such as `libcurl.so.4`) or MongoDB binary download failures. Use `sh up.sh` to apply the saved image/database mode. On Windows, `up.cmd` starts Compose without the readiness check; `.\bpmn.cmd status` shows the container and the HTTP status.
 
 ## Local .env
 
@@ -130,6 +130,35 @@ BPMN Server Docker management
 
 Native-only commands such as `domain`, `https`, and `access` are not offered in the Docker wrapper; configure reverse-proxy TLS and host permissions separately. In memory database mode, recreation erases account and workflow instance data, and a separate CLI process does not share the running in-memory MongoDB.
 
+### Windows (PowerShell or cmd)
+
+`bpmn.cmd` has the same commands, without WSL or Git Bash (it runs `bpmn.ps1`, so download both). In the installation folder:
+
+```powershell
+curl.exe -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/bpmn.cmd
+curl.exe -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/bpmn.ps1
+.\bpmn.cmd status
+.\bpmn.cmd logs --tail=100
+.\bpmn.cmd password
+.\bpmn.cmd cli
+```
+
+In `cmd`, drop the `.\`: `bpmn status`. `bpmn.cmd setup` creates `.env` with random keys, as `up.cmd` does; `bpmn.cmd env` opens it in Notepad.
+
+### The console (CLI)
+
+The console runs inside the server container. Any of these opens it:
+
+```sh
+sh bpmn cli                                  # Linux, macOS, WSL
+.\bpmn.cmd cli                               # Windows
+docker compose exec server npm run cli       # anywhere, from the installation folder
+```
+
+A command after it runs just that and quits, e.g. `bpmn cli co` lists the connectors (with plain Compose: `docker compose exec server npm run cli -- co`). In memory mode the console is a separate process with its own empty database, so it does not see the running server's users or instances; use MongoDB for that.
+
+For a shell inside the container: `sh it.sh`, or `it.cmd` on Windows (`docker compose exec server sh`).
+
 ## Commands
 
 For a normal published memory installation:
@@ -171,4 +200,6 @@ curl.exe -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/dock
 .\up.cmd
 ```
 
-This creates a local `.env` for memory mode with random secrets, then starts the published image. For an interactive installer use WSL, or edit `.env` and use the Compose overlays manually.
+This creates a local `.env` for memory mode with random secrets, then starts the published image. For an interactive installer use WSL, or edit `.env` and use the Compose overlays manually. To manage it afterwards (status, logs, password, the console), download `bpmn.cmd` and `bpmn.ps1`: see [Windows (PowerShell or cmd)](#windows-powershell-or-cmd).
+
+Run the image through Compose, not with a plain `docker run` or Docker Desktop's Run button: without the settings in `.env` the server refuses to start (`MONGO_DB_URL is not set`).
