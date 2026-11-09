@@ -1,5 +1,5 @@
 #!/bin/sh
-# Start an existing installation, applying mode from local .env.
+# Start an existing installation, applying mode saved in local .env.
 set -eu
 cd "$(dirname "$0")"
 if [ ! -f .env ]; then
@@ -11,10 +11,12 @@ get_setting() { sed -n "s/^$1=//p" .env | head -n 1; }
 set -- -f docker-compose.yml
 case "$(get_setting MONGO_DB_URL)" in
   memory) ;;
-  mongodb://mongo:*) set -- "$@" -f docker-compose.mongo.yml ;;
-  *) echo "Only memory or bundled MongoDB is supported by this launcher; use docker compose directly for an external DB." >&2; exit 2 ;;
+  mongodb://mongo:*) [ -f docker-compose.mongo.yml ] || { echo "Missing docker-compose.mongo.yml; run setup.sh --reconfigure" >&2; exit 1; }
+    set -- "$@" -f docker-compose.mongo.yml ;;
+  *) echo "Use docker compose directly for an external database URL." >&2; exit 2 ;;
 esac
 case "$(get_setting BPMN_IMAGE)" in
-  *:local) set -- "$@" -f docker-compose.build.yml ;;
+  *:local) [ -f docker-compose.build.yml ] || { echo "Missing docker-compose.build.yml; run setup.sh --reconfigure" >&2; exit 1; }
+    set -- "$@" -f docker-compose.build.yml ;;
 esac
-docker compose "$@" up -d --remove-orphans "$@"
+docker compose "$@" up -d --remove-orphans
