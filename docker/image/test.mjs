@@ -67,7 +67,8 @@ const secrets = { API_KEY: key(), ADMIN_API_KEY: key(), SESSION_SECRET: key(), A
 const work = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-image-test-'));
 const override = path.join(work, 'override.yml');
 fs.writeFileSync(override, `services:
-  bpmn-web:
+  server:
+    env_file: !override []
     image: ${image}
     pull_policy: never
     ports: !override
