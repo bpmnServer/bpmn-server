@@ -48,6 +48,7 @@ if (run('docker', ['image', 'inspect', image]).status !== 0) {
 const metadata = run('docker', ['image', 'inspect', image, '--format', '{{json .Config.Cmd}}']);
 check('image starts npm with exec-form CMD', metadata.status === 0 && metadata.out.trim() === '["npm","start"]', metadata.out.trim());
 check('memory database dependency installed', inImage("node -e 'require.resolve(\"mongodb-memory-server\")'").status === 0);
+check('MongoDB runtime libcurl available', inImage('test -e /usr/lib/x86_64-linux-gnu/libcurl.so.4 || test -e /usr/lib/aarch64-linux-gnu/libcurl.so.4').status === 0);
 const versionOf = pkg => inImage(`grep -m1 '"version"' /app/node_modules/${pkg}/package.json | cut -d'"' -f4`).out.trim();
 const server = versionOf('bpmn-server'), web = versionOf('bpmn-web');
 const tag = /:([^:/]+)$/.exec(image)?.[1];
