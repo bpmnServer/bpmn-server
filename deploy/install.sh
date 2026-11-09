@@ -240,20 +240,37 @@ fi
 # cookies marked Secure only once the site is HTTPS: a browser does not send them back over http
 grep -q '^SECURE_COOKIES=true' "$APP_DIR/.env" 2>/dev/null || set_env SECURE_COOKIES false
 
-# the first user, admin, with a password of its own (never admin/admin on a public server)
+# Admin password for first-time account creation. Keep one stable value in .env
+# (the same convention as Docker); editing it later does NOT reset MongoDB users.
+# On an upgrade, migrate the initial password from the legacy root-only file if present.
 CREDENTIALS=$HOME_DIR/admin-password.txt
+configured_password=$(sed -n 's/^ADMIN_PASSWORD=//p' "$APP_DIR/.env" | head -n 1)
+if [ -n "$configured_password" ]; then
+    ADMIN_PASSWORD=$configured_password
+elif [ -f "$CREDENTIALS" ]; then
+    ADMIN_PASSWORD=$(sed -n 's/^admin password: //p' "$CREDENTIALS" | head -n 1)
+    ADMIN_PASSWORD=${ADMIN_PASSWORD:-$(cat "$CREDENTIALS")}
+fi
+if [ -z "$ADMIN_PASSWORD" ]; then
+    ADMIN_PASSWORD=$(openssl rand -hex 16)
+fi
+# Avoid accidentally publishing credentials to other local accounts.
+set_env ADMIN_PASSWORD "$ADMIN_PASSWORD"
+chown "$APP_USER:$APP_USER" "$APP_DIR/.env"
+chmod 660 "$APP_DIR/.env"
 if [ ! -f "$CREDENTIALS" ]; then
-    ADMIN_PASSWORD=${ADMIN_PASSWORD:-$(openssl rand -base64 24 | tr -dc 'A-Za-z0-9' | head -c 20)}
-    as_app "$APP_DIR" "ADMIN_PASSWORD='$ADMIN_PASSWORD' npm run setup"
-    # a bpmn-web that predates ADMIN_PASSWORD made admin/admin: set the password through its user service
-    as_app "$APP_DIR" "ADMIN_PASSWORD='$ADMIN_PASSWORD' node --env-file=.env --input-type=module -e \"
+    # The setup command creates the first account only when no users exist.
+    as_app "$APP_DIR" "npm run setup"
+    # Legacy compatibility: older bpmn-web releases did not honor ADMIN_PASSWORD.
+    as_app "$APP_DIR" "node --env-file=.env --input-type=module -e \\"
         import mongoose from 'mongoose'; import { UserService } from 'bpmn-web';
         await mongoose.connect(process.env.MONGO_DB_URL);
         await new UserService().setPassword('admin', process.env.ADMIN_PASSWORD);
-        await mongoose.disconnect();\"" || echo "the admin password could not be set here: the console (npm run cli) sets it"
+        await mongoose.disconnect();\\"" || echo "the admin password could not be set here: use the console (npm run cli)"
     umask 077
-    echo "admin password: $ADMIN_PASSWORD" > "$CREDENTIALS"
+    printf 'admin password: %s\\n' "$ADMIN_PASSWORD" > "$CREDENTIALS"
     chown root:root "$CREDENTIALS"
+    chmod 600 "$CREDENTIALS"
     umask 022
 fi
 
