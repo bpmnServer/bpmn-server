@@ -115,6 +115,29 @@ The admin password is on the server: `sudo cat /opt/bpmn/admin-password.txt`.
 Run it again at any time: what is there is kept (the application, its data, its `.env`, the admin password),
 and the packages, the service and nginx are set up as above.
 
+### Native `bpmn` command reference
+
+After installation, run `bpmn` with no arguments to see the management commands:
+
+```text
+$ bpmn
+bpmn: the bpmn-server application in /opt/bpmn/my-app (the service bpmn-my-app)
+
+  bpmn status                   the app, MongoDB and nginx; its address
+  bpmn logs                     its log, live (Ctrl+C); bpmn logs -n 200, bpmn logs --since "1 hour ago", bpmn logs -p err
+  bpmn monitor                  a live view: status, CPU and memory, the last log lines
+  bpmn restart | stop | start
+  bpmn update                   the newest bpmn-server and bpmn-web, then a restart
+  bpmn env                      edit its .env, then a restart
+  bpmn cli [command ...]        its console (npm run cli); with a command, just that: bpmn cli cod asana
+  bpmn domain <name> [email]    the site's domain name, and HTTPS for it once its DNS points here
+  bpmn https                    HTTPS now (or why not yet)
+  bpmn access <user>            let a user edit the application's files (the group bpmn)
+  bpmn password                 the first admin password (until it is changed)
+```
+
+These commands operate the **native systemd installation**, not Docker. `bpmn env` edits the application settings and restarts the service. The password shown by `bpmn password` is the initial password, not necessarily the current account password.
+
 ## On the server, afterwards: the `bpmn` command
 
 The install adds a `bpmn` command for the everyday work (it asks for `sudo` itself where it needs it):
