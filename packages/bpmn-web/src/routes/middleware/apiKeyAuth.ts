@@ -5,7 +5,7 @@ export function configuredApiUser(): SecureUser {
     const userName = process.env.API_SERVICE_USER_NAME;
     const groups = process.env.API_SERVICE_USER_GROUPS?.split(',').map(g => g.trim()).filter(Boolean);
     if (!userName || !groups?.length)
-        throw new Error('API service principal is not configured');
+        throw new Error('API service principal is not configured: set API_SERVICE_USER_NAME and API_SERVICE_USER_GROUPS (for example integration and SYSTEM) in .env, then restart');
     return new SecureUser({
         userName,
         userGroups: groups,
