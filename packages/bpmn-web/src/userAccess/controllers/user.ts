@@ -6,7 +6,7 @@ import passport from 'passport';
 import validator from 'validator';
 import User from '../models/User.js';
 import * as Mailer from '../config/mail.js';
-import { signupGroups, signupVerifiesEmail } from '../roles.js';
+import { home, signupGroups, signupVerifiesEmail } from '../roles.js';
 import { firstRunPending, isSetupToken, endFirstRun } from '../firstRun.js';
 import { UserService, userNameProblem } from '../UserService.js';
 import { answerMessage } from '../../routes/common.js';
@@ -163,7 +163,6 @@ export class UserController {
      * Sign in using email and password.
      */
     static postLogin(req, res, next) {
-        console.log("postLogin", req.body.userid, req.body.password);
         const validationErrors = [];
         if (validator.isEmpty(req.body.userName))
             validationErrors.push({ msg: 'Password cannot be blank.' });
@@ -181,12 +180,15 @@ export class UserController {
                 req.flash('errors', info);
                 return res.redirect('/login');
             }
+            // the page it was on its way to, read now: logging in starts a new session, without it
+            const back = req.session.returnTo;
             req.logIn(user, (err) => {
                 if (err) {
                     return next(err);
                 }
                 req.flash('success', { msg: 'Success! You are logged in.' });
-                res.redirect(req.session.returnTo || '/');
+                // the site itself (/) is the user's home
+                res.redirect(back && back !== '/' ? back : home(user));
             });
         })(req, res, next);
     }

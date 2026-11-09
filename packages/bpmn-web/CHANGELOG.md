@@ -107,6 +107,11 @@ and here
 - **After starting a process or completing a task, a user goes back to My work**, where their next task is; only
   administrators and designers go to the instance's page. Users who are neither were sent to the Workbench (after a
   task) or to the instance's page (after a start from My work).
+- **Signing in lands a user on My work**, and administrators and designers on the Workbench. A user's Workbench no
+  longer asks for the diagram preview, a designer's route, which answered 403 on every visit.
+- **Signing in goes on to the page it interrupted**: the session made at sign-in had dropped where it was going, so
+  everyone landed on the Workbench.
+- **The sign-in no longer writes the password to the log.**
 - **A task form's own fields were saved as the task's data**: `_csrf` and `returnTo` are left out now.
 - **A user name has one rule wherever a user is added** (Administration's Add user, signing up, the first start,
   `UserService.addUser`): 2 to 64 letters, digits or `. _ @ -`, taken without the spaces around it; a name that

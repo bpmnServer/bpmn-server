@@ -40,7 +40,6 @@ test('a user starts a process from the start form and finds its task', async () 
   const { page, problems, close } = await signIn('staff');
   await page.goto(web.base + '/dashboard');
   await page.waitForLoadState('networkidle');
-  // signing in lands on the Workbench, whose diagram preview is a designer's route: not My work's
   problems.length = 0;
   const start = page.locator('#start-events details', { hasText: 'leave-request' }).first();
   await start.locator('summary').click();

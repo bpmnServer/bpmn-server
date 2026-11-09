@@ -4,7 +4,7 @@
 // editors carry the same places in their header (editorMenu.pug).
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { startWebApp, why } from '../support/webApp.mjs';
+import { startWebApp, why, PASSWORD } from '../support/webApp.mjs';
 
 let web, admin, designer, staff;
 test.before(async () => {
@@ -99,4 +99,34 @@ test('the same menu on the Workbench, a dashboard and an instance page; the edit
     assert.match(editor, /class="editor-menu"/);
     for (const href of ['/', '/dashboard', '/dashboard/design', '/dashboard/admin'])
         assert.match(editor, new RegExp(`editor-menu[^]*href="${href}"`));
+});
+
+/** Where signing in sends a user, after first asking for `first` (signed out, as a browser does). */
+async function landing(userName, first = '/') {
+    const client = web.client();
+    await client.get(first);
+    await client.get('/login');
+    const res = await client.post('/login', { userName, password: PASSWORD });
+    assert.equal(res.status, 302, why(res));
+    return res.location;
+}
+
+test('signing in lands an end user on My work; designers and administrators on the Workbench', async () => {
+    assert.equal(await landing('staff'), '/dashboard');
+    assert.equal(await landing('designer'), '/');
+    assert.equal(await landing('admin'), '/');
+});
+
+test('signing in on the way to a page goes on to that page', async () => {
+    assert.equal(await landing('designer', '/dashboard/design'), '/dashboard/design');
+    assert.equal(await landing('staff', '/dashboard'), '/dashboard');
+});
+
+test("an end user's Workbench asks for no diagram preview, a designer's only route", async () => {
+    const page = await staff.get('/');
+    assert.equal(page.status, 200, why(page));
+    assert.doesNotMatch(page.text, /id="svg"/);
+    assert.match(page.text, /id="execLink"/, 'they can still start a process from it');
+    assert.equal((await staff.get('/model/getSVg/leave-request')).status, 403);
+    assert.match((await designer.get('/')).text, /id="svg"/);
 });

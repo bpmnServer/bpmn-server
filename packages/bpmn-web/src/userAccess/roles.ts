@@ -31,13 +31,19 @@ export const isDesignerGroups = (userGroups) => !designDisabled() && inGroups(us
 export const canDesign = (user) => !designDisabled()
     && (process.env.REQUIRE_AUTHENTICATION === 'false' || isDesignerGroups(user?.userGroups));
 
+/** Administrators and designers work on the models and instances; everyone else on their tasks, in My work. */
+const worksOnModels = (user) => isAdminGroups(user?.userGroups) || canDesign(user);
+
 /**
  * Where someone goes after starting a process or completing a task: administrators and designers to the instance, to
  * see what ran; everyone else back to My work, where their next task is.
  */
-export const afterWork = (user, instanceId) => isAdminGroups(user?.userGroups) || canDesign(user)
+export const afterWork = (user, instanceId) => worksOnModels(user)
     ? '/instanceDetails?id=' + encodeURIComponent(instanceId)
     : '/dashboard';
+
+/** Where signing in lands, unless it was on its way to a page: the Workbench, or My work for everyone else. */
+export const home = (user) => worksOnModels(user) ? '/' : '/dashboard';
 
 /** SIGNUP_VERIFY_EMAIL=true: sign-up sends a verification email, and SIGNUP_GROUPS come only once it is verified. */
 export const signupVerifiesEmail = () => process.env.SIGNUP_VERIFY_EMAIL === 'true';
