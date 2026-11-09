@@ -4,6 +4,12 @@
 FROM node:22-bookworm-slim
 LABEL maintainer="ralphhanna@hotmail.com"
 
+# MongoDB binaries launched by mongodb-memory-server require libcurl.so.4.
+# The slim Debian base does not include it.
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends libcurl4 ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
+
 ARG BPMN_VERSION=latest
 WORKDIR /app
 
