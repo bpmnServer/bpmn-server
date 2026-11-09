@@ -143,6 +143,27 @@ MongoDB; the journal keeps and rotates the logs.
 | MongoDB, nginx | `journalctl -u mongod`, `sudo tail -f /var/log/nginx/error.log` |
 | The console | `cd /opt/bpmn/my-app && sudo -u bpmn npm run cli` |
 
+### Interactive native installation and folder access
+
+For a local installation, download the script and run it with Bash:
+
+```sh
+curl -fLo install.sh https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/deploy/install.sh
+sudo bash install.sh --interactive
+```
+
+The installer prompts for application name, version, port, directory, access user, and optional domain/email. Use `--yes` for unattended installs. It creates or reuses the `bpmn` group, adds the selected user, sets application directory group access, and checks read/write permissions. Existing installations are preserved.
+
+After installation, **log out and back in** to refresh your group membership, or run `newgrp bpmn` as your regular user. Verify access:
+
+```sh
+id -nG
+ls -ld /opt/bpmn /opt/bpmn/my-app
+cd /opt/bpmn/my-app
+```
+
+If a previous installation did not grant access, run `sudo bpmn access "$USER"` and log in again. The password file `/opt/bpmn/admin-password.txt` remains root-only.
+
 ### Who may edit its files
 
 The application runs as its own user, `bpmn`, not root and not you: a break-in through the app reaches its files
@@ -203,8 +224,25 @@ waits until the application answers, and prints the address and the admin passwo
 ./deploy/lightsail/create-lightsail.sh                                  # the 2 GB size, the CLI's region
 ./deploy/lightsail/create-lightsail.sh --domain bpmn.example.com --email you@example.com
 ./deploy/lightsail/create-lightsail.sh --bundle medium_3_0 --region eu-west-2
+./deploy/lightsail/create-lightsail.sh --access ubuntu                    # editable /opt/bpmn/my-app
 ./deploy/lightsail/create-lightsail.sh --delete                         # the instance and its static IP
 ```
 
 It needs the [AWS CLI](https://aws.amazon.com/cli/), signed in (`aws configure`). Lightsail bills the instance
 monthly; `--delete` stops it.
+
+### Lightsail file access
+
+The Lightsail launcher now passes `ACCESS_USER=ubuntu` by default to the remote native installer. It adds that user to group `bpmn`, checks access to `/opt/bpmn/my-app`, and preserves the system service account `bpmn` as owner. Use `--access <username>` for a different existing Linux account, or `--access none` to disable user access. It does not create that Linux account.
+
+After connecting through Lightsail SSH, reconnect or run `newgrp bpmn` to pick up the new group membership. Then `cd /opt/bpmn/my-app` should work without `sudo`.
+
+For an **existing** Lightsail server, changing `create-lightsail.sh` doesn't retroactively change its permissions. On the instance run:
+
+```sh
+sudo bpmn access ubuntu
+newgrp bpmn
+cd /opt/bpmn/my-app
+```
+
+Use the instance's actual login name instead of `ubuntu` if different. Cloud launch scripts remain noninteractive so instance creation cannot hang waiting for input.
