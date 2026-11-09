@@ -1,24 +1,22 @@
-# bpmn-web (with bpmn-server) from npm: the application `npx bpmn-server init` creates, as users install it.
-#   docker build -t ralphhanna/bpmn-web .                                         (the latest release)
-#   docker build --build-arg BPMN_VERSION=3.5.2 -t ralphhanna/bpmn-web:3.5.2 .    (a release)
-# build.cmd and build.sh tag the image with its version, and latest.
-FROM node:22-alpine
+# BPMN Server distribution: matching bpmn-server and bpmn-web npm releases.
+# Use docker/image/build.sh or build.cmd to tag ralphhanna/bpmn-server.
+# Debian provides a supported runtime for mongodb-memory-server's mongod binary.
+FROM node:22-bookworm-slim
 LABEL maintainer="ralphhanna@hotmail.com"
 
 ARG BPMN_VERSION=latest
-
 WORKDIR /app
-# - .env goes: init writes new keys there, and every container of this image would have them. The settings come
-#   from the container's environment (docker-compose.yml).
-# - The exact release, not init's ^version: an image holds one version, and BPMN_VERSION=latest says which.
+
+# Initialize an application, remove its generated secrets, and pin the exact published release.
+# mongodb-memory-server is a runtime dependency for MONGO_DB_URL=memory.
+# Its MongoDB binary is downloaded on first use (requires internet for the initial start).
 RUN npx --yes "bpmn-server@$BPMN_VERSION" init . --yes --no-install \
- && rm .env \
+ && rm -f .env \
  && version=$(node -p "require('./package.json').dependencies['bpmn-server'].replace('^', '')") \
- && npm pkg set "dependencies.bpmn-server=$version" "dependencies.bpmn-web=$version" \
+ && npm pkg set "dependencies.bpmn-server=$version" "dependencies.bpmn-web=$version" "dependencies.mongodb-memory-server=^10.4.3" \
  && npm install --omit=dev --no-audit --no-fund \
  && npm cache clean --force
 
-# production: the server does not start without SESSION_SECRET and API_KEY, or with the web pages left open
 ENV NODE_ENV=production
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
