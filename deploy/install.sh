@@ -215,6 +215,14 @@ set_env() {
     local file=$APP_DIR/.env
     if grep -q "^$1=" "$file" 2>/dev/null; then sed -i "s|^$1=.*|$1=$2|" "$file"; else echo "$1=$2" >> "$file"; fi
 }
+# Native systemd installation runs with NODE_ENV=production. Authentication and security must
+# be enabled: newly initialized apps may default to false and otherwise enter a restart loop.
+# Do not allow an insecure .env from a prior development install to break the service.
+set_env REQUIRE_AUTHENTICATION true
+set_env ENFORCE_SECURITY true
+set_env ALLOW_INSECURE_NO_AUTH false
+echo "Production configuration: authentication and security enabled"
+
 # cookies marked Secure only once the site is HTTPS: a browser does not send them back over http
 grep -q '^SECURE_COOKIES=true' "$APP_DIR/.env" 2>/dev/null || set_env SECURE_COOKIES false
 
