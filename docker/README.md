@@ -1,6 +1,6 @@
 # BPMN Server Docker installation
 
-The distribution uses `ralphhanna/bpmn-server:latest`, replacing the obsolete `ralphhanna/bpmn-web` image name. It includes the server and its API/UI hosting application.
+The distribution uses `bpmnserver/bpmn-server:latest`, replacing the earlier `ralphhanna/bpmn-server` and the obsolete `ralphhanna/bpmn-web` image names. It includes the server and its API/UI hosting application.
 
 ## Interactive setup (recommended)
 
@@ -64,7 +64,7 @@ The file is next to `docker-compose.yml`. Edit it with `nano .env` or VS Code:
 ```dotenv
 PORT=3000
 MONGO_DB_URL=memory
-BPMN_IMAGE=ralphhanna/bpmn-server:latest
+BPMN_IMAGE=bpmnserver/bpmn-server:latest
 REQUIRE_AUTHENTICATION=true
 ENFORCE_SECURITY=true
 API_SERVICE_USER_NAME=integration

@@ -1,6 +1,6 @@
 # Build and publish BPMN Server
 
-The published image is `ralphhanna/bpmn-server`. It packages matching releases of `bpmn-server` and `bpmn-web`.
+The published image is `bpmnserver/bpmn-server`. It packages matching releases of `bpmn-server` and `bpmn-web`.
 
 ## Build locally
 
@@ -29,7 +29,7 @@ After testing:
 
 ```sh
 docker login
-docker image ls ralphhanna/bpmn-server
+docker image ls bpmnserver/bpmn-server
 sh push.sh
 ```
 
@@ -38,8 +38,8 @@ On Windows use `push.cmd`.
 Verify published metadata:
 
 ```sh
-docker pull ralphhanna/bpmn-server:latest
-docker image inspect ralphhanna/bpmn-server:latest --format '{{json .Config.Cmd}}'
+docker pull bpmnserver/bpmn-server:latest
+docker image inspect bpmnserver/bpmn-server:latest --format '{{json .Config.Cmd}}'
 ```
 
 Expected command: `["npm","start"]`. A normal build produces the host architecture only; use Buildx for additional platforms.

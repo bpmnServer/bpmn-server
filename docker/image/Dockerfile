@@ -1,5 +1,5 @@
 # BPMN Server distribution: matching bpmn-server and bpmn-web npm releases.
-# Use docker/image/build.sh or build.cmd to tag ralphhanna/bpmn-server.
+# Use docker/image/build.sh or build.cmd to tag bpmnserver/bpmn-server.
 # Debian provides a supported runtime for mongodb-memory-server's mongod binary.
 FROM node:22-bookworm-slim
 LABEL maintainer="ralphhanna@hotmail.com"

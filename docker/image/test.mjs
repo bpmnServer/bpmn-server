@@ -2,8 +2,8 @@
 // docker-compose.yml, under a project and a port of its own, so an installation on this machine is not touched.
 // Needs Docker and Node.js 20 or later; no packages.
 //
-//   node test.mjs                                    ralphhanna/bpmn-server:latest, as built here (it is not pulled)
-//   node test.mjs ralphhanna/bpmn-server:3.5.2          that image
+//   node test.mjs                                    bpmnserver/bpmn-server:latest, as built here (it is not pulled)
+//   node test.mjs bpmnserver/bpmn-server:3.5.2          that image
 //   node test.mjs <image> --version 3.5.2            and the version it must hold
 //
 // The version expected, without --version: the image's tag; for latest or no tag, the latest on npm.
@@ -18,7 +18,7 @@ import path from 'node:path';
 const args = process.argv.slice(2);
 const versionAt = args.indexOf('--version');
 const versionArg = versionAt >= 0 ? args.splice(versionAt, 2)[1] : undefined;
-const image = args[0] ?? 'ralphhanna/bpmn-server:latest';
+const image = args[0] ?? 'bpmnserver/bpmn-server:latest';
 
 const results = [];
 function check(name, ok, detail = '') {

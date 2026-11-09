@@ -1,7 +1,7 @@
 name: bpmn-server
 services:
   server:
-    image: ${BPMN_IMAGE:-ralphhanna/bpmn-server:latest}
+    image: ${BPMN_IMAGE:-bpmnserver/bpmn-server:latest}
     ports:
       # Host port comes from local .env. The container always listens on 3000.
       - "${PORT:-3000}:3000"

@@ -1,3 +1,3 @@
 #!/bin/sh
 set -eu
-docker push --all-tags ralphhanna/bpmn-server
+docker push --all-tags bpmnserver/bpmn-server

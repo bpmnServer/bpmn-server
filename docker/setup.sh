@@ -30,7 +30,7 @@ case "$database" in
 esac
 source=$(ask "Image (published/local)" "$(case "$(old BPMN_IMAGE)" in *:local) printf local;; *) printf published;; esac)")
 case "$source" in
-  published) image=ralphhanna/bpmn-server:latest;;
+  published) image=bpmnserver/bpmn-server:latest;;
   local) image=bpmn-server:local;;
   *) echo "Choose published or local" >&2; exit 2;;
 esac
