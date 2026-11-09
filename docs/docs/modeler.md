@@ -76,6 +76,8 @@ diagram. **Print** saves the report as a PDF.
 The report is also what [History](#history) compares: as text, the model's problems and the decisions' tables
 left out (they are not in the model file).
 
+[Try the Report and History walkthrough](examples/report-and-history.md).
+
 ## Testing a model
 
 The **Test** tab keeps test scenarios for the model and runs them. The scenarios are on the left, each with the result

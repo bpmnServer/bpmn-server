@@ -198,7 +198,5 @@ in the administration backup.
 
 ## Example
 
-testSampleApp's model **GitHub repository** calls `github/repos/get` for an `owner` and a `repo`, keeps the
-repository's `description` and `starsCount`, and ends at *Not found* on a 404. Add the connector from the console
-(`coa`, id `github`, document `connectors/openapi/github.json`), then start the model with
-`owner bpmnServer repo bpmn-server`.
+[Run the GitHub repository example](examples/github-connector.md) to map a public API response into
+instance data and route an HTTP 404 through a BPMN boundary event.

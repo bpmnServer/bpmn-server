@@ -1,4 +1,4 @@
-# What's new in 3.5
+# What's new through 3.5.2
 
 bpmn-server 3.5 adds REST API connectors, SQLite storage, decisions (DMN) as the standard describes them, a new
 model editor with tests for models and decisions, and `npx bpmn-server init` to start an application.
@@ -6,10 +6,49 @@ model editor with tests for models and decisions, and `npx bpmn-server init` to 
 bpmn-server, bpmn-web and bpmn-client are now one repository,
 [bpmnServer/bpmn-server](https://github.com/bpmnServer/bpmn-server), released together with the same version.
 
-Upgrading from 3.2: see [What's new in 3.x](whats-new-3.md#upgrading-from-32-to-35) for what can change for a
-model that ran on 3.2. The full lists are in the change logs of
-[bpmn-server](https://github.com/bpmnServer/bpmn-server/blob/main/packages/bpmn-server/CHANGELOG.md) and
-[bpmn-web](https://github.com/bpmnServer/bpmn-server/blob/main/packages/bpmn-web/CHANGELOG.md).
+## Upgrading from 3.1
+
+The engine's 3.2 release restored read-only runtime model access. A runtime principal can list and read models
+and find start events without model administration rights. Model changes still require the admin API.
+`api.data.findInstances` again returns each visible instance with its data and items.
+
+3.2 also added `verifyModel` and the `bpmn-server verify` CLI, removed a fixed 10 ms delay per step, and reduced
+memory use by sharing the BPMN type registry and retaining fewer log messages. For benchmark details and
+changes that can affect existing expressions, decisions, and timers, see [Upgrading to 3.5](whats-new-3.md#upgrading-from-32-to-35).
+
+The full release histories are in the
+[engine](https://github.com/bpmnServer/bpmn-server/blob/v3.5.2/packages/bpmn-server/CHANGELOG.md),
+[web](https://github.com/bpmnServer/bpmn-server/blob/v3.5.2/packages/bpmn-web/CHANGELOG.md), and
+[client](https://github.com/bpmnServer/bpmn-server/blob/v3.5.2/packages/bpmn-client/CHANGELOG.md) changelogs.
+See [Feature examples](examples.md) for walkthroughs.
+
+## Operating a live server (3.5.2)
+
+- **Recover a failed task.** A task that throws is saved with status `error` and failure details. An
+  administrator can use **Retry** on the instance page, or a host can call `engine.retry()`, to run the same
+  item again. Service, send, and script tasks can opt into raising exceptions as BPMN errors so a boundary
+  event can handle them. See [Retry a failed task](examples/retry-task.md).
+- **Update running instances.** `engine.upgradeRunning(models, { dryRun: true })` previews moving active
+  instances onto the current saved model. The upgrade validates the model, checks that every open step
+  still exists, and leaves ended instances alone. It is intended for instances with their model source saved
+  (`SAVE_SOURCE=true` in bpmn-web). The bpmn-web package also provides an `upgrade:running` script. See [Revise a model with running instances](examples/revise-running-model.md).
+- **Check models before deployment.** The host can supply `appDelegate.verifyModel()` to add application
+  checks. bpmn-web provides the `verify:models` package script for stored models and
+  `POST /admin/api/definitions/verify` for verification without saving. With
+  `VERIFY_MODELS_ON_IMPORT=warn|enforce|off` (default `warn`), the admin import and save APIs can report or
+  reject models with errors. Editor saves still allow work in progress. See [Checking models](verify.md).
+- **Deploy and shut down.** The [Ubuntu installer](https://github.com/bpmnServer/bpmn-server/blob/v3.5.2/deploy/README.md)
+  configures a systemd service and generates the initial admin password. Setup creates an admin only for an
+  empty user store and uses `ADMIN_PASSWORD` if supplied. The web launcher checks production settings and
+  refuses unsafe configurations. The web host handles graceful shutdown and accepts application routes
+  through `start({ routes })`.
+- **Control production access.** `DISABLE_DESIGN=true` disables browser-based model design for all users
+  while leaving admin APIs available when enabled. `DISABLE_SIGNUP=true` disables self-registration.
+- **Keep locks and backups with the application.** MongoDB locks use the same resolved database as
+  instances, and the lock index is created before the first lock attempt. The version 2 web backup includes
+  top-level files in the definitions directory and records from each configured store, including connector
+  records with encrypted credentials. Copy `.history/` and `.runs/` separately to retain them. Restoring
+  connector credentials requires the original `CONNECTORS_KEY`.
 
 ## Connectors: REST APIs without code
 
@@ -30,12 +69,13 @@ See [Connectors](connectors.md).
 
 ## SQLite storage
 
-`SqliteDocumentStore` keeps instances, models and everything else in one SQLite file, through Node's built-in
-`node:sqlite` (Node 22.5 or later): no database server, for small installs, demos and desktop use. Several servers
-can share the file.
+`SqliteDocumentStore` keeps workflow instances and other document-store records in a SQLite file using
+Node's built-in `node:sqlite` (Node 22.5 or later). The starter app keeps model source, tests, and history
+in the definitions directory. The 3.5.2 web launcher still requires a `MONGO_DB_URL` value with a custom
+store. See [Keep a waiting instance in SQLite](examples/sqlite-resume.md) for the starter configuration.
 
 ```ts
-import { SqliteDocumentStore } from 'bpmn-server';
+import { Configuration, SqliteDocumentStore } from 'bpmn-server';
 
 const store = new SqliteDocumentStore('./bpmn.sqlite');
 const configuration = new Configuration({ /* ... */ documentStore: () => store });
@@ -70,14 +110,15 @@ bpmn-web's editor is rebuilt on current bpmn-js, with a properties panel that of
 - **Problems:** bpmn-server's checks and bpmnlint's modeling rules, as the model is edited; clicking one opens
   its field. The team chooses the rules' levels.
 - **Report:** the whole model as one printable document: its globals (messages, signals, errors, escalations),
-  pools and lanes, and each process's elements in flow order with every setting.
+  pools and lanes, and each process's elements in flow order with every setting. In 3.5.2, **Model report**
+  on the instance page shows the definition used by that instance.
 - **Test:** scenarios for a model, run step by step, repeated, checked, simulated on the diagram and debugged.
 - **History:** every save of a model kept; two versions compared by their report text (and what moved on the
   diagram); the history purged.
 
 Models, their tests and their history are files in the models folder (`<model>.tests.json`, `.history/`), ready
 for Git and backups: see [Where models, tests and history are kept](modeler.md#where-models-tests-and-history-are-kept).
-Tests kept in the database before are moved to files when the server starts.
+Setup migrates older database-backed test definitions to files. Run history is stored separately in `.runs/`.
 
 The **Design dashboard** shows every model's and decision's tests with their last result, and runs one model's,
 or all of them.
@@ -113,6 +154,7 @@ See [Security, A public demo](security.md#a-public-demo).
 
 - **`${...}` expressions:** `${js}` as a whole value is an expression, like `$js`; a text with `${...}` parts
   has each filled in (`Order ${data.id}`, `PT${data.hours}H`).
+  BPMN expressions use JavaScript. DMN decision tables and literal decisions use FEEL.
 - **Data objects:** a data object connected to an element is loaded by the application
   (`appDelegate.loadDataObject`) when the element runs, and kept in the instance data. See
   [Data objects](data-objects.md).
@@ -120,6 +162,8 @@ See [Security, A public demo](security.md#a-public-demo).
 - **Decisions in the log:** why each flow was taken or not, what a gateway waited for, which event won.
 - **Scripts in the debugger:** each script and expression is named `bpmn:///<model>/<element>/<label>.js`, so a
   debugger stops at its breakpoints and an error's stack points at it. See [Testing and debugging](testing.md#debugging).
+- **Per-instance diagnostics:** `engine.start(..., { flags })` can override the defaults for `savePoints`
+  and `saveLogs`. A completed task records the user who completed it in `item.userName`.
 - `engine.start(..., { instanceId })` lets the caller name the instance.
 
 ### Timers
