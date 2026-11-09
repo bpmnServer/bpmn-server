@@ -20,3 +20,7 @@ case "$(get_setting BPMN_IMAGE)" in
     set -- "$@" -f docker-compose.build.yml ;;
 esac
 docker compose "$@" up -d --remove-orphans
+if [ ! -f status.sh ]; then
+  curl -fL https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/status.sh -o status.sh
+fi
+sh status.sh "$@"
