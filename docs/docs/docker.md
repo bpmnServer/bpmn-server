@@ -15,6 +15,40 @@ Setup asks for the **port**, the **database** (`memory` or persistent MongoDB), 
 
 The **local build** option downloads editable image files into `./image/` and builds them. It uses the selected npm release of `bpmn-server` and `bpmn-web`; edits to the packages' source in GitHub are not automatically compiled into the image.
 
+## Startup feedback and troubleshooting
+
+`sh setup.sh` and `sh up.sh` now wait for an HTTP response after Docker reports the container started. They display either:
+
+```text
+Checking BPMN Server readiness at http://127.0.0.1:3000/login ...
+READY: BPMN Server is responding (HTTP 200).
+Open http://localhost:3000
+```
+
+or an error with the container status and recent application logs. Redirects and authentication responses can also count as HTTP readiness; this means the web endpoint responds, **not** that every workflow feature has passed a functional test. The check waits up to roughly 90 seconds, which may not be enough on a slow first memory-mode launch when MongoDB binaries are downloading.
+
+For an existing installation, download the latest startup scripts:
+
+```sh
+curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/up.sh
+curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/status.sh
+sh up.sh
+```
+
+You can run the readiness check independently:
+
+```sh
+sh status.sh
+```
+
+For an installation using overlays, pass them to the check in the same order as Compose:
+
+```sh
+sh status.sh -f docker-compose.yml -f docker-compose.build.yml
+```
+
+If it fails, inspect `docker compose ps -a` and `docker compose logs --tail=100 server`. With memory mode, check for missing Linux libraries (such as `libcurl.so.4`) or MongoDB binary download failures. Use `sh up.sh` to apply the saved image/database mode. On Windows, `up.cmd` currently starts Compose without the shell-based readiness check.
+
 ## .env and database
 
 ```dotenv
