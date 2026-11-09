@@ -47,7 +47,7 @@ For an installation using overlays, pass them to the check in the same order as 
 sh status.sh -f docker-compose.yml -f docker-compose.build.yml
 ```
 
-If it fails, inspect `docker compose ps -a` and `docker compose logs --tail=100 server`. With memory mode, check for missing Linux libraries (such as `libcurl.so.4`) or MongoDB binary download failures. Use `sh up.sh` to apply the saved image/database mode. On Windows, `up.cmd` currently starts Compose without the shell-based readiness check.
+If it fails, inspect `docker compose ps -a` and `docker compose logs --tail=100 server`. With memory mode, check for missing Linux libraries (such as `libcurl.so.4`) or MongoDB binary download failures. Use `sh up.sh` to apply the saved image/database mode. On Windows, `up.cmd` starts Compose without the readiness check; `.\bpmn.cmd status` shows the container and the HTTP status.
 
 ## .env and database
 
@@ -87,6 +87,34 @@ bpmn setup                  Configure the installation
 ```
 
 For a global command, download `install-cli.sh` from the same folder and run `sudo sh install-cli.sh`. If native `bpmn` is already installed, the helper installs `bpmn-docker` instead. Native-only commands (`domain`, `https`, `access`) are managed outside Docker.
+
+On Windows, `bpmn.cmd` has the same commands in PowerShell or `cmd`, without WSL. It runs `bpmn.ps1`, so download both:
+
+```powershell
+curl.exe -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/bpmn.cmd
+curl.exe -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/bpmn.ps1
+.\bpmn.cmd status
+.\bpmn.cmd password
+```
+
+## The console (CLI)
+
+The console runs inside the server container. From the installation folder:
+
+```sh
+sh bpmn cli                                  # Linux, macOS, WSL
+.\bpmn.cmd cli                               # Windows
+docker compose exec server npm run cli       # either, without the bpmn command
+```
+
+A command after it runs just that and quits: `bpmn cli co` lists the connectors, `bpmn cli lm` the models
+(see [Advanced Topics](advanced.md)). In memory mode the console is a separate process with its own empty
+database: it does not see the running server's users or instances. Use MongoDB for that.
+
+For a shell inside the container: `docker compose exec server sh` (`it.sh`, or `it.cmd` on Windows).
+
+Run the image through Compose, not with a plain `docker run` or Docker Desktop's Run button: without the
+settings in `.env` the server refuses to start (`MONGO_DB_URL is not set`).
 
 ## Manage
 

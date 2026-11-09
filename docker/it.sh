@@ -1,3 +1,4 @@
-#!/bin/bash
-id=$(docker ps -a --format "{{.ID}}" -f "name=bpmn-server-bpmn-web-*")
-docker exec -it $id sh
+#!/bin/sh
+# A shell in the running server container.
+cd "$(dirname "$0")"
+docker compose exec server sh

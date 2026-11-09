@@ -70,9 +70,16 @@ const timeout = () => AbortSignal.timeout(15000);
 const secrets = { API_KEY: key(), ADMIN_API_KEY: key(), SESSION_SECRET: key(), ADMIN_PASSWORD: key() };
 const work = fs.mkdtempSync(path.join(os.tmpdir(), 'bpmn-image-test-'));
 const override = path.join(work, 'override.yml');
+// the settings a real install keeps in .env beside docker-compose.yml: here a test's own
+const envFile = path.join(work, '.env');
+fs.writeFileSync(envFile, Object.entries({
+    ...secrets, MONGO_DB_URL: 'mongodb://mongo:27017/bpmn', REQUIRE_AUTHENTICATION: 'true', ENFORCE_SECURITY: 'true',
+    API_SERVICE_USER_NAME: 'integration', API_SERVICE_USER_GROUPS: 'SYSTEM',
+}).map(([k, v]) => `${k}=${v}\n`).join(''));
 fs.writeFileSync(override, `services:
   server:
-    env_file: !override []
+    env_file: !override
+      - ${envFile.replace(/\\/g, '/')}
     image: ${image}
     pull_policy: never
     ports: !override
