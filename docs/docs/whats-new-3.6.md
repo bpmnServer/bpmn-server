@@ -8,6 +8,9 @@ bpmn-server 3.6 separates the host from the engine, removes guest access and mov
 - **Guest users:** on a server that had `GUEST_ACCESS` on, delete the users in the group `GUEST` first. A session they kept would otherwise sign them in as a designer of the shared models. `GUEST_ACCESS`, `GUEST_SAVE`, `GUESTS_PATH`, `GUEST_MAX_MODELS` and `GUEST_RATE_LIMIT` are gone.
 - **Test files change on start-up:** each `<model>.tests.json` and `<decision>.dmn.tests.json` in the models folder becomes a `.feature` file, and the JSON is deleted. A file that wouldn't read back as the same tests stays as it is, keeps working, and is reported in the log. Keep the folder in Git or back it up first.
 - **Earlier test runs aren't carried over:** every scenario shows as not run and coverage starts empty, until you run the scenarios again. The old `.runs` folder is no longer read and can be deleted.
+- **The Docker image is now `bpmnserver/bpmn-server`.** An installation whose `.env` names `ralphhanna/bpmn-server` or
+  `ralphhanna/bpmn-web` keeps that image until you change `BPMN_IMAGE` (`bpmn env`); those images are no longer updated.
+- **Passwords were written to the log at sign-in** in earlier versions. Rotate them if your logs are kept or shared.
 - **Mocha and scenario files are gone from the sample application:** the engine's scenarios, and `test/custom/*.json`, are now `processes/<model>.engine.feature`, and `npm run test:scenarios` runs them. If you copied `test/custom/scenarios.test.ts` into your application, it keeps working on your own JSON files, but it is no longer maintained.
 
 ## The host and the engine
@@ -31,6 +34,31 @@ Tests are now `.feature` files beside their models, and they run whole in the en
 - **Coverage** is now under the scenarios.
 - A scenario's last run is its test instance in the database, tagged with its process and scenario. **Deleting that instance deletes the run and its coverage.**
 - **A decision's test runs are no longer saved.** A decision test has no instance to tag, so its runs last until the page is reloaded. The tests themselves are saved.
+
+## The Rationale, step by step
+
+The engine now logs each operation on an instance (`Start Process`, `Invoke Item`, `Timer Fired`, ...) and its outcome:
+the instance's status, the items that changed and what waits. On the instance page the Rationale is split by these
+steps, each a line that opens to what followed and why. In the Test tab, each step of the timeline has **What
+happened**: its rows, **Add as a check** on an item it changed, and its checks under the rows they check. Coverage
+shows one percentage, nodes and flows together. See [The model editor](modeler.md) and [Workflow execution](execution.md).
+
+## Signing in
+
+A user who is neither an administrator nor a designer lands on **My work**; signing in goes on to the page it
+interrupted; the password is no longer written to the log. An administrator can **Force** a waiting receive task, as
+an event.
+
+## Building workflows with an AI agent
+
+A guide for AI agents that build workflows on BPMN Server: the loop, what to read, working locally (`verify --json`,
+`npm test`), and the API calls that work remotely today. See [Building workflows with AI](ai/building-workflows.md).
+A new application's `npm test` runs every model's `.feature` file in memory.
+
+## Docker on Windows
+
+`bpmn.cmd` gives the Docker installation's `bpmn` commands (status, logs, the console, ...) in PowerShell or `cmd`,
+without WSL. See [Docker](docker.md).
 
 ## The model editor
 
