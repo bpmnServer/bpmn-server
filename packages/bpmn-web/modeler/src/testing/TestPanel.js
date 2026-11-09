@@ -86,7 +86,8 @@ export default class TestPanel {
         this._starting = null;          // the scenario whose start form is open
         this._debug = false;            // Debug: the variables shown and changed, steps restarted
         this._restarting = null;        // the done step whose Restart here is open: its index
-        this._opened = new Set(['inspect', 'data', 'items', 'rationale', 'gaps']);   // the parts shown open
+        this._opened = new Set(['inspect', 'steps', 'data', 'items', 'rationale', 'gaps']);   // the parts shown open
+        this._openSteps = new Set();     // the Steps opened to what happened, by their number
         this._editing = new Set();      // the checks whose fields are open
         this._marked = [];
         this._coverageOn = false;       // the diagram shows coverage, not the run shown
@@ -988,7 +989,8 @@ export default class TestPanel {
             scenario.source !== undefined ? el('div', { class: 'test-written' },
                 el('p', {}, 'Written in Gherkin, with what this tab has no form for. Run it here; to change it, ',
                     el('button', { type: 'button', class: 'test-written-edit', onclick: () => this.openText(), disabled: !!this._live }, 'Edit as text'), '.'),
-                el('pre', {}, scenario.source)) : this._renderTimeline(scenario, live),
+                el('pre', {}, scenario.source),
+                this._writtenSteps(scenario, live)) : this._renderTimeline(scenario, live),
             scenario.source !== undefined ? null : this._renderChecks(scenario, live),
             this._renderInspect(scenario, live));
     }
@@ -1017,6 +1019,24 @@ export default class TestPanel {
     _renderTimeline(scenario, live) {
         const result = live ? null : this._results.get(scenario);
         const steps = live ? live.done : scenario.steps;
+        // the run shown, step by step: under each of the timeline's, what happened when it ran
+        const instance = live ? live.instance : result?.instance;
+        const run = instance?.steps?.length ? this._runSteps(scenario, instance, live) : null;
+        const partOf = stepIndex => {
+            const i = run ? run.places.findIndex(p => p.stepIndex === stepIndex) : -1;
+            return i < 0 ? null : run.part(i);
+        };
+        // the run's steps no step of the scenario asked for (a timer the server fired), after the step they followed
+        const unasked = new Map();
+        if (run) {
+            let after = -1;
+            run.places.forEach((p, i) => {
+                if (p.stepIndex !== undefined) after = p.stepIndex;
+                else unasked.set(after, [...(unasked.get(after) ?? []), i]);
+            });
+        }
+        const unaskedRows = after => (unasked.get(after) ?? []).map(i => el('div', { class: 'test-step by-itself', 'data-element-id': run.groups[i].element ?? '' },
+            run.line(run.groups[i]), run.part(i)));
         const seen = new Set();     // a step repeated (a loop): its checks under the first
         const startId = scenario.start?.startNodeId;
         const firstStart = this._elements(['bpmn:StartEvent']).find(e => is(e.$parent, 'bpmn:Process'));
@@ -1025,21 +1045,24 @@ export default class TestPanel {
             el('div', { class: 'test-step test-step-start' },
                 el('span', { class: 'test-step-name' }, this._elementIcon(startId ?? firstStart?.id), scenario.start?.only ? `This task alone: ${startName}` : `Start: ${startName}`),
                 el('code', { class: 'test-step-data' }, JSON.stringify(scenario.start?.data ?? {})),
-                this._checkRows(scenario, c => c.at === 'start')),
+                // its checks: under their items in what happened, once it ran; before, here
+                partOf(-1) ?? this._checkRows(scenario, c => c.at === 'start')),
+            unaskedRows(-1),
             steps.map((step, i) => {
                 // a Run's result for this step; a stopped run has none for the steps after
                 const outcome = result?.steps?.[i]?.element === step.element ? result.steps[i] : null;
                 const mark = live || outcome?.ok ? '✓ ' : outcome ? '✗ ' : '';
                 const first = !seen.has(step.element);
                 seen.add(step.element);
-                return el('div', { class: `test-step ${live ? 'done' : 'saved'}${outcome && !outcome.ok ? ' failed' : ''}`, 'data-element-id': step.element },
+                return [el('div', { class: `test-step ${live ? 'done' : 'saved'}${outcome && !outcome.ok ? ' failed' : ''}`, 'data-element-id': step.element },
                     el('span', { class: 'test-step-name' }, mark, this._elementIcon(step.element), this._label(step.element)),
                     el('code', { class: 'test-step-data' }, JSON.stringify(step.data ?? {})),
                     live ? null : el('button', { type: 'button', class: 'test-step-remove', title: 'Remove this step and the ones after it',
                         onclick: () => { scenario.steps.splice(i); this._scheduleSave(); this.render(); } }, '✕'),
                     outcome?.error ? el('span', { class: 'test-error test-step-error' }, outcome.error) : null,
                     live && this._debug ? this._renderDoneDebug(live, step, i) : null,
-                    first ? this._checkRows(scenario, c => c.at === 'after' && c.step === step.element) : null);
+                    partOf(i) ?? (first ? this._checkRows(scenario, c => c.at === 'after' && c.step === step.element) : null)),
+                    unaskedRows(i)];
             }),
             live ? this._renderPending(live) : null,
             !live && !steps.length ? el('p', { class: 'test-hint' }, 'No steps yet. Record the scenario: each task you complete becomes a step, and Run then repeats them.') : null);
@@ -1152,7 +1175,6 @@ export default class TestPanel {
         return this._part('inspect', 'Inspect this run', [
             this._part('data', 'Data', this._renderData(scenario, instance, live), { class: 'test-data-part' }),
             this._renderItems(scenario, instance, live),
-            instance.rationale?.length ? this._part('rationale', 'Rationale', this._renderRationale(instance.rationale), { class: 'test-rationale' }) : null,
             this._part('log', `Log (${instance.logs?.length ?? 0} lines)`, el('pre', { class: 'test-log' }, (instance.logs || []).join('\n')))
         ], { class: 'test-inspect' });
     }
@@ -1161,6 +1183,7 @@ export default class TestPanel {
         this._stopSimulation();
         this._coverageOn = false;
         if (this._goal?.scenario !== scenario) this._goal = null;
+        if (this._current !== scenario) this._openSteps.clear();
         this._current = scenario;
         this.render();
         this._markCurrent();
@@ -1269,13 +1292,16 @@ export default class TestPanel {
     _renderCoverage() {
         if (!this._elements().length) return null;
         const { nodes, flows, notRun } = this._coverage();
+        // nodes and flows together, tested of all, rounded: as the Design dashboard
+        const percent = (tested, total) => total ? Math.round(100 * tested / total) : 0;
         const line = (which, label, of) => el('div', { class: `test-coverage-line test-coverage-${which}` },
             el('span', {}, label), el('strong', {}, `${of.tested} of ${of.total}`));
         const notPassed = nodes.reached + flows.reached;
         const gaps = [...nodes.elements, ...flows.elements].filter(e => e.state === 'untested');
         const generated = nodes.generated + flows.generated;
         return el('div', { class: `test-coverage${this._coverageLoading?.size ? ' test-coverage-loading' : ''}` },
-            el('h5', {}, 'Coverage'),
+            el('h5', {}, 'Coverage ', el('strong', { class: 'test-coverage-total', title: 'Nodes and flows tested, of all of them' },
+                `${percent(nodes.tested + flows.tested, nodes.total + flows.total)}%`)),
             line('nodes', 'Nodes', nodes),
             line('flows', 'Flows', flows),
             generated ? el('p', { class: 'test-coverage-note test-coverage-generated' }, `${generated} of these only by generated scenarios, not reviewed`) : null,
@@ -1644,7 +1670,7 @@ export default class TestPanel {
      * A check: at the end or after a step; a node (by id or name: how many times it ran, in what status), a data value
      * compared, the instance's status.
      */
-    _checkRow(scenario, check, inPlace = false) {
+    _checkRow(scenario, check, inPlace = false, inStep = false) {
         const outcome = this._checkOutcome(scenario, check);
         const icon = () => el('span', { class: `test-check-icon${outcome ? (outcome.ok ? ' ok' : ' failed') : ''}`,
             title: outcome ? (outcome.ok ? 'Passed in this run' : 'Failed in this run') : 'A check', 'aria-hidden': 'true' });
@@ -1688,7 +1714,8 @@ export default class TestPanel {
         ];
         return el('div', { class: 'test-check-row' },
             icon(),
-            el('select', { class: 'test-check-at', 'aria-label': 'When', onchange: e => {
+            // in a step's what happened, the step is when: no When
+            inStep ? null : el('select', { class: 'test-check-at', 'aria-label': 'When', onchange: e => {
                 const value = e.target.value;
                 // it moves to where it now belongs
                 set(value === 'end' ? { at: undefined, step: undefined } : value === 'start' ? { at: 'start', step: undefined } : { at: 'after', step: value.slice(6) }, true);
@@ -1720,25 +1747,186 @@ export default class TestPanel {
         return `${who} was reached${times}${check.status ? `, and ${STATE_WORDS[check.status] ?? `is ${check.status}`}` : ''}`;
     }
 
+    /**
+     * The run step by step (instance.steps): each operation the engine logged (Start Process, Invoke Item, Timer Fired,
+     * ...), its outcome as the engine logged it (the instance's status, the items whose status changed, what waits), the
+     * decisions under it, the scenario's checks of it, and the checks to add: one for each fact of the outcome that no
+     * check looks at. Nothing here knows BPMN: what is shown and offered is the log's.
+     * A recorded scenario adds a check with a button; one written in Gherkin gets the line to paste.
+     */
+    _runSteps(scenario, instance, live) {
+        const written = scenario.source !== undefined;
+        const groups = instance.steps;
+        const last = groups.length - 1;
+        const ownSteps = live ? live.done : scenario.steps;
+        const opens = g => g.label === 'Start Process';
+        // the scenario's own steps, matched in order to the run's operations: an operation none of them asked for (a timer
+        // the server fired) matches none
+        const places = [];
+        if (written) {
+            const blocks = [];
+            for (const line of String(scenario.source).split('\n').map(l => l.trim())) {
+                if (/@(start|invoke|signal|message|throw|restart)\b/.test(line)) blocks.push({ action: line, checks: [] });
+                else if (/@(check|wait)\b/.test(line) && blocks.length) blocks.at(-1).checks.push(line);
+            }
+            const instanceName = (/@start\b.*\bas :(\w+)/.exec(scenario.source) ?? [])[1] ?? 'instance';
+            let at = 0;
+            for (const g of groups) {
+                const block = blocks[at];
+                const mine = block && (opens(g) ? /@start\b/.test(block.action)
+                    : g.label !== 'Timer Fired' || block.action.includes(`element:${g.element}`) || block.action.includes(`element:"${g.element}"`));
+                places.push(mine ? { block, instanceName } : { instanceName });
+                if (mine) at++;
+            }
+        }
+        else {
+            const seen = new Set();
+            let at = 0;
+            for (const g of groups) {
+                if (opens(g)) { places.push({ position: { at: 'start' }, stepIndex: -1 }); continue; }
+                const step = ownSteps[at];
+                if (step && step.element === g.element) {
+                    // a step repeated (a loop): its checks are under the first, as in the timeline
+                    places.push(seen.has(g.element) ? { repeated: true, stepIndex: at } : { position: { at: 'after', step: g.element }, stepIndex: at });
+                    seen.add(g.element);
+                    at++;
+                }
+                else places.push({});
+            }
+        }
+        const inPlace = i => {
+            const place = places[i];
+            if (written) return place.block ? place.block.checks : [];
+            const ids = new Set(ownSteps.map(s => s.element));
+            const atTheEnd = c => c.at !== 'start' && !(c.at === 'after' && ids.has(c.step));
+            if (!place.position) return i === last ? scenario.checks.filter(atTheEnd) : [];
+            return scenario.checks.filter(c => place.position.at === 'start' ? c.at === 'start'
+                : (c.at === 'after' && c.step === place.position.step) || (i === last && atTheEnd(c)));
+        };
+        // a fact of the outcome as a check: what waits, each item's new status, the instance's status when it changed
+        const quote = id => /^[\w-]+$/.test(id) ? id : `"${String(id).replace(/"/g, '\\"')}"`;
+        const candidates = i => {
+            const g = groups[i], place = places[i], outcome = g.outcome;
+            if (!outcome) return [];
+            const position = place.position ?? {};
+            const name = place.instanceName ?? 'instance';
+            const list = [];
+            const waiting = new Map();
+            for (const w of outcome.waiting) waiting.set(w.elementId, (waiting.get(w.elementId) ?? 0) + 1);
+            for (const [id, count] of waiting)
+                list.push({ check: { kind: 'node', node: id, status: 'wait', count, ...position },
+                    gherkin: `@check :${name} has ${count} items of element:${quote(id)} with status "wait"` });
+            for (const c of outcome.changed) {
+                if (c.status === 'wait' || c.elementId === g.element || list.some(x => x.check.node === c.elementId)) continue;
+                list.push({ check: { kind: 'node', node: c.elementId, status: c.status, ...position },
+                    gherkin: `@check :${name} last element:${quote(c.elementId)} status is "${c.status}"` });
+            }
+            if (outcome.status !== g.statusBefore)
+                list.push({ check: { kind: 'status', status: outcome.status, ...(i === last ? {} : position) },
+                    gherkin: `@check :${name} status is "${outcome.status}"` });
+            return list;
+        };
+        // a check written in Gherkin is there when its statement is, whatever the instance is named
+        const statement = line => line.replace(/^(Given|When|Then|And|But|\*)\s+/, '').replace(/^@(check|wait) :\w+ /, '');
+        const copyCheck = c => el('button', { type: 'button', class: 'test-copy-check', title: `Copy, to paste in Edit as text: ${c.gherkin}`,
+            onclick: () => { navigator.clipboard?.writeText(c.gherkin); this._status(`Copied: ${c.gherkin}`); } }, 'Copy check');
+        // a step's What happened: its rows, Add check on an item it changed, the instance's status it changed; in a
+        // written scenario, the checks under the row of their item (a recorded one shows them in its timeline)
+        const part = i => {
+            const g = groups[i], place = places[i];
+            const checks = inPlace(i);
+            const present = written ? (place.block?.checks ?? []).map(statement) : [];
+            // what no check looks at yet: a check is shown once, under the row of its item
+            const offers = (place.repeated || (!written && !place.position && i !== last) ? [] : candidates(i))
+                .filter(c => written ? !present.some(p => p.startsWith(statement(c.gherkin)))
+                    : !(scenario.checks ?? []).some(x => checkKey(x) === checkKey(c.check)));
+            const button = c => written ? copyCheck(c) : this._addCheckButton(scenario, c.check);
+            // an item's last row in the step: its button, and its checks
+            const lastRow = new Map();
+            g.events.forEach((e, n) => { if (e.raw !== 'decision' && e.id) lastRow.set(e.id, n); });
+            const nodeOf = c => written ? (/element:(?:"([^"]+)"|([^\s]+))/.exec(c) ?? []).slice(1).find(Boolean) : c.kind === 'node' ? c.node : null;
+            // the step's own row: its element's (the task it completed); at the start, its first
+            const stepRow = g.element && lastRow.has(g.element) ? lastRow.get(g.element) : g.events.findIndex(e => e.raw !== 'decision');
+            // a check under the row of its item; one of no item (data, the instance's status) under the step's row
+            const under = new Map(), rest = [];
+            for (const c of checks) {
+                const row = lastRow.get(nodeOf(c)) ?? (stepRow >= 0 ? stepRow : undefined);
+                if (row === undefined) rest.push(c); else under.set(row, [...(under.get(row) ?? []), c]);
+            }
+            // a recorded check with its result in this run, to edit or remove; a written one, its line
+            const showCheck = c => written ? el('code', { class: 'test-rationale-check' }, c) : this._checkRow(scenario, c, true, true);
+            // open stays open when the tab is drawn again (a result, a check added)
+            return el('details', { class: 'test-steps-rows', open: this._openSteps.has(g.n),
+                ontoggle: e => { if (e.target.open) this._openSteps.add(g.n); else this._openSteps.delete(g.n); } },
+                el('summary', {}, `What happened (${g.events.length} rows${checks.length ? `, ${checks.length} check${checks.length === 1 ? '' : 's'}` : ''})`,
+                    // a check of this step, of any kind: it opens under the step's row, to be filled in
+                    !written && place.position ? el('button', { type: 'button', class: 'test-step-add-check', title: 'Add a check after this step: an element, data or the instance',
+                        onclick: e => {
+                            e.preventDefault(); e.stopPropagation();
+                            const check = { kind: 'node', ...place.position };
+                            scenario.checks.push(check);
+                            this._editing.add(check);
+                            this._openSteps.add(g.n);
+                            this._scheduleSave(); this.render();
+                        } }, 'Add check') : null),
+                // the checks of no item of the step (the instance, data, an expression)
+                rest.length ? el('div', { class: 'test-steps-other-checks' }, rest.map(showCheck)) : null,
+                this._renderRationale(g.events, {
+                    action: (e, n) => {
+                        const offer = lastRow.get(e.id) === n && offers.find(c => c.check.kind === 'node' && c.check.node === e.id);
+                        return offer ? button(offer) : null;
+                    },
+                    below: (e, n) => under.get(n)?.map(showCheck),
+                }));
+        };
+        // a step's line, when it is not a timeline's: Step n, what the engine logged, who, the data
+        const line = g => el('div', { class: 'test-steps-head' },
+            el('strong', {}, `Step ${g.n}${g.label ? ` · ${g.label}` : ''}`),
+            g.element ? el('span', {}, this._label(g.element, g.name)) : null,
+            g.userName ? el('span', { class: 'test-steps-user' }, `by ${g.userName}`) : null,
+            g.data && Object.keys(g.data).length ? el('code', { class: 'test-step-data' }, JSON.stringify(g.data)) : null);
+        return { groups, places, part, line };
+    }
+
+    /** A written scenario's last run, step by step, under its text. */
+    _writtenSteps(scenario, live) {
+        const instance = (live ? live.instance : this._results.get(scenario)?.instance);
+        return instance?.steps?.length ? el('div', { class: 'test-steps test-rationale' }, this._renderSteps(scenario, instance, live)) : null;
+    }
+
+    /** A scenario written in Gherkin: its run's steps, each its line and What happened. */
+    _renderSteps(scenario, instance, live) {
+        const { groups, places, part, line } = this._runSteps(scenario, instance, live);
+        return el('div', { class: 'test-steps-list' }, groups.map((g, i) =>
+            el('div', { class: `test-steps-step${places[i].block ? '' : ' by-itself'}`, 'data-element-id': g.element ?? '' }, line(g), part(i))));
+    }
+
     /** The Rationale, as the instance page shows it: what happened, in order; in a panel's width, the why under its row. */
-    _renderRationale(events) {
+    _renderRationale(events, { action = null, below = null, end = null } = {}) {
         const what = e => {
             const badge = e.raw === 'Waiting' ? 'wait' : e.raw === 'Aborted' || e.raw === 'Cancelled' ? 'error' : '';
             return [e.word && badge ? el('span', { class: `test-rationale-badge ${badge}` }, e.word) : e.word,
                 ...e.decisions.filter(d => d.action).map(d => el('div', { class: `test-rationale-decision${d.not ? ' not' : ''}` }, d.action))];
         };
         const whys = e => e.decisions.filter(d => d.why);
-        return el('div', { class: 'test-rationale-scroll' }, el('table', {},
-            el('thead', {}, el('tr', {}, ['Seq #', 'At', 'Element ID', 'Name', 'Type', 'What happened'].map(h => el('th', { scope: 'col' }, h)))),
-            el('tbody', {}, events.flatMap(e => [
-                el('tr', { class: e.decisions.length ? 'chose' : '' },
+        const columns = action ? 6 : 5;
+        // the element: its name and id, or its id
+        const element = e => e.name ? `${e.name} (${e.id})` : e.id ?? '';
+        const checks = list => list?.length ? el('tr', { class: 'test-rationale-checks' }, el('td', { colspan: columns }, list)) : null;
+        // styled as the Rationale wherever it is (a step of the timeline, a written scenario's steps)
+        return el('div', { class: 'test-rationale-scroll test-rationale' }, el('table', {},
+            el('thead', {}, el('tr', {}, ['Seq #', 'At', 'Element', 'Type', 'What happened', ...(action ? [''] : [])].map(h => el('th', { scope: 'col' }, h)))),
+            el('tbody', {}, events.flatMap((e, n) => [
+                el('tr', { class: e.decisions.length ? 'chose' : '', 'data-element': e.id ?? '' },
                     el('td', {}, e.seq ?? ''),
                     el('td', {}, e.at),
-                    el('td', {}, e.id ?? ''),
-                    el('td', {}, e.name ?? ''),
+                    el('td', {}, element(e)),
                     el('td', {}, (e.type ?? '').replace('bpmn:', '')),
-                    el('td', {}, what(e))),
-                whys(e).length ? el('tr', { class: 'chose' }, el('td', { colspan: 6, class: 'test-rationale-why' }, whys(e).map(d => el('div', {}, d.why)))) : null]))));
+                    el('td', {}, what(e)),
+                    action ? el('td', { class: 'test-rationale-action' }, action(e, n)) : null),
+                whys(e).length ? el('tr', { class: 'chose' }, el('td', { colspan: columns, class: 'test-rationale-why' }, whys(e).map(d => el('div', {}, d.why)))) : null,
+                below ? checks(below(e, n)) : null]),
+                checks(end))));
     }
 
     /** What the run shown found for a check, if it got there; a step repeated (a loop): a time it failed, if any. */
@@ -1879,10 +2067,6 @@ export default class TestPanel {
      * run step by step, an element done can be restarted (it runs again, with the variables as they are now).
      */
     _renderItems(scenario, instance, live = null) {
-        const position = this._runPosition(scenario, instance, live);
-        const sameState = item => instance.items.filter(i => i.elementId === item.elementId && i.status === item.status).length;
-        // how many times it is in this state: 1, or more in a loop; a flow too, as any item
-        const itemCheck = item => ({ kind: 'node', node: item.elementId, status: item.status, count: sameState(item), ...position });
         const restartable = item => live && this._debug && item.status === 'end' && !this._flowIds().has(item.elementId);
         const items = [...(instance.items || [])].sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0));
         const time = value => value ? new Date(value).toLocaleTimeString() : '';
@@ -1908,7 +2092,8 @@ export default class TestPanel {
                     el('td', {}, item.assignee || ''),
                     el('td', {}, time(item.startedAt)),
                     el('td', {}, time(item.endedAt)),
-                    el('td', { class: 'test-item-commands' }, this._addCheckButton(scenario, itemCheck(item)), restartable(item) ? el('button', { type: 'button', class: 'test-item-restart',
+                    // a check is added on its step's rows (What happened), not here
+                    el('td', { class: 'test-item-commands' }, restartable(item) ? el('button', { type: 'button', class: 'test-item-restart',
                         title: 'Go back to this element and run it again, with the variables as they are now',
                         onclick: e => { e.stopPropagation(); this.restartAt(item.id, live.instance.data, this._label(item.elementId, item.name)); } }, 'Restart') : null))))),
             { class: 'test-items' });

@@ -1397,3 +1397,33 @@ dialog.connector-wizard::backdrop { background: rgba(20, 24, 31, 0.45); }
     font-size: 12px;
     line-height: 1.45;
 }
+
+/* Inspect this run: Steps, each with its impact, why, checks and checks to add */
+.test-steps-list { display: flex; flex-direction: column; gap: 10px; }
+.test-steps-step { border: 1px solid #dce4ec; border-radius: 6px; padding: 8px 10px; font-size: 12px; }
+.test-steps-step.by-itself { border-style: dashed; }
+.test-steps-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+.test-steps-user { color: #637588; }
+.test-steps-row { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 8px; margin: 4px 0; }
+.test-steps-row > h6 { margin: 0; padding-top: 1px; font-size: 11px; font-weight: 600; color: #637588; text-transform: uppercase; }
+.test-steps-row ul { margin: 0; padding-left: 16px; }
+.test-steps-row p { margin: 0; }
+.test-steps-label { display: inline-block; min-width: 72px; color: #637588; }
+.test-steps-why pre { margin: 2px 0 6px; white-space: pre-wrap; font-size: 11px; background: #f8fbff; padding: 4px 6px; }
+.test-steps-add li { margin: 2px 0; }
+.test-steps-add li > * + * { margin-left: 6px; }
+.test-steps-rows summary { cursor: pointer; color: #637588; margin-top: 4px; }
+
+.test-coverage-total { margin-left: 4px; }
+.test-rationale td.test-rationale-action { white-space: nowrap; text-align: right; }
+.test-rationale td.test-rationale-action button { white-space: nowrap; }
+.test-steps-other-checks { margin: 0 0 4px 12px; }
+.test-rationale tr.test-rationale-checks td { padding-left: 24px; border-bottom: 1px solid #eef0f3; }
+.test-rationale tr:has(+ tr.test-rationale-checks) td { border-bottom: 0; }
+.test-rationale-check { display: block; }
+.test-steps-status { margin-left: auto; color: #637588; }
+.test-steps-status > * { margin-left: 6px; }
+/* the timeline: a step's What happened, under it, the panel's width */
+.test-step > .test-steps-rows, .test-step > .test-steps-head { grid-column: 1 / -1; }
+.test-steps-rows > summary .test-steps-status { margin-left: 12px; }
+.test-steps-rows > summary .test-step-add-check { margin-left: 12px; }

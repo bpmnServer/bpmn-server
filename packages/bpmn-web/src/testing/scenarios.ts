@@ -17,7 +17,7 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import vm from 'node:vm';
 import { runSandboxed, SandboxScriptHandler } from 'bpmn-server';
-import { rationaleEvents } from './rationale.js';
+import { rationaleSteps } from './rationale.js';
 import { readFeature, sourceFeature, writeFeature } from './featureFiles.js';
 
 export interface ScenarioStep {
@@ -362,7 +362,8 @@ export function summarize(instance) {
         logs: (instance.logs ?? []).slice(-300).map(l => typeof l === 'string' ? l : `${' '.repeat(Math.max(0, l.level ?? 0))}${l.message}`),
         // why the engine took its path: the log's decision entries, in order
         decisions: (instance.logs ?? []).filter(l => l?.type === 'decision').map(l => l.message),
-        rationale: rationaleEvents(instance.logs, instance.items, instance.startedAt),
+        // the Rationale by the steps that drove the instance: what each caused, and why
+        steps: rationaleSteps(instance.logs, instance.items, instance.startedAt),
     };
 }
 

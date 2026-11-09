@@ -141,7 +141,8 @@ test('the Test tab runs a FEEL condition: the data chooses the path', async () =
   await run('Small', { amount: 10, approved: true }, 'low', 'high');
 
   // the Rationale says which way, and shows the FEEL it read
-  assert.match(await page.locator('.test-rationale').innerText(), /amount > 1000 and approved/);
+  for (const summary of await page.locator('.test-timeline .test-steps-rows > summary').all()) await summary.click();
+  assert.match(await page.locator('.test-timeline').innerText(), /amount > 1000 and approved/);
   assert.deepEqual(errors, []);
   await close();
 });

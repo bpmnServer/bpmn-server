@@ -367,10 +367,12 @@ test('debug: a check after a step; the variables changed; a step restarted and r
     assert.deepEqual(await checkResults(page), ['✗ after Submit: data.days > 5 (is 2)']);
     assert.equal(await page.locator('.test-debug-panel').count(), 0, 'closed with the recording');
 
-    // why: the gateway's condition with the value it read
-    const why = await page.locator('.test-rationale').innerText();
-    assert.deepEqual(await page.locator('.test-rationale th').allInnerTexts(), ['Seq #', 'At', 'Element ID', 'Name', 'Type', 'What happened'], 'as on the instance page, the why under its row');
-    assert.match(await page.locator('.test-rationale-decision.not').first().innerText(), /not taken/);
+    // why: the gateway's condition with the value it read, in the timeline (each step opened to what happened)
+    for (const summary of await page.locator('.test-timeline .test-steps-rows > summary').all()) await summary.click();
+    const why = await page.locator('.test-timeline').innerText();
+    assert.deepEqual(await page.locator('.test-timeline table').first().locator('th').allInnerTexts(), ['Seq #', 'At', 'Element', 'Type', 'What happened', ''],
+        'as on the instance page, the why under its row; a column for Add check');
+    assert.match(await page.locator('.test-timeline .test-rationale-decision.not').first().innerText(), /not taken/);
     assert.match(why, /condition[^]*days[^]*result: false \(days=2\)/);
     assert.match(why, /takes its default flow/);
     assert.deepEqual(errors, []);
@@ -736,4 +738,63 @@ test('"No problems found" and Rules show with the Problems tab only', async () =
     assert.equal(await page.locator('#js-lint-rules-open').isVisible(), true);
     await page.click('#js-tab-report');
     assert.equal(await page.locator('#js-lint-rules-open').isVisible(), false);
+});
+
+test('a step of the timeline opens to what happened when it ran: its Rationale, Add check on a row; a written scenario, its steps', async () => {
+    const { page, errors, close } = await openTestTab();
+    // a row of a table, by its element: its last
+    const row = (where, id) => where.locator(`.test-rationale-scroll tbody tr[data-element="${id}"]`).last();
+
+    // recorded: the start and each step has what happened; Add check adds the check, which the timeline shows under the step
+    await newScenario(page);
+    await page.fill('.test-name', 'Steps of a long leave');
+    await startRun(page);
+    await runStep(page, 'Submit', { days: 10 });
+    await page.click('.test-stop-recording');
+    await page.click('.test-replay');
+    await page.waitForSelector('.test-timeline .test-step[data-element-id="Submit"] .test-steps-rows');
+    assert.equal(await page.locator('.test-timeline .test-steps-rows').count(), 2, 'the start, then Submit');
+    const submit = page.locator('.test-timeline .test-step[data-element-id="Submit"]');
+    assert.equal(await submit.locator('.test-rationale-scroll').isVisible(), false, 'closed: the step is its line');
+    await submit.locator('.test-steps-rows > summary').click();
+    assert.match(await submit.locator('.test-steps-rows').innerText(), /days[^]*result: true \(days=10\)/, 'its rows, the why under them');
+    await row(submit, 'Approve').locator('.test-add-check').click();
+    await page.waitForSelector('.test-timeline .test-step[data-element-id="Submit"] .test-rationale-checks .test-check-row');
+    const under = row(submit, 'Approve').locator('xpath=following-sibling::tr[1]');
+    assert.match(await under.getAttribute('class'), /test-rationale-checks/, 'the check, under the row of its item');
+    assert.match(await under.innerText(), /Approve request/);
+    assert.equal(await submit.locator('.test-step-check-rows').count(), 0, 'once: not in the timeline too');
+    assert.equal(await row(submit, 'Approve').locator('.test-add-check').count(), 0, 'a check shows once: in the timeline, not on its row too');
+
+    // written in Gherkin: its steps under its text; a row copies its check's line; a check of no item is under the step's line
+    const file = path.join(web.definitionsPath, 'leave-request.feature');
+    await page.click('.test-list-menu summary');
+    await page.click('.test-edit-text');
+    await page.waitForSelector('.test-text-input');
+    const text = await page.inputValue('.test-text-input');
+    await page.fill('.test-text-input', text.replace(/\s*$/, '\n') + [
+        '',
+        '  Scenario: a long leave, written',
+        '    When @start process:leave-request as :r',
+        '    And @invoke element:Submit in :r',
+        '      | days | 10 |',
+        '    Then @check ${data.days == 10}',
+        '',
+    ].join('\n'));
+    await page.click('.test-text-save');
+    await page.waitForSelector('.test-list');
+    await page.click('.test-tree li:has-text("a long leave, written")');
+    await page.click('.test-replay');
+    await page.waitForSelector('.test-summary.ok, .test-summary.failed');
+    assert.equal(await page.locator('.test-summary-title').innerText(), '✓ Passed', (await page.locator('.test-error').allInnerTexts()).join(' | '));
+    await page.waitForSelector('.test-written .test-steps-step >> nth=1');
+    const step = n => page.locator('.test-written .test-steps-step').nth(n - 1);
+    assert.match(await step(1).locator('.test-steps-head').innerText(), /^Step 1 · Start Process/, 'as the engine logged it');
+    assert.match(await step(2).locator('.test-steps-head').innerText(), /^Step 2 · Invoke Item[^]*Submit request/);
+    await step(2).locator('.test-steps-rows > summary').click();
+    assert.match(await step(2).locator('.test-steps-other-checks').innerText(), /@check \$\{data\.days == 10\}/);
+    assert.match(await row(step(2), 'Approve').locator('.test-copy-check').getAttribute('title'), /@check :r has 1 items of element:Approve with status "wait"$/);
+    fs.rmSync(file);
+    assert.deepEqual(errors, []);
+    await close();
 });

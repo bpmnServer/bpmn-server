@@ -36,6 +36,13 @@ and here
 - The Test tab's coverage is under the scenarios. "No problems found" and Rules show with the Problems tab only.
 - The web app launches its server (`BPMNServer.launch`), so it handles data, not running executions. **`ENGINE_AT=none`** runs it with no engine: everything but running and testing a model works, and those say an engine is needed. **`npm run services`** scans the application's source, running none of it, and keeps its services' names in `services.json`, for the editor and the model checks.
 - **The Design dashboard's models** show each model's description, its saved versions and its **coverage** by its scenarios; the coverage is saved with the runs, on their test instances, and says when the model has changed since. **Run** on the dashboard now keeps each scenario's run, as the Test tab does.
+- **What happened**, under each step of the Test tab's timeline: that step's part of the Rationale, as the engine
+  logged it, with Add as a check on an item it changed and on the instance's status; a step no step of the scenario
+  asked for (a timer the server fired) has a row of its own. A scenario written in Gherkin lists its run's steps under
+  its text, with Copy check. The Test tab no longer has a separate Rationale. The instance page's Rationale is split
+  by the same steps, each opening to its rows. See `docs/docs/modeler.md`.
+- **Coverage** in the Test tab shows one percentage beside its heading: nodes and flows together, as the Design
+  dashboard counts them.
 - **Restore as copy**, in the History tab: a saved version becomes a new model, opened in its own tab; the model and its unsaved changes stay.
 - The Properties panel shows a **conditional event's condition**, saying that bpmn-server does not run the event, and a condition can be added to a flow out of an **event-based gateway**, as the engine evaluates it.
 - **The task API**, `/api2/tasks`: an application lists, claims and completes tasks for its users, whom it authenticates itself. Off
@@ -107,6 +114,8 @@ and here
 - **After starting a process or completing a task, a user goes back to My work**, where their next task is; only
   administrators and designers go to the instance's page. Users who are neither were sent to the Workbench (after a
   task) or to the instance's page (after a start from My work).
+- **The Rationale named an event by another element's item** when a seq was another element's (a test instance's
+  items): it now takes the item of the element logged.
 - **Signing in lands a user on My work**, and administrators and designers on the Workbench. A user's Workbench no
   longer asks for the diagram preview, a designer's route, which answered 403 on every visit.
 - **Signing in goes on to the page it interrupted**: the session made at sign-in had dropped where it was going, so

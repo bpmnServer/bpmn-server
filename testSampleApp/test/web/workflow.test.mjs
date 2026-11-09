@@ -6,7 +6,9 @@
 //     no  -> Approve automatically (script: approvedBy = 'system') -> Approved automatically
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { startWebApp, why } from '../support/webApp.mjs';
+import fs from 'node:fs';
+import path from 'node:path';
+import { startWebApp, why, FIXTURES } from '../support/webApp.mjs';
 
 const MODEL = 'leave-request';
 let web, admin, staff, manager;
@@ -181,4 +183,26 @@ test('an administrator resets all instance data', async () => {
   const res = await admin.post('/resetData', {});
   assert.equal(res.status, 200, why(res));
   assert.equal((await web.bpmnServer.dataStore.findInstances({}, 'summary')).length, 0);
+});
+
+test('an administrator forces a waiting event or receive task; others see no Force', async () => {
+  // processes/Invoice.bpmn: after Issue Invoice, an event-based gateway waits for the payment (a receive task),
+  // Cancel by Admin (a message event) and a timer
+  fs.copyFileSync(path.join(FIXTURES, 'Invoice.bpmn'), path.join(web.definitionsPath, 'Invoice.bpmn'));
+  const started = await web.bpmnServer.engine.start('Invoice', {}, null, 'admin');
+  const id = started.id ?? started.instance?.id;
+  await web.bpmnServer.engine.invoke({ id, 'items.elementId': 'task_issue_invoice', 'items.status': 'wait' }, {}, 'admin');
+  const forces = async (client) => {
+    const page = await client.get('/instanceDetails?id=' + id);
+    assert.equal(page.status, 200, why(page));
+    return [...page.text.matchAll(/<tr data-element="([^"]+)">[\s\S]*?<\/tr>/g)]
+      .filter(([row]) => />Force</.test(row)).map(([, element]) => element).sort();
+  };
+  assert.deepEqual(await forces(admin), ['event_cancel', 'event_timer', 'task_got_payment']);
+  assert.deepEqual(await forces(manager), []);
+
+  const payment = await waitingAt(id, 'task_got_payment');
+  const res = await admin.get(`/invokeItem?id=${payment.id}&processName=Invoice&elementId=task_got_payment`);
+  assert.equal(res.status, 302, why(res));
+  assert.equal((await instance(id)).status, 'end', 'paid: the gateway ends the timer and the cancel');
 });

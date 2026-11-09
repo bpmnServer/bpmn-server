@@ -7,7 +7,7 @@ import { BPMNAPI , SecureUser } from '../index.js';
 import { answerMessage, Common } from './common.js';
 import { packageReadme } from './docs.js';
 import { ViewHelper } from './ViewHelper.js';
-import { rationaleEvents } from '../testing/rationale.js';
+import { rationaleSteps } from '../testing/rationale.js';
 import { notATest } from '../testing/scenarios.js';
 import { runProcess } from './runErrors.js';
 import { guardModelParams } from './middleware/modelName.js';
@@ -486,7 +486,7 @@ async function instanceDetails(request,response,instanceId) {
             title: 'Instance Details',
             logs,items: instance.items, svg,
             decorations, definition: defJson, lastItem,
-            rationale: rationaleEvents(logs, instance.items, instance.startedAt),
+            rationale: rationaleSteps(logs, instance.items, instance.startedAt),
             // the model as the Report shows it (report/view.js): the instance's own source, else the model's
             modelJson: JSON.stringify(instance.source || await definitions.getSource(instance.name)).replace(/</g, '\\u003c'),
         });

@@ -1,7 +1,8 @@
 extends layout
 
 block content
-  link(rel="stylesheet", href="/stylesheets/instance-details.css")
+  //- cached for a year: its URL carries its build time, so a browser takes a new one when it changes
+  link(rel="stylesheet", href=asset("/stylesheets/instance-details.css"))
   link(rel="stylesheet", href="/modeler/report.css")
   - var docs = JSON.parse(definition || '{}');
   - var info = (logs || []).filter(l => l.type === 'info');
@@ -30,6 +31,23 @@ block content
     });
     // Filters: a type, an element; the items and the Rationale by their rows' element, the logs by the element ids
     // a line names (its action, 'Node(name|id)', a flow's id, ...)
+    // a step of the Rationale opens to its rows, and closes
+    function openStep(group, open) {
+      group.classList.toggle('rationale-open', open);
+      var line = group.querySelector('.rationale-step');
+      line.setAttribute('aria-expanded', String(open));
+      line.querySelector('.rationale-caret').className = 'fa rationale-caret ' + (open ? 'fa-caret-down' : 'fa-caret-right');
+    }
+    // one listener for every step's line, whenever the page drew it
+    function toggleStep(e) {
+      var line = e.target.closest && e.target.closest('.rationale-table .rationale-step');
+      if (!line || (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ')) return;
+      e.preventDefault();
+      var group = line.closest('tbody');
+      openStep(group, !group.classList.contains('rationale-open'));
+    }
+    document.addEventListener('click', toggleStep);
+    document.addEventListener('keydown', toggleStep);
     function setUpFilters() {
       var typeSelect = document.getElementById('filter-type');
       var elementSelect = document.getElementById('filter-element');
@@ -41,7 +59,8 @@ block content
       var mentions = function (text, ids) {
         return ids.some(function (id) { return new RegExp('(^|[^\\w-])' + escape(id) + '($|[^\\w-])').test(text); });
       };
-      function apply() {
+      // a filter you choose opens the steps with a row of it; the first one, set for you, opens none
+      function apply(opening) {
         var type = typeSelect.value, element = elementSelect.value;
         // the element list: those of the type
         Array.prototype.forEach.call(elementSelect.options, function (o) { o.hidden = !!(o.value && type && o.dataset.type !== type); });
@@ -53,20 +72,25 @@ block content
           tr.hidden = !show;
           if (tr.closest('#dataTable')) { all++; if (show) shown++; }
         });
+        document.querySelectorAll('.rationale-table tbody.rationale-group').forEach(function (group) {
+          var any = !!group.querySelector('tr[data-element]:not([hidden])');
+          group.hidden = !!ids && !any;
+          if (ids && any && opening) openStep(group, true);
+        });
         document.querySelectorAll('#logs tr.log-row').forEach(function (tr) {
           tr.hidden = !!ids && !mentions(tr.textContent, ids);
         });
         document.getElementById('filter-count').textContent = ids ? shown + ' of ' + all + ' items' : '';
       }
-      typeSelect.addEventListener('change', apply);
-      elementSelect.addEventListener('change', apply);
+      typeSelect.addEventListener('change', function () { apply(true); });
+      elementSelect.addEventListener('change', function () { apply(true); });
       document.getElementById('filter-clear').addEventListener('click', function () {
-        typeSelect.value = ''; elementSelect.value = ''; apply();
+        typeSelect.value = ''; elementSelect.value = ''; apply(false);
       });
       // at first: the user tasks, when the instance has any
       if (elements.some(function (e) { return e.type === 'bpmn:UserTask'; })) {
         typeSelect.value = 'bpmn:UserTask';
-        apply();
+        apply(false);
       }
     }
 
@@ -165,8 +189,7 @@ block content
           thead
             tr
               th(scope="col") Seq #
-              th(scope="col") Element ID
-              th(scope="col") Name
+              th(scope="col") Element
               th(scope="col") Started
               th(scope="col") Ended
               th(scope="col") Status
@@ -185,7 +208,8 @@ block content
               - var ref = `?id=${encodeURIComponent(item.id)}&processName=${encodeURIComponent(instance.name)}&elementId=${encodeURIComponent(item.elementId)}`;
               - var label = (item.status === 'wait' && item.type === 'bpmn:UserTask') ? 'Execute' : '';
               - var label2 = (item.status === 'wait' && item.type === 'bpmn:UserTask') ? 'Assign' : '';
-              - if (user && user.isAdmin() && item.status === 'wait' && item.type.includes('Event')) label = 'Force';
+              //- an administrator completes a waiting event, or a receive task (it waits for a message, as an event does)
+              - if (user && user.isAdmin() && item.status === 'wait' && (item.type.includes('Event') || item.type === 'bpmn:ReceiveTask')) label = 'Force';
               - var key = item.itemKey ? `[${item.itemKey}]` : '';
               - seq++;
               tr(data-element=item.elementId)
@@ -225,7 +249,7 @@ block content
       .instance-card-heading
         div
           h2#rationale-heading Rationale
-          p.instance-hint What happened, in order, from the start to the end, and why: conditions with the values they read, gateways, joins, timers.
+          p.instance-hint Step by step: each action on the instance (its start, a task completed, a timer, a message), then what it caused and why: conditions with the values they read, gateways, joins, timers.
         button#showRationale.btn.btn-default(type="button", onclick="toggleDetails('rationale', 'showRationale')", aria-expanded="false", aria-controls="rationale", aria-label="Toggle the Rationale")
           i.fa.fa-chevron-down(aria-hidden="true")
       #rationale.instance-table-scroll(hidden)
@@ -234,36 +258,48 @@ block content
             tr
               th(scope="col") Seq #
               th(scope="col") At
-              th(scope="col") Element ID
-              th(scope="col") Name
+              th(scope="col") Element
               th(scope="col") Type
               th(scope="col") What happened
               th(scope="col") Why
-          tbody
-            each e in rationale
-              tr(class=e.decisions.length ? 'rationale-chose' : undefined data-element=e.id)
-                td #{e.seq != null ? e.seq : ''}
-                td.instance-nowrap #{e.at}
-                td.instance-nowrap #{e.id || ''}
-                td #{e.name || ''}
-                td.instance-nowrap #{e.type || ''}
-                td.instance-nowrap
-                  if e.word
-                    if e.raw === 'Waiting'
-                      span.status-badge.status-wait #{e.word}
-                    else if e.raw === 'Aborted' || e.raw === 'Cancelled'
-                      span.status-badge.status-error #{e.word}
-                    else
-                      | #{e.word}
-                  each d in e.decisions
-                    if d.action
-                      div.rationale-decision(class=d.not ? 'rationale-not' : undefined) #{d.action}
-                td.rationale-why
-                  each d in e.decisions
-                    div #{d.why}
-            if !rationale.length
+          each step in rationale
+            //- a step: what drove the instance, who, with what data; it opens to what it caused, and why
+            tbody.rationale-group
+              tr.rationale-step(tabindex="0", role="button", aria-expanded="false")
+                td(colspan="6")
+                  i.fa.fa-caret-right.rationale-caret(aria-hidden="true")
+                  strong Step #{step.n}#{step.label ? ` · ${step.label}` : ''}
+                  if step.name || step.element
+                    |  #{step.name || step.element}
+                  if step.userName
+                    |  by #{step.userName}
+                  if step.data && Object.keys(step.data).length
+                    code.rationale-step-data #{JSON.stringify(step.data)}
+                  span.rationale-step-count #{step.events.length} rows
+              each e in step.events
+                tr(class=e.decisions.length ? 'rationale-chose' : undefined data-element=e.id)
+                  td #{e.seq != null ? e.seq : ''}
+                  td.instance-nowrap #{e.at}
+                  td #{e.name ? `${e.name} (${e.id})` : (e.id || '')}
+                  td.instance-nowrap #{e.type || ''}
+                  td.instance-nowrap
+                    if e.word
+                      if e.raw === 'Waiting'
+                        span.status-badge.status-wait #{e.word}
+                      else if e.raw === 'Aborted' || e.raw === 'Cancelled'
+                        span.status-badge.status-error #{e.word}
+                      else
+                        | #{e.word}
+                    each d in e.decisions
+                      if d.action
+                        div.rationale-decision(class=d.not ? 'rationale-not' : undefined) #{d.action}
+                  td.rationale-why
+                    each d in e.decisions
+                      div #{d.why}
+          if !rationale.length
+            tbody
               tr
-                td(colspan="7") Nothing to show: the server keeps an instance's log when its configuration says so (SAVE_LOGS).
+                td(colspan="6") Nothing to show: the server keeps an instance's log when its configuration says so (SAVE_LOGS).
 
     section.instance-card.instance-collapsible(aria-labelledby="docs-heading")
       .instance-card-heading

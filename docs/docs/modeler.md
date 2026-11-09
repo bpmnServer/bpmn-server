@@ -129,6 +129,17 @@ and the commands for that run, **Simulate** and **Debug** each opening its panel
 checks it is as it is there: its status or its value, where the run waits (after the last step done, or at the start
 when none is), else at the end.
 
+**What happened**, under each step of the timeline once the scenario has run, opens to that step's part of the
+Rationale, as the engine logged it: what started, waited and ended, and why. An item the step changed has **Add as a
+check** on its row, for its status as the engine logged it, and the instance's status, when the step changed it, on
+the line of What happened. A step the run took that no step of the scenario asked for, such as a timer the server
+fired, has a row of its own, dashed, where it ran. A scenario written in Gherkin lists its run's steps under its text
+(Step 1 · Start Process, Step 2 · Invoke Item, ...), with **Copy check**, the line to paste in **Edit as text**, and its
+checks under the row of the item they check.
+
+The instance page's Rationale has the same steps: each a line (Step 1, Step 2, ..., who, the data) that opens to its
+rows. Its filters open the steps with a row of what they show, and hide the others.
+
 **Full window**, in the bar of the tabs, puts them over the whole page; **Back to the editor** or Esc returns, and so does
 Simulate, which shows on the diagram.
 

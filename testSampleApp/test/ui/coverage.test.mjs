@@ -143,6 +143,8 @@ test('on the diagram: taken is green, not taken is marked, nodes and flows; a ga
     await recordStart(page, 'Small', { amount: 5 });
 
     assert.deepEqual(await counts(page), { nodes: [3, 4], flows: [2, 3] });
+    // one percentage, beside Coverage: nodes and flows together (5 of 7), as the Design dashboard rounds it
+    assert.match(await page.locator('.test-coverage h5').innerText(), /^Coverage 71%$/);
     assert.deepEqual((await gaps(page)).sort(), ['high', 'toHigh']);
     assert.match(await page.locator('.test-gap[data-element-id="toHigh"]').innerText(), /'large': Which → High/);
 
@@ -170,6 +172,7 @@ test('a run that failed: what only it reached is not tested, but it is not a gap
     const { page, errors, close } = await openTestTab('drawn-flows');
     await recordStart(page, 'Large', { amount: 500 });
     assert.deepEqual(await counts(page), { nodes: [4, 4], flows: [3, 3] });
+    assert.equal(await page.locator('.test-coverage-total').innerText(), '100%');
     assert.deepEqual(await gaps(page), []);
 
     // the same scenario, with a check that fails
