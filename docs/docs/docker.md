@@ -65,6 +65,29 @@ Memory mode needs no MongoDB container, but loses users and workflow instances o
 
 For persistent MongoDB, setup uses `docker-compose.mongo.yml` and sets `MONGO_DB_URL=mongodb://mongo:27017/bpmn`.
 
+## Docker management command
+
+The Docker distribution provides a `bpmn` command for the most common operations. In your installation directory, download the command once:
+
+```sh
+curl -fLO https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/bpmn
+sh bpmn help
+```
+
+```text
+bpmn status                 Container state, port and HTTP status
+bpmn logs [options]         Follow logs or show a snapshot (--tail=100)
+bpmn monitor                Live container stats and recent logs
+bpmn start | stop | restart Start, stop, or recreate containers
+bpmn update                 Pull or rebuild the configured image
+bpmn env                    Edit local .env and optionally apply
+bpmn cli [arguments]        Invoke the application console
+bpmn password               Show the initial admin password
+bpmn setup                  Configure the installation
+```
+
+For a global command, download `install-cli.sh` from the same folder and run `sudo sh install-cli.sh`. If native `bpmn` is already installed, the helper installs `bpmn-docker` instead. Native-only commands (`domain`, `https`, `access`) are managed outside Docker.
+
 ## Manage
 
 In the default memory/published configuration:
