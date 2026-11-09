@@ -6,7 +6,8 @@ cd "$(dirname "$0")"
 mode=${1:-}
 if [ -f .env ] && [ "$mode" != "--reconfigure" ]; then
   echo "Existing .env preserved. Use 'sh setup.sh --reconfigure' to change it."
-  docker compose up -d --remove-orphans
+  if [ ! -f up.sh ]; then curl -fL https://raw.githubusercontent.com/bpmnServer/bpmn-server/main/docker/up.sh -o up.sh; fi
+  sh up.sh
   exit
 fi
 old() { if [ -f .env ]; then sed -n "s/^$1=//p" .env | head -n 1; fi; }
