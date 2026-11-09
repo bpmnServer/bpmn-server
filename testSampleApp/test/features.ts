@@ -1,5 +1,7 @@
 // Every model's tests (processes/*.feature) run in the engine, as the model editor's Run all runs them: this
 // application's settings, delegate and services, in memory (no database, no server). For a release, and for CI.
+// A scenario tagged @integration needs what is not here (a connector added on the server, the network): it is skipped
+// here, and runs in the editor.
 //
 //   npm test                        all of them; the exit code is 1 when one fails
 //   npm test -- "Leave Application" one model's
@@ -31,17 +33,19 @@ await server.ready;
 await server.dataStore.install();
 await server.definitions.rebuild();
 
-let failed = 0, passed = 0;
+let failed = 0, passed = 0, skipped = 0;
 for (const file of files) {
-    const results = await runFeature(server, fs.readFileSync(path.join(models, file), 'utf8'), file);
+    const source = fs.readFileSync(path.join(models, file), 'utf8').replace(/^(\s*)@integration\b/gm, '$1@integration @skip');
+    const results = await runFeature(server, source, file);
     for (const feature of results)
         for (const scenario of feature.elements ?? []) {
+            if (scenario.tags?.some(tag => tag.name === '@integration')) { skipped++; log(`skip  ${file}: ${scenario.name} (@integration)`); continue; }
             const failure = scenario.steps.find(step => step.result.status !== 'passed' && step.result.status !== 'skipped');
             if (failure) failed++; else passed++;
             log(`${failure ? 'FAIL' : 'pass'}  ${file}: ${scenario.name}`);
             if (failure) log(`      ${failure.keyword}${failure.name}\n      ${String(failure.result.error_message ?? failure.result.status).split('\n')[0]}`);
         }
 }
-log(`\n${passed} passed, ${failed} failed`);
+log(`\n${passed} passed, ${failed} failed${skipped ? `, ${skipped} skipped (@integration)` : ''}`);
 await server.shutdown();
 process.exit(failed ? 1 : 0);

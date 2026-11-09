@@ -41,6 +41,9 @@ and here
   others keep their numbers. It takes its turn with the saves.
 
 ### Fixed
+- **An instance with a multi-instance loop, saved with save points (every test run), failed in the memory store** with
+  "function ... could not be cloned": restoring it wrote the live execution into its stored loops, which a save point
+  shares, so the next save carried the whole server. The stored loops stay as stored.
 - **`init`'s Leave Application is ready for production**: dates checked, any manager deciding, reminders while it waits,
   the approved leave recorded through a service (with HR fixing a refusal), the employee told, every element documented,
   and its tests beside it (`Leave Application.feature`, every path). The tutorials explain its design.

@@ -497,83 +497,82 @@ test('New, The task selected: the task selected on the diagram, by itself; a scr
     await close();
 });
 
-test('Add as a check: an item or a value of the run, as it is there, under its step: at the start, after the last step, else at the end', async () => {
+test('Add as a check: on a step\'s row, or a value; the check under the row of its item; the step is when it is checked', async () => {
     const { page, errors, close } = await openTestTab();
-    const addItem = id => page.locator(`.test-items tbody tr[data-element-id="${id}"] .test-add-check`).click();
+    // the item's row in the step that changed it (What happened, opened first): its Add as a check
+    const addItem = async id => {
+        const row = page.locator(`.test-timeline .test-rationale-scroll tbody tr[data-element="${id}"]:has(.test-add-check)`).last();
+        const details = row.locator('xpath=ancestor::details[1]');
+        if (!(await details.evaluate(d => d.open))) await details.locator(':scope > summary').click();
+        await row.locator('.test-add-check').click();
+    };
     const addValue = path => page.locator(`.test-data-row[data-path="${path}"] .test-add-check`).click();
     const prose = locator => locator.locator('.test-check-prose').allInnerTexts();
     const atStart = page.locator('.test-step-start .test-check-row');
     const afterSubmit = page.locator('.test-step[data-element-id="Submit"] .test-check-row');
-    const atEnd = page.locator('.test-checks-editor .test-check-row');
+    const afterApprove = page.locator('.test-step[data-element-id="Approve"] .test-check-row');
     await newScenario(page);
     await page.fill('.test-name', 'Checks from the run');
     await startRun(page);
 
-    // just started, no step done: at the start, under the Start row, in words, times filled in
+    // just started: Submit waits, a row of the start; its check at the start, under that row, found as it is added
     await addItem('Submit');
     assert.deepEqual(await prose(atStart), ['Submit request (Submit) was reached 1 time, and is waiting']);
-    await atStart.locator('.test-check-icon.ok').waitFor();     // found as it is added
-    assert.equal(await atEnd.count(), 0, 'not in the list at the end');
+    await atStart.locator('.test-check-icon.ok').waitFor();
+    const under = atStart.locator('xpath=ancestor::tr[1]/preceding-sibling::tr[1]');
+    assert.equal(await under.getAttribute('data-element'), 'Submit', 'under the row of its item');
 
-    // Edit opens its fields; Done back to words
+    // Edit opens its fields, with no When: the step is when; Done back to words
     await atStart.locator('.test-check-edit').click();
-    assert.equal(await atStart.locator('.test-check-at').inputValue(), 'start');
+    assert.equal(await atStart.locator('.test-check-at').count(), 0);
     assert.equal(await atStart.locator('.test-check-kind').inputValue(), 'node');
     assert.equal(await atStart.locator('.test-check-node').inputValue(), 'Submit');
     assert.equal(await atStart.locator('.test-check-status').inputValue(), 'wait');
     assert.equal(await atStart.locator('.test-check-count').inputValue(), '1');
     await atStart.locator('.test-check-done').click();
-    assert.equal(await atStart.locator('.test-check-at').count(), 0);
 
     await runStep(page, 'Submit', { days: 10, nested: { level: 3 } });
 
-    // the run waits at Approve: after Submit, the last step done, under it
+    // after Submit: Approve waits, a row of Submit's step; values from the Data, under Submit's own row
     await addItem('Approve');
     await addValue('days');
     await addValue('nested.level');     // a value inside an object: its own row
-    assert.deepEqual(await prose(afterSubmit), ['Approve request (Approve) was reached 1 time, and is waiting', 'days is 10', 'nested.level is 3']);
-    await afterSubmit.nth(1).locator('.test-check-edit').click();
-    assert.equal(await afterSubmit.nth(1).locator('.test-check-at').inputValue(), 'after:Submit');
-    assert.equal(await afterSubmit.nth(1).locator('.test-check-path').inputValue(), 'days');
-    assert.equal(await afterSubmit.nth(1).locator('.test-check-value').inputValue(), '10');
-    await afterSubmit.nth(1).locator('.test-check-done').click();
+    assert.deepEqual(await prose(afterSubmit), ['days is 10', 'nested.level is 3', 'Approve request (Approve) was reached 1 time, and is waiting']);
+    await afterSubmit.nth(0).locator('.test-check-edit').click();
+    assert.equal(await afterSubmit.nth(0).locator('.test-check-path').inputValue(), 'days');
+    assert.equal(await afterSubmit.nth(0).locator('.test-check-value').inputValue(), '10');
+    await afterSubmit.nth(0).locator('.test-check-done').click();
     assert.equal(await page.locator('.test-data-row[data-path="days"] .test-add-check').innerText(), '✓ In checks', 'not twice');
-    assert.equal(await page.locator('.test-data-row[data-path="days"] .test-add-check').isDisabled(), true);
 
     // a click on the button does not select the row's element
     assert.deepEqual(await page.evaluate(() => window.bpmnModeler.get('selection').get().map(e => e.id)), []);
 
-    // finished: at the end, in the list; a flow, as any item, reads with its id
+    // finished: the end event, a row of Approve's step
     await runStep(page, 'Approve', { approved: true });
     await page.waitForSelector('.test-summary.ok');
     await addItem('Approved');
-    await addItem('ToSubmit');
-    assert.equal(await atEnd.count(), 2, 'in the list at the end');
-    assert.match((await prose(atEnd))[0], /^At the end: .*Approved.* was reached 1 time, and has ended$/);
-    assert.match((await prose(atEnd))[1], /^At the end: .*ToSubmit.* was reached 1 time, and has ended$/);
-    await atEnd.nth(1).locator('.test-check-edit').click();
-    assert.equal(await atEnd.nth(1).locator('.test-check-node').inputValue(), 'ToSubmit');
-    await atEnd.nth(1).locator('.test-check-done').click();
+    assert.match((await prose(afterApprove)).at(-1), /Approved.* was reached, and has ended$/);
 
     // Run: what was added holds on the same path
     await page.waitForTimeout(800);
     await page.click('.test-replay');
     await page.waitForSelector('.test-status:text("Checks from the run: passed")');
     const checks = await checkResults(page);
-    assert.equal(checks.length, 6, checks.join(' | '));
+    assert.equal(checks.length, 5, checks.join(' | '));
     assert.ok(checks.every(c => c.startsWith('✓')), checks.join(' | '));
     assert.ok(checks.includes('✓ at the start: passes Submit, wait, 1 time'), checks.join(' | '));
 
-    // Add check opens its fields; while recording it is where the recording waits; its When moves it; Done: in words
+    // a step's Add check: a check of any kind, under its row, its fields open
     await startRun(page);
-    await page.click('.test-check-add');
+    await page.locator('.test-step-start .test-step-add-check').click();
     assert.equal(await atStart.count(), 2);
-    await atStart.last().locator('.test-check-at').selectOption('end');
-    assert.equal(await atStart.count(), 1);
-    assert.equal(await atEnd.last().locator('.test-check-done').count(), 1);
-    await atEnd.last().locator('.test-check-done').click();
-    assert.match((await prose(atEnd)).at(-1), /At the end: A node: none chosen yet/);
-    await atEnd.last().locator('.test-check-remove').click();
+    // under the start's own row (its first), its fields open to choose what it checks
+    const added = atStart.first();
+    assert.equal(await added.locator('.test-check-kind').count(), 1, 'its fields, to choose what it checks');
+    assert.equal(await added.locator('.test-check-at').count(), 0);
+    await added.locator('.test-check-done').click();
+    assert.match((await prose(atStart))[0], /A node: none chosen yet/);
+    await atStart.first().locator('.test-check-remove').click();
     await page.click('.test-stop-recording');
     assert.deepEqual(errors, []);
     await close();
@@ -792,7 +791,9 @@ test('a step of the timeline opens to what happened when it ran: its Rationale, 
     assert.match(await step(1).locator('.test-steps-head').innerText(), /^Step 1 · Start Process/, 'as the engine logged it');
     assert.match(await step(2).locator('.test-steps-head').innerText(), /^Step 2 · Invoke Item[^]*Submit request/);
     await step(2).locator('.test-steps-rows > summary').click();
-    assert.match(await step(2).locator('.test-steps-other-checks').innerText(), /@check \$\{data\.days == 10\}/);
+    // a check of no item (data, an expression): under the step's own row, Submit's
+    const expression = step(2).locator('.test-rationale-check', { hasText: '@check ${data.days == 10}' });
+    assert.equal(await expression.locator('xpath=ancestor::tr[1]/preceding-sibling::tr[1]').getAttribute('data-element'), 'Submit');
     assert.match(await row(step(2), 'Approve').locator('.test-copy-check').getAttribute('title'), /@check :r has 1 items of element:Approve with status "wait"$/);
     fs.rmSync(file);
     assert.deepEqual(errors, []);

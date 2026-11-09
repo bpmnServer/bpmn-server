@@ -640,8 +640,8 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
         });
 
         const loops = new Map();
+        // the stored loops stay as stored: a save point may share them, and a live execution in one is saved with it
         stateLoops.forEach(l => {
-            l.execution = execution;
             const loop = Loop.load(execution, l);
             loops.set(loop.id, loop);
         });
