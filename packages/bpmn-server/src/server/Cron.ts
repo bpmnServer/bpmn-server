@@ -117,7 +117,8 @@ class Cron  extends ServerComponent implements ICron {
 		const engine = this.engine as any;
 		engine.runningCounter++;
 		try {
-			await this.engine.invoke({ 'items.id': entry.id }, null);
+			// a timer that fires: the engine logs it so ('Timer Fired'), not as someone's invoke
+			await this.engine.invoke({ 'items.id': entry.id }, null, null, { timer: true });
 			// recovered after a restart: the Timer behaviour that would start its next repetition went with the old server
 			if (Number(current.timerRepeat) > Number(current.timerCount ?? 0) + 1)
 				await engine.startRepeatTimerEvent(current.instanceId, current, {});

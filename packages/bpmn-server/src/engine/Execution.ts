@@ -126,13 +126,13 @@ class Execution extends ServerComponent implements IExecution {
     public async execute(startNodeId = null, inputData = {}, options = {},userName=null) {
 
         this.log('^ACTION:execute:');
-        this.info(JSON.stringify({type:'execution', label:'Start Process',
+        this.operationBegins({type:'execution', label:'Start Process',
             userName,
             action:'execute',
             name:this.name,
             startNodeId,
             options,
-            inputData}));
+            inputData});
         this.operation='execute';
         this.options=options;
         await this.definition.load();
@@ -258,13 +258,13 @@ class Execution extends ServerComponent implements IExecution {
         // a restart only goes back to it
         if (token && userName && !options['restart'])
             token.currentItem.userName = userName;
-        this.info(JSON.stringify({type:'execution', label:'Invoke Item',
+        this.operationBegins({type:'execution', label: options['timer'] ? 'Timer Fired' : options['restart'] ? 'Restart Item' : 'Invoke Item',
             action:'signalInput',
             id:token.currentNodeId,
             itemId,
             userName,
             options,
-            inputData}));
+            inputData});
 
         if (token) {
             this.log('Execution('+this.name+').signal: .. launching a token signal');
@@ -358,7 +358,7 @@ public async retry(itemId, userName?: string) :Promise<IExecution>  {
     this.process = this.tokens.get(0).path[0].node.process;
     this.appDelegate.executionStarted(this);
     this.item = item;
-    this.info(JSON.stringify({ type: 'execution', label: 'Retry Item', action: 'retry', id: item.elementId, itemId, userName }));
+    this.operationBegins({ type: 'execution', label: 'Retry Item', action: 'retry', id: item.elementId, itemId, userName });
     await token.retry(item);
     await this.checkEnd();
     await Promise.all(this.promises);
@@ -395,12 +395,12 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
     public async signalEvent(executionId, inputData:any,userName,options={}) :Promise<IExecution> {
         this.log('Execution('+this.name+').signal: executionId=' + executionId + ' data '+JSON.stringify(inputData));
 
-        this.info(JSON.stringify({type:'execution', label:'Invoke Event',
+        this.operationBegins({type:'execution', label:'Invoke Event',
             action:'signalEvent',
             id:executionId,
             userName,
             options,
-            inputData}));
+            inputData});
         this.operation = 'signal';
         this.options=options;
         let token = null;
@@ -522,6 +522,7 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
  
         this.log(`..Saving instance ${this.instance.id}`+JSON.stringify(this.instance.data));
         
+        this.logOutcome();
         const state = this.getState();
     
         this['state']=state;
@@ -779,6 +780,25 @@ public async restart(itemId, inputData:any,userName, options={}) :Promise<IExecu
     /** The instance keeps its log lines only when they are saved (its flags.saveLogs, else dataStore.saveLogs, the default). */
     private get keepLogs(): boolean {
         return this.instance?.flags?.saveLogs ?? this.server?.dataStore?.saveLogs !== false;
+    }
+    /** The items' status when an operation began: what it changed is its outcome (logOutcome). */
+    private statusBefore = new Map<string, string>();
+    /** Logs the entry that opens an operation ({"type":"execution",...}), and notes the items' status as it begins. */
+    private operationBegins(entry) {
+        this.info(JSON.stringify(entry));
+        this.statusBefore = new Map(this.getItems().map(item => [item.id, item.status]));
+    }
+    /**
+     * The outcome of what ran since the operation began, or since the last save: the instance's status, the items whose
+     * status changed, and the items that wait. {"type":"outcome",...}: the Rationale and the Test tab read it as it is.
+     */
+    private logOutcome() {
+        const items = this.getItems();
+        const fact = item => ({ id: item.id, seq: item.seq, elementId: item.elementId, name: item.name ?? '', type: item.type, status: item.status });
+        this.info(JSON.stringify({ type: 'outcome', status: this.instance.status,
+            changed: items.filter(item => this.statusBefore.get(item.id) !== item.status).map(fact),
+            waiting: items.filter(item => item.status === ITEM_STATUS.wait).map(fact) }));
+        this.statusBefore = new Map(items.map(item => [item.id, item.status]));
     }
     private record(entry) {
         if (this.keepLogs) this.instance.logs.push(entry);

@@ -15,6 +15,9 @@ and here
 
 ## [Unreleased]
 ### Added
+- **Each operation's outcome in the log**: when it saves, the engine logs `{"type":"outcome"}`, with the instance's status,
+  the items whose status changed and the items that wait. A timer the server fires is logged as `Timer Fired`, a
+  restart as `Restart Item`, not as `Invoke Item`.
 - **`engine.deleteInstances(query)` and `engine.tagInstance(id, tag)`**: what changes an instance is the engine's. A delete takes each instance's lock, so a call running it finishes first, and cancels its timers. `api.data.deleteInstances` and bpmn-web's deletes go through it, wherever the engine runs; reads stay with the data store.
 - **`startEngineService(server, { port, host, key, calls })`**: the engine on a port of its own, for its host's `BPMNServer.launch(configuration, logger, { engine, engineKey })`. `calls` adds to what the engine can be asked.
 - `server.testStubs`: stubs of a service or a timer for a test's own instances, which no engine call or start option can set.
